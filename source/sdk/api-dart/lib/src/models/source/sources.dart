@@ -1,18 +1,21 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/source/source_kind.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
+import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 import 'package:mzizi_api/src/models/source/publishers.dart';
 
 part 'sources.g.dart';
 
-/// A publication channel, named by anything but its domain: a real website, a real API, or a dataset (files or data obtained from somewhere that is neither). Only websites and APIs have domains and paths; the dataset tables record what we prepared from sources.
+/// A publication channel: a real website or a real API, with its classification and credibility.
 @JsonSerializable(includeIfNull: false)
 class SourceSources {
   const SourceSources({
+    this.classificationId,
     required this.code,
     required this.createdAt,
     this.credentialBinding,
+    this.credibilityId,
     this.deletedAt,
     this.description,
     required this.id,
@@ -23,9 +26,11 @@ class SourceSources {
     required this.updatedAt,
     required this.version,
   });
+  final String? classificationId;
   final String code;
   final DateTime createdAt;
   final String? credentialBinding;
+  final String? credibilityId;
   final DateTime? deletedAt;
   final String? description;
   final String id;

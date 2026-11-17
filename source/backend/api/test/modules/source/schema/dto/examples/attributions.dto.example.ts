@@ -2,15 +2,21 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { fileVersionsExample } from "@test/modules/filesystem/schema/dto/examples/file-versions.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { artifactsExample } from "@test/modules/source/schema/dto/examples/artifacts.dto.example.ts";
 import { publishersExample } from "@test/modules/source/schema/dto/examples/publishers.dto.example.ts";
 
 /** The contract shape of Attributions, for generated tests. */
 export const attributionsExample: ContractExample = contractExample({
   name: "Attributions",
   fields: [
+    {
+      name: "artifactId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
     {
       name: "assessedAt",
       optional: false,
@@ -53,12 +59,6 @@ export const attributionsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "fileVersionId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "id",

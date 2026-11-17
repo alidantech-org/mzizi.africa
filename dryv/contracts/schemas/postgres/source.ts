@@ -1,77 +1,70 @@
 /**
  * Schema: source | Database: mzizi
- * Implementation authorized by the Main/Operations handoff, 12 November 2026.
- * Owns publication channels (websites, APIs), their domains and paths, content documents, captures, datasets and their lineage, record provenance, evidence and manifest releases.
- * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/source.md
+ * Owns publishers, acquisition channels, domains and addresses, discoveries and captures, logical products with their
+ * editions and exact artifacts, classified input/output relationships, citations, verifications and attributions.
+ * Design: .docs/design/data/SOURCE_FILESYSTEM_GEOGRAPHY.md, .docs/design/data/SUBJECT_REFERENCES.md
+ * Thirteen tables. Removed on 2026-11-17: paths, documents, datasets, dataset_lineage, provenance, evidence,
+ * manifests, manifest_releases, manifest_bindings, publication_receipts.
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { subjectProperties } from "#/schemas/_subjects.ts";
 import { FileVersions } from "./filesystem.ts";
 import { Entities } from "./official.ts";
-import { Country, Value } from "./reference.ts";
+import { Country, Language, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const source = dryv
   .group({ name: "source" })
-  .description("Accepted sources, evidence and publication receipts.")
+  .description("Where information came from: channels, addresses, captures, products, relationships and exact citations.")
   .facets({ storage: { namespace: "source", store: "main" } });
+
 export const sourceEnums = source.properties({
-  ReleaseStatus: dryv.property.enum(["approved", "retired", "withdrawn"]),
-  VerificationOutcome: dryv.property.enum([
-    "supported",
-    "contradicted",
-    "insufficient",
-    "disputed",
-  ]),
-  /** A real website (pages and files), a real API (endpoints), or a dataset: files or data obtained from somewhere that is neither. */
-  SourceKind: dryv.property.enum(["website", "api", "dataset"]),
-  PathKind: dryv.property.enum(["page", "listing", "file", "endpoint"]),
+  VerificationOutcome: dryv.property.enum(["supported", "contradicted", "insufficient", "disputed"]),
+  /** A real website (pages and files) or a real API (endpoints). A dataset is a product, never a channel. */
+  SourceKind: dryv.property.enum(["website", "api"]),
+  AddressKind: dryv.property.enum(["page", "listing", "file", "endpoint"]),
   HttpMethod: dryv.property.enum(["GET", "HEAD", "POST"]),
-  /** A dataset is taken as downloaded, assembled from other inputs, or authored by hand. */
-  DatasetAssembly: dryv.property.enum([
-    "as-downloaded",
-    "assembled",
-    "authored",
-  ]),
-  LineageRole: dryv.property.enum(["raw", "derived", "lookup"]),
 });
 
 export const Publishers = source
   .schema("Publishers", {
     name: dryv.field(sharedProperties.Name),
     kindId: belongsTo(() => Value),
+    /** Scheme src.classification: official, research, community and so on. Absent while unassessed. */
+    classificationId: belongsTo(() => Value).maybe(),
     officialEntityId: belongsTo(() => Entities).maybe(),
     countryId: belongsTo(() => Country).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "Accepted publisher; an optional official identity distinguishes organization from publication channel.",
-  )
+  .description("Accepted publisher; an optional official identity distinguishes the organization from its publication channels.")
   .role("entity")
   .facets({
-    storage: dryv.storage("publishers").index("kindId").index("countryId"),
+    storage: dryv.storage("publishers").index("kindId").index("classificationId").index("countryId"),
   });
 
 export const Sources = source
   .schema("Sources", {
     publisherId: belongsTo(() => Publishers),
     kind: dryv.field(sourceEnums.SourceKind),
+    /** Scheme src.classification. Absent while unassessed; never coerced to unofficial. */
+    classificationId: belongsTo(() => Value).maybe(),
+    /** Scheme src.credibility. Absent while unassessed; never coerced to unreliable. */
+    credibilityId: belongsTo(() => Value).maybe(),
     officialEntityId: belongsTo(() => Entities).maybe(),
     title: dryv.field(sharedProperties.Name),
     description: dryv.field(sharedProperties.Description).maybe(),
-    /** For an API: the named credential binding only; request behavior is pinned in manifest releases. */
+    /** For an API: the named credential binding only. */
     credentialBinding: dryv.field(sharedProperties.NonEmptyString255).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "A publication channel, named by anything but its domain: a real website, a real API, or a dataset (files or data obtained from somewhere that is neither). Only websites and APIs have domains and paths; the dataset tables record what we prepared from sources.",
-  )
+  .description("A publication channel: a real website or a real API, with its classification and credibility.")
   .role("entity")
   .facets({
-    storage: dryv.storage("sources").index("publisherId").index("kind"),
+    storage: dryv.storage("sources").index("publisherId").index("kind").index("classificationId").index("credibilityId"),
   });
 
 export const Domains = source
@@ -80,305 +73,184 @@ export const Domains = source
     host: dryv.field(sharedProperties.NonEmptyString255),
   })
   .extends(baseSchemas.CodedValidityEntity)
-  .description(
-    "A host name a source is served from. A source can have several over time, and a domain keeps its own validity period.",
-  )
+  .description("A host name a source is served from. A host belongs to one source at a time; its validity period records moves.")
   .role("entity")
   .facets({
     storage: dryv.storage("domains").unique("host").index("sourceId"),
   });
 
-export const Paths = source
-  .schema("Paths", {
+export const Addresses = source
+  .schema("Addresses", {
     domainId: belongsTo(() => Domains),
-    /** The path and query exactly as requested, starting with a slash. */
+    kind: dryv.field(sourceEnums.AddressKind),
+    method: dryv.field(sourceEnums.HttpMethod),
+    /** The path exactly as requested, starting with a slash; without the query. */
     path: dryv.field(sharedProperties.NonEmptyString1000),
-    kind: dryv.field(sourceEnums.PathKind),
-    /** For an API endpoint. */
-    method: dryv.field(sourceEnums.HttpMethod).maybe(),
-    /** What was obtained at this path and anything worth knowing about it. */
+    /** The query string without the leading question mark; empty when there is none. Fragments and credentials are never stored. */
+    query: dryv.field(sharedProperties.NullableString1000),
     note: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "A page, listing, file or API endpoint on a domain; captures hang off it.",
-  )
+  .description("A page, listing, file or API endpoint on a domain, distinguished by method, path and query.")
   .role("entity")
   .facets({
-    storage: dryv.storage("paths").unique("domainId", "path").index("domainId"),
+    storage: dryv.storage("addresses").unique("domainId", "method", "path", "query").index("domainId"),
   });
 
-export const Documents = source
-  .schema("Documents", {
-    /** One row per distinct content, whoever served it; many captures can point here. */
-    sha256: dryv.field(sharedProperties.Sha256),
-    publisherId: belongsTo(() => Publishers).maybe(),
-    kindId: belongsTo(() => Value),
-    title: dryv.field(sharedProperties.Name),
-    contentType: dryv.field(sharedProperties.NonEmptyString255).maybe(),
-    sizeBytes: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    /** The stored bytes in the filesystem; empty until the file is preserved. */
-    fileVersionId: belongsTo(() => FileVersions).maybe(),
-    /** The archive this document came out of, when it is a member of a zip or tar. */
-    parentId: belongsTo(dryv.self).maybe(),
+export const Discoveries = source
+  .schema("Discoveries", {
+    /** The address once it resolves to an accepted domain; absent while the link points somewhere not yet accepted. */
+    addressId: belongsTo(() => Addresses).maybe(),
+    /** The link exactly as found, kept so an unresolved target is never invented into a source. */
+    observedUrl: dryv.field(sharedProperties.Url),
+    /** The page it was found on. */
+    foundOnAddressId: belongsTo(() => Addresses).maybe(),
+    sourceId: belongsTo(() => Sources).maybe(),
+    anchorText: dryv.field(sharedProperties.NullableString1000).maybe(),
+    context: dryv.field(sharedProperties.Description).maybe(),
+    discoveredAt: dryv.field(sharedProperties.Instant),
   })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "A distinct piece of content identified by its sha256. The same file fetched from many sources is one document with many captures.",
-  )
+  .extends(baseSchemas.Entity)
+  .description("An observation that an address exists: where it was found, as what text and when. Retrieval is a separate capture.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("documents")
-      .unique("sha256")
-      .index("publisherId")
-      .index("kindId")
-      .index("fileVersionId")
-      .index("parentId"),
+    storage: dryv.storage("discoveries").index("addressId").index("foundOnAddressId").index("sourceId").index("discoveredAt"),
   });
 
-export const Manifests = source
-  .schema("Manifests", {
-    title: dryv.field(sharedProperties.Name),
+export const Products = source
+  .schema("Products", {
+    /** Scheme src.product.kind: document, dataset, report, map and so on. */
     kindId: belongsTo(() => Value),
+    title: dryv.field(sharedProperties.Name),
+    publisherId: belongsTo(() => Publishers).maybe(),
     description: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "Stable API, website or extraction configuration identity; contents remain versioned artifacts.",
-  )
+  .description("One logical document or dataset, independent of who served it, in what format or how many times it was downloaded.")
   .role("entity")
   .facets({
-    storage: dryv.storage("manifests").index("kindId"),
+    storage: dryv.storage("products").index("kindId").index("publisherId"),
   });
 
-export const ManifestReleases = source
-  .schema("ManifestReleases", {
-    manifestId: belongsTo(() => Manifests),
-    releaseLabel: dryv.field(sharedProperties.NonEmptyString100),
-    fileVersionId: belongsTo(() => FileVersions),
-    contentHash: dryv.field(sharedProperties.Sha256),
-    inputSchemaCode: dryv.field(sharedProperties.IdentityCode),
-    inputSchemaVersion: dryv.field(sharedProperties.NonEmptyString100),
-    requiredCapabilities: dryv.field(sharedProperties.JsonText),
-    approvedBySnapshot: dryv.field(sharedProperties.JsonText),
-    approvedAt: dryv.field(sharedProperties.Instant),
-    effectiveFrom: dryv.field(sharedProperties.Instant),
-    effectiveUntil: dryv.field(sharedProperties.Instant).maybe(),
-    status: dryv.field(sourceEnums.ReleaseStatus),
+export const Editions = source
+  .schema("Editions", {
+    productId: belongsTo(() => Products),
+    /** The edition's own label: a year, a print, a release name. */
+    designation: dryv.field(sharedProperties.NonEmptyString255),
+    languageId: belongsTo(() => Language).maybe(),
+    publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    description: dryv.field(sharedProperties.Description).maybe(),
   })
-  .extends(baseSchemas.Entity)
-  .rule(
-    "EffectiveWindowIsOrdered",
-    rule.ordered("effectiveFrom", "effectiveUntil"),
-  )
-  .description(
-    "Pinned approved manifest content; schema and capabilities are immutable release inputs.",
-  )
+  .extends(baseSchemas.CodedEntity)
+  .description("A meaningfully distinct release of a product. Another format or scan of the same wording is an artifact, not an edition.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("manifest_releases")
-      .noOverlap("NoOverlappingReleases", {
-        scope: ["manifestId"],
-        from: "effectiveFrom",
-        until: "effectiveUntil",
-      })
-      .unique("manifestId", "releaseLabel")
-      .index("fileVersionId"),
+    storage: dryv.storage("editions").unique("productId", "designation").index("languageId"),
   });
 
-export const ManifestBindings = source
-  .schema("ManifestBindings", {
-    sourceId: belongsTo(() => Sources),
-    manifestReleaseId: belongsTo(() => ManifestReleases),
-    activatedAt: dryv.field(sharedProperties.Instant),
-    deactivatedAt: dryv.field(sharedProperties.Instant).maybe(),
-    effectiveFrom: dryv.field(sharedProperties.Instant),
-    effectiveUntil: dryv.field(sharedProperties.Instant).maybe(),
+export const Artifacts = source
+  .schema("Artifacts", {
+    editionId: belongsTo(() => Editions),
+    /** Exact bytes in the filesystem; absent until the file is preserved. */
+    fileVersionId: belongsTo(() => FileVersions).maybe(),
+    sha256: dryv.field(sharedProperties.Sha256),
+    format: dryv.field(sharedProperties.NonEmptyString100).maybe(),
+    contentType: dryv.field(sharedProperties.NonEmptyString255).maybe(),
+    sizeBytes: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
+    /** Where a prepared artifact lives in the repository, such as a seed CSV. */
+    location: dryv.field(sharedProperties.NonEmptyString1000).maybe(),
+    /** The archive this artifact is a member of. */
+    parentId: belongsTo(dryv.self).maybe(),
+    description: dryv.field(sharedProperties.Description).maybe(),
   })
-  .extends(baseSchemas.Entity)
-  .rule(
-    "EffectiveWindowIsOrdered",
-    rule.ordered("effectiveFrom", "effectiveUntil"),
-  )
-  .description(
-    "Dated release binding; activation never changes releases already pinned by running jobs.",
-  )
+  .extends(baseSchemas.CodedEntity)
+  .description("One exact representation of an edition, tied to immutable bytes. Identical downloads from many sources are one artifact with many captures.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("manifest_bindings")
-      .noOverlap("NoOverlappingBindings", {
-        scope: ["sourceId"],
-        from: "effectiveFrom",
-        until: "effectiveUntil",
-      })
-      .unique("sourceId", "manifestReleaseId", "effectiveFrom")
-      .index("manifestReleaseId"),
+    storage: dryv.storage("artifacts").unique("editionId", "sha256").index("sha256").index("fileVersionId").index("parentId"),
   });
 
 export const Captures = source
   .schema("Captures", {
     sourceId: belongsTo(() => Sources),
-    pathId: belongsTo(() => Paths).maybe(),
-    /** The content obtained; empty until the bytes are downloaded and hashed. */
-    documentId: belongsTo(() => Documents).maybe(),
-    manifestReleaseId: belongsTo(() => ManifestReleases).maybe(),
-    /** The link exactly as found. */
+    addressId: belongsTo(() => Addresses).maybe(),
+    discoveryId: belongsTo(() => Discoveries).maybe(),
+    /** The content obtained; absent until the bytes are downloaded and hashed. */
+    artifactId: belongsTo(() => Artifacts).maybe(),
     originalUrl: dryv.field(sharedProperties.Url),
-    /** The address finally fetched after redirects. */
     retrievedUrl: dryv.field(sharedProperties.Url).maybe(),
     retrievedAt: dryv.field(sharedProperties.Instant),
     responseMetadata: dryv.field(sharedProperties.JsonText),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations.",
-  )
+  .description("One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("captures")
-      .index("sourceId")
-      .index("pathId")
-      .index("documentId")
-      .index("manifestReleaseId"),
+    storage: dryv.storage("captures").index("sourceId").index("addressId").index("discoveryId").index("artifactId"),
   });
 
-export const Datasets = source
-  .schema("Datasets", {
-    title: dryv.field(sharedProperties.Name),
-    /** csv, geojson, xlsx, json and so on. */
-    format: dryv.field(sharedProperties.NonEmptyString100),
-    categoryId: belongsTo(() => Value).maybe(),
-    assembly: dryv.field(sourceEnums.DatasetAssembly),
-    /** Where the dataset lives in the repository (a seed CSV) or the store. */
-    location: dryv.field(sharedProperties.NonEmptyString1000).maybe(),
-    sha256: dryv.field(sharedProperties.Sha256).maybe(),
-    fileVersionId: belongsTo(() => FileVersions).maybe(),
-    description: dryv.field(sharedProperties.Description).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "A dataset we hold, most often a seed CSV that rows are loaded from: categorised, hashed, and either taken as downloaded or assembled from other inputs.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("datasets")
-      .index("categoryId")
-      .index("fileVersionId"),
-  });
-
-export const DatasetLineage = source
-  .schema("DatasetLineage", {
-    datasetId: belongsTo(() => Datasets),
-    /** Exactly one of the three inputs is set. */
-    inputDatasetId: belongsTo(() => Datasets).maybe(),
-    inputDocumentId: belongsTo(() => Documents).maybe(),
-    inputCaptureId: belongsTo(() => Captures).maybe(),
-    role: dryv.field(sourceEnums.LineageRole),
-    /** How the input was used to prepare the dataset. */
-    method: dryv.field(sharedProperties.Description).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .description(
-    "What a dataset was prepared from: a capture, a document or another dataset, with the role and method.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("dataset_lineage")
-      .unique(
-        "datasetId",
-        "inputDatasetId",
-        "inputDocumentId",
-        "inputCaptureId",
-      )
-      .index("datasetId")
-      .index("inputDatasetId")
-      .index("inputDocumentId")
-      .index("inputCaptureId"),
-  });
-
-export const Provenance = source
-  .schema("Provenance", {
-    /** The table of the record, such as geography.features. A plain name: the target varies, so this is not a foreign key. */
-    tableName: dryv.field(sharedProperties.NonEmptyString100),
-    recordId: dryv.field(sharedProperties.Id),
-    /** The dataset (usually the seed CSV) the record was loaded from. */
-    datasetId: belongsTo(() => Datasets),
-    /** The line of the CSV, counting the header as line 1. */
-    line: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    /** One column when only that value is sourced here. */
-    columnName: dryv.field(sharedProperties.NonEmptyString100).maybe(),
-    /** A finer link to where the record was found. */
-    captureId: belongsTo(() => Captures).maybe(),
-    documentId: belongsTo(() => Documents).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .description(
-    "Where a record in any table came from. The loader writes one row for every seeded record, so a record's origin is a query: its dataset, the lines of the CSV and the inputs the dataset came from.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("provenance")
-      .unique("tableName", "recordId", "datasetId", "line")
-      .index("tableName", "recordId")
-      .index("datasetId")
-      .index("captureId")
-      .index("documentId"),
-  });
-
-export const Evidence = source
-  .schema("Evidence", {
+export const Relationships = source
+  .schema("Relationships", {
+    /** Scheme src.relationship.kind: extracted-from, prepared-from, built-from, translated-from, supports. */
     kindId: belongsTo(() => Value),
-    title: dryv.field(sharedProperties.Name),
-    description: dryv.field(sharedProperties.Description).maybe(),
-    assembledAt: dryv.field(sharedProperties.Instant),
-    assembledBySnapshot: dryv.field(sharedProperties.JsonText),
+    /**
+     * Direction: the output was made from the input. Each end is exactly one of the typed columns, so every end is a real
+     * foreign key. A result made from several inputs has one row per input.
+     */
+    outputCaptureId: belongsTo(() => Captures).maybe(),
+    outputArtifactId: belongsTo(() => Artifacts).maybe(),
+    outputEditionId: belongsTo(() => Editions).maybe(),
+    outputProductId: belongsTo(() => Products).maybe(),
+    outputFileVersionId: belongsTo(() => FileVersions).maybe(),
+    /** Or the output is a domain record, named by the shared subject keys (both set or both absent). */
+    subjectTable: dryv.field(subjectProperties.SubjectTable).maybe(),
+    subjectId: dryv.field(sharedProperties.Id).maybe(),
+    inputCaptureId: belongsTo(() => Captures).maybe(),
+    inputArtifactId: belongsTo(() => Artifacts).maybe(),
+    inputEditionId: belongsTo(() => Editions).maybe(),
+    inputProductId: belongsTo(() => Products).maybe(),
+    inputFileVersionId: belongsTo(() => FileVersions).maybe(),
+    /** How the input was used. */
+    method: dryv.field(sharedProperties.Description).maybe(),
+    /** Optional loose reference to an external execution; never a foreign key and never required. */
+    executionRef: dryv.field(sharedProperties.NonEmptyString255).maybe(),
   })
-  .extends(baseSchemas.CodedEntity)
+  .extends(baseSchemas.Entity)
+  .rule("SubjectKeysTogether", rule.allOrNone("subjectTable", "subjectId"))
+  .rule(
+    "ExactlyOneOutput",
+    rule.exactlyOne("outputCaptureId", "outputArtifactId", "outputEditionId", "outputProductId", "outputFileVersionId", "subjectId"),
+  )
+  .rule(
+    "ExactlyOneInput",
+    rule.exactlyOne("inputCaptureId", "inputArtifactId", "inputEditionId", "inputProductId", "inputFileVersionId"),
+  )
   .description(
-    "Durable evidence bundle whose exact supporting items are normalized citations.",
+    "A classified connection from an input to an output or a domain record: derivation, extraction, translation, support. Exact locations are citations on the relationship.",
   )
   .role("entity")
-  .facets({
-    storage: dryv.storage("evidence").index("kindId"),
-  });
+  .facets({ storage: dryv.storage("relationships").index("kindId").index("subjectTable", "subjectId") });
 
 export const Citations = source
   .schema("Citations", {
-    evidenceId: belongsTo(() => Evidence),
-    documentId: belongsTo(() => Documents).maybe(),
+    artifactId: belongsTo(() => Artifacts),
     captureId: belongsTo(() => Captures).maybe(),
-    fileVersionId: belongsTo(() => FileVersions),
+    /** The connection this location supports, when it supports one. */
+    relationshipId: belongsTo(() => Relationships).maybe(),
     locatorKindId: belongsTo(() => Value),
     locator: dryv.field(sharedProperties.JsonText),
     quotedHash: dryv.field(sharedProperties.Sha256).maybe(),
     recordedAt: dryv.field(sharedProperties.Instant),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record.",
-  )
+  .description("Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("citations")
-      .index("evidenceId")
-      .index("documentId")
-      .index("captureId")
-      .index("fileVersionId")
-      .index("locatorKindId"),
+    storage: dryv.storage("citations").index("artifactId").index("captureId").index("relationshipId").index("locatorKindId"),
   });
 
 export const Verifications = source
   .schema("Verifications", {
-    evidenceId: belongsTo(() => Evidence),
     methodId: belongsTo(() => Value),
     outcome: dryv.field(sourceEnums.VerificationOutcome),
     confidence: dryv.field(sharedProperties.Confidence).maybe(),
@@ -387,23 +259,17 @@ export const Verifications = source
     assessedAt: dryv.field(sharedProperties.Instant),
     supersedesId: belongsTo(dryv.self).maybe(),
   })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes.",
-  )
+  .extends(baseSchemas.CodedSubjectEntity)
+  .description("Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("verifications")
-      .index("evidenceId")
-      .index("methodId")
-      .index("supersedesId"),
+    storage: dryv.storage("verifications").index("subjectTable", "subjectId").index("methodId").index("supersedesId"),
   });
 
 export const Attributions = source
   .schema("Attributions", {
     publisherId: belongsTo(() => Publishers),
-    fileVersionId: belongsTo(() => FileVersions),
+    artifactId: belongsTo(() => Artifacts),
     licenseValueId: belongsTo(() => Value).maybe(),
     credit: dryv.field(sharedProperties.NonEmptyString1000),
     rightsStatement: dryv.field(sharedProperties.Description),
@@ -411,42 +277,8 @@ export const Attributions = source
     assessorSnapshot: dryv.field(sharedProperties.JsonText),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "Accepted rights and credit statement tied to exact content and publisher.",
-  )
+  .description("Credit and rights for one artifact and publisher; equal bytes from other places never overwrite it.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("attributions")
-      .index("publisherId")
-      .index("fileVersionId")
-      .index("licenseValueId"),
+    storage: dryv.storage("attributions").index("publisherId").index("artifactId").index("licenseValueId"),
   });
-
-export const PublicationReceipts = source
-  .schema("PublicationReceipts", {
-    publicationRefId: dryv.field(sharedProperties.Id),
-    idempotencyKey: dryv.field(sharedProperties.NonEmptyString255),
-    requestHash: dryv.field(sharedProperties.Sha256),
-    payloadHash: dryv.field(sharedProperties.Sha256),
-    contractVersion: dryv.field(sharedProperties.NonEmptyString255),
-    publishedAt: dryv.field(sharedProperties.Instant),
-    actorSnapshot: dryv.field(sharedProperties.JsonText),
-    resultManifest: dryv.field(sharedProperties.JsonText),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "Immutable Main acknowledgement committed atomically with accepted records and provenance. Same-key different-hash retries must conflict.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("publication_receipts")
-      .unique("idempotencyKey")
-      .unique("publicationRefId"),
-  });
-
-/** Open: scheme-aware value membership; immutable releases, captures and assessments; same-key/hash replay and
- * atomic receipt/provenance writes; provenance rows are checked by the loader, not a foreign key.
- * publicationRefId refers to Operations and must never become a PostgreSQL cross-database FK.
- */

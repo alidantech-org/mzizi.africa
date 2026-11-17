@@ -1,8 +1,8 @@
 /**
  * Schema: legal | Database: mzizi
  * Contract implementation authorized by the Main/Operations handoff, 12 November 2026.
- * Stable instrument/provision identities and immutable source-backed wording versions.
- * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/legal.md
+ * Nine tables: instruments, names, editions, provisions, wordings, translations, references, relationships, effects.
+ * Design: .docs/design/data/LEGAL_SCHEMA.md
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
@@ -11,13 +11,13 @@ import { sharedProperties } from "#/schemas/_shared.ts";
 import { Features } from "./geography.ts";
 import { Entities } from "./official.ts";
 import { Language, Value } from "./reference.ts";
-import { Citations, Documents, Evidence } from "./source.ts";
+import { Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const legal = dryv
   .group({ name: "legal" })
-  .description("Legal instruments, exact wording versions and amendments.")
+  .description("Legal instruments, their names, editions, provisions, authoritative wordings, translations, references, relationships and effects.")
   .facets({ storage: { namespace: "legal", store: "main" } });
 
 export const legalEnums = legal.properties({
@@ -34,12 +34,8 @@ export const legalEnums = legal.properties({
     "item",
     "definition",
   ]),
-  TranslationKind: dryv.property.enum([
-    "official",
-    "unofficial",
-    "proposed-draft",
-    "machine-proposed",
-  ]),
+  /** How a translation was produced. Authority is never implied by the method or by review. */
+  TranslationMethod: dryv.property.enum(["human", "machine", "assisted"]),
   ReviewStatus: dryv.property.enum([
     "proposed",
     "reviewed",
@@ -57,41 +53,63 @@ export const legalEnums = legal.properties({
     "amends",
   ]),
   ReferenceMethod: dryv.property.enum(["parser", "model", "human"]),
-  BasisRelation: dryv.property.enum([
-    "established-by",
-    "governed-by",
-    "defined-by",
-    "limited-by",
-    "implements",
-    "derives-from",
-  ]),
 });
 
 export const Instruments = legal
   .schema("Instruments", {
-    title: dryv.field(sharedProperties.Name),
+    /** Scheme leg.instrument.kind: constitution, act, bill, regulation, treaty. Not a lifecycle status. */
     kindId: belongsTo(() => Value),
-    issuingUnitId: belongsTo(() => Features),
+    /** Scheme leg.instrument.status: introduced, withdrawn, enacted and so on. Absent while unassessed. */
+    statusId: belongsTo(() => Value).maybe(),
+    /** Territorial scope; absent when joint, international or unknown. Geography alone never establishes applicability. */
+    issuingUnitId: belongsTo(() => Features).maybe(),
     issuingEntityId: belongsTo(() => Entities).maybe(),
     enactedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "Stable instrument identity with explicit issuing territorial scope; geography alone never establishes applicability.",
-  )
+  .description("Stable instrument identity, independent of its names, editions, downloads and languages.")
   .role("entity")
   .facets({
-    storage: dryv.storage("instruments").index("kindId").index("issuingUnitId"),
+    storage: dryv.storage("instruments").index("kindId").index("statusId").index("issuingUnitId"),
   });
 
-export const InstrumentVersions = legal
-  .schema("InstrumentVersions", {
+export const Names = legal
+  .schema("Names", {
     instrumentId: belongsTo(() => Instruments),
-    edition: dryv.field(sharedProperties.NonEmptyString255),
-    /** The exact document (its sha256 and stored file) this release is read from. */
-    documentId: belongsTo(() => Documents),
-    evidenceId: belongsTo(() => Evidence).maybe(),
+    /** `und` when no language is asserted; never defaulted to English. */
+    languageId: belongsTo(() => Language),
+    name: dryv.field(sharedProperties.Name),
+    /** Scheme leg.name.kind: formal title, short name, alternative, abbreviation, canonical. */
+    kindId: belongsTo(() => Value),
+    /** The name to show for this instrument and language while it applies; at most one current preferred name. */
+    isPreferred: dryv.field(sharedProperties.Flag),
+  })
+  .extends(baseSchemas.CodedValidityEntity)
+  .description("A name of one instrument in one language, with its kind and validity. All forms resolve to the same instrument.")
+  .role("entity");
+
+const preferredName = legal.expression(
+  "PreferredCurrentName",
+  Names.check((v) => v.isPreferred.eq(true).and(v.validUntil.isNull())),
+);
+
+Names.facets({
+  storage: dryv
+    .storage("names")
+    .unique("instrumentId", "languageId", "kindId", "name")
+    .unique("instrumentId", "languageId")
+    .where(preferredName)
+    .index("instrumentId")
+    .index("languageId")
+    .index("kindId"),
+});
+
+export const Editions = legal
+  .schema("Editions", {
+    instrumentId: belongsTo(() => Instruments),
+    /** The legal content state's own label, such as a consolidation or commencement name. */
+    designation: dryv.field(sharedProperties.NonEmptyString255),
     consolidatedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     commencedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     ceasedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
@@ -100,19 +118,15 @@ export const InstrumentVersions = legal
     supersedesId: belongsTo(dryv.self).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "Exact source-backed release; observed, consolidated and legally effective dates have separate meanings.",
-  )
+  .rule("EditionMustNotSupersedeItself", rule.differs("id", "supersedesId"))
+  .description("A meaningful legal content state of an instrument. Not a download and not a Source publication edition.")
   .role("entity")
   .facets({
     storage: dryv
-      .storage("instrument_versions")
-      .acyclic("InstrumentVersionSupersessionAcyclic", {
-        field: "supersedesId",
-      })
-      .unique("instrumentId", "edition")
-      .index("documentId")
-      .index("evidenceId")
+      .storage("editions")
+      .acyclic("EditionSupersessionAcyclic", { field: "supersedesId" })
+      .unique("instrumentId", "designation")
+      .unique("id", "instrumentId")
       .index("supersedesId"),
   });
 
@@ -128,32 +142,28 @@ export const Provisions = legal
   })
   .extends(baseSchemas.CodedEntity)
   .description(
-    "Stable section identity within one instrument; hierarchy must remain within that instrument. One provision holds one statement: a numbered point is a row of its own under its parent.",
+    "Stable provision identity within one instrument; hierarchy stays within that instrument. One provision holds one statement.",
   )
   .role("entity")
   .facets({
     storage: dryv
       .storage("provisions")
-      .sameAs("ParentInSameInstrument", {
-        field: "parentId",
-        match: ["instrumentId"],
-      })
+      .sameAs("ParentInSameInstrument", { field: "parentId", match: ["instrumentId"] })
       .acyclic("ProvisionParentAcyclic", { field: "parentId" })
       .unique("parentId", "position")
+      .unique("id", "instrumentId")
       .index("instrumentId")
       .index("parentId"),
   });
 
-export const ProvisionVersions = legal
-  .schema("ProvisionVersions", {
+export const Wordings = legal
+  .schema("Wordings", {
     instrumentId: belongsTo(() => Instruments),
     provisionId: belongsTo(() => Provisions),
-    instrumentVersionId: belongsTo(() => InstrumentVersions),
+    editionId: belongsTo(() => Editions),
     citationId: belongsTo(() => Citations).maybe(),
-    /** Original language of `text`. Never inferred from a default. */
+    /** The language this authority-bearing text is written in. Never inferred from a default. */
     languageId: belongsTo(() => Language),
-    /** Where in the source this wording was read: a page, a link or a locator, for a person to check. */
-    locator: dryv.field(sharedProperties.NonEmptyString1000).maybe(),
     text: dryv.field(sharedProperties.NonEmptyString),
     effectiveFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
     effectiveUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
@@ -161,77 +171,66 @@ export const ProvisionVersions = legal
     supersedesId: belongsTo(dryv.self).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .rule(
-    "EffectiveWindowIsOrdered",
-    rule.ordered("effectiveFrom", "effectiveUntil"),
-  )
-  .description(
-    "Immutable original wording in an exact instrument release; structured interpretation is separately reviewed.",
-  )
+  .rule("EffectiveWindowIsOrdered", rule.ordered("effectiveFrom", "effectiveUntil"))
+  .description("Exact authority-bearing text of one provision in one edition and language. Translations are separate rows.")
   .role("entity")
   .facets({
     storage: dryv
-      .storage("provision_versions")
+      .storage("wordings")
       .references("ProvisionOfInstrument", {
         fields: ["provisionId", "instrumentId"],
         target: () => Provisions,
         targetFields: ["id", "instrumentId"],
       })
-      .references("VersionOfInstrument", {
-        fields: ["instrumentVersionId", "instrumentId"],
-        target: () => InstrumentVersions,
+      .references("EditionOfInstrument", {
+        fields: ["editionId", "instrumentId"],
+        target: () => Editions,
         targetFields: ["id", "instrumentId"],
       })
-      .acyclic("ProvisionVersionSupersessionAcyclic", { field: "supersedesId" })
-      .noOverlap("NoOverlappingProvisionWording", {
-        scope: ["provisionId"],
-        from: "effectiveFrom",
-        until: "effectiveUntil",
-      })
-      .unique("provisionId", "instrumentVersionId")
-      .index("instrumentVersionId")
+      .acyclic("WordingSupersessionAcyclic", { field: "supersedesId" })
+      .unique("provisionId", "editionId", "languageId")
+      .index("editionId")
+      .index("languageId")
       .index("citationId")
       .index("supersedesId"),
   });
 
-export const ProvisionTranslations = legal
-  .schema("ProvisionTranslations", {
-    provisionVersionId: belongsTo(() => ProvisionVersions),
+export const Translations = legal
+  .schema("Translations", {
+    /** The exact authoritative wording translated; a later wording never inherits this row. */
+    wordingId: belongsTo(() => Wordings),
     languageId: belongsTo(() => Language),
     text: dryv.field(sharedProperties.NonEmptyString),
-    kind: dryv.field(legalEnums.TranslationKind),
-    reviewStatus: dryv.field(legalEnums.ReviewStatus),
-    /** The document the translation is read from, when it comes from one. */
-    documentId: belongsTo(() => Documents).maybe(),
-    /** Who or what produced it: a person, an organisation, or a model with its version; a snapshot. */
+    method: dryv.field(legalEnums.TranslationMethod),
+    /** Who or what produced it: a person, an organisation or a model with its version; a snapshot. */
     producedBy: dryv.field(sharedProperties.JsonText).maybe(),
+    producedAt: dryv.field(sharedProperties.Instant).maybe(),
+    reviewStatus: dryv.field(legalEnums.ReviewStatus),
     reviewedBySnapshot: dryv.field(sharedProperties.JsonText).maybe(),
     reviewedAt: dryv.field(sharedProperties.Instant).maybe(),
+    notes: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .description(
-    "The wording of one provision version in another language, one row per statement so translations line up row for row. A machine or unofficial translation is a reviewable proposal, never silently canonical.",
+    "A translated representation of one exact wording. Several translations into one language are valid; review never makes a translation legal authority.",
   )
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("provision_translations")
-      .unique("provisionVersionId", "languageId", "kind")
-      .index("provisionVersionId")
-      .index("languageId")
-      .index("documentId"),
+    storage: dryv.storage("translations").unique("id", "wordingId").index("wordingId").index("languageId"),
   });
 
-export const ProvisionReferences = legal
-  .schema("ProvisionReferences", {
-    /** The wording that mentions another provision. */
-    sourceVersionId: belongsTo(() => ProvisionVersions),
-    /** Set when the mention is in a translation's text; the span then counts characters in that text. */
-    translationId: belongsTo(() => ProvisionTranslations).maybe(),
-    /** The provision mentioned; a link to its identity, so it follows the wording in force. */
+export const References = legal
+  .schema("References", {
+    /** The wording that mentions another provision; exactly one of wording or translation. */
+    wordingId: belongsTo(() => Wordings).maybe(),
+    /** Set instead when the mention is in a translation's text; the span counts characters in that text. */
+    translationId: belongsTo(() => Translations).maybe(),
+    /** The provision mentioned. */
     targetProvisionId: belongsTo(() => Provisions),
+    /** When the mention points at one historical text rather than whatever is in force. */
+    targetWordingId: belongsTo(() => Wordings).maybe(),
     relation: dryv.field(legalEnums.ReferenceRelation),
-    /** The characters of the text that make the mention, counted from 0 as [start, end). */
+    /** Characters of the text that make the mention, counted from 0 as [start, end) in Unicode code points. */
     spanStart: dryv.field(sharedProperties.NonNegativeInteger),
     spanEnd: dryv.field(sharedProperties.PositiveInteger),
     spanText: dryv.field(sharedProperties.NonEmptyString500),
@@ -239,70 +238,77 @@ export const ProvisionReferences = legal
     reviewStatus: dryv.field(legalEnums.ReviewStatus),
   })
   .extends(baseSchemas.Entity)
-  .rule("SpanMustBeOrdered", rule.differs("spanStart", "spanEnd"))
-  .description(
-    "A mention of one provision inside the wording of another, with the exact span, so a reader can follow it like a link and ask what refers to a provision.",
-  )
+  .rule("ExactlyOneOrigin", rule.exactlyOne("wordingId", "translationId"))
+  .rule("SpanMustBeOrdered", rule.ordered("spanStart", "spanEnd"))
+  .rule("SpanMustBeNonEmpty", rule.differs("spanStart", "spanEnd"))
+  .description("A textual mention of a provision inside a wording or translation, with the exact span. A mention is not an amendment.")
   .role("entity")
   .facets({
     storage: dryv
-      .storage("provision_references")
-      .unique("sourceVersionId", "translationId", "spanStart")
-      .index("sourceVersionId")
+      .storage("references")
+      .unique("wordingId", "targetProvisionId", "spanStart")
+      .unique("translationId", "targetProvisionId", "spanStart")
+      .index("wordingId")
       .index("translationId")
-      .index("targetProvisionId"),
+      .index("targetProvisionId")
+      .index("targetWordingId"),
   });
 
-export const Bases = legal
-  .schema("Bases", {
-    /** The table of the record that has a legal basis, such as reference.patterns or geography.features. */
-    tableName: dryv.field(sharedProperties.NonEmptyString100),
-    /** The record's identity path as seeded (its code, or its key parts joined by |); the loader derives recordId from it. */
-    recordCode: dryv.field(sharedProperties.NonEmptyString500),
-    recordId: dryv.field(sharedProperties.Id).maybe(),
-    provisionId: belongsTo(() => Provisions),
-    relation: dryv.field(legalEnums.BasisRelation),
-    note: dryv.field(sharedProperties.Description).maybe(),
-  })
-  .extends(baseSchemas.ValidityEntity)
-  .description(
-    "The one place that says which provision is the legal basis of a record in any table: a pattern, an institution, an office, a feature, a scheme or a value. The target varies by table, so it is a name and an id, not a foreign key.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("bases")
-      .unique("tableName", "recordCode", "provisionId", "relation")
-      .index("tableName", "recordId")
-      .index("provisionId"),
-  });
-
-export const Amendments = legal
-  .schema("Amendments", {
-    authorityId: belongsTo(() => ProvisionVersions),
-    affectedId: belongsTo(() => ProvisionVersions),
-    resultingVersionId: belongsTo(() => ProvisionVersions).maybe(),
+export const Relationships = legal
+  .schema("Relationships", {
+    /** Scheme leg.relationship.kind: amends, repeals, replaces, supplements, enacted-as, subject-to, made-under, implements, part-of. */
     kindId: belongsTo(() => Value),
+    /** The wording that carries out the operation. */
+    authorityWordingId: belongsTo(() => Wordings).maybe(),
+    /** Text-level operation: the wording affected and, when text changes, the wording that results. */
+    affectedWordingId: belongsTo(() => Wordings).maybe(),
+    resultingWordingId: belongsTo(() => Wordings).maybe(),
+    /** Instrument-level operation or hierarchy: subject is subject-to, made under or enacted as the object. */
+    subjectInstrumentId: belongsTo(() => Instruments).maybe(),
+    objectInstrumentId: belongsTo(() => Instruments).maybe(),
     effectiveOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     explanation: dryv.field(sharedProperties.Description).maybe(),
-    citationId: belongsTo(() => Citations),
+    citationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "An exact authority provision changes an exact affected wording version; both historical texts remain available.",
-  )
+  .rule("ExactlyOneLevel", rule.exactlyOne("affectedWordingId", "subjectInstrumentId"))
+  .rule("InstrumentEndsTogether", rule.allOrNone("subjectInstrumentId", "objectInstrumentId"))
+  .rule("InstrumentsMustDiffer", rule.differs("subjectInstrumentId", "objectInstrumentId"))
+  .rule("WordingMustNotAffectItself", rule.differs("affectedWordingId", "resultingWordingId"))
+  .description("A substantive legal operation or hierarchy link between wordings or instruments. Source derivation is not recorded here.")
   .role("entity")
   .facets({
     storage: dryv
-      .storage("amendments")
-      .index("authorityId")
-      .index("affectedId")
-      .index("resultingVersionId")
+      .storage("relationships")
       .index("kindId")
+      .index("authorityWordingId")
+      .index("affectedWordingId")
+      .index("resultingWordingId")
+      .index("subjectInstrumentId")
+      .index("objectInstrumentId")
       .index("citationId"),
   });
 
-/** Open: immutable wording and hashes.
- * Territorial scope uses geography.units.feature_id. No generic domain target pointer or automatic executable
- * legal interpretation is introduced. Reference owns incoming domain-to-Legal mediation.
- */
+export const Effects = legal
+  .schema("Effects", {
+    /** The exact authority text. A translation is never legal authority, so this is a wording. */
+    wordingId: belongsTo(() => Wordings),
+    /** Scheme leg.effect.kind: establishes, authorizes, governs, limits, changes, abolishes. */
+    kindId: belongsTo(() => Value),
+    explanation: dryv.field(sharedProperties.Description).maybe(),
+    reviewStatus: dryv.field(legalEnums.ReviewStatus),
+    observedAt: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.CodedValiditySubjectEntity)
+  .description(
+    "A reviewed assertion of what a wording establishes, governs, limits or changes for one subject record. Never mutates the subject.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("effects")
+      .unique("wordingId", "subjectTable", "subjectId", "kindId", "validFrom")
+      .index("subjectTable", "subjectId")
+      .index("kindId")
+      .index("wordingId"),
+  });

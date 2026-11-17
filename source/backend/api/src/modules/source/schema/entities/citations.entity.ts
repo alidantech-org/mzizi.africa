@@ -7,11 +7,10 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
-import { FileVersionsEntity } from "#/modules/filesystem/schema/entities/file-versions.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
-import { DocumentsEntity } from "#/modules/source/schema/entities/documents.entity.ts";
-import { EvidenceEntity } from "#/modules/source/schema/entities/evidence.entity.ts";
+import { SourceRelationshipsEntity } from "#/modules/source/schema/entities/relationships.entity.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
@@ -19,18 +18,24 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 
 /**
- * Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record.
+ * Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp.
  */
 @Entity({ schema: "source", name: "citations" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
-@Index(["evidenceId"])
-@Index(["documentId"])
+@Index(["artifactId"])
 @Index(["captureId"])
-@Index(["fileVersionId"])
+@Index(["relationshipId"])
 @Index(["locatorKindId"])
 export class CitationsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
+
+  @Column({ name: "artifact_id", type: "uuid" })
+  artifactId!: Id;
+
+  @ManyToOne(() => ArtifactsEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "artifact_id" })
+  artifact?: Relation<ArtifactsEntity>;
 
   @Column({ name: "capture_id", type: "uuid", nullable: true })
   captureId?: Id | null;
@@ -48,27 +53,6 @@ export class CitationsEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
-  @Column({ name: "document_id", type: "uuid", nullable: true })
-  documentId?: Id | null;
-
-  @ManyToOne(() => DocumentsEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "document_id" })
-  document?: Relation<DocumentsEntity>;
-
-  @Column({ name: "evidence_id", type: "uuid" })
-  evidenceId!: Id;
-
-  @ManyToOne(() => EvidenceEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "evidence_id" })
-  evidence?: Relation<EvidenceEntity>;
-
-  @Column({ name: "file_version_id", type: "uuid" })
-  fileVersionId!: Id;
-
-  @ManyToOne(() => FileVersionsEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "file_version_id" })
-  fileVersion?: Relation<FileVersionsEntity>;
-
   @Column({ name: "locator", type: "text" })
   locator!: JsonText;
 
@@ -84,6 +68,13 @@ export class CitationsEntity {
 
   @Column({ name: "recorded_at", type: "timestamptz" })
   recordedAt!: Date;
+
+  @Column({ name: "relationship_id", type: "uuid", nullable: true })
+  relationshipId?: Id | null;
+
+  @ManyToOne(() => SourceRelationshipsEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "relationship_id" })
+  relationship?: Relation<SourceRelationshipsEntity>;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

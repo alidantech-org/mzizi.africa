@@ -40,14 +40,17 @@ export const MEDIA_RELATION_KEYS = ["fileVersion", "kind"] as const satisfies re
 
 export const MEDIA_SORTABLE_FIELDS = [
   "altText",
-  "caption",
   "code",
   "createdAt",
   "deletedAt",
+  "description",
   "fileVersionId",
   "id",
   "kindId",
-  "sourceUrl",
+  "position",
+  "purpose",
+  "subjectId",
+  "subjectTable",
   "title",
   "updatedAt",
   "version",
@@ -55,8 +58,9 @@ export const MEDIA_SORTABLE_FIELDS = [
 
 export const MEDIA_SEARCHABLE_FIELDS = [
   "altText",
-  "caption",
   "code",
+  "description",
+  "purpose",
   "title",
 ] as const satisfies readonly MediaKey[];
 
@@ -64,6 +68,8 @@ export const MEDIA_FILTERABLE_FIELDS = [
   "fileVersionId",
   "id",
   "kindId",
+  "subjectId",
+  "subjectTable",
 ] as const satisfies readonly MediaKey[];
 
 export const MEDIA_DATE_RANGE_FIELDS = [
@@ -84,14 +90,17 @@ export const MEDIA_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IMedia> = {
 
 export const MEDIA_SELECTABLE_FIELDS = [
   "altText",
-  "caption",
   "code",
   "createdAt",
   "deletedAt",
+  "description",
   "fileVersionId",
   "id",
   "kindId",
-  "sourceUrl",
+  "position",
+  "purpose",
+  "subjectId",
+  "subjectTable",
   "title",
   "updatedAt",
   "version",
@@ -99,14 +108,17 @@ export const MEDIA_SELECTABLE_FIELDS = [
 
 export const MEDIA_DEFAULT_SELECT_FIELDS = [
   "altText",
-  "caption",
   "code",
   "createdAt",
   "deletedAt",
+  "description",
   "fileVersionId",
   "id",
   "kindId",
-  "sourceUrl",
+  "position",
+  "purpose",
+  "subjectId",
+  "subjectTable",
   "title",
   "updatedAt",
   "version",
@@ -118,11 +130,14 @@ export const MEDIA_DEFAULT_SELECT_FIELDS = [
 
 export const MEDIA_EDITABLE_FIELDS = [
   "altText",
-  "caption",
   "code",
+  "description",
   "fileVersionId",
   "kindId",
-  "sourceUrl",
+  "position",
+  "purpose",
+  "subjectId",
+  "subjectTable",
   "title",
 ] as const satisfies readonly MediaKey[];
 

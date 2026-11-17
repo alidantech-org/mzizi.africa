@@ -71,14 +71,6 @@ export class BrandingRepository
     return await this.findByQuery(query, { languageId, deletedAt: IsNull() });
   }
 
-  /** Find branding by media id, paged by the shared query. */
-  async findByMedia(
-    query: BaseQueryDto<BrandingEntity>,
-    mediaId: NonNullable<BrandingEntity["mediaId"]>,
-  ): Promise<IFindAllResponse<BrandingEntity>> {
-    return await this.findByQuery(query, { mediaId, deletedAt: IsNull() });
-  }
-
   /** Find branding by source citation id, paged by the shared query. */
   async findBySourceCitation(
     query: BaseQueryDto<BrandingEntity>,

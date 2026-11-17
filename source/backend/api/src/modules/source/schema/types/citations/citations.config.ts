@@ -9,11 +9,10 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
+import * as ArtifactsConfig from "#/modules/source/schema/types/artifacts/artifacts.config";
 import * as CapturesConfig from "#/modules/source/schema/types/captures/captures.config";
-import * as DocumentsConfig from "#/modules/source/schema/types/documents/documents.config";
-import * as EvidenceConfig from "#/modules/source/schema/types/evidence/evidence.config";
-import * as FileVersionsConfig from "#/modules/filesystem/schema/types/file-versions/file-versions.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as RelationshipsConfig from "#/modules/source/schema/types/relationships/relationships.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -36,11 +35,10 @@ import type {
 // ----------------------------------
 
 export const CITATIONS_RELATION_KEYS = [
+  "artifact",
   "capture",
-  "document",
-  "evidence",
-  "fileVersion",
   "locatorKind",
+  "relationship",
 ] as const satisfies readonly CitationsKey[];
 
 // ----------------------------------
@@ -48,18 +46,17 @@ export const CITATIONS_RELATION_KEYS = [
 // ----------------------------------
 
 export const CITATIONS_SORTABLE_FIELDS = [
+  "artifactId",
   "captureId",
   "code",
   "createdAt",
   "deletedAt",
-  "documentId",
-  "evidenceId",
-  "fileVersionId",
   "id",
   "locator",
   "locatorKindId",
   "quotedHash",
   "recordedAt",
+  "relationshipId",
   "updatedAt",
   "version",
 ] as const satisfies readonly CitationsKey[];
@@ -70,12 +67,11 @@ export const CITATIONS_SEARCHABLE_FIELDS = [
 ] as const satisfies readonly CitationsKey[];
 
 export const CITATIONS_FILTERABLE_FIELDS = [
+  "artifactId",
   "captureId",
-  "documentId",
-  "evidenceId",
-  "fileVersionId",
   "id",
   "locatorKindId",
+  "relationshipId",
 ] as const satisfies readonly CitationsKey[];
 
 export const CITATIONS_DATE_RANGE_FIELDS = [
@@ -96,35 +92,33 @@ export const CITATIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<ICitati
 // ----------------------------------
 
 export const CITATIONS_SELECTABLE_FIELDS = [
+  "artifactId",
   "captureId",
   "code",
   "createdAt",
   "deletedAt",
-  "documentId",
-  "evidenceId",
-  "fileVersionId",
   "id",
   "locator",
   "locatorKindId",
   "quotedHash",
   "recordedAt",
+  "relationshipId",
   "updatedAt",
   "version",
 ] as const satisfies readonly CitationsKey[];
 
 export const CITATIONS_DEFAULT_SELECT_FIELDS = [
+  "artifactId",
   "captureId",
   "code",
   "createdAt",
   "deletedAt",
-  "documentId",
-  "evidenceId",
-  "fileVersionId",
   "id",
   "locator",
   "locatorKindId",
   "quotedHash",
   "recordedAt",
+  "relationshipId",
   "updatedAt",
   "version",
 ] as const satisfies readonly CitationsSelectableField[];
@@ -134,15 +128,14 @@ export const CITATIONS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const CITATIONS_EDITABLE_FIELDS = [
+  "artifactId",
   "captureId",
   "code",
-  "documentId",
-  "evidenceId",
-  "fileVersionId",
   "locator",
   "locatorKindId",
   "quotedHash",
   "recordedAt",
+  "relationshipId",
 ] as const satisfies readonly CitationsKey[];
 
 // ----------------------------------
@@ -172,24 +165,20 @@ export const CITATIONS_AS_MANY_RELATION_CONFIG = {
 
 export const CITATIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
+    () => ArtifactsConfig.ARTIFACTS_AS_ONE_RELATION_CONFIG,
+    "artifact",
+  ),
+  Q.createRelationKeyMapper<CitationsRelationKey>().one(
     () => CapturesConfig.CAPTURES_AS_ONE_RELATION_CONFIG,
     "capture",
   ),
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    () => DocumentsConfig.DOCUMENTS_AS_ONE_RELATION_CONFIG,
-    "document",
-  ),
-  Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    () => EvidenceConfig.EVIDENCE_AS_ONE_RELATION_CONFIG,
-    "evidence",
-  ),
-  Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
-    "fileVersion",
-  ),
-  Q.createRelationKeyMapper<CitationsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "locatorKind",
+  ),
+  Q.createRelationKeyMapper<CitationsRelationKey>().one(
+    () => RelationshipsConfig.RELATIONSHIPS_AS_ONE_RELATION_CONFIG,
+    "relationship",
   ),
 ] as const;
 

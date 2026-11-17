@@ -12,6 +12,12 @@ export const publishersExample: ContractExample = contractExample({
   name: "Publishers",
   fields: [
     {
+      name: "classificationId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "code",
       optional: false,
       nullable: false,

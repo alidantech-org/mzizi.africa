@@ -4,12 +4,12 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum";
 import type { VerificationOutcome } from "#/modules/source/schema/enum/verification-outcome.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as EvidenceTypes from "#/modules/source/schema/types/evidence/evidence.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
@@ -31,18 +31,18 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes. */
+/** Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit. */
 export interface IVerifications extends B.IBase {
   assessedAt: Date;
   code: string;
   confidence: number | null;
-  evidenceId: string;
   explanation: string;
   methodId: string;
   outcome: VerificationOutcome;
   reviewerSnapshot: string;
+  subjectId: string;
+  subjectTable: SubjectTable;
   supersedesId: string | null;
-  readonly evidence?: EvidenceTypes.IEvidence;
   readonly method?: ValueTypes.IValue;
   readonly supersedes?: IVerifications;
 }
@@ -146,7 +146,6 @@ export type IVerificationsAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IVerificationsRelationMap extends Record<VerificationsRelationKey, unknown> {
-  evidence: EvidenceTypes.IEvidenceAsOneRelationQuery;
   method: ValueTypes.IValueAsOneRelationQuery;
   supersedes: IVerificationsAsOneRelationQuery;
 }

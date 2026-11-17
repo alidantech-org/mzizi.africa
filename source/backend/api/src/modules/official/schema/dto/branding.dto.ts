@@ -20,7 +20,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are media. (entity)
+ * How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person. (entity)
  *
  * Invariant "HasExactlyOneIdentityOwner" has no simple form, so it isn't validated here.
  */
@@ -66,12 +66,6 @@ export class BrandingDto {
   @IsString()
   @IsUUID()
   languageId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.mediaId !== null)
-  @IsString()
-  @IsUUID()
-  mediaId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.sourceCitationId !== null)

@@ -4,7 +4,7 @@ import 'package:mzizi_api/src/models/source/sources.dart';
 
 part 'domains.g.dart';
 
-/// A host name a source is served from. A source can have several over time, and a domain keeps its own validity period.
+/// A host name a source is served from. A host belongs to one source at a time; its validity period records moves.
 @JsonSerializable(includeIfNull: false)
 class SourceDomains {
   const SourceDomains({

@@ -12,7 +12,7 @@ import { Features } from "./geography.ts";
 import { Offices } from "./governance.ts";
 import { Entities, Individuals } from "./official.ts";
 import { Country, Topic, Value } from "./reference.ts";
-import { Citations, Documents } from "./source.ts";
+import { Artifacts, Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -171,7 +171,7 @@ export const Manifestos = politics
     partyId: belongsTo(() => Parties).maybe(),
     candidateId: belongsTo(() => Candidates).maybe(),
     electionId: belongsTo(() => Elections).maybe(),
-    documentId: belongsTo(() => Documents).maybe(),
+    artifactId: belongsTo(() => Artifacts).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })

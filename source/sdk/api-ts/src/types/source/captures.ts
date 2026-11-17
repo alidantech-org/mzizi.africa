@@ -1,13 +1,13 @@
-/** One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations. */
+/** One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other. */
 export interface SourceCaptures {
+  addressId?: string | null;
+  artifactId?: string | null;
   code: string;
   createdAt: string;
   deletedAt?: string | null;
-  documentId?: string | null;
+  discoveryId?: string | null;
   id: string;
-  manifestReleaseId?: string | null;
   originalUrl: string;
-  pathId?: string | null;
   responseMetadata: string;
   retrievedAt: string;
   retrievedUrl?: string | null;

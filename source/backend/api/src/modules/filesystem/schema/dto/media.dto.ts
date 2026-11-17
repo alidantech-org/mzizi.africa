@@ -1,9 +1,9 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
-  IsUrl,
   IsUUID,
   Matches,
   MaxLength,
@@ -12,17 +12,18 @@ import {
   ValidateIf,
 } from "class-validator";
 
+import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
+import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
-import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A logo, symbol, photograph, recording or other media an entity or person can point at; its bytes are a filesystem file version. (entity)
+ * One use of a stored media file by one subject record, which it mentions by table and id. A subject can have many media of any kind and one file can serve many subjects; subjects carry no media pointer. (entity)
  */
 export class MediaDto {
   @IsOptional()
@@ -31,12 +32,6 @@ export class MediaDto {
   @MinLength(1)
   @MaxLength(500)
   altText?: NonEmptyString500 | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.caption !== null)
-  @IsString()
-  @MaxLength(4000)
-  caption?: Description | null;
 
   @IsString()
   @MinLength(1)
@@ -57,10 +52,14 @@ export class MediaDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.fileVersionId !== null)
+  @ValidateIf((object) => object.description !== null)
+  @IsString()
+  @MaxLength(4000)
+  description?: Description | null;
+
   @IsString()
   @IsUUID()
-  fileVersionId?: Id | null;
+  fileVersionId!: Id;
 
   @IsString()
   @IsUUID()
@@ -71,11 +70,23 @@ export class MediaDto {
   kindId!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceUrl !== null)
+  @ValidateIf((object) => object.position !== null)
+  @IsInt()
+  @Min(0)
+  position?: NonNegativeInteger | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.purpose !== null)
   @IsString()
-  @IsUrl()
-  @MaxLength(2048)
-  sourceUrl?: Url | null;
+  @MaxLength(4000)
+  purpose?: Description | null;
+
+  @IsString()
+  @IsUUID()
+  subjectId!: Id;
+
+  @IsEnum(SubjectTable)
+  subjectTable!: SubjectTable;
 
   @IsString()
   @MinLength(1)

@@ -17,9 +17,15 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Accepted publisher; an optional official identity distinguishes organization from publication channel. (entity)
+ * Accepted publisher; an optional official identity distinguishes the organization from its publication channels. (entity)
  */
 export class PublishersDto {
+  @IsOptional()
+  @ValidateIf((object) => object.classificationId !== null)
+  @IsString()
+  @IsUUID()
+  classificationId?: Id | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(255)

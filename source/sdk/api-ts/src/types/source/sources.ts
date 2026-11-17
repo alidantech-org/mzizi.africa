@@ -1,10 +1,12 @@
 import { SourceSourceKind } from "#sdk/types/enums/source/source-kind.ts";
 
-/** A publication channel, named by anything but its domain: a real website, a real API, or a dataset (files or data obtained from somewhere that is neither). Only websites and APIs have domains and paths; the dataset tables record what we prepared from sources. */
+/** A publication channel: a real website or a real API, with its classification and credibility. */
 export interface SourceSources {
+  classificationId?: string | null;
   code: string;
   createdAt: string;
   credentialBinding?: string | null;
+  credibilityId?: string | null;
   deletedAt?: string | null;
   description?: string | null;
   id: string;

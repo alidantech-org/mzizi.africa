@@ -8,8 +8,8 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as CountryTypes from "#/modules/reference/schema/types/country/country.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CountryTypes from "#/modules/reference/schema/types/country/country.types";
 import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
 
 // ----------------------------------
@@ -31,13 +31,15 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** Accepted publisher; an optional official identity distinguishes organization from publication channel. */
+/** Accepted publisher; an optional official identity distinguishes the organization from its publication channels. */
 export interface IPublishers extends B.IBase {
+  classificationId: string | null;
   code: string;
   countryId: string | null;
   kindId: string;
   name: string;
   officialEntityId: string | null;
+  readonly classification?: ValueTypes.IValue;
   readonly country?: CountryTypes.ICountry;
   readonly kind?: ValueTypes.IValue;
   readonly officialEntity?: EntitiesTypes.IEntities;
@@ -142,6 +144,7 @@ export type IPublishersAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IPublishersRelationMap extends Record<PublishersRelationKey, unknown> {
+  classification: ValueTypes.IValueAsOneRelationQuery;
   country: CountryTypes.ICountryAsOneRelationQuery;
   kind: ValueTypes.IValueAsOneRelationQuery;
   officialEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;

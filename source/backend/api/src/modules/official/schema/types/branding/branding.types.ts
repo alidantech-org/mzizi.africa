@@ -12,7 +12,6 @@ import type * as EntitiesTypes from "#/modules/official/schema/types/entities/en
 import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as LanguageTypes from "#/modules/reference/schema/types/language/language.types";
-import type * as MediaTypes from "#/modules/filesystem/schema/types/media/media.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
@@ -34,14 +33,13 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are media. */
+/** How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person. */
 export interface IBranding extends B.IBase {
   code: string;
   entityId: string | null;
   individualId: string | null;
   kindId: string;
   languageId: string;
-  mediaId: string | null;
   sourceCitationId: string | null;
   validFrom: Date | null;
   validUntil: Date | null;
@@ -50,7 +48,6 @@ export interface IBranding extends B.IBase {
   readonly individual?: IndividualsTypes.IIndividuals;
   readonly kind?: ValueTypes.IValue;
   readonly language?: LanguageTypes.ILanguage;
-  readonly media?: MediaTypes.IMedia;
   readonly sourceCitation?: CitationsTypes.ICitations;
 }
 
@@ -148,7 +145,6 @@ export interface IBrandingRelationMap extends Record<BrandingRelationKey, unknow
   individual: IndividualsTypes.IIndividualsAsOneRelationQuery;
   kind: ValueTypes.IValueAsOneRelationQuery;
   language: LanguageTypes.ILanguageAsOneRelationQuery;
-  media: MediaTypes.IMediaAsOneRelationQuery;
   sourceCitation: CitationsTypes.ICitationsAsOneRelationQuery;
 }
 

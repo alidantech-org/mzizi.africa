@@ -8,16 +8,17 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
+
 
 class MediaRow(BaseModel):
-    """A logo, symbol, photograph, recording or other media an entity or person can point at; its bytes are a filesystem file version."""
+    """One use of a stored media file by one subject record, which it mentions by table and id. A subject can have many media of any kind and one file can serve many subjects; subjects carry no media pointer."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "filesystem.media"
 
     alt_text: Annotated[str, Field(min_length=1, max_length=500)] | None = None
-    caption: Annotated[str, Field(max_length=4000)] | None = None
     code: Annotated[
         str,
         Field(
@@ -28,10 +29,14 @@ class MediaRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
-    file_version_id: UUID | None = None
+    description: Annotated[str, Field(max_length=4000)] | None = None
+    file_version_id: UUID
     id: UUID
     kind_id: UUID
-    source_url: Annotated[str, Field(max_length=2048)] | None = None
+    position: Annotated[int, Field(ge=0)] | None = None
+    purpose: Annotated[str, Field(max_length=4000)] | None = None
+    subject_id: UUID
+    subject_table: SubjectTable
     title: Annotated[str, Field(min_length=1, max_length=300)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

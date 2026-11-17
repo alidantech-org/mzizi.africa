@@ -20,9 +20,21 @@ import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations. (entity)
+ * One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other. (entity)
  */
 export class CapturesDto {
+  @IsOptional()
+  @ValidateIf((object) => object.addressId !== null)
+  @IsString()
+  @IsUUID()
+  addressId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.artifactId !== null)
+  @IsString()
+  @IsUUID()
+  artifactId?: Id | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -42,31 +54,19 @@ export class CapturesDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.documentId !== null)
+  @ValidateIf((object) => object.discoveryId !== null)
   @IsString()
   @IsUUID()
-  documentId?: Id | null;
+  discoveryId?: Id | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.manifestReleaseId !== null)
-  @IsString()
-  @IsUUID()
-  manifestReleaseId?: Id | null;
-
   @IsString()
   @IsUrl()
   @MaxLength(2048)
   originalUrl!: Url;
-
-  @IsOptional()
-  @ValidateIf((object) => object.pathId !== null)
-  @IsString()
-  @IsUUID()
-  pathId?: Id | null;
 
   @IsString()
   @IsJSON()

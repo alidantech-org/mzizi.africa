@@ -39,6 +39,14 @@ export class CitationsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find citations by artifact id, paged by the shared query. */
+  async findByArtifact(
+    query: BaseQueryDto<CitationsEntity>,
+    artifactId: NonNullable<CitationsEntity["artifactId"]>,
+  ): Promise<IFindAllResponse<CitationsEntity>> {
+    return await this.findByQuery(query, { artifactId, deletedAt: IsNull() });
+  }
+
   /** Find citations by capture id, paged by the shared query. */
   async findByCapture(
     query: BaseQueryDto<CitationsEntity>,
@@ -47,36 +55,20 @@ export class CitationsRepository
     return await this.findByQuery(query, { captureId, deletedAt: IsNull() });
   }
 
-  /** Find citations by document id, paged by the shared query. */
-  async findByDocument(
-    query: BaseQueryDto<CitationsEntity>,
-    documentId: NonNullable<CitationsEntity["documentId"]>,
-  ): Promise<IFindAllResponse<CitationsEntity>> {
-    return await this.findByQuery(query, { documentId, deletedAt: IsNull() });
-  }
-
-  /** Find citations by evidence id, paged by the shared query. */
-  async findByEvidence(
-    query: BaseQueryDto<CitationsEntity>,
-    evidenceId: NonNullable<CitationsEntity["evidenceId"]>,
-  ): Promise<IFindAllResponse<CitationsEntity>> {
-    return await this.findByQuery(query, { evidenceId, deletedAt: IsNull() });
-  }
-
-  /** Find citations by file version id, paged by the shared query. */
-  async findByFileVersion(
-    query: BaseQueryDto<CitationsEntity>,
-    fileVersionId: NonNullable<CitationsEntity["fileVersionId"]>,
-  ): Promise<IFindAllResponse<CitationsEntity>> {
-    return await this.findByQuery(query, { fileVersionId, deletedAt: IsNull() });
-  }
-
   /** Find citations by locator kind id, paged by the shared query. */
   async findByLocatorKind(
     query: BaseQueryDto<CitationsEntity>,
     locatorKindId: NonNullable<CitationsEntity["locatorKindId"]>,
   ): Promise<IFindAllResponse<CitationsEntity>> {
     return await this.findByQuery(query, { locatorKindId, deletedAt: IsNull() });
+  }
+
+  /** Find citations by relationship id, paged by the shared query. */
+  async findByRelationship(
+    query: BaseQueryDto<CitationsEntity>,
+    relationshipId: NonNullable<CitationsEntity["relationshipId"]>,
+  ): Promise<IFindAllResponse<CitationsEntity>> {
+    return await this.findByQuery(query, { relationshipId, deletedAt: IsNull() });
   }
 
   /** Find the citations with this code (unique). */

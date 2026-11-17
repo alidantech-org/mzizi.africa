@@ -17,7 +17,6 @@ class GeographyGeometries {
     this.deletedAt,
     required this.envelope,
     required this.featureId,
-    this.fileVersionRefId,
     required this.geometry,
     required this.geometryRoleId,
     required this.id,
@@ -44,7 +43,6 @@ class GeographyGeometries {
   final DateTime? deletedAt;
   final Object? envelope;
   final String featureId;
-  final String? fileVersionRefId;
   final Object? geometry;
   final String geometryRoleId;
   final String id;

@@ -1,6 +1,7 @@
 import * as dryv from "@dryvcode/author";
 
 import { shared, sharedProperties } from "./_shared.ts";
+import { subjectFields, subjectSchemas } from "./_subjects.ts";
 
 /**
  * Abstract base schemas. A concrete schema declares `.extends(<Base>)` and inherits the base fields,
@@ -176,18 +177,39 @@ const CodedHistoricalEntityBase = dryv
     storage: dryv.storage().unique("code").where(baseRules.LiveRecord),
   });
 
-const effectiveGroup = shared.schemas({
+const codedGroup = shared.schemas({
   CodedEntity: CodedEntityBase,
   CodedValidityEntity: CodedValidityEntityBase,
   CodedHistoricalEntity: CodedHistoricalEntityBase,
 });
 
+/** Coded entity that concerns exactly one subject row (shared subjectTable and subjectId). */
+const CodedSubjectEntityBase = dryv
+  .schema({ ...subjectFields })
+  .extends(codedGroup.CodedEntity)
+  .abstract()
+  .description("Base for versioned, coded records about one subject row.");
+
+/** Coded validity entity that concerns exactly one subject row. */
+const CodedValiditySubjectEntityBase = dryv
+  .schema({ ...subjectFields })
+  .extends(codedGroup.CodedValidityEntity)
+  .abstract()
+  .description("Base for versioned, coded records about one subject row, valid over an optional period.");
+
+const subjectEntityGroup = shared.schemas({
+  CodedSubjectEntity: CodedSubjectEntityBase,
+  CodedValiditySubjectEntity: CodedValiditySubjectEntityBase,
+});
+
 export const baseSchemas = {
+  ...subjectSchemas,
   ...baseGroup,
   ...operationsGroup,
   ...operationsChildGroup,
   ...operationsLeafGroup,
   ...validityGroup,
   ...historicalGroup,
-  ...effectiveGroup,
+  ...codedGroup,
+  ...subjectEntityGroup,
 };

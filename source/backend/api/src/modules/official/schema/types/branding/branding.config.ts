@@ -13,7 +13,6 @@ import * as EntitiesConfig from "#/modules/official/schema/types/entities/entiti
 import * as IndividualsConfig from "#/modules/official/schema/types/individuals/individuals.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as LanguageConfig from "#/modules/reference/schema/types/language/language.config";
-import * as MediaConfig from "#/modules/filesystem/schema/types/media/media.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
 
 // ----------------------------------
@@ -41,7 +40,6 @@ export const BRANDING_RELATION_KEYS = [
   "individual",
   "kind",
   "language",
-  "media",
   "sourceCitation",
 ] as const satisfies readonly BrandingKey[];
 
@@ -58,7 +56,6 @@ export const BRANDING_SORTABLE_FIELDS = [
   "individualId",
   "kindId",
   "languageId",
-  "mediaId",
   "sourceCitationId",
   "updatedAt",
   "validFrom",
@@ -78,7 +75,6 @@ export const BRANDING_FILTERABLE_FIELDS = [
   "individualId",
   "kindId",
   "languageId",
-  "mediaId",
   "sourceCitationId",
 ] as const satisfies readonly BrandingKey[];
 
@@ -109,7 +105,6 @@ export const BRANDING_SELECTABLE_FIELDS = [
   "individualId",
   "kindId",
   "languageId",
-  "mediaId",
   "sourceCitationId",
   "updatedAt",
   "validFrom",
@@ -127,7 +122,6 @@ export const BRANDING_DEFAULT_SELECT_FIELDS = [
   "individualId",
   "kindId",
   "languageId",
-  "mediaId",
   "sourceCitationId",
   "updatedAt",
   "validFrom",
@@ -146,7 +140,6 @@ export const BRANDING_EDITABLE_FIELDS = [
   "individualId",
   "kindId",
   "languageId",
-  "mediaId",
   "sourceCitationId",
   "validFrom",
   "validUntil",
@@ -194,10 +187,6 @@ export const BRANDING_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<BrandingRelationKey>().one(
     () => LanguageConfig.LANGUAGE_AS_ONE_RELATION_CONFIG,
     "language",
-  ),
-  Q.createRelationKeyMapper<BrandingRelationKey>().one(
-    () => MediaConfig.MEDIA_AS_ONE_RELATION_CONFIG,
-    "media",
   ),
   Q.createRelationKeyMapper<BrandingRelationKey>().one(
     () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,

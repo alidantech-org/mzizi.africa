@@ -3,15 +3,27 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { documentsExample } from "@test/modules/source/schema/dto/examples/documents.dto.example.ts";
-import { manifestReleasesExample } from "@test/modules/source/schema/dto/examples/manifest-releases.dto.example.ts";
-import { pathsExample } from "@test/modules/source/schema/dto/examples/paths.dto.example.ts";
+import { addressesExample } from "@test/modules/source/schema/dto/examples/addresses.dto.example.ts";
+import { artifactsExample } from "@test/modules/source/schema/dto/examples/artifacts.dto.example.ts";
+import { discoveriesExample } from "@test/modules/source/schema/dto/examples/discoveries.dto.example.ts";
 import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Captures, for generated tests. */
 export const capturesExample: ContractExample = contractExample({
   name: "Captures",
   fields: [
+    {
+      name: "addressId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "artifactId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
     {
       name: "code",
       optional: false,
@@ -38,7 +50,7 @@ export const capturesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "documentId",
+      name: "discoveryId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -50,22 +62,10 @@ export const capturesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "manifestReleaseId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "originalUrl",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "url", maxLength: 2048 },
-    },
-    {
-      name: "pathId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "responseMetadata",

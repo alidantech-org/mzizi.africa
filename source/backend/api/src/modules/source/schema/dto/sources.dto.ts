@@ -22,9 +22,15 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A publication channel, named by anything but its domain: a real website, a real API, or a dataset (files or data obtained from somewhere that is neither). Only websites and APIs have domains and paths; the dataset tables record what we prepared from sources. (entity)
+ * A publication channel: a real website or a real API, with its classification and credibility. (entity)
  */
 export class SourcesDto {
+  @IsOptional()
+  @ValidateIf((object) => object.classificationId !== null)
+  @IsString()
+  @IsUUID()
+  classificationId?: Id | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -44,6 +50,12 @@ export class SourcesDto {
   @MinLength(1)
   @MaxLength(255)
   credentialBinding?: NonEmptyString255 | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.credibilityId !== null)
+  @IsString()
+  @IsUUID()
+  credibilityId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.deletedAt !== null)

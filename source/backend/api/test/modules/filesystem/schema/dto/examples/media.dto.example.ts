@@ -2,9 +2,10 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import { fileVersionsExample } from "@test/modules/filesystem/schema/dto/examples/file-versions.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { codedSubjectEntityExample } from "@test/modules/shared/schema/dto/examples/coded-subject-entity.dto.example.ts";
 
 /** The contract shape of Media, for generated tests. */
 export const mediaExample: ContractExample = contractExample({
@@ -15,12 +16,6 @@ export const mediaExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", minLength: 1, maxLength: 500 },
-    },
-    {
-      name: "caption",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
     },
     {
       name: "code",
@@ -48,9 +43,15 @@ export const mediaExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "fileVersionId",
+      name: "description",
       optional: true,
       nullable: true,
+      spec: { kind: "string", maxLength: 4000 },
+    },
+    {
+      name: "fileVersionId",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -66,10 +67,28 @@ export const mediaExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "sourceUrl",
+      name: "position",
       optional: true,
       nullable: true,
-      spec: { kind: "string", format: "url", maxLength: 2048 },
+      spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
+      name: "purpose",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", maxLength: 4000 },
+    },
+    {
+      name: "subjectId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "subjectTable",
+      optional: false,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(SubjectTable) },
     },
     {
       name: "title",

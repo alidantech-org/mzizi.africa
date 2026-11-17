@@ -8,7 +8,6 @@ export interface GeographyGeometries {
   deletedAt?: string | null;
   envelope: unknown;
   featureId: string;
-  fileVersionRefId?: string | null;
   geometry: unknown;
   geometryRoleId: string;
   id: string;

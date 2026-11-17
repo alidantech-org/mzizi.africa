@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class InstrumentsRow(BaseModel):
-    """Stable instrument identity with explicit issuing territorial scope; geography alone never establishes applicability."""
+    """Stable instrument identity, independent of its names, editions, downloads and languages."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -29,9 +29,9 @@ class InstrumentsRow(BaseModel):
     enacted_on: date | None = None
     id: UUID
     issuing_entity_id: UUID | None = None
-    issuing_unit_id: UUID
+    issuing_unit_id: UUID | None = None
     kind_id: UUID
     published_on: date | None = None
-    title: Annotated[str, Field(min_length=1, max_length=300)]
+    status_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

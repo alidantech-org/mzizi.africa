@@ -59,12 +59,6 @@ export const geometriesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "fileVersionRefId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "geometry",
       optional: false,
       nullable: false,

@@ -8,9 +8,9 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as DocumentsTypes from "#/modules/source/schema/types/documents/documents.types";
-import type * as ManifestReleasesTypes from "#/modules/source/schema/types/manifest-releases/manifest-releases.types";
-import type * as PathsTypes from "#/modules/source/schema/types/paths/paths.types";
+import type * as AddressesTypes from "#/modules/source/schema/types/addresses/addresses.types";
+import type * as ArtifactsTypes from "#/modules/source/schema/types/artifacts/artifacts.types";
+import type * as DiscoveriesTypes from "#/modules/source/schema/types/discoveries/discoveries.types";
 import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
 
 // ----------------------------------
@@ -32,20 +32,20 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations. */
+/** One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other. */
 export interface ICaptures extends B.IBase {
+  addressId: string | null;
+  artifactId: string | null;
   code: string;
-  documentId: string | null;
-  manifestReleaseId: string | null;
+  discoveryId: string | null;
   originalUrl: string;
-  pathId: string | null;
   responseMetadata: string;
   retrievedAt: Date;
   retrievedUrl: string | null;
   sourceId: string;
-  readonly document?: DocumentsTypes.IDocuments;
-  readonly manifestRelease?: ManifestReleasesTypes.IManifestReleases;
-  readonly path?: PathsTypes.IPaths;
+  readonly address?: AddressesTypes.IAddresses;
+  readonly artifact?: ArtifactsTypes.IArtifacts;
+  readonly discovery?: DiscoveriesTypes.IDiscoveries;
   readonly source?: SourcesTypes.ISources;
 }
 
@@ -139,9 +139,9 @@ export type ICapturesAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface ICapturesRelationMap extends Record<CapturesRelationKey, unknown> {
-  document: DocumentsTypes.IDocumentsAsOneRelationQuery;
-  manifestRelease: ManifestReleasesTypes.IManifestReleasesAsOneRelationQuery;
-  path: PathsTypes.IPathsAsOneRelationQuery;
+  address: AddressesTypes.IAddressesAsOneRelationQuery;
+  artifact: ArtifactsTypes.IArtifactsAsOneRelationQuery;
+  discovery: DiscoveriesTypes.IDiscoveriesAsOneRelationQuery;
   source: SourcesTypes.ISourcesAsOneRelationQuery;
 }
 

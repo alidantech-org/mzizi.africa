@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class BrandingRow(BaseModel):
-    """How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are media."""
+    """How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -31,7 +31,6 @@ class BrandingRow(BaseModel):
     individual_id: UUID | None = None
     kind_id: UUID
     language_id: UUID
-    media_id: UUID | None = None
     source_citation_id: UUID | None = None
     updated_at: datetime
     valid_from: date | None = None

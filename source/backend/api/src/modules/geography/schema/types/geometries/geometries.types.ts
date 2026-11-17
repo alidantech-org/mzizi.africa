@@ -38,7 +38,6 @@ export interface IGeometries extends B.IBase {
   confidence: number | null;
   envelope: unknown;
   featureId: string;
-  fileVersionRefId: string | null;
   geometry: unknown;
   geometryRoleId: string;
   maxZoom: number | null;

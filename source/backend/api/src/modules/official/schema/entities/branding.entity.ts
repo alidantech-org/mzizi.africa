@@ -8,7 +8,6 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
-import { MediaEntity } from "#/modules/filesystem/schema/entities/media.entity.ts";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
 import { IndividualsEntity } from "#/modules/official/schema/entities/individuals.entity.ts";
 import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
@@ -20,13 +19,12 @@ import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
- * How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are media.
+ * How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person.
  */
 @Entity({ schema: "official", name: "branding" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["entityId", "kindId"])
 @Index(["individualId", "kindId"])
-@Index(["mediaId"])
 @Index(["languageId"])
 @Index(["sourceCitationId"])
 @Check(
@@ -74,13 +72,6 @@ export class BrandingEntity {
   @ManyToOne(() => LanguageEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "language_id" })
   language?: Relation<LanguageEntity>;
-
-  @Column({ name: "media_id", type: "uuid", nullable: true })
-  mediaId?: Id | null;
-
-  @ManyToOne(() => MediaEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "media_id" })
-  media?: Relation<MediaEntity>;
 
   @Column({ name: "source_citation_id", type: "uuid", nullable: true })
   sourceCitationId?: Id | null;

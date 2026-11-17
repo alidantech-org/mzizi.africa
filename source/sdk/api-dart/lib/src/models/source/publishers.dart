@@ -6,10 +6,11 @@ import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 
 part 'publishers.g.dart';
 
-/// Accepted publisher; an optional official identity distinguishes organization from publication channel.
+/// Accepted publisher; an optional official identity distinguishes the organization from its publication channels.
 @JsonSerializable(includeIfNull: false)
 class SourcePublishers {
   const SourcePublishers({
+    this.classificationId,
     required this.code,
     this.countryId,
     required this.createdAt,
@@ -21,6 +22,7 @@ class SourcePublishers {
     required this.updatedAt,
     required this.version,
   });
+  final String? classificationId;
   final String code;
   final String? countryId;
   final DateTime createdAt;

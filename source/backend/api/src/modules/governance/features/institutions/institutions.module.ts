@@ -16,15 +16,16 @@ import { CountryEntity } from "#/modules/reference/schema/entities/country.entit
 import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
 import { SchemeEntity } from "#/modules/reference/schema/entities/scheme.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { AddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
+import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
-import { DocumentsEntity } from "#/modules/source/schema/entities/documents.entity.ts";
+import { DiscoveriesEntity } from "#/modules/source/schema/entities/discoveries.entity.ts";
 import { DomainsEntity } from "#/modules/source/schema/entities/domains.entity.ts";
-import { EvidenceEntity } from "#/modules/source/schema/entities/evidence.entity.ts";
-import { ManifestReleasesEntity } from "#/modules/source/schema/entities/manifest-releases.entity.ts";
-import { ManifestsEntity } from "#/modules/source/schema/entities/manifests.entity.ts";
-import { PathsEntity } from "#/modules/source/schema/entities/paths.entity.ts";
+import { EditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
+import { ProductsEntity } from "#/modules/source/schema/entities/products.entity.ts";
 import { PublishersEntity } from "#/modules/source/schema/entities/publishers.entity.ts";
+import { SourceRelationshipsEntity } from "#/modules/source/schema/entities/relationships.entity.ts";
 import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import { GovernanceInstitutionsRepository } from "#/modules/governance/features/institutions/repositories/institutions.repository.ts";
 import { BrowseInstitutionsUseCase } from "#/modules/governance/features/institutions/use-cases/browse-institutions.usecase.ts";
@@ -56,15 +57,16 @@ import {
       LanguageEntity,
       SchemeEntity,
       ValueEntity,
+      AddressesEntity,
+      ArtifactsEntity,
       CapturesEntity,
       CitationsEntity,
-      DocumentsEntity,
+      DiscoveriesEntity,
       DomainsEntity,
-      EvidenceEntity,
-      ManifestReleasesEntity,
-      ManifestsEntity,
-      PathsEntity,
+      EditionsEntity,
+      ProductsEntity,
       PublishersEntity,
+      SourceRelationshipsEntity,
       SourcesEntity,
     ]),
   ],

@@ -7,9 +7,11 @@ part of 'sources.dart';
 // **************************************************************************
 
 SourceSources _$SourceSourcesFromJson(Map<String, dynamic> json) => SourceSources(
+  classificationId: json['classificationId'] as String?,
   code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   credentialBinding: json['credentialBinding'] as String?,
+  credibilityId: json['credibilityId'] as String?,
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
   description: json['description'] as String?,
   id: json['id'] as String,
@@ -22,9 +24,11 @@ SourceSources _$SourceSourcesFromJson(Map<String, dynamic> json) => SourceSource
 );
 
 Map<String, dynamic> _$SourceSourcesToJson(SourceSources instance) => <String, dynamic>{
+  'classificationId': ?instance.classificationId,
   'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'credentialBinding': ?instance.credentialBinding,
+  'credibilityId': ?instance.credibilityId,
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
   'description': ?instance.description,
   'id': instance.id,
@@ -36,4 +40,4 @@ Map<String, dynamic> _$SourceSourcesToJson(SourceSources instance) => <String, d
   'version': instance.version,
 };
 
-const _$SourceSourceKindEnumMap = {SourceSourceKind.api: 'api', SourceSourceKind.dataset: 'dataset', SourceSourceKind.website: 'website'};
+const _$SourceSourceKindEnumMap = {SourceSourceKind.api: 'api', SourceSourceKind.website: 'website'};

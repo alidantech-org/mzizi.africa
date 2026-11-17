@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from mzizi_engine.api.schemas.postgres.filesystem.entities.media import MediaRow
 from mzizi_engine.api.schemas.postgres.official.entities.branding import BrandingRow
 from mzizi_engine.api.schemas.postgres.official.entities.contacts import ContactsRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
@@ -23,7 +22,6 @@ __all__ = [
     "EntitiesRow",
     "IndividualsRow",
     "LanguageRow",
-    "MediaRow",
     "OfficialIdentifiersRow",
     "OfficialNamesRow",
     "OfficialRelationshipsRow",

@@ -20,9 +20,13 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record. (entity)
+ * Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp. (entity)
  */
 export class CitationsDto {
+  @IsString()
+  @IsUUID()
+  artifactId!: Id;
+
   @IsOptional()
   @ValidateIf((object) => object.captureId !== null)
   @IsString()
@@ -47,20 +51,6 @@ export class CitationsDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.documentId !== null)
-  @IsString()
-  @IsUUID()
-  documentId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  evidenceId!: Id;
-
-  @IsString()
-  @IsUUID()
-  fileVersionId!: Id;
-
   @IsString()
   @IsUUID()
   id!: Id;
@@ -82,6 +72,12 @@ export class CitationsDto {
 
   @IsISO8601({})
   recordedAt!: Instant;
+
+  @IsOptional()
+  @ValidateIf((object) => object.relationshipId !== null)
+  @IsString()
+  @IsUUID()
+  relationshipId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

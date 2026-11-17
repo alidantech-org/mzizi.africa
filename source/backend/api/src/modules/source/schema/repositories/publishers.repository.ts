@@ -39,6 +39,14 @@ export class PublishersRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find publishers by classification id, paged by the shared query. */
+  async findByClassification(
+    query: BaseQueryDto<PublishersEntity>,
+    classificationId: NonNullable<PublishersEntity["classificationId"]>,
+  ): Promise<IFindAllResponse<PublishersEntity>> {
+    return await this.findByQuery(query, { classificationId, deletedAt: IsNull() });
+  }
+
   /** Find publishers by country id, paged by the shared query. */
   async findByCountry(
     query: BaseQueryDto<PublishersEntity>,

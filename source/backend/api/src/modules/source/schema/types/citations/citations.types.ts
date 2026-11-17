@@ -8,11 +8,10 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as ArtifactsTypes from "#/modules/source/schema/types/artifacts/artifacts.types";
 import type * as CapturesTypes from "#/modules/source/schema/types/captures/captures.types";
-import type * as DocumentsTypes from "#/modules/source/schema/types/documents/documents.types";
-import type * as EvidenceTypes from "#/modules/source/schema/types/evidence/evidence.types";
-import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as RelationshipsTypes from "#/modules/source/schema/types/relationships/relationships.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -33,22 +32,20 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** Exact locator in immutable bytes: PDF page/paragraph, JSON path, CSV row/column, region, timestamp or dataset record. */
+/** Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp. */
 export interface ICitations extends B.IBase {
+  artifactId: string;
   captureId: string | null;
   code: string;
-  documentId: string | null;
-  evidenceId: string;
-  fileVersionId: string;
   locator: string;
   locatorKindId: string;
   quotedHash: string | null;
   recordedAt: Date;
+  relationshipId: string | null;
+  readonly artifact?: ArtifactsTypes.IArtifacts;
   readonly capture?: CapturesTypes.ICaptures;
-  readonly document?: DocumentsTypes.IDocuments;
-  readonly evidence?: EvidenceTypes.IEvidence;
-  readonly fileVersion?: FileVersionsTypes.IFileVersions;
   readonly locatorKind?: ValueTypes.IValue;
+  readonly relationship?: RelationshipsTypes.IRelationships;
 }
 
 // ----------------------------------
@@ -150,11 +147,10 @@ export type ICitationsAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface ICitationsRelationMap extends Record<CitationsRelationKey, unknown> {
+  artifact: ArtifactsTypes.IArtifactsAsOneRelationQuery;
   capture: CapturesTypes.ICapturesAsOneRelationQuery;
-  document: DocumentsTypes.IDocumentsAsOneRelationQuery;
-  evidence: EvidenceTypes.IEvidenceAsOneRelationQuery;
-  fileVersion: FileVersionsTypes.IFileVersionsAsOneRelationQuery;
   locatorKind: ValueTypes.IValueAsOneRelationQuery;
+  relationship: RelationshipsTypes.IRelationshipsAsOneRelationQuery;
 }
 
 // ----------------------------------

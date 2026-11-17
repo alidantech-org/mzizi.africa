@@ -22,17 +22,17 @@ from mzizi_engine.api.schemas.postgres.politics.entities.results import ResultsR
 from mzizi_engine.api.schemas.postgres.reference.entities.country import CountryRow
 from mzizi_engine.api.schemas.postgres.reference.entities.topic import TopicRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
+from mzizi_engine.api.schemas.postgres.source.entities.artifacts import ArtifactsRow
 from mzizi_engine.api.schemas.postgres.source.entities.citations import CitationsRow
-from mzizi_engine.api.schemas.postgres.source.entities.documents import DocumentsRow
 
 __all__ = [
     "AlignmentsRow",
+    "ArtifactsRow",
     "CandidatesRow",
     "CitationsRow",
     "CoalitionsRow",
     "ContestsRow",
     "CountryRow",
-    "DocumentsRow",
     "ElectionsRow",
     "ElectoratesRow",
     "EntitiesRow",

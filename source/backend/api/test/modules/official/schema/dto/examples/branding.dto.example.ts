@@ -2,7 +2,6 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { mediaExample } from "@test/modules/filesystem/schema/dto/examples/media.dto.example.ts";
 import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
 import { individualsExample } from "@test/modules/official/schema/dto/examples/individuals.dto.example.ts";
 import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
@@ -67,12 +66,6 @@ export const brandingExample: ContractExample = contractExample({
       name: "languageId",
       optional: false,
       nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "mediaId",
-      optional: true,
-      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {

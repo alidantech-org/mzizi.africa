@@ -9,7 +9,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as FileVersionsConfig from "#/modules/filesystem/schema/types/file-versions/file-versions.config";
+import * as ArtifactsConfig from "#/modules/source/schema/types/artifacts/artifacts.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as PublishersConfig from "#/modules/source/schema/types/publishers/publishers.config";
 
@@ -34,7 +34,7 @@ import type {
 // ----------------------------------
 
 export const ATTRIBUTIONS_RELATION_KEYS = [
-  "fileVersion",
+  "artifact",
   "licenseValue",
   "publisher",
 ] as const satisfies readonly AttributionsKey[];
@@ -44,13 +44,13 @@ export const ATTRIBUTIONS_RELATION_KEYS = [
 // ----------------------------------
 
 export const ATTRIBUTIONS_SORTABLE_FIELDS = [
+  "artifactId",
   "assessedAt",
   "assessorSnapshot",
   "code",
   "createdAt",
   "credit",
   "deletedAt",
-  "fileVersionId",
   "id",
   "licenseValueId",
   "publisherId",
@@ -66,7 +66,7 @@ export const ATTRIBUTIONS_SEARCHABLE_FIELDS = [
 ] as const satisfies readonly AttributionsKey[];
 
 export const ATTRIBUTIONS_FILTERABLE_FIELDS = [
-  "fileVersionId",
+  "artifactId",
   "id",
   "licenseValueId",
   "publisherId",
@@ -90,13 +90,13 @@ export const ATTRIBUTIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IAtt
 // ----------------------------------
 
 export const ATTRIBUTIONS_SELECTABLE_FIELDS = [
+  "artifactId",
   "assessedAt",
   "assessorSnapshot",
   "code",
   "createdAt",
   "credit",
   "deletedAt",
-  "fileVersionId",
   "id",
   "licenseValueId",
   "publisherId",
@@ -106,13 +106,13 @@ export const ATTRIBUTIONS_SELECTABLE_FIELDS = [
 ] as const satisfies readonly AttributionsKey[];
 
 export const ATTRIBUTIONS_DEFAULT_SELECT_FIELDS = [
+  "artifactId",
   "assessedAt",
   "assessorSnapshot",
   "code",
   "createdAt",
   "credit",
   "deletedAt",
-  "fileVersionId",
   "id",
   "licenseValueId",
   "publisherId",
@@ -126,11 +126,11 @@ export const ATTRIBUTIONS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const ATTRIBUTIONS_EDITABLE_FIELDS = [
+  "artifactId",
   "assessedAt",
   "assessorSnapshot",
   "code",
   "credit",
-  "fileVersionId",
   "licenseValueId",
   "publisherId",
   "rightsStatement",
@@ -163,8 +163,8 @@ export const ATTRIBUTIONS_AS_MANY_RELATION_CONFIG = {
 
 export const ATTRIBUTIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<AttributionsRelationKey>().one(
-    () => FileVersionsConfig.FILE_VERSIONS_AS_ONE_RELATION_CONFIG,
-    "fileVersion",
+    () => ArtifactsConfig.ARTIFACTS_AS_ONE_RELATION_CONFIG,
+    "artifact",
   ),
   Q.createRelationKeyMapper<AttributionsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,

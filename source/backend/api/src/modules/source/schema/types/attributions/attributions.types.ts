@@ -8,7 +8,7 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
-import type * as FileVersionsTypes from "#/modules/filesystem/schema/types/file-versions/file-versions.types";
+import type * as ArtifactsTypes from "#/modules/source/schema/types/artifacts/artifacts.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as PublishersTypes from "#/modules/source/schema/types/publishers/publishers.types";
 
@@ -31,17 +31,17 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** Accepted rights and credit statement tied to exact content and publisher. */
+/** Credit and rights for one artifact and publisher; equal bytes from other places never overwrite it. */
 export interface IAttributions extends B.IBase {
+  artifactId: string;
   assessedAt: Date;
   assessorSnapshot: string;
   code: string;
   credit: string;
-  fileVersionId: string;
   licenseValueId: string | null;
   publisherId: string;
   rightsStatement: string;
-  readonly fileVersion?: FileVersionsTypes.IFileVersions;
+  readonly artifact?: ArtifactsTypes.IArtifacts;
   readonly licenseValue?: ValueTypes.IValue;
   readonly publisher?: PublishersTypes.IPublishers;
 }
@@ -145,7 +145,7 @@ export type IAttributionsAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IAttributionsRelationMap extends Record<AttributionsRelationKey, unknown> {
-  fileVersion: FileVersionsTypes.IFileVersionsAsOneRelationQuery;
+  artifact: ArtifactsTypes.IArtifactsAsOneRelationQuery;
   licenseValue: ValueTypes.IValueAsOneRelationQuery;
   publisher: PublishersTypes.IPublishersAsOneRelationQuery;
 }

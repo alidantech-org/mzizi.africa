@@ -39,14 +39,6 @@ export class VerificationsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
-  /** Find verifications by evidence id, paged by the shared query. */
-  async findByEvidence(
-    query: BaseQueryDto<VerificationsEntity>,
-    evidenceId: NonNullable<VerificationsEntity["evidenceId"]>,
-  ): Promise<IFindAllResponse<VerificationsEntity>> {
-    return await this.findByQuery(query, { evidenceId, deletedAt: IsNull() });
-  }
-
   /** Find verifications by method id, paged by the shared query. */
   async findByMethod(
     query: BaseQueryDto<VerificationsEntity>,
@@ -61,6 +53,14 @@ export class VerificationsRepository
     outcome: NonNullable<VerificationsEntity["outcome"]>,
   ): Promise<IFindAllResponse<VerificationsEntity>> {
     return await this.findByQuery(query, { outcome, deletedAt: IsNull() });
+  }
+
+  /** Find verifications by subject table, paged by the shared query. */
+  async findBySubjectTable(
+    query: BaseQueryDto<VerificationsEntity>,
+    subjectTable: NonNullable<VerificationsEntity["subjectTable"]>,
+  ): Promise<IFindAllResponse<VerificationsEntity>> {
+    return await this.findByQuery(query, { subjectTable, deletedAt: IsNull() });
   }
 
   /** Find verifications by supersedes id, paged by the shared query. */

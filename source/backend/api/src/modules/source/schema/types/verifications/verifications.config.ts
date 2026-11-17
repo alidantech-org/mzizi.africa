@@ -9,7 +9,6 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as EvidenceConfig from "#/modules/source/schema/types/evidence/evidence.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 
 // ----------------------------------
@@ -33,7 +32,6 @@ import type {
 // ----------------------------------
 
 export const VERIFICATIONS_RELATION_KEYS = [
-  "evidence",
   "method",
   "supersedes",
 ] as const satisfies readonly VerificationsKey[];
@@ -48,12 +46,13 @@ export const VERIFICATIONS_SORTABLE_FIELDS = [
   "confidence",
   "createdAt",
   "deletedAt",
-  "evidenceId",
   "explanation",
   "id",
   "methodId",
   "outcome",
   "reviewerSnapshot",
+  "subjectId",
+  "subjectTable",
   "supersedesId",
   "updatedAt",
   "version",
@@ -65,10 +64,11 @@ export const VERIFICATIONS_SEARCHABLE_FIELDS = [
 ] as const satisfies readonly VerificationsKey[];
 
 export const VERIFICATIONS_FILTERABLE_FIELDS = [
-  "evidenceId",
   "id",
   "methodId",
   "outcome",
+  "subjectId",
+  "subjectTable",
   "supersedesId",
 ] as const satisfies readonly VerificationsKey[];
 
@@ -95,12 +95,13 @@ export const VERIFICATIONS_SELECTABLE_FIELDS = [
   "confidence",
   "createdAt",
   "deletedAt",
-  "evidenceId",
   "explanation",
   "id",
   "methodId",
   "outcome",
   "reviewerSnapshot",
+  "subjectId",
+  "subjectTable",
   "supersedesId",
   "updatedAt",
   "version",
@@ -112,12 +113,13 @@ export const VERIFICATIONS_DEFAULT_SELECT_FIELDS = [
   "confidence",
   "createdAt",
   "deletedAt",
-  "evidenceId",
   "explanation",
   "id",
   "methodId",
   "outcome",
   "reviewerSnapshot",
+  "subjectId",
+  "subjectTable",
   "supersedesId",
   "updatedAt",
   "version",
@@ -131,11 +133,12 @@ export const VERIFICATIONS_EDITABLE_FIELDS = [
   "assessedAt",
   "code",
   "confidence",
-  "evidenceId",
   "explanation",
   "methodId",
   "outcome",
   "reviewerSnapshot",
+  "subjectId",
+  "subjectTable",
   "supersedesId",
 ] as const satisfies readonly VerificationsKey[];
 
@@ -165,10 +168,6 @@ export const VERIFICATIONS_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const VERIFICATIONS_ONE_RELATION_QUERY_OPTIONS = [
-  Q.createRelationKeyMapper<VerificationsRelationKey>().one(
-    () => EvidenceConfig.EVIDENCE_AS_ONE_RELATION_CONFIG,
-    "evidence",
-  ),
   Q.createRelationKeyMapper<VerificationsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "method",

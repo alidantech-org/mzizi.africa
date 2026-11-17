@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class DomainsRow(BaseModel):
-    """A host name a source is served from. A source can have several over time, and a domain keeps its own validity period."""
+    """A host name a source is served from. A host belongs to one source at a time; its validity period records moves."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

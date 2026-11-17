@@ -10,12 +10,13 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class PublishersRow(BaseModel):
-    """Accepted publisher; an optional official identity distinguishes organization from publication channel."""
+    """Accepted publisher; an optional official identity distinguishes the organization from its publication channels."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "source.publishers"
 
+    classification_id: UUID | None = None
     code: Annotated[
         str,
         Field(

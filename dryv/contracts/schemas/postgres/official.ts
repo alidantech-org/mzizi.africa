@@ -11,7 +11,6 @@ import * as dryv from "@dryvcode/author";
 import { rule, when } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Media } from "./filesystem.ts";
 import { Country, Language, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
@@ -207,8 +206,6 @@ export const Branding = official
     kindId: belongsTo(() => Value),
     /** Words: a slogan, a list of colours, a description of a symbol. */
     value: dryv.field(sharedProperties.NonEmptyString1000).maybe(),
-    /** The image, sound or video itself, when there is one. */
-    mediaId: belongsTo(() => Media).maybe(),
     /** The language the words are in; `mul` or `und` when no single language applies. */
     languageId: belongsTo(() => Language),
     sourceCitationId: belongsTo(() => Citations).maybe(),
@@ -216,7 +213,7 @@ export const Branding = official
   .extends(baseSchemas.CodedValidityEntity)
   .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
   .description(
-    "How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are media.",
+    "How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person.",
   )
   .role("entity")
   .facets({
@@ -224,7 +221,6 @@ export const Branding = official
       .storage("branding")
       .index("entityId", "kindId")
       .index("individualId", "kindId")
-      .index("mediaId")
       .index("languageId")
       .index("sourceCitationId"),
   });

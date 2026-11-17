@@ -26,7 +26,6 @@ class GeometriesRow(BaseModel):
     deleted_at: datetime | None = None
     envelope: JsonValue
     feature_id: UUID
-    file_version_ref_id: UUID | None = None
     geometry: JsonValue
     geometry_role_id: UUID
     id: UUID

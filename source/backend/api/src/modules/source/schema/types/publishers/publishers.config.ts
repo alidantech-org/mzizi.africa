@@ -9,8 +9,8 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as CountryConfig from "#/modules/reference/schema/types/country/country.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as CountryConfig from "#/modules/reference/schema/types/country/country.config";
 import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
 
 // ----------------------------------
@@ -34,6 +34,7 @@ import type {
 // ----------------------------------
 
 export const PUBLISHERS_RELATION_KEYS = [
+  "classification",
   "country",
   "kind",
   "officialEntity",
@@ -44,6 +45,7 @@ export const PUBLISHERS_RELATION_KEYS = [
 // ----------------------------------
 
 export const PUBLISHERS_SORTABLE_FIELDS = [
+  "classificationId",
   "code",
   "countryId",
   "createdAt",
@@ -62,6 +64,7 @@ export const PUBLISHERS_SEARCHABLE_FIELDS = [
 ] as const satisfies readonly PublishersKey[];
 
 export const PUBLISHERS_FILTERABLE_FIELDS = [
+  "classificationId",
   "countryId",
   "id",
   "kindId",
@@ -85,6 +88,7 @@ export const PUBLISHERS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IPubli
 // ----------------------------------
 
 export const PUBLISHERS_SELECTABLE_FIELDS = [
+  "classificationId",
   "code",
   "countryId",
   "createdAt",
@@ -98,6 +102,7 @@ export const PUBLISHERS_SELECTABLE_FIELDS = [
 ] as const satisfies readonly PublishersKey[];
 
 export const PUBLISHERS_DEFAULT_SELECT_FIELDS = [
+  "classificationId",
   "code",
   "countryId",
   "createdAt",
@@ -115,6 +120,7 @@ export const PUBLISHERS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const PUBLISHERS_EDITABLE_FIELDS = [
+  "classificationId",
   "code",
   "countryId",
   "kindId",
@@ -148,6 +154,10 @@ export const PUBLISHERS_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const PUBLISHERS_ONE_RELATION_QUERY_OPTIONS = [
+  Q.createRelationKeyMapper<PublishersRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "classification",
+  ),
   Q.createRelationKeyMapper<PublishersRelationKey>().one(
     () => CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
     "country",

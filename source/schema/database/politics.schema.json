@@ -882,9 +882,9 @@
           ,"version"
         ],
         "columns": [
-          "candidate_code"
+          "artifact_code"
+          ,"candidate_code"
           ,"code"
-          ,"document_code"
           ,"election_code"
           ,"party_code"
           ,"published_on"
@@ -895,7 +895,14 @@
         ]
       },
       "properties": {
-        "candidate_id": {
+        "artifact_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Artifacts", "column": "id", "alias": "artifact_code" }
+        }
+        ,"candidate_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
@@ -923,13 +930,6 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"document_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Documents", "column": "id", "alias": "document_code" }
         }
         ,"election_id": {
           "type": ["string", "null"],

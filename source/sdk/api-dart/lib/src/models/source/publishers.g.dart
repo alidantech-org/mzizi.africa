@@ -7,6 +7,7 @@ part of 'publishers.dart';
 // **************************************************************************
 
 SourcePublishers _$SourcePublishersFromJson(Map<String, dynamic> json) => SourcePublishers(
+  classificationId: json['classificationId'] as String?,
   code: json['code'] as String,
   countryId: json['countryId'] as String?,
   createdAt: DateTime.parse(json['createdAt'] as String),
@@ -20,6 +21,7 @@ SourcePublishers _$SourcePublishersFromJson(Map<String, dynamic> json) => Source
 );
 
 Map<String, dynamic> _$SourcePublishersToJson(SourcePublishers instance) => <String, dynamic>{
+  'classificationId': ?instance.classificationId,
   'code': instance.code,
   'countryId': ?instance.countryId,
   'createdAt': instance.createdAt.toIso8601String(),

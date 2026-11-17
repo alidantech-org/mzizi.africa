@@ -2,17 +2,22 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { fileVersionsExample } from "@test/modules/filesystem/schema/dto/examples/file-versions.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { artifactsExample } from "@test/modules/source/schema/dto/examples/artifacts.dto.example.ts";
 import { capturesExample } from "@test/modules/source/schema/dto/examples/captures.dto.example.ts";
-import { documentsExample } from "@test/modules/source/schema/dto/examples/documents.dto.example.ts";
-import { evidenceExample } from "@test/modules/source/schema/dto/examples/evidence.dto.example.ts";
+import { relationshipsExample } from "@test/modules/source/schema/dto/examples/relationships.dto.example.ts";
 
 /** The contract shape of Citations, for generated tests. */
 export const citationsExample: ContractExample = contractExample({
   name: "Citations",
   fields: [
+    {
+      name: "artifactId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
     {
       name: "captureId",
       optional: true,
@@ -45,24 +50,6 @@ export const citationsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "documentId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "evidenceId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "fileVersionId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "id",
       optional: false,
       nullable: false,
@@ -91,6 +78,12 @@ export const citationsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "temporal", temporal: "instant" },
+    },
+    {
+      name: "relationshipId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "updatedAt",

@@ -8,7 +8,7 @@ import {
   type Relation,
 } from "typeorm";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
-import { EvidenceEntity } from "#/modules/source/schema/entities/evidence.entity.ts";
+import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import { VerificationOutcome } from "#/modules/source/schema/enum/verification-outcome.enum.ts";
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
@@ -18,11 +18,11 @@ import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
- * Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes.
+ * Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit.
  */
 @Entity({ schema: "source", name: "verifications" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
-@Index(["evidenceId"])
+@Index(["subjectTable", "subjectId"])
 @Index(["methodId"])
 @Index(["supersedesId"])
 export class VerificationsEntity {
@@ -44,13 +44,6 @@ export class VerificationsEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
-  @Column({ name: "evidence_id", type: "uuid" })
-  evidenceId!: Id;
-
-  @ManyToOne(() => EvidenceEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "evidence_id" })
-  evidence?: Relation<EvidenceEntity>;
-
   @Column({ name: "explanation", type: "varchar", length: 4000 })
   explanation!: Description;
 
@@ -66,6 +59,12 @@ export class VerificationsEntity {
 
   @Column({ name: "reviewer_snapshot", type: "text" })
   reviewerSnapshot!: JsonText;
+
+  @Column({ name: "subject_id", type: "uuid" })
+  subjectId!: Id;
+
+  @Column({ name: "subject_table", type: "enum", enum: SubjectTable })
+  subjectTable!: SubjectTable;
 
   @Column({ name: "supersedes_id", type: "uuid", nullable: true })
   supersedesId?: Id | null;

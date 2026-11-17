@@ -39,28 +39,28 @@ export class CapturesRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
-  /** Find captures by document id, paged by the shared query. */
-  async findByDocument(
+  /** Find captures by address id, paged by the shared query. */
+  async findByAddress(
     query: BaseQueryDto<CapturesEntity>,
-    documentId: NonNullable<CapturesEntity["documentId"]>,
+    addressId: NonNullable<CapturesEntity["addressId"]>,
   ): Promise<IFindAllResponse<CapturesEntity>> {
-    return await this.findByQuery(query, { documentId, deletedAt: IsNull() });
+    return await this.findByQuery(query, { addressId, deletedAt: IsNull() });
   }
 
-  /** Find captures by manifest release id, paged by the shared query. */
-  async findByManifestRelease(
+  /** Find captures by artifact id, paged by the shared query. */
+  async findByArtifact(
     query: BaseQueryDto<CapturesEntity>,
-    manifestReleaseId: NonNullable<CapturesEntity["manifestReleaseId"]>,
+    artifactId: NonNullable<CapturesEntity["artifactId"]>,
   ): Promise<IFindAllResponse<CapturesEntity>> {
-    return await this.findByQuery(query, { manifestReleaseId, deletedAt: IsNull() });
+    return await this.findByQuery(query, { artifactId, deletedAt: IsNull() });
   }
 
-  /** Find captures by path id, paged by the shared query. */
-  async findByPath(
+  /** Find captures by discovery id, paged by the shared query. */
+  async findByDiscovery(
     query: BaseQueryDto<CapturesEntity>,
-    pathId: NonNullable<CapturesEntity["pathId"]>,
+    discoveryId: NonNullable<CapturesEntity["discoveryId"]>,
   ): Promise<IFindAllResponse<CapturesEntity>> {
-    return await this.findByQuery(query, { pathId, deletedAt: IsNull() });
+    return await this.findByQuery(query, { discoveryId, deletedAt: IsNull() });
   }
 
   /** Find captures by source id, paged by the shared query. */

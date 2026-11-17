@@ -2,10 +2,10 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import { VerificationOutcome } from "#/modules/source/schema/enum/verification-outcome.enum.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { evidenceExample } from "@test/modules/source/schema/dto/examples/evidence.dto.example.ts";
+import { codedSubjectEntityExample } from "@test/modules/shared/schema/dto/examples/coded-subject-entity.dto.example.ts";
 
 /** The contract shape of Verifications, for generated tests. */
 export const verificationsExample: ContractExample = contractExample({
@@ -49,12 +49,6 @@ export const verificationsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "evidenceId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "explanation",
       optional: false,
       nullable: false,
@@ -83,6 +77,18 @@ export const verificationsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "json" },
+    },
+    {
+      name: "subjectId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "subjectTable",
+      optional: false,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(SubjectTable) },
     },
     {
       name: "supersedesId",

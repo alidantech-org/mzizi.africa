@@ -1,7 +1,7 @@
 /**
  * Schema: filesystem | Database: mzizi
  * Contract implementation authorized by the Main/Operations handoff, 12 November 2026.
- * Owns logical identities, immutable bytes metadata and version lineage.
+ * Owns logical identities, immutable bytes metadata, version membership and media. Derivation and acquisition belong to Source.
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/filesystem.md
  */
 import * as dryv from "@dryvcode/author";
@@ -14,7 +14,7 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const filesystem = dryv
   .group({ name: "filesystem" })
-  .description("Accepted logical files, immutable versions and attributable derivative lineage.")
+  .description("Accepted logical files, immutable versions and the media that mention subject records.")
   .facets({ storage: { namespace: "filesystem", store: "main" } });
 
 export const filesystemEnums = filesystem.properties({
@@ -105,26 +105,6 @@ export const FileVersions = filesystem
       .index("fileExtensionId"),
   });
 
-/*---------------- file_relations ----------------*/
-export const FileRelations = filesystem
-  .schema("FileRelations", {
-    sourceVersionId: belongsTo(() => FileVersions),
-    derivedVersionId: belongsTo(() => FileVersions),
-    kindId: belongsTo(() => Value),
-    processingProvenance: dryv.field(sharedProperties.JsonText),
-  })
-  .extends(baseSchemas.Entity)
-  .description("Directed exact input-to-output lineage with a pinned processing description; originals remain immutable.")
-  .role("entity")
-  .rule("VersionsMustDiffer", rule.differs("sourceVersionId", "derivedVersionId"))
-  .facets({
-    storage: dryv
-      .storage("file_relations")
-      .unique("sourceVersionId", "derivedVersionId", "kindId")
-      .index("derivedVersionId")
-      .index("kindId"),
-  });
-
 /*---------------- tags ----------------*/
 export const Tags = filesystem
   .schema("Tags", {
@@ -158,8 +138,7 @@ export const Taggings = filesystem
       .index("folderId"),
   });
 
-/** Open: derivative cycle rejection through file_relations;
- * access inheritance and prefix checks; immutable versions; typed Reference scheme membership;
+/** Open: access inheritance and prefix checks; immutable versions; typed Reference scheme membership;
  * transactionally verified S3 metadata. ReplaceCurrent never authorizes deleting pinned versions or
  * rewriting accepted bytes. Bucket mzizi, region us-east-1, credentials from env.
  */
@@ -170,20 +149,22 @@ export const Media = filesystem
     /** Scheme fil.media.kind: logo, symbol, flag, portrait, photograph, audio, video, document scan. */
     kindId: belongsTo(() => Value),
     title: dryv.field(sharedProperties.Name),
-    caption: dryv.field(sharedProperties.Description).maybe(),
+    /** A natural description of what the media shows or says. */
+    description: dryv.field(sharedProperties.Description).maybe(),
+    /** Why this media is attached to this subject; the same file can be used differently by another subject. */
+    purpose: dryv.field(sharedProperties.Description).maybe(),
     /** Text for people who cannot see or hear the media. */
     altText: dryv.field(sharedProperties.NonEmptyString500).maybe(),
-    /** The stored bytes, once the file is registered. A media record can exist before its file does. */
-    fileVersionId: belongsTo(() => FileVersions).maybe(),
-    /** Where the media was found, for a record whose file is not stored yet. */
-    sourceUrl: dryv.field(sharedProperties.Url).maybe(),
+    /** Reviewed display order among the subject's media; not unique and not a default marker. */
+    position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+    /** The exact stored bytes. Acquisition before registration is a Source discovery or capture, never a URL here. */
+    fileVersionId: belongsTo(() => FileVersions),
   })
-  .extends(baseSchemas.CodedEntity)
+  .extends(baseSchemas.CodedSubjectEntity)
   .description(
-    "A logo, symbol, photograph, recording or other media an entity or person can point at; its bytes are a filesystem file version.",
+    "One use of a stored media file by one subject record, which it mentions by table and id. A subject can have many media of any kind and one file can serve many subjects; subjects carry no media pointer.",
   )
   .role("entity")
   .facets({
-    storage: dryv.storage("media").index("kindId").index("fileVersionId"),
+    storage: dryv.storage("media").index("subjectTable", "subjectId").index("kindId").index("fileVersionId"),
   });
-

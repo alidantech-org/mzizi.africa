@@ -1,36 +1,43 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/subject_table.dart';
 import 'package:mzizi_api/src/models/filesystem/file_versions.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_subject_entity.dart';
 
 part 'media.g.dart';
 
-/// A logo, symbol, photograph, recording or other media an entity or person can point at; its bytes are a filesystem file version.
+/// One use of a stored media file by one subject record, which it mentions by table and id. A subject can have many media of any kind and one file can serve many subjects; subjects carry no media pointer.
 @JsonSerializable(includeIfNull: false)
 class FilesystemMedia {
   const FilesystemMedia({
     this.altText,
-    this.caption,
     required this.code,
     required this.createdAt,
     this.deletedAt,
-    this.fileVersionId,
+    this.description,
+    required this.fileVersionId,
     required this.id,
     required this.kindId,
-    this.sourceUrl,
+    this.position,
+    this.purpose,
+    required this.subjectId,
+    required this.subjectTable,
     required this.title,
     required this.updatedAt,
     required this.version,
   });
   final String? altText;
-  final String? caption;
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String? fileVersionId;
+  final String? description;
+  final String fileVersionId;
   final String id;
   final String kindId;
-  final String? sourceUrl;
+  final int? position;
+  final String? purpose;
+  final String subjectId;
+  final SharedSubjectTable subjectTable;
   final String title;
   final DateTime updatedAt;
   final int version;

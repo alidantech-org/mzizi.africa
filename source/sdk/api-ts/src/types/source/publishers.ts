@@ -1,5 +1,6 @@
-/** Accepted publisher; an optional official identity distinguishes organization from publication channel. */
+/** Accepted publisher; an optional official identity distinguishes the organization from its publication channels. */
 export interface SourcePublishers {
+  classificationId?: string | null;
   code: string;
   countryId?: string | null;
   createdAt: string;

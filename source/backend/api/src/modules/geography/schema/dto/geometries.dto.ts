@@ -56,12 +56,6 @@ export class GeometriesDto {
   @IsUUID()
   featureId!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.fileVersionRefId !== null)
-  @IsString()
-  @IsUUID()
-  fileVersionRefId?: Id | null;
-
   @Allow()
   geometry!: unknown;
 

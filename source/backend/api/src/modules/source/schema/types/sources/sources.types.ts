@@ -9,6 +9,7 @@ import type { SourceKind } from "#/modules/source/schema/enum/source-kind.enum";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
 import type * as PublishersTypes from "#/modules/source/schema/types/publishers/publishers.types";
 
@@ -31,15 +32,19 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** A publication channel, named by anything but its domain: a real website, a real API, or a dataset (files or data obtained from somewhere that is neither). Only websites and APIs have domains and paths; the dataset tables record what we prepared from sources. */
+/** A publication channel: a real website or a real API, with its classification and credibility. */
 export interface ISources extends B.IBase {
+  classificationId: string | null;
   code: string;
   credentialBinding: string | null;
+  credibilityId: string | null;
   description: string | null;
   kind: SourceKind;
   officialEntityId: string | null;
   publisherId: string;
   title: string;
+  readonly classification?: ValueTypes.IValue;
+  readonly credibility?: ValueTypes.IValue;
   readonly officialEntity?: EntitiesTypes.IEntities;
   readonly publisher?: PublishersTypes.IPublishers;
 }
@@ -131,6 +136,8 @@ export type ISourcesAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface ISourcesRelationMap extends Record<SourcesRelationKey, unknown> {
+  classification: ValueTypes.IValueAsOneRelationQuery;
+  credibility: ValueTypes.IValueAsOneRelationQuery;
   officialEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   publisher: PublishersTypes.IPublishersAsOneRelationQuery;
 }

@@ -27,6 +27,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 })
 @Index(["featureId", "geometryRoleId"])
 @Index(["validFrom", "validUntil"])
+@Index(["id", "featureId"], { unique: true })
 @Index(["basisId"])
 @Check(
   "chk_geometries_validity_window_is_ordered",
@@ -99,9 +100,6 @@ export class GeometriesEntity {
   @ManyToOne(() => FeaturesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "feature_id" })
   feature?: Relation<FeaturesEntity>;
-
-  @Column({ name: "file_version_ref_id", type: "uuid", nullable: true })
-  fileVersionRefId?: Id | null;
 
   @Column({
     name: "geometry",

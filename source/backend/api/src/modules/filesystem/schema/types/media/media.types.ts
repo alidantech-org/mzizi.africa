@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -30,14 +31,17 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** A logo, symbol, photograph, recording or other media an entity or person can point at; its bytes are a filesystem file version. */
+/** One use of a stored media file by one subject record, which it mentions by table and id. A subject can have many media of any kind and one file can serve many subjects; subjects carry no media pointer. */
 export interface IMedia extends B.IBase {
   altText: string | null;
-  caption: string | null;
   code: string;
-  fileVersionId: string | null;
+  description: string | null;
+  fileVersionId: string;
   kindId: string;
-  sourceUrl: string | null;
+  position: number | null;
+  purpose: string | null;
+  subjectId: string;
+  subjectTable: SubjectTable;
   title: string;
   readonly fileVersion?: FileVersionsTypes.IFileVersions;
   readonly kind?: ValueTypes.IValue;

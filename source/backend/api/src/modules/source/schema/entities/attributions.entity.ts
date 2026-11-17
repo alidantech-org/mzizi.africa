@@ -7,8 +7,8 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
-import { FileVersionsEntity } from "#/modules/filesystem/schema/entities/file-versions.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { PublishersEntity } from "#/modules/source/schema/entities/publishers.entity.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -18,16 +18,23 @@ import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
- * Accepted rights and credit statement tied to exact content and publisher.
+ * Credit and rights for one artifact and publisher; equal bytes from other places never overwrite it.
  */
 @Entity({ schema: "source", name: "attributions" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["publisherId"])
-@Index(["fileVersionId"])
+@Index(["artifactId"])
 @Index(["licenseValueId"])
 export class AttributionsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
+
+  @Column({ name: "artifact_id", type: "uuid" })
+  artifactId!: Id;
+
+  @ManyToOne(() => ArtifactsEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "artifact_id" })
+  artifact?: Relation<ArtifactsEntity>;
 
   @Column({ name: "assessed_at", type: "timestamptz" })
   assessedAt!: Date;
@@ -46,13 +53,6 @@ export class AttributionsEntity {
 
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
-
-  @Column({ name: "file_version_id", type: "uuid" })
-  fileVersionId!: Id;
-
-  @ManyToOne(() => FileVersionsEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "file_version_id" })
-  fileVersion?: Relation<FileVersionsEntity>;
 
   @Column({ name: "license_value_id", type: "uuid", nullable: true })
   licenseValueId?: Id | null;

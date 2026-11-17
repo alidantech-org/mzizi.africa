@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.legal.enums.provision_kind import Provisi
 
 
 class ProvisionsRow(BaseModel):
-    """Stable section identity within one instrument; hierarchy must remain within that instrument. One provision holds one statement: a numbered point is a row of its own under its parent."""
+    """Stable provision identity within one instrument; hierarchy stays within that instrument. One provision holds one statement."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

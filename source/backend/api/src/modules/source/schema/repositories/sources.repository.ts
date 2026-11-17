@@ -39,6 +39,22 @@ export class SourcesRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find sources by classification id, paged by the shared query. */
+  async findByClassification(
+    query: BaseQueryDto<SourcesEntity>,
+    classificationId: NonNullable<SourcesEntity["classificationId"]>,
+  ): Promise<IFindAllResponse<SourcesEntity>> {
+    return await this.findByQuery(query, { classificationId, deletedAt: IsNull() });
+  }
+
+  /** Find sources by credibility id, paged by the shared query. */
+  async findByCredibility(
+    query: BaseQueryDto<SourcesEntity>,
+    credibilityId: NonNullable<SourcesEntity["credibilityId"]>,
+  ): Promise<IFindAllResponse<SourcesEntity>> {
+    return await this.findByQuery(query, { credibilityId, deletedAt: IsNull() });
+  }
+
   /** Find sources by kind, paged by the shared query. */
   async findByKind(
     query: BaseQueryDto<SourcesEntity>,

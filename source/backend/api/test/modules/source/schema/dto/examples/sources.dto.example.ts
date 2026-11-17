@@ -4,6 +4,7 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { SourceKind } from "#/modules/source/schema/enum/source-kind.enum.ts";
 import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 import { publishersExample } from "@test/modules/source/schema/dto/examples/publishers.dto.example.ts";
 
@@ -11,6 +12,12 @@ import { publishersExample } from "@test/modules/source/schema/dto/examples/publ
 export const sourcesExample: ContractExample = contractExample({
   name: "Sources",
   fields: [
+    {
+      name: "classificationId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
     {
       name: "code",
       optional: false,
@@ -35,6 +42,12 @@ export const sourcesExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", minLength: 1, maxLength: 255 },
+    },
+    {
+      name: "credibilityId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "deletedAt",

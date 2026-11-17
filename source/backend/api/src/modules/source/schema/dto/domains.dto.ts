@@ -20,7 +20,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A host name a source is served from. A source can have several over time, and a domain keeps its own validity period. (entity)
+ * A host name a source is served from. A host belongs to one source at a time; its validity period records moves. (entity)
  */
 export class DomainsDto {
   @IsString()

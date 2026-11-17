@@ -1,24 +1,24 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/documents.dart';
-import 'package:mzizi_api/src/models/source/manifest_releases.dart';
-import 'package:mzizi_api/src/models/source/paths.dart';
+import 'package:mzizi_api/src/models/source/addresses.dart';
+import 'package:mzizi_api/src/models/source/artifacts.dart';
+import 'package:mzizi_api/src/models/source/discoveries.dart';
 import 'package:mzizi_api/src/models/source/sources.dart';
 
 part 'captures.g.dart';
 
-/// One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations.
+/// One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other.
 @JsonSerializable(includeIfNull: false)
 class SourceCaptures {
   const SourceCaptures({
+    this.addressId,
+    this.artifactId,
     required this.code,
     required this.createdAt,
     this.deletedAt,
-    this.documentId,
+    this.discoveryId,
     required this.id,
-    this.manifestReleaseId,
     required this.originalUrl,
-    this.pathId,
     required this.responseMetadata,
     required this.retrievedAt,
     this.retrievedUrl,
@@ -26,14 +26,14 @@ class SourceCaptures {
     required this.updatedAt,
     required this.version,
   });
+  final String? addressId;
+  final String? artifactId;
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String? documentId;
+  final String? discoveryId;
   final String id;
-  final String? manifestReleaseId;
   final String originalUrl;
-  final String? pathId;
   final String responseMetadata;
   final DateTime retrievedAt;
   final String? retrievedUrl;

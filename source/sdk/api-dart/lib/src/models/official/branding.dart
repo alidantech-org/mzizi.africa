@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/filesystem/media.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
 import 'package:mzizi_api/src/models/reference/language.dart';
@@ -9,7 +8,7 @@ import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'branding.g.dart';
 
-/// How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are media.
+/// How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person.
 @JsonSerializable(includeIfNull: false)
 class OfficialBranding {
   const OfficialBranding({
@@ -21,7 +20,6 @@ class OfficialBranding {
     this.individualId,
     required this.kindId,
     required this.languageId,
-    this.mediaId,
     this.sourceCitationId,
     required this.updatedAt,
     this.validFrom,
@@ -37,7 +35,6 @@ class OfficialBranding {
   final String? individualId;
   final String kindId;
   final String languageId;
-  final String? mediaId;
   final String? sourceCitationId;
   final DateTime updatedAt;
   final DateTime? validFrom;

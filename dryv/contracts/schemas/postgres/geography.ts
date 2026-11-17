@@ -4,16 +4,17 @@
  * Responsibility: Canonical geographic identities, territorial specializations and spatial facts.
  * Design: .docs/_plan/schema-redesign/mzizi-db/phase-01/geography.md
  * Review: approved table inventory; proposed classification field alignment — 2026-11-12
- * Tables: features, names, identifiers, geometries, relationships, changes, datasets (units and places removed 2026-11-16).
+ * Tables: features, names, classifications, identifiers, geometries, relationships, changes, assets (datasets removed 2026-11-17).
  * Approval record: .docs/decisions/DEC-MZIZI-REFERENCE-GEOGRAPHY-20261112.md; redesign task TSK-C145D32860A4.
  * Open items: scheme-aware Reference constraints and PostGIS geometry/indexes.
  */
 import * as dryv from "@dryvcode/author";
-import { rule, when } from "@dryvcode/author";
+import { rule } from "@dryvcode/author";
 
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Language, Unit, Value } from "./reference.ts";
+import { FileVersions } from "./filesystem.ts";
+import { Language, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -158,7 +159,6 @@ export const Geometries = geography
       .generated(calculations.GeometryArea),
     srid: dryv.field(sharedProperties.PositiveInteger),
     observedAt: dryv.field(sharedProperties.Instant).maybe(),
-    fileVersionRefId: dryv.field(sharedProperties.Id).maybe(),
   })
   .extends(baseSchemas.HistoricalValidityEntity)
   .rule("ZoomRangeMustBeOrdered", rule.ordered("minZoom", "maxZoom"))
@@ -193,6 +193,7 @@ Geometries.facets({
     .where(geometryRules.CurrentGeometry)
     .index("featureId", "geometryRoleId")
     .index("validFrom", "validUntil")
+    .unique("id", "featureId")
     .index("basisId")
     .index("geometry")
     .using("gist"),
@@ -257,33 +258,47 @@ export const Changes = geography
       .index("changeKindId"),
   });
 
-export const Datasets = geography
-  .schema("Datasets", {
-    title: dryv.field(sharedProperties.NonEmptyString255),
-    /** Expected scheme: geography.dataset_subject. */
-    subjectId: belongsTo(() => Value),
-    /** Expected scheme: geography.dataset_representation. */
-    representationId: belongsTo(() => Value),
-    format: dryv.field(sharedProperties.NonEmptyString100),
-    crs: dryv.field(sharedProperties.NonEmptyString100).maybe(),
-    resolution: dryv.field(sharedProperties.Number).maybe(),
-    resolutionUnitId: belongsTo(() => Unit).maybe(),
-    coverageFeatureId: belongsTo(() => Features).maybe(),
-    fileVersionRefId: dryv.field(sharedProperties.Id).maybe(),
-    qualityNotes: dryv.field(sharedProperties.Description).maybe(),
+export const AssetSelectors = geography.properties({
+  /** Layer name in a multi-layer file such as a GeoPackage. */
+  Layer: dryv.property.string().length({ min: 1, max: 255 }),
+  /** Member path inside an archive. */
+  Member: dryv.property.string().length({ min: 1, max: 1000 }),
+});
+
+export const Assets = geography
+  .schema("Assets", {
+    /** Every asset belongs to a feature. */
+    featureId: belongsTo(() => Features),
+    /** Set when the file is the drawing of one geometry; that geometry must belong to `featureId`. */
+    geometryId: belongsTo(() => Geometries).maybe(),
+    /** The exact immutable GIS file. */
+    fileVersionId: belongsTo(() => FileVersions),
+    /** Expected scheme: geo.asset.kind (vector boundary, raster surface, elevation, mosaic, layer package). */
+    kindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.asset.kind"),
+    /** Expected scheme: geo.asset.purpose (boundary source, elevation, land cover, reference). */
+    purposeId: belongsTo(() => Value).tags("scheme:ref.sch.geo.asset.purpose"),
+    description: dryv.field(sharedProperties.Description).maybe(),
+    layer: dryv.field(AssetSelectors.Layer).maybe(),
+    /** One-based raster band. */
+    band: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    member: dryv.field(AssetSelectors.Member).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .rule("DatasetResolutionMustBePositive", (v) =>
-    when.any(v.resolution.isNull(), v.resolution.gt(0)),
-  )
   .description(
-    "Catalog metadata for vector, raster, climate, elevation, historical and derived datasets. Large assets remain in the existing Filesystem/SeaweedFS S3 system; external references await executable Source and Filesystem contracts.",
+    "A stored GIS file used for a feature or for one of its geometries. One file can serve many features and a feature can have many files. Photographs and video are filesystem media; acquisition and provenance belong to Source.",
   )
   .role("entity")
   .facets({
     storage: dryv
-      .storage("datasets")
-      .index("subjectId")
-      .index("representationId")
-      .index("coverageFeatureId"),
+      .storage("assets")
+      .references("AssetGeometryBelongsToFeature", {
+        fields: ["geometryId", "featureId"],
+        target: () => Geometries,
+        targetFields: ["id", "featureId"],
+      })
+      .index("featureId")
+      .index("geometryId")
+      .index("fileVersionId")
+      .index("kindId")
+      .index("purposeId"),
   });

@@ -52,6 +52,14 @@ export class MediaRepository
     return await this.findByQuery(query, { kindId, deletedAt: IsNull() });
   }
 
+  /** Find media by subject table, paged by the shared query. */
+  async findBySubjectTable(
+    query: BaseQueryDto<MediaEntity>,
+    subjectTable: NonNullable<MediaEntity["subjectTable"]>,
+  ): Promise<IFindAllResponse<MediaEntity>> {
+    return await this.findByQuery(query, { subjectTable, deletedAt: IsNull() });
+  }
+
   /** Find the media with this code (unique). */
   async findByCode(code: NonNullable<MediaEntity["code"]>): Promise<MediaEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });

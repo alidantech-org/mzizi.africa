@@ -15,6 +15,7 @@ import {
   ValidateIf,
 } from "class-validator";
 
+import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import { VerificationOutcome } from "#/modules/source/schema/enum/verification-outcome.enum.ts";
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
@@ -25,7 +26,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Append-only attributable assessment; disagreement and insufficient evidence remain explicit outcomes. (entity)
+ * Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit. (entity)
  */
 export class VerificationsDto {
   @IsISO8601({})
@@ -57,10 +58,6 @@ export class VerificationsDto {
   deletedAt?: Instant | null;
 
   @IsString()
-  @IsUUID()
-  evidenceId!: Id;
-
-  @IsString()
   @MaxLength(4000)
   explanation!: Description;
 
@@ -78,6 +75,13 @@ export class VerificationsDto {
   @IsString()
   @IsJSON()
   reviewerSnapshot!: JsonText;
+
+  @IsString()
+  @IsUUID()
+  subjectId!: Id;
+
+  @IsEnum(SubjectTable)
+  subjectTable!: SubjectTable;
 
   @IsOptional()
   @ValidateIf((object) => object.supersedesId !== null)

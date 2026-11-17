@@ -10,12 +10,14 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class CapturesRow(BaseModel):
-    """One retrieval of a path by a source: when, from which link, with what response. The content is a document, shared by every capture of the same bytes; failed requests remain in Operations."""
+    """One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "source.captures"
 
+    address_id: UUID | None = None
+    artifact_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -26,11 +28,9 @@ class CapturesRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
-    document_id: UUID | None = None
+    discovery_id: UUID | None = None
     id: UUID
-    manifest_release_id: UUID | None = None
     original_url: Annotated[str, Field(max_length=2048)]
-    path_id: UUID | None = None
     response_metadata: str
     retrieved_at: datetime
     retrieved_url: Annotated[str, Field(max_length=2048)] | None = None

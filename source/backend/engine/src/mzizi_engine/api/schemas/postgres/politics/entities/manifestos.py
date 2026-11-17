@@ -16,6 +16,7 @@ class ManifestosRow(BaseModel):
 
     table: ClassVar[str] = "politics.manifestos"
 
+    artifact_id: UUID | None = None
     candidate_id: UUID | None = None
     code: Annotated[
         str,
@@ -27,7 +28,6 @@ class ManifestosRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
-    document_id: UUID | None = None
     election_id: UUID | None = None
     id: UUID
     party_id: UUID | None = None

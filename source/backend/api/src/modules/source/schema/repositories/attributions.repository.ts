@@ -39,12 +39,12 @@ export class AttributionsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
-  /** Find attributions by file version id, paged by the shared query. */
-  async findByFileVersion(
+  /** Find attributions by artifact id, paged by the shared query. */
+  async findByArtifact(
     query: BaseQueryDto<AttributionsEntity>,
-    fileVersionId: NonNullable<AttributionsEntity["fileVersionId"]>,
+    artifactId: NonNullable<AttributionsEntity["artifactId"]>,
   ): Promise<IFindAllResponse<AttributionsEntity>> {
-    return await this.findByQuery(query, { fileVersionId, deletedAt: IsNull() });
+    return await this.findByQuery(query, { artifactId, deletedAt: IsNull() });
   }
 
   /** Find attributions by license value id, paged by the shared query. */

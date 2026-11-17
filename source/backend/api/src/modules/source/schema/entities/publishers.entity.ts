@@ -16,15 +16,23 @@ import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
- * Accepted publisher; an optional official identity distinguishes organization from publication channel.
+ * Accepted publisher; an optional official identity distinguishes the organization from its publication channels.
  */
 @Entity({ schema: "source", name: "publishers" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["kindId"])
+@Index(["classificationId"])
 @Index(["countryId"])
 export class PublishersEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
+
+  @Column({ name: "classification_id", type: "uuid", nullable: true })
+  classificationId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "classification_id" })
+  classification?: Relation<ValueEntity>;
 
   @Column({ name: "code", type: "varchar", length: 255 })
   code!: IdentityCode;

@@ -21,9 +21,13 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Accepted rights and credit statement tied to exact content and publisher. (entity)
+ * Credit and rights for one artifact and publisher; equal bytes from other places never overwrite it. (entity)
  */
 export class AttributionsDto {
+  @IsString()
+  @IsUUID()
+  artifactId!: Id;
+
   @IsISO8601({})
   assessedAt!: Instant;
 
@@ -53,10 +57,6 @@ export class AttributionsDto {
   @ValidateIf((object) => object.deletedAt !== null)
   @IsISO8601({})
   deletedAt?: Instant | null;
-
-  @IsString()
-  @IsUUID()
-  fileVersionId!: Id;
 
   @IsString()
   @IsUUID()

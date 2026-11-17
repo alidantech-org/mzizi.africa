@@ -38,7 +38,6 @@
           ,"individual_code"
           ,"kind_code"
           ,"language_code"
-          ,"media_code"
           ,"source_citation_code"
           ,"valid_from"
           ,"valid_until"
@@ -107,13 +106,6 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
-        }
-        ,"media_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/filesystem.Media", "column": "id", "alias": "media_code" }
         }
         ,"source_citation_id": {
           "type": ["string", "null"],
