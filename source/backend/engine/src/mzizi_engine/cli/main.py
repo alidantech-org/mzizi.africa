@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from uuid import UUID
@@ -118,12 +119,17 @@ def main(argv: list[str] | None = None) -> int:
         from mzizi_manifest.shared.paths import SEED_ROOT
 
         with connect(config.require_postgres().url) as conn:
-            outcome = load_seed(conn, args.root or SEED_ROOT, apply=args.apply)
-        for problem in outcome.problems:
+            seeded = load_seed(conn, args.root or SEED_ROOT, apply=args.apply)
+        for problem in seeded.problems:
             print(f"error: {problem}", file=sys.stderr)
-        if outcome.ok:
-            print(summarise(outcome))
-        return 0 if outcome.ok else 1
+        if seeded.ok:
+            print(summarise(seeded))
+            if args.apply and os.environ.get("ENGINE_VECTOR_URL"):
+                from mzizi_engine.runtime.assembly.index_sync import sync_names
+
+                report = sync_names(args.root or SEED_ROOT, ("global", "ke"), os.environ["ENGINE_VECTOR_URL"])
+                print("vector index:", report.model_dump_json())
+        return 0 if seeded.ok else 1
     if args.command == "publish-schemas":
         from mzizi_engine.runtime.assembly.schemas import publish_schemas
 
@@ -159,7 +165,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "draft-rows":
         from mzizi_engine.runtime.assembly.draft_rows import draft_rows
 
-        result = draft_rows(
+        drafted = draft_rows(
             args.csv,
             args.seed,
             args.out,
@@ -168,44 +174,34 @@ def main(argv: list[str] | None = None) -> int:
             args.prefer_set,
             args.defaults,
         )
-        print(f"drafted into {result.out_dir}: {result.rows}")
-        print("still needs a person (rows lacking the column):", result.needs_approval)
-        print("proposed values not yet in the seed:", list(result.unapproved_values))
+        print(f"drafted into {drafted.out_dir}: {drafted.rows}")
+        print("still needs a person (rows lacking the column):", drafted.needs_approval)
+        print("proposed values not yet in the seed:", list(drafted.unapproved_values))
         return 0
     if args.command == "lookup":
         from mzizi_engine.runtime.assembly.knowledge import build_name_index
 
-        index = build_name_index(args.seed, tuple(args.scopes.split(",")))
-        found = index.resolve(args.text, args.table)
-        for match in found:
+        names_index = build_name_index(args.seed, tuple(args.scopes.split(",")))
+        matches = names_index.resolve(args.text, args.table)
+        for match in matches:
             print(f"{match.score:.3f}  {match.tier:8} {match.table}  {match.code}  ({match.text})  {match.evidence}")
-        if index.is_ambiguous(found):
+        if names_index.is_ambiguous(matches):
             print("ambiguous: the best two matches are close; context or review decides")
         if args.vector:
+            from mzizi_engine.persistence.vector.embedders import embedder_from_environment
             from mzizi_engine.persistence.vector.qdrant import QdrantVectorStore
             from mzizi_engine.persistence.vector.sync import collection_name
-            from mzizi_patterns import HashingEmbedder
 
-            embedder = HashingEmbedder()
+            embedder = embedder_from_environment()
             for hit in QdrantVectorStore().search(collection_name(args.vector, embedder), embedder.embed(args.text), 5):
                 print(
                     f"{hit.score:.3f}  vector   {hit.payload['table']}  {hit.payload['code']}  ({hit.payload['text']})"
                 )
         return 0
     if args.command == "index-sync":
-        from mzizi_engine.persistence.vector.qdrant import QdrantVectorStore
-        from mzizi_engine.persistence.vector.sync import collection_name, sync
-        from mzizi_engine.runtime.assembly.knowledge import index_rows
-        from mzizi_patterns import HashingEmbedder
+        from mzizi_engine.runtime.assembly.index_sync import sync_names
 
-        embedder = HashingEmbedder()
-        report = sync(
-            QdrantVectorStore(args.url),
-            collection_name(args.prefix, embedder),
-            index_rows(args.seed, tuple(args.scopes.split(","))),
-            embedder,
-            prune=not args.keep,
-        )
+        report = sync_names(args.seed, tuple(args.scopes.split(",")), args.url, args.prefix, prune=not args.keep)
         print(report.model_dump_json(indent=1))
         return 0
     if args.command == "propose-mapping":

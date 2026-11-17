@@ -75,3 +75,27 @@ def test_the_sync_embeds_only_what_changed_and_removes_what_is_gone() -> None:
     assert (second.embedded, second.unchanged, second.removed) == (0, 2, 0)
     third = sync(store, "c", [rows[0], IndexRow("geography.features", "ke.nairobi", "Nairobi")], embedder)
     assert (third.embedded, third.removed) == (1, 1)
+
+
+def test_a_model_server_embedder_names_its_collection_and_reads_the_vector() -> None:
+    import json
+
+    from mzizi_engine.persistence.vector.embedders import HttpEmbedder
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        body = json.loads(request.content)
+        if request.url.path == "/api/embeddings":
+            return httpx.Response(200, json={"embedding": [0.1, 0.2, 0.3]})
+        return httpx.Response(200, json={"data": [{"embedding": [1.0, 0.0]}], "echo": body["input"]})
+
+    ollama = HttpEmbedder(
+        "ollama",
+        "http://m",
+        "nomic-embed-text",
+        httpx.Client(transport=httpx.MockTransport(handler), base_url="http://m"),
+    )
+    assert ollama.dimension == 3 and ollama.name == "ollama-nomic-embed-text" and ollama.embed("x") == (0.1, 0.2, 0.3)
+    openai = HttpEmbedder(
+        "openai", "http://m", "e5", httpx.Client(transport=httpx.MockTransport(handler), base_url="http://m")
+    )
+    assert openai.dimension == 2

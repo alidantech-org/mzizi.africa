@@ -18,7 +18,8 @@ seed/
 ├── data/<scope>/<domain>/<usage folders...>/<table>.csv   (<label>.<table>.csv when several files feed one table)
 ├── sources/srs/<scope>/<name>/manifest.yml           (+ modules/, examples/, NOTES.md)
 ├── mappings/<schema short>/<table short>/<scope>/<name>.yml
-├── terms/<schema short>/<table short>/<scope>/<name>.yml
+├── terms/<scope>/<domain>.yml                      words, patterns, heading rules and splits, by meaning (sys.trm.<scope>.<domain>)
+├── columns/<scope>/<domain>.yml                    which terms define each seed column, code recipes, name lookups (sys.col.<scope>.<domain>)
 ├── engine/               engine data and jobs: web/classification.yaml, job/<scope>/<name>.json
 └── _fixtures/            tests only
 ```

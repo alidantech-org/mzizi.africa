@@ -50,7 +50,7 @@ def encode_document(output: DocumentOutput) -> DocumentWire:
             if isinstance(block, TableBlock):
                 path = f"tables/page-{page.number}-table-{block.index}.csv"
                 tables.append(WireTable(path=path, page=page.number, rows=len(block.rows), csv=table_csv(block)))
-    for (page_number, index), variants in alternates.items():
+    for (page_number, _index), variants in alternates.items():
         for path, rows in variants:
             tables.append(WireTable(path=path, page=page_number, rows=len(rows), csv=_csv(rows)))
     for logical in stitch_tables(output.pages):

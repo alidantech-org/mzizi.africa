@@ -38,7 +38,14 @@ def test_every_command_points_at_a_declared_port() -> None:
 def test_registered_capabilities_are_all_declared_as_ports_or_internal() -> None:
     declared = {p.capability for p in PORTS}
     undeclared = set(build_default_runtime().operations.names()) - declared
-    assert undeclared <= {"engine.process_info", "source.gate", "filesystem.sync"}
+    assert undeclared <= {
+        "engine.process_info",
+        "source.gate",
+        "filesystem.sync",
+        "filesystem.sync_source_files",
+        "catalog.seed_tables",  # HTTP only: the seed contract catalog
+        "extraction.folder",  # a job stage; the CLI extracts one file at a time
+    }
 
 
 def test_port_state_follows_the_registry() -> None:

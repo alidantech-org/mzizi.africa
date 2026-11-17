@@ -14,8 +14,11 @@ from mzizi_patterns.features.lookup.index import normalise, trigrams
 
 
 class Embedder(Protocol):
-    name: str
-    dimension: int
+    @property
+    def name(self) -> str: ...
+
+    @property
+    def dimension(self) -> int: ...
 
     def embed(self, text: str) -> tuple[float, ...]: ...
 
