@@ -313,3 +313,15 @@ def test_an_exact_date_needs_its_year_and_a_precision(tmp_path: Path) -> None:
     assert any("year" in p for p in run(header + "ke,geo.feature.kind.country,2013-03-04,,exact\n"))
     assert any("year of 2013-03-04" in p for p in run(header + "ke,geo.feature.kind.country,2013-03-04,2012,exact\n"))
     assert any("from_to_precision" in p for p in run(header + "ke,geo.feature.kind.country,2013-03-04,2013,\n"))
+
+
+def test_a_link_no_row_fills_does_not_close_a_cycle() -> None:
+    tables = load_tables()
+    entity_cycle = table_cycle(tables)
+    assert entity_cycle is not None
+    names = {"official.entities", "source.citations", "source.addresses", "source.domains", "source.sources"}
+    assert table_cycle(tables, names) is not None
+    # With no link column filled, the same tables have no dependency on each other at all.
+    unused: dict[str, frozenset[str]] = {name: frozenset() for name in names}
+    assert table_cycle(tables, names, unused) is None
+    assert set(load_order(tables, names, None, unused)) == names

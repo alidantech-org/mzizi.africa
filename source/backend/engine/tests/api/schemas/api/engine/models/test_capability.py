@@ -9,7 +9,9 @@ def test_fields_match_contract() -> None:
     fields = Capability.model_fields
     assert {name: field.alias for name, field in fields.items()} == {
         "description": "description",
-        "kind": "kind",
+        "name": "name",
+        "package": "package",
+        "version": "version",
     }
 
 
@@ -17,6 +19,8 @@ def test_required_fields_match_contract() -> None:
     required = {name for name, field in Capability.model_fields.items() if field.is_required()}
     assert required == set(
         [
-            "kind",
+            "name",
+            "package",
+            "version",
         ]
     )

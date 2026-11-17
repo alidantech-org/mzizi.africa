@@ -65,6 +65,24 @@ const routes: Array<[method: string, path: string]> = [
       encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
     ),
   ],
+  ["GET", "/v1/sources"],
+  [
+    "GET",
+    "/v1/evidence/{citationId}".replace(
+      "{citationId}",
+      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
+    ),
+  ],
+  [
+    "GET",
+    "/v1/locality/{featureId}".replace(
+      "{featureId}",
+      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
+    ),
+  ],
+  ["GET", "/v1/languages"],
+  ["GET", "/v1/locality/at"],
+  ["GET", "/v1/locality/search"],
   ["GET", "/v1/reference/values"],
   ["GET", "/v1/reference/schemes"],
   ["GET", "/v1/reference/lookup"],

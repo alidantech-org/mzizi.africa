@@ -153,8 +153,13 @@ def load_tables(schema_root: Path = SCHEMA_ROOT) -> dict[str, Table]:
     return tables
 
 
-def table_cycle(tables: dict[str, Table], names: set[str] | None = None) -> list[str] | None:
+def table_cycle(
+    tables: dict[str, Table], names: set[str] | None = None, used: dict[str, frozenset[str]] | None = None
+) -> list[str] | None:
     """The first cycle in the foreign-key graph among `names` (default: every table), ignoring self-references.
+
+    `used` names, per table, the stored columns that some row fills; a link column no row fills is not a dependency,
+    so an optional link that the data leaves empty cannot close a cycle.
 
     A cycle means no load order exists without a two-pass load. The reference group has none.
     """
@@ -165,7 +170,10 @@ def table_cycle(tables: dict[str, Table], names: set[str] | None = None) -> list
             {
                 by_id[column.link.table_id]
                 for column in tables[name].columns.values()
-                if column.link and column.link.table_id in by_id and by_id[column.link.table_id] != name
+                if column.link
+                and column.link.table_id in by_id
+                and by_id[column.link.table_id] != name
+                and (used is None or column.name in used.get(name, frozenset()))
             }
             & selected
         )
@@ -192,10 +200,16 @@ def table_cycle(tables: dict[str, Table], names: set[str] | None = None) -> list
     return None
 
 
-def load_order(tables: dict[str, Table], names: set[str], subjects: dict[str, set[str]] | None = None) -> list[str]:
+def load_order(
+    tables: dict[str, Table],
+    names: set[str],
+    subjects: dict[str, set[str]] | None = None,
+    used: dict[str, frozenset[str]] | None = None,
+) -> list[str]:
     """The tables in `names` ordered so every table comes after the tables it links to (self-links ignored).
 
-    `subjects` adds the tables a table names as subjects, which must also be loaded first.
+    `subjects` adds the tables a table names as subjects, which must also be loaded first. `used` limits the links to
+    the columns some row fills, as in `table_cycle`.
     """
     subjects = subjects or {}
     by_id = {table.id: table.qualified_name for table in tables.values()}
@@ -209,7 +223,10 @@ def load_order(tables: dict[str, Table], names: set[str], subjects: dict[str, se
                 {
                     by_id[c.link.table_id]
                     for c in tables[name].columns.values()
-                    if c.link and c.link.table_id in by_id and by_id[c.link.table_id] not in (name, *ordered)
+                    if c.link
+                    and c.link.table_id in by_id
+                    and by_id[c.link.table_id] not in (name, *ordered)
+                    and (used is None or c.name in used.get(name, frozenset()))
                 }
                 | {t for t in subjects.get(name, set()) if t != name and t not in ordered}
             )

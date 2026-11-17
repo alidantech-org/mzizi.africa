@@ -112,6 +112,72 @@
       "summary": "One office with everyone who has held it, newest first."
     },
     {
+      "name": "BrowseSources",
+      "group": "locality",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/sources",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "SourceCollection",
+      "summary": "The data sources behind the platform, with their publisher and how many artifacts and citations each has."
+    },
+    {
+      "name": "GetEvidence",
+      "group": "locality",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/evidence/{citationId}",
+      "role": "detail",
+      "inputs": ["citationId"],
+      "output": "EvidenceDetail",
+      "summary": "One citation with its source, edition, quoted text and the files it points at."
+    },
+    {
+      "name": "GetLocality",
+      "group": "locality",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/locality/{featureId}",
+      "role": "detail",
+      "inputs": ["featureId", "input"],
+      "output": "LocalityProfile",
+      "summary": "The same place document for a known feature, for visitors who pick a place by name instead of position."
+    },
+    {
+      "name": "ListLanguages",
+      "group": "locality",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/languages",
+      "role": "list",
+      "inputs": [],
+      "output": "LanguageList",
+      "summary": "The languages the system can serve names and labels in, for a language picker."
+    },
+    {
+      "name": "ResolveLocality",
+      "group": "locality",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/locality/at",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "LocalityProfile",
+      "summary": "Who and what serves the place at a position: the containing units, the office holders scoped to them, procurement there, media and the evidence for each claim, in the requested language."
+    },
+    {
+      "name": "SearchLocalities",
+      "group": "locality",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/locality/search",
+      "role": "search",
+      "inputs": ["input"],
+      "output": "LocalityMatches",
+      "summary": "Places whose name matches the text, in any language, narrowest units first."
+    },
+    {
       "name": "BrowseSchemeMembers",
       "group": "reference",
       "feature": "catalogue",

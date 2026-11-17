@@ -298,11 +298,16 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                 )
 
     names = set(result.rows)
-    if (cycle := table_cycle(tables, names)) is not None:
+    used: dict[str, frozenset[str]] = {}
+    for name, rows in result.rows.items():
+        by_seed = _columns_by_seed_name(tables[name])
+        filled = {seed for row in rows for seed, value in row.values.items() if value != ""}
+        used[name] = frozenset(by_seed[seed].name for seed in filled if seed in by_seed)
+    if (cycle := table_cycle(tables, names, used)) is not None:
         result.problems.append(f"the tables link in a cycle: {' -> '.join(cycle)}")
     else:
         try:
-            result.order = load_order(tables, names, subject_edges)
+            result.order = load_order(tables, names, subject_edges, used)
         except ValueError as problem:
             result.problems.append(str(problem))
 
