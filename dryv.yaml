@@ -45,17 +45,7 @@ actions:
     stage: files
     extensions: [.ts, .tsx]
     commands:
-      - run:
-          [
-            bun,
-            x,
-            biome,
-            lint,
-            --write,
-            --unsafe,
-            --only=correctness/noUnusedImports,
-            $(files),
-          ]
+      - run: [ bun, x, biome, lint, --write, --unsafe, --only=correctness/noUnusedImports ,$(files) ]
   # Generated TypeScript is formatted with Prettier defaults, matching the editor.
   format-ts:
     stage: files
@@ -421,6 +411,7 @@ packs:
     operations: consumed
     inputs:
       api_path: ../../sdk/api-dart
+      ui_path: ../../ui/flutter
     bind:
       operation.client: { $ref: "#/packs/sdk-dart" }
       schema.types: { $ref: "#/packs/sdk-dart" }

@@ -3,6 +3,6 @@ import 'package:mzizi_app/presentation/screens/features/_features.router.dart';
 
 /// Every generated screen route, grouped by feature.
 final appRouter = GoRouter(
-  initialLocation: '/app/feature-list',
+  initialLocation: '/app/feature-browse',
   routes: [...featuresRouterRoutes],
 );

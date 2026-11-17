@@ -25,6 +25,18 @@ inputs:
     type: string
     default: mzizi_api
     description: Name of the Dart API SDK package the app imports (the `package:` root).
+  ui_path:
+    type: string
+    default: ../../ui/flutter
+    description: Path from the app to the Flutter component package, used as a pubspec path dependency.
+  ui_package:
+    type: string
+    default: mzizi_ui
+    description: Name of the hand-written Flutter component package the pattern templates import.
+  page_size:
+    type: string
+    default: "20"
+    description: Rows a list screen asks for at first; the operation's own maximum still applies.
   api_facade:
     type: string
     default: MziziApi
@@ -32,8 +44,32 @@ inputs:
 
 selections:
   # Views that belong to a feature: screens live in the feature's folder.
+  #
+  # One template per view pattern: a view's role picks the pattern, the library component it imports is the
+  # implementation. Other roles keep the scaffolded screen and its providers.
+  list_screens:
+    subject: view
+    filter:
+      all: { role: list }
+    scope: each
+
+  detail_screens:
+    subject: view
+    filter:
+      all: { role: detail }
+    scope: each
+
   screens:
     subject: view
+    filter:
+      not: { role: [list, detail] }
+    scope: each
+
+  # Paging of every HTTP operation, read from its query plan by the paging template.
+  operations:
+    subject: operation
+    filter:
+      all: { facet: http }
     scope: each
 
   features:
@@ -63,6 +99,37 @@ templates:
       path:
         - $(feature.name.snake)
       symbol: $(feature.name.camel)RouterRoutes
+
+  paging:
+    $ref: '#/selections/operations'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(group.name.snake)
+      symbol: $(subject.name.camel)Paging
+
+  list-screen:
+    $ref: '#/selections/list_screens'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(feature.name.snake)
+      symbol: $(subject.name.pascal)Screen
+    imports:
+      - $ref: '#/needs/operation.client'
+      - $ref: '#/needs/schema.types'
+      - $ref: '#/templates/paging'
+
+  detail-screen:
+    $ref: '#/selections/detail_screens'
+    output:
+      name: $(subject.name.snake)
+      path:
+        - $(feature.name.snake)
+      symbol: $(subject.name.pascal)Screen
+    imports:
+      - $ref: '#/needs/operation.client'
+      - $ref: '#/needs/schema.types'
 
   providers:
     $ref: '#/selections/screens'

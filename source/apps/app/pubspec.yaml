@@ -18,6 +18,9 @@ dependencies:
   # The shared generated API client SDK (app.flutter binds it through operation.client).
   mzizi_api:
     path: ../../sdk/api-dart
+  # The hand-written components the pattern screens import.
+  mzizi_ui:
+    path: ../../ui/flutter
 
 dev_dependencies:
   flutter_test:

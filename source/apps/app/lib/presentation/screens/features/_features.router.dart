@@ -4,16 +4,26 @@ import 'package:mzizi_app/core/network/app_network_gate.dart';
 import 'package:mzizi_app/presentation/routers/_utils.dart';
 import 'package:mzizi_app/presentation/routers/constants/features_screens.dart';
 
-import 'feature_list_screen.dart';
+import 'feature_browse_screen.dart';
+import 'feature_detail_screen.dart';
 
 /// Routes of the Features screens.
 final featuresRouterRoutes = <GoRoute>[
   GoRoute(
-    path: FeaturesScreensRoutes.featureList,
+    path: FeaturesScreensRoutes.featureBrowse,
     pageBuilder: (context, state) => fadeTransition(
       child: const AppNetworkRequiredGate(
-        title: 'Feature List',
-        child: FeatureListScreen(),
+        title: 'Feature Browse',
+        child: FeatureBrowseScreen(),
+      ),
+    ),
+  ),
+  GoRoute(
+    path: FeaturesScreensRoutes.featureDetail,
+    pageBuilder: (context, state) => fadeTransition(
+      child: const AppNetworkRequiredGate(
+        title: 'Feature Detail',
+        child: FeatureDetailScreen(),
       ),
     ),
   ),

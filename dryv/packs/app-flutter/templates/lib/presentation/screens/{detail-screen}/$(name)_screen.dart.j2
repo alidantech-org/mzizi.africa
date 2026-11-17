@@ -1,0 +1,115 @@
+{#- The detail pattern: one record read when the view opens, shown as labelled values with a list for each
+    list of records inside it. The view's context values arrive as address (query) values. -#}
+{%- macro client_for(link) -%}
+{%- for dependency in file.dependency_groups.operation_client %}{% if dependency.target.id == link.id %}{{ dependency.symbol }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{%- for part in view.parts if part.kind == 'present' -%}{%- if loop.first -%}
+{%- set op = part.present.source.port.operation -%}
+import 'dart:convert';
+
+import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:{{ pack.inputs.api_package }}/api.dart';
+import 'package:{{ pack.inputs.ui_package }}/{{ pack.inputs.ui_package }}.dart';
+
+/// {{ view.description or view.name.title }}
+class {{ file.symbol }} extends StatefulWidget {
+  const {{ file.symbol }}({super.key});
+
+  @override
+  State<{{ file.symbol }}> createState() => _{{ file.symbol }}State();
+}
+
+class _{{ file.symbol }}State extends State<{{ file.symbol }}> {
+  static const _scalars = <ColumnSpec>[
+{%- for field in part.present.source.port.value.schema.fields if field.value.kind == 'property' and field.array is none %}
+    ColumnSpec(key: '{{ field.name.raw }}', label: '{{ field.name.title }}'),
+{%- endfor %}
+  ];
+
+  static const _lists = <String, ({String label, List<ColumnSpec> columns})>{
+{%- for field in part.present.source.port.value.schema.fields if field.value.kind == 'schema' and field.array is not none %}
+    '{{ field.name.raw }}': (
+      label: '{{ field.name.title }}',
+      columns: <ColumnSpec>[
+{%- for column in field.value.schema.fields if column.value.kind == 'property' and column.array is none %}
+        ColumnSpec(key: '{{ column.name.raw }}', label: '{{ column.name.title }}'),
+{%- endfor %}
+      ],
+    ),
+{%- endfor %}
+  };
+
+  Map<String, Object?>? _record;
+  String? _error;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final address = GoRouterState.of(context).uri.queryParameters;
+{%- for item in view.context %}
+    final {{ item.name.camel }} = address['{{ item.name.raw }}'];
+{%- endfor %}
+{%- for load in view.parts if load.kind == 'invoke' and 'run:on-open' in load.tags %}
+    if (
+{%- for b in load.invoke.context %}{{ b.source.name.camel }} == null{% if not loop.last %} || {% endif %}{% endfor %}) {
+      setState(() => _error = 'Missing address value.');
+      return;
+    }
+    final result = await {{ client_for(op) }}({{ pack.inputs.api_facade }}.connection).{{ op.name.camel }}(
+{%- for b in load.invoke.context %}
+      {{ b.target.field.camel }}: {{ b.source.name.camel }},
+{%- endfor %}
+    );
+{%- endfor %}
+    if (!mounted) return;
+    setState(() {
+      if (result.isError) {
+        _error = result.message;
+        return;
+      }
+      _error = null;
+      _record = jsonDecode(jsonEncode(result.dataOrNull)) as Map<String, Object?>?;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final record = _record;
+    return MziziPageScaffold(
+      title: '{{ view.name.title }}',
+      children: [
+        if (_error != null) Text(_error!),
+        if (record != null) ...[
+          MziziSection(
+            child: MziziDetailList(
+              entries: [
+                for (final column in _scalars)
+                  DetailEntry(
+                    label: column.label,
+                    value: record[column.key] == null ? null : '${record[column.key]}',
+                  ),
+              ],
+              missingText: 'Not recorded',
+            ),
+          ),
+          for (final entry in _lists.entries)
+            MziziSection(
+              title: entry.value.label,
+              child: MziziRowList(
+                columns: entry.value.columns,
+                rows: ((record[entry.key] as List?) ?? const [])
+                    .cast<Map<String, Object?>>(),
+                emptyText: 'None recorded.',
+              ),
+            ),
+        ],
+      ],
+    );
+  }
+}
+{%- endif -%}{%- endfor -%}

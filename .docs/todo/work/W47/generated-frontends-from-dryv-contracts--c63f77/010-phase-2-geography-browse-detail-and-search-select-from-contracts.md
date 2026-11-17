@@ -19,7 +19,8 @@ The plan is `.docs/_plan/guides/frontend-assembly-from-contracts.md`; decisions 
 - [x] `source/ui/web` exists as a package with the page and section shells, filter bar, search-select, data table, pagination and detail list, themed by the generated theme.
 - [x] Pattern binding lives in the project pack only: selections by view role pick a pattern template that imports the hand-written components (no separate manifest, by owner decision).
 - [x] A project pack assembles the views into routes and typed glue; the web app builds and the geography browse and detail pages render from the live API.
-- [ ] The Flutter side exists: the app contract's geography views, `source/ui/flutter` components and the Flutter pattern templates, verified with `flutter analyze` and a run.
+- [x] The Flutter side exists: the app contract's geography views, `source/ui/flutter` components and the Flutter pattern templates, verified with `flutter analyze`.
+- [ ] The Flutter app is run on a device, emulator or Linux (needs `libsecret-devel`) against the live API and the browse and detail screens are checked.
 - [ ] Every Dryv gap found is recorded with a failing example, and `task validate` passes.
 
 ## Progress
@@ -70,3 +71,11 @@ Found while verifying: the hand-written geometry use cases failed over HTTP with
 
 6. **A transition carries no context bindings.** Opening a feature from the list should supply the detail view's `featureId` from the row's `featureId`. The transition names only an operation, so the generated list passes every text value of the row as address values and the detail page reads the ones it needs by name. Proposal candidate: transition bindings from source part values to target view context.
 7. **Not yet done:** the feature-type filter is a plain text field (needs Dryv proposal 2), the detail view still uses the tagged `invoke` part (proposal 1), and the Flutter library, pack templates and the `dev` app are not yet built.
+
+## Flutter side
+
+The `app` contract declares the same `FeatureBrowse` and `FeatureDetail` views for the mobile surface. `source/ui/flutter` (`mzizi_ui`, a path dependency of the app) holds `MziziPageScaffold`, `MziziSection`, `MziziFilterBar`, `MziziRowList`, `MziziPaginationBar`, `MziziDetailList` and the shared types, coloured only by the app theme. `dryv/packs/app-flutter` gained list and detail screen templates selected by view role (other roles keep the scaffolded screen and its providers) and a `paging` template that exports each operation's page names from its query plan. On a phone the `collection: table` hint becomes a list of tiles: the pack chooses the representation per surface, the contract does not.
+
+Verified: `flutter analyze` is clean for the app and for `mzizi_ui`; `flutter build web` compiled the app (dart2js). **Not run with data:** the app depends on `flutter_api_bridge`, which needs platform storage plugins. A widget test hangs on them; the web build starts but fails at start-up (the bridge uses `path_provider`, which has no web support), and the API has no CORS headers anyway; a Linux desktop run needs the system package `libsecret-devel`, which I did not install. A run needs an Android or iOS device or emulator, or that package. The temporary platform folders and test files made for these attempts were removed.
+
+Same Dryv findings as the web slice apply (present parts cannot bind context; a field source's operation is not a dependency, so the feature-type filter is a text field; a transition carries no context bindings, so the row's text values travel as address values).

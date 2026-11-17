@@ -18,6 +18,9 @@ dependencies:
   # The shared generated API client SDK (app.flutter binds it through operation.client).
   {{ pack.inputs.api_package }}:
     path: {{ pack.inputs.api_path }}
+  # The hand-written components the pattern screens import.
+  {{ pack.inputs.ui_package }}:
+    path: {{ pack.inputs.ui_path }}
 
 dev_dependencies:
   flutter_test:

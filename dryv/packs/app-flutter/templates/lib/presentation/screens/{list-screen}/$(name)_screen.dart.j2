@@ -1,0 +1,149 @@
+{#- The list pattern: filters over a paged list whose rows open the related destination. Hand-written components
+    implement it; this template only fills their props from the contract. -#}
+{%- macro client_for(link) -%}
+{%- for dependency in file.dependency_groups.operation_client %}{% if dependency.target.id == link.id %}{{ dependency.symbol }}{% endif %}{% endfor -%}
+{%- endmacro -%}
+{%- macro paging_for(link) -%}
+{%- for dependency in file.dependencies -%}{%- if dependency.template == 'paging' and dependency.target.id == link.id -%}{{ dependency.symbol }}{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+{%- macro paging_path(link) -%}
+{%- for dependency in file.dependencies -%}{%- if dependency.template == 'paging' and dependency.target.id == link.id -%}{{ dependency.path.prefixed }}{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+{%- macro this_destination() -%}{%- for d in application.destinations -%}{%- if d.view.id == view.id -%}{{ d.name.raw }}{%- endif -%}{%- endfor -%}{%- endmacro -%}
+{%- macro target_route() -%}{%- set me = this_destination() -%}{%- for t in application.transitions -%}{%- if t.source.raw == me -%}{%- for d in application.destinations -%}{%- if d.name.raw == t.target.raw -%}/{{ view.group.name.kebab }}/{{ d.view.name.kebab }}{%- endif -%}{%- endfor -%}{%- endif -%}{%- endfor -%}{%- endmacro -%}
+{%- set route = target_route() -%}
+{%- for part in view.parts if part.kind == 'present' -%}{%- if loop.first -%}
+{%- set op = part.present.source.port.operation -%}
+{%- set select = part.present.source.select[0].dotted -%}
+import 'dart:convert';
+import 'dart:math';
+
+{%- if route != '' %}
+import 'package:go_router/go_router.dart';
+{%- endif %}
+import 'package:material_ui/material_ui.dart';
+import 'package:{{ pack.inputs.api_package }}/api.dart';
+import 'package:{{ pack.inputs.ui_package }}/{{ pack.inputs.ui_package }}.dart';
+import '{{ paging_path(op) }}';
+
+/// {{ view.description or view.name.title }}
+class {{ file.symbol }} extends StatefulWidget {
+  const {{ file.symbol }}({super.key});
+
+  @override
+  State<{{ file.symbol }}> createState() => _{{ file.symbol }}State();
+}
+
+class _{{ file.symbol }}State extends State<{{ file.symbol }}> {
+  static const _pageSize = {{ pack.inputs.page_size }};
+
+  static const _filterFields = <FieldSpec>[
+{%- for filters in view.parts if filters.kind == 'collect' and filters.collect.target.port is not none %}
+{%- for path in filters.collect.target.collect %}{% for field in filters.collect.target.port.value.schema.fields if field.name.raw == path.dotted %}
+    FieldSpec(name: '{{ field.name.raw }}', label: '{{ field.name.title }}'),
+{%- endfor %}{% endfor %}
+{%- endfor %}
+  ];
+
+  static const _columns = <ColumnSpec>[
+{%- for field in part.present.source.port.value.schema.fields if field.name.raw == select %}
+{%- for column in field.value.schema.fields if column.value.kind == 'property' and column.array is none %}
+    ColumnSpec(key: '{{ column.name.raw }}', label: '{{ column.name.title }}'),
+{%- endfor %}
+{%- endfor %}
+  ];
+
+  Map<String, String> _filters = const {};
+  PageWindow _window = const PageWindow(limit: _pageSize, offset: 0);
+  List<Map<String, Object?>> _rows = const [];
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final input = <String, Object?>{
+      for (final entry in _filters.entries)
+        if (entry.value.isNotEmpty) entry.key: entry.value,
+    };
+    final paging = {{ paging_for(op) }};
+    if (paging.isPaged) {
+      input[paging.limit] = min(_window.limit, paging.maxLimit);
+      input[paging.offset] = _window.offset;
+    }
+{%- for filters in view.parts if filters.kind == 'collect' and filters.collect.target.port is not none %}{% if loop.first %}
+    final result = await {{ client_for(op) }}({{ pack.inputs.api_facade }}.connection).{{ op.name.camel }}(
+      {% if filters.collect.target.port.field is none %}input{% else %}{{ filters.collect.target.port.field.camel }}{% endif %}: {{ filters.collect.target.port.value.generated.schema_types.symbol }}.fromJson(input),
+    );
+{%- endif %}{% endfor %}
+    if (!mounted) return;
+    setState(() {
+      if (result.isError) {
+        _error = result.message;
+        _rows = const [];
+        return;
+      }
+      _error = null;
+      final json =
+          jsonDecode(jsonEncode(result.dataOrNull)) as Map<String, Object?>?;
+      _rows = ((json?['{{ select }}'] as List?) ?? const [])
+          .cast<Map<String, Object?>>();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MziziPageScaffold(
+      title: '{{ view.name.title }}',
+      children: [
+        MziziSection(
+          child: MziziFilterBar(
+            fields: _filterFields,
+            initial: _filters,
+            submitLabel: 'Apply',
+            onSubmit: (values) {
+              _filters = values;
+              _window = PageWindow(limit: _window.limit, offset: 0);
+              _load();
+            },
+          ),
+        ),
+        MziziSection(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (_error != null) Text(_error!),
+              MziziRowList(
+                columns: _columns,
+                rows: _rows,
+                emptyText: 'Nothing matches.',
+{%- if route != '' %}
+                onOpen: (row) {
+                  // The row's text values travel as the target's context values, matched by name.
+                  final values = <String, String>{
+                    for (final entry in row.entries)
+                      if (entry.value is String) entry.key: entry.value as String,
+                  };
+                  context.go(Uri(path: '{{ route }}', queryParameters: values).toString());
+                },
+{%- endif %}
+              ),
+              MziziPaginationBar(
+                window: _window,
+                received: _rows.length,
+                onChange: (window) {
+                  _window = window;
+                  _load();
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+{%- endif -%}{%- endfor -%}
