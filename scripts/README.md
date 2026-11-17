@@ -45,6 +45,8 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS and other local 
 | `bun run infra:up` / `infra:down`         | invokes Docker Compose using `compose.local.yaml`; the file is absent in the current checkout                          |
 | `bun run seed -- check`                   | `mzizi-manifest`: `check`, `lock`, `report`, `validate-structure <dir>`                                                                          |
 | `bun run engine -- check`                 | `mzizi-engine`: `serve`, `capabilities`, `check`                                                                                                 |
+| `bun run dev:data`                        | creates and fills the dev database `mzizi_ui` (migrations, roles, invented dev seed and geoBoundaries outlines from `.dev/`, engine seed loader); safe to repeat |
+| `bun run dev:stack -- api\|engine\|web\|portal\|flutter\|stop` | runs one dev service in the background against `mzizi_ui` (API :8700, engine :8800, site :3300, portal :3400, Flutter web :8090); logs in `.dev/logs/` |
 | `bun run docs:validate`                   | `task validate` for the `.docs` workspace                                                                                                        |
 
 Arguments after `--` go to the command. `bun scripts/mz.ts <command> [args]` is the same thing without the `--`.
