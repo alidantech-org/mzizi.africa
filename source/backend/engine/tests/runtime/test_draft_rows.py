@@ -79,3 +79,11 @@ def test_a_bidder_list_becomes_bids_and_companies(tmp_path: Path) -> None:
     ]  # legal forms (Ltd, Co) are not part of the code
     assert all(b["outcome_code"] == "civ.bid.outcome.successful" for b in bids)
     assert {e["code"] for e in rows(out / "official.entities.csv")} == {"ke.rawel-holdings", "ke.fornani"}
+
+
+@needs_seed
+def test_a_heading_matched_only_by_a_column_name_never_makes_rows(tmp_path: Path) -> None:
+    source = tmp_path / "register.csv"
+    source.write_text("Name of the Party,Slogan,Symbol\nLabour Party of Kenya,Nyota,Star\n", encoding="utf-8")
+    draft_rows(source, SEED, tmp_path / "draft", ("global", "ke"), "ke", frozenset())
+    assert sorted(p.name for p in (tmp_path / "draft").glob("*.csv")) == ["official.entities.csv", "official.names.csv"]
