@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.ke.politics
+describe: 'Kenyan political wording from the ORPP registers and notices. Terms from one publisher carry source: orpp.'
+extends:
+- sys.trm.global.politics
+languages:
+- en
+- sw
+groups:
+- group: party-words
+  label: ORPP register vocabulary
+  terms:
+  - value: fully registered
+    aliases:
+    - fully registered parties
+    - register of political parties
+    - register of particulars
+    - particulars of fully registered parties
+    kind: concept
+    source: orpp
+  - value: provisionally registered
+    aliases:
+    - provisional registration
+    - provisionally registered parties
+    - notice for provisional registration
+    - notisi ya usajili wa muda
+    - value: usajili wa muda
+      language: sw
+    kind: concept
+    source: orpp
+  - value: political parties fund
+    aliases:
+    - ppf
+    - value: mfuko wa vyama vya siasa
+      language: sw
+    kind: concept
+    source: orpp
+  - value: political parties liaison committee
+    aliases:
+    - pplc
+    - value: kamati ya uhusiano ya vyama vya siasa
+      language: sw
+    kind: concept
+    source: orpp
+  - value: nomination rules
+    aliases:
+    - party nomination rules
+    - certified nomination rules
+    kind: concept
+    source: orpp
+  - value: registrar of political parties
+    aliases:
+    - orpp
+    - office of the registrar of political parties
+    - value: ofisi ya msajili wa vyama vya siasa
+      language: sw
+    kind: concept
+    source: orpp
+  - value: political parties act
+    aliases:
+    - ppa
+    - political parties act 2011
+    - the political parties act
+    kind: concept
+    source: orpp
+- group: certificate-headings
+  label: ORPP certificate headings
+  terms:
+  - value: certificate serial no
+    aliases:
+    - certificate serial number
+    - certificate serial
+    kind: concept
+    source: orpp
+- group: postal-headings
+  label: ORPP postal heading
+  terms:
+  - value: postal address of party
+    aliases:
+    - postal address of the party
+    kind: concept
+    source: orpp
+- group: head-office-headings
+  label: ORPP head office heading
+  terms:
+  - value: location of head office of party
+    aliases:
+    - location of head office of the party
+    kind: concept
+    source: orpp
+- group: change-headings
+  label: ORPP changes heading
+  terms:
+  - value: changes in particulars
+    aliases:
+    - changes
+    kind: concept
+    source: orpp

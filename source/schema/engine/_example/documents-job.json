@@ -2,7 +2,7 @@
   "spec_version": 1,
   "kind": "collection",
   "name": "documents-example",
-  "code": "sys.eng.job.example.documents",
+  "code": "sys.eng.job.global.documents-example",
   "sources": [
     {
       "url": "https://example.org/",

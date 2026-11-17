@@ -1,0 +1,366 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.global.politics
+describe: 'Politics: parties, elections and the headings of register and results tables, with Swahili forms tagged sw. Neutral across
+  countries.'
+languages:
+- en
+- sw
+groups:
+- group: party-words
+  label: Political parties and their parts
+  terms:
+  - value: political party
+    aliases:
+    - party
+    - chama cha siasa
+    - chama
+    - parties
+    - vyama
+    kind: concept
+  - value: coalition
+    aliases:
+    - muungano
+    - alliance
+    - umbrella party
+    - pre-election coalition
+    - post-election coalition
+    - coalition party
+    kind: concept
+  - value: party leader
+    aliases:
+    - kiongozi wa chama
+    - leader of the party
+    kind: concept
+  - value: party symbol
+    aliases:
+    - symbol
+    - alama
+    - party colours
+    - party colors
+    - colours
+    - colors
+    - party slogan
+    - slogan
+    - motto
+    - kauli mbiu
+    kind: concept
+  - value: party membership
+    aliases:
+    - membership
+    - wanachama
+    - member
+    - members list
+    - membership list
+    kind: concept
+  - value: party constitution
+    aliases:
+    - party manifesto
+    - manifesto
+    - ilani
+    - party rules
+    - nomination rules
+    - party nomination rules
+    kind: concept
+  - value: registered
+    aliases:
+    - registration
+    - usajili
+    - provisional registration
+    - provisionally registered
+    - fully registered
+    - full registration
+    - deregistered
+    - deregistration
+    - suspended
+    - dissolved
+    - merged
+    - merger
+    - amalgamation
+    kind: concept
+  - value: party headquarters
+    aliases:
+    - head office
+    - headquarters
+    - makao makuu
+    - registered office
+    - postal address
+    kind: concept
+  - value: formerly
+    aliases:
+    - formerly known as
+    - previously
+    - zamani
+    - changed name to
+    - renamed
+    - change of name
+    - abbreviation
+    - acronym
+    - party name
+    - name of the party
+    - jina la chama
+    kind: concept
+  - value: certificate
+    aliases:
+    - cheti
+    - certificate of registration
+    - certificate serial
+    - certificate no
+    - certificate number
+    - date of issue
+    kind: concept
+  - value: party funding
+    aliases:
+    - party fund
+    - allocation to parties
+    - qualifying parties
+    kind: concept
+  - value: party nomination
+    aliases:
+    - nominations
+    - nomination particulars
+    - party list
+    - party lists
+    - nominees
+    - nominated candidates
+    kind: concept
+- group: election-words
+  label: Elections
+  terms:
+  - value: election
+    aliases:
+    - uchaguzi
+    - general election
+    - by-election
+    - by election
+    - repeat election
+    - uchaguzi mkuu
+    kind: concept
+  - value: ballot
+    aliases:
+    - ballot paper
+    - kura
+    - votes
+    - vote
+    - voting
+    - voter
+    - voters
+    - mpiga kura
+    kind: concept
+  - value: candidate
+    aliases:
+    - candidates
+    - mgombea
+    - wagombea
+    - aspirant
+    - aspirants
+    - nominee
+    - independent candidate
+    - mgombea binafsi
+    kind: concept
+  - value: seat
+    aliases:
+    - seats
+    - kiti
+    - position
+    - elective position
+    - elective positions
+    - nafasi
+    kind: concept
+  - value: constituency
+    aliases:
+    - constituencies
+    - eneo bunge
+    - ward
+    - wards
+    - wadi
+    - county
+    - counties
+    - kaunti
+    kind: concept
+  - value: results
+    aliases:
+    - matokeo
+    - declared
+    - winner
+    - mshindi
+    - runner-up
+    - turnout
+    - valid votes
+    - rejected votes
+    - spoilt votes
+    - registered voters
+    - wapiga kura waliosajiliwa
+    kind: concept
+  - value: polling station
+    aliases:
+    - kituo cha kupigia kura
+    - polling centre
+    - tally
+    - tallying
+    - returning officer
+    - afisa mkuu wa uchaguzi
+    kind: concept
+  - value: manifesto
+    aliases:
+    - ilani ya uchaguzi
+    kind: concept
+  - value: petition
+    aliases:
+    - election petition
+    - ombi la uchaguzi
+    kind: concept
+  - value: campaign
+    aliases:
+    - kampeni
+    - campaign period
+    - nomination period
+    kind: concept
+- group: party-name-headings
+  label: Headings of a party name
+  terms:
+  - value: party
+    aliases:
+    - political party
+    - name of the party
+    - name of party
+    - party name
+    - chama
+    - jina la chama
+    kind: concept
+- group: party-abbreviation-headings
+  label: Headings of a party abbreviation
+  terms:
+  - value: abbreviation
+    aliases:
+    - abbrev
+    - abbrv
+    - abrv
+    - acronym
+    - short name
+    - party abbreviation
+    - herufi
+    kind: concept
+- group: certificate-headings
+  label: Headings of a certificate number
+  terms:
+  - value: certificate serial no
+    aliases:
+    - certificate serial
+    - certificate no
+    - certificate number
+    - registration number
+    - reg no
+    - serial no
+    - cheti
+    kind: concept
+- group: symbol-headings
+  label: Headings of a party symbol
+  terms:
+  - value: symbol
+    aliases:
+    - party symbol
+    - alama
+    - logo
+    - emblem
+    kind: concept
+- group: colour-headings
+  label: Headings of party colours
+  terms:
+  - value: colours
+    aliases:
+    - colors
+    - party colours
+    - party colors
+    - rangi
+    kind: concept
+- group: slogan-headings
+  label: Headings of a party slogan
+  terms:
+  - value: slogan
+    aliases:
+    - motto
+    - party slogan
+    - kauli mbiu
+    kind: concept
+- group: postal-headings
+  label: Headings of a postal address
+  terms:
+  - value: postal address
+    aliases:
+    - postal address of party
+    - p.o. box
+    - box
+    - anwani ya posta
+    - mailing address
+    kind: concept
+- group: head-office-headings
+  label: Headings of a head office location
+  terms:
+  - value: location of head office
+    aliases:
+    - head office
+    - location of head office of party
+    - headquarters
+    - physical address
+    - makao makuu
+    - registered office
+    kind: concept
+- group: change-headings
+  label: Headings of changes and remarks
+  terms:
+  - value: changes
+    aliases:
+    - change
+    - formerly
+    - remarks
+    - notes
+    - comments
+    - maelezo
+    - changes in particulars
+    kind: concept
+- group: candidate-headings
+  label: Headings of a candidate
+  terms:
+  - value: candidate
+    aliases:
+    - name of candidate
+    - mgombea
+    - nominee
+    - aspirant
+    kind: concept
+- group: seat-headings
+  label: Headings of an elective seat
+  terms:
+  - value: constituency
+    aliases:
+    - county
+    - ward
+    - seat
+    - position
+    - eneo
+    - kaunti
+    - wadi
+    kind: concept
+- group: votes-headings
+  label: Headings of votes
+  terms:
+  - value: votes
+    aliases:
+    - total votes
+    - valid votes
+    - kura
+    - percentage of votes
+    - '% of votes'
+    - votes cast
+    kind: concept
+- group: membership-headings
+  label: Headings of membership counts
+  terms:
+  - value: member
+    aliases:
+    - members
+    - membership
+    - wanachama
+    - membership numbers
+    - number of members
+    kind: concept

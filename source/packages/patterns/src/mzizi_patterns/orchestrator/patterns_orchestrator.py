@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import Counter
 
+from mzizi_patterns.features.columns.columns import match_columns
 from mzizi_patterns.features.dedupe.dedupe import jaccard, minhash, shingles, signature_similarity
 from mzizi_patterns.features.score.score import (
     document_frequency,
@@ -12,9 +13,31 @@ from mzizi_patterns.features.score.score import (
 )
 from mzizi_patterns.features.terms.terms import merge_groups, phrase_index, resolve
 from mzizi_patterns.features.tokenise.tokenise import words
-from mzizi_patterns.shared.contracts import DocumentScore, DocumentText, DuplicatePair, Field_, Profile, TermList
+from mzizi_patterns.features.vocabulary.vocabulary import Vocabulary
+from mzizi_patterns.shared.contracts import (
+    ColumnProbe,
+    ColumnProposal,
+    Dictionary,
+    DocumentScore,
+    DocumentText,
+    DuplicatePair,
+    Field_,
+    Profile,
+    TermList,
+)
 
 MIN_SHINGLES = 20
+
+
+def propose_columns(
+    probes: tuple[ColumnProbe, ...],
+    term_lists: tuple[TermList, ...],
+    dictionaries: tuple[Dictionary, ...],
+    scopes: tuple[str, ...] = ("global",),
+    prefer: frozenset[str] = frozenset(),
+) -> tuple[ColumnProposal, ...]:
+    """Match source columns to database columns with the term lists of `scopes` and the column dictionaries."""
+    return match_columns(probes, Vocabulary(term_lists, scopes), dictionaries, prefer)
 
 
 class PatternOrchestrator:
@@ -55,4 +78,4 @@ class PatternOrchestrator:
         return tuple(sorted(pairs, key=lambda p: -p.similarity))
 
 
-__all__ = ["Field_", "PatternOrchestrator"]
+__all__ = ["Field_", "PatternOrchestrator", "propose_columns"]

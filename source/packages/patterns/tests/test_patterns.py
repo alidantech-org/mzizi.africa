@@ -78,7 +78,7 @@ def test_near_duplicates_ignore_documents_without_text() -> None:
     assert jaccard(shingles(text), shingles(text)) == 1.0
 
 
-def test_the_drafted_layers_merge_and_a_swahili_alias_reaches_the_global_term() -> None:
+def test_the_seed_document_lists_layer_and_a_swahili_alias_reaches_the_global_term() -> None:
     from pathlib import Path
 
     import pytest
@@ -94,4 +94,4 @@ def test_the_drafted_layers_merge_and_a_swahili_alias_reaches_the_global_term() 
     scores = engine_.score_corpus(
         (DocumentText(name="a", filename="notisi ya usajili wa muda", body="notisi"), *filler)
     )
-    assert scores[0].kind == "notice"  # the Swahili alias of the global term, loaded through two extends
+    assert scores[0].kind == "notice"  # the Swahili alias of the global term, through ke extends global

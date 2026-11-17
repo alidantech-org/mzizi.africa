@@ -50,11 +50,12 @@ In a seed CSV (`data/<scope>/<domain>/<table>.csv`, or a folder named for the ta
 |---|---|---|
 | Source (website, API) | `pg.src.srs.<scope>.<name>` (a source is a row) | `seed/sources/srs/<scope>/<name>/manifest.yml` |
 | Mapping | `sys.map.<schema short>.<table short>.<scope>.<name>`, named after the table it writes first | `seed/mappings/<schema short>/<table short>/<scope>/<name>.yml` |
-| Term list | `sys.trm.<schema short>.<table short>.<scope>.<name>` | `seed/terms/<schema short>/<table short>/<scope>/<name>.yml` |
+| Term list | `sys.trm.<scope>.<domain>` | `seed/terms/<scope>/<domain>.yml` |
+| Column dictionary | `sys.col.<scope>.<domain>` | `seed/columns/<scope>/<domain>.yml` |
 | Job spec | `sys.eng.job.<scope>.<name>` | `seed/engine/job/<scope>/<name>.json` |
 | Engine data | `sys.eng.<name path>`, for example `sys.eng.web.classification` | `seed/engine/web/classification.yaml` |
 
-`<scope>` is `global` or a country code. A manifest may use items of its own scope or `global`, never another country; `global` uses only `global`. A file's folder path mirrors its code without the first two segments. Expected table columns are not a manifest: they are the object form of a mapping's `inputs`.
+`<scope>` is `global` or a country code. For term lists it says where the meaning is true, not where a word was found (county, governor and president are `global`; a Kenya-only office is `ke`), and a language is never a scope: each term and alias carries a language code. A term list holds words, patterns and heading rules for one domain (people, address, money, procurement, ...) and never names a table; a column dictionary links database columns to those terms by list code and key. A manifest may use items of its own scope or `global`, never another country; `global` uses only `global`. A file's folder path mirrors its code without the first two segments. Expected table columns are not a manifest: they are the object form of a mapping's `inputs`.
 
 ## Checks
 

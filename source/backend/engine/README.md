@@ -95,6 +95,7 @@ Choose `ENGINE_HOST_REQUESTS_PER_SECOND`, `ENGINE_HOST_CONCURRENCY`, and `ENGINE
 ```bash
 uv run mzizi-engine supervise            # run in one terminal
 uv run mzizi-engine run-job spec.json     # run a spec now, in this terminal
+uv run mzizi-engine propose-mapping table.csv --scopes global,ke --prefer official,politics   # which database columns each column of a CSV maps to
 uv run mzizi-engine submit-run spec.json  # use the returned run ID
 uv run mzizi-engine show-run <run-id>
 uv run mzizi-engine cancel-run <run-id>

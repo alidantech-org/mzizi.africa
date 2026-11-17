@@ -9,7 +9,7 @@ tags: [purpose:publications, domain:politics, domain:finance, domain:procurement
 fetch: { mode: browser }
 modules: [documents]
 uses:
-  terms: [sys.trm.src.doc.ke.orpp]  # extends sys.trm.src.doc.ke.documents, which extends sys.trm.src.doc.global.documents
+  terms: [sys.trm.ke.documents, sys.trm.ke.politics]
 policy:
   assessment: { ref: assess-orpp }
   licence: { ref: unconfirmed, source: "https://orpp.or.ke/" }

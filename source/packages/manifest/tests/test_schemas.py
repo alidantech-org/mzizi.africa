@@ -193,11 +193,11 @@ def test_bootstrap_names_environment_variables_only() -> None:
 
 def test_a_term_list_validates() -> None:
     document = {
-        "code": "sys.trm.ref.pat.ke.office-names",
+        "code": "sys.trm.ke.office-names",
         "terms": [{"value": "governor", "aliases": ["county governor"]}],
     }
     assert _errors("engine/terms.schema.json", document) == []
-    assert _errors("engine/terms.schema.json", {"code": "sys.trm.ref.pat.ke.office-names", "terms": []})
+    assert _errors("engine/terms.schema.json", {"code": "sys.trm.ke.office-names", "terms": []})
 
 
 def test_a_mapping_input_may_state_the_expected_table_column() -> None:

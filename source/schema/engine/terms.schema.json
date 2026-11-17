@@ -2,81 +2,565 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json",
   "title": "Term list vocabulary",
-  "description": "Words and phrases a source, ranking rule or pattern can use by code, grouped and labelled. A list belongs to one scope (global, a country, or a named source) and may extend lists of its own scope or global; groups with the same name merge across the lists a consumer loads, and terms with the same value merge their aliases. The web classification data has its own typed schema in web.schema.json. Vector settings are not defined yet: the vector store is only a skeleton.",
+  "description": "Words, patterns and heading rules about the meaning of text, grouped by domain and labelled. A term list is `sys.trm.<scope>.<domain>` and lives at `seed/terms/<scope>/<domain>.yml`; the scope is `global` or a country, chosen by where the meaning is true, not where the word was found. Language is a tag on each term, never a scope. Terms are neutral: they never name a table. A column dictionary (`sys.col.<scope>.<domain>`) or a mapping links database columns to groups and patterns here by list code and key. Groups with the same key merge across the lists a consumer loads, and terms with the same value merge their aliases.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["code"],
-  "anyOf": [{ "required": ["terms"] }, { "required": ["groups"] }],
+  "required": [
+    "code"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "terms"
+      ]
+    },
+    {
+      "required": [
+        "groups"
+      ]
+    },
+    {
+      "required": [
+        "patterns"
+      ]
+    },
+    {
+      "required": [
+        "heading_rules"
+      ]
+    },
+    {
+      "required": [
+        "splits"
+      ]
+    }
+  ],
   "properties": {
-    "code": { "$ref": "../sources/common.schema.json#/$defs/code" },
-    "describe": { "type": "string" },
+    "code": {
+      "$ref": "../sources/common.schema.json#/$defs/code"
+    },
+    "describe": {
+      "type": "string"
+    },
     "extends": {
       "type": "array",
       "description": "Codes of term lists this one builds on. Each must be in this list's scope or global; a global list extends none.",
-      "items": { "$ref": "../sources/common.schema.json#/$defs/code" },
+      "items": {
+        "$ref": "../sources/common.schema.json#/$defs/code"
+      },
       "uniqueItems": true
     },
     "languages": {
       "type": "array",
-      "description": "Languages the list's terms and aliases are written in (BCP 47 primary tags such as en, sw). A term or alias without its own language takes the first one.",
-      "items": { "$ref": "#/$defs/language" },
+      "description": "Language codes (reference.languages codes such as en, sw) the list's terms are written in. A term or alias without its own language takes the first one.",
+      "items": {
+        "$ref": "#/$defs/language"
+      },
       "uniqueItems": true
     },
     "terms": {
       "type": "array",
       "description": "Terms that belong to no group. Use groups for anything a ranking rule will refer to.",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/term" }
+      "items": {
+        "$ref": "#/$defs/term"
+      }
     },
     "groups": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/group" }
+      "items": {
+        "$ref": "#/$defs/group"
+      }
+    },
+    "patterns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/pattern"
+      }
+    },
+    "heading_rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/headingRule"
+      }
+    },
+    "splits": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/split"
+      }
     }
   },
   "$defs": {
-    "language": { "type": "string", "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)*$" },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)*$"
+    },
     "group": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["group", "terms"],
+      "required": [
+        "group",
+        "terms"
+      ],
       "properties": {
         "group": {
+          "$ref": "#/$defs/key",
+          "description": "The group's key. Groups with this key in other loaded lists are the same group."
+        },
+        "label": {
           "type": "string",
-          "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
-          "description": "The group's name. Groups with this name in other loaded lists are the same group."
+          "description": "A short human title."
         },
-        "label": { "type": "string", "description": "A short human title." },
-        "describe": { "type": "string" },
+        "describe": {
+          "type": "string"
+        },
         "role": {
-          "enum": ["kind", "subject", "stopword"],
-          "description": "How consumers use the group: kind (what a document is), subject (what it is about) or stopword (ignored when tokenising)."
+          "enum": [
+            "kind",
+            "subject",
+            "stopword",
+            "concept"
+          ],
+          "description": "How consumers use the group: kind (what a document is), subject (what it is about), stopword (ignored when tokenising) or concept (general vocabulary a column dictionary or pattern refers to; the default)."
         },
-        "terms": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/term" } }
-      }
+        "terms": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/term"
+          }
+        },
+        "shape": {
+          "enum": [
+            "text",
+            "name",
+            "money",
+            "date",
+            "integer",
+            "code",
+            "percentage",
+            "url",
+            "email",
+            "phone"
+          ],
+          "description": "What the cells under a heading matching this group look like; evidence for the column matcher."
+        }
+      },
+      "description": "A named, labelled set of terms. In a column list it is one database column (target), or one value of a controlled scheme (member); in a document list it is a kind or subject."
     },
     "term": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["value"],
+      "required": [
+        "value"
+      ],
       "properties": {
-        "value": { "type": "string", "minLength": 1, "description": "The canonical term. Matches of any alias count as this term." },
-        "language": { "$ref": "#/$defs/language" },
+        "value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The canonical term. Matches of any alias count as this term."
+        },
+        "language": {
+          "$ref": "#/$defs/language"
+        },
         "aliases": {
           "type": "array",
           "items": {
             "oneOf": [
-              { "type": "string", "minLength": 1 },
+              {
+                "type": "string",
+                "minLength": 1
+              },
               {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["value"],
-                "properties": { "value": { "type": "string", "minLength": 1 }, "language": { "$ref": "#/$defs/language" } }
+                "required": [
+                  "value"
+                ],
+                "properties": {
+                  "value": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "language": {
+                    "$ref": "#/$defs/language"
+                  }
+                }
               }
             ]
           }
         },
-        "meaning": { "type": "string" }
+        "meaning": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "concept",
+            "instance",
+            "abbreviation",
+            "title",
+            "unit",
+            "pattern-word"
+          ],
+          "description": "concept: a word for a kind of thing (county, governor). instance: a named thing (Kiambu, IEBC); prefer a refers_to link or the seed data. abbreviation. title: a form of address or office. unit: currency, measure or scale. pattern-word: only meaningful inside a pattern."
+        },
+        "represents": {
+          "$ref": "../sources/common.schema.json#/$defs/code",
+          "description": "The reference value or seed row this term stands for in the real world, for example geo.feature.kind.county or fin.currency.kes. A global term may not represent a country-scoped code."
+        },
+        "variant_of": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The value of another term in this list that this is a form of: MP is a variant of member of parliament; gavana (sw) of governor. Prefer an alias for plain spelling or language variants; use variant_of when the form has its own meaning or register."
+        },
+        "refers_to": {
+          "$ref": "../sources/common.schema.json#/$defs/code",
+          "description": "For an instance: the seed row it names. Add it only when the word is not already a name or alias in the data."
+        },
+        "applies_to": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]{2,3}$"
+          },
+          "uniqueItems": true,
+          "description": "Countries where a global term has this meaning, when it does not hold everywhere."
+        },
+        "valid_from": {
+          "type": "string",
+          "format": "date"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date"
+        },
+        "register": {
+          "enum": [
+            "formal",
+            "informal",
+            "historical",
+            "technical"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The publisher or document family the usage comes from, for wording specific to one source."
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+      "description": "A key: lowercase words joined by dashes. Groups, patterns, heading rules and splits are addressed as <list code> plus key."
+    },
+    "part": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One part of a pattern, in order. Exactly one of group, literal, words, digits, letters, punct, any_of.",
+      "properties": {
+        "as": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$",
+          "description": "Name of the capture this part fills."
+        },
+        "optional": {
+          "type": "boolean",
+          "default": false
+        },
+        "repeat": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            }
+          }
+        },
+        "group": {
+          "type": "string",
+          "pattern": "^([a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*)*#)?[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+          "description": "A word or phrase from a group: <key> in this list, or <list code>#<key> from another."
+        },
+        "literal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "words": {
+          "enum": [
+            "capitalised",
+            "upper",
+            "lower",
+            "any"
+          ],
+          "description": "A word of letters in this case style."
+        },
+        "digits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            }
+          }
+        },
+        "letters": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20
+            },
+            "case": {
+              "enum": [
+                "upper",
+                "lower",
+                "any"
+              ]
+            }
+          }
+        },
+        "punct": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8,
+          "description": "Any of these punctuation characters, such as .,-/"
+        },
+        "any_of": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/part"
+          }
+        },
+        "number": {
+          "type": "boolean",
+          "description": "A number as written in documents: digits with optional thousands separators and decimals (1,200,000.50). Captured as the written text."
+        },
+        "lazy": {
+          "type": "boolean",
+          "default": false,
+          "description": "With repeat: take as few as possible, so a following part can claim the rest (a landmark name before the word Road)."
+        }
+      }
+    },
+    "example": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "captures": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "The values the pattern must capture; checked when the term files are tested."
+        }
+      }
+    },
+    "pattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pattern",
+        "sequences",
+        "examples"
+      ],
+      "properties": {
+        "pattern": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string"
+        },
+        "describe": {
+          "type": "string"
+        },
+        "means": {
+          "type": "string",
+          "description": "What a match is: person, organisation, role, place, address, money, date, phone, reference."
+        },
+        "sequences": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/part"
+            }
+          },
+          "description": "The orders in which the parts may occur; each sequence is one allowed order."
+        },
+        "examples": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/example"
+          },
+          "description": "Texts that must match. They run as tests."
+        },
+        "counterexamples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Texts that must not match. They run as tests."
+        }
+      }
+    },
+    "headingRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule",
+        "sequences",
+        "examples"
+      ],
+      "properties": {
+        "rule": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string"
+        },
+        "describe": {
+          "type": "string"
+        },
+        "qualifier_is": {
+          "enum": [
+            "unit",
+            "abbreviation",
+            "format",
+            "note",
+            "language"
+          ],
+          "description": "What the part of the heading in brackets or after a dash says. The base is matched to a column; the qualifier is read as a unit, an abbreviation marker, a date format and so on."
+        },
+        "sequences": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/$defs/part"
+            }
+          },
+          "description": "Use captures named base and qualifier."
+        },
+        "examples": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/example"
+          }
+        },
+        "counterexamples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "split",
+        "heading_rule",
+        "cell_pattern",
+        "into"
+      ],
+      "properties": {
+        "split": {
+          "$ref": "#/$defs/key"
+        },
+        "label": {
+          "type": "string"
+        },
+        "describe": {
+          "type": "string"
+        },
+        "heading_rule": {
+          "type": "string",
+          "description": "The heading rule (key, or <list code>#<key>) the heading must match."
+        },
+        "cell_pattern": {
+          "type": "string",
+          "description": "The pattern (key, or <list code>#<key>) most cells must match."
+        },
+        "min_share": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1,
+          "default": 0.8,
+          "description": "Share of sampled cells that must match before the column is proposed as two."
+        },
+        "into": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "from_capture",
+              "as"
+            ],
+            "properties": {
+              "from_capture": {
+                "type": "string"
+              },
+              "as": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              }
+            }
+          }
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/example"
+          }
+        }
       }
     }
   }

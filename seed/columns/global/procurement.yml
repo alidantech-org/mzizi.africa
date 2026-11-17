@@ -1,0 +1,155 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/columns.schema.json
+code: sys.col.global.procurement
+describe: Columns of procurements, bids and contracts.
+columns:
+  civic.procurements.published_on:
+    means: When the procurement was published
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-published
+      role: heading
+    - list: sys.trm.global.dates
+      key: date-closing
+      role: exclude
+  civic.procurements.buyer_entity_id:
+    means: Who buys
+    shape: name
+    terms:
+    - list: sys.trm.global.procurement
+      key: procuring-entity-headings
+      role: heading
+    - list: sys.trm.global.organisations
+      key: org-types
+      role: value
+      says: organisation
+  civic.procurements.procedure_kind_id:
+    means: The procedure used
+    terms:
+    - list: sys.trm.global.procurement
+      key: procedure-words
+      role: heading
+    - list: sys.trm.global.procurement
+      key: procedure-words
+      role: member
+  civic.bids.bidder_entity_id:
+    means: Who bid
+    shape: name
+    terms:
+    - list: sys.trm.global.organisations
+      key: bidder-headings
+      role: heading
+      says: organisation
+    - list: sys.trm.global.organisations
+      key: supplier-headings
+      role: heading
+      says: organisation
+      weight: 0.85
+    - list: sys.trm.global.organisations
+      key: organisation-headings
+      role: heading
+      says: organisation
+      weight: 0.5
+    - list: sys.trm.global.organisations
+      key: organisation-name
+      role: value
+      says: organisation
+  civic.bids.amount_minor_units:
+    means: The amount bid
+    shape: money
+    terms:
+    - list: sys.trm.global.procurement
+      key: bid-number-headings
+      role: exclude
+    - list: sys.trm.global.money
+      key: amount-bid
+      role: heading
+    - list: sys.trm.global.money
+      key: amount-generic
+      role: heading
+      weight: 0.6
+    - list: sys.trm.global.money
+      key: currency-units
+      role: unit
+    - list: sys.trm.global.money
+      key: money-amount
+      role: value
+    - list: sys.trm.global.money
+      key: plain-number
+      role: value
+      weight: 0.7
+  civic.bids.submitted_on:
+    means: When the bid was submitted
+    shape: date
+    terms:
+    - list: sys.trm.global.procurement
+      key: bid-number-headings
+      role: exclude
+    - list: sys.trm.global.dates
+      key: date-submitted
+      role: heading
+  civic.bids.outcome_id:
+    means: Whether the bid won
+    terms:
+    - list: sys.trm.global.procurement
+      key: outcome-headings
+      role: heading
+    - list: sys.trm.global.procurement
+      key: bid-outcomes
+      role: member
+  civic.contracts.amount_minor_units:
+    means: The contract value
+    shape: money
+    terms:
+    - list: sys.trm.global.procurement
+      key: bid-number-headings
+      role: exclude
+    - list: sys.trm.global.money
+      key: amount-contract
+      role: heading
+    - list: sys.trm.global.money
+      key: amount-generic
+      role: heading
+      weight: 0.6
+    - list: sys.trm.global.money
+      key: currency-units
+      role: unit
+    - list: sys.trm.global.money
+      key: money-amount
+      role: value
+    - list: sys.trm.global.money
+      key: plain-number
+      role: value
+      weight: 0.7
+  civic.contracts.contractor_entity_id:
+    means: Who holds the contract
+    shape: name
+    terms:
+    - list: sys.trm.global.organisations
+      key: contractor-headings
+      role: heading
+      says: organisation
+    - list: sys.trm.global.organisations
+      key: supplier-headings
+      role: heading
+      says: organisation
+      weight: 0.85
+    - list: sys.trm.global.organisations
+      key: organisation-headings
+      role: heading
+      says: organisation
+      weight: 0.5
+    - list: sys.trm.global.organisations
+      key: organisation-name
+      role: value
+      says: organisation
+  civic.contracts.signed_on:
+    means: When the contract was signed
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-signed
+      role: heading
+    - list: sys.trm.global.dates
+      key: date-awarded
+      role: heading

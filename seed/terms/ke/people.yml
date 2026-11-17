@@ -1,0 +1,144 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.ke.people
+describe: Kenyan offices and titles that exist only in Kenya's constitution and administration. General titles and Swahili forms are
+  in the global list.
+extends:
+- sys.trm.global.people
+languages:
+- en
+- sw
+groups:
+- group: office-titles
+  label: Kenyan offices
+  terms:
+  - value: member of county assembly
+    aliases:
+    - mca
+    - m.c.a.
+    - value: mbunge wa kaunti
+      language: sw
+    kind: title
+  - value: cabinet secretary
+    aliases:
+    - cs
+    - c.s.
+    - value: katibu wa baraza la mawaziri
+      language: sw
+    kind: title
+  - value: principal secretary
+    aliases:
+    - ps
+    - p.s.
+    - value: katibu mkuu wa wizara
+      language: sw
+    kind: title
+  - value: county commissioner
+    aliases:
+    - cc
+    - value: kamishna wa kaunti
+      language: sw
+    kind: title
+  - value: deputy county commissioner
+    aliases:
+    - dcc
+    - d.c.c.
+    - sub-county commissioner
+    - value: naibu kamishna wa kaunti
+      language: sw
+    kind: title
+  - value: assistant county commissioner
+    aliases:
+    - acc
+    - value: kamishna msaidizi
+      language: sw
+    kind: title
+  - value: assistant chief
+    aliases:
+    - value: chifu msaidizi
+      language: sw
+    kind: title
+  - value: village elder
+    aliases:
+    - nyumba kumi
+    - value: mzee wa kijiji
+      language: sw
+    kind: title
+  - value: woman representative
+    aliases:
+    - woman rep
+    - value: mwakilishi wa kike
+      language: sw
+    kind: title
+  - value: nominated member
+    aliases:
+    - nominated mp
+    - nominated mca
+    kind: title
+  - value: county executive committee member
+    aliases:
+    - cecm
+    - cec member
+    - value: waziri wa kaunti
+      language: sw
+    kind: title
+  - value: county secretary
+    aliases:
+    - value: katibu wa kaunti
+      language: sw
+    kind: title
+  - value: chief officer
+    aliases:
+    - value: afisa mkuu wa kaunti
+      language: sw
+    kind: title
+  - value: clerk of the national assembly
+    aliases:
+    - clerk of the senate
+    - clerk of the county assembly
+    kind: title
+  - value: director of public prosecutions
+    aliases:
+    - dpp
+    - d.p.p.
+    kind: title
+  - value: controller of budget
+    aliases:
+    - cob
+    kind: title
+  - value: chief registrar of the judiciary
+    kind: title
+  - value: inspector general of police
+    aliases:
+    - igp
+    kind: title
+  - value: cabinet secretary for the national treasury
+    kind: title
+  - value: speaker of the national assembly
+    aliases:
+    - speaker of the senate
+    - speaker of the county assembly
+    kind: title
+  - value: senate majority leader
+    aliases:
+    - national assembly majority leader
+    - county assembly majority leader
+    kind: title
+  - value: chief whip
+    aliases:
+    - majority whip
+    - minority whip
+    kind: title
+  - value: returning officer
+    aliases:
+    - value: afisa mkuu wa uchaguzi
+      language: sw
+    kind: title
+  - value: registrar of political parties
+    aliases:
+    - value: msajili wa vyama vya siasa
+      language: sw
+    kind: title
+  - value: chairperson of the independent electoral and boundaries commission
+    aliases:
+    - iebc chairperson
+    kind: title

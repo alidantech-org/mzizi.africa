@@ -1,0 +1,142 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/columns.schema.json
+code: sys.col.global.entities
+describe: Columns of people, organisations and their names, identifiers, contacts and dates.
+columns:
+  official.names.name:
+    means: A name of an entity or person
+    terms:
+    - list: sys.trm.global.people
+      key: name-parts
+      role: heading
+      says: person
+    - list: sys.trm.global.organisations
+      key: organisation-headings
+      role: heading
+      says: organisation
+    - list: sys.trm.global.politics
+      key: party-name-headings
+      role: heading
+      says: organisation
+    - list: sys.trm.global.politics
+      key: party-abbreviation-headings
+      role: heading
+      says: abbreviation
+    - list: sys.trm.global.people
+      key: titled-person
+      role: value
+      says: person
+    - list: sys.trm.global.organisations
+      key: organisation-name
+      role: value
+      says: organisation
+    - list: sys.trm.global.organisations
+      key: name-with-abbreviation
+      role: value
+      says: organisation
+    - list: sys.trm.global.people
+      key: person-titles
+      role: value
+      says: person
+    - list: sys.trm.global.people
+      key: office-titles
+      role: value
+      says: person
+    - list: sys.trm.global.organisations
+      key: org-suffixes
+      role: value
+      says: organisation
+    - list: sys.trm.global.organisations
+      key: org-types
+      role: value
+      says: organisation
+    - list: sys.trm.global.people
+      key: collectives
+      role: value
+      says: group
+  official.entities.registered_on:
+    means: When the entity was registered
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-registered
+      role: heading
+    - list: sys.trm.global.dates
+      key: date-issued
+      role: heading
+    - list: sys.trm.global.dates
+      key: date-numeric
+      role: value
+    - list: sys.trm.global.dates
+      key: date-day-month-year
+      role: value
+  official.entities.dissolved_on:
+    means: When the entity ended
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-ended
+      role: heading
+    - list: sys.trm.global.dates
+      key: date-numeric
+      role: value
+    - list: sys.trm.global.dates
+      key: date-day-month-year
+      role: value
+  official.identifiers.value:
+    means: An identifier issued by a registry
+    shape: code
+    terms:
+    - list: sys.trm.global.politics
+      key: certificate-headings
+      role: heading
+    - list: sys.trm.global.organisations
+      key: organisation-headings
+      role: heading
+      weight: 0.5
+    - list: sys.trm.global.headings
+      key: row-numbers
+      role: exclude
+  official.contacts.value:
+    means: 'A way to reach the entity: an address, phone, email or website'
+    shape: text
+    terms:
+    - list: sys.trm.global.address
+      key: contact-headings
+      role: heading
+    - list: sys.trm.global.politics
+      key: postal-headings
+      role: heading
+      says: postal address
+    - list: sys.trm.global.politics
+      key: head-office-headings
+      role: heading
+      says: head office
+    - list: sys.trm.global.address
+      key: po-box
+      role: value
+      says: address
+    - list: sys.trm.global.address
+      key: landmark-address
+      role: value
+      says: address
+    - list: sys.trm.global.address
+      key: phone-number
+      role: value
+      says: phone
+  official.individuals.birth_date:
+    means: A person's date of birth
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-birth
+      role: heading
+    - list: sys.trm.global.people
+      key: person-detail-headings
+      role: heading
+  official.individuals.death_date:
+    means: A person's date of death
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-death
+      role: heading

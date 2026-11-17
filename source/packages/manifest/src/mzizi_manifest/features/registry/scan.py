@@ -65,6 +65,8 @@ def _kind(document: dict) -> Kind | None:
         return Kind.SOURCE
     if "yields" in document:
         return Kind.MAPPING
+    if document["code"].startswith("sys.col.") and "columns" in document:
+        return Kind.COLUMNS
     if "terms" in document or "groups" in document:
         return Kind.TERMS
     if "url_kinds" in document:
@@ -74,11 +76,35 @@ def _kind(document: dict) -> Kind | None:
     return None
 
 
+def _term_references(node: object, where: str) -> list[Reference]:
+    """Every `{list: <term list code>, key: ...}` link below `node`: a column's terms or an input's `means`."""
+    found: list[Reference] = []
+    if isinstance(node, dict):
+        for name, value in node.items():
+            if name == "list" and isinstance(value, str):
+                found.append(Reference(f"{where}.list", value, Kind.TERMS))
+            else:
+                found += _term_references(value, f"{where}.{name}")
+    elif isinstance(node, list):
+        for i, value in enumerate(node):
+            found += _term_references(value, f"{where}[{i}]")
+    return found
+
+
 def _references(document: dict, kind: Kind) -> list[Reference]:
     if kind is Kind.TERMS:
         parents = document.get("extends")
         listed = parents if isinstance(parents, list) else []
         return [Reference(f"extends[{i}]", code, Kind.TERMS) for i, code in enumerate(listed) if isinstance(code, str)]
+    if kind is Kind.COLUMNS:
+        return _term_references(document.get("columns"), "columns")
+    if kind is Kind.MAPPING:
+        inputs = document.get("inputs")
+        found: list[Reference] = []
+        for i, item in enumerate(inputs if isinstance(inputs, list) else []):
+            if isinstance(item, dict):
+                found += _term_references(item.get("means"), f"inputs[{i}].means")
+        return found
     if kind is not Kind.SOURCE:
         return []
     references = [
@@ -107,6 +133,7 @@ KIND_FOLDERS = {
     Kind.SOURCE: "sources",
     Kind.MAPPING: "mappings",
     Kind.TERMS: "terms",
+    Kind.COLUMNS: "columns",
     Kind.JOB: "engine",
     Kind.ENGINE: "engine",
 }
@@ -188,6 +215,10 @@ def scan(root: Path, *, mirror_paths: bool = True, glossary: Glossary | None = N
         )
     result.registry = Registry(entries)
     result.problems += check(result.registry, glossary or load_glossary())
+    if any(e.kind is Kind.COLUMNS for e in entries.values()):
+        from mzizi_manifest.features.registry.columns_check import column_problems
+
+        result.problems += column_problems(root)
     if mirror_paths:
         for entry in entries.values():
             result.problems += mirror_problems(entry)

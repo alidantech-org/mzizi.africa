@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/columns.schema.json
+code: sys.col.global.politics
+describe: Columns of parties, memberships and elections.
+columns:
+  politics.parties.valid_from:
+    means: When the party status starts
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-registered
+      role: heading
+    - list: sys.trm.global.dates
+      key: date-effective
+      role: heading
+  politics.memberships.valid_from:
+    means: When a membership starts
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-effective
+      role: heading
+    - list: sys.trm.global.dates
+      key: date-appointed
+      role: heading
+  politics.memberships.valid_until:
+    means: When a membership ends
+    shape: date
+    terms:
+    - list: sys.trm.global.dates
+      key: date-ended
+      role: heading

@@ -1,0 +1,543 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.global.address
+describe: 'Addresses and contact details: postal box and landmark words, administrative levels, address patterns and contact headings.'
+languages:
+- en
+- sw
+groups:
+- group: po-box-words
+  label: Postal box labels
+  terms:
+  - value: p.o. box
+    aliases:
+    - po box
+    - p o box
+    - p.o.box
+    - pobox
+    - box
+    - s.l.p.
+    - slp
+    - mail box
+    kind: pattern-word
+  - value: private bag
+    aliases:
+    - p.m.b
+    - pmb
+    - mfuko binafsi
+    kind: pattern-word
+  - value: post office
+    aliases:
+    - posta
+    kind: pattern-word
+- group: admin-levels
+  label: Levels of administrative area
+  terms:
+  - value: country
+    aliases:
+    - nchi
+    kind: concept
+    represents: geo.feature.kind.country
+  - value: region
+    aliases:
+    - mkoa
+    kind: concept
+  - value: province
+    aliases:
+    - jimbo
+    kind: concept
+    represents: geo.feature.kind.province
+  - value: state
+    aliases:
+    - jimbo la nchi
+    kind: concept
+  - value: county
+    aliases:
+    - kaunti
+    kind: concept
+    represents: geo.feature.kind.county
+  - value: district
+    aliases:
+    - wilaya
+    kind: concept
+  - value: sub-county
+    aliases:
+    - sub county
+    - subcounty
+    - kaunti ndogo
+    kind: concept
+    represents: geo.feature.kind.sub-county
+  - value: division
+    aliases:
+    - tarafa
+    kind: concept
+  - value: location
+    aliases:
+    - eneo
+    kind: concept
+  - value: sub-location
+    aliases:
+    - sub location
+    - kata ndogo
+    kind: concept
+  - value: ward
+    aliases:
+    - wadi
+    kind: concept
+    represents: geo.feature.kind.ward
+  - value: constituency
+    aliases:
+    - eneo bunge
+    kind: concept
+    represents: geo.feature.kind.constituency
+  - value: village
+    aliases:
+    - kijiji
+    kind: concept
+    represents: geo.feature.kind.village
+  - value: town
+    aliases:
+    - mji
+    kind: concept
+    represents: geo.feature.kind.town
+  - value: city
+    aliases:
+    - jiji
+    kind: concept
+    represents: geo.feature.kind.city
+  - value: municipality
+    aliases:
+    - manispaa
+    kind: concept
+  - value: estate
+    aliases:
+    - mtaa
+    kind: concept
+  - value: neighbourhood
+    aliases:
+    - neighborhood
+    - jirani
+    kind: concept
+  - value: zone
+    kind: concept
+  - value: sector
+    aliases:
+    - sekta
+    kind: concept
+  - value: cell
+    kind: concept
+  - value: parish
+    kind: concept
+  - value: urban area
+    kind: concept
+  - value: rural area
+    kind: concept
+- group: landmark-words
+  label: Words that locate something relative to a landmark
+  terms:
+  - value: along
+    aliases:
+    - kando ya
+    kind: pattern-word
+  - value: opposite
+    aliases:
+    - mkabala na
+    - oposite
+    kind: pattern-word
+  - value: next to
+    aliases:
+    - karibu na
+    - beside
+    - adjacent to
+    kind: pattern-word
+  - value: behind
+    aliases:
+    - nyuma ya
+    kind: pattern-word
+  - value: near
+    aliases:
+    - karibu
+    kind: pattern-word
+  - value: 'off'
+    aliases:
+    - nje ya
+    kind: pattern-word
+  - value: junction
+    aliases:
+    - makutano
+    kind: pattern-word
+  - value: roundabout
+    aliases:
+    - mzunguko
+    kind: pattern-word
+  - value: at the
+    aliases:
+    - at
+    kind: pattern-word
+  - value: inside
+    aliases:
+    - within
+    - ndani ya
+    kind: pattern-word
+  - value: after
+    aliases:
+    - baada ya
+    kind: pattern-word
+  - value: before
+    aliases:
+    - kabla ya
+    kind: pattern-word
+  - value: in front of
+    aliases:
+    - mbele ya
+    kind: pattern-word
+  - value: corner of
+    aliases:
+    - kona ya
+    kind: pattern-word
+  - value: by the
+    kind: pattern-word
+- group: place-words
+  label: Words in the name of a building or street
+  terms:
+  - value: road
+    aliases:
+    - rd
+    - rd.
+    - barabara
+    kind: pattern-word
+  - value: street
+    aliases:
+    - st
+    - st.
+    - mtaa wa
+    kind: pattern-word
+  - value: avenue
+    aliases:
+    - ave
+    - ave.
+    kind: pattern-word
+  - value: lane
+    aliases:
+    - njia
+    kind: pattern-word
+  - value: highway
+    aliases:
+    - hwy
+    - barabara kuu
+    kind: pattern-word
+  - value: drive
+    aliases:
+    - dr
+    kind: pattern-word
+  - value: close
+    kind: pattern-word
+  - value: crescent
+    kind: pattern-word
+  - value: way
+    kind: pattern-word
+  - value: plaza
+    kind: pattern-word
+  - value: building
+    aliases:
+    - bldg
+    - jengo
+    kind: pattern-word
+  - value: house
+    aliases:
+    - nyumba
+    kind: pattern-word
+  - value: towers
+    aliases:
+    - tower
+    kind: pattern-word
+  - value: centre
+    aliases:
+    - center
+    - kituo
+    kind: pattern-word
+  - value: complex
+    kind: pattern-word
+  - value: mall
+    kind: pattern-word
+  - value: arcade
+    kind: pattern-word
+  - value: estate
+    kind: pattern-word
+  - value: court
+    kind: pattern-word
+  - value: apartments
+    aliases:
+    - apartment
+    - flats
+    kind: pattern-word
+  - value: floor
+    aliases:
+    - flr
+    - ghorofa
+    kind: pattern-word
+  - value: suite
+    aliases:
+    - ste
+    kind: pattern-word
+  - value: room
+    aliases:
+    - chumba
+    kind: pattern-word
+  - value: block
+    aliases:
+    - blk
+    kind: pattern-word
+  - value: plot
+    aliases:
+    - plot no
+    - plot number
+    kind: pattern-word
+  - value: l.r. no
+    aliases:
+    - lr no
+    - l.r. number
+    kind: pattern-word
+- group: contact-headings
+  label: Headings of columns that hold contact details
+  terms:
+  - value: address
+    aliases:
+    - anwani
+    kind: concept
+  - value: postal address
+    aliases:
+    - anwani ya posta
+    - mailing address
+    kind: concept
+  - value: physical address
+    aliases:
+    - anwani ya makazi
+    - physical location
+    kind: concept
+  - value: location
+    aliases:
+    - eneo
+    - place
+    kind: concept
+  - value: head office
+    aliases:
+    - headquarters
+    - hq
+    - makao makuu
+    kind: concept
+  - value: registered office
+    kind: concept
+  - value: branch
+    aliases:
+    - tawi
+    kind: concept
+  - value: telephone
+    aliases:
+    - tel
+    - tel.
+    - phone
+    - simu
+    - simu ya mkononi
+    kind: concept
+  - value: mobile
+    aliases:
+    - cell phone
+    - mobile number
+    - cellphone
+    kind: concept
+  - value: fax
+    kind: concept
+  - value: email
+    aliases:
+    - e-mail
+    - email address
+    - barua pepe
+    kind: concept
+  - value: website
+    aliases:
+    - web
+    - url
+    - tovuti
+    kind: concept
+  - value: contact
+    aliases:
+    - contacts
+    - mawasiliano
+    kind: concept
+  - value: contact person
+    kind: concept
+  - value: postal code
+    aliases:
+    - post code
+    - postcode
+    - zip
+    - zip code
+    - msimbo wa posta
+    kind: concept
+  - value: town
+    aliases:
+    - city
+    - mji
+    - jiji
+    kind: concept
+  - value: county
+    aliases:
+    - kaunti
+    kind: concept
+  - value: country
+    aliases:
+    - nchi
+    kind: concept
+  - value: p.o. box
+    aliases:
+    - po box
+    - box
+    kind: concept
+patterns:
+- pattern: po-box
+  label: A postal box address
+  means: address
+  sequences:
+  - - group: po-box-words
+      as: label
+    - digits:
+        min: 1
+        max: 7
+      as: box
+    - punct: -,
+      optional: true
+    - digits:
+        min: 4
+        max: 5
+      as: postcode
+      optional: true
+    - punct: ','
+      optional: true
+    - words: capitalised
+      as: town
+      optional: true
+      repeat:
+        min: 1
+        max: 3
+  examples:
+  - text: P.O. Box 34200-00100 Nairobi
+    captures:
+      box: '34200'
+      postcode: '00100'
+      town: Nairobi
+  - text: PO Box 12 Kisumu
+    captures:
+      box: '12'
+      town: Kisumu
+  - text: P O BOX 4567
+    captures:
+      box: '4567'
+  counterexamples:
+  - Along Thika Road
+  - '34200'
+- pattern: landmark-address
+  label: A place given by a landmark
+  means: address
+  sequences:
+  - - group: landmark-words
+      as: relation
+    - words: capitalised
+      as: landmark
+      repeat:
+        min: 1
+        max: 4
+      lazy: true
+    - group: place-words
+      as: kind
+      optional: true
+  examples:
+  - text: Along Thika Road
+    captures:
+      relation: Along
+      landmark: Thika
+      kind: Road
+  - text: Opposite Sarit Centre
+    captures:
+      relation: Opposite
+      landmark: Sarit
+      kind: Centre
+  counterexamples:
+  - P.O. Box 12
+- pattern: admin-unit
+  label: A named administrative area
+  means: place
+  sequences:
+  - - words: capitalised
+      as: name
+      repeat:
+        min: 1
+        max: 3
+    - group: admin-levels
+      as: level
+  - - group: admin-levels
+      as: level
+    - punct: ':'
+      optional: true
+    - words: capitalised
+      as: name
+      repeat:
+        min: 1
+        max: 3
+  examples:
+  - text: Kiambu County
+    captures:
+      name: Kiambu
+      level: County
+  - text: 'Ward: Githurai'
+    captures:
+      level: Ward
+      name: Githurai
+  counterexamples:
+  - Rawel Holdings Limited
+- pattern: phone-number
+  label: A telephone number
+  means: phone
+  sequences:
+  - - punct: +
+    - digits:
+        min: 9
+        max: 13
+      as: number
+  - - punct: +
+    - digits:
+        min: 1
+        max: 3
+      as: country
+    - digits:
+        min: 2
+        max: 4
+      as: a
+    - digits:
+        min: 3
+        max: 4
+      as: b
+    - digits:
+        min: 3
+        max: 4
+      as: c
+      optional: true
+  - - digits:
+        min: 9
+        max: 11
+      as: number
+  examples:
+  - text: '+254712345678'
+    captures:
+      number: '254712345678'
+  - text: 0712345678
+    captures:
+      number: 0712345678
+  - text: +254 712 345 678
+    captures:
+      country: '254'
+      a: '712'
+      b: '345'
+      c: '678'
+  counterexamples:
+  - P.O. Box 34200
+  - '2012'

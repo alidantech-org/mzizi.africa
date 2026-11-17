@@ -7,13 +7,17 @@ from pathlib import Path
 import yaml
 
 from mzizi_patterns.features.tokenise.tokenise import words
-from mzizi_patterns.shared.contracts import Axis, Profile, Role, TermGroup, TermList
+from mzizi_patterns.shared.contracts import Axis, Dictionary, Profile, Role, TermGroup, TermList
 
 type Phrase = tuple[str, ...]
 
 
 def load_term_list(path: Path) -> TermList:
     return TermList.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")), strict=False)
+
+
+def load_dictionary(path: Path) -> Dictionary:
+    return Dictionary.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")), strict=False)
 
 
 def load_profile(path: Path) -> Profile:

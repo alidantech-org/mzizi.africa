@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.ke.money
+describe: 'Kenyan wording for money: how Kenyan sources write the shilling.'
+extends:
+- sys.trm.global.money
+languages:
+- en
+groups:
+- group: currency-units
+  label: Kenyan ways to write currencies
+  terms:
+  - value: kes
+    aliases:
+    - ksh
+    - kshs
+    - ksh.
+    - kshs.
+    - k.sh.
+    - /=
+    - kenya shilling
+    - kenyan shillings
+    - kenya shillings
+    - kshs/=
+    kind: unit
+    represents: fin.currency.kes
+- group: amount-generic
+  label: Kenyan headings of a plain amount
+  shape: money
+  terms:
+  - value: amount
+    aliases:
+    - kshs
+    - ksh
+    - kes
+    - kshs.
+    - ksh.
+    - amount (kshs)
+    - amount in kshs
+    - amount in ksh
+    - value in kshs
+    - amount kshs
+    kind: concept

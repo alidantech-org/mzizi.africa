@@ -7,7 +7,7 @@ and does the code say what the thing is?":
 - a code is well formed (`.docs/rules/codes.md`) and unique across the tree;
 - a source is `pg.src.<sources short>.<scope>.<name>` and its kind agrees (a source is a database row, so `pg`);
 - a mapping is `sys.map.<schema short>.<table short>.<scope>.<name>`, named after the table it writes first;
-- a term list is `sys.trm.<schema short>.<table short>.<scope>.<name>` for a real table;
+- a term list is `sys.trm.<scope>.<domain>` (words by meaning, not by table) and a column dictionary `sys.col.<scope>.<domain>`;
 - a job spec is `sys.eng.job.<scope>.<name>`, other engine data `sys.eng.<name path>`;
 - a manifest may use items in its own scope or in `global`, never in another country, and `global` never uses a country;
 - a reference to a code of the wrong kind, or a reference cycle, is an error.
@@ -33,6 +33,7 @@ SOURCE_TABLES = {"website": "source.sources", "api": "source.sources"}
 class Kind(StrEnum):
     SOURCE = "source"
     MAPPING = "mapping"
+    COLUMNS = "columns"
     TERMS = "terms"
     JOB = "job"
     #: Flat engine data and configuration, such as the web classification the fetch package reads.
@@ -73,7 +74,7 @@ class Registry:
 def scope_of(entry: Entry) -> str:
     """The scope segment of a manifest code; engine data has no scope and counts as `global`."""
     segments = entry.code.split(".")
-    index = {Kind.SOURCE: 3, Kind.MAPPING: 4, Kind.TERMS: 4, Kind.JOB: 3}.get(entry.kind)
+    index = {Kind.SOURCE: 3, Kind.MAPPING: 4, Kind.TERMS: 2, Kind.COLUMNS: 2, Kind.JOB: 3}.get(entry.kind)
     return segments[index] if index is not None and len(segments) > index else GLOBAL_SCOPE
 
 
@@ -136,8 +137,14 @@ def code_problems(entry: Entry, glossary: Glossary) -> list[str]:
                     f"{where}: {article} {entry.detail} source code must use the short of {wanted}, not {segments[2]!r}"
                 )
             scope_ok(3)
-    elif entry.kind in (Kind.MAPPING, Kind.TERMS):
-        prefix = "sys.map" if entry.kind is Kind.MAPPING else "sys.trm"
+    elif entry.kind in (Kind.TERMS, Kind.COLUMNS):
+        prefix = "sys.trm" if entry.kind is Kind.TERMS else "sys.col"
+        if expect(f"{prefix}.<scope>.<domain>", 4):
+            scope_ok(2)
+            if len(segments) != 4:
+                problems.append(f"{where}: code {code!r} must be exactly {prefix}.<scope>.<domain>")
+    elif entry.kind is Kind.MAPPING:
+        prefix = "sys.map"
         if expect(f"{prefix}.<schema short>.<table short>.<scope>.<name>", 6):
             table = glossary.table_for(segments[2], segments[3])
             if table is None:

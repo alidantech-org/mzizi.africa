@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/columns.schema.json
+code: sys.col.ke.address
+describe: Kenyan address headings from the IEBC office tables that sit on the global contact column.
+columns:
+  official.contacts.value:
+    means: 'A way to reach an office: its address, location or landmark'
+    shape: text
+    terms:
+    - list: sys.trm.ke.address
+      key: office-location-headings
+      role: heading
+      says: address
+    - list: sys.trm.ke.address
+      key: landmark-headings
+      role: heading
+      says: landmark
+    - list: sys.trm.ke.address
+      key: landmark-words
+      role: value
+      says: landmark

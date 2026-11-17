@@ -25,6 +25,17 @@ def main(argv: list[str] | None = None) -> int:
     worker.add_argument("--lease", type=UUID)
     run_job = sub.add_parser("run-job", help="run a job spec now, in this terminal, and print what each stage produced")
     run_job.add_argument("spec", type=Path)
+    propose = sub.add_parser("propose-mapping", help="propose how a CSV table's columns map to database columns")
+    propose.add_argument("csv", type=Path)
+    propose.add_argument(
+        "--seed", type=Path, default=Path("seed"), help="seed folder holding terms/ and columns/ (default: seed)"
+    )
+    propose.add_argument("--scopes", default="global,ke", help="comma-separated scopes whose terms apply (default: global,ke)")
+    propose.add_argument(
+        "--prefer",
+        default="",
+        help="comma-separated schemas the document is about (finance,civic): their targets win ties",
+    )
     submit = sub.add_parser("submit-run", help="queue a run from a job spec")
     submit.add_argument("spec", type=Path)
     sub.add_parser("supervise", help="admit and supervise queued runs")
@@ -98,6 +109,17 @@ def main(argv: list[str] | None = None) -> int:
                 approval = ReleaseApproval.model_validate_json(args.approval.read_bytes())
                 print(release_run(args.run_id, placements, approval, config).model_dump_json())
         return 0
+    if args.command == "propose-mapping":
+        from mzizi_engine.runtime.assembly.mapping_proposal import propose_mapping
+
+        print(
+            propose_mapping(
+                args.csv, args.seed, tuple(args.scopes.split(",")), frozenset(filter(None, args.prefer.split(",")))
+            ).model_dump_json(
+                indent=1
+            )
+        )
+        return 0
     if args.command == "run-job":
         from mzizi_engine.runtime.assembly.run_operations import run_job_spec
 
@@ -151,12 +173,9 @@ def main(argv: list[str] | None = None) -> int:
     import uvicorn
 
     from mzizi_engine.runtime.http.app import create_app
-
     from mzizi_engine.runtime.http.logging import log_config
 
-    uvicorn.run(
-        create_app(settings, runtime=runtime), host=settings.host, port=settings.port, log_config=log_config()
-    )
+    uvicorn.run(create_app(settings, runtime=runtime), host=settings.host, port=settings.port, log_config=log_config())
     return 0
 
 

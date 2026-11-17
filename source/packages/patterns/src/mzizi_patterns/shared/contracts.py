@@ -37,11 +37,32 @@ class Alias(Frozen):
     language: str = ""
 
 
+class TermKind(StrEnum):
+    CONCEPT = "concept"
+    INSTANCE = "instance"
+    ABBREVIATION = "abbreviation"
+    TITLE = "title"
+    UNIT = "unit"
+    PATTERN_WORD = "pattern-word"
+
+
 class TermEntry(Frozen):
+    model_config = ConfigDict(frozen=True, extra="forbid", populate_by_name=True)
+
     value: str = Field(min_length=1)
     language: str = ""
     aliases: tuple[Alias, ...] = ()
     meaning: str = ""
+    kind: TermKind | None = None
+    represents: str = ""  # the reference value or seed row this term stands for
+    variant_of: str = ""
+    refers_to: str = ""
+    applies_to: tuple[str, ...] = ()
+    valid_from: str = ""
+    valid_until: str = ""
+    register_: str = Field(default="", alias="register")
+    source: str = ""
+    notes: str = ""
 
     @field_validator("aliases", mode="before")
     @classmethod
@@ -56,10 +77,104 @@ class Role(StrEnum):
     KIND = "kind"
     SUBJECT = "subject"
     STOPWORD = "stopword"
+    CONCEPT = "concept"
+
+
+class Shape(StrEnum):
+    TEXT = "text"
+    NAME = "name"
+    MONEY = "money"
+    DATE = "date"
+    INTEGER = "integer"
+    CODE = "code"
+    PERCENTAGE = "percentage"
+    URL = "url"
+    EMAIL = "email"
+    PHONE = "phone"
+
+
+class Repeat(Frozen):
+    min: int = Field(default=1, ge=0, le=20)
+    max: int = Field(default=1, ge=1, le=20)
+
+
+class Span(Frozen):
+    min: int = Field(default=1, ge=1, le=20)
+    max: int = Field(default=20, ge=1, le=20)
+
+
+class LetterSpan(Span):
+    case: str = "any"
+
+
+class Part(Frozen):
+    """One part of a pattern; exactly one of the kinds below is set."""
+
+    as_: str = Field(default="", alias="as")
+    optional: bool = False
+    lazy: bool = False
+    repeat: Repeat | None = None
+    group: str = ""
+    literal: str = ""
+    words: str = ""
+    digits: Span | None = None
+    letters: LetterSpan | None = None
+    punct: str = ""
+    number: bool = False
+    any_of: tuple[Part, ...] = ()
+
+    model_config = ConfigDict(frozen=True, extra="forbid", populate_by_name=True)
+
+
+Part.model_rebuild()
+
+
+class Example(Frozen):
+    text: str
+    captures: dict[str, str] = Field(default_factory=dict)
+
+
+class Pattern(Frozen):
+    pattern: str
+    label: str = ""
+    describe: str = ""
+    means: str = ""
+    sequences: tuple[tuple[Part, ...], ...]
+    examples: tuple[Example, ...]
+    counterexamples: tuple[str, ...] = ()
+
+
+class HeadingRule(Frozen):
+    rule: str
+    label: str = ""
+    describe: str = ""
+    qualifier_is: str = ""
+    sequences: tuple[tuple[Part, ...], ...]
+    examples: tuple[Example, ...]
+    counterexamples: tuple[str, ...] = ()
+
+
+class SplitInto(Frozen):
+    from_capture: str
+    as_: str = Field(alias="as")
+
+    model_config = ConfigDict(frozen=True, extra="forbid", populate_by_name=True)
+
+
+class Split(Frozen):
+    split: str
+    label: str = ""
+    describe: str = ""
+    heading_rule: str
+    cell_pattern: str
+    min_share: float = 0.8
+    into: tuple[SplitInto, ...]
+    examples: tuple[Example, ...] = ()
 
 
 class TermGroup(Frozen):
     group: str
+    shape: Shape | None = None
     label: str = ""
     describe: str = ""
     role: Role | None = None
@@ -75,6 +190,9 @@ class TermList(Frozen):
     languages: tuple[str, ...] = ()
     terms: tuple[TermEntry, ...] = ()
     groups: tuple[TermGroup, ...] = ()
+    patterns: tuple[Pattern, ...] = ()
+    heading_rules: tuple[HeadingRule, ...] = ()
+    splits: tuple[Split, ...] = ()
 
 
 class TagRule(Frozen):
@@ -140,3 +258,75 @@ class DuplicatePair(Frozen):
     left: str
     right: str
     similarity: float
+
+
+class ColumnProbe(Frozen):
+    """One column of a source table: its heading and a few of its cells."""
+
+    header: str
+    samples: tuple[str, ...] = ()
+
+
+class ColumnCandidate(Frozen):
+    target: str  # <schema>.<table>.<column>, as the stored column
+    group: str
+    score: float
+    matched_term: str
+    header_score: float
+    shape: Shape | None  # what the group expects
+    shape_share: float | None  # share of the sampled cells that look like that shape
+    specificity: int = 0  # 0 global, 1 country, 2 publisher: a more specific list wins a tie
+    preferred: bool = False  # the target is in a schema the document is about; wins a tie
+    reads_as: str = ""  # what the matched link says the cell is (person, organisation, abbreviation)
+
+
+class ColumnProposal(Frozen):
+    header: str
+    status: str  # matched, weak (a person should confirm), ambiguous (rival targets) or unmatched
+    chosen: ColumnCandidate | None
+    alternatives: tuple[ColumnCandidate, ...]
+    detected: tuple[tuple[Shape, float], ...]  # the shapes the cells look like, strongest first
+    heading: HeadingParts | None = None  # how the heading is built, when a heading rule matched
+    unit: str = ""  # a unit read from the heading's qualifier (ksh, USD)
+    says: tuple[tuple[str, int], ...] = ()  # what cells turned out to be: person, organisation, address ... with counts
+    split: SplitProposal | None = None  # the column looks like two collapsed into one
+    note: str = ""
+
+
+class DictLink(Frozen):
+    list: str
+    key: str
+    role: str  # heading, value, unit, member or exclude
+    weight: float = 1.0
+    says: str = ""
+
+
+class DictColumn(Frozen):
+    means: str = ""
+    shape: Shape | None = None
+    says: str = ""
+    terms: tuple[DictLink, ...] = ()
+
+
+class Dictionary(Frozen):
+    """A column dictionary (`sys.col.<scope>.<domain>`): the terms that define each database column."""
+
+    code: str
+    describe: str = ""
+    columns: dict[str, DictColumn]
+
+
+class HeadingParts(Frozen):
+    base: str
+    qualifier: str = ""
+    qualifier_is: str = ""
+    rule: str = ""
+
+
+class SplitProposal(Frozen):
+    split: str
+    share: float
+    main_heading: str
+    qualifier_heading: str
+    main_cells: tuple[str, ...]
+    qualifier_cells: tuple[str, ...]

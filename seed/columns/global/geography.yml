@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/columns.schema.json
+code: sys.col.global.geography
+describe: Columns of places and their names.
+columns:
+  geography.names.name:
+    means: A name of a place
+    shape: name
+    terms:
+    - list: sys.trm.global.address
+      key: admin-levels
+      role: heading
+    - list: sys.trm.global.address
+      key: contact-headings
+      role: heading
+    - list: sys.trm.global.address
+      key: admin-unit
+      role: value
+      says: place

@@ -1,0 +1,747 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.global.people
+describe: 'People: titles, offices, group words and the headings of name columns, with Swahili forms tagged sw. Neutral across countries.'
+languages:
+- en
+- sw
+groups:
+- group: person-titles
+  label: Titles and forms of address before a name
+  describe: Forms of address that precede a person's name. Their presence says the cell is a person, not an organisation.
+  terms:
+  - value: hon
+    aliases:
+    - hon.
+    - honourable
+    - honorable
+    - mheshimiwa
+    kind: title
+  - value: his excellency
+    aliases:
+    - h.e.
+    - h.e
+    - his exc
+    - mheshimiwa rais
+    kind: title
+  - value: her excellency
+    aliases:
+    - h.e. mrs
+    kind: title
+  - value: dr
+    aliases:
+    - dr.
+    - doctor
+    - daktari
+    kind: title
+  - value: prof
+    aliases:
+    - prof.
+    - professor
+    - profesa
+    kind: title
+  - value: mr
+    aliases:
+    - mr.
+    - mister
+    - bwana
+    kind: title
+  - value: mrs
+    aliases:
+    - mrs.
+    - missus
+    - bi
+    kind: title
+  - value: ms
+    aliases:
+    - ms.
+    - miss
+    - bi.
+    kind: title
+  - value: eng
+    aliases:
+    - eng.
+    - engineer
+    - mhandisi
+    kind: title
+  - value: rev
+    aliases:
+    - rev.
+    - reverend
+    - mchungaji
+    kind: title
+  - value: fr
+    aliases:
+    - fr.
+    - father
+    - padre
+    kind: title
+  - value: bishop
+    aliases:
+    - askofu
+    kind: title
+  - value: archbishop
+    aliases:
+    - askofu mkuu
+    kind: title
+  - value: sheikh
+    aliases:
+    - shaikh
+    - sheik
+    kind: title
+  - value: imam
+    aliases:
+    - imamu
+    kind: title
+  - value: pastor
+    aliases:
+    - mchungaji
+    kind: title
+  - value: sir
+    kind: title
+  - value: madam
+    aliases:
+    - madame
+    - mama
+    kind: title
+  - value: comrade
+    aliases:
+    - kamarada
+    kind: title
+  - value: advocate
+    aliases:
+    - adv
+    - adv.
+    - wakili
+    kind: title
+  - value: justice
+    aliases:
+    - hon. justice
+    - jaji
+    kind: title
+  - value: judge
+    aliases:
+    - hakimu
+    kind: title
+  - value: cpa
+    aliases:
+    - cpa.
+    kind: title
+  - value: arch
+    aliases:
+    - arch.
+    kind: title
+  - value: amb
+    aliases:
+    - amb.
+    - ambassador
+    - balozi
+    kind: title
+  - value: gen
+    aliases:
+    - general
+    - jenerali
+    kind: title
+  - value: col
+    aliases:
+    - colonel
+    - kanali
+    kind: title
+  - value: maj
+    aliases:
+    - major
+    - meja
+    kind: title
+  - value: capt
+    aliases:
+    - captain
+    - nahodha
+    kind: title
+  - value: lt
+    aliases:
+    - lieutenant
+    kind: title
+  - value: sgt
+    aliases:
+    - sergeant
+    - sajini
+    kind: title
+  - value: chief
+    aliases:
+    - chifu
+    kind: title
+  - value: elder
+    aliases:
+    - mzee
+    kind: title
+  - value: mama
+    kind: title
+  - value: mzee
+    kind: title
+- group: office-titles
+  label: Offices and positions held by a person
+  describe: Offices a person holds. Seen with a name they make a titled person and an office holder.
+  terms:
+  - value: president
+    aliases:
+    - rais
+    kind: title
+  - value: vice president
+    aliases:
+    - makamu wa rais
+    kind: title
+  - value: deputy president
+    aliases:
+    - naibu rais
+    kind: title
+  - value: prime minister
+    aliases:
+    - waziri mkuu
+    kind: title
+  - value: governor
+    aliases:
+    - gavana
+    kind: title
+  - value: deputy governor
+    aliases:
+    - naibu gavana
+    kind: title
+  - value: senator
+    aliases:
+    - seneta
+    kind: title
+  - value: member of parliament
+    aliases:
+    - mp
+    - mbunge
+    - m.p.
+    kind: title
+  - value: speaker
+    aliases:
+    - spika
+    kind: title
+  - value: deputy speaker
+    aliases:
+    - naibu spika
+    kind: title
+  - value: minister
+    aliases:
+    - waziri
+    kind: title
+  - value: permanent secretary
+    kind: title
+  - value: commissioner
+    aliases:
+    - kamishna
+    kind: title
+  - value: chairperson
+    aliases:
+    - chairman
+    - chair
+    - chairwoman
+    - mwenyekiti
+    kind: title
+  - value: vice chairperson
+    aliases:
+    - vice chairman
+    - vice chair
+    - makamu mwenyekiti
+    kind: title
+  - value: secretary general
+    aliases:
+    - secretary-general
+    - katibu mkuu wa chama
+    kind: title
+  - value: secretary
+    aliases:
+    - katibu
+    kind: title
+  - value: treasurer
+    aliases:
+    - mweka hazina
+    kind: title
+  - value: director
+    aliases:
+    - mkurugenzi
+    kind: title
+  - value: director general
+    aliases:
+    - director-general
+    - mkurugenzi mkuu
+    kind: title
+  - value: chief executive officer
+    aliases:
+    - ceo
+    - c.e.o.
+    - afisa mkuu mtendaji
+    kind: title
+  - value: accounting officer
+    aliases:
+    - afisa wa uhasibu
+    kind: title
+  - value: registrar
+    aliases:
+    - msajili
+    kind: title
+  - value: assistant registrar
+    aliases:
+    - msajili msaidizi
+    kind: title
+  - value: acting registrar
+    kind: title
+  - value: mayor
+    aliases:
+    - meya
+    kind: title
+  - value: councillor
+    aliases:
+    - diwani
+    kind: title
+  - value: chief justice
+    aliases:
+    - jaji mkuu
+    kind: title
+  - value: attorney general
+    aliases:
+    - ag
+    - mwanasheria mkuu
+    kind: title
+  - value: inspector general
+    aliases:
+    - ig
+    kind: title
+  - value: auditor general
+    aliases:
+    - mkaguzi mkuu
+    kind: title
+  - value: ombudsman
+    kind: title
+  - value: clerk
+    aliases:
+    - karani
+    kind: title
+  - value: leader of the majority
+    aliases:
+    - kiongozi wa wengi
+    kind: title
+  - value: leader of the minority
+    aliases:
+    - kiongozi wa wachache
+    kind: title
+  - value: party leader
+    aliases:
+    - kiongozi wa chama
+    kind: title
+  - value: chief
+    aliases:
+    - chifu
+    kind: title
+  - value: headteacher
+    aliases:
+    - principal
+    - mwalimu mkuu
+    kind: title
+  - value: managing director
+    aliases:
+    - md
+    - m.d.
+    kind: title
+  - value: proprietor
+    aliases:
+    - mmiliki
+    kind: title
+  - value: chairman of the board
+    kind: title
+  - value: board member
+    aliases:
+    - mjumbe wa bodi
+    kind: title
+  - value: trustee
+    kind: title
+  - value: patron
+    kind: title
+  - value: coordinator
+    aliases:
+    - mratibu
+    kind: title
+  - value: manager
+    aliases:
+    - meneja
+    kind: title
+  - value: officer
+    aliases:
+    - afisa
+    kind: title
+- group: collectives
+  label: Words for groups of people
+  describe: A cell with these words names a group or body, not one person.
+  terms:
+  - value: team
+    aliases:
+    - timu
+    kind: concept
+  - value: members
+    aliases:
+    - wanachama
+    - wajumbe
+    kind: concept
+  - value: people
+    aliases:
+    - watu
+    kind: concept
+  - value: group
+    aliases:
+    - kikundi
+    kind: concept
+  - value: persons
+    kind: concept
+  - value: committee
+    aliases:
+    - kamati
+    kind: concept
+  - value: board
+    aliases:
+    - bodi
+    kind: concept
+  - value: delegation
+    aliases:
+    - ujumbe
+    kind: concept
+  - value: caucus
+    kind: concept
+  - value: council
+    aliases:
+    - baraza
+    kind: concept
+  - value: panel
+    aliases:
+    - jopo
+    kind: concept
+  - value: staff
+    aliases:
+    - wafanyakazi
+    kind: concept
+  - value: officers
+    aliases:
+    - maafisa
+    kind: concept
+  - value: agents
+    aliases:
+    - mawakala
+    kind: concept
+  - value: representatives
+    aliases:
+    - wawakilishi
+    kind: concept
+  - value: directors
+    aliases:
+    - wakurugenzi
+    kind: concept
+  - value: shareholders
+    aliases:
+    - wanahisa
+    kind: concept
+  - value: beneficiaries
+    aliases:
+    - walengwa
+    kind: concept
+  - value: applicants
+    aliases:
+    - waombaji
+    kind: concept
+  - value: candidates
+    aliases:
+    - wagombea
+    kind: concept
+  - value: nominees
+    kind: concept
+  - value: executive
+    aliases:
+    - utendaji
+    kind: concept
+  - value: secretariat
+    aliases:
+    - sekretarieti
+    kind: concept
+  - value: taskforce
+    aliases:
+    - task force
+    kind: concept
+  - value: working group
+    kind: concept
+- group: person-words
+  label: Words that name a person in a role
+  terms:
+  - value: person
+    aliases:
+    - mtu
+    kind: concept
+  - value: individual
+    aliases:
+    - mtu binafsi
+    kind: concept
+  - value: citizen
+    aliases:
+    - raia
+    kind: concept
+  - value: resident
+    aliases:
+    - mkazi
+    kind: concept
+  - value: applicant
+    aliases:
+    - mwombaji
+    kind: concept
+  - value: candidate
+    aliases:
+    - mgombea
+    kind: concept
+  - value: nominee
+    aliases:
+    - mteule
+    kind: concept
+  - value: owner
+    aliases:
+    - mmiliki
+    kind: concept
+  - value: shareholder
+    aliases:
+    - mwanahisa
+    kind: concept
+  - value: beneficiary
+    aliases:
+    - mnufaika
+    kind: concept
+  - value: director
+    kind: concept
+  - value: proprietor
+    kind: concept
+  - value: signatory
+    kind: concept
+  - value: witness
+    aliases:
+    - shahidi
+    kind: concept
+  - value: complainant
+    aliases:
+    - mlalamikaji
+    kind: concept
+  - value: respondent
+    aliases:
+    - mjibu maombi
+    kind: concept
+  - value: petitioner
+    aliases:
+    - mwombaji
+    kind: concept
+  - value: appellant
+    kind: concept
+  - value: claimant
+    kind: concept
+  - value: member
+    aliases:
+    - mwanachama
+    kind: concept
+  - value: delegate
+    aliases:
+    - mjumbe
+    kind: concept
+  - value: agent
+    aliases:
+    - wakala
+    kind: concept
+  - value: official
+    aliases:
+    - afisa
+    kind: concept
+  - value: contact person
+    aliases:
+    - mtu wa kuwasiliana naye
+    kind: concept
+- group: name-parts
+  label: Headings for the parts of a person's name
+  describe: Headings of columns that hold a person's name or part of it.
+  terms:
+  - value: first name
+    aliases:
+    - given name
+    - forename
+    - jina la kwanza
+    kind: concept
+  - value: middle name
+    aliases:
+    - jina la kati
+    kind: concept
+  - value: surname
+    aliases:
+    - family name
+    - last name
+    - jina la ukoo
+    kind: concept
+  - value: other names
+    aliases:
+    - jina lingine
+    kind: concept
+  - value: full name
+    aliases:
+    - full names
+    - names
+    - jina kamili
+    kind: concept
+  - value: initials
+    aliases:
+    - herufi za kwanza
+    kind: concept
+  - value: name
+    aliases:
+    - jina
+    kind: concept
+  - value: title
+    aliases:
+    - cheo
+    kind: concept
+  - value: name of person
+    aliases:
+    - person's name
+    - name of individual
+    kind: concept
+- group: person-detail-headings
+  label: Headings for facts about a person
+  terms:
+  - value: gender
+    aliases:
+    - sex
+    - jinsia
+    kind: concept
+  - value: date of birth
+    aliases:
+    - dob
+    - birth date
+    - tarehe ya kuzaliwa
+    kind: concept
+  - value: age
+    aliases:
+    - umri
+    kind: concept
+  - value: nationality
+    aliases:
+    - uraia
+    kind: concept
+  - value: id number
+    aliases:
+    - national id
+    - id no
+    - identity number
+    - nambari ya kitambulisho
+    kind: concept
+  - value: passport number
+    aliases:
+    - passport no
+    - nambari ya pasipoti
+    kind: concept
+  - value: occupation
+    aliases:
+    - profession
+    - kazi
+    kind: concept
+  - value: marital status
+    aliases:
+    - hali ya ndoa
+    kind: concept
+  - value: disability
+    aliases:
+    - pwd
+    - person with disability
+    kind: concept
+  - value: ethnicity
+    aliases:
+    - community
+    - tribe
+    - kabila
+    kind: concept
+patterns:
+- pattern: titled-person
+  label: A person with a title or office
+  means: person
+  describe: A form of address or an office before the names, or an office after them. Names alone are not enough to call a cell a person.
+  sequences:
+  - - group: person-titles
+      as: title
+    - group: office-titles
+      as: office
+      optional: true
+    - words: capitalised
+      as: given
+      repeat:
+        min: 1
+        max: 3
+    - words: capitalised
+      as: family
+  - - group: office-titles
+      as: office
+    - words: capitalised
+      as: given
+      repeat:
+        min: 1
+        max: 3
+    - words: capitalised
+      as: family
+  - - group: person-titles
+      as: title
+      optional: true
+    - words: capitalised
+      as: given
+      repeat:
+        min: 1
+        max: 3
+    - words: capitalised
+      as: family
+    - punct: ','
+      optional: true
+    - group: office-titles
+      as: office_after
+  examples:
+  - text: Hon. Jane Wanjiru Kamau
+    captures:
+      title: Hon.
+      given: Jane Wanjiru
+      family: Kamau
+  - text: H.E. Governor Anne Waiguru
+    captures:
+      title: H.E.
+      office: Governor
+      given: Anne
+      family: Waiguru
+  - text: Dr. John Kamau, Chairperson
+    captures:
+      title: Dr.
+      given: John
+      family: Kamau
+      office_after: Chairperson
+  counterexamples:
+  - P.O. Box 34200
+  - KES 1,200
+- pattern: member-of-for
+  label: An elected seat
+  means: role
+  sequences:
+  - - group: office-titles
+      as: office
+    - any_of:
+      - literal: for
+      - literal: of
+    - words: capitalised
+      as: place
+      repeat:
+        min: 1
+        max: 3
+  examples:
+  - text: Member of Parliament for Kiambu Town
+    captures:
+      office: Member of Parliament
+      place: Kiambu Town
+  - text: Governor of Nairobi
+    captures:
+      office: Governor
+      place: Nairobi
+  counterexamples:
+  - Jane Kamau

@@ -14,6 +14,7 @@ dependencies = [
   "psycopg[binary]",
   "mzizi-filesystem",
   "mzizi-manifest",
+  "mzizi-patterns",
   "mzizi-fetch",
   "mzizi-search",
   "mzizi-crawler",
@@ -41,6 +42,7 @@ where = ["src"]
 [tool.uv.sources]
 mzizi-filesystem = { workspace = true }
 mzizi-manifest = { workspace = true }
+mzizi-patterns = { workspace = true }
 mzizi-fetch = { workspace = true }
 mzizi-search = { workspace = true }
 mzizi-crawler = { workspace = true }

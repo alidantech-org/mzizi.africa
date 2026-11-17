@@ -16,7 +16,7 @@ A = "pg.src.srs.ke.a"
 B = "pg.src.srs.ke.b"
 M_GLOBAL = "sys.map.ref.cty.global.base"
 M_KE = "sys.map.ref.cty.ke.local"
-V_KE = "sys.trm.ref.pat.ke.names"
+V_KE = "sys.trm.ke.names"
 
 
 def write(root: Path, files: dict[str, str]) -> Path:
@@ -49,10 +49,10 @@ def test_the_example_tree_resolves_every_code() -> None:
     kinds = {code: entry.kind for code, entry in result.registry.entries.items()}
     assert kinds["pg.src.srs.ke.example-ministry"] is Kind.SOURCE
     assert kinds["sys.map.ref.cty.global.example-statistics"] is Kind.MAPPING
-    assert kinds["sys.trm.ref.pat.ke.office-names"] is Kind.TERMS
+    assert kinds["sys.trm.ke.office-names"] is Kind.TERMS
     assert kinds["sys.map.fin.flw.ke.county-allocations"] is Kind.MAPPING
     assert kinds["sys.eng.job.ke.example-ministry-publications"] is Kind.JOB
-    users = result.registry.users_of("sys.trm.ref.pat.ke.office-names")
+    users = result.registry.users_of("sys.trm.ke.office-names")
     assert [e.code for e in users] == ["pg.src.srs.ke.example-ministry"]
 
 
@@ -70,7 +70,7 @@ def test_a_valid_tree_with_a_module_mapping_and_global_sharing(tmp_path: Path) -
             "sources/srs/ke/a/modules/x.yml": f"module: x\nmapping: {M_KE}\n",
             "mappings/ref/cty/global/base.yml": mapping(M_GLOBAL),
             "mappings/ref/cty/ke/local.yml": mapping(M_KE),
-            "terms/ref/pat/ke/names.yml": terms(V_KE),
+            "terms/ke/names.yml": terms(V_KE),
         },
     )
     assert problems(root, mirror=True) == []
@@ -149,7 +149,7 @@ def test_a_source_job_and_mapping_must_fit_their_kind(tmp_path: Path) -> None:
             "b.yml": source("pg.src.doc.ke.b", kind="api"),
             "d.yml": mapping("sys.map.ofc.ind.ke.d"),
             "e.json": '{"code": "sys.eng.run.ke.e", "spec_version": 1, "stages": []}',
-            "f.yml": terms("sys.trm.ref.pat.ke.f"),
+            "f.yml": terms("sys.trm.ke.f"),
         },
     )
     found = problems(root)
@@ -167,7 +167,7 @@ def test_the_path_must_mirror_the_code(tmp_path: Path) -> None:
             "mappings/ref/cty/ke/local.yml": mapping(M_KE),
             "mappings/elsewhere/local2.yml": mapping("sys.map.ref.cty.ke.local2"),
             "sources/srs/ke/a/manifest.yml": source(A),
-            "terms/ref/pat/ke/wrong-name.yml": terms(V_KE),
+            "terms/ke/wrong-name.yml": terms(V_KE),
         },
     )
     found = problems(root, mirror=True)

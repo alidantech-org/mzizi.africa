@@ -1,0 +1,576 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.global.organisations
+describe: 'Organisations: legal-form suffixes, kinds of body, and the headings of organisation columns, with Swahili forms tagged sw.'
+languages:
+- en
+- sw
+groups:
+- group: org-suffixes
+  label: Legal-form words at the end of an organisation name
+  describe: Words that end the name of a company or body; a cell ending in one is an organisation.
+  terms:
+  - value: limited
+    aliases:
+    - ltd
+    - ltd.
+    - ltd
+    - l.t.d.
+    - kampuni ndogo
+    kind: pattern-word
+  - value: plc
+    aliases:
+    - p.l.c.
+    - public limited company
+    kind: pattern-word
+  - value: inc
+    aliases:
+    - inc.
+    - incorporated
+    kind: pattern-word
+  - value: llc
+    aliases:
+    - l.l.c.
+    kind: pattern-word
+  - value: llp
+    aliases:
+    - l.l.p.
+    kind: pattern-word
+  - value: co
+    aliases:
+    - co.
+    - company
+    - kampuni
+    kind: pattern-word
+  - value: corporation
+    aliases:
+    - corp
+    - corp.
+    kind: pattern-word
+  - value: enterprises
+    aliases:
+    - enterprise
+    - biashara
+    kind: pattern-word
+  - value: holdings
+    aliases:
+    - holding
+    kind: pattern-word
+  - value: group
+    aliases:
+    - kikundi
+    kind: pattern-word
+  - value: partners
+    aliases:
+    - partnership
+    kind: pattern-word
+  - value: associates
+    kind: pattern-word
+  - value: ventures
+    aliases:
+    - venture
+    kind: pattern-word
+  - value: services
+    aliases:
+    - service
+    kind: pattern-word
+  - value: solutions
+    kind: pattern-word
+  - value: supplies
+    aliases:
+    - suppliers
+    kind: pattern-word
+  - value: contractors
+    aliases:
+    - contractor
+    - wakandarasi
+    kind: pattern-word
+  - value: investments
+    aliases:
+    - investment
+    kind: pattern-word
+  - value: trading
+    aliases:
+    - traders
+    - trader
+    kind: pattern-word
+  - value: agencies
+    aliases:
+    - agency
+    - wakala
+    kind: pattern-word
+  - value: consultants
+    aliases:
+    - consultancy
+    - consulting
+    kind: pattern-word
+  - value: engineers
+    aliases:
+    - engineering
+    kind: pattern-word
+  - value: builders
+    aliases:
+    - building contractors
+    kind: pattern-word
+  - value: merchants
+    kind: pattern-word
+  - value: technologies
+    aliases:
+    - technology
+    - tech
+    kind: pattern-word
+  - value: industries
+    aliases:
+    - industry
+    kind: pattern-word
+  - value: international
+    aliases:
+    - intl
+    - intl.
+    kind: pattern-word
+  - value: africa
+    kind: pattern-word
+  - value: east africa
+    kind: pattern-word
+  - value: kenya
+    kind: pattern-word
+  - value: sacco
+    aliases:
+    - s.a.c.c.o.
+    kind: pattern-word
+  - value: cooperative
+    aliases:
+    - co-operative
+    - coop
+    - ushirika
+    kind: pattern-word
+  - value: foundation
+    aliases:
+    - msingi
+    kind: pattern-word
+  - value: trust
+    kind: pattern-word
+  - value: initiative
+    kind: pattern-word
+  - value: network
+    kind: pattern-word
+  - value: alliance
+    kind: pattern-word
+  - value: forum
+    kind: pattern-word
+  - value: centre
+    aliases:
+    - center
+    - kituo
+    kind: pattern-word
+  - value: (k)
+    aliases:
+    - (e.a.)
+    - (ea)
+    - (u)
+    kind: pattern-word
+  - value: a.k.a
+    kind: pattern-word
+- group: org-types
+  label: Kinds of organisation
+  terms:
+  - value: ministry
+    aliases:
+    - wizara
+    kind: concept
+  - value: state department
+    aliases:
+    - idara ya serikali
+    kind: concept
+  - value: department
+    aliases:
+    - idara
+    kind: concept
+  - value: authority
+    aliases:
+    - mamlaka
+    kind: concept
+  - value: commission
+    aliases:
+    - tume
+    kind: concept
+  - value: council
+    aliases:
+    - baraza
+    kind: concept
+  - value: agency
+    aliases:
+    - wakala
+    kind: concept
+  - value: board
+    aliases:
+    - bodi
+    kind: concept
+  - value: bureau
+    aliases:
+    - ofisi
+    kind: concept
+  - value: institute
+    aliases:
+    - taasisi
+    kind: concept
+  - value: university
+    aliases:
+    - chuo kikuu
+    kind: concept
+  - value: college
+    aliases:
+    - chuo
+    kind: concept
+  - value: school
+    aliases:
+    - shule
+    kind: concept
+  - value: hospital
+    aliases:
+    - hospitali
+    kind: concept
+  - value: bank
+    aliases:
+    - benki
+    kind: concept
+  - value: sacco
+    kind: concept
+  - value: cooperative society
+    aliases:
+    - co-operative society
+    kind: concept
+  - value: ngo
+    aliases:
+    - non-governmental organisation
+    - non governmental organization
+    kind: concept
+  - value: civil society organisation
+    aliases:
+    - cso
+    kind: concept
+  - value: foundation
+    kind: concept
+  - value: association
+    aliases:
+    - chama
+    kind: concept
+  - value: society
+    aliases:
+    - jamii
+    kind: concept
+  - value: union
+    aliases:
+    - muungano
+    kind: concept
+  - value: trade union
+    kind: concept
+  - value: political party
+    aliases:
+    - chama cha siasa
+    kind: concept
+  - value: party
+    aliases:
+    - chama
+    kind: concept
+  - value: coalition
+    aliases:
+    - muungano wa vyama
+    kind: concept
+  - value: church
+    aliases:
+    - kanisa
+    kind: concept
+  - value: mosque
+    aliases:
+    - msikiti
+    kind: concept
+  - value: temple
+    aliases:
+    - hekalu
+    kind: concept
+  - value: parastatal
+    aliases:
+    - shirika la umma
+    kind: concept
+  - value: state corporation
+    aliases:
+    - shirika la serikali
+    kind: concept
+  - value: county government
+    aliases:
+    - serikali ya kaunti
+    kind: concept
+  - value: national government
+    aliases:
+    - serikali ya kitaifa
+    kind: concept
+  - value: county assembly
+    aliases:
+    - bunge la kaunti
+    kind: concept
+  - value: national assembly
+    aliases:
+    - bunge la kitaifa
+    kind: concept
+  - value: senate
+    aliases:
+    - seneti
+    kind: concept
+  - value: parliament
+    aliases:
+    - bunge
+    kind: concept
+  - value: judiciary
+    aliases:
+    - mahakama
+    kind: concept
+  - value: court
+    aliases:
+    - mahakama
+    kind: concept
+  - value: police
+    aliases:
+    - polisi
+    kind: concept
+  - value: military
+    aliases:
+    - jeshi
+    kind: concept
+  - value: regulator
+    kind: concept
+  - value: tribunal
+    aliases:
+    - baraza la rufaa
+    kind: concept
+  - value: secretariat
+    aliases:
+    - sekretarieti
+    kind: concept
+  - value: directorate
+    kind: concept
+  - value: office of the
+    kind: concept
+  - value: registrar of
+    kind: concept
+  - value: commission on
+    kind: concept
+- group: bidder-headings
+  label: Headings of a bidder
+  terms:
+  - value: bidder
+    aliases:
+    - bidder name
+    - name of bidder
+    - tenderer
+    - name of tenderer
+    - mzabuni
+    - mtoa zabuni
+    kind: concept
+- group: contractor-headings
+  label: Headings of a contractor
+  terms:
+  - value: contractor
+    aliases:
+    - name of contractor
+    - awarded to
+    - successful bidder
+    - mkandarasi
+    - contracted party
+    kind: concept
+- group: supplier-headings
+  label: Headings of a supplier
+  terms:
+  - value: supplier
+    aliases:
+    - supplier name
+    - name of supplier
+    - vendor
+    - vendor name
+    - service provider
+    - mtoa huduma
+    - firm
+    - name of firm
+    kind: concept
+- group: organisation-headings
+  label: Headings of columns that hold organisation names
+  terms:
+  - value: organisation
+    aliases:
+    - organization
+    - taasisi
+    - shirika
+    kind: concept
+  - value: institution
+    kind: concept
+  - value: company
+    aliases:
+    - kampuni
+    - company name
+    - name of company
+    kind: concept
+  - value: firm
+    aliases:
+    - business
+    - business name
+    kind: concept
+  - value: entity
+    aliases:
+    - legal entity
+    - kampuni au taasisi
+    kind: concept
+  - value: supplier
+    aliases:
+    - supplier name
+    - name of supplier
+    - mtoa huduma
+    kind: concept
+  - value: contractor
+    aliases:
+    - name of contractor
+    - mkandarasi
+    kind: concept
+  - value: bidder
+    aliases:
+    - name of bidder
+    - bidder name
+    - tenderer
+    - name of tenderer
+    - mzabuni
+    kind: concept
+  - value: vendor
+    aliases:
+    - vendor name
+    kind: concept
+  - value: service provider
+    aliases:
+    - mtoa huduma
+    kind: concept
+  - value: procuring entity
+    aliases:
+    - procuring agency
+    - taasisi ya ununuzi
+    kind: concept
+  - value: ministry
+    aliases:
+    - department
+    - agency
+    - authority
+    kind: concept
+  - value: beneficiary
+    aliases:
+    - recipient
+    - mnufaika
+    - mpokeaji
+    kind: concept
+  - value: sponsor
+    aliases:
+    - mdhamini
+    kind: concept
+  - value: partner
+    aliases:
+    - mshirika
+    kind: concept
+  - value: owner
+    aliases:
+    - mmiliki
+    kind: concept
+  - value: registered name
+    aliases:
+    - official name
+    - jina rasmi
+    kind: concept
+  - value: trading name
+    aliases:
+    - trade name
+    kind: concept
+  - value: party
+    aliases:
+    - political party
+    - chama
+    kind: concept
+  - value: registration number
+    aliases:
+    - company number
+    - reg no
+    - reg. no.
+    - no. ya usajili
+    kind: concept
+  - value: certificate of incorporation
+    kind: concept
+  - value: kra pin
+    aliases:
+    - pin
+    - tax pin
+    - tax compliance
+    kind: concept
+  - value: business permit
+    aliases:
+    - licence
+    - license
+    - leseni
+    kind: concept
+patterns:
+- pattern: organisation-name
+  label: A company or body name
+  means: organisation
+  sequences:
+  - - words: capitalised
+      as: name
+      repeat:
+        min: 1
+        max: 6
+    - group: org-suffixes
+      as: suffix
+  - - group: org-types
+      as: type
+    - any_of:
+      - literal: of
+      - literal: for
+    - words: capitalised
+      as: name
+      repeat:
+        min: 1
+        max: 6
+  examples:
+  - text: Rawel Holdings Limited
+    captures:
+      name: Rawel Holdings
+      suffix: Limited
+  - text: Fornani Co Ltd
+    captures:
+      name: Fornani Co
+      suffix: Ltd
+  - text: Ministry of Health
+    captures:
+      type: Ministry
+      name: Health
+  counterexamples:
+  - Hon. Jane Kamau
+- pattern: name-with-abbreviation
+  label: A name followed by its abbreviation in brackets
+  means: organisation
+  sequences:
+  - - words: capitalised
+      as: name
+      repeat:
+        min: 1
+        max: 8
+    - punct: (
+    - letters:
+        min: 2
+        max: 10
+        case: upper
+      as: abbrev
+    - punct: )
+  examples:
+  - text: The National Alliance (TNA )
+    captures:
+      name: The National Alliance
+      abbrev: TNA
+  - text: Orange Democratic Movement (ODM)
+    captures:
+      name: Orange Democratic Movement
+      abbrev: ODM
+  counterexamples:
+  - Orange Democratic Movement
+  - Total (formerly Caltex)

@@ -2,7 +2,7 @@
 # The group a tag reads from decides whether it is a kind (what a document is) or a subject (what it is about).
 # Impact: 3 high, 2 medium, 1 low, 0 noise. Weights are starting values to calibrate on reviewed decisions.
 code: sys.eng.docs.profile
-term_lists: [sys.trm.src.doc.ke.orpp]  # the lists it extends (ke documents, global documents) load with it
+term_lists: [sys.trm.ke.documents]  # extends sys.trm.global.documents
 stopword_group: stopwords
 tags:
   - { tag: law, group: law, impact: 3, weight: 1.0 }
