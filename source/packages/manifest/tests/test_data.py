@@ -206,7 +206,12 @@ def test_the_reference_group_links_without_a_cycle_and_the_whole_database_has_on
         "reference.patterns",
         "reference.countries",
     }
-    assert table_cycle(tables) == ["filesystem.file_versions", "filesystem.files", "filesystem.file_versions"]
+    # The whole database has cycles through nullable links (files and their current version; official entities, their
+    # citations and the sources whose publisher is an entity); the check returns one as a closed path.
+    cycle = table_cycle(tables)
+    assert cycle is not None and cycle[0] == cycle[-1] and len(cycle) > 2
+    geography = {name for name in tables if name.startswith("geography.")}
+    assert table_cycle(tables, geography) is None
     for name in ("reference.countries", "reference.values"):
         assert tables[name].seedable
 
