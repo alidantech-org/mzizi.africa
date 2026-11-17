@@ -118,7 +118,11 @@ class DevLayout:
 
     def website(self, url_or_host: str) -> SiteFolder:
         address = address_of(url_or_host)
-        return SiteFolder(self.root.joinpath("websites", *address.parts), address)
+        folder = self.root.joinpath("websites", *address.parts)
+        twin = {APEX: "www", "www": APEX}.get(address.label)
+        if twin and not folder.exists() and (folder.parent / twin / "pages").is_dir():
+            folder = folder.parent / twin  # the apex and `www` are one site: reuse what is already saved
+        return SiteFolder(folder, address)
 
     @property
     def browser(self) -> Path:
