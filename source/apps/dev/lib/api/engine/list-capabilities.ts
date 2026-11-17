@@ -16,13 +16,18 @@ export const listCapabilitiesOutputFields: readonly FieldMeta[] | undefined = Ca
 export const listCapabilitiesPage: PageNames | undefined = undefined;
 
 /** Values for each input port of List Capabilities. */
-export type ListCapabilitiesPorts = {};
+export type ListCapabilitiesPorts = {
+  /** Query values by field name, for callers (such as the generated list pages) that build them generically. */
+  input?: Record<string, unknown>;
+};
 
 /** Maps port values to the HTTP request parts of the operation.client convention. */
 export function listCapabilitiesRequest(ports: ListCapabilitiesPorts = {}): ClientInput {
   return {
     params: {},
-    query: {},
+    query: {
+      ...ports.input,
+    },
   };
 }
 

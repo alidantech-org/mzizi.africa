@@ -3,6 +3,6 @@ abstract final class AppConfig {
   /// The API base URL: `flutter run --dart-define=API_URL=https://api.example.com`.
   static const String apiBaseUrl = String.fromEnvironment(
     'API_URL',
-    defaultValue: 'http://localhost:3000',
+    defaultValue: 'http://127.0.0.1:8700',
   );
 }

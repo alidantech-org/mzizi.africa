@@ -18,7 +18,9 @@ const filterFields: readonly FieldSpec[] = [];
 
 const columns = [
   { key: "description", label: "Description" },
-  { key: "kind", label: "Kind" },
+  { key: "name", label: "Name" },
+  { key: "package", label: "Package" },
+  { key: "version", label: "Version" },
 ];
 
 type Row = Record<string, unknown>;

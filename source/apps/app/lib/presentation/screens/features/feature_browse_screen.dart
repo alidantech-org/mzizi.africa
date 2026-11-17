@@ -105,7 +105,7 @@ class _FeatureBrowseScreenState extends State<FeatureBrowseScreen> {
                   };
                   context.go(
                     Uri(
-                      path: '/app/feature-detail',
+                      path: '/feature-detail',
                       queryParameters: values,
                     ).toString(),
                   );

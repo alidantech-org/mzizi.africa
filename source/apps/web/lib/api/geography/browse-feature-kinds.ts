@@ -20,13 +20,18 @@ export const browseFeatureKindsOutputFields: readonly FieldMeta[] | undefined =
 export const browseFeatureKindsPage: PageNames | undefined = undefined;
 
 /** Values for each input port of Browse Feature Kinds. */
-export type BrowseFeatureKindsPorts = {};
+export type BrowseFeatureKindsPorts = {
+  /** Query values by field name, for callers (such as the generated list pages) that build them generically. */
+  input?: Record<string, unknown>;
+};
 
 /** Maps port values to the HTTP request parts of the operation.client convention. */
 export function browseFeatureKindsRequest(ports: BrowseFeatureKindsPorts = {}): ClientInput {
   return {
     params: {},
-    query: {},
+    query: {
+      ...ports.input,
+    },
   };
 }
 

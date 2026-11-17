@@ -30,3 +30,24 @@ h3 {
   background: var(--surface-elevated);
   box-shadow: var(--shadow);
 }
+
+/* Scheme-aware tokens the hand-built pages use, so text and surfaces keep their contrast in light and dark. */
+:root {
+  --content-muted: #6a5b4c;
+  --surface-sunken: var(--sand);
+  --link: var(--indigo);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --content-muted: #c9b9a3;
+    --surface-sunken: #4a3e33;
+    --link: #e0b25a;
+  }
+}
+
+@theme inline {
+  --color-content-muted: var(--content-muted);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-link: var(--link);
+}

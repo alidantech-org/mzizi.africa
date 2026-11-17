@@ -4,10 +4,18 @@
  * leaving a dead link.
  */
 export const routes = {
+  /** One citation with its source and files. */
+  evidenceView: "/evidence-view",
   /** Browse geographic features, narrowed by feature kind or code prefix. */
   featureBrowse: "/feature-browse",
   /** One geographic feature with its names. */
   featureDetail: "/feature-detail",
+  /** Who serves a place: officials, procurement, media and the evidence for each claim. */
+  placeProfile: "/place-profile",
+  /** Find a place by name and open its profile. */
+  placeSearch: "/place-search",
+  /** The data sources behind the platform. */
+  sourceBrowse: "/source-browse",
 } as const;
 
 export type RouteName = keyof typeof routes;
@@ -23,4 +31,8 @@ export const navigation: readonly {
   readonly name: RouteName;
   readonly label: string;
   readonly href: string;
-}[] = [{ name: "featureBrowse", label: "Feature Browse", href: "/feature-browse" }];
+}[] = [
+  { name: "featureBrowse", label: "Feature Browse", href: "/feature-browse" },
+  { name: "placeSearch", label: "Place Search", href: "/place-search" },
+  { name: "sourceBrowse", label: "Source Browse", href: "/source-browse" },
+];

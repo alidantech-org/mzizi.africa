@@ -18,19 +18,23 @@ export type ClientInput = {
   body?: unknown;
 };
 
-/** Sends one request to the application's HTTP API. Set NEXT_PUBLIC_API_URL to its base URL. */
+/**
+ * Sends one request to the application's HTTP API. Set NEXT_PUBLIC_API_URL to its base URL, or to a path on this
+ * site (such as `/api/engine`) when a server-side layer forwards the call and holds any secret.
+ */
 export async function send<T>(
   method: string,
   path: string,
   input: ClientInput,
 ): Promise<ClientResponse<T>> {
-  const base = process.env.NEXT_PUBLIC_API_URL ?? "";
-  const url = new URL(path, base === "" ? "http://localhost" : base);
+  const base = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/$/, "");
+  const query = new URLSearchParams();
   for (const [key, value] of Object.entries(input.query ?? {})) {
-    if (value !== undefined && value !== null) url.searchParams.set(key, String(value));
+    if (value !== undefined && value !== null) query.set(key, String(value));
   }
+  const search = query.size === 0 ? "" : `?${query.toString()}`;
   try {
-    const response = await fetch(base === "" ? `${url.pathname}${url.search}` : url, {
+    const response = await fetch(`${base}${path}${search}`, {
       method,
       headers: input.body === undefined ? undefined : { "content-type": "application/json" },
       body: input.body === undefined ? undefined : JSON.stringify(input.body),

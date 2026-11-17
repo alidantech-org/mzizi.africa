@@ -20,6 +20,8 @@ export const getFeaturePage: PageNames | undefined = undefined;
 
 /** Values for each input port of Get Feature. */
 export type GetFeaturePorts = {
+  /** Query values by field name, for callers (such as the generated list pages) that build them generically. */
+  input?: Record<string, unknown>;
   featureId?: string;
 };
 
@@ -29,7 +31,9 @@ export function getFeatureRequest(ports: GetFeaturePorts = {}): ClientInput {
     params: {
       featureId: String(ports.featureId),
     },
-    query: {},
+    query: {
+      ...ports.input,
+    },
   };
 }
 
