@@ -19,6 +19,18 @@ sources:
       type: typescript
       path: dryv/contracts
       entrypoint: apps/engine/index.ts
+    app:
+      type: typescript
+      path: dryv/contracts
+      entrypoint: apps/app/index.ts
+    web:
+      type: typescript
+      path: dryv/contracts
+      entrypoint: apps/web/index.ts
+    dev:
+      type: typescript
+      path: dryv/contracts
+      entrypoint: apps/dev/index.ts
   packs:
     # The local checkout of the official packs repository, pinned to the commit that declares TypeORM store
     # support; switch back to the GitHub repository once that commit is published.
@@ -92,6 +104,15 @@ destinations:
     engine:
       path: dryv/.dryv/ir/dryv.engine.ir.yaml
       authoring: { $ref: "#/sources/authoring/engine" }
+    app:
+      path: dryv/.dryv/ir/dryv.app.ir.yaml
+      authoring: { $ref: "#/sources/authoring/app" }
+    web:
+      path: dryv/.dryv/ir/dryv.web.ir.yaml
+      authoring: { $ref: "#/sources/authoring/web" }
+    dev:
+      path: dryv/.dryv/ir/dryv.dev.ir.yaml
+      authoring: { $ref: "#/sources/authoring/dev" }
   # Injected NestJS modules: source/backend/api/src/modules/<group>/...
   modules:
     path: source/backend/api/src/modules
@@ -187,6 +208,14 @@ destinations:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
       - { $ref: "#/actions/typecheck-py" }
+  # Generated frontends. Next.js apps get the app and the server-action bridge (`_gen`); the Flutter app gets
+  # the app and the Dart API bridge package (`sdk/api`).
+  web-app: { path: source/apps/web }
+  web-bridge: { path: source/apps/web/_gen }
+  dev-app: { path: source/apps/dev }
+  dev-bridge: { path: source/apps/dev/_gen }
+  app-app: { path: source/apps/app }
+  app-bridge: { path: source/apps/app/sdk/api }
   # Generated system catalogs: one JSON document per application, read by the root pages and the web app.
   catalog-api:
     path: source/backend/api/src/system/catalog
@@ -309,6 +338,60 @@ packs:
     destination: { $ref: "#/destinations/postgres-sql" }
     outputs: { snapshot: { name: schema } }
 
+  web-theme:
+    source: { $ref: "#/sources/packs/project", path: theme-css }
+    destination: { $ref: "#/destinations/web-app" }
+    operations: consumed
+
+  web-bridge:
+    source: { $ref: "#/sources/packs/official", path: unit/clients/next-api-bridge }
+    destination: { $ref: "#/destinations/web-bridge" }
+    operations: consumed
+
+  web-app:
+    source: { $ref: "#/sources/packs/official", path: unit/frontend/nextjs-app }
+    destination: { $ref: "#/destinations/web-app" }
+    operations: consumed
+    bind:
+      operation.client: { $ref: "#/packs/web-bridge" }
+
+  dev-theme:
+    source: { $ref: "#/sources/packs/project", path: theme-css }
+    destination: { $ref: "#/destinations/dev-app" }
+    operations: consumed
+
+  dev-bridge:
+    source: { $ref: "#/sources/packs/official", path: unit/clients/next-api-bridge }
+    destination: { $ref: "#/destinations/dev-bridge" }
+    operations: consumed
+
+  dev-app:
+    source: { $ref: "#/sources/packs/official", path: unit/frontend/nextjs-app }
+    destination: { $ref: "#/destinations/dev-app" }
+    operations: consumed
+    bind:
+      operation.client: { $ref: "#/packs/dev-bridge" }
+
+  app-theme:
+    source: { $ref: "#/sources/packs/project", path: theme-dart }
+    destination: { $ref: "#/destinations/app-app" }
+    operations: consumed
+
+  app-bridge:
+    source: { $ref: "#/sources/packs/official", path: unit/clients/flutter-api-bridge }
+    destination: { $ref: "#/destinations/app-bridge" }
+    operations: consumed
+
+  app-app:
+    source: { $ref: "#/sources/packs/official", path: unit/frontend/flutter-app }
+    destination: { $ref: "#/destinations/app-app" }
+    operations: consumed
+    inputs:
+      api_path: sdk/api
+    bind:
+      operation.client: { $ref: "#/packs/app-bridge" }
+      schema.types: { $ref: "#/packs/app-bridge" }
+
 applications:
   pgsql:
     authoring: { $ref: "#/sources/authoring/pgsql" }
@@ -335,6 +418,27 @@ applications:
       - { $ref: "#/packs/use-cases" }
       - { $ref: "#/packs/server" }
       - { $ref: "#/packs/catalog-api" }
+  app:
+    authoring: { $ref: "#/sources/authoring/app" }
+    application: { $ref: "#/applications/mzizi-app" }
+    packs:
+      - { $ref: "#/packs/app-bridge" }
+      - { $ref: "#/packs/app-app" }
+      - { $ref: "#/packs/app-theme" }
+  web:
+    authoring: { $ref: "#/sources/authoring/web" }
+    application: { $ref: "#/applications/mzizi-web" }
+    packs:
+      - { $ref: "#/packs/web-bridge" }
+      - { $ref: "#/packs/web-app" }
+      - { $ref: "#/packs/web-theme" }
+  dev:
+    authoring: { $ref: "#/sources/authoring/dev" }
+    application: { $ref: "#/applications/mzizi-dev" }
+    packs:
+      - { $ref: "#/packs/dev-bridge" }
+      - { $ref: "#/packs/dev-app" }
+      - { $ref: "#/packs/dev-theme" }
 
 stores:
   main:

@@ -23,7 +23,7 @@ export function syncSteps(selected: readonly Project[]): Step[] {
 export function prepareSteps(): Step[] {
   return [
     step("Link local Dryv checkout", at("dryv"), ["bun", "run", "link"], { DRYV_HOME: dryvHome() }),
-    step("Development sign-in keys", at("source/apps/web"), ["bun", "run", "dev:env"]),
+    step("Development sign-in keys", at("source/apps/admin"), ["bun", "run", "dev:env"]),
   ];
 }
 
@@ -64,7 +64,7 @@ const disposable = [
   ".mypy_cache",
   ".pytest_cache",
   ".dev/dist",
-  "source/apps/web/.next",
+  "source/apps/admin/.next",
   "source/apps/www/.next",
   "source/apps/mobile/build",
 ];
@@ -76,7 +76,7 @@ export function clean(deep: boolean): void {
     "node_modules",
     "dryv/node_modules",
     "source/backend/api/node_modules",
-    "source/apps/web/node_modules",
+    "source/apps/admin/node_modules",
     "source/apps/www/node_modules",
   ];
   for (const path of [...disposable, ...(deep ? dependencies : [])]) {

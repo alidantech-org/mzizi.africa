@@ -17,9 +17,9 @@ describe("parse", () => {
     expect(parse([]).command).toBe("help");
   });
   test("keeps positional arguments and extracts --only in both forms", () => {
-    expect(parse(["dev", "api", "web"]).context).toEqual({ rest: ["api", "web"], only: undefined });
+    expect(parse(["dev", "api", "admin"]).context).toEqual({ rest: ["api", "admin"], only: undefined });
     expect(parse(["test", "--only", "python", "-x"]).context).toEqual({ rest: ["-x"], only: "python" });
-    expect(parse(["test", "--only=api,web"]).context).toEqual({ rest: [], only: "api,web" });
+    expect(parse(["test", "--only=api,admin"]).context).toEqual({ rest: [], only: "api,admin" });
   });
 });
 
@@ -38,7 +38,7 @@ describe("select", () => {
     expect(select().map((project) => project.name)).not.toContain("mobile");
   });
   test("names, kinds and all", () => {
-    expect(select("api,web").map((project) => project.name)).toEqual(["api", "web"]);
+    expect(select("api,admin").map((project) => project.name)).toEqual(["api", "admin"]);
     expect(select("python").map((project) => project.name)).toEqual(["python"]);
     expect(select("all")).toHaveLength(projects.length);
     expect(select("mobile").map((project) => project.name)).toEqual(["mobile"]);

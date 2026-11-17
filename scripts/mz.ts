@@ -76,11 +76,11 @@ export const commands: Record<string, Command> = {
     },
   },
   dev: {
-    summary: "run services in watch mode: dev [api] [engine] [web] [www]",
+    summary: "run services in watch mode: dev [api] [engine] [admin] [www]",
     run: async ({ rest }) => (await serve("dev" satisfies Mode, rest)) === 0,
   },
   start: {
-    summary: "run services in start mode (run build first): start [api] [engine] [web] [www]",
+    summary: "run services in start mode (run build first): start [api] [engine] [admin] [www]",
     run: async ({ rest }) => (await serve("start", rest)) === 0,
   },
   build: quality("build", "build the apps and the Python wheels"),
@@ -206,7 +206,7 @@ export function help(): void {
   console.log("Usage: bun run <command> [-- args]   or   bun scripts/mz.ts <command> [args] [--only <names>]\n");
   for (const [name, command] of Object.entries(commands)) console.log(`  ${name.padEnd(15)} ${command.summary}`);
   console.log(
-    "\n--only takes project names or kinds: python, scripts, dryv, api, database, web, www, mobile, bun, flutter, all",
+    "\n--only takes project names or kinds: python, scripts, dryv, api, database, admin, www, mobile, bun, flutter, all",
   );
 }
 

@@ -1,0 +1,15 @@
+version: dryv.pack/v1alpha1
+key: mzizi.theme-dart
+source: templates
+info:
+  title: Mzizi theme as Flutter ThemeData
+  version: 0.1.0
+  description: One Dart file per application from its resolved Theme - token constants plus light and dark ThemeData built from the semantic roles.
+  purpose: frontend
+  languages: [dart]
+  tags: [theme, tokens, flutter]
+plugins:
+  - name: jinja
+    extensions: [.j2]
+templates:
+  theme: {}

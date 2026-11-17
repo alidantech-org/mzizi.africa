@@ -1,0 +1,20 @@
+include: package:lints/recommended.yaml
+
+formatter:
+  page_width: 145
+
+linter:
+  rules:
+    prefer_single_quotes: true
+
+analyzer:
+  errors:
+    unused_import: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**

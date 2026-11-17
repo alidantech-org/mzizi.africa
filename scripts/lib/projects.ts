@@ -72,10 +72,10 @@ export const projects: readonly Project[] = [
     byDefault: true,
   },
   {
-    name: "web",
+    name: "admin",
     kind: "bun",
-    dir: "source/apps/web",
-    summary: "research and review dashboard (Next.js)",
+    dir: "source/apps/admin",
+    summary: "administrative portal: research and review dashboard (Next.js)",
     byDefault: true,
   },
   { name: "www", kind: "bun", dir: "source/apps/www", summary: "public site (Next.js)", byDefault: true },
@@ -90,7 +90,7 @@ export const projects: readonly Project[] = [
 
 /**
  * Each service has its own default port so processes never collide. `PORT` from `.env` is not passed
- * through; override one service with `API_PORT`, `ENGINE_PORT`, `WEB_PORT` or `WWW_PORT`. `{port}` in a command
+ * through; override one service with `API_PORT`, `ENGINE_PORT`, `ADMIN_PORT` or `WWW_PORT`. `{port}` in a command
  * is replaced with the resolved port.
  */
 export const services: readonly Service[] = [
@@ -111,8 +111,8 @@ export const services: readonly Service[] = [
     portEnv: "ENGINE_PORT",
   },
   {
-    name: "web",
-    dir: "source/apps/web",
+    name: "admin",
+    dir: "source/apps/admin",
     dev: ["bun", "--bun", "next", "dev", "-p", "{port}"],
     start: ["bun", "--bun", "next", "start", "-p", "{port}"],
     port: 3100,
