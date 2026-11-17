@@ -216,10 +216,6 @@ export const localityOperations = reads.operations({
     .input(inputs.CitationInput)
     .output(documents.EvidenceDetail)
     .facets(({ inputField, output }) => ({
-      http: dryv
-        .http("GET", "/v1/evidence/{citationId}")
-        .input(inputField("citationId"), dryv.path())
-        .output(output),
+      http: dryv.http("GET", "/v1/evidence/{citationId}").input(inputField("citationId"), dryv.path()).output(output),
     })),
 });
-

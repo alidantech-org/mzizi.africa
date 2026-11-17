@@ -30,11 +30,7 @@ type Command = {
 };
 
 /** A command that runs one kind of quality step across the selected projects. */
-const quality = (
-  kind: QualityKind,
-  summary: string,
-  concurrency = 1,
-): Command => ({
+const quality = (kind: QualityKind, summary: string, concurrency = 1): Command => ({
   summary,
   run: ({ only }) => group(kind, qualitySteps(kind, select(only)), concurrency),
 });
@@ -42,8 +38,7 @@ const quality = (
 /** A command that forwards its arguments to a console command of the Python workspace. */
 const passthrough = (program: string, summary: string): Command => ({
   summary,
-  run: ({ rest }) =>
-    group(program, [rootStep(program, ["uv", "run", program, ...rest])]),
+  run: ({ rest }) => group(program, [rootStep(program, ["uv", "run", program, ...rest])]),
 });
 
 const postgres = (): string => process.env.MZIZI_PG_CONTAINER ?? "postgis";
@@ -60,19 +55,14 @@ const databaseCli = async ({ rest }: Context): Promise<boolean> => {
 };
 
 /** The stages of `check`: everything that must pass before a commit. */
-const checkStages = (
-  only: string | undefined,
-): [string, ReturnType<typeof qualitySteps>][] => {
+const checkStages = (only: string | undefined): [string, ReturnType<typeof qualitySteps>][] => {
   const selected = select(only);
-  return (["format:check", "lint", "typecheck", "test"] as const).map(
-    (kind) => [kind, qualitySteps(kind, selected)],
-  );
+  return (["format:check", "lint", "typecheck", "test"] as const).map((kind) => [kind, qualitySteps(kind, selected)]);
 };
 
 export const commands: Record<string, Command> = {
   setup: {
-    summary:
-      "install every dependency, link Dryv and create the development sign-in keys",
+    summary: "install every dependency, link Dryv and create the development sign-in keys",
     run: ({ only }) =>
       stages([
         ["sync", syncSteps(select(only))],
@@ -80,8 +70,7 @@ export const commands: Record<string, Command> = {
       ]),
   },
   sync: {
-    summary:
-      "install dependencies as locked (uv sync, bun install per project)",
+    summary: "install dependencies as locked (uv sync, bun install per project)",
     run: ({ only }) => group("sync", syncSteps(select(only))),
   },
   doctor: {
@@ -89,8 +78,7 @@ export const commands: Record<string, Command> = {
     run: () => doctor(),
   },
   clean: {
-    summary:
-      "delete caches and build output (add --deep to delete dependencies too)",
+    summary: "delete caches and build output (add --deep to delete dependencies too)",
     run: ({ rest }) => {
       clean(rest.includes("--deep"));
       return true;
@@ -101,31 +89,22 @@ export const commands: Record<string, Command> = {
     run: async ({ rest }) => (await serve("dev" satisfies Mode, rest)) === 0,
   },
   start: {
-    summary:
-      "run services in start mode (run build first): start [api] [engine] [admin] [www]",
+    summary: "run services in start mode (run build first): start [api] [engine] [admin] [www]",
     run: async ({ rest }) => (await serve("start", rest)) === 0,
   },
   build: quality("build", "build the apps and the Python wheels"),
-  format: quality(
-    "format",
-    "format Python (ruff) and TypeScript (Biome, Prettier)",
-  ),
+  format: quality("format", "format Python (ruff) and TypeScript (Biome, Prettier)"),
   "format:check": quality("format:check", "fail when a file is not formatted"),
   lint: quality("lint", "lint Python (ruff) and TypeScript (Biome, ESLint)"),
   "lint:fix": quality("lint:fix", "apply safe lint fixes"),
-  typecheck: quality(
-    "typecheck",
-    "type check Python (mypy) and TypeScript (tsc)",
-  ),
+  typecheck: quality("typecheck", "type check Python (mypy) and TypeScript (tsc)"),
   test: quality("test", "run pytest, bun test and vitest"),
   structure: {
-    summary:
-      "enforce folder layout, file headers and hard file size limits for manual code",
+    summary: "enforce folder layout, file headers and hard file size limits for manual code",
     run: () => checkStructure(),
   },
   boundaries: {
-    summary:
-      "report import-boundary violations of packages and the engine (--strict fails on any)",
+    summary: "report import-boundary violations of packages and the engine (--strict fails on any)",
     run: ({ rest }) => checkBoundaries(rest.includes("--strict")),
   },
   check: {
@@ -137,25 +116,17 @@ export const commands: Record<string, Command> = {
     },
   },
   "check:all": {
-    summary:
-      "check, plus Dryv contract checks, seed registry, docs validation and builds",
+    summary: "check, plus Dryv contract checks, seed registry, docs validation and builds",
     run: async ({ only }) => {
       const structure = checkStructure();
       const boundaries = checkBoundaries(true);
       const extra: [string, ReturnType<typeof qualitySteps>][] = [
         ["dryv:check", dryv.checkSteps()],
-        [
-          "seed",
-          [rootStep("Seed registry", ["uv", "run", "mzizi-manifest", "check"])],
-        ],
+        ["seed", [rootStep("Seed registry", ["uv", "run", "mzizi-manifest", "check"])]],
         ["docs", [rootStep("Task workspace", ["task", "validate"])]],
         ["build", qualitySteps("build", select(only))],
       ];
-      return (
-        (await stages([...checkStages(only), ...extra])) &&
-        structure &&
-        boundaries
-      );
+      return (await stages([...checkStages(only), ...extra])) && structure && boundaries;
     },
   },
   "dryv:link": {
@@ -179,31 +150,16 @@ export const commands: Record<string, Command> = {
     run: () => dryv.trust(),
   },
   "dryv:generate": {
-    summary:
-      "generate database artifacts from the current schema and operation contracts",
+    summary: "generate database artifacts from the current schema and operation contracts",
     run: () => dryv.generate(),
   },
   "dryv:database:typecheck": {
     summary: "typecheck the database root and neutral schemas",
-    run: () =>
-      group("database types", [
-        step("database:typecheck", `${root}/dryv`, [
-          "bun",
-          "run",
-          "database:typecheck",
-        ]),
-      ]),
+    run: () => group("database types", [step("database:typecheck", `${root}/dryv`, ["bun", "run", "database:typecheck"])]),
   },
   "dryv:database:check": {
     summary: "check only the database contracts and canonical stores",
-    run: () =>
-      group("database contracts", [
-        step("database:check", `${root}/dryv`, [
-          "bun",
-          "run",
-          "database:check",
-        ]),
-      ]),
+    run: () => group("database contracts", [step("database:check", `${root}/dryv`, ["bun", "run", "database:check"])]),
   },
   "dryv:database:plan": {
     summary: "plan the database app (--store main|operations is optional)",
@@ -222,108 +178,59 @@ export const commands: Record<string, Command> = {
     run: () => dryv.verify(),
   },
   catalog: {
-    summary:
-      "generate the system catalogs with Dryv, then the web data catalog from the API list routes",
-    run: async () =>
-      (await dryv.catalog()) && group("catalog", dryv.catalogSteps()),
+    summary: "generate the system catalogs with Dryv, then the web data catalog from the API list routes",
+    run: async () => (await dryv.catalog()) && group("catalog", dryv.catalogSteps()),
   },
   "schemas:sync": {
-    summary:
-      "regenerate, check and publish source/schema (--local, --dry-run, --no-dryv)",
+    summary: "regenerate, check and publish source/schema (--local, --dry-run, --no-dryv)",
     run: ({ rest }) => syncSchemas(rest),
   },
   "schemas:forget-cache": {
-    summary:
-      "delete the editor's cached copies of the published schemas (then reload the editor window)",
+    summary: "delete the editor's cached copies of the published schemas (then reload the editor window)",
     run: () => forgetEditorCache(),
   },
   "db:up": {
-    summary:
-      "start the local PostGIS container (MZIZI_PG_CONTAINER, default postgis)",
-    run: () =>
-      group("db:up", [
-        rootStep("docker start", ["docker", "start", postgres()]),
-      ]),
+    summary: "start the local PostGIS container (MZIZI_PG_CONTAINER, default postgis)",
+    run: () => group("db:up", [rootStep("docker start", ["docker", "start", postgres()])]),
   },
   "db:down": {
     summary: "stop the local PostGIS container",
-    run: () =>
-      group("db:down", [
-        rootStep("docker stop", ["docker", "stop", postgres()]),
-      ]),
+    run: () => group("db:down", [rootStep("docker stop", ["docker", "stop", postgres()])]),
   },
   "infra:up": {
     summary: "start persistent local Temporal and object-store services",
     run: () =>
-      group("infra:up", [
-        rootStep("docker compose", [
-          "docker",
-          "compose",
-          "-f",
-          "compose.local.yaml",
-          "up",
-          "-d",
-        ]),
-      ]),
+      group("infra:up", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "up", "-d"])]),
   },
   "infra:down": {
-    summary:
-      "stop local Temporal and object-store services while preserving their volumes",
-    run: () =>
-      group("infra:down", [
-        rootStep("docker compose", [
-          "docker",
-          "compose",
-          "-f",
-          "compose.local.yaml",
-          "down",
-        ]),
-      ]),
+    summary: "stop local Temporal and object-store services while preserving their volumes",
+    run: () => group("infra:down", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "down"])]),
   },
   db: {
-    summary:
-      "database CLI: assemble | status | plan | migrate | verify | roles",
+    summary: "database CLI: assemble | status | plan | migrate | verify | roles",
     run: databaseCli,
   },
   "db:ts": { summary: "alias for the database CLI", run: databaseCli },
   "dev:data": {
-    summary:
-      "create and fill the dev database (mzizi_ui): migrations, roles, invented dev seed and geoBoundaries outlines",
-    run: () =>
-      group("dev:data", [
-        rootStep("dev data", ["bash", "scripts/dev/dev-data.sh"]),
-      ]),
+    summary: "create and fill the dev database (mzizi_ui): migrations, roles, invented dev seed and geoBoundaries outlines",
+    run: () => group("dev:data", [rootStep("dev data", ["bash", "scripts/dev/dev-data.sh"])]),
   },
   "dev:stack": {
-    summary:
-      "run one dev service against the dev database: dev:stack api | engine | web | portal | flutter | stop",
-    run: ({ rest }) =>
-      group("dev:stack", [
-        rootStep("stack", ["bash", "scripts/dev/stack.sh", ...rest]),
-      ]),
+    summary: "run one dev service against the dev database: dev:stack api | engine | web | portal | flutter | stop",
+    run: ({ rest }) => group("dev:stack", [rootStep("stack", ["bash", "scripts/dev/stack.sh", ...rest])]),
   },
-  seed: passthrough(
-    "mzizi-manifest",
-    "seed registry: seed check | lock | report | validate-structure <dir>",
-  ),
-  engine: passthrough(
-    "mzizi-engine",
-    "engine: engine serve | capabilities | check",
-  ),
+  seed: passthrough("mzizi-manifest", "seed registry: seed check | lock | report | validate-structure <dir>"),
+  engine: passthrough("mzizi-engine", "engine: engine serve | capabilities | check"),
   "docs:validate": {
     summary: "validate the Task workspace in .docs",
-    run: () =>
-      group("docs", [step("task validate", root, ["task", "validate"])]),
+    run: () => group("docs", [step("task validate", root, ["task", "validate"])]),
   },
 };
 
 /** Print the command table. */
 export function help(): void {
-  console.log(
-    "Usage: bun run <command> [-- args]   or   bun scripts/mz.ts <command> [args] [--only <names>]\n",
-  );
-  for (const [name, command] of Object.entries(commands))
-    console.log(`  ${name.padEnd(15)} ${command.summary}`);
+  console.log("Usage: bun run <command> [-- args]   or   bun scripts/mz.ts <command> [args] [--only <names>]\n");
+  for (const [name, command] of Object.entries(commands)) console.log(`  ${name.padEnd(15)} ${command.summary}`);
   console.log(
     "\n--only takes project names or kinds: python, scripts, dryv, api, database, admin, www, mobile, bun, flutter, all",
   );
@@ -335,21 +242,14 @@ export function parse(argv: readonly string[]): {
   context: Context;
 } {
   const [command = "help", ...tail] = argv;
-  const at = tail.findIndex(
-    (arg) => arg === "--only" || arg.startsWith("--only="),
-  );
+  const at = tail.findIndex((arg) => arg === "--only" || arg.startsWith("--only="));
   if (at < 0) return { command, context: { rest: tail, only: undefined } };
-  const inline = tail[at]?.startsWith("--only=")
-    ? tail[at]?.slice("--only=".length)
-    : undefined;
+  const inline = tail[at]?.startsWith("--only=") ? tail[at]?.slice("--only=".length) : undefined;
   const only = inline ?? tail[at + 1];
   return {
     command,
     context: {
-      rest: tail.filter(
-        (_, index) =>
-          index !== at && (inline !== undefined || index !== at + 1),
-      ),
+      rest: tail.filter((_, index) => index !== at && (inline !== undefined || index !== at + 1)),
       only,
     },
   };
@@ -359,17 +259,14 @@ if (import.meta.main) {
   const { command, context } = parse(process.argv.slice(2));
   const entry = commands[command];
   if (!entry) {
-    if (command !== "help" && command !== "--help" && command !== "-h")
-      console.error(`unknown command: ${command}\n`);
+    if (command !== "help" && command !== "--help" && command !== "-h") console.error(`unknown command: ${command}\n`);
     help();
     process.exit(command.endsWith("help") || command === "-h" ? 0 : 2);
   }
   try {
     process.exit((await entry.run(context)) ? 0 : 1);
   } catch (error) {
-    console.error(
-      `✖ ${error instanceof Error ? error.message : String(error)}`,
-    );
+    console.error(`✖ ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   }
 }

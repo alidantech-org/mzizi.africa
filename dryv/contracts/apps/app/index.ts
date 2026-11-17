@@ -73,7 +73,6 @@ const views = features.views({
       evidence: part.present(outputFrom(localityOperations.GetEvidence.out)).context({ citationId: "citationId" }),
     })
     .presentation("mobile", surfaces.Main),
-
 });
 
 const app_app = dryv
@@ -82,7 +81,19 @@ const app_app = dryv
   .groups(shared, reference, geography, locality, brand, app)
   .surfaces(surfaces.Main)
   .theme(themes.Mzizi)
-  .consumes(api, localityOperations.GetLocality, localityOperations.SearchLocalities, localityOperations.BrowseSources, localityOperations.GetEvidence, localityOperations.ListLanguages, localityOperations.ResolveLocality, geographyOperations.BrowseFeatures, geographyOperations.GetFeature, geographyOperations.BrowseFeatureKinds, geographyOperations.ListFeatureGeometries)
+  .consumes(
+    api,
+    localityOperations.GetLocality,
+    localityOperations.SearchLocalities,
+    localityOperations.BrowseSources,
+    localityOperations.GetEvidence,
+    localityOperations.ListLanguages,
+    localityOperations.ResolveLocality,
+    geographyOperations.BrowseFeatures,
+    geographyOperations.GetFeature,
+    geographyOperations.BrowseFeatureKinds,
+    geographyOperations.ListFeatureGeometries,
+  )
   .destination("places", views.PlaceSearch)
   .destination("sources", views.SourceBrowse)
   .destination("browse", views.FeatureBrowse)

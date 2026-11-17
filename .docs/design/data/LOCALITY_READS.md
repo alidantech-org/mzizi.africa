@@ -46,3 +46,9 @@ Two loader rules were relaxed for this work: a link column that no row fills no 
 ## What to replace with real data
 
 Officials, party membership, procurement and contract awards are the invented parts. Real rows go through the normal path (source assessment, extraction, review, then `seed/` with owner approval); the API reads them unchanged.
+
+## Maps, saved places and likes in the frontends
+
+- **Maps.** The site (Leaflet) and the Flutter app (`flutter_map`) draw a place from `GET /v1/geography/features/{id}/geometries`: the place's outline in clay, the unit above it dashed, a pulsing marker at the visitor's position, fitted to the bounds. Tiles are OpenStreetMap's own (attribution shown), darkened in dark mode. CARTO's free basemaps were dropped after they began returning an "API key required" watermark.
+- **Saved places, GPS spots and likes.** A visitor can save a place, save the GPS spot they looked up from, follow a leader (heart) and like a project. They are stored on the device (`localStorage` on the site, `shared_preferences` in the app), need no account, are never sent anywhere and are therefore personal, not public counts. A shared, account-backed version needs sign-in first (the `auth` group exists) and a table for it; that is not built.
+- **Motion.** Entrances, heart pops, the pulsing marker and skeleton shimmer respect `prefers-reduced-motion` on the site.

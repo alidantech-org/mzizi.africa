@@ -16,7 +16,7 @@ export function AsyncView<T>({
     return (
       <div className="space-y-3" aria-busy="true">
         {[0, 1, 2, 3].map((row) => (
-          <div key={row} className="h-12 animate-pulse rounded-xl bg-surface-sunken" />
+          <div key={row} className="h-12 skeleton rounded-xl" />
         ))}
       </div>
     );

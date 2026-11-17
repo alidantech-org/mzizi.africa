@@ -10,7 +10,7 @@ import { routes } from "#/lib/dryv/routes.ts";
 
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-xl border border-border-default bg-surface-elevated p-5 shadow-[var(--shadow)]">
+    <div className="reveal rounded-xl border border-border-default bg-surface-elevated p-5 shadow-[var(--shadow)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]">
       <p className="text-xs font-semibold uppercase tracking-wide text-content-muted">{label}</p>
       <p className="mt-1 font-display text-3xl">{value}</p>
     </div>

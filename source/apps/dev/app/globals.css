@@ -51,3 +51,49 @@ h3 {
   --color-surface-sunken: var(--surface-sunken);
   --color-link: var(--link);
 }
+
+/* Motion and decoration for the hand-built pages. Everything animated stops under prefers-reduced-motion. */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) rotate(0deg); }
+  to { transform: translate3d(0, -18px, 0) rotate(8deg); }
+}
+@keyframes ping {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.reveal { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.reveal-1 { animation-delay: 0.08s; }
+.reveal-2 { animation-delay: 0.16s; }
+.reveal-3 { animation-delay: 0.24s; }
+.reveal-4 { animation-delay: 0.32s; }
+.heart-pop { animation: pop 0.35s ease-out; }
+.skeleton {
+  background: linear-gradient(100deg, var(--surface-sunken) 30%, color-mix(in srgb, var(--surface-sunken) 60%, white) 50%, var(--surface-sunken) 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.drift { animation: drift 7s ease-in-out infinite alternate; }
+.you-are-here { position: relative; width: 18px; height: 18px; }
+.you-are-here::before,
+.you-are-here::after { content: ""; position: absolute; inset: 0; border-radius: 9999px; background: var(--clay); }
+.you-are-here::before { animation: ping 1.8s ease-out infinite; }
+.you-are-here::after { border: 3px solid var(--cream); box-shadow: 0 2px 8px #0006; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .skeleton { animation: none; }
+}

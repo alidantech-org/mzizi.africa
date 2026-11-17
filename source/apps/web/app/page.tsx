@@ -14,7 +14,7 @@ export default function HomePage() {
   const saved = useSaved();
   return (
     <div>
-      <section className="pattern-bg relative overflow-hidden border-b border-border-default">
+      <section className="pattern-bg overflow-hidden border-b border-border-default">
         <div
           aria-hidden
           className="drift pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-calabash/25 blur-3xl"

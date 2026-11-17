@@ -21,7 +21,7 @@ export function SiteHeader() {
   const { count } = useSaved();
   return (
     <header className="sticky top-0 z-20 border-b border-border-default bg-surface-background/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center gap-6 px-5 py-3">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-5 py-3">
         <Link
           href="/"
           className="flex items-center gap-2 font-display text-2xl text-content-primary"
@@ -34,7 +34,7 @@ export function SiteHeader() {
           </span>
           Mzizi
         </Link>
-        <nav className="flex flex-1 items-center gap-1">
+        <nav className="order-last -mx-1 flex w-full items-center gap-1 overflow-x-auto pb-1 md:order-none md:mx-0 md:w-auto md:flex-1 md:pb-0">
           {LINKS.map((link) => {
             const active = pathname === link.href;
             return (
@@ -42,7 +42,7 @@ export function SiteHeader() {
                 key={link.href}
                 href={link.href}
                 aria-current={active ? "page" : undefined}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition ${
+                className={`shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition ${
                   active
                     ? "bg-clay text-cream"
                     : "text-content-muted hover:bg-surface-sunken hover:text-content-primary"
