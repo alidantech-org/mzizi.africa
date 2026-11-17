@@ -45,7 +45,7 @@ def test_a_party_register_becomes_linked_rows_with_branding_and_former_names(tmp
     assert ("ke.the-national-vision-party", "ofc.branding.kind.colours", "Blue, Green") in branding
     assert ("ke.the-democratic-union", "ofc.branding.kind.symbol-description", "House") in branding
     assert rows(out / "politics.parties.csv")[1]["code"] == "ke.the-democratic-union"
-    assert "ofc.branding.kind.slogan" in result.unapproved_values
+    assert result.unapproved_values == ()  # every value the defaults use is approved seed
 
 
 @needs_seed

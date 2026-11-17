@@ -95,3 +95,20 @@ gov.office.kind.secretary,sw,preferred,Katibu
 gov.office.kind.chairperson,sw,preferred,Mwenyekiti
 gov.office.kind.elected,sw,preferred,Kiti cha kuchaguliwa
 gov.office.kind.appointed,sw,preferred,Wadhifa wa uteuzi
+ofc.branding.kind.slogan,sw,preferred,Kauli mbiu
+ofc.branding.kind.motto,sw,preferred,Msemo
+ofc.branding.kind.colours,sw,preferred,Rangi
+ofc.branding.kind.symbol-description,sw,preferred,Maelezo ya alama
+ofc.branding.kind.logo,sw,preferred,Nembo
+ofc.branding.kind.flag,sw,preferred,Bendera
+ofc.branding.kind.anthem,sw,preferred,Wimbo
+ofc.branding.kind.portrait,sw,preferred,Picha ya uso
+ofc.branding.kind.photograph,sw,preferred,Picha
+fil.media.kind.logo,sw,preferred,Nembo
+fil.media.kind.symbol,sw,preferred,Alama
+fil.media.kind.flag,sw,preferred,Bendera
+fil.media.kind.portrait,sw,preferred,Picha ya uso
+fil.media.kind.photograph,sw,preferred,Picha
+fil.media.kind.audio,sw,preferred,Rekodi ya sauti
+fil.media.kind.video,sw,preferred,Rekodi ya video
+fil.media.kind.document-scan,sw,preferred,Hati iliyochanganuliwa

@@ -5,6 +5,7 @@ seed.global.reference.languages,Seed data: global / reference / languages,csv,au
 seed.global.reference.schemes,Seed data: global / reference / schemes,csv,authored,src.dataset.category.reference,seed/data/global/reference/schemes.csv,
 seed.global.reference.value-labels,Seed data: global / reference / value_labels,csv,authored,src.dataset.category.reference,seed/data/global/reference/value_labels.csv,
 seed.global.reference.values.civ-values,Seed data: global / reference / values / civ.values,csv,authored,src.dataset.category.reference,seed/data/global/reference/values/civ.values.csv,
+seed.global.reference.values.fil-values,Seed data: global / reference / values / fil.values,csv,authored,src.dataset.category.reference,seed/data/global/reference/values/fil.values.csv,
 seed.global.reference.values.fin-values,Seed data: global / reference / values / fin.values,csv,authored,src.dataset.category.reference,seed/data/global/reference/values/fin.values.csv,
 seed.global.reference.values.geo-values,Seed data: global / reference / values / geo.values,csv,authored,src.dataset.category.reference,seed/data/global/reference/values/geo.values.csv,
 seed.global.reference.values.gov-values,Seed data: global / reference / values / gov.values,csv,authored,src.dataset.category.reference,seed/data/global/reference/values/gov.values.csv,

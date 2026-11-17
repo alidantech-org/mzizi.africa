@@ -44,3 +44,12 @@ ofc.contact.kind.landmark,ofc.contact.kind,Landmark description
 ofc.contact.visibility.public,ofc.contact.visibility,Public
 ofc.contact.visibility.restricted,ofc.contact.visibility,Restricted
 ofc.contact.visibility.private,ofc.contact.visibility,Private
+ofc.branding.kind.slogan,ofc.branding.kind,Slogan
+ofc.branding.kind.motto,ofc.branding.kind,Motto
+ofc.branding.kind.colours,ofc.branding.kind,Colours
+ofc.branding.kind.symbol-description,ofc.branding.kind,Description of a symbol
+ofc.branding.kind.logo,ofc.branding.kind,Logo
+ofc.branding.kind.flag,ofc.branding.kind,Flag
+ofc.branding.kind.anthem,ofc.branding.kind,Anthem
+ofc.branding.kind.portrait,ofc.branding.kind,Portrait
+ofc.branding.kind.photograph,ofc.branding.kind,Photograph
