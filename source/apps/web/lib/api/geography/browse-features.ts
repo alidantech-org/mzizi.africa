@@ -14,6 +14,8 @@ export const browseFeaturesInputFields: Readonly<Record<string, readonly FieldMe
 };
 /** Field metadata of the output, when it is a schema. */
 export const browseFeaturesOutputFields: readonly FieldMeta[] | undefined = FeatureCollectionFields;
+/** Paging of this list operation: the names of its window inputs and the largest page it serves. */
+export const browseFeaturesPage = { limit: "limit", offset: "offset", maxLimit: 200 } as const;
 
 /** Values for each input port of Browse Features. */
 export type BrowseFeaturesPorts = {

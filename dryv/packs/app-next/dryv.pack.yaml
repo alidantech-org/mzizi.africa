@@ -32,8 +32,24 @@ selections:
       all: { facet: http }
     scope: each
 
+  # One template per view pattern. A view's role picks the pattern; the library component it imports is the
+  # implementation, and its typed props are the whole interface. Other roles fall back to the generic page.
+  list_pages:
+    subject: view
+    filter:
+      all: { role: list }
+    scope: each
+
+  detail_pages:
+    subject: view
+    filter:
+      all: { role: detail }
+    scope: each
+
   pages:
     subject: view
+    filter:
+      not: { role: [list, detail] }
     scope: each
 
 templates:
@@ -62,6 +78,28 @@ templates:
     imports:
       - $ref: '#/templates/model'
       - $ref: '#/templates/enum'
+
+  list-page:
+    $ref: '#/selections/list_pages'
+    output:
+      path:
+        - $(group.name.kebab)
+        - $(subject.name.kebab)
+      symbol: $(subject.name.pascal)Page
+    imports:
+      - $ref: '#/needs/operation.client'
+      - $ref: '#/templates/operation'
+
+  detail-page:
+    $ref: '#/selections/detail_pages'
+    output:
+      path:
+        - $(group.name.kebab)
+        - $(subject.name.kebab)
+      symbol: $(subject.name.pascal)Page
+    imports:
+      - $ref: '#/needs/operation.client'
+      - $ref: '#/templates/operation'
 
   page:
     $ref: '#/selections/pages'
@@ -93,6 +131,14 @@ inputs:
     type: string
     default: ../sdk/api-ts
     description: Path from the app to the SDK package, used as a file dependency.
+  ui_package:
+    type: string
+    default: "@mzizi/ui-web"
+    description: Name of the hand-written web component package the pattern templates import.
+  page_size:
+    type: string
+    default: "20"
+    description: Rows a list page asks for at first; the operation's own maximum still applies.
   workspace_root:
     type: string
     default: ..

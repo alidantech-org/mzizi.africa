@@ -2,5 +2,10 @@
   "name": "mzizi-source",
   "private": true,
   "description": "Bun workspace for the generated TypeScript packages: the API SDK and the apps that import it. The other projects install on their own.",
-  "workspaces": ["sdk/api-ts", "apps/web", "apps/dev"]
+  "workspaces": [
+    "sdk/api-ts",
+    "apps/web",
+    "apps/dev",
+    "ui/web"
+  ]
 }

@@ -1,6 +1,7 @@
 /* Scaffolded by Dryv once; this file belongs to the app. The theme is generated into theme.css. */
 @import "tailwindcss";
 @import "./theme.css";
+@source "../../../ui/web/src";
 
 body {
   margin: 0;

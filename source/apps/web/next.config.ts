@@ -4,7 +4,7 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {
   // The API SDK is a TypeScript package in this repository; Next compiles it with the app.
-  transpilePackages: ["@mzizi/api-client"],
+  transpilePackages: ["@mzizi/api-client", "@mzizi/ui-web"],
   // The bundler may read the SDK outside the app folder.
   turbopack: { root: resolve(import.meta.dirname, "../..") },
 };

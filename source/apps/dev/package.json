@@ -12,7 +12,8 @@
     "@mzizi/api-client": "file:../../sdk/api-ts",
     "next": "^16.4.6",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "@mzizi/ui-web": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",

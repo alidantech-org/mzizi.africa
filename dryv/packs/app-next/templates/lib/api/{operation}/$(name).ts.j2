@@ -38,6 +38,16 @@ export const {{ file.symbol }}OutputFields: readonly FieldMeta[] | undefined =
 {%- else %} undefined;
 {%- endif %}
 
+{%- if operation.persistence %}{% set plan = operation.persistence.document | fromjson %}
+{%- if plan.read is not none and plan.read.page is not none %}
+/** Paging of this list operation: the names of its window inputs and the largest page it serves. */
+export const {{ file.symbol }}Page = { limit: "{{ plan.read.page.limit }}", offset: "{{ plan.read.page.offset }}", maxLimit: {{ plan.read.page.max_limit }} } as const;
+{%- else %}
+/** This operation is not paged. */
+export const {{ file.symbol }}Page = undefined;
+{%- endif %}
+{%- endif %}
+
 /** Values for each input port of {{ operation.name.title }}. */
 export type {{ operation.name.pascal }}Ports = {
 {%- for binding in http.inputs %}

@@ -15,10 +15,11 @@ The plan is `.docs/_plan/guides/frontend-assembly-from-contracts.md`; decisions 
 ## Acceptance checklist
 
 - [x] The geography contracts declare an options operation for feature kinds and attach it as an `options` source to the feature-type filter fields.
-- [ ] The web and app contracts declare geography browse, detail and search-select views with roles, parts, context values and destinations.
-- [ ] `source/ui/web` and `source/ui/flutter` exist as packages with the list page shell, detail shell, filter bar, search-select field and pagination, themed by the generated theme.
-- [ ] A schema-validated assembly manifest binds each pattern to its component with typed props and slots.
-- [ ] A project pack assembles the views into routes and typed glue; the web app builds and the geography browse page renders from the live API.
+- [x] The web contract declares geography browse and detail views with roles, parts, context values, destinations and a transition (the search-select is the feature-type filter, which waits on a Dryv proposal).
+- [x] `source/ui/web` exists as a package with the page and section shells, filter bar, search-select, data table, pagination and detail list, themed by the generated theme.
+- [x] Pattern binding lives in the project pack only: selections by view role pick a pattern template that imports the hand-written components (no separate manifest, by owner decision).
+- [x] A project pack assembles the views into routes and typed glue; the web app builds and the geography browse and detail pages render from the live API.
+- [ ] The Flutter side exists: the app contract's geography views, `source/ui/flutter` components and the Flutter pattern templates, verified with `flutter analyze` and a run.
 - [ ] Every Dryv gap found is recorded with a failing example, and `task validate` passes.
 
 ## Progress
@@ -31,3 +32,41 @@ Findings so far (for the gap record):
 - Regenerating the API rewrites `source/backend/api/src/app.module.ts`, which holds hand-added `EngineModule` and `SystemModule` imports; `--conflicts keep` does not protect it. It was restored from git after each run; it needs a stable home outside generated code.
 
 Remaining: steps 2 to 6 (views in the web and app contracts, `source/ui` library, assembly manifest and schema, assembling pack, gap record).
+
+## Progress: views and library
+
+Step 2 (web): `dryv/contracts/apps/web/index.ts` now declares `FeatureBrowse` (role list: an inline `collect` filter over `featureTypeId` and `codePrefix`, a `present` table of features) and `FeatureDetail` (role detail, view context `featureId`), two destinations and an `openFeature` transition. Step 3 (library, web): `source/ui/web` (`@mzizi/ui-web`, workspace member, alias `#ui/`) with `PageShell`, `Section`, `FilterBar`, `SearchSelect`, `DataTable`, `Pagination` and `DetailList`, typed and themed by the generated role variables; typecheck and Prettier pass.
+
+### Gaps found by generating the stock pack from these views (for the gap record)
+
+1. **Context cannot feed a present part.** A detail view needs `featureId` to reach `GetFeature`. A `collect` with only context bindings is rejected ("input collection selector must be omitted when empty"), so the only way to bind context to an operation input is an `invoke` part, which means a button. The contract tags it `run:on-open`. The stock pack ignores the context and calls `getFeature()` with no input, so the generated detail page is broken.
+2. **Part order is lost.** Parts are a map and the IR sorts them by name, so the page shows `features` before `filters`. Layout order cannot be authored.
+3. **The stock pack ignores `sources`.** The feature-type filter renders as a text box instead of a choice backed by `BrowseFeatureKinds`.
+4. **The stock pack ignores `collection` and tags.** The present part asks for a `table`; the pack prints a generic result block.
+5. **No paging vocabulary.** The page window stays the operation's default; there is no way to say that the filter and the page controls belong together.
+
+## Open design question
+
+How generation reads the assembly manifest. A Dryv pack renders from the IR plus its own resources and inputs; it cannot read an arbitrary project file. See the session for the options.
+
+## Probe results (no Dryv change; a throwaway template read the generation context, then it was removed)
+
+- **Selection works as the pattern binding.** Views can be selected by `role` and `tags` in pack selections, so one pack template per pattern (`role: list`, `role: detail`) plus tag-selected variants is existing Dryv logic. No manifest file: the library's typed props are the interface and `tsc` checks the glue.
+- **Part tags and the `collection` hint reach templates** (gap 4: pack-only).
+- **Paging reaches templates.** A template of the operation subject sees `operation.persistence.document` whose `read.page` is `{limit, offset, max_limit: 200}`. The operation module the pack already generates per operation can export it, and the page imports it (gap 5: pack-only).
+- **Field sources reach templates** through the collect part's port schema fields (`featureTypeId` shows one `options` source to `BrowseFeatureKinds`), but **the source operation is not a dependency of the page** (only `browseFeatures` is), so no SDK import or symbol is available for it. A link carries the id and name variants but not the group name, so a path cannot be built cleanly from it. Needs a Dryv change: treat a field source's operation as a reference when planning a file's dependencies.
+- **Context to present** still needs a Dryv change (present parts cannot bind input from view context).
+- **Part order** is a pattern concern for list and detail views (the pattern places collect parts in its filter slot and present parts in its results slot); an authored order is needed only for free-form views.
+
+## Result: the web slice works end to end
+
+`dryv/packs/app-next` now has two pattern templates selected by view role (`role: list`, `role: detail`; other roles keep the generic page) that import the hand-written `@mzizi/ui-web` components and fill their props from the contract: filter fields from the collect part's paths, table columns from the present part's element schema, paging from the operation module's new `<operation>Page` export (read from `operation.persistence`), and navigation from the application's transition. The dropped manifest is not needed: selection picks the pattern, the template is the binding, and `tsc` checks the glue against the components' props.
+
+Verified: `tsc` passes for the library and the web app; `next build` produces `/web/feature-browse` and `/web/feature-detail`; with the API (started from `.env` on a spare port, database `mzizix`) and the web app running, the browse page listed real features styled by the generated theme, a click opened the detail page for Kenya with its three names, and `GET /v1/geography/feature-kinds`, `/geometries` and `/features/{id}/geometries` answer over HTTP (geometries empty: no stored drawings yet). Servers were stopped afterwards.
+
+Found while verifying: the hand-written geometry use cases failed over HTTP with "No metadata for GeometriesEntity" because no generated module registers that entity; it is now registered in the project-owned `DatabaseModule` (`TypeOrmModule.forFeature([GeometriesEntity])`).
+
+### Added to the gap record
+
+6. **A transition carries no context bindings.** Opening a feature from the list should supply the detail view's `featureId` from the row's `featureId`. The transition names only an operation, so the generated list passes every text value of the row as address values and the detail page reads the ones it needs by name. Proposal candidate: transition bindings from source part values to target view context.
+7. **Not yet done:** the feature-type filter is a plain text field (needs Dryv proposal 2), the detail view still uses the tagged `invoke` part (proposal 1), and the Flutter library, pack templates and the `dev` app are not yet built.

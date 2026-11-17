@@ -1,0 +1,23 @@
+{
+  "name": "@mzizi/ui-web",
+  "private": true,
+  "type": "module",
+  "description": "Hand-written Mzizi web components: page shells, filter bar, data table, pagination, search-select and detail list. Generated screens assemble these; Dryv writes none of them.",
+  "imports": {
+    "#ui/*": "./src/*"
+  },
+  "exports": {
+    "./*": "./src/*"
+  },
+  "scripts": {
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "react": "^19.3.1",
+    "typescript": "^7.0.2"
+  }
+}

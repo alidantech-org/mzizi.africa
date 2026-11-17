@@ -63,11 +63,14 @@ Conclusion: the intent layer is largely there and the binding mechanism exists. 
 - **Intent and behaviour belong in the contracts**, never in YAML. A YAML manifest is only for assembling with implementation: it binds a pattern to the hand-written component that implements it (component path, typed props, slots, accepted property types). It carries no intent.
 - First real targets: geography browse, geography detail, and a search-and-select form.
 
-## The assembly manifest and the library
+## The pattern binding and the library
 
-- The library starts from the shells in the riderescue dashboard (shadcn and Tailwind) and mobile kit (page and dialog shells, form sections, filter sheets, tables, catalog and search pickers), restyled by the generated theme.
-- A manifest beside each library binds **patterns to components**: which component implements which pattern, its typed props and slots, the property types it renders. It is validated against a schema under `source/schema/`. It holds no intent or behaviour (those are in the contract), and no publisher or country knowledge (`typed-code.md` section 3).
-- Packs bind the library as a provider of pattern slots to the app pack with the existing `needs` / `provides` / `bind` mechanism.
+Decision (owner, after the phase 2 probes): **no separate manifest file.** Dryv's existing pack mechanics are the binding.
+
+- A pack selects views by `role` (and `tags`), so one pack template per pattern is the binding: a `role: list` template and a `role: detail` template import the hand-written components and fill their props from the contract. Variants are tag-selected the same way.
+- The library's typed props are the interface. `tsc` rejects glue that does not fit them, so nothing needs to be duplicated in a manifest.
+- Concerns stay apart: the contract holds intent and behaviour; `dryv.yaml` only lists packs, destinations and binds; the pack holds the pattern templates; the library (`source/ui/web`, `source/ui/flutter`) holds implementation.
+- The library starts from riderescue's shells, rewritten small and typed, themed by the generated role variables.
 
 ## Maps
 
