@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 /// Shows [child] while the device is online, and a reconnect message while it isn't.

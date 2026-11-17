@@ -38,6 +38,7 @@ describe("geometry reads", () => {
     const sql = currentDrawings(await moduleRefWithMetadata(), undefined).getQuery();
     expect(sql).toContain("ST_AsGeoJSON(");
     expect(sql).toContain('"g"."valid_until" IS NULL');
+    expect(sql).toContain('"g"."deleted_at" IS NULL');
     expect(sql).toContain('"geometryId"');
   });
 

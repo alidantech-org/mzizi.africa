@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_api_bridge/flutter_api_bridge.dart';
 
 /// How a generated form edits one schema field.

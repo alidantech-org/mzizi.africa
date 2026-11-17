@@ -41,7 +41,11 @@ export function currentDrawings(
     simplifyTolerance === undefined || simplifyTolerance === 0
       ? "g.geometry"
       : "ST_SimplifyPreserveTopology(g.geometry, :tolerance)";
-  const query = repository.query("g").select([]).where("g.validUntil IS NULL");
+  const query = repository
+    .query("g")
+    .select([])
+    .where("g.validUntil IS NULL")
+    .andWhere("g.deletedAt IS NULL");
   if (simplifyTolerance) query.setParameter("tolerance", simplifyTolerance);
   return query
     .addSelect("g.id", "geometryId")

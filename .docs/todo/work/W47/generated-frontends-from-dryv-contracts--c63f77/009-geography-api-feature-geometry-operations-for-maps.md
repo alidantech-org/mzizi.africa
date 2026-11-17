@@ -31,3 +31,7 @@ Checked: `dryv-ts compile`, the contract import check and API `tsc` pass; the ne
 - A read query over a schema with a geometry field fails planning (`persistence.unsupported`).
 - Read queries have no spatial predicate (only equality, ordering comparisons, prefix, null).
 - The generated DTOs and interfaces type `geometry` and `centroid` as `unknown`; a GeoJSON type would let clients and the SDK type them.
+
+## Verified against `mzizix`
+
+The database in `.env` (`mzizix`, PostGIS 3.6, 2,100 features, no stored drawings yet) has `geography.geometries`. The generated statement was run there inside a transaction that was rolled back (nothing persisted; the row count was 0 afterwards): one polygon inserted with a valid role and basis value (a trigger enforces the reference schemes `ref.sch.geo.geometry.role` and `.basis`) returned its GeoJSON, simplified GeoJSON and centroid for a bounds over Kenya at zoom 6, and was excluded by a bounds elsewhere and by zoom 10. The table also has `deleted_at`, which the generated repositories always filter on, so both use cases now add `deleted_at IS NULL` (the spec asserts it). The earlier "not run against a database" note no longer applies to the SQL; the use cases themselves were not called through HTTP.
