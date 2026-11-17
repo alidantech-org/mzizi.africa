@@ -59,8 +59,7 @@ def stitch_tables(pages: tuple[Page, ...]) -> list[LogicalTable]:
                     for position, chain in enumerate(chains)
                     if position not in taken
                     and chain[-1][0] == page.number - 1
-                    and len(block.rows[0]) == len(chain[0][1].rows[0])
-                    and (_repeats_header(chain[0][1], block) or block.header_rows == 0)
+                    and _continues(chain[0][1], block)
                 ),
                 None,
             )
@@ -70,23 +69,58 @@ def stitch_tables(pages: tuple[Page, ...]) -> list[LogicalTable]:
             else:
                 chains[match].append((page.number, block))
                 taken.add(match)
-    logical: list[LogicalTable] = []
+    return _group_by_columns(chains)
+
+
+MAX_PADDED_COLUMNS = 2  # a continuation may lose trailing empty columns when blank columns are dropped
+
+
+def _continues(head: TableBlock, block: TableBlock) -> bool:
+    """The block carries on the table that starts with `head`: same headings again, or no heading and no wider."""
+    if block.header_rows == 0:
+        missing = len(head.rows[0]) - len(block.rows[0])
+        return 0 <= missing <= MAX_PADDED_COLUMNS
+    return _repeats_header(head, block)
+
+
+def _padded(row: tuple[str, ...], width: int) -> tuple[str, ...]:
+    return (*row, *([""] * (width - len(row))))
+
+
+def _group_by_columns(chains: list[list[tuple[int, TableBlock]]]) -> list[LogicalTable]:
+    """Tables anywhere in the document that print the same column headings become one table, in page order."""
+    groups: list[list[list[tuple[int, TableBlock]]]] = []
     for chain in chains:
-        if len(chain) < 2:
-            continue
         head = chain[0][1]
+        if head.header_rows == 0:
+            groups.append([chain])
+            continue
+        for group in groups:
+            first = group[0][0][1]
+            if first.header_rows and _repeats_header(first, head):
+                group.append(chain)
+                break
+        else:
+            groups.append([chain])
+    logical: list[LogicalTable] = []
+    for group in groups:
+        pieces = [piece for chain in group for piece in chain]
+        if len(pieces) < 2:
+            continue
+        head = pieces[0][1]
+        width = len(head.rows[0])
         header_count = max(1, head.header_rows)
-        body = list(head.rows[header_count:])
-        for _, block in chain[1:]:
-            body.extend(block.rows[_repeated_rows(head, block) :])
-        rows = (_joined_header(head.rows[:header_count]), *body)
+        body = [_padded(row, width) for row in head.rows[header_count:]]
+        for _, block in pieces[1:]:
+            skip = block.header_rows if block.header_rows and _repeats_header(head, block) else 0
+            body.extend(_padded(row, width) for row in block.rows[skip:])
         logical.append(
             LogicalTable(
                 index=len(logical) + 1,
-                pages=tuple(p for p, _ in chain),
-                parts=tuple((p, b.index) for p, b in chain),
+                pages=tuple(p for p, _ in pieces),
+                parts=tuple((p, b.index) for p, b in pieces),
                 header_rows=1,
-                rows=tuple(rows),
+                rows=(_joined_header(head.rows[:header_count]), *body),
             )
         )
     return logical

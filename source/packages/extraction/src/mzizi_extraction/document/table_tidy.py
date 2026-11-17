@@ -4,9 +4,12 @@ No cell text is invented or reworded; the function only moves, joins and removes
 
 from __future__ import annotations
 
+import re
+
 from mzizi_extraction.document.table_models import TableRows
 
 MAX_HEADER_ROWS = 3
+INDEX_CELL = re.compile(r"\d{1,4}[.)]?")
 HEADER_FILL_SHARE = 0.75
 
 
@@ -26,6 +29,10 @@ def _numbering(row: list[str]) -> bool:
     )
 
 
+def _indexed(row: list[str]) -> bool:
+    return bool(row) and bool(INDEX_CELL.fullmatch(row[0].strip()))
+
+
 def _despan(row: list[str]) -> list[str]:
     """A heading spanning columns is repeated by some detectors; keep the first copy and blank the repeats."""
     out = list(row)
@@ -38,13 +45,15 @@ def _despan(row: list[str]) -> list[str]:
 def header_row_count(rows: list[list[str]]) -> int:
     if len(rows) < 2:
         return 1
-    if rows[0][0].isdigit() and not _numbering(rows[0]):
+    if _indexed(rows[0]) and not _numbering(rows[0]):
         return 0  # the table continues from an earlier page: its first row is already data (item 1, 2, ...)
     width = len(rows[0])
     count = 1
     while count < min(MAX_HEADER_ROWS, len(rows) - 1):
         current, following = rows[count - 1], rows[count]
         sparse = sum(bool(cell) for cell in current) < HEADER_FILL_SHARE * width
+        if _indexed(following):
+            break  # an item number (1, 2. or 3)) starts a data row, never a heading
         if sparse or _numbering(following) or not following[0]:
             count += 1
         else:

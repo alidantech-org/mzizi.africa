@@ -85,8 +85,8 @@ def test_continuation_tables_are_stitched_without_repeated_headers() -> None:
         page(5, (head, ("9", "Z")), 1),
     )
     merged = stitch_tables(pages)
-    assert len(merged) == 1 and merged[0].pages == (1, 2, 3)
-    assert [row[0] for row in merged[0].rows] == ["No", "1", "2", "3", "4"] and merged[0].rows[0] == head
+    assert len(merged) == 1 and merged[0].pages == (1, 2, 3, 5)  # page 5 prints the same columns again
+    assert [row[0] for row in merged[0].rows] == ["No", "1", "2", "3", "4", "9"] and merged[0].rows[0] == head
 
 
 def test_stitching_follows_each_table_when_a_page_has_several() -> None:
@@ -105,3 +105,35 @@ def test_stitching_follows_each_table_when_a_page_has_several() -> None:
     )
     merged = stitch_tables(pages)
     assert [m.pages for m in merged] == [(1, 2, 3), (1, 2, 3)]
+
+
+def test_a_numbered_first_data_row_is_not_swallowed_into_the_header() -> None:
+    rows = (("No. Name of Party", ""), ("1.", "National Rainbow Coalition"), ("2.", "The National Vision Party"))
+    _, header_rows = tidy_rows(rows)
+    assert header_rows == 1
+
+
+def test_same_columns_anywhere_in_a_document_become_one_table_and_narrow_pages_are_padded() -> None:
+    from mzizi_extraction.document.models import BBox, Page, TableBlock
+    from mzizi_extraction.document.table_stitch import stitch_tables
+
+    box: BBox = (0.0, 0.0, 1.0, 1.0)
+    head = ("No", "Name", "Note")
+
+    def page(number: int, rows: tuple[tuple[str, ...], ...], header_rows: int) -> Page:
+        return Page(
+            number=number,
+            width=1.0,
+            height=1.0,
+            blocks=(TableBlock(index=1, rows=rows, header_rows=header_rows, page=number, bbox=box),),
+        )
+
+    pages = (
+        page(1, (head, ("1", "A", "x")), 1),
+        page(3, (("0", "other"),), 1),  # an unrelated table breaks adjacency
+        page(5, (head, ("2", "B", "y")), 1),
+        page(6, (("3", "C"),), 0),  # headless and one column narrower
+    )
+    merged = stitch_tables(pages)
+    assert len(merged) == 1 and merged[0].pages == (1, 5, 6)
+    assert merged[0].rows[-1] == ("3", "C", "")
