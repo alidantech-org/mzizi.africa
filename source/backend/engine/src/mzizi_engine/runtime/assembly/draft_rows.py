@@ -90,8 +90,11 @@ class Run:
             t: spec.code for d in load_dictionaries(seed_root, scopes) for t, spec in d.tables.items() if spec.code
         }
         self.value_codes = {r.values["code"] for r in data.rows.get("reference.values", [])}
+        # a heading matched only by a column's own name is a hint for review, never a row
         self.chosen = {
-            c.header: c for c in proposal_columns if c.chosen and c.status in {"matched", "weak", "ambiguous"}
+            c.header: c
+            for c in proposal_columns
+            if c.chosen and c.status in {"matched", "weak", "ambiguous"} and not c.chosen.group.startswith("(derived")
         }
         self.splits = [c.split for c in proposal_columns if c.split]
         self.out: dict[str, dict[str, dict[str, str]]] = defaultdict(dict)  # table -> key -> row
