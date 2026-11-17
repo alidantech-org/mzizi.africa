@@ -21,7 +21,7 @@ The plan is `.docs/_plan/guides/frontend-assembly-from-contracts.md`; decisions 
 - [x] A project pack assembles the views into routes and typed glue; the web app builds and the geography browse and detail pages render from the live API.
 - [x] The Flutter side exists: the app contract's geography views, `source/ui/flutter` components and the Flutter pattern templates, verified with `flutter analyze`.
 - [ ] The Flutter app is run on a device, emulator or Linux (needs `libsecret-devel`) against the live API and the browse and detail screens are checked.
-- [ ] Every Dryv gap found is recorded with a failing example, and `task validate` passes.
+- [x] Every Dryv gap found is recorded with a failing example, and `task validate` passes.
 
 ## Progress
 
@@ -79,3 +79,7 @@ The `app` contract declares the same `FeatureBrowse` and `FeatureDetail` views f
 Verified: `flutter analyze` is clean for the app and for `mzizi_ui`; `flutter build web` compiled the app (dart2js). **Not run with data:** the app depends on `flutter_api_bridge`, which needs platform storage plugins. A widget test hangs on them; the web build starts but fails at start-up (the bridge uses `path_provider`, which has no web support), and the API has no CORS headers anyway; a Linux desktop run needs the system package `libsecret-devel`, which I did not install. A run needs an Android or iOS device or emulator, or that package. The temporary platform folders and test files made for these attempts were removed.
 
 Same Dryv findings as the web slice apply (present parts cannot bind context; a field source's operation is not a dependency, so the feature-type filter is a text field; a transition carries no context bindings, so the row's text values travel as address values).
+
+## Gap record
+
+Written: `.docs/_plan/guides/dryv-frontend-proposals.md`, section "Gap record from the phase 2 prototype": 14 gaps, each with its failing example and workaround. Phase 2 is closed except the device run of the Flutter screens, which stays open above.
