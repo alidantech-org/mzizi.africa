@@ -2,7 +2,7 @@
 
 `source/apps/admin` is a Next.js/TypeScript application with two distinct sets of screens:
 
-- `/review/*` is the Mzizi review workbench. Its server-side API client defaults to the NestJS product API at `http://127.0.0.1:3000`. It includes pages for assessments, candidates, captures, checks, data records, documents, jobs, runs, sites and site structures.
+- `/review/*` is the Mzizi review workbench. Its server-side API client defaults to the NestJS product API at `http://127.0.0.1:8700`. It includes pages for assessments, candidates, captures, checks, data records, documents, jobs, runs, sites and site structures.
 - `/admin/*` contains inherited Katiba Book / political-finance administration screens. These still use the legacy `SERVER_URL` integration and are not evidence that a corresponding active backend service lives in this repository.
 
 The app uses Bun and runs on port `3100`. Use the repository-root commands and environment setup in [`../../../scripts/README.md`](../../../scripts/README.md); the app-specific development sign-in helper is `bun run dev:env` from this directory. Do not use the old `source/backend/engine/database` path: database operations are owned by [`source/backend/database/`](../../backend/database/README.md).

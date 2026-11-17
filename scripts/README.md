@@ -66,8 +66,8 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 
 | Service     | Directory                  | Port | Override         |
 | ----------- | -------------------------- | ---- | ---------------- |
-| `api`       | `source/backend/api`       | 3000 | `API_PORT`       |
-| `engine`    | `source/backend/engine`    | 8760 | `ENGINE_PORT`    |
+| `api`       | `source/backend/api`       | 8700 | `API_PORT`       |
+| `engine`    | `source/backend/engine`    | 8800 | `ENGINE_PORT`    |
 | `admin`     | `source/apps/admin`        | 3100 | `ADMIN_PORT`     |
 | `www`       | `source/apps/www`          | 3200 | `WWW_PORT`       |
 | `web`       | `source/apps/web`          | 3300 | `WEB_PORT`       |

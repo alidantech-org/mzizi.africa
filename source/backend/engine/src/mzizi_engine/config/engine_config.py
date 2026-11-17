@@ -58,7 +58,7 @@ class ServerConfig:
     """The HTTP front door and the executor: bind address, authentication, retries, concurrency and callbacks."""
 
     host: str = "127.0.0.1"
-    port: int = 8760
+    port: int = 8800
     auth: str = "oidc"
     issuer: str | None = None
     jwks_url: str | None = None
@@ -83,7 +83,7 @@ class ServerConfig:
             limits[name.strip()] = int(count)
         return cls(
             host=env.get("ENGINE_HOST", "127.0.0.1"),
-            port=int(env.get("ENGINE_PORT", "8760")),
+            port=int(env.get("ENGINE_PORT", "8800")),
             auth=env.get("ENGINE_AUTH", "oidc"),
             issuer=env.get("AUTH_ISSUER"),
             jwks_url=env.get("AUTH_JWKS_URL"),

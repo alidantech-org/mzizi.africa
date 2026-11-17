@@ -20,16 +20,26 @@ export function pick(names: readonly string[]): Service[] {
   return services.filter((service) => names.includes(service.name));
 }
 
+const PALETTE = ["\x1b[36m", "\x1b[35m", "\x1b[33m", "\x1b[34m", "\x1b[32m", "\x1b[96m"] as const;
+const RESET = "\x1b[0m";
+
+/** A stable colour per service, so each service's lines are easy to follow. Plain text when colour is off. */
+export function tag(name: string, index: number): string {
+  if (process.env.NO_COLOR) return `[${name}]`;
+  return `${PALETTE[index % PALETTE.length]}\x1b[1m[${name}]${RESET}`;
+}
+
 /** Copy a stream to the terminal line by line with a `[name]` prefix. */
 async function relay(stream: ReadableStream<Uint8Array>, name: string, write: (line: string) => void): Promise<void> {
+  // Services log progress on stderr as well (uvicorn does), so a line is not an error just because of its stream.
   const decoder = new TextDecoder();
   let pending = "";
   for await (const chunk of stream) {
     const lines = (pending + decoder.decode(chunk, { stream: true })).split("\n");
     pending = lines.pop() ?? "";
-    for (const line of lines) write(`[${name}] ${line}`);
+    for (const line of lines) write(`${name} ${line}`);
   }
-  if (pending) write(`[${name}] ${pending}`);
+  if (pending) write(`${name} ${pending}`);
 }
 
 /** Start the chosen services and wait until they stop. Resolves to the exit code for the runner. */
@@ -37,7 +47,7 @@ export async function serve(mode: Mode, names: readonly string[]): Promise<numbe
   const chosen = pick(names);
   const base = localEnv();
   const children = new Map<string, Subprocess<"ignore", "pipe", "pipe">>();
-  for (const service of chosen) {
+  for (const [index, service] of chosen.entries()) {
     const port = String(portOf(service, base));
     const command = service[mode].map((part) => part.replace("{port}", port));
     console.log(`▶ ${service.name.padEnd(7)} http://127.0.0.1:${port}  (${service.dir}: ${command.join(" ")})`);
@@ -49,8 +59,9 @@ export async function serve(mode: Mode, names: readonly string[]): Promise<numbe
       stderr: "pipe",
     });
     children.set(service.name, child);
-    void relay(child.stdout, service.name, (line) => console.log(line));
-    void relay(child.stderr, service.name, (line) => console.error(line));
+    const label = tag(service.name, index);
+    void relay(child.stdout, label, (line) => console.log(line));
+    void relay(child.stderr, label, (line) => console.log(line));
   }
 
   let stopping = false;

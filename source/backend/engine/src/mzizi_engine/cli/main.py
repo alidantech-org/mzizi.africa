@@ -17,7 +17,7 @@ def main(argv: list[str] | None = None) -> int:
 
     parser = argparse.ArgumentParser(prog="mzizi-engine")
     sub = parser.add_subparsers(dest="command", required=True)
-    sub.add_parser("serve", help="run the API (ENGINE_HOST/ENGINE_PORT, default 127.0.0.1:8760)")
+    sub.add_parser("serve", help="run the API (ENGINE_HOST/ENGINE_PORT, default 127.0.0.1:8800)")
     sub.add_parser("capabilities", help="print the operations the runtime exposes")
     sub.add_parser("check", help="validate settings")
     worker = sub.add_parser("worker", help="execute a leased run")
@@ -142,7 +142,11 @@ def main(argv: list[str] | None = None) -> int:
 
     from mzizi_engine.runtime.http.app import create_app
 
-    uvicorn.run(create_app(settings, runtime=runtime), host=settings.host, port=settings.port)
+    from mzizi_engine.runtime.http.logging import log_config
+
+    uvicorn.run(
+        create_app(settings, runtime=runtime), host=settings.host, port=settings.port, log_config=log_config()
+    )
     return 0
 
 

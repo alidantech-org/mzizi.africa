@@ -58,8 +58,8 @@ async function load(url: string, headers: HeadersInit = {}): Promise<Report> {
 }
 
 export async function loadOverview(): Promise<{ api: Report; engine: Report }> {
-  const api = process.env.REVIEW_API_URL ?? 'http://127.0.0.1:3000';
-  const engine = process.env.ENGINE_URL ?? 'http://127.0.0.1:8760';
+  const api = process.env.REVIEW_API_URL ?? 'http://127.0.0.1:8700';
+  const engine = process.env.ENGINE_URL ?? 'http://127.0.0.1:8800';
   const [apiReport, engineReport] = await Promise.all([load(api), load(engine)]);
   return { api: apiReport, engine: engineReport };
 }

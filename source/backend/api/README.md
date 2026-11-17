@@ -6,7 +6,7 @@ Most controllers, DTOs, entities and contract-facing types are generated from au
 
 ## Local development
 
-The API listens on port `3000` by default. Start the local database and API through the repository-root runner; [`scripts/README.md`](../../../scripts/README.md) documents database setup, roles, environment variables and service commands. Do not use archived Python API commands.
+The API listens on port `8700` by default. Start the local database and API through the repository-root runner; [`scripts/README.md`](../../../scripts/README.md) documents database setup, roles, environment variables and service commands. Do not use archived Python API commands.
 
 The API configures PostgreSQL with `DATABASE_URL`. The Bun [database CLI](../database/README.md) owns migrations and role provisioning. Authentication policies are exported from Dryv contracts and enforced by the API's guards. Protected routes fail closed when authentication is not configured.
 

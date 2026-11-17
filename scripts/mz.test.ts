@@ -63,7 +63,7 @@ describe("steps", () => {
     const api = pick(["api"])[0];
     if (!api) throw new Error("api service missing");
     expect(portOf(api, { API_PORT: "3900" })).toBe(3900);
-    expect(portOf(api, { API_PORT: "x" })).toBe(3000);
+    expect(portOf(api, { API_PORT: "x" })).toBe(8700);
     expect(pick(["api"]).map((service) => service.name)).toEqual(["api"]);
     expect(() => pick(["nope"])).toThrow("unknown service");
   });

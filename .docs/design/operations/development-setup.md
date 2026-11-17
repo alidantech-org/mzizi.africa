@@ -11,7 +11,7 @@ Everything is run from the repository root with Bun. Python projects use uv and 
 ```sh
 bun run setup        # install workspace dependencies and configure local development
 bun run doctor       # report required tools and local files
-bun run dev          # API (3000), engine (8760), dashboard (3100), public site (3200)
+bun run dev          # API (8700), engine (8800), dashboard (3100), public site (3200)
 bun run check        # format check, lint, typecheck, structure and tests
 bun run build        # Python wheels and both Next.js apps
 bun run start        # the same services without watchers

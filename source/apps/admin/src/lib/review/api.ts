@@ -2,7 +2,7 @@ import 'server-only';
 
 import { mintToken } from '@/lib/review/auth';
 
-const API = process.env.REVIEW_API_URL ?? 'http://127.0.0.1:3000';
+const API = process.env.REVIEW_API_URL ?? 'http://127.0.0.1:8700';
 
 export class ApiError extends Error {
   constructor(

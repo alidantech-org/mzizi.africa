@@ -122,7 +122,7 @@ export const services: readonly Service[] = [
     dir: "source/backend/api",
     dev: ["bun", "run", "dev"],
     start: ["bun", "run", "start"],
-    port: 3000,
+    port: 8700,
     portEnv: "PORT",
   },
   {
@@ -130,7 +130,7 @@ export const services: readonly Service[] = [
     dir: ".",
     dev: ["uv", "run", "mzizi-engine", "serve"],
     start: ["uv", "run", "mzizi-engine", "serve"],
-    port: 8760,
+    port: 8800,
     portEnv: "ENGINE_PORT",
   },
   {

@@ -25,7 +25,7 @@ See the [CLI and engine jobs quickstart](../../../.docs/design/operations/cli-an
 
 ```bash
 uv sync --all-packages --all-extras
-uv run mzizi-engine serve                       # 127.0.0.1:8760 with the settings below
+uv run mzizi-engine serve                       # 127.0.0.1:8800 with the settings below
 uv run mzizi-engine capabilities                 # the operations the runtime exposes
 uv run pytest source/backend/engine/tests
 ```

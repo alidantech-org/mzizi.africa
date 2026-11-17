@@ -64,13 +64,13 @@ uv run --no-sync mzizi-engine serve
 Set the same token in the client shell and submit a job. Use the `id` returned by the POST for `JOB_ID`.
 
 ```sh
-curl -fsS http://127.0.0.1:8760/capabilities \
+curl -fsS http://127.0.0.1:8800/capabilities \
   -H "Authorization: Bearer $ENGINE_SERVICE_TOKEN"
-curl -fsS http://127.0.0.1:8760/v1/jobs \
+curl -fsS http://127.0.0.1:8800/v1/jobs \
   -H "Authorization: Bearer $ENGINE_SERVICE_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"kind":"scraping.replay","input":{"expectations":"replay/suite.json"}}'
-curl -fsS "http://127.0.0.1:8760/v1/jobs/$JOB_ID" \
+curl -fsS "http://127.0.0.1:8800/v1/jobs/$JOB_ID" \
   -H "Authorization: Bearer $ENGINE_SERVICE_TOKEN"
 ```
 
