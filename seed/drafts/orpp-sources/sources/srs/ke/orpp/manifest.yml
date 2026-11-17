@@ -9,16 +9,7 @@ tags: [purpose:publications, domain:politics, domain:finance, domain:procurement
 fetch: { mode: browser }
 modules: [documents]
 uses:
-  terms:
-    - sys.trm.src.doc.ke.law
-    - sys.trm.src.doc.ke.register
-    - sys.trm.src.doc.ke.funding
-    - sys.trm.src.doc.ke.notice
-    - sys.trm.src.doc.ke.procurement
-    - sys.trm.src.doc.ke.audit-budget
-    - sys.trm.src.doc.ke.court
-    - sys.trm.src.doc.ke.report
-    - sys.trm.src.doc.ke.people-places
+  terms: [sys.trm.src.doc.ke.orpp]  # extends sys.trm.src.doc.ke.documents, which extends sys.trm.src.doc.global.documents
 policy:
   assessment: { ref: assess-orpp }
   licence: { ref: unconfirmed, source: "https://orpp.or.ke/" }

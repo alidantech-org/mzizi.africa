@@ -1,31 +1,51 @@
-from mzizi_patterns import DocumentText, Impact, PatternOrchestrator, Profile, TagRule, TermEntry, TermList
+from mzizi_patterns import DocumentText, Impact, PatternOrchestrator, Profile, TagRule, TermEntry, TermGroup, TermList
 from mzizi_patterns.features.dedupe.dedupe import jaccard, shingles
 from mzizi_patterns.features.tokenise.tokenise import words
-from mzizi_patterns.shared.contracts import Axis
+from mzizi_patterns.shared.contracts import Role
 
 
 def engine() -> PatternOrchestrator:
-    lists = (
-        TermList(
-            code="t.law", terms=(TermEntry(value="act", aliases=("political parties act",)), TermEntry(value="bill"))
+    def group(name: str, role: Role, *terms: TermEntry) -> TermGroup:
+        return TermGroup(group=name, role=role, terms=terms)
+
+    world = TermList(
+        code="t.world",
+        groups=(
+            group("law", Role.KIND, TermEntry(value="act"), TermEntry(value="bill")),
+            group("register", Role.KIND, TermEntry(value="register"), TermEntry(value="fully registered")),
+            group("form", Role.KIND, TermEntry(value="form"), TermEntry(value="checklist")),
+            group("money", Role.SUBJECT, TermEntry(value="allocation"), TermEntry(value="fund")),
+            group("stopwords", Role.STOPWORD, TermEntry(value="the"), TermEntry(value="of")),
         ),
-        TermList(code="t.register", terms=(TermEntry(value="register"), TermEntry(value="fully registered"))),
-        TermList(code="t.form", terms=(TermEntry(value="form"), TermEntry(value="checklist"))),
-        TermList(code="t.money", terms=(TermEntry(value="allocation"), TermEntry(value="fund"))),
-        TermList(code="t.stop", terms=(TermEntry(value="the"), TermEntry(value="of"))),
+    )
+    local = TermList(
+        code="t.local",
+        extends=("t.world",),
+        groups=(
+            group("law", Role.KIND, TermEntry(value="act", aliases=("political parties act", "sheria"))),
+            group("money", Role.SUBJECT, TermEntry(value="fund", aliases=("mfuko",))),
+        ),
     )
     profile = Profile(
         code="p",
-        stopword_lists=("t.stop",),
+        term_lists=("t.local",),  # t.world comes in through extends
+        stopword_group="stopwords",
         tags=(
-            TagRule(tag="law", impact=Impact.HIGH, term_lists=("t.law",)),
-            TagRule(tag="register", impact=Impact.HIGH, term_lists=("t.register",)),
-            TagRule(tag="form", impact=Impact.LOW, term_lists=("t.form",)),
-            TagRule(tag="money", impact=Impact.HIGH, axis=Axis.SUBJECT, term_lists=("t.money",)),
+            TagRule(tag="law", impact=Impact.HIGH, group="law"),
+            TagRule(tag="register", impact=Impact.HIGH, group="register"),
+            TagRule(tag="form", impact=Impact.LOW, group="form"),
+            TagRule(tag="money", impact=Impact.HIGH, group="money"),
         ),
         threshold=0.1,
     )
-    return PatternOrchestrator(profile, lists)
+    return PatternOrchestrator(profile, (world, local))
+
+
+def test_groups_merge_across_lists_and_a_local_alias_counts_as_the_global_term() -> None:
+    scores = engine().score_corpus(
+        (DocumentText(name="a", filename="sheria ya kenya", body="x"), DocumentText(name="b"))
+    )
+    assert scores[0].kind == "law" and scores[0].tags[0].matches[0].term == "act"
 
 
 def test_tokeniser_splits_letters_digits_and_scripts() -> None:
@@ -56,3 +76,22 @@ def test_near_duplicates_ignore_documents_without_text() -> None:
     pairs = engine().near_duplicates(docs, threshold=0.8)
     assert [(p.left, p.right) for p in pairs] == [("x", "y")]
     assert jaccard(shingles(text), shingles(text)) == 1.0
+
+
+def test_the_drafted_layers_merge_and_a_swahili_alias_reaches_the_global_term() -> None:
+    from pathlib import Path
+
+    import pytest
+
+    from mzizi_patterns import load_profile, load_term_list
+
+    draft = Path("seed/drafts/orpp-sources")
+    if not draft.is_dir():
+        pytest.skip("the ORPP draft has moved into seed/")
+    lists = tuple(load_term_list(p) for p in sorted((draft / "terms").rglob("*.yml")))
+    engine_ = PatternOrchestrator(load_profile(draft / "engine/docs/profile.yaml"), lists)
+    filler = tuple(DocumentText(name=f"f{i}", filename="unrelated words", body="nothing here") for i in range(8))
+    scores = engine_.score_corpus(
+        (DocumentText(name="a", filename="notisi ya usajili wa muda", body="notisi"), *filler)
+    )
+    assert scores[0].kind == "notice"  # the Swahili alias of the global term, loaded through two extends

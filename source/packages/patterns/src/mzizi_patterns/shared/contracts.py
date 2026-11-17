@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from enum import IntEnum, StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class Frozen(BaseModel):
@@ -32,33 +32,64 @@ class Axis(StrEnum):
     SUBJECT = "subject"  # what it is about: funding, people, places
 
 
+class Alias(Frozen):
+    value: str = Field(min_length=1)
+    language: str = ""
+
+
 class TermEntry(Frozen):
     value: str = Field(min_length=1)
-    aliases: tuple[str, ...] = ()
+    language: str = ""
+    aliases: tuple[Alias, ...] = ()
     meaning: str = ""
+
+    @field_validator("aliases", mode="before")
+    @classmethod
+    def _alias_forms(cls, value: object) -> object:
+        """An alias is a bare string or an object with its own language."""
+        if isinstance(value, (list, tuple)):
+            return [{"value": item} if isinstance(item, str) else item for item in value]
+        return value
+
+
+class Role(StrEnum):
+    KIND = "kind"
+    SUBJECT = "subject"
+    STOPWORD = "stopword"
+
+
+class TermGroup(Frozen):
+    group: str
+    label: str = ""
+    describe: str = ""
+    role: Role | None = None
+    terms: tuple[TermEntry, ...] = Field(min_length=1)
 
 
 class TermList(Frozen):
-    """A named list of words or phrases (the shape of `source/schema/engine/terms.schema.json`)."""
+    """One term list (the shape of `source/schema/engine/terms.schema.json`): groups of labelled terms."""
 
     code: str
     describe: str = ""
-    terms: tuple[TermEntry, ...] = Field(min_length=1)
+    extends: tuple[str, ...] = ()
+    languages: tuple[str, ...] = ()
+    terms: tuple[TermEntry, ...] = ()
+    groups: tuple[TermGroup, ...] = ()
 
 
 class TagRule(Frozen):
     tag: str
     impact: Impact
-    axis: Axis = Axis.KIND
     weight: float = Field(default=1.0, gt=0)
-    term_lists: tuple[str, ...] = Field(min_length=1)  # codes of the term lists that evidence this tag
+    group: str  # the term group that evidences this tag; its role decides whether the tag is a kind or a subject
 
 
 class Profile(Frozen):
     """How evidence becomes tags and an impact level. All of it is data."""
 
     code: str
-    stopword_lists: tuple[str, ...] = ()
+    term_lists: tuple[str, ...] = Field(min_length=1)  # lists to load; groups of one name merge across them
+    stopword_group: str = ""
     tags: tuple[TagRule, ...] = Field(min_length=1)
     field_weights: tuple[tuple[Field_, float], ...] = (
         (Field_.FILENAME, 3.0),

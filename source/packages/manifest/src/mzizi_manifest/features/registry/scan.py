@@ -65,7 +65,7 @@ def _kind(document: dict) -> Kind | None:
         return Kind.SOURCE
     if "yields" in document:
         return Kind.MAPPING
-    if "terms" in document:
+    if "terms" in document or "groups" in document:
         return Kind.TERMS
     if "url_kinds" in document:
         return Kind.ENGINE
@@ -75,6 +75,10 @@ def _kind(document: dict) -> Kind | None:
 
 
 def _references(document: dict, kind: Kind) -> list[Reference]:
+    if kind is Kind.TERMS:
+        parents = document.get("extends")
+        listed = parents if isinstance(parents, list) else []
+        return [Reference(f"extends[{i}]", code, Kind.TERMS) for i, code in enumerate(listed) if isinstance(code, str)]
     if kind is not Kind.SOURCE:
         return []
     references = [

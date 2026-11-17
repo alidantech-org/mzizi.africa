@@ -10,6 +10,7 @@ from mzizi_patterns.shared.contracts import (
     Profile,
     TagRule,
     TermEntry,
+    TermGroup,
     TermList,
 )
 
@@ -22,6 +23,7 @@ __all__ = [
     "Profile",
     "TagRule",
     "TermEntry",
+    "TermGroup",
     "TermList",
     "load_profile",
     "load_term_list",

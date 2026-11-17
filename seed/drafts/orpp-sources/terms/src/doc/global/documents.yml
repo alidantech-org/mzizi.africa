@@ -1,0 +1,141 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.global.documents
+describe: Words that say what an official document is (its kind) and what it is about (its subject), in English. Nothing here is specific to a country or a publisher.
+languages: [en]
+groups:
+  - group: law
+    label: Law and regulation
+    role: kind
+    terms:
+      - { value: act, meaning: A statute }
+      - { value: bill, meaning: A proposed law }
+      - { value: constitution, meaning: The constitutional text }
+      - { value: regulations, aliases: [rules, subsidiary legislation], meaning: Subsidiary legislation }
+      - { value: amendment, aliases: [amendments] }
+      - { value: arrangement of sections, aliases: [be it enacted, short title, commencement, interpretation, saving provisions] }
+      - { value: schedule, aliases: [first schedule, second schedule, transitional provisions] }
+      - { value: code of conduct }
+  - group: register
+    label: Register or roll
+    role: kind
+    terms:
+      - { value: register, aliases: [register of particulars, roll], meaning: An official record of named entities with status }
+      - { value: registered, aliases: [registration, certificate of registration] }
+      - { value: certificate, aliases: [date of issue] }
+  - group: notice
+    label: Notice or announcement
+    role: kind
+    terms:
+      - { value: notice, aliases: [public notice, notification] }
+      - { value: communique }
+      - { value: announcement, aliases: [public announcement] }
+      - { value: appointment, aliases: [appointed] }
+      - { value: objections }
+      - { value: merger }
+      - { value: change of name }
+  - group: procurement
+    label: Tendering, bidding and contracts
+    role: kind
+    terms:
+      - { value: tender, aliases: [tenders, request for proposals, rfp, rfq, request for quotation, expression of interest] }
+      - { value: bidder, aliases: [bidders, successful bidders, unsuccessful bidders, tenderer] }
+      - { value: award, aliases: [awarded, notification of award] }
+      - { value: contract, aliases: [contract sum] }
+      - { value: supplier, aliases: [suppliers, registration of suppliers, prequalification] }
+      - { value: procuring entity }
+      - { value: addendum, aliases: [addenda, clarification] }
+      - { value: tender price, aliases: [bid price, total price] }
+      - { value: procurement plan }
+  - group: court
+    label: Court or tribunal decision
+    role: kind
+    terms:
+      - { value: judgment, aliases: [judgement, ruling] }
+      - { value: petition, aliases: [constitutional petition, appeal] }
+      - { value: respondent, aliases: [appellant, petitioner] }
+      - { value: high court, aliases: [court of appeal, supreme court, tribunal] }
+  - group: report
+    label: Report or plan
+    role: kind
+    terms:
+      - { value: annual report }
+      - { value: evaluation report, aliases: [post election evaluation, assessment] }
+      - { value: strategic plan }
+      - { value: performance, aliases: [achievements, outcomes] }
+      - { value: findings, aliases: [recommendations] }
+  - group: form
+    label: Form, checklist or guide
+    role: kind
+    terms:
+      - { value: form, aliases: [application form] }
+      - { value: checklist, aliases: [guide, manual, quick guide, faq, faqs] }
+      - { value: declaration, aliases: [consent form, affidavit] }
+      - { value: template }
+  - group: news
+    label: News, bulletin or speech
+    role: kind
+    terms:
+      - { value: bulletin, aliases: [newsletter, edition] }
+      - { value: speech, aliases: [keynote address, remarks] }
+      - { value: interview, aliases: [transcript] }
+      - { value: tv show, aliases: [programme, webinar, podcast] }
+      - { value: press statement, aliases: [press release, news article] }
+  - group: noise
+    label: Recruitment and other non-records
+    role: kind
+    terms:
+      - { value: vacancy, aliases: [vacancies, advert, job advert, career opportunities, internship, pupillage] }
+      - { value: job description, aliases: [job application, curriculum vitae] }
+      - { value: order, aliases: [invoice, receipt] }
+      - { value: presentation }
+  - group: funding
+    label: Public funding and allocations
+    role: subject
+    terms:
+      - { value: fund }
+      - { value: allocation, aliases: [allocations] }
+      - { value: distribution, aliases: [disbursement, disbursed] }
+      - { value: shares, aliases: [share] }
+      - { value: financial year, aliases: [fy] }
+      - { value: appropriation }
+  - group: audit-budget
+    label: Budgets, expenditure and audits
+    role: subject
+    terms:
+      - { value: budget, aliases: [estimates] }
+      - { value: expenditure, aliases: [expenses, spending] }
+      - { value: audit, aliases: [auditor general, audited, audit report] }
+      - { value: financial statements, aliases: [balance sheet, statement of financial position] }
+      - { value: revenue, aliases: [income, receipts] }
+      - { value: pending bills }
+      - { value: variance }
+  - group: people-places
+    label: People in roles and places
+    role: subject
+    terms:
+      - { value: registrar, aliases: [assistant registrar, acting registrar] }
+      - { value: chairperson, aliases: [chairman, secretary general, treasurer] }
+      - { value: nominee, aliases: [nominated, candidate] }
+      - { value: committee }
+      - { value: location, aliases: [postal address, physical address, office location] }
+      - { value: member, aliases: [members] }
+  - group: stopwords
+    label: Function words ignored when tokenising
+    role: stopword
+    terms:
+      - { value: "the" }
+      - { value: "of" }
+      - { value: "and" }
+      - { value: "for" }
+      - { value: "to" }
+      - { value: "in" }
+      - { value: "on" }
+      - { value: "a" }
+      - { value: "an" }
+      - { value: "is" }
+      - { value: "are" }
+      - { value: "by" }
+      - { value: "with" }
+      - { value: "be" }
+      - { value: "as" }
+      - { value: "at" }

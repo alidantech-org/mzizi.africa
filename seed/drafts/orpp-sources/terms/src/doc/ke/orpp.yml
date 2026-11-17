@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.orpp
+describe: Terms specific to the Office of the Registrar of Political Parties and its publications. Everything not tied to this publisher belongs in a wider list.
+extends: [sys.trm.src.doc.ke.documents]
+languages: [en, sw]
+groups:
+  - group: register
+    terms:
+      - { value: fully registered, aliases: [provisionally registered, registered parties, { value: usajili wa muda, language: sw }, provisional registration] }
+      - { value: certificate serial, aliases: [certificate date of issue] }
+      - { value: nomination particulars, aliases: [particulars of the party] }
+      - { value: cleared for election }
+      - { value: name of the party, aliases: [name of party, party abbreviation, location of head office] }
+  - group: funding
+    terms:
+      - { value: political parties fund, aliases: [ppf], meaning: The statutory fund for political parties }
+  - group: people-places
+    terms:
+      - { value: registrar of political parties, aliases: [orpp] }
+      - { value: pplc, aliases: [political parties liaison committee] }
+      - { value: political party, aliases: [political parties] }
+  - group: form
+    terms:
+      - { value: form pp, aliases: [form ppm, form pplc] }

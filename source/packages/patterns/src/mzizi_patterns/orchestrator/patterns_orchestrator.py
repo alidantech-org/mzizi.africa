@@ -8,10 +8,9 @@ from mzizi_patterns.features.dedupe.dedupe import jaccard, minhash, shingles, si
 from mzizi_patterns.features.score.score import (
     document_frequency,
     score_document,
-    tag_term_sets,
     term_counts,
 )
-from mzizi_patterns.features.terms.terms import phrase_index
+from mzizi_patterns.features.terms.terms import merge_groups, phrase_index, resolve
 from mzizi_patterns.features.tokenise.tokenise import words
 from mzizi_patterns.shared.contracts import DocumentScore, DocumentText, DuplicatePair, Field_, Profile, TermList
 
@@ -21,32 +20,23 @@ MIN_SHINGLES = 20
 class PatternOrchestrator:
     def __init__(self, profile: Profile, term_lists: tuple[TermList, ...]) -> None:
         by_code = {term_list.code: term_list for term_list in term_lists}
-        missing = [c for rule in profile.tags for c in rule.term_lists if c not in by_code]
-        missing += [c for c in profile.stopword_lists if c not in by_code]
-        if missing:
-            raise ValueError(
-                f"profile {profile.code} refers to term lists that were not supplied: {sorted(set(missing))}"
-            )
+        merged = merge_groups(resolve(profile.term_lists, by_code))
+        unknown = sorted({r.group for r in profile.tags} - set(merged))
+        if unknown:
+            raise ValueError(f"profile {profile.code} refers to groups no loaded list defines: {unknown}")
         self.profile = profile
-        self._index = phrase_index(tuple(by_code[c] for rule in profile.tags for c in rule.term_lists))
-        self._stopwords = frozenset(
-            word for code in profile.stopword_lists for entry in by_code[code].terms for word in words(entry.value)
-        )
-        self._tag_terms = tag_term_sets(
-            profile.tags,
-            {
-                code: frozenset(entry.value for entry in by_code[code].terms)
-                for rule in profile.tags
-                for code in rule.term_lists
-            },
-        )
+        self.axes = {rule.tag: merged[rule.group].axis for rule in profile.tags}
+        self._index = phrase_index([merged[rule.group] for rule in profile.tags])
+        stop = merged.get(profile.stopword_group)
+        self._stopwords = frozenset(word for form in (stop.surfaces if stop else {}) for word in words(form))
+        self._tag_terms = {rule.tag: frozenset(merged[rule.group].surfaces) for rule in profile.tags}
 
     def score_corpus(self, documents: tuple[DocumentText, ...]) -> tuple[DocumentScore, ...]:
         longest = self.profile.max_ngram
         counts = [term_counts(d, self._index, self._stopwords, longest) for d in documents]
         frequency: Counter[str] = document_frequency(counts)
         return tuple(
-            score_document(d, c, self.profile, self._tag_terms, frequency, len(documents))
+            score_document(d, c, self.profile, self._tag_terms, self.axes, frequency, len(documents))
             for d, c in zip(documents, counts, strict=True)
         )
 

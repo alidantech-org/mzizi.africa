@@ -1,8 +1,0 @@
-# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
-code: sys.trm.src.doc.ke.court
-describe: Words that mark a court or tribunal decision.
-terms:
-  - { value: judgment, aliases: [judgement, ruling, hukumu] }
-  - { value: petition, aliases: [constitutional petition, appeal] }
-  - { value: respondent, aliases: [appellant, petitioner] }
-  - { value: high court, aliases: [court of appeal, supreme court, tribunal] }

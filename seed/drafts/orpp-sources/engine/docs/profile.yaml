@@ -1,18 +1,19 @@
-# Proposed profile (code sys.eng.docs.profile): how term matches become tags and an impact level.
-# axis: kind says what a document is (sets the level); subject says what it is about.
+# Proposed profile (code sys.eng.docs.profile): how term matches become kinds, subjects and an impact level.
+# The group a tag reads from decides whether it is a kind (what a document is) or a subject (what it is about).
 # Impact: 3 high, 2 medium, 1 low, 0 noise. Weights are starting values to calibrate on reviewed decisions.
 code: sys.eng.docs.profile
-stopword_lists: [sys.trm.src.doc.ke.stopwords]
+term_lists: [sys.trm.src.doc.ke.orpp]  # the lists it extends (ke documents, global documents) load with it
+stopword_group: stopwords
 tags:
-  - { tag: law, impact: 3, weight: 1.0, term_lists: [sys.trm.src.doc.ke.law] }
-  - { tag: register, impact: 3, weight: 1.2, term_lists: [sys.trm.src.doc.ke.register] }
-  - { tag: funding, axis: subject, impact: 3, weight: 1.2, term_lists: [sys.trm.src.doc.ke.funding] }
-  - { tag: notice, impact: 3, weight: 1.0, term_lists: [sys.trm.src.doc.ke.notice] }
-  - { tag: procurement, impact: 3, weight: 1.2, term_lists: [sys.trm.src.doc.ke.procurement] }
-  - { tag: audit-budget, axis: subject, impact: 3, weight: 1.2, term_lists: [sys.trm.src.doc.ke.audit-budget] }
-  - { tag: court, impact: 3, weight: 1.0, term_lists: [sys.trm.src.doc.ke.court] }
-  - { tag: report, impact: 2, weight: 1.0, term_lists: [sys.trm.src.doc.ke.report] }
-  - { tag: people-places, axis: subject, impact: 2, weight: 0.8, term_lists: [sys.trm.src.doc.ke.people-places] }
-  - { tag: form, impact: 1, weight: 1.0, term_lists: [sys.trm.src.doc.ke.form] }
-  - { tag: news, impact: 1, weight: 1.0, term_lists: [sys.trm.src.doc.ke.news] }
-  - { tag: noise, impact: 0, weight: 1.5, term_lists: [sys.trm.src.doc.ke.noise] }
+  - { tag: law, group: law, impact: 3, weight: 1.0 }
+  - { tag: register, group: register, impact: 3, weight: 1.2 }
+  - { tag: notice, group: notice, impact: 3, weight: 1.0 }
+  - { tag: procurement, group: procurement, impact: 3, weight: 1.2 }
+  - { tag: court, group: court, impact: 3, weight: 1.0 }
+  - { tag: report, group: report, impact: 2, weight: 1.0 }
+  - { tag: form, group: form, impact: 1, weight: 1.0 }
+  - { tag: news, group: news, impact: 1, weight: 1.0 }
+  - { tag: noise, group: noise, impact: 0, weight: 1.5 }
+  - { tag: funding, group: funding, impact: 3, weight: 1.2 }
+  - { tag: audit-budget, group: audit-budget, impact: 3, weight: 1.2 }
+  - { tag: people-places, group: people-places, impact: 2, weight: 0.8 }

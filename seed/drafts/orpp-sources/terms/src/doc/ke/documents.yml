@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://res.alidantech.org/mzizi/public/schemas/engine/terms.schema.json
+code: sys.trm.src.doc.ke.documents
+describe: "Kenya-wide additions (Swahili names for the global terms, Kenyan legal and government wording, county and constituency words). Not specific to any one publisher."
+extends: [sys.trm.src.doc.global.documents]
+languages: [en, sw]
+groups:
+  - group: law
+    terms:
+      - { value: act, aliases: [{ value: sheria, language: sw }, political parties act, elections act, constitution of kenya, laws of kenya] }
+      - { value: bill, aliases: [{ value: mswada, language: sw }] }
+      - { value: constitution, aliases: [{ value: katiba, language: sw }] }
+      - { value: regulations, aliases: [legal notice, { value: kanuni, language: sw }] }
+      - { value: amendment, aliases: [{ value: marekebisho, language: sw }] }
+      - { value: code of conduct, aliases: [{ value: kanuni za maadili, language: sw }] }
+  - group: register
+    terms:
+      - { value: register, aliases: [{ value: rejista, language: sw }] }
+      - { value: registered, aliases: [{ value: usajili, language: sw }] }
+      - { value: certificate, aliases: [{ value: cheti, language: sw }] }
+  - group: notice
+    terms:
+      - { value: notice, aliases: [{ value: notisi, language: sw }, { value: ilani, language: sw }] }
+      - { value: gazette notice, aliases: [kenya gazette, gazette, vol cxxii], meaning: A notice in the Kenya Gazette }
+      - { value: communique, aliases: [{ value: taarifa, language: sw }] }
+      - { value: appointment, aliases: [{ value: uteuzi, language: sw }] }
+      - { value: objections, aliases: [{ value: pingamizi, language: sw }] }
+  - group: procurement
+    terms:
+      - { value: tender, aliases: [{ value: zabuni, language: sw }] }
+      - { value: contract, aliases: [{ value: mkataba, language: sw }] }
+  - group: court
+    terms:
+      - { value: judgment, aliases: [{ value: hukumu, language: sw }] }
+  - group: report
+    terms:
+      - { value: annual report, aliases: [{ value: ripoti ya mwaka, language: sw }] }
+      - { value: strategic plan, aliases: [{ value: mpango mkakati, language: sw }] }
+  - group: form
+    terms:
+      - { value: form, aliases: [{ value: fomu, language: sw }] }
+  - group: news
+    terms:
+      - { value: speech, aliases: [{ value: hotuba, language: sw }] }
+      - { value: interview, aliases: [{ value: mahojiano, language: sw }] }
+      - { value: tv show, aliases: [kbc, kbctv, eye on politics] }
+  - group: noise
+    terms:
+      - { value: vacancy, aliases: [{ value: nafasi za kazi, language: sw }, amazon] }
+  - group: funding
+    terms:
+      - { value: fund, aliases: [{ value: mfuko, language: sw }] }
+      - { value: allocation, aliases: [{ value: mgao, language: sw }] }
+      - { value: kes, aliases: [ksh, kshs, kenya shillings, shillings], meaning: Kenya shillings }
+      - { value: financial year, aliases: [{ value: mwaka wa fedha, language: sw }] }
+  - group: audit-budget
+    terms:
+      - { value: budget, aliases: [{ value: bajeti, language: sw }, medium term expenditure framework, mtef] }
+      - { value: audit, aliases: [{ value: ukaguzi, language: sw }] }
+  - group: people-places
+    terms:
+      - { value: registrar, aliases: [{ value: msajili, language: sw }] }
+      - { value: chairperson, aliases: [{ value: mwenyekiti, language: sw }] }
+      - { value: nominee, aliases: [{ value: mgombea, language: sw }] }
+      - { value: county, aliases: [counties, { value: kaunti, language: sw }, constituency, ward] }
+      - { value: member, aliases: [{ value: wanachama, language: sw }] }
+  - group: stopwords
+    terms:
+      - { value: "ya", language: sw }
+      - { value: "wa", language: sw }
+      - { value: "na", language: sw }
+      - { value: "za", language: sw }
+      - { value: "la", language: sw }
+      - { value: "kwa", language: sw }
+      - { value: "cha", language: sw }

@@ -20,7 +20,6 @@ from mzizi_patterns.shared.contracts import (
     Impact,
     MatchedTerm,
     Profile,
-    TagRule,
     TagScore,
 )
 
@@ -88,6 +87,7 @@ def score_document(
     counts: dict[Field_, Counter[str]],
     profile: Profile,
     tag_terms: dict[str, frozenset[str]],
+    axes: dict[str, Axis],
     frequency: Counter[str],
     documents: int,
 ) -> DocumentScore:
@@ -113,7 +113,7 @@ def score_document(
             scored.append(
                 TagScore(
                     tag=rule.tag,
-                    axis=rule.axis,
+                    axis=axes[rule.tag],
                     impact=rule.impact,
                     score=round(total, 4),
                     confidence=round(confidence, 4),
@@ -149,7 +149,3 @@ def _reason(scored: list[TagScore]) -> str:
     subjects = [s for s in scored if s.axis is Axis.SUBJECT][:2]
     parts += [f"subject {s.tag} ({s.confidence})" for s in subjects]
     return "; ".join(parts) or "subject only"
-
-
-def tag_term_sets(rules: tuple[TagRule, ...], list_terms: dict[str, frozenset[str]]) -> dict[str, frozenset[str]]:
-    return {rule.tag: frozenset().union(*(list_terms[code] for code in rule.term_lists)) for rule in rules}
