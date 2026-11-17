@@ -11,6 +11,8 @@ The active backend has three separately owned projects, plus a README-only propo
 
 Shared Python libraries live in [`../packages/`](../packages/README.md), input schemas and SQL in [`../schema/`](../schema/README.md), and prepared system inputs in [`../../seed/`](../../seed/README.md). The root command runner and local service setup are documented in [`../../scripts/README.md`](../../scripts/README.md).
 
+The [developer portal design](../../.docs/design/architecture/DEVELOPER_PORTAL.md) describes the planned shared HTTP workflow for the web app, CLI and future agent.
+
 The database design is one PostgreSQL database with direct engine and API connections (see [DATABASE_ARCHITECTURE](../../.docs/design/data/DATABASE_ARCHITECTURE.md)). The engine's direct PostgreSQL and MongoDB access lives in `source/backend/engine/src/mzizi_engine/persistence/` (see [ENGINE_PERSISTENCE](../../.docs/design/data/ENGINE_PERSISTENCE.md)); the former database-service client paths have no server and were removed. No package holds database code.
 
 Former Python API and engine implementations are archived and non-executable under `.docs/_archives/2026-11-08-rewrite-snapshot/`.

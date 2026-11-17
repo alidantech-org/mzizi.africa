@@ -4,7 +4,7 @@
 
 # ARCHITECTURE — active Mzizi components
 
-The repository has separate application, product API, database, workflow, engine, capability and schema projects. These are code ownership boundaries; not every planned workflow or migration is complete.
+The repository has separate application, product API, database, engine, capability and schema projects. These are code ownership boundaries; not every planned workflow or migration is complete.
 
 ## Code map
 
@@ -12,15 +12,15 @@ The repository has separate application, product API, database, workflow, engine
 - `source/backend/api` — NestJS product API, generated primarily from authored contracts in `dryv/`.
 - `source/backend/database` — generated SQL, immutable migrations and the Bun administration CLI for the single PostgreSQL database (not a service).
 - `source/backend/engine` — Python operational API, jobs and capability orchestrator.
-- `source/packages/{agent,extraction,filesystem,manifest,ocr,scraping,source}` — reusable Python capabilities.
-- `source/schema/{contracts,database,pipeline,seed,site/v1}` — exchange/input schemas and ordered SQL.
+- `source/packages/{browser,cli,crawler,extraction,fetch,filesystem,manifest,search}` — reusable Python capabilities.
+- `source/schema/{database,engine,seed,sources}` — machine-readable input and exchange schemas.
 - root `seed/` — prepared system inputs; root `scripts/` — unified command runner.
 
 See the [repository map](../design/operations/repository-map.md) and component READMEs for the exact code responsibilities.
 
 ## Request and data ownership
 
-Applications call the NestJS product API. The API enforces authentication and operation policies and connects to PostgreSQL with its own role; it asks the Python engine to run jobs. The engine connects with its own role and is the only writer of facts promoted from staging. The Bun CLI owns migrations. Reconnection of the engine and API to PostgreSQL (replacing the removed database-service client paths) is in progress; see [DATABASE_ARCHITECTURE](../design/data/DATABASE_ARCHITECTURE.md).
+Applications call the NestJS product API. The API enforces authentication and operation policies and connects to PostgreSQL with its own role; it asks the Python engine to run jobs. The engine connects with its own role and is the only writer of facts promoted from staging. The Bun CLI owns migrations. For direct connection and persistence status, see [DATABASE_ARCHITECTURE](../design/data/DATABASE_ARCHITECTURE.md).
 
 The Python engine runs operational jobs and invokes reusable Python packages; there is no separate workflow worker (the former Temporal pipelines project was removed on 2026-11-15). Packages preserve source and processing metadata and emit representations or proposals; they do not define site-specific content or publish canonical data by themselves.
 
@@ -28,9 +28,9 @@ Raw artifact bytes are managed through the filesystem capability and object stor
 
 ## Contracts and proposals
 
-Authored API/database contracts live in `dryv/`. Exchange, seed, site and pipeline input schemas and ordered SQL live under `source/schema/`. System input values live under root `seed/`. Design proposals under `.docs/_plan/` describe unapproved or deferred scope; the active code and current contracts determine what is implemented.
+Authored API/database contracts live in `dryv/`. Generated table schemas and engine, seed and source input contracts live under `source/schema/`. SQL lives with the database CLI. System input values live under root `seed/`. Design proposals under `.docs/_plan/` describe unapproved or deferred scope; the active code and current contracts determine what is implemented.
 
-The Python capability package list does not currently include `database/`, despite engine/filesystem workspace metadata importing `mzizi-database`. `source/backend/database` is a Bun CLI and SQL folder and does not provide that Python package. Treat fresh Python workspace synchronization as blocked until the configuration/code mismatch is repaired.
+The [developer portal](../design/architecture/DEVELOPER_PORTAL.md) is the planned evolution of the existing review workbench. It shares typed engine operations over HTTP with the CLI and future agent. The current developer CLI calls the runtime in process.
 
 ## Detailed design
 

@@ -5,7 +5,7 @@
 # Coding Rules
 
 - Follow root `AGENTS.md` and the relevant `.docs` architecture/domain contract first.
-- Preserve service ownership: public API is NestJS target; current Python FastAPI is migration input; extraction, intelligence, files, and database lifecycle remain separate responsibilities.
+- Preserve service ownership. NestJS serves product contracts, FastAPI exposes engine operations, and the engine runs capability packages and owns its persistence. The [developer portal design](../design/architecture/DEVELOPER_PORTAL.md) describes the planned shared HTTP workflow.
 - Keep canonical domain rules out of presentation components. Apps consume versioned API contracts.
 - Model provenance, source artifact, retrieval time, historical validity, uncertainty, verification, and version history where applicable.
 - Use stable backend IDs and explicit parent relationships; never derive identity from a name, coordinate, or display label.

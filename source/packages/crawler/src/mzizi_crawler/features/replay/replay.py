@@ -248,13 +248,18 @@ def _replay(view: ReplayView, base: Path) -> ReplayResult:
     return ReplayResult(url=view.url, sha256=digest, mismatches=tuple(mismatches))
 
 
+def evaluate_replay(suite: ReplaySuite, base: Path) -> ReplayReport:
+    """Evaluate the supplied captures and return results without writing files."""
+    views = (
+        *(_replay(view, base) for view in suite.views),
+        *(_pdf_replay(spec, base) for spec in suite.pdfs),
+    )
+    return ReplayReport(passed=not any(view.mismatches for view in views), views=views, files=())
+
+
 def replay(request: ReplayRequest) -> ReplayReport:
     manifest = Path(request.expectations).resolve()
     suite = ReplaySuite.model_validate_json(manifest.read_bytes())
-    views = (
-        *(_replay(view, manifest.parent) for view in suite.views),
-        *(_pdf_replay(spec, manifest.parent) for spec in suite.pdfs),
-    )
-    report = ReplayReport(passed=not any(view.mismatches for view in views), views=views)
+    report = evaluate_replay(suite, manifest.parent).model_copy(update={"files": ("coverage.json",)})
     (out_dir(request) / "coverage.json").write_text(report.model_dump_json(indent=2) + "\n", encoding="utf-8")
     return report

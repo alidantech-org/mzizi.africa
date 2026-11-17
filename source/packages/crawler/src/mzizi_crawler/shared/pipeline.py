@@ -95,6 +95,7 @@ class DownloadPool:
         self.activity, self.layout, self.limit = activity, layout, limit
         self.site = layout.website(request.site)
         self.host = self.site.address.host
+        self.kinds = frozenset(request.kinds)
         self._seen: set[str] = set()
         self._queue: queue.Queue[object] = queue.Queue(maxsize=DOWNLOAD_QUEUE_DEPTH)
         self._lock = threading.Lock()
@@ -107,7 +108,7 @@ class DownloadPool:
             self._threads.append(thread)
 
     def offer(self, url: str, kind: str, found: FoundAt) -> None:
-        if url in self._seen:
+        if url in self._seen or kind not in self.kinds:
             return
         self._seen.add(url)
         item = queue_item(self.host, url, kind, found)

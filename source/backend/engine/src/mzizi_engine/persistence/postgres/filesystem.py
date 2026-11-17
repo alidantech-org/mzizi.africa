@@ -152,7 +152,7 @@ class PostgresRegistry:
             sets.append('"authorization" = %s')
             values.append(change.authorization)
         row = self._conn.execute(
-            f"UPDATE filesystem.folders SET {', '.join(sets)} WHERE id = %s AND deleted_at IS NULL RETURNING *",
+            f"UPDATE filesystem.folders SET {', '.join(sets)} WHERE id = %s AND deleted_at IS NULL RETURNING *", # type: ignore
             (*values, UUID(folder_id)),
         ).fetchone()
         return _folder(FoldersRow.model_validate(row))
@@ -196,7 +196,7 @@ class PostgresRegistry:
             sets.append("folder_id = %s")
             values.append(UUID(change.folder_id))
         row = self._conn.execute(
-            f"UPDATE filesystem.files SET {', '.join(sets)} WHERE id = %s AND deleted_at IS NULL RETURNING *",
+            f"UPDATE filesystem.files SET {', '.join(sets)} WHERE id = %s AND deleted_at IS NULL RETURNING *", # type: ignore
             (*values, UUID(file_id)),
         ).fetchone()
         return _file(FilesRow.model_validate(row))

@@ -42,6 +42,13 @@ One file reads the environment: [`config/engine_config.py`](src/mzizi_engine/con
 
 `GET /capabilities` lists the registered operations; `POST /v1/jobs` runs one (`{"kind", "input"}`) through the executor with limits, retries and cancellation (`ENGINE_CAPABILITY_LIMITS="name=n,..."`), and results are delivered to `NESTJS_CALLBACK_URL` through an outbox with `Idempotency-Key` retries. For `filesystem.*` kinds the engine stamps the authenticated principal into the payload as `actor`; a client-supplied actor is overwritten.
 
+The [developer portal design](../../../.docs/design/architecture/DEVELOPER_PORTAL.md) records the planned shared HTTP workflow, including replay and workspace artifacts. The current executor and the Mongo spec-run ledger are separate paths.
+
+### Research operations
+
+- `GET /v1/catalog/seed-tables` requires engine read access. Add `?table=civic.projects` for one seedable table. The response describes seed columns, required fields, natural keys and link targets from the Dryv-generated table metadata. Its SHA-256 identifies the complete catalog projection, even when filtered. The same operation is available as `catalog.seed_tables` in the runtime.
+- Submit `{"kind":"scraping.replay","input":{"expectations":"replay/suite.json"}}` to `POST /v1/jobs` with engine edit access. Configure `ENGINE_INPUT_ROOT` to an operator-controlled workspace shared by the authorized replay callers. The suite reference is relative to that root and nested capture paths are relative to the suite directory. Absolute paths and references outside the workspace are rejected. Read the report with `GET /v1/jobs/{job_id}`. A completed comparison can return `passed: false` with evidence mismatches. Invalid input fails the job. Workspace replay does not rewrite captures.
+
 ## Spec-driven runs
 
 The Python entry point `mzizi_engine.runtime.assembly.run_operations.run_job_spec` accepts version-1 JSON and returns a run record plus operation outputs. Phase 1 runs `scraping.crawl` and `site.watch` in process. The registry validates each stage's parameters against its request model before starting work. Keep the caller's crawl output folder and the existing `.dev/websites/` location. The run store writes its audit logs under `.dev/runs/<run_id>/logs/` and exposes an artifact-bytes API for explicit staging.

@@ -4,11 +4,9 @@
 
 # DATA LIFECYCLE — From Evidence to Canonical Knowledge
 
-## Schema organization — 12 November 2026
+## Historical schema organization — 12 November 2026
 
-## Schema organization — 12 November 2026
-
-The current catalogue reflects the 12 November contract authorization: ten persisted Main schemas (Reference, Geography, Legal, Official, Governance, Politics, Civic, Finance, Source and Filesystem) plus read-only, non-persisted Accountability, and seven Operations schemas. Procurement records are owned by Civic. The six Main domain contracts are authored and composed in Dryv; SQL generation, migrations, data changes and deployment are not authorized by this schema-contract task. Older inventories below remain historical design material and are superseded by the owning Phase 01 contract summaries.
+This snapshot predates the [single-PostgreSQL decision](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md). The then-current catalogue reflects the 12 November contract authorization: ten persisted Main schemas (Reference, Geography, Legal, Official, Governance, Politics, Civic, Finance, Source and Filesystem) plus read-only, non-persisted Accountability, and seven Operations schemas. Procurement records are owned by Civic. The six Main domain contracts are authored and composed in Dryv; SQL generation, migrations, data changes and deployment are not authorized by this schema-contract task. Older inventories below remain historical design material and are superseded by the owning Phase 01 contract summaries.
 
 ## Purpose
 
@@ -58,7 +56,9 @@ Those are different states and must not be collapsed.
 
 Every major step should produce its own identity, timestamps, method/version metadata and lineage.
 
-## Current database ownership transition — 2026-11-11
+## Historical database ownership transition — 2026-11-11
+
+The following migration notes are superseded by the [database architecture](../data/DATABASE_ARCHITECTURE.md) and [engine persistence](../data/ENGINE_PERSISTENCE.md).
 
 Schema migrations and named audit, authorization, pipeline, engine job/event/outbox, and filesystem folder-creation, upload-reservation, cleanup-metadata, and exact-version lineage writes are applied through the Bun TypeScript database owner. Folder/file details and download-key authorization also use named service operations. Upload cleanup keeps object deletion in the filesystem capability while the database owner selects and marks eligible sessions; metadata is trimmed only after cleanup is recorded, so failed S3 operations remain retryable. The NestJS API uses a read-only database role. Other Python filesystem metadata changes and seed synchronization still contain direct PostgreSQL paths; those are migration gaps, so the transition is not complete. Temporal and immutable pipeline-release records are in place, while workflow cutover, candidate evidence review, canonical promotion, and retry-safe artifact finalization remain outstanding. The disposable target is `mzizi_new`; existing object-store artifacts remain preserved.
 
@@ -150,7 +150,7 @@ Important metadata:
 
 ## Sites, structures and approval in discovery and registration
 
-Discovery and registration now have a registry: a discovered institution website becomes a `website.sites` row (status `expected`, `discovered` or `profiled`) with dated domains and links to the geography unit, institution or body it is about; families and domain patterns propose more sites. Registration of a source for collection additionally requires a **current legal and source assessment** (`website.assessments`, human reviewer named) and the jurisdiction's dossier at pilot or production. A structure version (files in `filesystem`) describes how to read the site; publishing one never starts collection. Every capture records the site, the hostname actually used, the structure version, the inherited family version and the assessment that governed it.
+Historical registry proposal. See [current source authoring](../acquisition/site-structure-authoring.md) for the active input contracts. In the earlier design, a discovered institution website becomes a `website.sites` row (status `expected`, `discovered` or `profiled`) with dated domains and links to the geography unit, institution or body it is about; families and domain patterns propose more sites. Registration of a source for collection additionally requires a **current legal and source assessment** (`website.assessments`, human reviewer named) and the jurisdiction's dossier at pilot or production. A structure version (files in `filesystem`) describes how to read the site; publishing one never starts collection. Every capture records the site, the hostname actually used, the structure version, the inherited family version and the assessment that governed it.
 
 # 3. Raw artifact capture
 
@@ -525,7 +525,7 @@ Store:
 
 Create or update the currently accepted structured representation.
 
-Promotion must be controlled by the database management engine or a clearly owned canonical-data service workflow.
+Promotion must be controlled by the engine through authorized database writes. See the [current ownership and implementation status](../data/DATABASE_ARCHITECTURE.md).
 
 Promotion may:
 
@@ -684,13 +684,12 @@ Those dimensions should remain separable where useful.
 # 16. Data ownership summary
 
 ```text
-Source discovery/registering     -> Data Engine / research workflow
-Raw artifact custody             -> File Service
-Extraction                       -> Data Engine
-AI classification/cleaning       -> Intelligence Layer
-Candidate data                   -> Staging domain
-Validation/promotion/versioning   -> DB Engine
-Canonical query/mutation contract -> NestJS API
+Source discovery and extraction  -> Engine and capability packages
+Raw artifact custody             -> Filesystem capability and object store
+Candidate data and drafts        -> Engine-owned staging and artifacts (planned workflow)
+Canonical promotion              -> Engine through authorized writes (planned workflow)
+Canonical product contracts      -> NestJS API
+Migrations                       -> Bun database CLI
 Public exploration               -> source/apps/www
 Research/review                   -> source/apps/web
 ```
@@ -707,9 +706,7 @@ If the architecture cannot answer that question, the data lifecycle is incomplet
 
 # Where the product API sits in the lifecycle
 
-The NestJS API (`source/backend/api`) is downstream of canonical promotion. It reads reviewed canonical records through a SELECT-only database role and serves them with their provenance, valid time, record time and verification state. By default lists return current records only; superseded versions stay reachable by id and with `includeHistory`, so the version chain is never hidden.
-
-The API takes no part in discovery, capture, extraction, normalisation, classification or promotion. Its only writes are append-only audit records (comments, evidence references, review decisions) through a separate INSERT-only role. A review decision proposes a verification state; applying it to a canonical record is a controlled promotion step owned by the database management engine, so the API never mutates canonical data.
+The NestJS product API serves domain data through its own PostgreSQL role. The Python engine owns acquisition, extraction, operational jobs and staging persistence. The [developer portal design](DEVELOPER_PORTAL.md) describes the planned shared HTTP workflow. Draft validation and export precede owner approval. Seed registration, file release and canonical database import are distinct actions.
 
 ## 2026-11-11 — Spatial and domain-native measurements
 
@@ -717,6 +714,8 @@ The expanded proposal adds geospatial and environmental products to the same evi
 
 Preserve the originating domain for measurements: Environment holds raw sensor readings, Agriculture holds actual harvest quantities, Economy holds individual market price observations, Electoral holds election results, and Finance holds transactions. Statistical holds published comparable series and reproducible derivations, not a duplicate copy of every number. The [system-expansion proposal](../../_plan/schema-redesign/README.md) records candidate formats and unresolved design work.
 
-## 2026-11-11 — Database and pipeline ownership migration
+## Historical database and pipeline ownership migration — 2026-11-11
+
+Superseded by the [database architecture](../data/DATABASE_ARCHITECTURE.md).
 
 The target write owner is the TypeScript database service. Its current CLI applies the ordered SQL inputs to local `mzizi_new` through TypeORM with advisory locking and checksums; named HTTP operations now own API audit writes and provide auth identity, platform permission, and scoped filesystem authorization checks. Separate local API-reader and database-runtime roles are provisioned, and `db verify` checks the API has no table mutation privileges or auth-mutation function execution while the runtime cannot change schema or migration history. A deterministic Dryv entity catalog and `db plan` migration coverage report are available, but the report finds substantial model/SQL divergence and no replacement DDL is generated yet. PostgreSQL-specific definitions, full seed migration, candidate review/promotion, and Python metadata-writer replacement remain incomplete. Filesystem metadata repositories, engine job persistence, and seed synchronization still connect from Python during migration; Python auth no longer has a direct-DB fallback. Do not report an extraction or review run as fully on the target architecture until result/evidence persistence and retry recovery are connected through the database service.

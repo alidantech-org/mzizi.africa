@@ -16,7 +16,7 @@ seed/
 ├── manifest.yaml            registers files; never loads data (generated manifest.lock.yaml beside it)
 ├── codes: see source/schema/seed/codes.json (short names)
 ├── data/<scope>/<domain>/<usage folders...>/<table>.csv   (<label>.<table>.csv when several files feed one table)
-├── sources/wbs|api/<scope>/<name>/manifest.yml           (+ modules/, examples/, NOTES.md)
+├── sources/srs/<scope>/<name>/manifest.yml           (+ modules/, examples/, NOTES.md)
 ├── mappings/<schema short>/<table short>/<scope>/<name>.yml
 ├── terms/<schema short>/<table short>/<scope>/<name>.yml
 ├── engine/               engine data and jobs: web/classification.yaml, job/<scope>/<name>.json
@@ -83,6 +83,8 @@ To start from scratch: drop and recreate the database, `bun run db migrate` (the
 The files are generated, not typed: `uv run python scripts/seed/build_constitution.py` reads the PDFs in `.dev/datasets/kenya-constitution/` and the KLRC link map in `.dev/datasets/klrc/` with the extraction package (`mzizi_extraction.legislation`) and rewrites them. The English text is the NCLR print (Laws of Kenya, with the authority of the Attorney General); the Kiswahili text is URAIA's translation of it and the English governs (Article 259). The 6 May 2010 Kiswahili *proposed* constitution is stored as a document only. KLRC page addresses for 209 of 264 articles come from its chapter and part pages (`data/global/source/paths.csv`); the rest cite the PDF page.
 
 ## Drafts that wait for approval
+
+The [developer portal pilot](../.docs/design/architecture/DEVELOPER_PORTAL.md) will export draft CSVs and their evidence for owner review. Export, registering approved seed files and applying them to PostgreSQL are separate actions.
 
 `seed/drafts/` is outside `seed/data/`, so nothing in it is loaded. `drafts/constitution-patterns/` drafts the patterns, institutions, offices and mandates the Constitution establishes (its README lists them with the articles they rest on). `uv run python scripts/seed/check_drafts.py` checks a draft against the schemas together with the real seed. Approving a draft means moving the files you accept into `seed/data/`.
 

@@ -9,6 +9,8 @@ tags: [engine, packages, staging, agent]
 
 **Date:** 2026-11-13 · **Status:** proposed (confirmed by the user in conversation; implementation not started)
 
+**Historical decision.** See [runtime and packages](DEC-ENGINE-RUNTIME-AND-PACKAGES-20261116.md) for updated package boundaries, [one PostgreSQL and Mongo staging](DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md) for persistence, and [developer portal](DEC-DEVELOPER-PORTAL.md) for the agreed HTTP and agent workflow.
+
 ## Decision
 
 1. Python packages under `source/packages/` are pure libraries. No package imports or knows about a database. Side effects go through ports injected by the engine.

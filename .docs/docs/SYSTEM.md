@@ -17,16 +17,16 @@ Mzizi turns source material into evidence-backed knowledge that people can revie
 | `source/backend/database` | Generated SQL, immutable migrations and the Bun administration CLI for the single PostgreSQL database. Not a service. |
 | `source/backend/engine` | Python operational API, jobs, workers and orchestration of reusable capabilities. It is not the product API. |
 | `source/packages/` | Python libraries for fetching, scraping, extraction (with OCR), filesystem work and manifests. |
-| `source/schema/` | Input and exchange schemas plus ordered database SQL. Product API/database contracts are authored in root `dryv/`. |
+| `source/schema/` | Generated table schemas and engine, seed and source contracts. Product API/database contracts are authored in root `dryv/`. |
 | root `seed/` | Prepared and versioned system inputs and fixtures. |
 
-There is no standalone intelligence service: `source/backend/agent/` is a README-only proposal for a future assistive application. The Python engine still has direct PostgreSQL paths for filesystem metadata, behind its own database port; the packages under `source/packages/` are pure and hold no database code. There is no database service: the engine and API connect to PostgreSQL directly, and `source/backend/database` holds the SQL, migrations and CLI.
+There is no standalone intelligence service: `source/backend/agent/` is a README-only proposal for a future assistive application. The Python engine still has direct PostgreSQL paths for filesystem metadata, behind its own database port; the packages under `source/packages/` hold no database code. Network and browser capabilities may own adapters behind ports. There is no database service: the engine and API connect to PostgreSQL directly, and `source/backend/database` holds the SQL, migrations and CLI.
 
 ## Responsibility boundaries
 
 - Applications render and submit work through API contracts. They do not define canonical domain rules.
 - The NestJS API handles product HTTP contracts, authorization and use cases. It connects to PostgreSQL with its own role, writes the schemas it owns (such as authentication) and asks the Python engine to run jobs.
-- The Bun database CLI owns the generated SQL, ordered immutable releases and role provisioning. It is not a service and does not own source acquisition or document extraction. MongoDB is the permanent staging store for huge, messy data; only verified, approved data is promoted to PostgreSQL.
+- The Bun database CLI owns the generated SQL, ordered immutable releases and role provisioning. It is not a service and does not own source acquisition or document extraction. MongoDB stores crawl activity and the supervised-run ledger. Broader candidate staging and approval are planned.
 - The Python engine runs operational jobs and calls packages.
 - Packages provide reusable capabilities; they do not own publisher-specific data or silently publish canonical facts.
 - SQL and machine-readable source/pipeline/seed/site shapes live under `source/schema/`. Prepared values live under root `seed/`.
@@ -45,4 +45,4 @@ Preserve the raw artifact when creating a derivative. Every meaningful claim sho
 
 ## Current limits
 
-The implementation is in migration. Filesystem metadata and manifest synchronization still include Python database paths; the engine database schema is provisional; the review and source-specific promotion flow is incomplete; and the Python package workspace currently has an unresolved missing-member reference. See [ARCHITECTURE](ARCHITECTURE.md), [DATA_LIFECYCLE](../design/architecture/DATA_LIFECYCLE.md), [MIGRATION](../design/architecture/MIGRATION.md) and [ROADMAP](ROADMAP.md) for boundaries and current work.
+The current HTTP executor keeps jobs and events in memory. Supervised spec runs have their own MongoDB ledger. The review and source-specific promotion flow is incomplete. The [developer portal design](../design/architecture/DEVELOPER_PORTAL.md) records the planned shared workflow over HTTP, from saved evidence to draft export. See [ARCHITECTURE](ARCHITECTURE.md), [DATA_LIFECYCLE](../design/architecture/DATA_LIFECYCLE.md), [MIGRATION](../design/architecture/MIGRATION.md) and [ROADMAP](ROADMAP.md) for boundaries and current work.

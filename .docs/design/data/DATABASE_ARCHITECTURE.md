@@ -7,7 +7,7 @@ tags: [database,postgres,mongo,engine,api,dryv,migrations]
 
 # Database architecture: one PostgreSQL database, Mongo staging, direct access
 
-**Status: owner order of 15 November 2026 ([DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md)).** The database layer below is built and was run end to end on a scratch PostgreSQL 18 database. The engine and API reconnection, the Mongo contracts and the change ledger are planned and are marked as such. This document supersedes [DATABASE_FOUNDATION](DATABASE_FOUNDATION.md) and [DATABASE_ACCESS_AND_LIFECYCLE](../architecture/DATABASE_ACCESS_AND_LIFECYCLE.md) wherever they describe a Rust service, two PostgreSQL databases, or an exclusive database service.
+**Status: owner order of 15 November 2026 ([DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md)).** The database layer below is built and was run end to end on a scratch PostgreSQL 18 database. Current engine persistence is described in [ENGINE_PERSISTENCE](ENGINE_PERSISTENCE.md). The change ledger and candidate promotion remain planned. This document supersedes [DATABASE_FOUNDATION](DATABASE_FOUNDATION.md) and [DATABASE_ACCESS_AND_LIFECYCLE](../architecture/DATABASE_ACCESS_AND_LIFECYCLE.md) wherever they describe a Rust service, two PostgreSQL databases, or an exclusive database service.
 
 ## The shape
 
@@ -18,9 +18,9 @@ tags: [database,postgres,mongo,engine,api,dryv,migrations]
                        └───────────────────┬─────────────────────┘
                                            │ internal HTTP
                        ┌───────────────────▼─────────────────────┐
- Temporal worker ────► │ Python engine                           │
+                       │ Python engine                           │
                        │ PostgreSQL (role mzizi_engine), Mongo,  │
-                       │ S3 (raw bytes), packages (pure)         │
+                       │ S3 (raw bytes), capability packages         │
                        └───────────────────┬─────────────────────┘
                                            ▼
              PostgreSQL `mzizi`   ·   MongoDB (staging)   ·   S3 objects
@@ -67,7 +67,7 @@ Approval writes a durable, append-only **change ledger** row in PostgreSQL (what
 
 ## Planned: API to engine and job progress
 
-The API calls the engine's internal HTTP API to start work. The engine records job runs and events in Mongo. The API watches those jobs through the engine (server-sent events or polling) and exposes progress, work and outputs to the frontend. The engine job model is described in [ENGINE_JOB_MODEL](../architecture/ENGINE_JOB_MODEL.md); its persistence moves from the removed database service to Mongo.
+The engine HTTP API accepts jobs and provides progress and cancellation. Its executor keeps jobs and events in memory. Supervised spec runs use the Mongo ledger described in [ENGINE_PERSISTENCE](ENGINE_PERSISTENCE.md). The product API relay and shared workspace workflow are planned in the [developer portal design](../architecture/DEVELOPER_PORTAL.md).
 
 ## Planned: typed schemas for every runtime
 
@@ -77,15 +77,9 @@ The API calls the engine's internal HTTP API to start work. The engine records j
 | Python, Postgres rows | `schemas/postgres` | Frozen Pydantic row models in `source/backend/engine/src/mzizi_engine/api/schemas/<group>/{entities,enums}` | Built (`dryv/packs/python-rows`, `dryv generate --app pgsql`); ruff and strict mypy run as actions |
 | Python, Mongo documents | `schemas/mongo` (`runtime`, `staging`) | Pydantic models in `.../api/schemas/<group>/{enums,models}` | Built through the engine app (`dryv/packs/python-api`); no storage facet because Dryv has no Mongo store driver; engine routes in `.../api/routes` and contract tests in `source/backend/engine/tests/api` |
 
-## Known interim breakage
+## Compatibility paths
 
-The Rust database service was removed in this change. Code that called a database service has no server until the engine and API are reconnected:
-
-- `source/backend/engine`: `ENGINE_STORE=database_service` (`DATABASE_SERVICE_URL`, `DATABASE_SERVICE_TOKEN`) for accounts, permissions, jobs, events and the outbox; the engine's memory store remains.
-- `source/backend/api/src/database/write-database.ts`: `DATABASE_SERVICE_URL` for named writes.
-- Direct engine filesystem SQL still needs `ENGINE_FILESYSTEM_LEGACY_DATABASE_URL`.
-
-These are tracked as follow-up tasks; none is silently working.
+The former database service was removed. The engine still reads legacy OIDC authority settings, which require an external authority to use that mode. See the [engine README](../../../source/backend/engine/README.md) for the current loopback API and service-auth settings.
 
 ## Not changed
 

@@ -40,6 +40,7 @@ from mzizi_crawler.shared.requests import (
     WatchRequest,
     Workspace,
 )
+from mzizi_engine.runtime.assembly.replay import WorkspaceReplayRequest, replay_workspace
 from mzizi_engine.runtime.assembly.specs import register_specs
 from mzizi_engine.runtime.operations import OperationRegistry, Requirement, operation
 
@@ -77,6 +78,13 @@ def register_crawler(registry: OperationRegistry) -> None:
                 sections.page_sections,
                 1,
                 requires=NETWORK,
+            ),
+            operation(
+                "scraping.replay",
+                "Compare saved captures with expectations inside the engine input workspace",
+                WorkspaceReplayRequest,
+                replay_workspace,
+                1,
             ),
             operation(
                 "scraping.extract", "Apply a site module to saved HTML", ScrapeFileRequest, scrape.scrape_file, 1

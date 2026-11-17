@@ -4,7 +4,7 @@
 
 # Codes
 
-Every database row that has a `code`, and every source, mapping, term list, job spec and piece of engine data, is identified by a dotted lowercase code. The rule was agreed with the owner on 16 November 2026. It has one grammar, two forms for a database row, and a fixed list of short names.
+This rule governs source, mapping, term, job and engine inputs and the database row codes handled by the seed workflow. The current filesystem registry has its own [underscore grammar](code-columns.md). The rule was agreed with the owner on 16 November 2026. It has one grammar, two forms for a database row, and a fixed list of short names.
 
 ## Grammar
 
@@ -48,7 +48,7 @@ In a seed CSV (`data/<scope>/<domain>/<table>.csv`, or a folder named for the ta
 
 | Thing | Code | Lives at |
 |---|---|---|
-| Source (website, API) | `pg.src.<wbs\|api>.<scope>.<name>` (a source is a row) | `seed/sources/wbs/<scope>/<name>/manifest.yml` |
+| Source (website, API) | `pg.src.srs.<scope>.<name>` (a source is a row) | `seed/sources/srs/<scope>/<name>/manifest.yml` |
 | Mapping | `sys.map.<schema short>.<table short>.<scope>.<name>`, named after the table it writes first | `seed/mappings/<schema short>/<table short>/<scope>/<name>.yml` |
 | Term list | `sys.trm.<schema short>.<table short>.<scope>.<name>` | `seed/terms/<schema short>/<table short>/<scope>/<name>.yml` |
 | Job spec | `sys.eng.job.<scope>.<name>` | `seed/engine/job/<scope>/<name>.json` |

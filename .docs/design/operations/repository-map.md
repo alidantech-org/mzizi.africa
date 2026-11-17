@@ -16,15 +16,15 @@ source/
 │   └── www/                    Next.js public landing experience
 ├── backend/
 │   ├── api/                    NestJS product API
-│   ├── database/               Bun TypeScript database service and CLI
+│   ├── database/               Bun database CLI, SQL and migrations
 │   ├── engine/                 Python operational API and capability orchestrator
 │   └── README.md
 ├── packages/
-│   ├── extraction/ fetch/ filesystem/ manifest/
-│   ├── scraping/
+│   ├── browser/ cli/ crawler/ extraction/
+│   ├── fetch/ filesystem/ manifest/ search/
 │   └── README.md
 └── schema/
-    ├── contracts/ database/ pipeline/ seed/ site/v1/
+    ├── database/ engine/ seed/ sources/
     └── README.md
 ```
 
@@ -36,10 +36,10 @@ source/
 | `source/apps/web` | Next.js `/review` workbench plus inherited `/admin` pages. The review routes call the NestJS API; legacy admin pages use `SERVER_URL`. |
 | `source/apps/mobile` | Flutter geography client that calls `/v1/geography/*` on the NestJS API. |
 | `source/backend/api` | NestJS product API. Most contract-facing API types and modules are generated from root `dryv/`; selected use cases, auth and adapters are hand-written. |
-| `source/backend/database` | Bun TypeScript migration/seed CLI and internal named database operations. |
-| `source/backend/engine` | The Python runtime: `EngineRuntime`, its HTTP front door and executor, PostgreSQL/MongoDB adapters and the vector skeleton. No capability logic. |
+| `source/backend/database` | Bun TypeScript migration and administration CLI, SQL and named database operations. |
+| `source/backend/engine` | The Python runtime: `EngineRuntime`, its HTTP front door and executor, PostgreSQL/MongoDB adapters and the vector skeleton. It assembles and runs package capabilities. |
 | `source/packages/*` | Reusable Python capabilities; these are libraries, not separately deployed services. |
-| `source/schema/*` | Ordered SQL and JSON Schemas for exchange, pipeline, seed and site inputs. |
+| `source/schema/*` | Generated table schemas and engine, seed and source inputs. |
 | root `dryv/` | Authored API/database contracts and generation/audit tooling. |
 | root `seed/` | Prepared system inputs, manifests and fixtures. |
 | root `scripts/` | Bun command runner for setup, services, checks, databases and package entry points. |

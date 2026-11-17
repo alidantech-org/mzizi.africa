@@ -180,8 +180,10 @@ def download(request: WatchRequest, site: SiteFolder, limit: int) -> tuple[int, 
     from mzizi_crawler.features.queue.queue import enqueue, fetch_queue
     from mzizi_crawler.shared.requests import EnqueueRequest
 
-    enqueue(EnqueueRequest(out_dir=request.out_dir, site=f"https://{site.address.host}/"))
-    report = fetch_queue(FetchQueueRequest(out_dir=request.out_dir, site=f"https://{site.address.host}/", limit=limit))
+    enqueue(EnqueueRequest(out_dir=request.out_dir, site=f"https://{site.address.host}/", kinds=request.download_kinds))
+    report = fetch_queue(FetchQueueRequest(
+            out_dir=request.out_dir, site=f"https://{site.address.host}/", limit=limit, kinds=request.download_kinds
+        ))
     return report.done, report.failed
 
 

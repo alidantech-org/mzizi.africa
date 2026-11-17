@@ -4,11 +4,11 @@
 
 # MIGRATION — From Consolidated Legacy Code to the Target Mzizi Architecture
 
-## Schema organization — 12 November 2026
+**Historical migration record.** See [active architecture](../../docs/ARCHITECTURE.md) and [database architecture](../data/DATABASE_ARCHITECTURE.md) for current ownership. See the [developer portal guide](DEVELOPER_PORTAL.md) for the next workflow.
 
 ## Schema organization — 12 November 2026
 
-The current catalogue reflects the 12 November contract authorization: ten persisted Main schemas (Reference, Geography, Legal, Official, Governance, Politics, Civic, Finance, Source and Filesystem) plus read-only, non-persisted Accountability, and seven Operations schemas. Procurement records are owned by Civic. The six Main domain contracts are authored and composed in Dryv; SQL generation, migrations, data changes and deployment are not authorized by this schema-contract task. Older inventories below remain historical design material and are superseded by the owning Phase 01 contract summaries.
+The catalogue at the time reflects the 12 November contract authorization: ten persisted Main schemas (Reference, Geography, Legal, Official, Governance, Politics, Civic, Finance, Source and Filesystem) plus read-only, non-persisted Accountability, and seven Operations schemas. Procurement records are owned by Civic. The six Main domain contracts are authored and composed in Dryv; SQL generation, migrations, data changes and deployment are not authorized by this schema-contract task. Older inventories below remain historical design material and are superseded by the owning Phase 01 contract summaries.
 
 ## Purpose
 

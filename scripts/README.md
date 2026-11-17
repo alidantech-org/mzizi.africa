@@ -1,6 +1,6 @@
 # Scripts: the root command runner
 
-Every routine activity in this repository runs from the repository root through Bun. Python projects are driven with **uv**, JavaScript and TypeScript projects with **Bun**, and the runner knows which is which. Current limitation: `uv sync --all-packages` cannot resolve `mzizi-database`, which the engine and filesystem package still declare as a workspace dependency even though `source/packages/database/` does not exist. Commands that install or run the Python workspace (`setup`, full `check`, `build`, or `engine`) may therefore fail until this dependency gap is fixed.
+Every routine activity in this repository runs from the repository root through Bun. Python projects are driven with **uv**, JavaScript and TypeScript projects with **Bun**, and the runner knows which is which.
 
 ```bash
 bun run setup        # first time: install everything, link Dryv, create the development sign-in keys
@@ -9,14 +9,14 @@ bun run check        # format check, lint, typecheck, structure and tests
 bun run dev          # API, engine, dashboard and public site together
 ```
 
-Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object store), `flutter` (mobile app), `task` (work tracking), a Dryv checkout at `DRYV_HOME` (generation). TypeScript services run with Bun; no Node.js runtime is required. `bun run doctor` reports what is present.
+Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS and other local services), `flutter` (mobile app), `task` (work tracking), a Dryv checkout at `DRYV_HOME` (generation). TypeScript services run with Bun; no Node.js runtime is required. `bun run doctor` reports what is present.
 
 ## Commands
 
 | Command                                   | What it does                                                                                                                                     |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `bun run setup`                           | attempts `sync`, then links the local Dryv checkout and creates the development sign-in keys; currently blocked at Python workspace sync         |
-| `bun run sync`                            | attempts `uv sync --all-packages` and installs each Bun project; currently blocked by the missing Python workspace member                        |
+| `bun run setup`                           | runs `sync`, then links the local Dryv checkout and creates the development sign-in keys         |
+| `bun run sync`                            | runs `uv sync --all-packages` and installs each Bun project                        |
 | `bun run doctor`                          | reports required tools and local files                                                                                                           |
 | `bun run clean`                           | deletes caches and build output; `bun run clean -- --deep` also deletes `.venv` and every `node_modules`                                         |
 | `bun run dev`                             | runs the services in watch mode; name some to run only those: `bun run dev api web`                                                              |
@@ -42,7 +42,7 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS/Temporal/object 
 | `bun run db:up` / `db:down`               | starts or stops the local PostGIS container (`MZIZI_PG_CONTAINER`, default `postgis`)                                                            |
 | `bun run db generate` / `bun run db plan` | regenerates the Dryv persistence catalog and reports table-name coverage against current SQL migrations                                          |
 | `bun run db status`                       | TypeScript owner: `status`, `migrate`, `verify`, local role provisioning, `seed`, guarded reset, admin bootstrap and pipeline release operations |
-| `bun run infra:up` / `infra:down`         | starts or stops local Temporal and S3-compatible SeaweedFS; named volumes preserve development history and test objects                          |
+| `bun run infra:up` / `infra:down`         | invokes Docker Compose using `compose.local.yaml`; the file is absent in the current checkout                          |
 | `bun run seed -- check`                   | `mzizi-manifest`: `check`, `lock`, `report`, `validate-structure <dir>`                                                                          |
 | `bun run engine -- check`                 | `mzizi-engine`: `serve`, `capabilities`, `check`                                                                                                 |
 | `bun run docs:validate`                   | `task validate` for the `.docs` workspace                                                                                                        |
@@ -75,11 +75,11 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 
 ### Local data and workflow infrastructure
 
-On a new checkout, copy `.env.example` to `.env` and set local-only service tokens. Keep an existing `.env` intact. The database administrator connection `MZIZI_DB_ADMIN_URL` is reserved for the Bun database CLI. The engine and the NestJS API each connect with their own role (`mzizi_engine`, `mzizi_api`) provisioned by `bun run db roles`; their connection settings are being moved to this model (see `.docs/design/data/DATABASE_ARCHITECTURE.md`).
+On a new checkout, copy `.env.example` to `.env` and set local-only service tokens. Keep an existing `.env` intact. The database administrator connection `MZIZI_DB_ADMIN_URL` is reserved for the Bun database CLI. The engine and the NestJS API each connect with their own role (`mzizi_engine`, `mzizi_api`) provisioned by `bun run db roles`; see their component guides for current configuration (see `.docs/design/data/DATABASE_ARCHITECTURE.md`).
 
-The local PostGIS container is managed separately so a database reset cannot remove other local databases. Start it with `bun run db:up`, then start the persistent Temporal development service and isolated S3-compatible SeaweedFS object store with `bun run infra:up`. Temporal listens on `127.0.0.1:7233` and its UI on `http://127.0.0.1:8233`; its SQLite history is in the named `temporal-data` volume. SeaweedFS exposes its local S3 endpoint on `127.0.0.1:9000`; object bytes remain in the named `object-store-data` volume. The local endpoint is bound to loopback and configured for local development only. These services never connect to the existing `mzizi` S3 bucket.
+Use `bun run db:up` and `bun run db:down` for the configured local PostGIS container. These commands start and stop an existing container. Apply migrations and provision roles against the intended scratch database with `bun run db migrate` and `bun run db roles`, then check with `bun run db verify`.
 
-The development sequence is `bun run db:up`, `bun run infra:up`, then against a fresh empty database `bun run db assemble` (first time), `bun run db migrate`, `bun run db roles` and `bun run db verify`, then run the engine and API services with local URLs and tokens from `.env`. `bun run db status` reports release state. Stop application processes, then use `bun run infra:down` and `bun run db:down`. The infra down command retains its named volumes. To erase only local Temporal/SeaweedFS development data, explicitly run `docker compose -f compose.local.yaml down --volumes`. This stack provides local infrastructure; application service configuration and full end-to-end workflow acceptance remain in progress.
+The active engine needs MongoDB for its supervised-run ledger and an S3-compatible endpoint for object-store workflows. Configure local services through the [engine guide](../source/backend/engine/README.md). The current checkout does not include `compose.local.yaml`, so the `infra:up` and `infra:down` wrappers require a separately supplied local configuration. The in-memory HTTP executor does not depend on Temporal.
 
 ## Dryv
 

@@ -43,14 +43,15 @@ Detection runs on responses from either browser adapter. A headed crawl with `--
 
 ## Single-page extraction
 
-Pass a `modules/*.yml` file from a [site structure](SITE_STRUCTURE_SPEC.md) to `scrape file PAGE.html --manifest MODULE` or `scrape url URL --manifest MODULE`. The engine validates the module schema before requesting a page. The explicit URL identifies the page to retrieve. The module supplies `discover.listing.items` and `extract.fields` for that page.
+Pass a `modules/*.yml` file from a [source bundle](site-structure-authoring.md) to `scrape file PAGE.html --manifest MODULE` or `scrape url URL --manifest MODULE`. The engine validates the module schema before requesting a page. The explicit URL identifies the page to retrieve. The module supplies `discover.listing.items` and `extract.fields` for that page.
 
 ```yaml
 module: headings
 discover:
   listing:
     url: /
-    items: { css: "h1" }
+    items:
+      - { css: "h1" }
 extract:
   fields:
     title: { from: item_text }
@@ -60,11 +61,11 @@ Add `--render browser --adapter patchright` to extract from a rendered DOM. The 
 
 ## Offline coverage replay
 
-`mzizi --allow-outside-inputs web replay EXPECTATIONS.json` reruns extraction on saved HTML without using the network. A version-1 suite lists `views` with `html` and `url` and optional checks for the source SHA-256, table count, data rows, exact cells, Markdown URLs, PDF link count, CSS image occurrences, CSS selector counts and terminal pagination state. Paths are relative to the suite file. A capture can also reference a saved rendered media inventory. Replay checks its recorded URLs and selectors against the saved DOM. Recreating browser-computed styles requires the page's stylesheet and browser state.
+Use `mzizi web replay EXPECTATIONS.json` with files under `.dev/inputs`. HTTP clients submit the same `scraping.replay` operation through `POST /v1/jobs` using a suite path relative to the configured `ENGINE_INPUT_ROOT`. Replay works offline. Use an operator-controlled workspace containing files approved for these callers. The existing suite contract lists `views` with `html` and `url` and optional checks for the source SHA-256, table count, data rows, exact cells, Markdown URLs, PDF link count, CSS image occurrences, CSS selector counts and terminal pagination state. Paths are relative to the suite file. A capture can also reference a saved rendered media inventory. Replay checks its recorded URLs and selectors against the saved DOM. Recreating browser-computed styles requires the page's stylesheet and browser state.
 
 A suite can also list `pdfs` with saved paths and expectations for page counts, table locations, row counts and exact cells. PDF replay runs the multi-strategy table extractor.
 
-Each result records the expected and observed evidence in `coverage.json`. The CLI returns a failing exit code if a check differs. The small checked fixture that showed the format was in the old seed tree, now archived; it returns with the rebuilt `seed/_fixtures/`. Counts and CSS selectors can be paired with exact row and cell expectations to detect offset columns or omitted references.
+The HTTP job stores its report as the result. The CLI saves it in the run’s `result.json`. A mismatch sets `passed` to false and the CLI exits nonzero. A malformed suite or out-of-workspace reference fails the operation. The small checked fixture that showed the format was in the old seed tree, now archived; it returns with the rebuilt `seed/_fixtures/`. Counts and CSS selectors can be paired with exact row and cell expectations to detect offset columns or omitted references.
 
 ## Rendered media inventory
 

@@ -27,6 +27,7 @@ from mzizi_extraction.document.table_models import BBox, TableReviewReport
 from mzizi_extraction.ocr import OcrUnavailable, check
 
 PDF_MAGIC = b"%PDF"
+PDF_HEADER_WINDOW = 1024
 PAGE_RENDER_SCALE = 1.5
 ALT_TEXT_CHARS = 160
 WIDE_SHARE = 0.6
@@ -137,7 +138,7 @@ def extract_pdf_document(
     limits = profile.limits
     if len(data) > limits.max_bytes:
         return _failed(error(Code.TOO_LARGE, f"{len(data)} bytes exceeds the {limits.max_bytes} byte limit"))
-    if not data.startswith(PDF_MAGIC):
+    if PDF_MAGIC not in data[:PDF_HEADER_WINDOW]:  # the PDF specification allows junk before the header
         return _failed(error(Code.NOT_PDF, "the file does not start with %PDF"))
     try:
         pdf = pdfium.PdfDocument(data)

@@ -83,7 +83,10 @@ def watch_site(request: WatchRequest) -> WatchReport:
     markdown = MarkdownPool(store)
     downloads = (
         DownloadPool(
-            FetchQueueRequest(out_dir=request.out_dir, site=site_url), activity, layout, request.download_limit
+            FetchQueueRequest(out_dir=request.out_dir, site=site_url, kinds=request.download_kinds),
+            activity,
+            layout,
+            request.download_limit,
         )
         if request.download and activity is not None
         else None

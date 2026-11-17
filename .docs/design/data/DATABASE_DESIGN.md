@@ -6,12 +6,12 @@
 
 > **Currency note — 12 November 2026:** This guide contains pre-rewrite schema names and implementation assumptions. The active schema layout and approval states are in the [schema redesign catalogue](../../_plan/schema-redesign/README.md). Same-database cross-schema foreign keys are allowed by the current schema-authoring rules. The paragraphs below are architecture background where they do not conflict with that catalogue, `AGENTS.md`, or the authored contracts.
 
-PostgreSQL stores domain schemas in the Main and Operations database targets recorded by the current catalogue. Names follow `.docs/rules/database-naming.md`. Moving a schema between database targets may change foreign-key and query boundaries and requires a reviewed migration plan.
+The [database architecture](DATABASE_ARCHITECTURE.md) supersedes the earlier Main and Operations split. PostgreSQL stores canonical domain schemas in one database. Names follow [database naming](../../rules/database-naming.md).
 
 ## Principles
 
 1. **One schema per domain, full words.** `geography`, `organization`, `statistical`, never `geo`, `org`, `statistic`.
-2. **Foreign keys follow database boundaries, not schema names.** Reviewed foreign keys within one PostgreSQL database, including across schemas, are allowed when the target is authored and the selected SQL pack preserves the relation. Foreign keys must never cross the `mzizi` / `mzizi_operations` database boundary; use typed identifiers and documented recovery/integrity operations there. Splitting a schema later may require FK and query redesign.
+2. **Foreign keys follow database boundaries, not schema names.** Reviewed foreign keys within one PostgreSQL database, including across schemas, are allowed when the target is authored and the selected SQL pack preserves the relation. Cross-store references, such as a reference to Mongo staging, use typed identifiers and explicit integrity checks. Splitting a schema later may require FK and query redesign.
 3. **Provenance lives in `source`, not in data rows.** A data table carries only what describes the thing itself: its valid time, record time and version. Where a claim came from, how it was produced, how confident we are, and whether it has been verified are held by the `source` schema, which points at data rows by (`schema.table`, id). Data tables know nothing about sources.
 4. **Bytes live in object storage, metadata in `filesystem`.** No table stores file contents. Anything with media (source PDFs, avatars, logos, scans) is a file in `filesystem`, linked from the thing that uses it through `filesystem.attachments`.
 5. **Humans are modelled once.** `person` holds every real human (officials, historical figures, authors, reviewers) with names, profile, contacts and public handles. `identity` holds platform accounts and grants. They link by id.
@@ -20,11 +20,11 @@ PostgreSQL stores domain schemas in the Main and Operations database targets rec
 
 ## Historical implementation note
 
-The former `staging`, `engine` and `geography.boundary_shapes` descriptions below referred to the archived pre-rewrite service and migrations. They are not current contract or runtime claims. The active Rust database service, schema ownership, and SQL generation state are documented in `source/backend/README.md`, `source/backend/database/README.md`, and the schema redesign catalogue. The Rust SQL pack currently remains a generation skeleton and must not be treated as a migration source.
+The former `staging`, `engine` and `geography.boundary_shapes` descriptions below referred to the archived pre-rewrite service and migrations. They are not current contract or runtime claims. Current SQL generation, migrations and ownership are described in the [database CLI guide](../../../source/backend/database/README.md) and [database architecture](DATABASE_ARCHITECTURE.md).
 
 ## Current schema catalogue
 
-The old 21-schema table inventory formerly shown here is retired. Use the [schema redesign catalogue](../../_plan/schema-redesign/README.md), which records the current Main and Operations assignments, implemented Main contracts, approved Operational inventories, and Phase 02 deferrals. In particular, Reference uses `countries`, `schemes`, `values`, measurement `units`, `topics`, and pattern tables; Geography uses the accepted `features`, `units`, `places`, `names`, `identifiers`, `geometries`, `relationships`, `changes`, and `datasets` inventory. The six authorized Main domain contracts are implemented in Dryv and composed with the foundation groups; Accountability contains no persisted entities. Their owning Phase 01 documents state the current table grains and the remaining SQL-pack gates.
+The old 21-schema table inventory formerly shown here is retired. Use the [generated table contracts](../../../source/schema/README.md) for the active catalogue and the [schema redesign catalogue](../../_plan/schema-redesign/README.md) for design history and deferred work. In particular, Reference uses `countries`, `schemes`, `values`, measurement `units`, `topics`, and pattern tables; Geography uses the accepted `features`, `units`, `places`, `names`, `identifiers`, `geometries`, `relationships`, `changes`, and `datasets` inventory. The six authorized Main domain contracts are implemented in Dryv and composed with the foundation groups; Accountability contains no persisted entities. Their owning Phase 01 documents state the current table grains and the remaining SQL-pack gates.
 
 Reference tables (`reference`) are read constantly and change rarely; `filesystem.events`, `source.attributions` and `audit.*` are the heavy append-only tables.
 

@@ -11,7 +11,7 @@ This document establishes Mzizi Africa's baseline for discovering, accessing, co
 It applies to:
 - human researchers and contributors;
 - AI agents that discover sources or author website structures;
-- the website registry and `mzizi.site/v1` structure bundles;
+- source manifests and extraction modules;
 - the data and database engines;
 - source documents, captures, extraction results, staging candidates and canonical records;
 - public APIs, dashboards, exports and other publication surfaces;
@@ -264,7 +264,7 @@ Keep review history. A material change in law, terms, ownership, domain, data ca
 
 ### 9.2 Structure-level execution policy
 
-The `mzizi.site/v1` manifest or associated site policy should eventually express machine-enforceable operational constraints, such as:
+The source manifest or associated policy should express machine-enforceable operational constraints, such as:
 - approved source and legal-review reference;
 - allowed hosts, schemes and path scope;
 - fetch modes and allowed endpoints;
@@ -370,7 +370,7 @@ No country should move from research to production collection solely because its
 This policy is intended to integrate with, not replace, existing design documents:
 
 - `design/acquisition/WEBSITE_DESIGN.md`: site identity, domains, publishers, immutable structures, checks and family inheritance.
-- `design/acquisition/SITE_STRUCTURE_SPEC.md`: declarative collection recipes, bounded fetch behaviour, notes, validation and drift expectations.
+- [Site structure authoring](../acquisition/site-structure-authoring.md): declarative collection recipes, bounded fetch behaviour, notes, validation and drift expectations.
 - `DATA_INTAKE_PLAN.md`: source registration, preservation, extraction, staging, review and controlled promotion.
 - `design/architecture/DATA_LIFECYCLE.md`: evidence custody, provenance, review and version history.
 - `design/data/SOURCING_DESIGN.md`: publisher and source authority.

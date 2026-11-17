@@ -9,7 +9,7 @@
 Everything is run from the repository root with Bun. Python projects use uv and JavaScript and TypeScript projects use Bun; the runner in `scripts/` knows which is which, so there is no need to change directory.
 
 ```sh
-bun run setup        # currently blocked by the missing mzizi-database Python workspace member
+bun run setup        # install workspace dependencies and configure local development
 bun run doctor       # report required tools and local files
 bun run dev          # API (3000), engine (8760), dashboard (3100), public site (3200)
 bun run check        # format check, lint, typecheck, structure and tests

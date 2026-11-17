@@ -20,7 +20,7 @@ Advance the authored Main contracts across Geography, Official, Governance, Poli
 
 ## 4. Connect product surfaces
 
-Have the public site, research dashboard and mobile client consume stable API contracts. Clearly expose evidence, historical context, uncertainty, availability and limitations.
+Have the public site, research dashboard and mobile client consume stable API contracts. The [developer portal pilot](../design/architecture/DEVELOPER_PORTAL.md) will use shared HTTP operations to take saved IEBC evidence through draft CSV export for owner review. Clearly expose evidence, historical context, uncertainty, availability and limitations.
 
 ## 5. Review deferred domains deliberately
 

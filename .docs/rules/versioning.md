@@ -13,7 +13,7 @@ Mzizi is pre-release and every consumer of a schema, manifest or seed file lives
 
 ## Where a version must not appear
 
-- **Not in folder names.** Use `source/schema/site/`, never `site/v1/`.
+- **Not in folder names.** Use the current `source/schema/sources/` directory without a version suffix.
 - **Not in file names.** Use `vocabulary.yaml`, never `vocabulary.v1.yaml`.
 - **Not in new `schema:` or `schema_version:` markers** inside manifests, until the owner asks for them.
 

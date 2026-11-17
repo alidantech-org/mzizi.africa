@@ -7,7 +7,7 @@ tags: [engine, packages, inventory, migration, proposal]
 
 # Engine module inventory
 
-**Status: proposal, 16 November 2026.** This maps every hand-written module in `source/backend/engine/src/mzizi_engine` to its target package under [ENGINE_RUNTIME_AND_PACKAGES](ENGINE_RUNTIME_AND_PACKAGES.md). Nothing here is implemented. Targets marked **(confirm)** are my reading of the code and need the project owner's decision before the move.
+**Historical inventory, 16 November 2026.** This records the module map before the move and the dated outcomes at the end. For active paths use the [repository map](../operations/repository-map.md) and [runtime guide](ENGINE_RUNTIME_AND_PACKAGES.md). Targets marked **(confirm)** are my reading of the code and need the project owner's decision before the move.
 
 ## How the numbers were produced
 

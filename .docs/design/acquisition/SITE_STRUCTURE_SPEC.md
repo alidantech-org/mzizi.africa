@@ -2,7 +2,9 @@
 {id: DOC-SITE-STRUCTURE-SPEC,name: SITE_STRUCTURE_SPEC,type: documentation,tags: [website,data-engine,format]}
 ---
 
-# Site structure specification (mzizi.site/v1, draft)
+# Historical site structure specification
+
+**Retired format.** This page preserves the former site-bundle design and its examples. For current source manifests, modules and mappings, start with [site structure authoring](site-structure-authoring.md) and the [schema map](../../../source/schema/README.md).
 
 A site structure tells the data engine how to discover, fetch, extract, label and map the information a site publishes, without an LLM at run time. It is authored mostly by agents in batches, stored as files, versioned per site (see `design/acquisition/WEBSITE_DESIGN.md`), and validated against a JSON Schema owned by Mzizi. It borrows ideas from browser site descriptions but is a different format designed for data extraction.
 

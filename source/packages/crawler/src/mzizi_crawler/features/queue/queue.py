@@ -365,6 +365,7 @@ def fetch_queue(request: FetchQueueRequest) -> FetchReport:
             "host": site.address.host,
             "state": {"$in": [State.QUEUED.value, State.FAILED.value]},
             "attempts": {"$lt": MAX_ATTEMPTS},
+            "kind": {"$in": list(request.kinds)},
         }
         for item in activity.get(QUEUE, query, request.limit):
             counts[fetcher.process(item)] += 1

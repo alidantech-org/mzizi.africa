@@ -7,7 +7,7 @@ tags: [engine, runtime, packages, features, dryv, proposal]
 
 # Engine runtime and feature packages
 
-**Status: proposal, 16 November 2026.** Nothing here is implemented unless stated. Decision record: [DEC-ENGINE-RUNTIME-AND-PACKAGES-20261116](../../decisions/DEC-ENGINE-RUNTIME-AND-PACKAGES-20261116.md). Work is tracked in the task group "Engine restructure into runtime and feature packages". This guide replaces the "engine does all I/O" parts of [ENGINE_JOB_MODEL](ENGINE_JOB_MODEL.md); read that guide for the staging store and job vocabulary, which still stand.
+**Status: runtime and package separation implemented in part.** The current runtime assembles capabilities, the engine owns persistence, and several extension and migration proposals remain below. See the [engine README](../../../source/backend/engine/README.md) for current entry points and [engine persistence](../data/ENGINE_PERSISTENCE.md) for current backing stores. The [runtime decision](../../decisions/DEC-ENGINE-RUNTIME-AND-PACKAGES-20261116.md) supersedes the earlier engine-only I/O rule. The [developer portal design](DEVELOPER_PORTAL.md) owns the shared HTTP direction.
 
 ## Why
 
@@ -33,7 +33,7 @@ tags: [engine, runtime, packages, features, dryv, proposal]
 
 ## Persistence
 
-The engine persists through Dryv-generated repositories only: PostgreSQL for verified data and MongoDB for staging, as in [DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md). Tables that are still hand-written SQL move into Dryv and are regenerated. The engine's hand-written persistence code is limited to **binding modules**: each implements one package's ports using the generated repositories and maps package contracts to generated ones. A binding module holds no business logic. Transactions are scoped by a unit of work that the runtime opens.
+The target is persistence through Dryv-generated repositories. Today the engine binds its adapters to generated models where available. Store ownership remains: PostgreSQL for verified data and MongoDB for staging, as in [DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md). Tables that are still hand-written SQL move into Dryv and are regenerated. The engine's hand-written persistence code is limited to **binding modules**: each implements one package's ports using the generated repositories and maps package contracts to generated ones. A binding module holds no business logic. Transactions are scoped by a unit of work that the runtime opens.
 
 A package picks one of three methods per operation:
 
@@ -103,7 +103,7 @@ The full module-by-module inventory is a separate task.
 
 ## Open questions
 
-1. **HTTP transport.** The default is to keep only the Dryv-generated routes in the engine, each calling the runtime. A separate transport package is the alternative.
+1. **HTTP transport.** The active FastAPI transport and generated contracts must support typed operations for the [developer portal](DEVELOPER_PORTAL.md). The transport module layout remains open.
 2. **Authentication and authorisation.** It could be a package with Dryv tables or part of the runtime.
 3. **Crawl and browser.** They are separate packages by default so the browser stays reusable; this can be revisited.
 4. **Placement of text helpers** such as `markdown_repair` (`scraping` or `extraction`).

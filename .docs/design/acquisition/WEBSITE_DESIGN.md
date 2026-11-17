@@ -2,7 +2,9 @@
 {id: DOC-WEBSITE-DESIGN,name: WEBSITE_DESIGN,type: documentation,tags: [website,source,filesystem,data-engine]}
 ---
 
-# Website design
+# Historical website registry design
+
+**Historical proposal.** The registry, service paths and bundle format below describe an earlier design. Current authoring starts with [source manifests and modules](site-structure-authoring.md). See the [acquisition runtime](WEB_ACQUISITION_RUNTIME.md) for active behavior and [purpose detection](CRAWL_AND_PURPOSE_DETECTION.md) for the planned pipeline.
 
 Mzizi needs to know the sites that publish public information: who runs them, which domains they have had, how to read them, and how that understanding changed. This design adds a `website` schema, stores each site's structure as versioned files in the `filesystem`, and lets `source` link every capture to the site and structure version that produced it. It replaces the DevAuto dependency assumed in the earlier research note: Mzizi defines its own machine-readable structure format (see `design/acquisition/SITE_STRUCTURE_SPEC.md`).
 

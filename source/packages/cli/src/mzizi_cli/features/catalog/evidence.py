@@ -1,7 +1,26 @@
 """Commands for offline coverage and pre-download attachment selection."""
 
+from pathlib import Path
+
 from mzizi_cli.features.catalog.builders import passthrough
 from mzizi_cli.features.catalog.models import Arg, ArgKind, Command
+from mzizi_cli.shared.errors import CliError
+from mzizi_cli.shared.types import ArgValues
+from mzizi_cli.shared.workspace import Workspace
+from mzizi_engine.jsonvalue import Payload
+
+
+def replay_payload(values: ArgValues, workspace: Workspace) -> Payload:
+    value = values.get("expectations")
+    if not isinstance(value, str):
+        raise CliError("A replay suite file is required")
+    source = Path(value).resolve()
+    try:
+        reference = source.relative_to(workspace.inputs.resolve())
+    except ValueError as error:
+        raise CliError("Place the replay suite and its captures under .dev/inputs") from error
+    return {"expectations": reference.as_posix()}
+
 
 REPLAY = Command(
     "web",
@@ -9,8 +28,7 @@ REPLAY = Command(
     "Compare saved HTML with reviewed extraction expectations",
     "scraping.replay",
     (Arg("expectations", ArgKind.FILE, "Replay suite JSON", positional=True, suffixes=(".json",)),),
-    passthrough,
-    run_folder=True,
+    replay_payload,
     failure_field="passed",
 )
 

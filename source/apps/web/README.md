@@ -9,6 +9,8 @@ The app uses Bun and runs on port `3100`. Use the repository-root commands and e
 
 The review UI consumes NestJS API contracts and does not own canonical domain rules, database migrations, source acquisition, filesystem storage or model lineage. The app is still a mixed inherited and Mzizi codebase; its screens should be treated according to the route and backend they actually call.
 
+The [developer portal design](../../../.docs/design/architecture/DEVELOPER_PORTAL.md) extends this workbench with shared engine operations over HTTP, a scripting and draft workspace, run inspection and takeover. The IEBC pilot and these capabilities are planned.
+
 ## Local checks
 
 From this directory: `bun run typecheck`, `bun run test`, and `bun run dev`. The root runner can include it with `bun run dev --only web` or run the full local stack with `bun run dev`.

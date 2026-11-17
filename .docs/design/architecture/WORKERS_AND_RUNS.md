@@ -9,6 +9,8 @@ tags: [engine, workers, runs, jobs, s3, mongo, proposal]
 
 **Phases 1–3 are implemented for HTTP acquisition (16 November 2026). Browser traffic interception and phases 4–5 remain planned.** Decision record: [DEC-WORKERS-AND-RUNS-20261116](../../decisions/DEC-WORKERS-AND-RUNS-20261116.md). Handoff for the implementing agent: [HANDOFF-WORKERS-AND-RUNS-20261116](../../handoffs/HANDOFF-WORKERS-AND-RUNS-20261116.md). Builds on [ENGINE_RUNTIME_AND_PACKAGES](ENGINE_RUNTIME_AND_PACKAGES.md) and [ENGINE_PERSISTENCE](../data/ENGINE_PERSISTENCE.md).
 
+The [developer portal design](DEVELOPER_PORTAL.md) describes planned draft preparation and takeover. Releasing sealed files into the filesystem registry is a separate workflow from reviewing seed drafts and importing canonical rows.
+
 ## Phase 1
 
 The engine parses a version-1 job spec, retains each registered request model in its stage, and hashes the resulting canonical JSON. Legacy operations without a request model are rejected during parsing. The in-process runner executes `scraping.crawl` and `site.watch`, using the union of declared requirements and a separate Mongo ledger requirement. A successful in-process run records `completed` after the stage returns. A handler error records `failed` with the exception type. Interrupted runs retain their last recorded state.
@@ -123,7 +125,7 @@ Host permits account for HTTP requests to each normalized hostname across subpro
 
 ## Ranking and hunting
 
-A `Ranker` port in the crawler scores candidate URLs and extracted content. Two modes: **criteria** (rank before fetching, fetch only above a threshold) and **hunt** (fetch everything matching the file rules, rank only after extraction). Every skip is recorded with score and reason, so recall can be measured and a skip is never silent. The first implementation is rule-based from the site manifest (`expect` and ranking rules, see `SITE_STRUCTURE_SPEC.md`). A vector-based ranker plugs in later through the vector port (`persistence/vector`, currently a skeleton).
+The planned `Ranker` port in the crawler scores candidate URLs and extracted content. Two modes: **criteria** (rank before fetching, fetch only above a threshold) and **hunt** (fetch everything matching the file rules, rank only after extraction). Every skip is recorded with score and reason, so recall can be measured and a skip is never silent. The first implementation is rule-based from the site manifest (`expect` and ranking rules, see [source and engine schemas](../../../source/schema/README.md)). A vector-based ranker plugs in later through the vector port (`persistence/vector`, currently a skeleton).
 
 ## Logs and audit
 

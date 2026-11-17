@@ -7,7 +7,7 @@ tags: [scraping,crawling,patterns,documents,proposal]
 
 # Manifest-driven crawling and purpose detection
 
-**Status: the Markdown-first commands below are implemented. The manifest-driven pipeline remains a design.** It extends the existing [site structure specification](SITE_STRUCTURE_SPEC.md) (`mzizi.site/v1`: modules, `sections.yml` path rules with slots, tags, mappings, policy block) and builds on [PATTERN_MATCHING](../architecture/PATTERN_MATCHING.md) and [ENGINE_JOB_MODEL](../architecture/ENGINE_JOB_MODEL.md). The first implementation slice and the runtime guide describe the active command. The binding code rules are in [typed-code.md](../../rules/typed-code.md). Site and classification knowledge belongs in manifests, and matching goes through the pattern packages.
+**Status: staged design.** The [runtime guide](WEB_ACQUISITION_RUNTIME.md) identifies working acquisition commands and the scope of workspace replay. Use the [current source and engine schemas](../../../source/schema/README.md), [site authoring guide](site-structure-authoring.md) and [developer portal design](../architecture/DEVELOPER_PORTAL.md). Source and classification knowledge belongs in validated inputs. The [typed code rules](../../rules/typed-code.md) govern matching and package boundaries.
 
 ## Goal
 
@@ -17,7 +17,7 @@ Crawl government and public-sector sites properly (with bounded requests and an 
 
 Discovery captures the HTML needed for a listing and inventories the references it contains. Store the URL, fragment or interactive state, observed link label, and the page or panel that supplied each document or media reference. Classification can then compare content and reference context and submit selected files to the existing downloader. Browser rendering may fetch assets needed by the page. Content selection controls what is subsequently downloaded and archived.
 
-1. **Extraction checks and offline replay.** `web replay` runs saved HTML through the converter and reports mismatches against reviewed counts, URLs, original capture hashes, selectors, cells and pagination states. It can pair a rendered media inventory with its HTML capture.
+1. **Extraction checks and offline replay.** The crawler replay function compares saved HTML and PDFs against reviewed expectations. The CLI and engine HTTP jobs invoke `scraping.replay` on saved suites inside the configured input workspace. Durable run-artifact references are planned.
 2. **Rendered media inventory.** The opt-in browser capture is available in one-page Markdown, scoped crawls and listing sections. It records computed backgrounds, picture candidates, browser-selected URLs and declared lazy sources. Crawls and single-page runs can scroll a bounded sample of lazy targets. Images observed only in network activity are outside this DOM-based pass.
 3. **Tables and weak DOMs.** The HTML extractor lays out spans and header groups before rendering. Its table JSON preserves original cells, positions and links. Manifest-based `scrape url --render auto` compares static and browser captures when the static version falls short of the module's item or field expectations.
 4. **Verifiable traversal.** Crawls emit `listings.json` with source hashes, continuation actions, new row and item counts, and stop reasons. `web sections` records tab and disclosure states, and its section coverage report distinguishes a disabled Next control from a repeated result, timeout or cap. The general crawler retains ordinary URL continuations and marks whether the destination was captured.

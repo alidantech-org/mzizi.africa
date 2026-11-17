@@ -29,3 +29,11 @@ def test_pdf_text_extraction_and_an_honest_result_for_garbage():
     texts = [s.content.text for s in out.segments if isinstance(s.content, TextContent)]
     assert out.status in (Status.SUCCEEDED, Status.PARTIAL) and any("Hello Mzizi" in t for t in texts)
     assert extract_pdf(b"definitely not a pdf").status is Status.FAILED
+
+
+def test_pdf_with_bytes_before_the_header_is_still_read():
+    from pdfmaker import make_pdf
+
+    data = make_pdf([{"text": [(72, 720, "Hello Mzizi: a page with enough text to count as a text layer")]}])
+    assert extract_pdf(b"\r\n  " + data).status is Status.SUCCEEDED
+    assert extract_pdf(b"not a pdf at all").status is Status.FAILED

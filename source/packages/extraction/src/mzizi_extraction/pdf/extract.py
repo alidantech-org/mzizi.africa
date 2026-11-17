@@ -22,6 +22,7 @@ from mzizi_extraction.pdf.tables import read_tables
 from mzizi_extraction.pdf.text import read_text_layer
 
 PDF_MAGIC = b"%PDF"
+PDF_HEADER_WINDOW = 1024
 
 
 def _unreadable(problem: pdfium.PdfiumError) -> Output:
@@ -33,7 +34,7 @@ def extract_pdf(data: bytes, profile: ExtractionProfile | None = None) -> Output
     limits = profile.limits
     if len(data) > limits.max_bytes:
         return failed(error(Code.TOO_LARGE, f"{len(data)} bytes exceeds the {limits.max_bytes} byte limit"))
-    if not data.startswith(PDF_MAGIC):
+    if PDF_MAGIC not in data[:PDF_HEADER_WINDOW]:  # the PDF specification allows junk before the header
         return failed(error(Code.NOT_PDF, "the file does not start with %PDF"))
     try:
         document = pdfium.PdfDocument(data)

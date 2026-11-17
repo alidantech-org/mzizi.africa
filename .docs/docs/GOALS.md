@@ -133,7 +133,7 @@ The current consolidated code inherited unrelated concerns inside a Python backe
 - file service owns artifacts;
 - data engine owns extraction;
 - intelligence layer owns reasoning/classification/evaluation;
-- DB engine owns migrations/seeding/promotion;
+- the Bun database CLI owns migrations, and the engine owns seed loading and the planned promotion workflow;
 - NestJS API owns product contracts;
 - apps consume stable contracts.
 

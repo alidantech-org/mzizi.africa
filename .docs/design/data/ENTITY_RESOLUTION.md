@@ -48,7 +48,7 @@ Face templates are biometric data. Biometric data is a sensitive category under 
 
 ## Where it runs
 
-The `patterns` and `meaning` packages do the matching. The engine runs resolution as job kinds over staged documents, using the `Reader` port for reference data and the staging store for working data. Candidates, review decisions and must/cannot-link pairs persist through the database service. NestJS serves the review interface. Agents may propose aliases, thresholds and links as reviewable manifest patches.
+The `patterns` and `meaning` packages do the matching. The engine runs resolution as job kinds over staged documents, using the `Reader` port for reference data and the staging store for working data. The proposed candidate, review and must/cannot-link persistence belongs to the engine. See [engine persistence](ENGINE_PERSISTENCE.md) and the [developer portal design](../architecture/DEVELOPER_PORTAL.md) for the current backing stores and planned review workflow. Agents may propose aliases, thresholds and links as reviewable manifest patches.
 
 ## Open decisions
 

@@ -10,6 +10,9 @@ from mzizi_fetch.web.blocks import Response
 from mzizi_fetch.web.policy import Authorization, RobotsMode
 
 
+DOWNLOAD_KINDS: tuple[str, ...] = ("document", "image", "media", "file", "candidate")
+
+
 class Request(BaseModel):
     model_config = ConfigDict(frozen=True, extra="ignore")
 
@@ -94,6 +97,7 @@ class WatchRequest(CrawlRequest):
 
     download: bool = True
     download_limit: int = 200  # files fetched per run; the queue keeps the rest for the next run
+    download_kinds: tuple[str, ...] = DOWNLOAD_KINDS  # which found files to download; ("document",) skips images and media
     hunt: bool = True
     min_age_hours: float = (
         12.0  # a page fetched more recently than this is not fetched again; its saved copy feeds the crawl
@@ -186,11 +190,12 @@ class RankRequest(Workspace):
 
 class EnqueueRequest(Workspace):
     site: str  # the site's URL or host; its inventory lists the files
-    kinds: tuple[str, ...] = ("document", "image", "media", "file", "candidate")
+    kinds: tuple[str, ...] = DOWNLOAD_KINDS
 
 
 class FetchQueueRequest(Workspace):
     site: str
+    kinds: tuple[str, ...] = DOWNLOAD_KINDS  # only queued items of these kinds are fetched
     limit: int = 100
     limit_rate: int = 0
     allow_private: bool = False

@@ -24,19 +24,21 @@ source/backend/database            Bun CLI, generated SQL and immutable migratio
 source/backend/engine               Python runtime: EngineRuntime, its HTTP front door and executor, persistence adapters, Dryv-generated code
 source/backend/agent                README-only proposal for a future assistive AI application
 source/packages/{browser,cli,crawler,extraction,fetch,filesystem,manifest,search}
-source/schema/{contracts,database,pipeline,seed,site/v1}
+source/schema/{database,engine,seed,sources}
 ```
 
 Read the local maps for current ownership and commands: `source/backend/README.md`, `source/packages/README.md`, `source/schema/README.md`, `source/apps/web/README.md`, `source/apps/www/README.md`, and `scripts/README.md`.
+
+The [developer portal design](.docs/design/architecture/DEVELOPER_PORTAL.md) records the planned shared HTTP operations for the portal, CLI and agent. The current web app provides the review workbench.
 
 The responsibilities are distinct even when they share a runtime:
 
 - `source/apps/` contains clients. They consume API contracts; they do not own canonical domain rules.
 - `source/backend/api/` is the NestJS product API. It reads product data and sends authorized named write commands to PostgreSQL with its own role; it does not run migrations, seed data, scrape or execute extraction.
-- `source/backend/database/` owns TypeScript SQL migration/seed commands and named database operations.
+- `source/backend/database/` owns the Bun CLI, SQL migrations and named database operations.
 - `source/backend/engine/` is the Python runtime, not the product API: `runtime/` (the `EngineRuntime`, its operations registry, `assembly/` composition root, `policy/` collection gate, HTTP front door and executor), `persistence/` (PostgreSQL adapters, the MongoDB activity store and a vector-store skeleton), `cli/` (`mzizi-engine`) and Dryv-generated `api/`. Every capability lives in a package under `source/packages/` with one orchestrator; the engine root holds only folders.
-- `source/packages/` contains reusable Python libraries, not separate services. `source/backend/agent/` is a README-only proposal; no intelligence service or agent package currently exists. Packages must not know a database exists, but may own network and browser adapters behind ports. Target design (proposal, not implemented): the engine is one runtime class plus Dryv-generated persistence, and every capability lives in a package with one orchestrator class and code under `features/<capability>/` (see `.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md`).
-- `source/schema/` contains SQL and machine-readable input/exchange schemas. Authored API/database contracts remain in `dryv/`; prepared inputs remain in root `seed/`.
+- `source/packages/` contains reusable Python libraries, not separate services. `source/backend/agent/` is a README-only proposal; no intelligence service or agent package currently exists. Packages must not know a database exists, but may own network and browser adapters behind ports. The engine runtime and several capability packages are in place. The target adds generated repositories and organizes each capability package around one orchestrator and `features/<capability>/` (see `.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md`).
+- `source/schema/` contains machine-readable input and exchange schemas. Authored API/database contracts remain in `dryv/`; prepared inputs remain in root `seed/`.
 
 `uv sync --all-packages` resolves and runs from a clean checkout. There is no database service: the engine and the NestJS API connect to PostgreSQL directly with their own roles, and `source/backend/database` holds only the SQL, migrations and Bun CLI (see `.docs/design/data/DATABASE_ARCHITECTURE.md`). The engine's PostgreSQL access lives in `source/backend/engine/src/mzizi_engine/persistence/` (adapters over the Dryv-generated row models; Dryv does not generate Python repositories yet). The filesystem is the `mzizi-filesystem` package (one `FilesystemOrchestrator`, no database knowledge); the engine only wires it and registers the `filesystem.*` operations on its runtime, and placement (folders, names, access, retention) is always decided by the caller of an operation, never hard-coded.
 
@@ -73,7 +75,7 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 ## Documentation and repository hygiene
 
 - Keep exactly the eight overview documents in `.docs/docs/`. Put detailed design in an existing topic under `.docs/design/`, and planning proposals in `.docs/_plan/`.
-- Manifest and row codes follow `.docs/rules/codes.md`: `<scope>.<area>.<table-or-name>.<name>`, and a file's folder path mirrors its code.
+- Manifest and seed row codes follow [codes.md](.docs/rules/codes.md). Filesystem registry codes follow [the filesystem code rules](.docs/rules/code-columns.md).
 - Never invent versions: no version folders, file-name suffixes or new version fields unless the owner asks. Read `.docs/rules/versioning.md`.
 - Put contributor and agent process in `.docs/rules/`. Do not recreate `.docs/guidance/`.
 - All hand-written Python, Rust and TypeScript follows `.docs/rules/typed-code.md`: named typed contracts (no free `dict`/`Any`/`any`/`serde_json::Value` past the parsing boundary), no hard-coded source or classification knowledge (it lives in manifests), and pattern matching only in the pattern-matching packages.
