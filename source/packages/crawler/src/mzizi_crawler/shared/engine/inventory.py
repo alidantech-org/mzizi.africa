@@ -1,6 +1,7 @@
 """Turns a finished (or stopped) crawl into Markdown files and the separate inventories, written as CSV/JSON/JSONL."""
 
 from __future__ import annotations
+from mzizi_extraction.document import format_markdown
 
 import json
 from collections import defaultdict
@@ -93,7 +94,7 @@ def write_markdown(crawl: Crawl) -> list[PageRecord]:
             body += render_media(inventory)
         save_tables(output, crawl.out_dir / f"tables/{page.n:04d}.json")
         head = f"---\nurl: {page.final_url}\ntitle: {json.dumps(page.title, ensure_ascii=False)}\n---\n\n"
-        (crawl.out_dir / name).write_text(head + body, encoding="utf-8")
+        (crawl.out_dir / name).write_text(head + format_markdown(body), encoding="utf-8")
         updated.append(page.model_copy(update={"markdown_file": name, "chrome_removed": removed}))
     return updated
 

@@ -23,6 +23,8 @@ def main(argv: list[str] | None = None) -> int:
     worker = sub.add_parser("worker", help="execute a leased run")
     worker.add_argument("--run", type=UUID, required=True)
     worker.add_argument("--lease", type=UUID)
+    run_job = sub.add_parser("run-job", help="run a job spec now, in this terminal, and print what each stage produced")
+    run_job.add_argument("spec", type=Path)
     submit = sub.add_parser("submit-run", help="queue a run from a job spec")
     submit.add_argument("spec", type=Path)
     sub.add_parser("supervise", help="admit and supervise queued runs")
@@ -96,6 +98,14 @@ def main(argv: list[str] | None = None) -> int:
                 approval = ReleaseApproval.model_validate_json(args.approval.read_bytes())
                 print(release_run(args.run_id, placements, approval, config).model_dump_json())
         return 0
+    if args.command == "run-job":
+        from mzizi_engine.runtime.assembly.run_operations import run_job_spec
+
+        result = run_job_spec(args.spec.read_bytes(), config=config)
+        for index, output in enumerate(result.outputs, start=1):
+            print(f"stage {index}: " + json.dumps({k: v for k, v in output.items() if k not in ("changes", "files")}))
+        print(f"run {result.record.run_id}: {result.record.state}")
+        return 0 if result.record.state == "completed" else 1
     if args.command in ("worker", "submit-run", "supervise", "show-run", "cancel-run"):
         from mzizi_engine.runtime.assembly.workers import (
             execute_worker,

@@ -25,3 +25,9 @@ def test_tidy_merges_split_headers_and_drops_empty_columns() -> None:
     assert header_rows == 2
     assert tidy[0] == ("", "Type", "Disclosure YES", "Details")
     assert tidy[-1] == ("1", "Tenderer controlled", "", "")
+
+
+def test_tidy_does_not_treat_a_continued_table_first_row_as_header() -> None:
+    rows = (("1", "Tenderer is controlled by another tenderer", "", ""), ("2", "Tenderer receives a subsidy", "", ""))
+    _, header_rows = tidy_rows(rows)
+    assert header_rows == 0

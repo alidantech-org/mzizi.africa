@@ -1,6 +1,7 @@
 """Capture a listing's same-document sections, with Markdown and per-view source evidence."""
 
 from __future__ import annotations
+from mzizi_extraction.document import format_markdown
 
 import hashlib
 from contextlib import ExitStack
@@ -147,7 +148,7 @@ def _save_view(
                 seen.add((ref.url, UrlKind.IMAGE))
     captured = view.html.encode("utf-8")
     html_path.write_bytes(captured)
-    md_path.write_text(markdown, encoding="utf-8")
+    md_path.write_text(format_markdown(markdown), encoding="utf-8")
     return CapturedView(
         method=method,
         source_url=url,
@@ -266,7 +267,7 @@ def _write_report(report: SectionsReport, out: Path) -> SectionsReport:
             lines.append((out / name).read_text(encoding="utf-8").strip())
             lines.append("")
     if report.sections:
-        (out / "sections.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+        (out / "sections.md").write_text(format_markdown("\n".join(lines)), encoding="utf-8")
         names.append("sections.md")
     for name in ("initial.html", "rendered.html"):
         if (out / name).is_file():

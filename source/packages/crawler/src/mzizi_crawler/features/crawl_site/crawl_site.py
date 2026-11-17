@@ -1,6 +1,7 @@
 """Crawl, one-page Markdown and export capabilities."""
 
 from __future__ import annotations
+from mzizi_extraction.document import format_markdown
 
 import json
 from collections.abc import Callable
@@ -171,7 +172,7 @@ def page_markdown(request: MarkdownRequest) -> MarkdownResult:
         files += ("rendered-media.json",)
     (folder / "page.html").write_bytes(response.body)
     (folder / "page.md").write_text(
-        f"---\nurl: {response.final_url}\ntitle: {json.dumps(title, ensure_ascii=False)}\n---\n\n{markdown}",
+        f"---\nurl: {response.final_url}\ntitle: {json.dumps(title, ensure_ascii=False)}\n---\n\n{format_markdown(markdown)}",
         encoding="utf-8",
     )
     return MarkdownResult(

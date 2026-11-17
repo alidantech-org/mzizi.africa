@@ -1,0 +1,48 @@
+{
+  "spec_version": 1,
+  "kind": "collection",
+  "name": "documents-example",
+  "code": "sys.eng.job.example.documents",
+  "sources": [
+    {
+      "url": "https://example.org/",
+      "authority_ref": "local.example"
+    }
+  ],
+  "mode": "crawl",
+  "limits": {
+    "max_requests": 2000,
+    "max_seconds": 12000
+  },
+  "stages": [
+    {
+      "operation": "site.watch",
+      "params": {
+        "url": "https://example.org/",
+        "out_dir": ".dev/runs/documents-example",
+        "render": "auto",
+        "max_pages": 600,
+        "max_depth": 6,
+        "delay": 1.0,
+        "max_seconds": 1500,
+        "min_age_hours": 24,
+        "max_list_pages": 60,
+        "download_limit": 600,
+        "download_kinds": [
+          "document",
+          "candidate"
+        ],
+        "passes": 6
+      }
+    },
+    {
+      "operation": "extraction.folder",
+      "params": {
+        "source": ".dev/websites/<tld>/<second-level>/<name>/_root/scraped/files/pdf",
+        "out_dir": ".dev/runs/documents-example/text",
+        "ocr": true,
+        "languages": "eng"
+      }
+    }
+  ]
+}

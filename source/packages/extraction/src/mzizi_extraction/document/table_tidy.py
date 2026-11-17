@@ -38,6 +38,8 @@ def _despan(row: list[str]) -> list[str]:
 def header_row_count(rows: list[list[str]]) -> int:
     if len(rows) < 2:
         return 1
+    if rows[0][0].isdigit() and not _numbering(rows[0]):
+        return 0  # the table continues from an earlier page: its first row is already data (item 1, 2, ...)
     width = len(rows[0])
     count = 1
     while count < min(MAX_HEADER_ROWS, len(rows) - 1):
@@ -58,5 +60,5 @@ def tidy_rows(rows: TableRows) -> tuple[TableRows, int]:
     header_rows = header_row_count(squashed)
     squashed[:header_rows] = [_despan(row) for row in squashed[:header_rows]]
     squashed = _squash(squashed)
-    header_rows = min(header_rows, max(1, len(squashed) - 1))
+    header_rows = min(header_rows, max(0, len(squashed) - 1))
     return tuple(tuple(row) for row in squashed), header_rows

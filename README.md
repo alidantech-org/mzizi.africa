@@ -6,6 +6,8 @@ Start with [WHY](.docs/docs/WHY.md), [GOALS](.docs/docs/GOALS.md) and [STORY](.d
 
 ## CLI and scraping
 
+New machine? Follow [SETUP.md](SETUP.md): prerequisites per operating system, and how to write and run a scrape-and-extract job for any site.
+
 Start with the [CLI and engine jobs quickstart](.docs/design/operations/cli-and-jobs.md) to install from a fresh checkout, run a bounded crawl or submit a job.
 
 ## Source code map
