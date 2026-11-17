@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -32,10 +33,13 @@ import type {
 /** A host name a source is served from. A host belongs to one source at a time; its validity period records moves. */
 export interface IDomains extends B.IBase {
   code: string;
+  endsOn: Date | null;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
   host: string;
   sourceId: string;
-  validFrom: Date | null;
-  validUntil: Date | null;
+  startsOn: Date | null;
+  toYear: number | null;
   readonly source?: SourcesTypes.ISources;
 }
 

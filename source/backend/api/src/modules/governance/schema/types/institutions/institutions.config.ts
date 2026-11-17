@@ -47,13 +47,16 @@ export const INSTITUTIONS_SORTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "dissolvedOn",
   "entityId",
+  "establishedOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionKindId",
   "sourceCitationId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly InstitutionsKey[];
 
@@ -63,6 +66,7 @@ export const INSTITUTIONS_SEARCHABLE_FIELDS = [
 
 export const INSTITUTIONS_FILTERABLE_FIELDS = [
   "entityId",
+  "fromToPrecision",
   "id",
   "institutionKindId",
   "sourceCitationId",
@@ -71,9 +75,9 @@ export const INSTITUTIONS_FILTERABLE_FIELDS = [
 export const INSTITUTIONS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "dissolvedOn",
+  "establishedOn",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly InstitutionsKey[];
 
 export const INSTITUTIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IInstitutions> = {
@@ -90,13 +94,16 @@ export const INSTITUTIONS_SELECTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "dissolvedOn",
   "entityId",
+  "establishedOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionKindId",
   "sourceCitationId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly InstitutionsKey[];
 
@@ -104,13 +111,16 @@ export const INSTITUTIONS_DEFAULT_SELECT_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "dissolvedOn",
   "entityId",
+  "establishedOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionKindId",
   "sourceCitationId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly InstitutionsSelectableField[];
 
@@ -120,11 +130,14 @@ export const INSTITUTIONS_DEFAULT_SELECT_FIELDS = [
 
 export const INSTITUTIONS_EDITABLE_FIELDS = [
   "code",
+  "dissolvedOn",
   "entityId",
+  "establishedOn",
+  "fromToPrecision",
+  "fromYear",
   "institutionKindId",
   "sourceCitationId",
-  "validFrom",
-  "validUntil",
+  "toYear",
 ] as const satisfies readonly InstitutionsKey[];
 
 // ----------------------------------

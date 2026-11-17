@@ -58,8 +58,6 @@ export const BRANDING_SORTABLE_FIELDS = [
   "languageId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
 ] as const satisfies readonly BrandingKey[];
@@ -82,8 +80,6 @@ export const BRANDING_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly BrandingKey[];
 
 export const BRANDING_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IBranding> = {
@@ -107,8 +103,6 @@ export const BRANDING_SELECTABLE_FIELDS = [
   "languageId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
 ] as const satisfies readonly BrandingKey[];
@@ -124,8 +118,6 @@ export const BRANDING_DEFAULT_SELECT_FIELDS = [
   "languageId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
 ] as const satisfies readonly BrandingSelectableField[];
@@ -141,8 +133,6 @@ export const BRANDING_EDITABLE_FIELDS = [
   "kindId",
   "languageId",
   "sourceCitationId",
-  "validFrom",
-  "validUntil",
   "value",
 ] as const satisfies readonly BrandingKey[];
 

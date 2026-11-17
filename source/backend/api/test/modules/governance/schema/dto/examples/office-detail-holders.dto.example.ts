@@ -2,6 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { officeDetailHoldersNamesExample } from "@test/modules/governance/schema/dto/examples/office-detail-holders-names.dto.example.ts";
 
 /** The contract shape of OfficeDetailHolders, for generated tests. */
@@ -22,6 +23,18 @@ export const officeDetailHoldersExample: ContractExample = contractExample({
       },
     },
     {
+      name: "fromToPrecision",
+      optional: false,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(DatePrecision) },
+    },
+    {
+      name: "fromYear",
+      optional: false,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
       name: "individualId",
       optional: false,
       nullable: false,
@@ -35,16 +48,10 @@ export const officeDetailHoldersExample: ContractExample = contractExample({
       spec: { kind: "schema", example: () => officeDetailHoldersNamesExample },
     },
     {
-      name: "validFrom",
+      name: "toYear",
       optional: false,
       nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntil",
-      optional: false,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
   ],
   invariants: [],

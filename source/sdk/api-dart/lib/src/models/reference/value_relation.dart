@@ -5,7 +5,7 @@ import 'package:mzizi_api/src/models/shared/association.dart';
 
 part 'value_relation.g.dart';
 
-/// A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind.
+/// A directed, typed, relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind.
 @JsonSerializable(includeIfNull: false)
 class ReferenceValueRelation {
   const ReferenceValueRelation({
@@ -15,8 +15,6 @@ class ReferenceValueRelation {
     required this.relationKind,
     required this.sourceValueId,
     required this.targetValueId,
-    this.validFrom,
-    this.validUntil,
   });
   final DateTime createdAt;
   final DateTime? deletedAt;
@@ -24,8 +22,6 @@ class ReferenceValueRelation {
   final ReferenceValueRelationKind relationKind;
   final String sourceValueId;
   final String targetValueId;
-  final DateTime? validFrom;
-  final DateTime? validUntil;
 
   factory ReferenceValueRelation.fromJson(Map<String, dynamic> json) => _$ReferenceValueRelationFromJson(json);
 

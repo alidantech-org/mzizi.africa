@@ -51,17 +51,20 @@ export const RELATIONSHIPS_SORTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endsOn",
   "fromEntityId",
   "fromIndividualId",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "kindId",
   "sharePercentage",
   "sourceCitationId",
+  "startsOn",
   "toEntityId",
   "toIndividualId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly RelationshipsKey[];
 
@@ -72,6 +75,7 @@ export const RELATIONSHIPS_SEARCHABLE_FIELDS = [
 export const RELATIONSHIPS_FILTERABLE_FIELDS = [
   "fromEntityId",
   "fromIndividualId",
+  "fromToPrecision",
   "id",
   "kindId",
   "sourceCitationId",
@@ -82,9 +86,9 @@ export const RELATIONSHIPS_FILTERABLE_FIELDS = [
 export const RELATIONSHIPS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "startsOn",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IRelationships> = {
@@ -101,17 +105,20 @@ export const RELATIONSHIPS_SELECTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endsOn",
   "fromEntityId",
   "fromIndividualId",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "kindId",
   "sharePercentage",
   "sourceCitationId",
+  "startsOn",
   "toEntityId",
   "toIndividualId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly RelationshipsKey[];
 
@@ -119,17 +126,20 @@ export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endsOn",
   "fromEntityId",
   "fromIndividualId",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "kindId",
   "sharePercentage",
   "sourceCitationId",
+  "startsOn",
   "toEntityId",
   "toIndividualId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly RelationshipsSelectableField[];
 
@@ -139,15 +149,18 @@ export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
 
 export const RELATIONSHIPS_EDITABLE_FIELDS = [
   "code",
+  "endsOn",
   "fromEntityId",
   "fromIndividualId",
+  "fromToPrecision",
+  "fromYear",
   "kindId",
   "sharePercentage",
   "sourceCitationId",
+  "startsOn",
   "toEntityId",
   "toIndividualId",
-  "validFrom",
-  "validUntil",
+  "toYear",
 ] as const satisfies readonly RelationshipsKey[];
 
 // ----------------------------------

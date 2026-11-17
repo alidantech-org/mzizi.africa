@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from typing import Annotated, ClassVar
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
 
 
 class AlignmentsRow(BaseModel):
@@ -28,10 +30,11 @@ class AlignmentsRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
+    from_to_precision: DatePrecision | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     party_id: UUID
     source_citation_id: UUID | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
-    valid_from: date | None = None
-    valid_until: date | None = None
     version: Annotated[int, Field(ge=1)]

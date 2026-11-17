@@ -2,9 +2,10 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedValidityEntityExample } from "@test/modules/shared/schema/dto/examples/coded-validity-entity.dto.example.ts";
+import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
 import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
 /** The contract shape of Institutions, for generated tests. */
@@ -37,10 +38,34 @@ export const institutionsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "dissolvedOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
+    },
+    {
       name: "entityId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "establishedOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "fromToPrecision",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(DatePrecision) },
+    },
+    {
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "id",
@@ -61,22 +86,16 @@ export const institutionsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "toYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
       name: "updatedAt",
       optional: false,
       nullable: false,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "validFrom",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntil",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
     },
     {
       name: "version",
@@ -90,19 +109,39 @@ export const institutionsExample: ContractExample = contractExample({
       any: true,
       comparisons: [
         {
-          left: { field: "validFrom" },
+          left: { field: "fromYear" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "validUntil" },
+          left: { field: "toYear" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "validFrom" },
-          operator: "less-than",
-          right: { field: "validUntil" },
+          left: { field: "fromYear" },
+          operator: "less-than-or-equal",
+          right: { field: "toYear" },
+        },
+      ],
+    },
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "establishedOn" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "dissolvedOn" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "establishedOn" },
+          operator: "less-than-or-equal",
+          right: { field: "dissolvedOn" },
         },
       ],
     },

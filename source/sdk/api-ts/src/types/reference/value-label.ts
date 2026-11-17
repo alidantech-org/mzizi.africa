@@ -9,8 +9,6 @@ export interface ReferenceValueLabel {
   labelKind: ReferenceValueLabelKind;
   languageId: string;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   valueId: string;
   version: number;
 }

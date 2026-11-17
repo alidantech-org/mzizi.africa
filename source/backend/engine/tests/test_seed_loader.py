@@ -102,14 +102,15 @@ def test_a_small_edit_updates_only_that_row_and_bumps_its_version(conn: Connecti
     root = make_seed(tmp_path)
     load_seed(conn, root, apply=True)
     (root / "data/ke/geo/features.csv").write_text(
-        "code,feature_type_code,valid_from\nke,geo.feature.kind.country,2000-01-01\n", encoding="utf-8"
+        "code,feature_type_code,established_on,from_year,from_to_precision\nke,geo.feature.kind.country,2000-01-01,2000,exact\n",
+        encoding="utf-8",
     )
     write_datasets(root)
     report = load_seed(conn, root, apply=True)
     assert report.ok
     assert counts(report)["geography.features"] == (0, 1, 0)
-    row = conn.execute("SELECT version, valid_from FROM geography.features").fetchone()
-    assert row["version"] == 2 and str(row["valid_from"]) == "2000-01-01"
+    row = conn.execute("SELECT version, established_on, from_year FROM geography.features").fetchone()
+    assert row["version"] == 2 and str(row["established_on"]) == "2000-01-01" and row["from_year"] == 2000
     assert counts(report)["reference.values"] == (0, 0, 4)
     # The edited CSV is a new artifact; provenance written for the earlier bytes still points at the earlier artifact.
     artifacts = conn.execute(

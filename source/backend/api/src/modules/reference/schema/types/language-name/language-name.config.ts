@@ -49,8 +49,6 @@ export const LANGUAGE_NAME_SORTABLE_FIELDS = [
   "name",
   "nameKind",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly LanguageNameKey[];
 
@@ -69,8 +67,6 @@ export const LANGUAGE_NAME_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly LanguageNameKey[];
 
 export const LANGUAGE_NAME_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<ILanguageName> = {
@@ -92,8 +88,6 @@ export const LANGUAGE_NAME_SELECTABLE_FIELDS = [
   "name",
   "nameKind",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly LanguageNameKey[];
 
@@ -106,8 +100,6 @@ export const LANGUAGE_NAME_DEFAULT_SELECT_FIELDS = [
   "name",
   "nameKind",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly LanguageNameSelectableField[];
 
@@ -120,8 +112,6 @@ export const LANGUAGE_NAME_EDITABLE_FIELDS = [
   "languageId",
   "name",
   "nameKind",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly LanguageNameKey[];
 
 // ----------------------------------

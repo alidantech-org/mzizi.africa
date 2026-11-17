@@ -8,7 +8,5 @@ export interface GovernanceRelationships {
   sourceCitationId?: string | null;
   subjectInstitutionId: string;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   version: number;
 }

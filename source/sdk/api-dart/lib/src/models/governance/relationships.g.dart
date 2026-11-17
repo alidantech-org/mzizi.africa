@@ -15,8 +15,6 @@ GovernanceRelationships _$GovernanceRelationshipsFromJson(Map<String, dynamic> j
   sourceCitationId: json['sourceCitationId'] as String?,
   subjectInstitutionId: json['subjectInstitutionId'] as String,
   updatedAt: DateTime.parse(json['updatedAt'] as String),
-  validFrom: json['validFrom'] == null ? null : DateTime.parse(json['validFrom'] as String),
-  validUntil: json['validUntil'] == null ? null : DateTime.parse(json['validUntil'] as String),
   version: (json['version'] as num).toInt(),
 );
 
@@ -29,7 +27,5 @@ Map<String, dynamic> _$GovernanceRelationshipsToJson(GovernanceRelationships ins
   'sourceCitationId': ?instance.sourceCitationId,
   'subjectInstitutionId': instance.subjectInstitutionId,
   'updatedAt': instance.updatedAt.toIso8601String(),
-  'validFrom': ?instance.validFrom?.toIso8601String(),
-  'validUntil': ?instance.validUntil?.toIso8601String(),
   'version': instance.version,
 };

@@ -9,7 +9,5 @@ export interface GeographyNames {
   name: string;
   nameKindId: string;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   version: number;
 }

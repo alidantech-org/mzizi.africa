@@ -868,10 +868,13 @@
         ],
         "columns": [
           "code"
+          ,"ends_on"
+          ,"from_to_precision"
+          ,"from_year"
           ,"host"
           ,"source_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"starts_on"
+          ,"to_year"
         ],
         "required": [
           "code"
@@ -902,6 +905,23 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"ends_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"host": {
           "type": "string",
           "x-type": "text",
@@ -923,24 +943,23 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Sources", "column": "id", "alias": "source_code" }
         }
+        ,"starts_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",

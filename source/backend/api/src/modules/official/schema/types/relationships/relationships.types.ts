@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -35,15 +36,18 @@ import type {
 /** One directed typed relationship between exactly two Official identities, optionally with an ownership share. */
 export interface IRelationships extends B.IBase {
   code: string;
+  endsOn: Date | null;
   fromEntityId: string | null;
   fromIndividualId: string | null;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
   kindId: string;
   sharePercentage: number | null;
   sourceCitationId: string | null;
+  startsOn: Date | null;
   toEntityId: string | null;
   toIndividualId: string | null;
-  validFrom: Date | null;
-  validUntil: Date | null;
+  toYear: number | null;
   readonly fromEntity?: EntitiesTypes.IEntities;
   readonly fromIndividual?: IndividualsTypes.IIndividuals;
   readonly kind?: ValueTypes.IValue;

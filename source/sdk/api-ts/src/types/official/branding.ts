@@ -10,8 +10,6 @@ export interface OfficialBranding {
   languageId: string;
   sourceCitationId?: string | null;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   value?: string | null;
   version: number;
 }

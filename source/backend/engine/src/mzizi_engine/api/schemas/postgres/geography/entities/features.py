@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+
 
 class FeaturesRow(BaseModel):
     """The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here."""
@@ -26,13 +28,12 @@ class FeaturesRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
+    ended_on: date | None = None
+    established_on: date | None = None
     feature_type_id: UUID
+    from_to_precision: DatePrecision | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
-    valid_from: date | None = None
-    valid_from_earliest: date | None = None
-    valid_from_latest: date | None = None
-    valid_until: date | None = None
-    valid_until_earliest: date | None = None
-    valid_until_latest: date | None = None
     version: Annotated[int, Field(ge=1)]

@@ -10,7 +10,6 @@ import type {
   SelectQueryBuilder,
 } from "typeorm";
 import {
-  dateOnly,
   missing,
   pageWindow,
   prefixPattern,
@@ -69,8 +68,9 @@ export class GeographyPlacesRepository {
     query.addSelect("r.code", "code");
     query.addSelect("r.id", "featureId");
     query.addSelect("r.featureTypeId", "featureTypeId");
-    query.addSelect("r.validFrom", "validFrom");
-    query.addSelect("r.validUntil", "validUntil");
+    query.addSelect("r.fromToPrecision", "fromToPrecision");
+    query.addSelect("r.fromYear", "fromYear");
+    query.addSelect("r.toYear", "toYear");
     query.addSelect("r.id", "__key_id");
     query.orderBy("r.code", "ASC");
     query.addOrderBy("r.id", "ASC");
@@ -81,8 +81,9 @@ export class GeographyPlacesRepository {
       code: raw.code,
       featureId: raw.featureId,
       featureTypeId: raw.featureTypeId,
-      validFrom: dateOnly(raw.validFrom),
-      validUntil: dateOnly(raw.validUntil),
+      fromToPrecision: raw.fromToPrecision,
+      fromYear: raw.fromYear,
+      toYear: raw.toYear,
     }));
     const namesByOwner = await this.load_BrowseFeatures_names(
       raws.map((raw) => raw.__key_id),
@@ -140,8 +141,9 @@ export class GeographyPlacesRepository {
     query.addSelect("r.code", "code");
     query.addSelect("r.id", "featureId");
     query.addSelect("r.featureTypeId", "featureTypeId");
-    query.addSelect("r.validFrom", "validFrom");
-    query.addSelect("r.validUntil", "validUntil");
+    query.addSelect("r.fromToPrecision", "fromToPrecision");
+    query.addSelect("r.fromYear", "fromYear");
+    query.addSelect("r.toYear", "toYear");
     query.addSelect("r.id", "__key_id");
     query.orderBy("r.id", "ASC");
     query.limit(1);
@@ -152,8 +154,9 @@ export class GeographyPlacesRepository {
       code: raw.code,
       featureId: raw.featureId,
       featureTypeId: raw.featureTypeId,
-      validFrom: dateOnly(raw.validFrom),
-      validUntil: dateOnly(raw.validUntil),
+      fromToPrecision: raw.fromToPrecision,
+      fromYear: raw.fromYear,
+      toYear: raw.toYear,
     }));
     const namesByOwner = await this.load_GetFeature_names(
       raws.map((raw) => raw.__key_id),

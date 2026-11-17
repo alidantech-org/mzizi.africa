@@ -23,7 +23,7 @@ export interface GeometryRow {
   maxZoom: number | null;
   geometry: unknown;
   centroid: unknown;
-  validFrom: Date;
+  fromYear: number | null;
   observedAt: Date | null;
 }
 
@@ -44,7 +44,7 @@ export function currentDrawings(
   const query = repository
     .query("g")
     .select([])
-    .where("g.validUntil IS NULL")
+    .where("g.toYear IS NULL")
     .andWhere("g.deletedAt IS NULL");
   if (simplifyTolerance) query.setParameter("tolerance", simplifyTolerance);
   return query
@@ -58,7 +58,7 @@ export function currentDrawings(
     .addSelect("g.maxZoom", "maxZoom")
     .addSelect(`ST_AsGeoJSON(${geometry})::json`, "geometry")
     .addSelect("ST_AsGeoJSON(g.centroid)::json", "centroid")
-    .addSelect("g.validFrom", "validFrom")
+    .addSelect("g.fromYear", "fromYear")
     .addSelect("g.observedAt", "observedAt")
     .orderBy("g.featureId", "ASC")
     .addOrderBy("g.geometryRoleId", "ASC")
@@ -109,7 +109,7 @@ export function toFeatureGeometry(row: GeometryRow): FeatureGeometryDto {
     maxZoom: row.maxZoom,
     geometry: row.geometry,
     centroid: row.centroid,
-    validFrom: row.validFrom.toISOString(),
+    fromYear: row.fromYear,
     observedAt: row.observedAt === null ? null : row.observedAt.toISOString(),
   };
 }

@@ -55,6 +55,14 @@ export class GeometriesRepository
     return await this.findByQuery(query, { featureId, deletedAt: IsNull() });
   }
 
+  /** Find geometries by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<GeometriesEntity>,
+    fromToPrecision: NonNullable<GeometriesEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<GeometriesEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find geometries by geometry role id, paged by the shared query. */
   async findByGeometryRole(
     query: BaseQueryDto<GeometriesEntity>,

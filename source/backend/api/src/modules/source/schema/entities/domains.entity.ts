@@ -9,10 +9,12 @@ import {
   type Relation,
 } from "typeorm";
 import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * A host name a source is served from. A host belongs to one source at a time; its validity period records moves.
@@ -22,8 +24,12 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["host"], { unique: true })
 @Index(["sourceId"])
 @Check(
-  "chk_domains_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+  "chk_domains_period_years_are_ordered",
+  `from_year = null OR to_year = null OR from_year <= to_year`,
+)
+@Check(
+  "chk_domains_domains_dates_are_ordered",
+  `starts_on = null OR ends_on = null OR starts_on <= ends_on`,
 )
 export class DomainsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
@@ -38,6 +44,20 @@ export class DomainsEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
+  @Column({ name: "ends_on", type: "date", nullable: true })
+  endsOn?: Date | null;
+
+  @Column({
+    name: "from_to_precision",
+    type: "enum",
+    enum: DatePrecision,
+    nullable: true,
+  })
+  fromToPrecision?: DatePrecision | null;
+
+  @Column({ name: "from_year", type: "integer", nullable: true })
+  fromYear?: Year | null;
+
   @Column({ name: "host", type: "varchar", length: 255 })
   host!: NonEmptyString255;
 
@@ -48,14 +68,14 @@ export class DomainsEntity {
   @JoinColumn({ name: "source_id" })
   source?: Relation<SourcesEntity>;
 
+  @Column({ name: "starts_on", type: "date", nullable: true })
+  startsOn?: Date | null;
+
+  @Column({ name: "to_year", type: "integer", nullable: true })
+  toYear?: Year | null;
+
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

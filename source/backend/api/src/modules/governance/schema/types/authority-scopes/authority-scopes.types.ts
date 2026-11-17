@@ -42,8 +42,6 @@ export interface IAuthorityScopes extends B.IBase {
   officeId: string | null;
   sourceCitationId: string | null;
   unitFeatureId: string;
-  validFrom: Date | null;
-  validUntil: Date | null;
   readonly authorityKind?: ValueTypes.IValue;
   readonly country?: CountryTypes.ICountry;
   readonly institution?: InstitutionsTypes.IInstitutions;

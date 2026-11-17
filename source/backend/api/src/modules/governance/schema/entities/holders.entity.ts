@@ -13,21 +13,27 @@ import { EntitiesEntity } from "#/modules/official/schema/entities/entities.enti
 import { IndividualsEntity } from "#/modules/official/schema/entities/individuals.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * One person's continuous tenure in one office, with appointment kind and effective dates.
  */
 @Entity({ schema: "governance", name: "holders" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
-@Index(["officeId", "validFrom", "validUntil"])
+@Index(["officeId", "fromYear", "toYear"])
 @Index(["individualId"])
 @Index(["sourceCitationId"])
 @Check(
-  "chk_holders_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+  "chk_holders_period_years_are_ordered",
+  `from_year = null OR to_year = null OR from_year <= to_year`,
+)
+@Check(
+  "chk_holders_holders_dates_are_ordered",
+  `took_office_on = null OR left_office_on = null OR took_office_on <= left_office_on`,
 )
 export class HoldersEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
@@ -56,12 +62,26 @@ export class HoldersEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
+  @Column({
+    name: "from_to_precision",
+    type: "enum",
+    enum: DatePrecision,
+    nullable: true,
+  })
+  fromToPrecision?: DatePrecision | null;
+
+  @Column({ name: "from_year", type: "integer", nullable: true })
+  fromYear?: Year | null;
+
   @Column({ name: "individual_id", type: "uuid" })
   individualId!: Id;
 
   @ManyToOne(() => IndividualsEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "individual_id" })
   individual?: Relation<IndividualsEntity>;
+
+  @Column({ name: "left_office_on", type: "date", nullable: true })
+  leftOfficeOn?: Date | null;
 
   @Column({ name: "office_id", type: "uuid" })
   officeId!: Id;
@@ -77,14 +97,14 @@ export class HoldersEntity {
   @JoinColumn({ name: "source_citation_id" })
   sourceCitation?: Relation<CitationsEntity>;
 
+  @Column({ name: "to_year", type: "integer", nullable: true })
+  toYear?: Year | null;
+
+  @Column({ name: "took_office_on", type: "date", nullable: true })
+  tookOfficeOn?: Date | null;
+
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

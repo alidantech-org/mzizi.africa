@@ -2,7 +2,7 @@
 code: sys.col.global.politics
 describe: Columns of parties, memberships and elections.
 columns:
-  politics.parties.valid_from:
+  politics.parties.registered_on:
     means: When the party status starts
     shape: date
     terms:
@@ -12,7 +12,7 @@ columns:
     - list: sys.trm.global.dates
       key: date-effective
       role: heading
-  politics.memberships.valid_from:
+  politics.memberships.joined_on:
     means: When a membership starts
     shape: date
     terms:
@@ -22,7 +22,7 @@ columns:
     - list: sys.trm.global.dates
       key: date-appointed
       role: heading
-  politics.memberships.valid_until:
+  politics.memberships.left_on:
     means: When a membership ends
     shape: date
     terms:

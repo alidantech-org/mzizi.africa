@@ -8,24 +8,21 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { ValueRelationKind } from "#/modules/reference/schema/enum/value-relation-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 
 /**
- * A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind.
+ * A directed, typed, relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind.
  */
 @Entity({ schema: "reference", name: "value_relations" })
 @Index(["sourceValueId", "targetValueId", "relationKind"], { unique: true })
-@Index(["sourceValueId", "relationKind", "validFrom"])
+@Index(["sourceValueId", "relationKind"])
 @Index(["targetValueId", "relationKind"])
 @Check(
   "chk_value_relation_value_relation_must_not_be_self_referential",
   `source_value_id <> target_value_id`,
-)
-@Check(
-  "chk_value_relation_value_relation_window_must_be_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
 )
 export class ValueRelationEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
@@ -53,10 +50,4 @@ export class ValueRelationEntity {
   @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "target_value_id" })
   targetValue?: Relation<ValueEntity>;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
 }

@@ -614,35 +614,18 @@ CREATE TABLE "geography"."classifications" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "feature_id" uuid NOT NULL,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_from_earliest" date,
-    "valid_from_latest" date,
-    "valid_until" date,
-    "valid_until_earliest" date,
-    "valid_until_latest" date,
     "value_id" uuid NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_classifications_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_classifications_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
-    CONSTRAINT "chk_classifications_start_bounds_are_ordered" CHECK (
-        (
-            ("valid_from_earliest" IS NULL)
-            OR ("valid_from_latest" IS NULL)
-            OR ("valid_from_earliest" < "valid_from_latest")
-        )
-    ),
-    CONSTRAINT "chk_classifications_end_bounds_are_ordered" CHECK (
-        (
-            ("valid_until_earliest" IS NULL)
-            OR ("valid_until_latest" IS NULL)
-            OR ("valid_until_earliest" < "valid_until_latest")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
         )
     ),
     PRIMARY KEY ("id")
@@ -652,35 +635,27 @@ CREATE TABLE "geography"."features" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "ended_on" date,
+    "established_on" date,
     "feature_type_id" uuid NOT NULL,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_from_earliest" date,
-    "valid_from_latest" date,
-    "valid_until" date,
-    "valid_until_earliest" date,
-    "valid_until_latest" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_features_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_features_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
         )
     ),
-    CONSTRAINT "chk_features_start_bounds_are_ordered" CHECK (
+    CONSTRAINT "chk_features_features_dates_are_ordered" CHECK (
         (
-            ("valid_from_earliest" IS NULL)
-            OR ("valid_from_latest" IS NULL)
-            OR ("valid_from_earliest" < "valid_from_latest")
-        )
-    ),
-    CONSTRAINT "chk_features_end_bounds_are_ordered" CHECK (
-        (
-            ("valid_until_earliest" IS NULL)
-            OR ("valid_until_latest" IS NULL)
-            OR ("valid_until_earliest" < "valid_until_latest")
+            ("established_on" IS NULL)
+            OR ("ended_on" IS NULL)
+            OR ("established_on" <= "ended_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -695,6 +670,8 @@ CREATE TABLE "geography"."geometries" (
     "deleted_at" timestamptz,
     "envelope" geometry (geometry, 4326) NOT NULL GENERATED ALWAYS AS (ST_Envelope ("geometry")) STORED,
     "feature_id" uuid NOT NULL,
+    "from_to_precision" text,
+    "from_year" integer,
     "geometry" geometry (geometry, 4326) NOT NULL,
     "geometry_role_id" uuid NOT NULL,
     "id" uuid NOT NULL,
@@ -704,33 +681,14 @@ CREATE TABLE "geography"."geometries" (
     "revision" integer NOT NULL,
     "srid" integer NOT NULL,
     "supersedes_id" uuid,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_from_earliest" date,
-    "valid_from_latest" date,
-    "valid_until" date,
-    "valid_until_earliest" date,
-    "valid_until_latest" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_geometries_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_geometries_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
-    CONSTRAINT "chk_geometries_start_bounds_are_ordered" CHECK (
-        (
-            ("valid_from_earliest" IS NULL)
-            OR ("valid_from_latest" IS NULL)
-            OR ("valid_from_earliest" < "valid_from_latest")
-        )
-    ),
-    CONSTRAINT "chk_geometries_end_bounds_are_ordered" CHECK (
-        (
-            ("valid_until_earliest" IS NULL)
-            OR ("valid_until_latest" IS NULL)
-            OR ("valid_until_earliest" < "valid_until_latest")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
         )
     ),
     CONSTRAINT "chk_geometries_zoom_range_must_be_ordered" CHECK (
@@ -767,54 +725,37 @@ CREATE TABLE "geography"."names" (
     "name" varchar(300) NOT NULL,
     "name_kind_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_names_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "geography"."relationships" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "ends_on" date,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "object_feature_id" uuid NOT NULL,
     "relationship_kind_id" uuid NOT NULL,
+    "starts_on" date,
     "subject_feature_id" uuid NOT NULL,
     "system_id" uuid NOT NULL,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_from_earliest" date,
-    "valid_from_latest" date,
-    "valid_until" date,
-    "valid_until_earliest" date,
-    "valid_until_latest" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_relationships_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
         )
     ),
-    CONSTRAINT "chk_relationships_start_bounds_are_ordered" CHECK (
+    CONSTRAINT "chk_relationships_relationships_dates_are_ordered" CHECK (
         (
-            ("valid_from_earliest" IS NULL)
-            OR ("valid_from_latest" IS NULL)
-            OR ("valid_from_earliest" < "valid_from_latest")
-        )
-    ),
-    CONSTRAINT "chk_relationships_end_bounds_are_ordered" CHECK (
-        (
-            ("valid_until_earliest" IS NULL)
-            OR ("valid_until_latest" IS NULL)
-            OR ("valid_until_earliest" < "valid_until_latest")
+            ("starts_on" IS NULL)
+            OR ("ends_on" IS NULL)
+            OR ("starts_on" <= "ends_on")
         )
     ),
     CONSTRAINT "chk_relationships_relationship_must_not_be_self_referential" CHECK (("subject_feature_id" <> "object_feature_id")),
@@ -832,16 +773,7 @@ CREATE TABLE "governance"."authority_scopes" (
     "source_citation_id" uuid,
     "unit_feature_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_authority_scopes_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     PRIMARY KEY ("id")
 );
 
@@ -851,19 +783,29 @@ CREATE TABLE "governance"."holders" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "individual_id" uuid NOT NULL,
+    "left_office_on" date,
     "office_id" uuid NOT NULL,
     "source_citation_id" uuid,
+    "to_year" integer,
+    "took_office_on" date,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_holders_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_holders_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_holders_holders_dates_are_ordered" CHECK (
+        (
+            ("took_office_on" IS NULL)
+            OR ("left_office_on" IS NULL)
+            OR ("took_office_on" <= "left_office_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -873,19 +815,29 @@ CREATE TABLE "governance"."institutions" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "dissolved_on" date,
     "entity_id" uuid NOT NULL,
+    "established_on" date,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "institution_kind_id" uuid NOT NULL,
     "source_citation_id" uuid,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_institutions_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_institutions_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_institutions_institutions_dates_are_ordered" CHECK (
+        (
+            ("established_on" IS NULL)
+            OR ("dissolved_on" IS NULL)
+            OR ("established_on" <= "dissolved_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -895,43 +847,63 @@ CREATE TABLE "governance"."mandates" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "description" varchar(4000) NOT NULL,
+    "ends_on" date,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "institution_id" uuid,
     "mandate_kind_id" uuid NOT NULL,
     "office_id" uuid,
     "source_citation_id" uuid,
+    "starts_on" date,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_mandates_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_mandates_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_mandates_mandates_dates_are_ordered" CHECK (
+        (
+            ("starts_on" IS NULL)
+            OR ("ends_on" IS NULL)
+            OR ("starts_on" <= "ends_on")
         )
     ),
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "governance"."offices" (
+    "abolished_on" date,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
+    "created_on" date,
     "deleted_at" timestamptz,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "institution_id" uuid NOT NULL,
     "office_kind_id" uuid NOT NULL,
     "source_citation_id" uuid,
+    "to_year" integer,
     "unit_feature_id" uuid,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_offices_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_offices_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_offices_offices_dates_are_ordered" CHECK (
+        (
+            ("created_on" IS NULL)
+            OR ("abolished_on" IS NULL)
+            OR ("created_on" <= "abolished_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -946,16 +918,7 @@ CREATE TABLE "governance"."relationships" (
     "source_citation_id" uuid,
     "subject_institution_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     CONSTRAINT "chk_relationships_relationship_is_not_self_referential" CHECK (
         (
             "subject_institution_id" <> "object_institution_id"
@@ -987,23 +950,33 @@ CREATE TABLE "legal"."effects" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "effective_on" date,
+    "ended_on" date,
     "explanation" varchar(4000),
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "kind_id" uuid NOT NULL,
     "observed_at" timestamptz NOT NULL,
     "review_status" text NOT NULL,
     "subject_id" uuid NOT NULL,
     "subject_table" text NOT NULL,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
     "wording_id" uuid NOT NULL,
-    CONSTRAINT "chk_effects_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_effects_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_effects_effects_dates_are_ordered" CHECK (
+        (
+            ("effective_on" IS NULL)
+            OR ("ended_on" IS NULL)
+            OR ("effective_on" <= "ended_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -1036,16 +1009,7 @@ CREATE TABLE "legal"."names" (
     "language_id" uuid NOT NULL,
     "name" varchar(300) NOT NULL,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_names_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     PRIMARY KEY ("id")
 );
 
@@ -1178,22 +1142,32 @@ CREATE TABLE "legal"."wordings" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "edition_id" uuid NOT NULL,
-    "effective_from" date,
-    "effective_until" date,
+    "ends_on" date,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "instrument_id" uuid NOT NULL,
     "language_id" uuid NOT NULL,
     "observed_at" timestamptz NOT NULL,
     "provision_id" uuid NOT NULL,
+    "starts_on" date,
     "supersedes_id" uuid,
     "text" text NOT NULL,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_wordings_effective_window_is_ordered" CHECK (
+    CONSTRAINT "chk_wordings_period_years_are_ordered" CHECK (
         (
-            ("effective_from" IS NULL)
-            OR ("effective_until" IS NULL)
-            OR ("effective_from" < "effective_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_wordings_wordings_dates_are_ordered" CHECK (
+        (
+            ("starts_on" IS NULL)
+            OR ("ends_on" IS NULL)
+            OR ("starts_on" <= "ends_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -1210,17 +1184,8 @@ CREATE TABLE "official"."branding" (
     "language_id" uuid NOT NULL,
     "source_citation_id" uuid,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "value" varchar(1000),
     "version" integer NOT NULL,
-    CONSTRAINT "chk_branding_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     CONSTRAINT "chk_branding_has_exactly_one_identity_owner" CHECK (
         (
             (
@@ -1246,18 +1211,9 @@ CREATE TABLE "official"."contacts" (
     "kind_id" uuid NOT NULL,
     "source_citation_id" uuid,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "value" varchar(1000) NOT NULL,
     "version" integer NOT NULL,
     "visibility_id" uuid NOT NULL,
-    CONSTRAINT "chk_contacts_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     CONSTRAINT "chk_contacts_has_exactly_one_identity_owner" CHECK (
         (
             (
@@ -1306,17 +1262,8 @@ CREATE TABLE "official"."identifiers" (
     "scheme_id" uuid NOT NULL,
     "source_citation_id" uuid,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "value" varchar(1000) NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_identifiers_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     CONSTRAINT "chk_identifiers_has_exactly_one_identity_owner" CHECK (
         (
             (
@@ -1357,16 +1304,7 @@ CREATE TABLE "official"."names" (
     "name_kind_id" uuid NOT NULL,
     "source_citation_id" uuid,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_names_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     CONSTRAINT "chk_names_has_exactly_one_identity_owner" CHECK (
         (
             (
@@ -1386,23 +1324,33 @@ CREATE TABLE "official"."relationships" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "ends_on" date,
     "from_entity_id" uuid,
     "from_individual_id" uuid,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "kind_id" uuid NOT NULL,
     "share_percentage" double precision,
     "source_citation_id" uuid,
+    "starts_on" date,
     "to_entity_id" uuid,
     "to_individual_id" uuid,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_relationships_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_relationships_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_relationships_relationships_dates_are_ordered" CHECK (
+        (
+            ("starts_on" IS NULL)
+            OR ("ends_on" IS NULL)
+            OR ("starts_on" <= "ends_on")
         )
     ),
     CONSTRAINT "chk_relationships_has_exactly_one_from_identity" CHECK (
@@ -1444,18 +1392,19 @@ CREATE TABLE "politics"."alignments" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "party_id" uuid NOT NULL,
     "source_citation_id" uuid,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_alignments_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_alignments_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
         )
     ),
     PRIMARY KEY ("id")
@@ -1482,18 +1431,28 @@ CREATE TABLE "politics"."coalitions" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "dissolved_on" date,
+    "formed_on" date,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "name" varchar(300) NOT NULL,
     "source_citation_id" uuid,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_coalitions_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_coalitions_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_coalitions_coalitions_dates_are_ordered" CHECK (
+        (
+            ("formed_on" IS NULL)
+            OR ("dissolved_on" IS NULL)
+            OR ("formed_on" <= "dissolved_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -1580,20 +1539,30 @@ CREATE TABLE "politics"."memberships" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "individual_id" uuid NOT NULL,
+    "joined_on" date,
+    "left_on" date,
     "membership_kind_id" uuid NOT NULL,
     "party_id" uuid NOT NULL,
     "source_citation_id" uuid,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_memberships_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_memberships_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_memberships_memberships_dates_are_ordered" CHECK (
+        (
+            ("joined_on" IS NULL)
+            OR ("left_on" IS NULL)
+            OR ("joined_on" <= "left_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -1617,19 +1586,29 @@ CREATE TABLE "politics"."parties" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "deregistered_on" date,
     "entity_id" uuid NOT NULL,
+    "from_to_precision" text,
+    "from_year" integer,
     "id" uuid NOT NULL,
     "party_kind_id" uuid NOT NULL,
+    "registered_on" date,
     "source_citation_id" uuid,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_parties_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_parties_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_parties_parties_dates_are_ordered" CHECK (
+        (
+            ("registered_on" IS NULL)
+            OR ("deregistered_on" IS NULL)
+            OR ("registered_on" <= "deregistered_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -1716,16 +1695,7 @@ CREATE TABLE "reference"."language_names" (
     "name" varchar(300) NOT NULL,
     "name_kind" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_language_names_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     PRIMARY KEY ("id")
 );
 
@@ -1805,17 +1775,8 @@ CREATE TABLE "reference"."value_labels" (
     "label_kind" text NOT NULL,
     "language_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "value_id" uuid NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_value_labels_validity_window_is_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     PRIMARY KEY ("id")
 );
 
@@ -1826,16 +1787,7 @@ CREATE TABLE "reference"."value_relations" (
     "relation_kind" text NOT NULL,
     "source_value_id" uuid NOT NULL,
     "target_value_id" uuid NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     CONSTRAINT "chk_value_relations_value_relation_must_not_be_self_referential" CHECK (("source_value_id" <> "target_value_id")),
-    CONSTRAINT "chk_value_relations_value_relation_window_must_be_ordered" CHECK (
-        (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
-        )
-    ),
     PRIMARY KEY ("id")
 );
 
@@ -1967,18 +1919,28 @@ CREATE TABLE "source"."domains" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "ends_on" date,
+    "from_to_precision" text,
+    "from_year" integer,
     "host" varchar(255) NOT NULL,
     "id" uuid NOT NULL,
     "source_id" uuid NOT NULL,
+    "starts_on" date,
+    "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "valid_from" date,
-    "valid_until" date,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_domains_validity_window_is_ordered" CHECK (
+    CONSTRAINT "chk_domains_period_years_are_ordered" CHECK (
         (
-            ("valid_from" IS NULL)
-            OR ("valid_until" IS NULL)
-            OR ("valid_from" < "valid_until")
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_domains_domains_dates_are_ordered" CHECK (
+        (
+            ("starts_on" IS NULL)
+            OR ("ends_on" IS NULL)
+            OR ("starts_on" <= "ends_on")
         )
     ),
     PRIMARY KEY ("id")
@@ -2874,7 +2836,7 @@ ADD CONSTRAINT "fk_classifications_feature_id" FOREIGN KEY ("feature_id") REFERE
 ALTER TABLE "geography"."classifications"
 ADD CONSTRAINT "fk_classifications_value_id" FOREIGN KEY ("value_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_classifications__feature_id_value_id_valid_from" ON "geography"."classifications" USING btree ("feature_id", "value_id", "valid_from");
+CREATE UNIQUE INDEX "uq_classifications__feature_id_value_id_from_year" ON "geography"."classifications" USING btree ("feature_id", "value_id", "from_year");
 
 CREATE INDEX "ix_classifications__feature_id" ON "geography"."classifications" USING btree ("feature_id");
 
@@ -2889,7 +2851,7 @@ WHERE
 
 CREATE INDEX "ix_features__feature_type_id" ON "geography"."features" USING btree ("feature_type_id");
 
-CREATE INDEX "ix_features__valid_from_valid_until" ON "geography"."features" USING btree ("valid_from", "valid_until");
+CREATE INDEX "ix_features__from_year_to_year" ON "geography"."features" USING btree ("from_year", "to_year");
 
 ALTER TABLE "geography"."geometries"
 ADD CONSTRAINT "fk_geometries_basis_id" FOREIGN KEY ("basis_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -2907,11 +2869,11 @@ CREATE UNIQUE INDEX "uq_geometries__feature_id_geometry_role_id_revision" ON "ge
 
 CREATE UNIQUE INDEX "uq_geometries__feature_id_geometry_role_id_partial_2" ON "geography"."geometries" USING btree ("feature_id", "geometry_role_id")
 WHERE
-    ("valid_until" IS NULL);
+    ("to_year" IS NULL);
 
 CREATE INDEX "ix_geometries__feature_id_geometry_role_id" ON "geography"."geometries" USING btree ("feature_id", "geometry_role_id");
 
-CREATE INDEX "ix_geometries__valid_from_valid_until" ON "geography"."geometries" USING btree ("valid_from", "valid_until");
+CREATE INDEX "ix_geometries__from_year_to_year" ON "geography"."geometries" USING btree ("from_year", "to_year");
 
 CREATE UNIQUE INDEX "uq_geometries__id_feature_id" ON "geography"."geometries" USING btree ("id", "feature_id");
 
@@ -2976,14 +2938,14 @@ CREATE UNIQUE INDEX "uq_relationships__subject_feature_id_object_feature_id_rela
     "object_feature_id",
     "relationship_kind_id",
     "system_id",
-    "valid_from"
+    "from_year"
 );
 
 CREATE INDEX "ix_relationships__subject_feature_id_relationship_kind_id" ON "geography"."relationships" USING btree ("subject_feature_id", "relationship_kind_id");
 
 CREATE INDEX "ix_relationships__object_feature_id_relationship_kind_id" ON "geography"."relationships" USING btree ("object_feature_id", "relationship_kind_id");
 
-CREATE INDEX "ix_relationships__valid_from_valid_until" ON "geography"."relationships" USING btree ("valid_from", "valid_until");
+CREATE INDEX "ix_relationships__from_year_to_year" ON "geography"."relationships" USING btree ("from_year", "to_year");
 
 ALTER TABLE "governance"."authority_scopes"
 ADD CONSTRAINT "fk_authority_scopes_authority_kind_id" FOREIGN KEY ("authority_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3007,15 +2969,14 @@ CREATE UNIQUE INDEX "uq_authority_scopes__institution_id_office_id_authority_kin
     "institution_id",
     "office_id",
     "authority_kind_id",
-    "unit_feature_id",
-    "valid_from"
+    "unit_feature_id"
 );
 
 CREATE INDEX "ix_authority_scopes__institution_id" ON "governance"."authority_scopes" USING btree ("institution_id");
 
 CREATE INDEX "ix_authority_scopes__office_id" ON "governance"."authority_scopes" USING btree ("office_id");
 
-CREATE INDEX "ix_authority_scopes__unit_feature_id_valid_from_valid_until" ON "governance"."authority_scopes" USING btree ("unit_feature_id", "valid_from", "valid_until");
+CREATE INDEX "ix_authority_scopes__unit_feature_id" ON "governance"."authority_scopes" USING btree ("unit_feature_id");
 
 CREATE INDEX "ix_authority_scopes__country_id" ON "governance"."authority_scopes" USING btree ("country_id");
 
@@ -3040,7 +3001,7 @@ CREATE UNIQUE INDEX "uq_holders__code_partial_1" ON "governance"."holders" USING
 WHERE
     ("deleted_at" IS NULL);
 
-CREATE INDEX "ix_holders__office_id_valid_from_valid_until" ON "governance"."holders" USING btree ("office_id", "valid_from", "valid_until");
+CREATE INDEX "ix_holders__office_id_from_year_to_year" ON "governance"."holders" USING btree ("office_id", "from_year", "to_year");
 
 CREATE INDEX "ix_holders__individual_id" ON "governance"."holders" USING btree ("individual_id");
 
@@ -3123,8 +3084,7 @@ ADD CONSTRAINT "fk_relationships_subject_institution_id" FOREIGN KEY ("subject_i
 CREATE UNIQUE INDEX "uq_relationships__subject_institution_id_object_institution_id_" ON "governance"."relationships" USING btree (
     "subject_institution_id",
     "object_institution_id",
-    "relationship_kind_id",
-    "valid_from"
+    "relationship_kind_id"
 );
 
 CREATE INDEX "ix_relationships__subject_institution_id_relationship_kind_id" ON "governance"."relationships" USING btree ("subject_institution_id", "relationship_kind_id");
@@ -3178,12 +3138,12 @@ CREATE UNIQUE INDEX "uq_effects__code_partial_1" ON "legal"."effects" USING btre
 WHERE
     ("deleted_at" IS NULL);
 
-CREATE UNIQUE INDEX "uq_effects__wording_id_subject_table_subject_id_kind_id_valid_f" ON "legal"."effects" USING btree (
+CREATE UNIQUE INDEX "uq_effects__wording_id_subject_table_subject_id_kind_id_from_ye" ON "legal"."effects" USING btree (
     "wording_id",
     "subject_table",
     "subject_id",
     "kind_id",
-    "valid_from"
+    "from_year"
 );
 
 CREATE INDEX "ix_effects__subject_table_subject_id" ON "legal"."effects" USING btree ("subject_table", "subject_id");
@@ -3231,10 +3191,7 @@ CREATE UNIQUE INDEX "uq_names__instrument_id_language_id_kind_id_name" ON "legal
 
 CREATE UNIQUE INDEX "uq_names__instrument_id_language_id_partial_3" ON "legal"."names" USING btree ("instrument_id", "language_id")
 WHERE
-    (
-        ("is_preferred" = TRUE)
-        AND ("valid_until" IS NULL)
-    );
+    ("is_preferred" = TRUE);
 
 CREATE INDEX "ix_names__instrument_id" ON "legal"."names" USING btree ("instrument_id");
 
@@ -3636,9 +3593,9 @@ CREATE UNIQUE INDEX "uq_alignments__code_partial_1" ON "politics"."alignments" U
 WHERE
     ("deleted_at" IS NULL);
 
-CREATE INDEX "ix_alignments__coalition_id_valid_from" ON "politics"."alignments" USING btree ("coalition_id", "valid_from");
+CREATE INDEX "ix_alignments__coalition_id_from_year" ON "politics"."alignments" USING btree ("coalition_id", "from_year");
 
-CREATE INDEX "ix_alignments__party_id_valid_from" ON "politics"."alignments" USING btree ("party_id", "valid_from");
+CREATE INDEX "ix_alignments__party_id_from_year" ON "politics"."alignments" USING btree ("party_id", "from_year");
 
 CREATE INDEX "ix_alignments__source_citation_id" ON "politics"."alignments" USING btree ("source_citation_id");
 
@@ -3794,9 +3751,9 @@ CREATE UNIQUE INDEX "uq_memberships__code_partial_1" ON "politics"."memberships"
 WHERE
     ("deleted_at" IS NULL);
 
-CREATE INDEX "ix_memberships__party_id_valid_from" ON "politics"."memberships" USING btree ("party_id", "valid_from");
+CREATE INDEX "ix_memberships__party_id_from_year" ON "politics"."memberships" USING btree ("party_id", "from_year");
 
-CREATE INDEX "ix_memberships__individual_id_valid_from" ON "politics"."memberships" USING btree ("individual_id", "valid_from");
+CREATE INDEX "ix_memberships__individual_id_from_year" ON "politics"."memberships" USING btree ("individual_id", "from_year");
 
 CREATE INDEX "ix_memberships__source_citation_id" ON "politics"."memberships" USING btree ("source_citation_id");
 
@@ -4131,7 +4088,7 @@ CREATE UNIQUE INDEX "uq_value_relations__source_value_id_target_value_id_relatio
     "relation_kind"
 );
 
-CREATE INDEX "ix_value_relations__source_value_id_relation_kind_valid_from" ON "reference"."value_relations" USING btree ("source_value_id", "relation_kind", "valid_from");
+CREATE INDEX "ix_value_relations__source_value_id_relation_kind" ON "reference"."value_relations" USING btree ("source_value_id", "relation_kind");
 
 CREATE INDEX "ix_value_relations__target_value_id_relation_kind" ON "reference"."value_relations" USING btree ("target_value_id", "relation_kind");
 
@@ -4664,7 +4621,7 @@ SELECT
 FROM
     "geography"."geometries"
 WHERE
-    "valid_until" IS NULL;
+    "to_year" IS NULL;
 
 CREATE FUNCTION "geography"."scheme_identifiers_identifier_scheme_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN

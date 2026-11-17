@@ -90,7 +90,7 @@ const geometries = geography.schemas({
     maxZoom: dryv.field(p.NonNegativeInteger).maybe(),
     geometry: dryv.field(drawing),
     centroid: dryv.field(dryv.geometry({ shape: "point", srid: 4326 })),
-    validFrom: dryv.field(p.Instant),
+    fromYear: dryv.field(p.Integer).maybe(),
     observedAt: dryv.field(p.Instant).maybe(),
   }),
 });
@@ -110,8 +110,9 @@ const { ScanFeatures, FindFeature } = places.queries({
       featureId: row.fields.id,
       code: row.fields.code,
       featureTypeId: row.fields.featureTypeId,
-      validFrom: row.fields.validFrom,
-      validUntil: row.fields.validUntil,
+      fromYear: row.fields.fromYear,
+      toYear: row.fields.toYear,
+      fromToPrecision: row.fields.fromToPrecision,
       names: row.reverse(name.fields.featureId, name).select(
         (n) => ({ name: n.fields.name, languageId: n.fields.languageId }),
         (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
@@ -128,8 +129,9 @@ const { ScanFeatures, FindFeature } = places.queries({
       featureId: row.fields.id,
       code: row.fields.code,
       featureTypeId: row.fields.featureTypeId,
-      validFrom: row.fields.validFrom,
-      validUntil: row.fields.validUntil,
+      fromYear: row.fields.fromYear,
+      toYear: row.fields.toYear,
+      fromToPrecision: row.fields.fromToPrecision,
       names: row.reverse(name.fields.featureId, name).select(
         (n) => ({ name: n.fields.name, languageId: n.fields.languageId }),
         (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],

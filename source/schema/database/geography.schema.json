@@ -280,10 +280,10 @@
       "x-code": "sys.tbl.geography.classifications",
       "x-id": "#/schemas/geography.Classifications",
       "x-table": "geography.classifications",
-      "x-primaryKey": ["id"],"x-naturalKey": ["feature_code", "value_code", "valid_from"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["feature_code", "value_code", "from_year"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["feature_id", "value_id", "valid_from"]
+        ["feature_id", "value_id", "from_year"]
       ],
       "required": [
         "feature_id"
@@ -300,12 +300,9 @@
         ],
         "columns": [
           "feature_code"
-          ,"valid_from"
-          ,"valid_from_earliest"
-          ,"valid_from_latest"
-          ,"valid_until"
-          ,"valid_until_earliest"
-          ,"valid_until_latest"
+          ,"from_to_precision"
+          ,"from_year"
+          ,"to_year"
           ,"value_code"
         ],
         "required": [
@@ -335,6 +332,17 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "key"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -342,48 +350,17 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "key"
-        }
-        ,"valid_from_earliest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_from_latest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until_earliest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until_latest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"value_id": {
           "type": "string",
@@ -427,13 +404,12 @@
         ],
         "columns": [
           "code"
+          ,"ended_on"
+          ,"established_on"
           ,"feature_type_code"
-          ,"valid_from"
-          ,"valid_from_earliest"
-          ,"valid_from_latest"
-          ,"valid_until"
-          ,"valid_until_earliest"
-          ,"valid_until_latest"
+          ,"from_to_precision"
+          ,"from_year"
+          ,"to_year"
         ],
         "required": [
           "code"
@@ -463,12 +439,35 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"ended_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"established_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"feature_type_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "feature_type_code", "scheme": "ref.sch.geo.feature.kind" }
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"id": {
           "type": "string",
@@ -477,48 +476,17 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_from_earliest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_from_latest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until_earliest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until_latest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -565,6 +533,8 @@
           "basis_code"
           ,"confidence"
           ,"feature_code"
+          ,"from_to_precision"
+          ,"from_year"
           ,"geometry"
           ,"geometry_role_code"
           ,"max_zoom"
@@ -573,12 +543,7 @@
           ,"revision"
           ,"srid"
           ,"supersedes_code"
-          ,"valid_from"
-          ,"valid_from_earliest"
-          ,"valid_from_latest"
-          ,"valid_until"
-          ,"valid_until_earliest"
-          ,"valid_until_latest"
+          ,"to_year"
         ],
         "required": [
           "basis_code"
@@ -641,6 +606,17 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"geometry": {
           "type": "object",
           "x-type": "geometry",
@@ -693,48 +669,17 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/geography.Geometries", "column": "id", "alias": "supersedes_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_from_earliest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_from_latest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until_earliest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until_latest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -881,8 +826,6 @@
           ,"language_code"
           ,"name"
           ,"name_kind_code"
-          ,"valid_from"
-          ,"valid_until"
         ],
         "required": [
           "feature_code"
@@ -954,18 +897,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
         ,"version": {
           "type": "integer",
           "x-type": "integer",
@@ -981,10 +912,10 @@
       "x-code": "sys.tbl.geography.relationships",
       "x-id": "#/schemas/geography.Relationships",
       "x-table": "geography.relationships",
-      "x-primaryKey": ["id"],"x-naturalKey": ["subject_feature_code", "object_feature_code", "relationship_kind_code", "system_code", "valid_from"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["subject_feature_code", "object_feature_code", "relationship_kind_code", "system_code", "from_year"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["subject_feature_id", "object_feature_id", "relationship_kind_id", "system_id", "valid_from"]
+        ["subject_feature_id", "object_feature_id", "relationship_kind_id", "system_id", "from_year"]
       ],
       "required": [
         "id"
@@ -1002,16 +933,15 @@
           ,"version"
         ],
         "columns": [
-          "object_feature_code"
+          "ends_on"
+          ,"from_to_precision"
+          ,"from_year"
+          ,"object_feature_code"
           ,"relationship_kind_code"
+          ,"starts_on"
           ,"subject_feature_code"
           ,"system_code"
-          ,"valid_from"
-          ,"valid_from_earliest"
-          ,"valid_from_latest"
-          ,"valid_until"
-          ,"valid_until_earliest"
-          ,"valid_until_latest"
+          ,"to_year"
         ],
         "required": [
           "object_feature_code"
@@ -1035,6 +965,23 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"ends_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "key"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -1056,6 +1003,12 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code", "scheme": "ref.sch.geo.relationship.kind" }
         }
+        ,"starts_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"subject_feature_id": {
           "type": "string",
           "x-type": "uuid",
@@ -1070,48 +1023,17 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "system_code", "scheme": "ref.sch.geo.relationship.system" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "key"
-        }
-        ,"valid_from_earliest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_from_latest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until_earliest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until_latest": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",

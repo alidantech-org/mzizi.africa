@@ -1,18 +1,22 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
+  Max,
   MaxLength,
   Min,
   ValidateIf,
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
@@ -31,6 +35,30 @@ export class MandatesDto {
   @IsString()
   @MaxLength(4000)
   description!: Description;
+
+  @IsOptional()
+  @ValidateIf((object) => object.endsOn !== null)
+  @IsISO8601({ strict: true })
+  endsOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromToPrecision !== null)
+  @IsEnum(DatePrecision)
+  fromToPrecision?: DatePrecision | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  @Satisfies<MandatesDto>(
+    (object) =>
+      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
+    {
+      message: "Period Years Are Ordered",
+    },
+  )
+  fromYear?: Year | null;
 
   @IsString()
   @IsUUID()
@@ -58,25 +86,27 @@ export class MandatesDto {
   @IsUUID()
   sourceCitationId?: Id | null;
 
-  @IsISO8601({})
-  updatedAt!: Instant;
-
   @IsOptional()
-  @ValidateIf((object) => object.validFrom !== null)
+  @ValidateIf((object) => object.startsOn !== null)
   @IsISO8601({ strict: true })
   @Satisfies<MandatesDto>(
     (object) =>
-      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+      object.startsOn == null || object.endsOn == null || object.startsOn <= object.endsOn,
     {
-      message: "Validity Window Is Ordered",
+      message: "Mandates Dates Are Ordered",
     },
   )
-  validFrom?: CalendarDate | null;
+  startsOn?: CalendarDate | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.validUntil !== null)
-  @IsISO8601({ strict: true })
-  validUntil?: CalendarDate | null;
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
+
+  @IsISO8601({})
+  updatedAt!: Instant;
 
   @IsInt()
   @Min(1)

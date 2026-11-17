@@ -50,6 +50,8 @@ export const GEOMETRIES_SORTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "featureId",
+  "fromToPrecision",
+  "fromYear",
   "geometryRoleId",
   "id",
   "maxZoom",
@@ -58,13 +60,8 @@ export const GEOMETRIES_SORTABLE_FIELDS = [
   "revision",
   "srid",
   "supersedesId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly GeometriesKey[];
 
@@ -73,6 +70,7 @@ export const GEOMETRIES_SEARCHABLE_FIELDS = [] as const satisfies readonly Geome
 export const GEOMETRIES_FILTERABLE_FIELDS = [
   "basisId",
   "featureId",
+  "fromToPrecision",
   "geometryRoleId",
   "id",
   "supersedesId",
@@ -83,12 +81,6 @@ export const GEOMETRIES_DATE_RANGE_FIELDS = [
   "deletedAt",
   "observedAt",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
 ] as const satisfies readonly GeometriesKey[];
 
 export const GEOMETRIES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IGeometries> = {
@@ -110,6 +102,8 @@ export const GEOMETRIES_SELECTABLE_FIELDS = [
   "deletedAt",
   "envelope",
   "featureId",
+  "fromToPrecision",
+  "fromYear",
   "geometry",
   "geometryRoleId",
   "id",
@@ -119,13 +113,8 @@ export const GEOMETRIES_SELECTABLE_FIELDS = [
   "revision",
   "srid",
   "supersedesId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly GeometriesKey[];
 
@@ -138,6 +127,8 @@ export const GEOMETRIES_DEFAULT_SELECT_FIELDS = [
   "deletedAt",
   "envelope",
   "featureId",
+  "fromToPrecision",
+  "fromYear",
   "geometry",
   "geometryRoleId",
   "id",
@@ -147,13 +138,8 @@ export const GEOMETRIES_DEFAULT_SELECT_FIELDS = [
   "revision",
   "srid",
   "supersedesId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly GeometriesSelectableField[];
 
@@ -168,6 +154,8 @@ export const GEOMETRIES_EDITABLE_FIELDS = [
   "confidence",
   "envelope",
   "featureId",
+  "fromToPrecision",
+  "fromYear",
   "geometry",
   "geometryRoleId",
   "maxZoom",
@@ -176,12 +164,7 @@ export const GEOMETRIES_EDITABLE_FIELDS = [
   "revision",
   "srid",
   "supersedesId",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
+  "toYear",
 ] as const satisfies readonly GeometriesKey[];
 
 // ----------------------------------

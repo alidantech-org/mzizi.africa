@@ -11,6 +11,7 @@ GeographyFeatureGeometry _$GeographyFeatureGeometryFromJson(Map<String, dynamic>
   centroid: json['centroid'],
   confidence: (json['confidence'] as num?)?.toDouble(),
   featureId: json['featureId'] as String,
+  fromYear: (json['fromYear'] as num?)?.toInt(),
   geometry: json['geometry'],
   geometryId: json['geometryId'] as String,
   geometryRoleId: json['geometryRoleId'] as String,
@@ -18,7 +19,6 @@ GeographyFeatureGeometry _$GeographyFeatureGeometryFromJson(Map<String, dynamic>
   minZoom: (json['minZoom'] as num?)?.toInt(),
   observedAt: json['observedAt'] == null ? null : DateTime.parse(json['observedAt'] as String),
   revision: (json['revision'] as num).toInt(),
-  validFrom: DateTime.parse(json['validFrom'] as String),
 );
 
 Map<String, dynamic> _$GeographyFeatureGeometryToJson(GeographyFeatureGeometry instance) => <String, dynamic>{
@@ -26,6 +26,7 @@ Map<String, dynamic> _$GeographyFeatureGeometryToJson(GeographyFeatureGeometry i
   'centroid': ?instance.centroid,
   'confidence': ?instance.confidence,
   'featureId': instance.featureId,
+  'fromYear': ?instance.fromYear,
   'geometry': ?instance.geometry,
   'geometryId': instance.geometryId,
   'geometryRoleId': instance.geometryRoleId,
@@ -33,5 +34,4 @@ Map<String, dynamic> _$GeographyFeatureGeometryToJson(GeographyFeatureGeometry i
   'minZoom': ?instance.minZoom,
   'observedAt': ?instance.observedAt?.toIso8601String(),
   'revision': instance.revision,
-  'validFrom': instance.validFrom.toIso8601String(),
 };

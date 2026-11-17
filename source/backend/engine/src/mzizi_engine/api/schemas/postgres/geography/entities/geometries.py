@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from typing import Annotated, ClassVar
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
 from mzizi_engine.jsonvalue import JsonValue
 
 
@@ -26,6 +27,8 @@ class GeometriesRow(BaseModel):
     deleted_at: datetime | None = None
     envelope: JsonValue
     feature_id: UUID
+    from_to_precision: DatePrecision | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     geometry: JsonValue
     geometry_role_id: UUID
     id: UUID
@@ -35,11 +38,6 @@ class GeometriesRow(BaseModel):
     revision: Annotated[int, Field(ge=1)]
     srid: Annotated[int, Field(ge=1)]
     supersedes_id: UUID | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
-    valid_from: date | None = None
-    valid_from_earliest: date | None = None
-    valid_from_latest: date | None = None
-    valid_until: date | None = None
-    valid_until_earliest: date | None = None
-    valid_until_latest: date | None = None
     version: Annotated[int, Field(ge=1)]

@@ -53,8 +53,6 @@ export const NAMES_SORTABLE_FIELDS = [
   "name",
   "nameKindId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly NamesKey[];
 
@@ -72,8 +70,6 @@ export const NAMES_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly NamesKey[];
 
 export const NAMES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<INames> = {
@@ -96,8 +92,6 @@ export const NAMES_SELECTABLE_FIELDS = [
   "name",
   "nameKindId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly NamesKey[];
 
@@ -111,8 +105,6 @@ export const NAMES_DEFAULT_SELECT_FIELDS = [
   "name",
   "nameKindId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly NamesSelectableField[];
 
@@ -126,8 +118,6 @@ export const NAMES_EDITABLE_FIELDS = [
   "languageId",
   "name",
   "nameKindId",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly NamesKey[];
 
 // ----------------------------------

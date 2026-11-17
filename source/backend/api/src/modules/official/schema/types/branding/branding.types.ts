@@ -41,8 +41,6 @@ export interface IBranding extends B.IBase {
   kindId: string;
   languageId: string;
   sourceCitationId: string | null;
-  validFrom: Date | null;
-  validUntil: Date | null;
   value: string | null;
   readonly entity?: EntitiesTypes.IEntities;
   readonly individual?: IndividualsTypes.IIndividuals;

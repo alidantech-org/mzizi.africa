@@ -1,6 +1,7 @@
 import * as dryv from "@dryvcode/author";
 
 import { shared, sharedProperties } from "./_shared.ts";
+import { periodFields } from "./_periods.ts";
 import { subjectFields, subjectSchemas } from "./_subjects.ts";
 
 /**
@@ -120,75 +121,32 @@ const CodedEntityBase = dryv
       .indexes({ fields: ["code"], unique: true, where: baseRules.LiveRecord }),
   });
 
-/** Entity that is valid over an optional period: both ends may be unknown, and an open end has no limit. */
-const ValidityEntityBase = dryv
-  .schema({
-    validFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
-    validUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
-  })
+/** Entity with a plain period: `fromYear`, `toYear` and one `fromToPrecision` for both. */
+const PeriodEntityBase = dryv
+  .schema({ ...periodFields })
   .extends(baseGroup.Entity)
   .abstract()
-  .description("Base for versioned records valid over an optional period.");
+  .description("Base for versioned records with a period of integer years and one precision for the pair.");
 
-const validityGroup = shared.schemas({ ValidityEntity: ValidityEntityBase });
-ValidityEntityBase.rule(shared, "ValidityWindowIsOrdered", dryv.rule.ordered("validFrom", "validUntil"));
+const periodGroup = shared.schemas({ PeriodEntity: PeriodEntityBase });
+PeriodEntityBase.rule(shared, "PeriodYearsAreOrdered", dryv.rule.ordered("fromYear", "toYear", { allowEqual: true }));
 
-/** Validity entity that also carries a stable, globally unique identity code. */
-const CodedValidityEntityBase = dryv
+/** Period entity that also carries a stable, globally unique identity code. */
+const CodedPeriodEntityBase = dryv
   .schema({
     /** Stable identity code: lowercase, dot-separated, repository-wide unique. */
     code: dryv.field(sharedProperties.IdentityCode),
   })
-  .extends(validityGroup.ValidityEntity)
+  .extends(periodGroup.PeriodEntity)
   .abstract()
-  .description("Base for versioned records with a unique identity code and an optional validity period.")
-  .facets({
-    storage: dryv.storage().unique("code").where(baseRules.LiveRecord),
-  });
-
-/**
- * Validity whose ends may be uncertain, for historical records: `validFrom`/`validUntil` are the best estimate and the
- * earliest/latest pairs bound it ("between 1400 and 1600"). Any of them may be unknown.
- */
-const HistoricalValidityEntityBase = dryv
-  .schema({
-    validFromEarliest: dryv.field(sharedProperties.CalendarDate).maybe(),
-    validFromLatest: dryv.field(sharedProperties.CalendarDate).maybe(),
-    validUntilEarliest: dryv.field(sharedProperties.CalendarDate).maybe(),
-    validUntilLatest: dryv.field(sharedProperties.CalendarDate).maybe(),
-  })
-  .extends(validityGroup.ValidityEntity)
-  .abstract()
-  .description("Base for versioned records valid over a period whose start and end may be uncertain.");
-HistoricalValidityEntityBase.rule(
-  shared,
-  "StartBoundsAreOrdered",
-  dryv.rule.ordered("validFromEarliest", "validFromLatest"),
-);
-HistoricalValidityEntityBase.rule(
-  shared,
-  "EndBoundsAreOrdered",
-  dryv.rule.ordered("validUntilEarliest", "validUntilLatest"),
-);
-
-const historicalGroup = shared.schemas({ HistoricalValidityEntity: HistoricalValidityEntityBase });
-
-/** Historical validity entity that also carries a stable, globally unique identity code. */
-const CodedHistoricalEntityBase = dryv
-  .schema({
-    code: dryv.field(sharedProperties.IdentityCode),
-  })
-  .extends(historicalGroup.HistoricalValidityEntity)
-  .abstract()
-  .description("Base for versioned records with a unique identity code and an uncertain validity period.")
+  .description("Base for versioned records with a unique identity code and a period of integer years.")
   .facets({
     storage: dryv.storage().unique("code").where(baseRules.LiveRecord),
   });
 
 const codedGroup = shared.schemas({
   CodedEntity: CodedEntityBase,
-  CodedValidityEntity: CodedValidityEntityBase,
-  CodedHistoricalEntity: CodedHistoricalEntityBase,
+  CodedPeriodEntity: CodedPeriodEntityBase,
 });
 
 /** Coded entity that concerns exactly one subject row (shared subjectTable and subjectId). */
@@ -198,16 +156,16 @@ const CodedSubjectEntityBase = dryv
   .abstract()
   .description("Base for versioned, coded records about one subject row.");
 
-/** Coded validity entity that concerns exactly one subject row. */
-const CodedValiditySubjectEntityBase = dryv
+/** Coded period entity that concerns exactly one subject row. */
+const CodedPeriodSubjectEntityBase = dryv
   .schema({ ...subjectFields })
-  .extends(codedGroup.CodedValidityEntity)
+  .extends(codedGroup.CodedPeriodEntity)
   .abstract()
-  .description("Base for versioned, coded records about one subject row, valid over an optional period.");
+  .description("Base for versioned, coded records about one subject row, with a period of integer years.");
 
 const subjectEntityGroup = shared.schemas({
   CodedSubjectEntity: CodedSubjectEntityBase,
-  CodedValiditySubjectEntity: CodedValiditySubjectEntityBase,
+  CodedPeriodSubjectEntity: CodedPeriodSubjectEntityBase,
 });
 
 export const baseSchemas = {
@@ -216,8 +174,7 @@ export const baseSchemas = {
   ...operationsGroup,
   ...operationsChildGroup,
   ...operationsLeafGroup,
-  ...validityGroup,
-  ...historicalGroup,
+  ...periodGroup,
   ...codedGroup,
   ...subjectEntityGroup,
 };

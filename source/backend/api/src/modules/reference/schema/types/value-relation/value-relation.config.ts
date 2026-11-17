@@ -47,8 +47,6 @@ export const VALUE_RELATION_SORTABLE_FIELDS = [
   "relationKind",
   "sourceValueId",
   "targetValueId",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly ValueRelationKey[];
 
 export const VALUE_RELATION_SEARCHABLE_FIELDS = [] as const satisfies readonly ValueRelationKey[];
@@ -63,8 +61,6 @@ export const VALUE_RELATION_FILTERABLE_FIELDS = [
 export const VALUE_RELATION_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly ValueRelationKey[];
 
 export const VALUE_RELATION_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IValueRelation> = {
@@ -84,8 +80,6 @@ export const VALUE_RELATION_SELECTABLE_FIELDS = [
   "relationKind",
   "sourceValueId",
   "targetValueId",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly ValueRelationKey[];
 
 export const VALUE_RELATION_DEFAULT_SELECT_FIELDS = [
@@ -95,8 +89,6 @@ export const VALUE_RELATION_DEFAULT_SELECT_FIELDS = [
   "relationKind",
   "sourceValueId",
   "targetValueId",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly ValueRelationSelectableField[];
 
 // ----------------------------------
@@ -107,8 +99,6 @@ export const VALUE_RELATION_EDITABLE_FIELDS = [
   "relationKind",
   "sourceValueId",
   "targetValueId",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly ValueRelationKey[];
 
 // ----------------------------------

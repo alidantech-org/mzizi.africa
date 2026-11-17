@@ -160,7 +160,7 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
-        ,["wording_id", "subject_table", "subject_id", "kind_id", "valid_from"]
+        ,["wording_id", "subject_table", "subject_id", "kind_id", "from_year"]
       ],
       "required": [
         "code"
@@ -182,14 +182,17 @@
         ],
         "columns": [
           "code"
+          ,"effective_on"
+          ,"ended_on"
           ,"explanation"
+          ,"from_to_precision"
+          ,"from_year"
           ,"kind_code"
           ,"observed_at"
           ,"review_status"
           ,"subject_id"
           ,"subject_table"
-          ,"valid_from"
-          ,"valid_until"
+          ,"to_year"
           ,"wording_code"
         ],
         "required": [
@@ -225,10 +228,33 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"effective_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"ended_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"explanation": {
           "type": ["string", "null"],
           "x-type": "text",
           "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
           "x-role": "data"
         }
         ,"id": {
@@ -269,24 +295,17 @@
           "enum": ["civic.bids", "civic.contracts", "civic.deliveries", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.names", "geography.relationships", "governance.authority_scopes", "governance.holders", "governance.institutions", "governance.mandates", "governance.offices", "governance.relationships", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.referendum_options", "politics.results", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.discoveries", "source.domains", "source.editions", "source.products", "source.publishers", "source.relationships", "source.sources", "source.verifications"],
           "x-role": "data"
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -464,8 +483,6 @@
           ,"kind_code"
           ,"language_code"
           ,"name"
-          ,"valid_from"
-          ,"valid_until"
         ],
         "required": [
           "code"
@@ -545,18 +562,6 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -1202,14 +1207,17 @@
           "citation_code"
           ,"code"
           ,"edition_code"
-          ,"effective_from"
-          ,"effective_until"
+          ,"ends_on"
+          ,"from_to_precision"
+          ,"from_year"
           ,"instrument_code"
           ,"language_code"
           ,"observed_at"
           ,"provision_code"
+          ,"starts_on"
           ,"supersedes_code"
           ,"text"
+          ,"to_year"
         ],
         "required": [
           "code"
@@ -1258,16 +1266,21 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Editions", "column": "id", "alias": "edition_code" }
         }
-        ,"effective_from": {
+        ,"ends_on": {
           "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
           "x-role": "data"
         }
-        ,"effective_until": {
+        ,"from_to_precision": {
           "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
           "x-role": "data"
         }
         ,"id": {
@@ -1304,6 +1317,12 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "provision_code" }
         }
+        ,"starts_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"supersedes_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
@@ -1315,6 +1334,11 @@
           "type": "string",
           "x-type": "text",
           "minLength": 1,
+          "x-role": "data"
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
           "x-role": "data"
         }
         ,"updated_at": {

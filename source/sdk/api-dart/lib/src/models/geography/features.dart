@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_historical_entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
 
 part 'features.g.dart';
 
@@ -11,29 +12,27 @@ class GeographyFeatures {
     required this.code,
     required this.createdAt,
     this.deletedAt,
+    this.endedOn,
+    this.establishedOn,
     required this.featureTypeId,
+    this.fromToPrecision,
+    this.fromYear,
     required this.id,
+    this.toYear,
     required this.updatedAt,
-    this.validFrom,
-    this.validFromEarliest,
-    this.validFromLatest,
-    this.validUntil,
-    this.validUntilEarliest,
-    this.validUntilLatest,
     required this.version,
   });
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
+  final DateTime? endedOn;
+  final DateTime? establishedOn;
   final String featureTypeId;
+  final SharedDatePrecision? fromToPrecision;
+  final int? fromYear;
   final String id;
+  final int? toYear;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validFromEarliest;
-  final DateTime? validFromLatest;
-  final DateTime? validUntil;
-  final DateTime? validUntilEarliest;
-  final DateTime? validUntilLatest;
   final int version;
 
   factory GeographyFeatures.fromJson(Map<String, dynamic> json) => _$GeographyFeaturesFromJson(json);

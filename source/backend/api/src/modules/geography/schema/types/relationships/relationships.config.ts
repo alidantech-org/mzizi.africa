@@ -46,24 +46,24 @@ export const RELATIONSHIPS_RELATION_KEYS = [
 export const RELATIONSHIPS_SORTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "objectFeatureId",
   "relationshipKindId",
+  "startsOn",
   "subjectFeatureId",
   "systemId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_SEARCHABLE_FIELDS = [] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_FILTERABLE_FIELDS = [
+  "fromToPrecision",
   "id",
   "objectFeatureId",
   "relationshipKindId",
@@ -74,13 +74,9 @@ export const RELATIONSHIPS_FILTERABLE_FIELDS = [
 export const RELATIONSHIPS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "startsOn",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
 ] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IRelationships> = {
@@ -96,36 +92,34 @@ export const RELATIONSHIPS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IRe
 export const RELATIONSHIPS_SELECTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "objectFeatureId",
   "relationshipKindId",
+  "startsOn",
   "subjectFeatureId",
   "systemId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "objectFeatureId",
   "relationshipKindId",
+  "startsOn",
   "subjectFeatureId",
   "systemId",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly RelationshipsSelectableField[];
 
@@ -134,16 +128,15 @@ export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const RELATIONSHIPS_EDITABLE_FIELDS = [
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "objectFeatureId",
   "relationshipKindId",
+  "startsOn",
   "subjectFeatureId",
   "systemId",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
+  "toYear",
 ] as const satisfies readonly RelationshipsKey[];
 
 // ----------------------------------

@@ -73,8 +73,11 @@ export const Domains = source
   .schema("Domains", {
     sourceId: belongsTo(() => Sources),
     host: dryv.field(sharedProperties.NonEmptyString255),
+    startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("DomainsDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .description(
     "A host name a source is served from. A host belongs to one source at a time; its validity period records moves.",
   )

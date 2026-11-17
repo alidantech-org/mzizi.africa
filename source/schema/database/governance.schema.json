@@ -13,10 +13,10 @@
       "x-code": "sys.tbl.governance.authority-scopes",
       "x-id": "#/schemas/governance.AuthorityScopes",
       "x-table": "governance.authority_scopes",
-      "x-primaryKey": ["id"],"x-naturalKey": ["institution_code", "office_code", "authority_kind_code", "unit_feature_code", "valid_from"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["institution_code", "office_code", "authority_kind_code", "unit_feature_code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["institution_id", "office_id", "authority_kind_id", "unit_feature_id", "valid_from"]
+        ["institution_id", "office_id", "authority_kind_id", "unit_feature_id"]
       ],
       "required": [
         "authority_kind_id"
@@ -38,8 +38,6 @@
           ,"office_code"
           ,"source_citation_code"
           ,"unit_feature_code"
-          ,"valid_from"
-          ,"valid_until"
         ],
         "required": [
           "authority_kind_code"
@@ -117,18 +115,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "key"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
         ,"version": {
           "type": "integer",
           "x-type": "integer",
@@ -168,11 +154,14 @@
           "appointed_by_entity_code"
           ,"appointment_kind_code"
           ,"code"
+          ,"from_to_precision"
+          ,"from_year"
           ,"individual_code"
+          ,"left_office_on"
           ,"office_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"to_year"
+          ,"took_office_on"
         ],
         "required": [
           "appointment_kind_code"
@@ -218,6 +207,17 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -231,6 +231,12 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "individual_code" }
+        }
+        ,"left_office_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
         }
         ,"office_id": {
           "type": "string",
@@ -246,24 +252,23 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"took_office_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -301,11 +306,14 @@
         ],
         "columns": [
           "code"
+          ,"dissolved_on"
           ,"entity_code"
+          ,"established_on"
+          ,"from_to_precision"
+          ,"from_year"
           ,"institution_kind_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"to_year"
         ],
         "required": [
           "code"
@@ -336,12 +344,35 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"dissolved_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"entity_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "entity_code" }
+        }
+        ,"established_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"id": {
           "type": "string",
@@ -364,24 +395,17 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -418,12 +442,15 @@
         ],
         "columns": [
           "description"
+          ,"ends_on"
+          ,"from_to_precision"
+          ,"from_year"
           ,"institution_code"
           ,"mandate_kind_code"
           ,"office_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"starts_on"
+          ,"to_year"
         ],
         "required": [
           "description"
@@ -450,6 +477,23 @@
           "x-type": "text",
           "maxLength": 4000,
           "x-role": "key"
+        }
+        ,"ends_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"id": {
           "type": "string",
@@ -486,24 +530,23 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"starts_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -540,13 +583,16 @@
           ,"version"
         ],
         "columns": [
-          "code"
+          "abolished_on"
+          ,"code"
+          ,"created_on"
+          ,"from_to_precision"
+          ,"from_year"
           ,"institution_code"
           ,"office_kind_code"
           ,"source_citation_code"
+          ,"to_year"
           ,"unit_feature_code"
-          ,"valid_from"
-          ,"valid_until"
         ],
         "required": [
           "code"
@@ -555,7 +601,13 @@
         ]
       },
       "properties": {
-        "code": {
+        "abolished_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"code": {
           "type": "string",
           "x-type": "text",
           "maxLength": 255,
@@ -570,12 +622,29 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"created_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"deleted_at": {
           "type": ["string", "null"],
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"id": {
           "type": "string",
@@ -605,6 +674,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"unit_feature_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
@@ -618,18 +692,6 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -646,10 +708,10 @@
       "x-code": "sys.tbl.governance.relationships",
       "x-id": "#/schemas/governance.Relationships",
       "x-table": "governance.relationships",
-      "x-primaryKey": ["id"],"x-naturalKey": ["subject_institution_code", "object_institution_code", "relationship_kind_code", "valid_from"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["subject_institution_code", "object_institution_code", "relationship_kind_code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["subject_institution_id", "object_institution_id", "relationship_kind_id", "valid_from"]
+        ["subject_institution_id", "object_institution_id", "relationship_kind_id"]
       ],
       "required": [
         "id"
@@ -670,8 +732,6 @@
           ,"relationship_kind_code"
           ,"source_citation_code"
           ,"subject_institution_code"
-          ,"valid_from"
-          ,"valid_until"
         ],
         "required": [
           "object_institution_code"
@@ -735,18 +795,6 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "key"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",

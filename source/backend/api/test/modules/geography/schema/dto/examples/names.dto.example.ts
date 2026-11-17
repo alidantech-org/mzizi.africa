@@ -5,7 +5,7 @@ import {
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { validityEntityExample } from "@test/modules/shared/schema/dto/examples/validity-entity.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
 
 /** The contract shape of Names, for generated tests. */
 export const namesExample: ContractExample = contractExample({
@@ -66,44 +66,11 @@ export const namesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "validFrom",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntil",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
       name: "version",
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "validFrom" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "validUntil" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "validFrom" },
-          operator: "less-than",
-          right: { field: "validUntil" },
-        },
-      ],
-    },
-  ],
+  invariants: [],
 });

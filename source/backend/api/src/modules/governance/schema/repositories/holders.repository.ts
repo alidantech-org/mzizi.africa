@@ -55,6 +55,14 @@ export class HoldersRepository
     return await this.findByQuery(query, { appointmentKindId, deletedAt: IsNull() });
   }
 
+  /** Find holders by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<HoldersEntity>,
+    fromToPrecision: NonNullable<HoldersEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<HoldersEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find holders by individual id, paged by the shared query. */
   async findByIndividual(
     query: BaseQueryDto<HoldersEntity>,

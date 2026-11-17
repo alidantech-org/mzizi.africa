@@ -1,10 +1,12 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -12,9 +14,11 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
@@ -40,9 +44,47 @@ export class InstitutionsDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.dissolvedOn !== null)
+  @IsISO8601({ strict: true })
+  dissolvedOn?: CalendarDate | null;
+
   @IsString()
   @IsUUID()
   entityId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.establishedOn !== null)
+  @IsISO8601({ strict: true })
+  @Satisfies<InstitutionsDto>(
+    (object) =>
+      object.establishedOn == null ||
+      object.dissolvedOn == null ||
+      object.establishedOn <= object.dissolvedOn,
+    {
+      message: "Institutions Dates Are Ordered",
+    },
+  )
+  establishedOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromToPrecision !== null)
+  @IsEnum(DatePrecision)
+  fromToPrecision?: DatePrecision | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  @Satisfies<InstitutionsDto>(
+    (object) =>
+      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
+    {
+      message: "Period Years Are Ordered",
+    },
+  )
+  fromYear?: Year | null;
 
   @IsString()
   @IsUUID()
@@ -58,25 +100,15 @@ export class InstitutionsDto {
   @IsUUID()
   sourceCitationId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
+
   @IsISO8601({})
   updatedAt!: Instant;
-
-  @IsOptional()
-  @ValidateIf((object) => object.validFrom !== null)
-  @IsISO8601({ strict: true })
-  @Satisfies<InstitutionsDto>(
-    (object) =>
-      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
-    {
-      message: "Validity Window Is Ordered",
-    },
-  )
-  validFrom?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.validUntil !== null)
-  @IsISO8601({ strict: true })
-  validUntil?: CalendarDate | null;
 
   @IsInt()
   @Min(1)

@@ -14,6 +14,7 @@ Canonical data, evidence, identity, file metadata and place design. These docume
 - [SOURCING_DESIGN](SOURCING_DESIGN.md)
 - [SOURCE_FILESYSTEM_GEOGRAPHY](SOURCE_FILESYSTEM_GEOGRAPHY.md) — owner-approved target responsibilities and tables; implemented in the Dryv contracts and generated SQL on 17 November 2026 (Source 13 tables, Filesystem 7, Geography 8) with media mentions, central sourcing and GIS asset associations
 - [SUBJECT_REFERENCES](SUBJECT_REFERENCES.md) — mandatory shared enum/base and subject keys across generic associations
+- [PERIODS](PERIODS.md) — plain year periods with one precision and table-named exact dates; no validity windows
 - [LEGAL_SCHEMA](LEGAL_SCHEMA.md) — owner-approved nine-table Legal target, implemented in the Dryv contracts and generated SQL on 17 November 2026, with multilingual names and separate translations, exact wording, legal relationships/effects and migration requirements; implemented 17 November 2026
 - [PEOPLE_DESIGN](PEOPLE_DESIGN.md)
 - [ENTITY_RESOLUTION](ENTITY_RESOLUTION.md) — proposal: scored matching of extracted data to candidates, review loop, biometric limits

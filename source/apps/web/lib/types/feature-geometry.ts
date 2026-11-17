@@ -6,6 +6,7 @@ export interface FeatureGeometry {
   centroid: unknown;
   confidence?: number | null;
   featureId: string;
+  fromYear?: number | null;
   geometry: unknown;
   geometryId: string;
   geometryRoleId: string;
@@ -13,7 +14,6 @@ export interface FeatureGeometry {
   minZoom?: number | null;
   observedAt?: string | null;
   revision: number;
-  validFrom: string;
 }
 
 /** Field metadata for forms and results. */
@@ -22,6 +22,7 @@ export const FeatureGeometryFields: readonly FieldMeta[] = [
   { name: "centroid", label: "Centroid", kind: "other", required: true },
   { name: "confidence", label: "Confidence", kind: "number", required: false },
   { name: "featureId", label: "Feature Id", kind: "string", required: true },
+  { name: "fromYear", label: "From Year", kind: "number", required: false },
   { name: "geometry", label: "Geometry", kind: "other", required: true },
   { name: "geometryId", label: "Geometry Id", kind: "string", required: true },
   { name: "geometryRoleId", label: "Geometry Role Id", kind: "string", required: true },
@@ -29,5 +30,4 @@ export const FeatureGeometryFields: readonly FieldMeta[] = [
   { name: "minZoom", label: "Min Zoom", kind: "number", required: false },
   { name: "observedAt", label: "Observed At", kind: "date", required: false },
   { name: "revision", label: "Revision", kind: "number", required: true },
-  { name: "validFrom", label: "Valid From", kind: "date", required: true },
 ];

@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsNumber,
@@ -14,10 +15,12 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Percentage } from "#/modules/shared/schema/type/percentage.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
@@ -48,6 +51,11 @@ export class RelationshipsDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
+  @ValidateIf((object) => object.endsOn !== null)
+  @IsISO8601({ strict: true })
+  endsOn?: CalendarDate | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.fromEntityId !== null)
   @IsString()
   @IsUUID()
@@ -66,6 +74,25 @@ export class RelationshipsDto {
   @IsString()
   @IsUUID()
   fromIndividualId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromToPrecision !== null)
+  @IsEnum(DatePrecision)
+  fromToPrecision?: DatePrecision | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  @Satisfies<RelationshipsDto>(
+    (object) =>
+      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
+    {
+      message: "Period Years Are Ordered",
+    },
+  )
+  fromYear?: Year | null;
 
   @IsString()
   @IsUUID()
@@ -89,6 +116,18 @@ export class RelationshipsDto {
   sourceCitationId?: Id | null;
 
   @IsOptional()
+  @ValidateIf((object) => object.startsOn !== null)
+  @IsISO8601({ strict: true })
+  @Satisfies<RelationshipsDto>(
+    (object) =>
+      object.startsOn == null || object.endsOn == null || object.startsOn <= object.endsOn,
+    {
+      message: "Relationships Dates Are Ordered",
+    },
+  )
+  startsOn?: CalendarDate | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.toEntityId !== null)
   @IsString()
   @IsUUID()
@@ -100,25 +139,15 @@ export class RelationshipsDto {
   @IsUUID()
   toIndividualId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
+
   @IsISO8601({})
   updatedAt!: Instant;
-
-  @IsOptional()
-  @ValidateIf((object) => object.validFrom !== null)
-  @IsISO8601({ strict: true })
-  @Satisfies<RelationshipsDto>(
-    (object) =>
-      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
-    {
-      message: "Validity Window Is Ordered",
-    },
-  )
-  validFrom?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.validUntil !== null)
-  @IsISO8601({ strict: true })
-  validUntil?: CalendarDate | null;
 
   @IsInt()
   @Min(1)

@@ -10,7 +10,5 @@ export interface GovernanceAuthorityScopes {
   sourceCitationId?: string | null;
   unitFeatureId: string;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   version: number;
 }

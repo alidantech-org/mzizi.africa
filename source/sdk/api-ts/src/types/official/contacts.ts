@@ -9,8 +9,6 @@ export interface OfficialContacts {
   kindId: string;
   sourceCitationId?: string | null;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   value: string;
   version: number;
   visibilityId: string;

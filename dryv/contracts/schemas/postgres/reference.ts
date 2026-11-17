@@ -152,7 +152,7 @@ export const ValueLabel = reference
     label: dryv.field(sharedProperties.Name),
     labelKind: dryv.field(labelProperties.ValueLabelKind),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.Entity)
   .description(
     "A label of a value in one language and of one kind, so a value can be shown in English, Swahili and other languages, with alternative names, abbreviations and definitions. The value's own label is the default display text.",
   )
@@ -253,7 +253,7 @@ export const LanguageName = reference
     name: dryv.field(sharedProperties.Name),
     nameKind: dryv.field(languageProperties.LanguageNameKind),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.Entity)
   .description("A name of a language written in a language, such as Kiswahili (endonym) and Swahili (exonym).")
   .role("entity")
   .facets({
@@ -319,20 +319,17 @@ export const ValueRelation = reference
     sourceValueId: belongsTo(Value),
     targetValueId: belongsTo(Value),
     relationKind: dryv.field(referenceProposalEnums.ValueRelationKind),
-    validFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
-    validUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.Association)
   .rule("ValueRelationMustNotBeSelfReferential", (v) => v.sourceValueId.ne(v.targetValueId))
-  .rule("ValueRelationWindowMustBeOrdered", rule.ordered("validFrom", "validUntil"))
   .description(
-    "A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind.",
+    "A directed, typed, relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind.",
   )
   .role("entity")
   .facets({
     storage: dryv
       .storage("value_relations")
       .unique("sourceValueId", "targetValueId", "relationKind")
-      .index("sourceValueId", "relationKind", "validFrom")
+      .index("sourceValueId", "relationKind")
       .index("targetValueId", "relationKind"),
   });

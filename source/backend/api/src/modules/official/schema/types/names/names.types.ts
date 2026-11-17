@@ -42,8 +42,6 @@ export interface INames extends B.IBase {
   name: string;
   nameKindId: string;
   sourceCitationId: string | null;
-  validFrom: Date | null;
-  validUntil: Date | null;
   readonly entity?: EntitiesTypes.IEntities;
   readonly individual?: IndividualsTypes.IIndividuals;
   readonly language?: LanguageTypes.ILanguage;

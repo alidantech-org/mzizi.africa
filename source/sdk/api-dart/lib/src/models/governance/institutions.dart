@@ -1,7 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'institutions.g.dart';
@@ -13,25 +14,31 @@ class GovernanceInstitutions {
     required this.code,
     required this.createdAt,
     this.deletedAt,
+    this.dissolvedOn,
     required this.entityId,
+    this.establishedOn,
+    this.fromToPrecision,
+    this.fromYear,
     required this.id,
     required this.institutionKindId,
     this.sourceCitationId,
+    this.toYear,
     required this.updatedAt,
-    this.validFrom,
-    this.validUntil,
     required this.version,
   });
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
+  final DateTime? dissolvedOn;
   final String entityId;
+  final DateTime? establishedOn;
+  final SharedDatePrecision? fromToPrecision;
+  final int? fromYear;
   final String id;
   final String institutionKindId;
   final String? sourceCitationId;
+  final int? toYear;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validUntil;
   final int version;
 
   factory GovernanceInstitutions.fromJson(Map<String, dynamic> json) => _$GovernanceInstitutionsFromJson(json);

@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -33,12 +34,9 @@ import type {
 /** One dated classification of a feature by a scheme value, so a feature can answer several classification questions and change over time. */
 export interface IClassifications extends B.IBase {
   featureId: string;
-  validFrom: Date | null;
-  validFromEarliest: Date | null;
-  validFromLatest: Date | null;
-  validUntil: Date | null;
-  validUntilEarliest: Date | null;
-  validUntilLatest: Date | null;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
+  toYear: number | null;
   valueId: string;
   readonly feature?: FeaturesTypes.IFeatures;
   readonly value?: ValueTypes.IValue;

@@ -10,30 +10,28 @@ import {
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems.
  */
 @Entity({ schema: "geography", name: "relationships" })
-@Index(["subjectFeatureId", "objectFeatureId", "relationshipKindId", "systemId", "validFrom"], {
+@Index(["subjectFeatureId", "objectFeatureId", "relationshipKindId", "systemId", "fromYear"], {
   unique: true,
 })
 @Index(["subjectFeatureId", "relationshipKindId"])
 @Index(["objectFeatureId", "relationshipKindId"])
-@Index(["validFrom", "validUntil"])
+@Index(["fromYear", "toYear"])
 @Check(
-  "chk_relationships_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+  "chk_relationships_period_years_are_ordered",
+  `from_year = null OR to_year = null OR from_year <= to_year`,
 )
 @Check(
-  "chk_relationships_start_bounds_are_ordered",
-  `valid_from_earliest = null OR valid_from_latest = null OR valid_from_earliest < valid_from_latest`,
-)
-@Check(
-  "chk_relationships_end_bounds_are_ordered",
-  `valid_until_earliest = null OR valid_until_latest = null OR valid_until_earliest < valid_until_latest`,
+  "chk_relationships_relationships_dates_are_ordered",
+  `starts_on = null OR ends_on = null OR starts_on <= ends_on`,
 )
 @Check(
   "chk_relationships_relationship_must_not_be_self_referential",
@@ -49,6 +47,20 @@ export class GeographyRelationshipsEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
+  @Column({ name: "ends_on", type: "date", nullable: true })
+  endsOn?: Date | null;
+
+  @Column({
+    name: "from_to_precision",
+    type: "enum",
+    enum: DatePrecision,
+    nullable: true,
+  })
+  fromToPrecision?: DatePrecision | null;
+
+  @Column({ name: "from_year", type: "integer", nullable: true })
+  fromYear?: Year | null;
+
   @Column({ name: "object_feature_id", type: "uuid" })
   objectFeatureId!: Id;
 
@@ -62,6 +74,9 @@ export class GeographyRelationshipsEntity {
   @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "relationship_kind_id" })
   relationshipKind?: Relation<ValueEntity>;
+
+  @Column({ name: "starts_on", type: "date", nullable: true })
+  startsOn?: Date | null;
 
   @Column({ name: "subject_feature_id", type: "uuid" })
   subjectFeatureId!: Id;
@@ -77,26 +92,11 @@ export class GeographyRelationshipsEntity {
   @JoinColumn({ name: "system_id" })
   system?: Relation<ValueEntity>;
 
+  @Column({ name: "to_year", type: "integer", nullable: true })
+  toYear?: Year | null;
+
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_from_earliest", type: "date", nullable: true })
-  validFromEarliest?: Date | null;
-
-  @Column({ name: "valid_from_latest", type: "date", nullable: true })
-  validFromLatest?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
-
-  @Column({ name: "valid_until_earliest", type: "date", nullable: true })
-  validUntilEarliest?: Date | null;
-
-  @Column({ name: "valid_until_latest", type: "date", nullable: true })
-  validUntilLatest?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

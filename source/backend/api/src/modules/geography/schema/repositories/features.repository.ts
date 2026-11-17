@@ -47,6 +47,14 @@ export class FeaturesRepository
     return await this.findByQuery(query, { featureTypeId, deletedAt: IsNull() });
   }
 
+  /** Find features by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<FeaturesEntity>,
+    fromToPrecision: NonNullable<FeaturesEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<FeaturesEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find the features with this code (unique). */
   async findByCode(code: NonNullable<FeaturesEntity["code"]>): Promise<FeaturesEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });

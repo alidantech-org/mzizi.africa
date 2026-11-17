@@ -9,9 +9,11 @@ import {
   type Relation,
 } from "typeorm";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here.
@@ -19,18 +21,14 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Entity({ schema: "geography", name: "features" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["featureTypeId"])
-@Index(["validFrom", "validUntil"])
+@Index(["fromYear", "toYear"])
 @Check(
-  "chk_features_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+  "chk_features_period_years_are_ordered",
+  `from_year = null OR to_year = null OR from_year <= to_year`,
 )
 @Check(
-  "chk_features_start_bounds_are_ordered",
-  `valid_from_earliest = null OR valid_from_latest = null OR valid_from_earliest < valid_from_latest`,
-)
-@Check(
-  "chk_features_end_bounds_are_ordered",
-  `valid_until_earliest = null OR valid_until_latest = null OR valid_until_earliest < valid_until_latest`,
+  "chk_features_features_dates_are_ordered",
+  `established_on = null OR ended_on = null OR established_on <= ended_on`,
 )
 export class FeaturesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
@@ -45,6 +43,12 @@ export class FeaturesEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
+  @Column({ name: "ended_on", type: "date", nullable: true })
+  endedOn?: Date | null;
+
+  @Column({ name: "established_on", type: "date", nullable: true })
+  establishedOn?: Date | null;
+
   @Column({ name: "feature_type_id", type: "uuid" })
   featureTypeId!: Id;
 
@@ -52,26 +56,22 @@ export class FeaturesEntity {
   @JoinColumn({ name: "feature_type_id" })
   featureType?: Relation<ValueEntity>;
 
+  @Column({
+    name: "from_to_precision",
+    type: "enum",
+    enum: DatePrecision,
+    nullable: true,
+  })
+  fromToPrecision?: DatePrecision | null;
+
+  @Column({ name: "from_year", type: "integer", nullable: true })
+  fromYear?: Year | null;
+
+  @Column({ name: "to_year", type: "integer", nullable: true })
+  toYear?: Year | null;
+
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_from_earliest", type: "date", nullable: true })
-  validFromEarliest?: Date | null;
-
-  @Column({ name: "valid_from_latest", type: "date", nullable: true })
-  validFromLatest?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
-
-  @Column({ name: "valid_until_earliest", type: "date", nullable: true })
-  validUntilEarliest?: Date | null;
-
-  @Column({ name: "valid_until_latest", type: "date", nullable: true })
-  validUntilLatest?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

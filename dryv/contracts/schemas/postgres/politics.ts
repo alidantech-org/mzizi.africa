@@ -27,8 +27,11 @@ export const Parties = politics
     entityId: belongsTo(() => Entities),
     partyKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
+    registeredOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    deregisteredOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("PartiesDatesAreOrdered", rule.ordered("registeredOn", "deregisteredOn", { allowEqual: true }))
   .description("One political-party specialization of an Official entity over an optional effective period.")
   .role("entity")
   .facets({ storage: dryv.storage("parties").index("entityId").index("sourceCitationId") });
@@ -40,15 +43,18 @@ export const Memberships = politics
     individualId: belongsTo(() => Individuals),
     membershipKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
+    joinedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    leftOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("MembershipsDatesAreOrdered", rule.ordered("joinedOn", "leftOn", { allowEqual: true }))
   .description("One individual's dated membership in one political party.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("memberships")
-      .index("partyId", "validFrom")
-      .index("individualId", "validFrom")
+      .index("partyId", "fromYear")
+      .index("individualId", "fromYear")
       .index("sourceCitationId"),
   });
 
@@ -58,8 +64,11 @@ export const Coalitions = politics
     name: dryv.field(sharedProperties.Name),
     coalitionKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
+    formedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    dissolvedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("CoalitionsDatesAreOrdered", rule.ordered("formedOn", "dissolvedOn", { allowEqual: true }))
   .description("One political coalition identity over an optional effective period.")
   .role("entity")
   .facets({ storage: dryv.storage("coalitions").index("sourceCitationId") });
@@ -72,14 +81,14 @@ export const Alignments = politics
     alignmentKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
   .description("One party's dated alignment with one coalition.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("alignments")
-      .index("coalitionId", "validFrom")
-      .index("partyId", "validFrom")
+      .index("coalitionId", "fromYear")
+      .index("partyId", "fromYear")
       .index("sourceCitationId"),
   });
 

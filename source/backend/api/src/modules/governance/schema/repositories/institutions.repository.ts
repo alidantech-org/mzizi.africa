@@ -47,6 +47,14 @@ export class InstitutionsRepository
     return await this.findByQuery(query, { entityId, deletedAt: IsNull() });
   }
 
+  /** Find institutions by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<InstitutionsEntity>,
+    fromToPrecision: NonNullable<InstitutionsEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<InstitutionsEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find institutions by institution kind id, paged by the shared query. */
   async findByInstitutionKind(
     query: BaseQueryDto<InstitutionsEntity>,

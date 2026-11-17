@@ -1,7 +1,10 @@
+import { SharedDatePrecision } from "#sdk/types/enums/shared/date-precision.ts";
+
 /** Institution Detail Mandates */
 export interface GovernanceInstitutionDetailMandates {
   description: string;
+  fromToPrecision: SharedDatePrecision | null;
+  fromYear: number | null;
   kind: string;
-  validFrom: string | null;
-  validUntil: string | null;
+  toYear: number | null;
 }

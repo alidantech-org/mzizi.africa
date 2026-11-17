@@ -36,8 +36,6 @@ export interface IValueLabel extends B.IBase {
   label: string;
   labelKind: ValueLabelKind;
   languageId: string;
-  validFrom: Date | null;
-  validUntil: Date | null;
   valueId: string;
   readonly language?: LanguageTypes.ILanguage;
   readonly value?: ValueTypes.IValue;

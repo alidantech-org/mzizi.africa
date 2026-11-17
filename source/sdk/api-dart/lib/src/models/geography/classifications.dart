@@ -1,7 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/historical_validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/period_entity.dart';
 
 part 'classifications.g.dart';
 
@@ -12,28 +13,22 @@ class GeographyClassifications {
     required this.createdAt,
     this.deletedAt,
     required this.featureId,
+    this.fromToPrecision,
+    this.fromYear,
     required this.id,
+    this.toYear,
     required this.updatedAt,
-    this.validFrom,
-    this.validFromEarliest,
-    this.validFromLatest,
-    this.validUntil,
-    this.validUntilEarliest,
-    this.validUntilLatest,
     required this.valueId,
     required this.version,
   });
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String featureId;
+  final SharedDatePrecision? fromToPrecision;
+  final int? fromYear;
   final String id;
+  final int? toYear;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validFromEarliest;
-  final DateTime? validFromLatest;
-  final DateTime? validUntil;
-  final DateTime? validUntilEarliest;
-  final DateTime? validUntilLatest;
   final String valueId;
   final int version;
 

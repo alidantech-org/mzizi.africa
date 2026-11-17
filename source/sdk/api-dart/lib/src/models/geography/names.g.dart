@@ -16,8 +16,6 @@ GeographyNames _$GeographyNamesFromJson(Map<String, dynamic> json) => GeographyN
   name: json['name'] as String,
   nameKindId: json['nameKindId'] as String,
   updatedAt: DateTime.parse(json['updatedAt'] as String),
-  validFrom: json['validFrom'] == null ? null : DateTime.parse(json['validFrom'] as String),
-  validUntil: json['validUntil'] == null ? null : DateTime.parse(json['validUntil'] as String),
   version: (json['version'] as num).toInt(),
 );
 
@@ -31,7 +29,5 @@ Map<String, dynamic> _$GeographyNamesToJson(GeographyNames instance) => <String,
   'name': instance.name,
   'nameKindId': instance.nameKindId,
   'updatedAt': instance.updatedAt.toIso8601String(),
-  'validFrom': ?instance.validFrom?.toIso8601String(),
-  'validUntil': ?instance.validUntil?.toIso8601String(),
   'version': instance.version,
 };

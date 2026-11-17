@@ -8,13 +8,16 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { GeometryArea } from "#/modules/geography/schema/type/geometry-area.type.ts";
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * One drawing of a feature: a revision with a role, a basis, a confidence, a zoom range, a validity period and the stored file it came from. A feature has many; the current one has no end date.
@@ -23,23 +26,15 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["featureId", "geometryRoleId", "revision"], { unique: true })
 @Index(["featureId", "geometryRoleId"], {
   unique: true,
-  where: '"valid_until" IS NULL',
+  where: '"to_year" IS NULL',
 })
 @Index(["featureId", "geometryRoleId"])
-@Index(["validFrom", "validUntil"])
+@Index(["fromYear", "toYear"])
 @Index(["id", "featureId"], { unique: true })
 @Index(["basisId"])
 @Check(
-  "chk_geometries_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
-)
-@Check(
-  "chk_geometries_start_bounds_are_ordered",
-  `valid_from_earliest = null OR valid_from_latest = null OR valid_from_earliest < valid_from_latest`,
-)
-@Check(
-  "chk_geometries_end_bounds_are_ordered",
-  `valid_until_earliest = null OR valid_until_latest = null OR valid_until_earliest < valid_until_latest`,
+  "chk_geometries_period_years_are_ordered",
+  `from_year = null OR to_year = null OR from_year <= to_year`,
 )
 @Check(
   "chk_geometries_zoom_range_must_be_ordered",
@@ -102,6 +97,17 @@ export class GeometriesEntity {
   feature?: Relation<FeaturesEntity>;
 
   @Column({
+    name: "from_to_precision",
+    type: "enum",
+    enum: DatePrecision,
+    nullable: true,
+  })
+  fromToPrecision?: DatePrecision | null;
+
+  @Column({ name: "from_year", type: "integer", nullable: true })
+  fromYear?: Year | null;
+
+  @Column({
     name: "geometry",
     type: "geometry",
     spatialFeatureType: "Geometry",
@@ -138,26 +144,11 @@ export class GeometriesEntity {
   @JoinColumn({ name: "supersedes_id" })
   supersedes?: Relation<GeometriesEntity>;
 
+  @Column({ name: "to_year", type: "integer", nullable: true })
+  toYear?: Year | null;
+
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_from_earliest", type: "date", nullable: true })
-  validFromEarliest?: Date | null;
-
-  @Column({ name: "valid_from_latest", type: "date", nullable: true })
-  validFromLatest?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
-
-  @Column({ name: "valid_until_earliest", type: "date", nullable: true })
-  validUntilEarliest?: Date | null;
-
-  @Column({ name: "valid_until_latest", type: "date", nullable: true })
-  validUntilLatest?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

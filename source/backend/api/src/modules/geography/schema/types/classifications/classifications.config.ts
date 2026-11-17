@@ -45,14 +45,11 @@ export const CLASSIFICATIONS_SORTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "featureId",
+  "fromToPrecision",
+  "fromYear",
   "id",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "valueId",
   "version",
 ] as const satisfies readonly ClassificationsKey[];
@@ -62,6 +59,7 @@ export const CLASSIFICATIONS_SEARCHABLE_FIELDS =
 
 export const CLASSIFICATIONS_FILTERABLE_FIELDS = [
   "featureId",
+  "fromToPrecision",
   "id",
   "valueId",
 ] as const satisfies readonly ClassificationsKey[];
@@ -70,12 +68,6 @@ export const CLASSIFICATIONS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
 ] as const satisfies readonly ClassificationsKey[];
 
 export const CLASSIFICATIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IClassifications> = {
@@ -92,14 +84,11 @@ export const CLASSIFICATIONS_SELECTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "featureId",
+  "fromToPrecision",
+  "fromYear",
   "id",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "valueId",
   "version",
 ] as const satisfies readonly ClassificationsKey[];
@@ -108,14 +97,11 @@ export const CLASSIFICATIONS_DEFAULT_SELECT_FIELDS = [
   "createdAt",
   "deletedAt",
   "featureId",
+  "fromToPrecision",
+  "fromYear",
   "id",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "valueId",
   "version",
 ] as const satisfies readonly ClassificationsSelectableField[];
@@ -126,12 +112,9 @@ export const CLASSIFICATIONS_DEFAULT_SELECT_FIELDS = [
 
 export const CLASSIFICATIONS_EDITABLE_FIELDS = [
   "featureId",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
+  "fromToPrecision",
+  "fromYear",
+  "toYear",
   "valueId",
 ] as const satisfies readonly ClassificationsKey[];
 

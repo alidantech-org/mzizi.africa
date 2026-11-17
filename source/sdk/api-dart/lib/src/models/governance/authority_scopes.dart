@@ -4,7 +4,7 @@ import 'package:mzizi_api/src/models/governance/institutions.dart';
 import 'package:mzizi_api/src/models/governance/offices.dart';
 import 'package:mzizi_api/src/models/reference/country.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'authority_scopes.g.dart';
@@ -23,8 +23,6 @@ class GovernanceAuthorityScopes {
     this.sourceCitationId,
     required this.unitFeatureId,
     required this.updatedAt,
-    this.validFrom,
-    this.validUntil,
     required this.version,
   });
   final String authorityKindId;
@@ -37,8 +35,6 @@ class GovernanceAuthorityScopes {
   final String? sourceCitationId;
   final String unitFeatureId;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validUntil;
   final int version;
 
   factory GovernanceAuthorityScopes.fromJson(Map<String, dynamic> json) => _$GovernanceAuthorityScopesFromJson(json);

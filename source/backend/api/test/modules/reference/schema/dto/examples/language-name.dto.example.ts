@@ -4,7 +4,7 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { LanguageNameKind } from "#/modules/reference/schema/enum/language-name-kind.enum.ts";
 import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
-import { validityEntityExample } from "@test/modules/shared/schema/dto/examples/validity-entity.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
 
 /** The contract shape of LanguageName, for generated tests. */
 export const languageNameExample: ContractExample = contractExample({
@@ -59,44 +59,11 @@ export const languageNameExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "validFrom",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntil",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
       name: "version",
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "validFrom" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "validUntil" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "validFrom" },
-          operator: "less-than",
-          right: { field: "validUntil" },
-        },
-      ],
-    },
-  ],
+  invariants: [],
 });

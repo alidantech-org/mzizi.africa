@@ -12,6 +12,7 @@ import {
 } from "class-validator";
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { Integer } from "#/modules/shared/schema/type/integer.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
@@ -37,6 +38,11 @@ export class FeatureGeometryDto {
   @IsString()
   @IsUUID()
   featureId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  fromYear?: Integer | null;
 
   @Allow()
   geometry!: unknown;
@@ -69,7 +75,4 @@ export class FeatureGeometryDto {
   @IsInt()
   @Min(1)
   revision!: PositiveInteger;
-
-  @IsISO8601({})
-  validFrom!: Instant;
 }

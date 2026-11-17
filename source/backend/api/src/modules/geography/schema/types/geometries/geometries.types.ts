@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -38,6 +39,8 @@ export interface IGeometries extends B.IBase {
   confidence: number | null;
   envelope: unknown;
   featureId: string;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
   geometry: unknown;
   geometryRoleId: string;
   maxZoom: number | null;
@@ -46,12 +49,7 @@ export interface IGeometries extends B.IBase {
   revision: number;
   srid: number;
   supersedesId: string | null;
-  validFrom: Date | null;
-  validFromEarliest: Date | null;
-  validFromLatest: Date | null;
-  validUntil: Date | null;
-  validUntilEarliest: Date | null;
-  validUntilLatest: Date | null;
+  toYear: number | null;
   readonly basis?: ValueTypes.IValue;
   readonly feature?: FeaturesTypes.IFeatures;
   readonly geometryRole?: ValueTypes.IValue;

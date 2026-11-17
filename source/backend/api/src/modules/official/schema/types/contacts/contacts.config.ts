@@ -56,8 +56,6 @@ export const CONTACTS_SORTABLE_FIELDS = [
   "kindId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
   "visibilityId",
@@ -81,8 +79,6 @@ export const CONTACTS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly ContactsKey[];
 
 export const CONTACTS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IContacts> = {
@@ -105,8 +101,6 @@ export const CONTACTS_SELECTABLE_FIELDS = [
   "kindId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
   "visibilityId",
@@ -122,8 +116,6 @@ export const CONTACTS_DEFAULT_SELECT_FIELDS = [
   "kindId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
   "visibilityId",
@@ -139,8 +131,6 @@ export const CONTACTS_EDITABLE_FIELDS = [
   "individualId",
   "kindId",
   "sourceCitationId",
-  "validFrom",
-  "validUntil",
   "value",
   "visibilityId",
 ] as const satisfies readonly ContactsKey[];

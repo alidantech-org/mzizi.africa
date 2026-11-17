@@ -2,7 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { codedValidityEntityExample } from "@test/modules/shared/schema/dto/examples/coded-validity-entity.dto.example.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
 import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Domains, for generated tests. */
@@ -35,6 +36,24 @@ export const domainsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "endsOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "fromToPrecision",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(DatePrecision) },
+    },
+    {
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
       name: "host",
       optional: false,
       nullable: false,
@@ -53,22 +72,22 @@ export const domainsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "startsOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "toYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
       name: "updatedAt",
       optional: false,
       nullable: false,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "validFrom",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntil",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
     },
     {
       name: "version",
@@ -82,19 +101,39 @@ export const domainsExample: ContractExample = contractExample({
       any: true,
       comparisons: [
         {
-          left: { field: "validFrom" },
+          left: { field: "fromYear" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "validUntil" },
+          left: { field: "toYear" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "validFrom" },
-          operator: "less-than",
-          right: { field: "validUntil" },
+          left: { field: "fromYear" },
+          operator: "less-than-or-equal",
+          right: { field: "toYear" },
+        },
+      ],
+    },
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "startsOn" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "endsOn" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "startsOn" },
+          operator: "less-than-or-equal",
+          right: { field: "endsOn" },
         },
       ],
     },

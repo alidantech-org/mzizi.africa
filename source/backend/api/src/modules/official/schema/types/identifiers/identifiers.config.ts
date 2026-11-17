@@ -57,8 +57,6 @@ export const IDENTIFIERS_SORTABLE_FIELDS = [
   "schemeId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
 ] as const satisfies readonly IdentifiersKey[];
@@ -81,8 +79,6 @@ export const IDENTIFIERS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly IdentifiersKey[];
 
 export const IDENTIFIERS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IIdentifiers> = {
@@ -106,8 +102,6 @@ export const IDENTIFIERS_SELECTABLE_FIELDS = [
   "schemeId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
 ] as const satisfies readonly IdentifiersKey[];
@@ -123,8 +117,6 @@ export const IDENTIFIERS_DEFAULT_SELECT_FIELDS = [
   "schemeId",
   "sourceCitationId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "value",
   "version",
 ] as const satisfies readonly IdentifiersSelectableField[];
@@ -140,8 +132,6 @@ export const IDENTIFIERS_EDITABLE_FIELDS = [
   "namespace",
   "schemeId",
   "sourceCitationId",
-  "validFrom",
-  "validUntil",
   "value",
 ] as const satisfies readonly IdentifiersKey[];
 

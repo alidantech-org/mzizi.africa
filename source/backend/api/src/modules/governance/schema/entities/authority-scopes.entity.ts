@@ -1,5 +1,4 @@
 import {
-  Check,
   Column,
   Entity,
   Index,
@@ -21,18 +20,14 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One institution or office authority over a required Geography unit for an effective period.
  */
 @Entity({ schema: "governance", name: "authority_scopes" })
-@Index(["institutionId", "officeId", "authorityKindId", "unitFeatureId", "validFrom"], {
+@Index(["institutionId", "officeId", "authorityKindId", "unitFeatureId"], {
   unique: true,
 })
 @Index(["institutionId"])
 @Index(["officeId"])
-@Index(["unitFeatureId", "validFrom", "validUntil"])
+@Index(["unitFeatureId"])
 @Index(["countryId"])
 @Index(["sourceCitationId"])
-@Check(
-  "chk_authority_scopes_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
-)
 export class AuthorityScopesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -87,12 +82,6 @@ export class AuthorityScopesEntity {
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

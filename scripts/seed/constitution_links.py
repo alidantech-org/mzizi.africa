@@ -211,12 +211,14 @@ def bases() -> int:
             table,
             record,
             f"leg.effect.kind.{relation}",
-            valid_from,
+            effective_on,
+            effective_on[:4],
+            "exact" if effective_on else "",
             note,
             "proposed",
             OBSERVED,
         ]
-        for table, record, provision, relation, note, valid_from in rows
+        for table, record, provision, relation, note, effective_on in rows
     ]
     write(
         REPO / "seed/data/ke/legal/effects/geography.effects.csv",
@@ -226,7 +228,9 @@ def bases() -> int:
             "subject_table",
             "subject_code",
             "kind_code",
-            "valid_from",
+            "effective_on",
+            "from_year",
+            "from_to_precision",
             "explanation",
             "review_status",
             "observed_at",

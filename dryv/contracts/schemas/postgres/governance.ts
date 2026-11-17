@@ -25,8 +25,11 @@ export const Institutions = governance
     entityId: belongsTo(() => Entities),
     institutionKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
+    establishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    dissolvedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("InstitutionsDatesAreOrdered", rule.ordered("establishedOn", "dissolvedOn", { allowEqual: true }))
   .description("One government institution specialization of an Official entity.")
   .role("entity")
   .facets({
@@ -40,8 +43,11 @@ export const Offices = governance
     officeKindId: belongsTo(() => Value),
     unitFeatureId: belongsTo(() => Features).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
+    createdOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    abolishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("OfficesDatesAreOrdered", rule.ordered("createdOn", "abolishedOn", { allowEqual: true }))
   .description(
     "One established public office, independent of any current holder and optionally scoped to a geographic unit.",
   )
@@ -58,16 +64,15 @@ export const Holders = governance
     appointmentKindId: belongsTo(() => Value),
     appointedByEntityId: belongsTo(() => Entities).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
+    tookOfficeOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    leftOfficeOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("HoldersDatesAreOrdered", rule.ordered("tookOfficeOn", "leftOfficeOn", { allowEqual: true }))
   .description("One person's continuous tenure in one office, with appointment kind and effective dates.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("holders")
-      .index("officeId", "validFrom", "validUntil")
-      .index("individualId")
-      .index("sourceCitationId"),
+    storage: dryv.storage("holders").index("officeId", "fromYear", "toYear").index("individualId").index("sourceCitationId"),
   });
 
 /*---------------- governance.mandates ----------------*/
@@ -78,8 +83,11 @@ export const Mandates = governance
     mandateKindId: belongsTo(() => Value),
     description: dryv.field(sharedProperties.Description),
     sourceCitationId: belongsTo(() => Citations).maybe(),
+    startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.PeriodEntity)
+  .rule("MandatesDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .description("One responsibility or authority assignment for an institution or office.")
   .role("entity")
   .facets({
@@ -99,14 +107,14 @@ export const Relationships = governance
     relationshipKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.Entity)
   .description("One dated, typed relationship between two government institutions.")
   .role("entity")
   .rule("RelationshipIsNotSelfReferential", rule.differs("subjectInstitutionId", "objectInstitutionId"))
   .facets({
     storage: dryv
       .storage("relationships")
-      .unique("subjectInstitutionId", "objectInstitutionId", "relationshipKindId", "validFrom")
+      .unique("subjectInstitutionId", "objectInstitutionId", "relationshipKindId")
       .index("subjectInstitutionId", "relationshipKindId")
       .index("objectInstitutionId", "relationshipKindId")
       .index("sourceCitationId"),
@@ -122,16 +130,16 @@ export const AuthorityScopes = governance
     authorityKindId: belongsTo(() => Value),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.Entity)
   .description("One institution or office authority over a required Geography unit for an effective period.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("authority_scopes")
-      .unique("institutionId", "officeId", "authorityKindId", "unitFeatureId", "validFrom")
+      .unique("institutionId", "officeId", "authorityKindId", "unitFeatureId")
       .index("institutionId")
       .index("officeId")
-      .index("unitFeatureId", "validFrom", "validUntil")
+      .index("unitFeatureId")
       .index("countryId")
       .index("sourceCitationId"),
   });

@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -32,16 +33,15 @@ import type {
 
 /** A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems. */
 export interface IRelationships extends B.IBase {
+  endsOn: Date | null;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
   objectFeatureId: string;
   relationshipKindId: string;
+  startsOn: Date | null;
   subjectFeatureId: string;
   systemId: string;
-  validFrom: Date | null;
-  validFromEarliest: Date | null;
-  validFromLatest: Date | null;
-  validUntil: Date | null;
-  validUntilEarliest: Date | null;
-  validUntilLatest: Date | null;
+  toYear: number | null;
   readonly objectFeature?: FeaturesTypes.IFeatures;
   readonly relationshipKind?: ValueTypes.IValue;
   readonly subjectFeature?: FeaturesTypes.IFeatures;

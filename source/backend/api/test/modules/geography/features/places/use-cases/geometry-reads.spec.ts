@@ -37,7 +37,7 @@ describe("geometry reads", () => {
   it("selects current drawings with their evidence and GeoJSON geometry", async () => {
     const sql = currentDrawings(await moduleRefWithMetadata(), undefined).getQuery();
     expect(sql).toContain("ST_AsGeoJSON(");
-    expect(sql).toContain('"g"."valid_until" IS NULL');
+    expect(sql).toContain('"g"."to_year" IS NULL');
     expect(sql).toContain('"g"."deleted_at" IS NULL');
     expect(sql).toContain('"geometryId"');
   });

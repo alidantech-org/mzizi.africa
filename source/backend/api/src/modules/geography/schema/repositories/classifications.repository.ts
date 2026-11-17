@@ -48,6 +48,14 @@ export class ClassificationsRepository
     return await this.findByQuery(query, { featureId, deletedAt: IsNull() });
   }
 
+  /** Find classifications by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<ClassificationsEntity>,
+    fromToPrecision: NonNullable<ClassificationsEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<ClassificationsEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find classifications by value id, paged by the shared query. */
   async findByValue(
     query: BaseQueryDto<ClassificationsEntity>,

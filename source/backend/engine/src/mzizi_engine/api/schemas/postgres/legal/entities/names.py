@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from typing import Annotated, ClassVar
 from uuid import UUID
 
@@ -33,6 +33,4 @@ class LegalNamesRow(BaseModel):
     language_id: UUID
     name: Annotated[str, Field(min_length=1, max_length=300)]
     updated_at: datetime
-    valid_from: date | None = None
-    valid_until: date | None = None
     version: Annotated[int, Field(ge=1)]

@@ -15,8 +15,6 @@ ReferenceLanguageName _$ReferenceLanguageNameFromJson(Map<String, dynamic> json)
   name: json['name'] as String,
   nameKind: $enumDecode(_$ReferenceLanguageNameKindEnumMap, json['nameKind']),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
-  validFrom: json['validFrom'] == null ? null : DateTime.parse(json['validFrom'] as String),
-  validUntil: json['validUntil'] == null ? null : DateTime.parse(json['validUntil'] as String),
   version: (json['version'] as num).toInt(),
 );
 
@@ -29,8 +27,6 @@ Map<String, dynamic> _$ReferenceLanguageNameToJson(ReferenceLanguageName instanc
   'name': instance.name,
   'nameKind': _$ReferenceLanguageNameKindEnumMap[instance.nameKind]!,
   'updatedAt': instance.updatedAt.toIso8601String(),
-  'validFrom': ?instance.validFrom?.toIso8601String(),
-  'validUntil': ?instance.validUntil?.toIso8601String(),
   'version': instance.version,
 };
 

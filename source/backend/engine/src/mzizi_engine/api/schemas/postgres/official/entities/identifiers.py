@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from typing import Annotated, ClassVar
 from uuid import UUID
 
@@ -26,7 +26,5 @@ class OfficialIdentifiersRow(BaseModel):
     scheme_id: UUID
     source_citation_id: UUID | None = None
     updated_at: datetime
-    valid_from: date | None = None
-    valid_until: date | None = None
     value: Annotated[str, Field(min_length=1, max_length=1000)]
     version: Annotated[int, Field(ge=1)]

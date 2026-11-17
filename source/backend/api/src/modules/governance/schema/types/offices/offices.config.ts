@@ -46,23 +46,27 @@ export const OFFICES_RELATION_KEYS = [
 // ----------------------------------
 
 export const OFFICES_SORTABLE_FIELDS = [
+  "abolishedOn",
   "code",
   "createdAt",
+  "createdOn",
   "deletedAt",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionId",
   "officeKindId",
   "sourceCitationId",
+  "toYear",
   "unitFeatureId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly OfficesKey[];
 
 export const OFFICES_SEARCHABLE_FIELDS = ["code"] as const satisfies readonly OfficesKey[];
 
 export const OFFICES_FILTERABLE_FIELDS = [
+  "fromToPrecision",
   "id",
   "institutionId",
   "officeKindId",
@@ -71,11 +75,11 @@ export const OFFICES_FILTERABLE_FIELDS = [
 ] as const satisfies readonly OfficesKey[];
 
 export const OFFICES_DATE_RANGE_FIELDS = [
+  "abolishedOn",
   "createdAt",
+  "createdOn",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly OfficesKey[];
 
 export const OFFICES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IOffices> = {
@@ -89,32 +93,38 @@ export const OFFICES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IOffices>
 // ----------------------------------
 
 export const OFFICES_SELECTABLE_FIELDS = [
+  "abolishedOn",
   "code",
   "createdAt",
+  "createdOn",
   "deletedAt",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionId",
   "officeKindId",
   "sourceCitationId",
+  "toYear",
   "unitFeatureId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly OfficesKey[];
 
 export const OFFICES_DEFAULT_SELECT_FIELDS = [
+  "abolishedOn",
   "code",
   "createdAt",
+  "createdOn",
   "deletedAt",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionId",
   "officeKindId",
   "sourceCitationId",
+  "toYear",
   "unitFeatureId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly OfficesSelectableField[];
 
@@ -123,13 +133,16 @@ export const OFFICES_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const OFFICES_EDITABLE_FIELDS = [
+  "abolishedOn",
   "code",
+  "createdOn",
+  "fromToPrecision",
+  "fromYear",
   "institutionId",
   "officeKindId",
   "sourceCitationId",
+  "toYear",
   "unitFeatureId",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly OfficesKey[];
 
 // ----------------------------------

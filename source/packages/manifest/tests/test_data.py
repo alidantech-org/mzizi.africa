@@ -291,3 +291,25 @@ def test_every_seedable_table_has_a_code_so_no_seed_row_carries_an_id() -> None:
     assert [name for name, table in tables.items() if table.seedable and "id" in table.seed.columns] == []
     assert tables["official.contacts"].natural_key == ("code",)
     assert tables["official.contacts"].seed_name("kind_id") == "kind_code"
+
+
+def test_an_exact_date_needs_its_year_and_a_precision(tmp_path: Path) -> None:
+    schemes = "code,title,owner_snapshot\ngeo.feature.kind,Kinds,t\n"
+    values = "code,scheme_code,label\ngeo.feature.kind.country,geo.feature.kind,Country\n"
+
+    def run(features: str) -> list[str]:
+        root = tree(
+            tmp_path / features.split("\n")[1].replace(",", "_").replace("-", "_"),
+            {
+                "global/reference/schemes.csv": schemes,
+                "global/reference/values.csv": values,
+                "ke/geo/features.csv": features,
+            },
+        )
+        return list(check_data(root).problems)
+
+    header = "code,feature_type_code,established_on,from_year,from_to_precision\n"
+    assert run(header + "ke,geo.feature.kind.country,2013-03-04,2013,exact\n") == []
+    assert any("year" in p for p in run(header + "ke,geo.feature.kind.country,2013-03-04,,exact\n"))
+    assert any("year of 2013-03-04" in p for p in run(header + "ke,geo.feature.kind.country,2013-03-04,2012,exact\n"))
+    assert any("from_to_precision" in p for p in run(header + "ke,geo.feature.kind.country,2013-03-04,2013,\n"))

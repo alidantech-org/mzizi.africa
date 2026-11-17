@@ -82,7 +82,7 @@ export const Names = legal
     /** The name to show for this instrument and language while it applies; at most one current preferred name. */
     isPreferred: dryv.field(sharedProperties.Flag),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedEntity)
   .description(
     "A name of one instrument in one language, with its kind and validity. All forms resolve to the same instrument.",
   )
@@ -90,7 +90,7 @@ export const Names = legal
 
 const preferredName = legal.expression(
   "PreferredCurrentName",
-  Names.check((v) => v.isPreferred.eq(true).and(v.validUntil.isNull())),
+  Names.check((v) => v.isPreferred.eq(true)),
 );
 
 Names.facets({
@@ -164,13 +164,13 @@ export const Wordings = legal
     /** The language this authority-bearing text is written in. Never inferred from a default. */
     languageId: belongsTo(() => Language),
     text: dryv.field(sharedProperties.NonEmptyString),
-    effectiveFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
-    effectiveUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
     observedAt: dryv.field(sharedProperties.Instant),
     supersedesId: belongsTo(dryv.self).maybe(),
+    startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedEntity)
-  .rule("EffectiveWindowIsOrdered", rule.ordered("effectiveFrom", "effectiveUntil"))
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("WordingsDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .description("Exact authority-bearing text of one provision in one edition and language. Translations are separate rows.")
   .role("entity")
   .facets({
@@ -301,8 +301,11 @@ export const Effects = legal
     explanation: dryv.field(sharedProperties.Description).maybe(),
     reviewStatus: dryv.field(legalEnums.ReviewStatus),
     observedAt: dryv.field(sharedProperties.Instant),
+    effectiveOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    endedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValiditySubjectEntity)
+  .extends(baseSchemas.CodedPeriodSubjectEntity)
+  .rule("EffectsDatesAreOrdered", rule.ordered("effectiveOn", "endedOn", { allowEqual: true }))
   .description(
     "A reviewed assertion of what a wording establishes, governs, limits or changes for one subject record. Never mutates the subject.",
   )
@@ -310,7 +313,7 @@ export const Effects = legal
   .facets({
     storage: dryv
       .storage("effects")
-      .unique("wordingId", "subjectTable", "subjectId", "kindId", "validFrom")
+      .unique("wordingId", "subjectTable", "subjectId", "kindId", "fromYear")
       .index("subjectTable", "subjectId")
       .index("kindId")
       .index("wordingId"),

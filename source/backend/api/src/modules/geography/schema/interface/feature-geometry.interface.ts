@@ -1,5 +1,6 @@
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { Integer } from "#/modules/shared/schema/type/integer.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
@@ -10,6 +11,7 @@ export interface FeatureGeometry {
   centroid: unknown;
   confidence?: Confidence | null;
   featureId: Id;
+  fromYear?: Integer | null;
   geometry: unknown;
   geometryId: Id;
   geometryRoleId: Id;
@@ -17,5 +19,4 @@ export interface FeatureGeometry {
   minZoom?: NonNegativeInteger | null;
   observedAt?: Instant | null;
   revision: PositiveInteger;
-  validFrom: Instant;
 }

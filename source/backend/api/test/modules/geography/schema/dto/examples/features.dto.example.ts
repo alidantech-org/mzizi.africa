@@ -2,8 +2,9 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedHistoricalEntityExample } from "@test/modules/shared/schema/dto/examples/coded-historical-entity.dto.example.ts";
+import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
 
 /** The contract shape of Features, for generated tests. */
 export const featuresExample: ContractExample = contractExample({
@@ -35,10 +36,34 @@ export const featuresExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "endedOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "establishedOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
+    },
+    {
       name: "featureTypeId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "fromToPrecision",
+      optional: true,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(DatePrecision) },
+    },
+    {
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "id",
@@ -47,46 +72,16 @@ export const featuresExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "toYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
       name: "updatedAt",
       optional: false,
       nullable: false,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "validFrom",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validFromEarliest",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validFromLatest",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntil",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntilEarliest",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntilLatest",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
     },
     {
       name: "version",
@@ -100,19 +95,19 @@ export const featuresExample: ContractExample = contractExample({
       any: true,
       comparisons: [
         {
-          left: { field: "validFrom" },
+          left: { field: "fromYear" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "validUntil" },
+          left: { field: "toYear" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "validFrom" },
-          operator: "less-than",
-          right: { field: "validUntil" },
+          left: { field: "fromYear" },
+          operator: "less-than-or-equal",
+          right: { field: "toYear" },
         },
       ],
     },
@@ -120,39 +115,19 @@ export const featuresExample: ContractExample = contractExample({
       any: true,
       comparisons: [
         {
-          left: { field: "validFromEarliest" },
+          left: { field: "establishedOn" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "validFromLatest" },
+          left: { field: "endedOn" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "validFromEarliest" },
-          operator: "less-than",
-          right: { field: "validFromLatest" },
-        },
-      ],
-    },
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "validUntilEarliest" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "validUntilLatest" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "validUntilEarliest" },
-          operator: "less-than",
-          right: { field: "validUntilLatest" },
+          left: { field: "establishedOn" },
+          operator: "less-than-or-equal",
+          right: { field: "endedOn" },
         },
       ],
     },

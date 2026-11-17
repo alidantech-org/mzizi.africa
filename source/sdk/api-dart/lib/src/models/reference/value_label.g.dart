@@ -14,8 +14,6 @@ ReferenceValueLabel _$ReferenceValueLabelFromJson(Map<String, dynamic> json) => 
   labelKind: $enumDecode(_$ReferenceValueLabelKindEnumMap, json['labelKind']),
   languageId: json['languageId'] as String,
   updatedAt: DateTime.parse(json['updatedAt'] as String),
-  validFrom: json['validFrom'] == null ? null : DateTime.parse(json['validFrom'] as String),
-  validUntil: json['validUntil'] == null ? null : DateTime.parse(json['validUntil'] as String),
   valueId: json['valueId'] as String,
   version: (json['version'] as num).toInt(),
 );
@@ -28,8 +26,6 @@ Map<String, dynamic> _$ReferenceValueLabelToJson(ReferenceValueLabel instance) =
   'labelKind': _$ReferenceValueLabelKindEnumMap[instance.labelKind]!,
   'languageId': instance.languageId,
   'updatedAt': instance.updatedAt.toIso8601String(),
-  'validFrom': ?instance.validFrom?.toIso8601String(),
-  'validUntil': ?instance.validUntil?.toIso8601String(),
   'valueId': instance.valueId,
   'version': instance.version,
 };

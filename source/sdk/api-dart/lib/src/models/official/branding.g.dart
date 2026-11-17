@@ -17,8 +17,6 @@ OfficialBranding _$OfficialBrandingFromJson(Map<String, dynamic> json) => Offici
   languageId: json['languageId'] as String,
   sourceCitationId: json['sourceCitationId'] as String?,
   updatedAt: DateTime.parse(json['updatedAt'] as String),
-  validFrom: json['validFrom'] == null ? null : DateTime.parse(json['validFrom'] as String),
-  validUntil: json['validUntil'] == null ? null : DateTime.parse(json['validUntil'] as String),
   value: json['value'] as String?,
   version: (json['version'] as num).toInt(),
 );
@@ -34,8 +32,6 @@ Map<String, dynamic> _$OfficialBrandingToJson(OfficialBranding instance) => <Str
   'languageId': instance.languageId,
   'sourceCitationId': ?instance.sourceCitationId,
   'updatedAt': instance.updatedAt.toIso8601String(),
-  'validFrom': ?instance.validFrom?.toIso8601String(),
-  'validUntil': ?instance.validUntil?.toIso8601String(),
   'value': ?instance.value,
   'version': instance.version,
 };

@@ -13,8 +13,6 @@ ReferenceValueRelation _$ReferenceValueRelationFromJson(Map<String, dynamic> jso
   relationKind: $enumDecode(_$ReferenceValueRelationKindEnumMap, json['relationKind']),
   sourceValueId: json['sourceValueId'] as String,
   targetValueId: json['targetValueId'] as String,
-  validFrom: json['validFrom'] == null ? null : DateTime.parse(json['validFrom'] as String),
-  validUntil: json['validUntil'] == null ? null : DateTime.parse(json['validUntil'] as String),
 );
 
 Map<String, dynamic> _$ReferenceValueRelationToJson(ReferenceValueRelation instance) => <String, dynamic>{
@@ -24,8 +22,6 @@ Map<String, dynamic> _$ReferenceValueRelationToJson(ReferenceValueRelation insta
   'relationKind': _$ReferenceValueRelationKindEnumMap[instance.relationKind]!,
   'sourceValueId': instance.sourceValueId,
   'targetValueId': instance.targetValueId,
-  'validFrom': ?instance.validFrom?.toIso8601String(),
-  'validUntil': ?instance.validUntil?.toIso8601String(),
 };
 
 const _$ReferenceValueRelationKindEnumMap = {

@@ -10,7 +10,6 @@ import type {
   SelectQueryBuilder,
 } from "typeorm";
 import {
-  dateOnly,
   missing,
   pageWindow,
   prefixPattern,
@@ -156,6 +155,8 @@ export class GovernanceInstitutionsRepository {
     }
     query.andWhere("r.deletedAt IS NULL");
     query.addSelect("r.code", "code");
+    query.addSelect("r.fromToPrecision", "fromToPrecision");
+    query.addSelect("r.fromYear", "fromYear");
     query.addSelect("r.id", "id");
     query.leftJoin(
       ValueEntity,
@@ -163,8 +164,7 @@ export class GovernanceInstitutionsRepository {
       "r_institutionKindId.id = r.institutionKindId",
     );
     query.addSelect("r_institutionKindId.code", "kind");
-    query.addSelect("r.validFrom", "validFrom");
-    query.addSelect("r.validUntil", "validUntil");
+    query.addSelect("r.toYear", "toYear");
     query.addSelect("r.id", "__key_id");
     query.addSelect("r.entityId", "__key_entityId");
     query.orderBy("r.id", "ASC");
@@ -174,10 +174,11 @@ export class GovernanceInstitutionsRepository {
       throw missing("not_found", "The requested resource does not exist.", 404);
     const rows: Row[] = raws.map((raw) => ({
       code: raw.code,
+      fromToPrecision: raw.fromToPrecision,
+      fromYear: raw.fromYear,
       id: raw.id,
       kind: raw.kind,
-      validFrom: dateOnly(raw.validFrom),
-      validUntil: dateOnly(raw.validUntil),
+      toYear: raw.toYear,
     }));
     const mandatesByOwner = await this.load_GetInstitution_mandates(
       raws.map((raw) => raw.__key_id),
@@ -221,18 +222,20 @@ export class GovernanceInstitutionsRepository {
     query.addSelect("r1.institutionId", "__owner");
     query.addSelect("r1.institutionId", "__hit");
     query.addSelect("r1.description", "description");
+    query.addSelect("r1.fromToPrecision", "fromToPrecision");
+    query.addSelect("r1.fromYear", "fromYear");
     query.leftJoin(ValueEntity, "r1_mandateKindId", "r1_mandateKindId.id = r1.mandateKindId");
     query.addSelect("r1_mandateKindId.code", "kind");
-    query.addSelect("r1.validFrom", "validFrom");
-    query.addSelect("r1.validUntil", "validUntil");
-    query.orderBy("r1.validFrom", "DESC");
+    query.addSelect("r1.toYear", "toYear");
+    query.orderBy("r1.fromYear", "DESC");
     query.addOrderBy("r1.id", "ASC");
     const raws = await query.getRawMany<Row>();
     const rows: Row[] = raws.map((raw) => ({
       description: raw.description,
+      fromToPrecision: raw.fromToPrecision,
+      fromYear: raw.fromYear,
       kind: raw.kind,
-      validFrom: dateOnly(raw.validFrom),
-      validUntil: dateOnly(raw.validUntil),
+      toYear: raw.toYear,
     }));
     const grouped = new Map<unknown, Row[]>();
     raws.forEach((raw, index) => {
@@ -371,18 +374,20 @@ export class GovernanceInstitutionsRepository {
       "r1_appointmentKindId.id = r1.appointmentKindId",
     );
     query.addSelect("r1_appointmentKindId.code", "appointment");
+    query.addSelect("r1.fromToPrecision", "fromToPrecision");
+    query.addSelect("r1.fromYear", "fromYear");
     query.addSelect("r1.individualId", "individualId");
-    query.addSelect("r1.validFrom", "validFrom");
-    query.addSelect("r1.validUntil", "validUntil");
+    query.addSelect("r1.toYear", "toYear");
     query.addSelect("r1.individualId", "__key_individualId");
-    query.orderBy("r1.validFrom", "DESC");
+    query.orderBy("r1.fromYear", "DESC");
     query.addOrderBy("r1.id", "ASC");
     const raws = await query.getRawMany<Row>();
     const rows: Row[] = raws.map((raw) => ({
       appointment: raw.appointment,
+      fromToPrecision: raw.fromToPrecision,
+      fromYear: raw.fromYear,
       individualId: raw.individualId,
-      validFrom: dateOnly(raw.validFrom),
-      validUntil: dateOnly(raw.validUntil),
+      toYear: raw.toYear,
     }));
     const namesByOwner = await this.load_GetOffice_holders_names(
       raws.map((raw) => raw.__key_individualId),

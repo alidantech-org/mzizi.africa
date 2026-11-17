@@ -10,7 +10,5 @@ export interface ReferenceLanguageName {
   name: string;
   nameKind: ReferenceLanguageNameKind;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   version: number;
 }

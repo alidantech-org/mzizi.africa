@@ -53,13 +53,16 @@ export const HOLDERS_SORTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "individualId",
+  "leftOfficeOn",
   "officeId",
   "sourceCitationId",
+  "toYear",
+  "tookOfficeOn",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly HoldersKey[];
 
@@ -68,6 +71,7 @@ export const HOLDERS_SEARCHABLE_FIELDS = ["code"] as const satisfies readonly Ho
 export const HOLDERS_FILTERABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "fromToPrecision",
   "id",
   "individualId",
   "officeId",
@@ -77,9 +81,9 @@ export const HOLDERS_FILTERABLE_FIELDS = [
 export const HOLDERS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "leftOfficeOn",
+  "tookOfficeOn",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly HoldersKey[];
 
 export const HOLDERS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IHolders> = {
@@ -98,13 +102,16 @@ export const HOLDERS_SELECTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "individualId",
+  "leftOfficeOn",
   "officeId",
   "sourceCitationId",
+  "toYear",
+  "tookOfficeOn",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly HoldersKey[];
 
@@ -114,13 +121,16 @@ export const HOLDERS_DEFAULT_SELECT_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "individualId",
+  "leftOfficeOn",
   "officeId",
   "sourceCitationId",
+  "toYear",
+  "tookOfficeOn",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly HoldersSelectableField[];
 
@@ -132,11 +142,14 @@ export const HOLDERS_EDITABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
   "code",
+  "fromToPrecision",
+  "fromYear",
   "individualId",
+  "leftOfficeOn",
   "officeId",
   "sourceCitationId",
-  "validFrom",
-  "validUntil",
+  "toYear",
+  "tookOfficeOn",
 ] as const satisfies readonly HoldersKey[];
 
 // ----------------------------------

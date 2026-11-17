@@ -1264,14 +1264,11 @@ describe("entity schema matches the contract", () => {
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["feature_id", false, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["id", false, true],
+            ["to_year", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_from_earliest", true, false],
-            ["valid_from_latest", true, false],
-            ["valid_until", true, false],
-            ["valid_until_earliest", true, false],
-            ["valid_until_latest", true, false],
             ["value_id", false, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
@@ -1294,7 +1291,7 @@ describe("entity schema matches the contract", () => {
         )
         .sort();
       expect(indexes).toEqual(
-        expect.arrayContaining(["unique:feature_id,value_id,valid_from", "feature_id", "value_id"]),
+        expect.arrayContaining(["unique:feature_id,value_id,from_year", "feature_id", "value_id"]),
       );
     });
 
@@ -1316,15 +1313,14 @@ describe("entity schema matches the contract", () => {
             ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
+            ["ended_on", true, false],
+            ["established_on", true, false],
             ["feature_type_id", false, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["id", false, true],
+            ["to_year", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_from_earliest", true, false],
-            ["valid_from_latest", true, false],
-            ["valid_until", true, false],
-            ["valid_until_earliest", true, false],
-            ["valid_until_latest", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1345,9 +1341,7 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(
-        expect.arrayContaining(["feature_type_id", "valid_from,valid_until"]),
-      );
+      expect(indexes).toEqual(expect.arrayContaining(["feature_type_id", "from_year,to_year"]));
     });
 
     it("rejects a row without its required columns", async () => {
@@ -1373,6 +1367,8 @@ describe("entity schema matches the contract", () => {
             ["deleted_at", true, false],
             ["envelope", false, false],
             ["feature_id", false, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["geometry", false, false],
             ["geometry_role_id", false, false],
             ["id", false, true],
@@ -1382,13 +1378,8 @@ describe("entity schema matches the contract", () => {
             ["revision", false, false],
             ["srid", false, false],
             ["supersedes_id", true, false],
+            ["to_year", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_from_earliest", true, false],
-            ["valid_from_latest", true, false],
-            ["valid_until", true, false],
-            ["valid_until_earliest", true, false],
-            ["valid_until_latest", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1420,7 +1411,7 @@ describe("entity schema matches the contract", () => {
         expect.arrayContaining([
           "unique:feature_id,geometry_role_id,revision",
           "feature_id,geometry_role_id",
-          "valid_from,valid_until",
+          "from_year,to_year",
           "unique:id,feature_id",
           "basis_id",
         ]),
@@ -1501,8 +1492,6 @@ describe("entity schema matches the contract", () => {
             ["name", false, false],
             ["name_kind_id", false, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1556,18 +1545,17 @@ describe("entity schema matches the contract", () => {
           [
             ["created_at", false, false],
             ["deleted_at", true, false],
+            ["ends_on", true, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["id", false, true],
             ["object_feature_id", false, false],
             ["relationship_kind_id", false, false],
+            ["starts_on", true, false],
             ["subject_feature_id", false, false],
             ["system_id", false, false],
+            ["to_year", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_from_earliest", true, false],
-            ["valid_from_latest", true, false],
-            ["valid_until", true, false],
-            ["valid_until_earliest", true, false],
-            ["valid_until_latest", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1597,10 +1585,10 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:subject_feature_id,object_feature_id,relationship_kind_id,system_id,valid_from",
+          "unique:subject_feature_id,object_feature_id,relationship_kind_id,system_id,from_year",
           "subject_feature_id,relationship_kind_id",
           "object_feature_id,relationship_kind_id",
-          "valid_from,valid_until",
+          "from_year,to_year",
         ]),
       );
     });
@@ -1630,8 +1618,6 @@ describe("entity schema matches the contract", () => {
             ["source_citation_id", true, false],
             ["unit_feature_id", false, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1663,10 +1649,10 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:institution_id,office_id,authority_kind_id,unit_feature_id,valid_from",
+          "unique:institution_id,office_id,authority_kind_id,unit_feature_id",
           "institution_id",
           "office_id",
-          "unit_feature_id,valid_from,valid_until",
+          "unit_feature_id",
           "country_id",
           "source_citation_id",
         ]),
@@ -1693,13 +1679,16 @@ describe("entity schema matches the contract", () => {
             ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["id", false, true],
             ["individual_id", false, false],
+            ["left_office_on", true, false],
             ["office_id", false, false],
             ["source_citation_id", true, false],
+            ["to_year", true, false],
+            ["took_office_on", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1730,7 +1719,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "office_id,valid_from,valid_until",
+          "office_id,from_year,to_year",
           "individual_id",
           "source_citation_id",
         ]),
@@ -1755,13 +1744,16 @@ describe("entity schema matches the contract", () => {
             ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
+            ["dissolved_on", true, false],
             ["entity_id", false, false],
+            ["established_on", true, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["id", false, true],
             ["institution_kind_id", false, false],
             ["source_citation_id", true, false],
+            ["to_year", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1809,14 +1801,17 @@ describe("entity schema matches the contract", () => {
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["description", false, false],
+            ["ends_on", true, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["id", false, true],
             ["institution_id", true, false],
             ["mandate_kind_id", false, false],
             ["office_id", true, false],
             ["source_citation_id", true, false],
+            ["starts_on", true, false],
+            ["to_year", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1869,17 +1864,20 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
+            ["abolished_on", true, false],
             ["code", false, false],
             ["created_at", false, false],
+            ["created_on", true, false],
             ["deleted_at", true, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["id", false, true],
             ["institution_id", false, false],
             ["office_kind_id", false, false],
             ["source_citation_id", true, false],
+            ["to_year", true, false],
             ["unit_feature_id", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1933,8 +1931,6 @@ describe("entity schema matches the contract", () => {
             ["source_citation_id", true, false],
             ["subject_institution_id", false, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -1964,7 +1960,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:subject_institution_id,object_institution_id,relationship_kind_id,valid_from",
+          "unique:subject_institution_id,object_institution_id,relationship_kind_id",
           "subject_institution_id,relationship_kind_id",
           "object_institution_id,relationship_kind_id",
           "source_citation_id",
@@ -1997,8 +1993,6 @@ describe("entity schema matches the contract", () => {
             ["language_id", false, false],
             ["source_citation_id", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["value", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
@@ -2062,8 +2056,6 @@ describe("entity schema matches the contract", () => {
             ["kind_id", false, false],
             ["source_citation_id", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["value", false, false],
             ["version", false, false],
             ["visibility_id", false, false],
@@ -2185,8 +2177,6 @@ describe("entity schema matches the contract", () => {
             ["scheme_id", false, false],
             ["source_citation_id", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["value", false, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
@@ -2300,8 +2290,6 @@ describe("entity schema matches the contract", () => {
             ["name_kind_id", false, false],
             ["source_citation_id", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -2359,17 +2347,20 @@ describe("entity schema matches the contract", () => {
             ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
+            ["ends_on", true, false],
             ["from_entity_id", true, false],
             ["from_individual_id", true, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["id", false, true],
             ["kind_id", false, false],
             ["share_percentage", true, false],
             ["source_citation_id", true, false],
+            ["starts_on", true, false],
             ["to_entity_id", true, false],
             ["to_individual_id", true, false],
+            ["to_year", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -2580,8 +2571,6 @@ describe("entity schema matches the contract", () => {
             ["name", false, false],
             ["name_kind", false, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
@@ -2856,8 +2845,6 @@ describe("entity schema matches the contract", () => {
             ["label_kind", false, false],
             ["language_id", false, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["value_id", false, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
@@ -2911,8 +2898,6 @@ describe("entity schema matches the contract", () => {
             ["relation_kind", false, false],
             ["source_value_id", false, false],
             ["target_value_id", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),
       );
@@ -2937,7 +2922,7 @@ describe("entity schema matches the contract", () => {
       expect(indexes).toEqual(
         expect.arrayContaining([
           "unique:source_value_id,target_value_id,relation_kind",
-          "source_value_id,relation_kind,valid_from",
+          "source_value_id,relation_kind",
           "target_value_id,relation_kind",
         ]),
       );
@@ -3319,12 +3304,15 @@ describe("entity schema matches the contract", () => {
             ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
+            ["ends_on", true, false],
+            ["from_to_precision", true, false],
+            ["from_year", true, false],
             ["host", false, false],
             ["id", false, true],
             ["source_id", false, false],
+            ["starts_on", true, false],
+            ["to_year", true, false],
             ["updated_at", false, false],
-            ["valid_from", true, false],
-            ["valid_until", true, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
         ).sort(([left], [right]) => left.localeCompare(right)),

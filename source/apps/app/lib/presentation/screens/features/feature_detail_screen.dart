@@ -18,8 +18,9 @@ class _FeatureDetailScreenState extends State<FeatureDetailScreen> {
     ColumnSpec(key: 'code', label: 'Code'),
     ColumnSpec(key: 'featureId', label: 'Feature Id'),
     ColumnSpec(key: 'featureTypeId', label: 'Feature Type Id'),
-    ColumnSpec(key: 'validFrom', label: 'Valid From'),
-    ColumnSpec(key: 'validUntil', label: 'Valid Until'),
+    ColumnSpec(key: 'fromToPrecision', label: 'From To Precision'),
+    ColumnSpec(key: 'fromYear', label: 'From Year'),
+    ColumnSpec(key: 'toYear', label: 'To Year'),
   ];
 
   static const _lists = <String, ({String label, List<ColumnSpec> columns})>{

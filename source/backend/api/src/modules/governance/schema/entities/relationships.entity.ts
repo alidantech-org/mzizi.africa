@@ -8,6 +8,7 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
@@ -18,16 +19,12 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * One dated, typed relationship between two government institutions.
  */
 @Entity({ schema: "governance", name: "relationships" })
-@Index(["subjectInstitutionId", "objectInstitutionId", "relationshipKindId", "validFrom"], {
+@Index(["subjectInstitutionId", "objectInstitutionId", "relationshipKindId"], {
   unique: true,
 })
 @Index(["subjectInstitutionId", "relationshipKindId"])
 @Index(["objectInstitutionId", "relationshipKindId"])
 @Index(["sourceCitationId"])
-@Check(
-  "chk_relationships_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
-)
 @Check(
   "chk_relationships_relationship_is_not_self_referential",
   `subject_institution_id <> object_institution_id`,
@@ -72,12 +69,6 @@ export class GovernanceRelationshipsEntity {
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

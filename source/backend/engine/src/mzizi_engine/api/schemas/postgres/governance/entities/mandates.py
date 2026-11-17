@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+
 
 class MandatesRow(BaseModel):
     """One responsibility or authority assignment for an institution or office."""
@@ -19,12 +21,15 @@ class MandatesRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     description: Annotated[str, Field(max_length=4000)]
+    ends_on: date | None = None
+    from_to_precision: DatePrecision | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     institution_id: UUID | None = None
     mandate_kind_id: UUID
     office_id: UUID | None = None
     source_citation_id: UUID | None = None
+    starts_on: date | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
-    valid_from: date | None = None
-    valid_until: date | None = None
     version: Annotated[int, Field(ge=1)]

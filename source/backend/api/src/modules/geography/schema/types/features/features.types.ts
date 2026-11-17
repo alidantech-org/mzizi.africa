@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -32,13 +33,12 @@ import type {
 /** The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here. */
 export interface IFeatures extends B.IBase {
   code: string;
+  endedOn: Date | null;
+  establishedOn: Date | null;
   featureTypeId: string;
-  validFrom: Date | null;
-  validFromEarliest: Date | null;
-  validFromLatest: Date | null;
-  validUntil: Date | null;
-  validUntilEarliest: Date | null;
-  validUntilLatest: Date | null;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
+  toYear: number | null;
   readonly featureType?: ValueTypes.IValue;
 }
 

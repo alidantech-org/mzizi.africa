@@ -54,8 +54,9 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
       id: row.fields.id,
       code: row.fields.code,
       kind: row.follow(institution.fields.institutionKindId, value).fields.code,
-      validFrom: row.fields.validFrom,
-      validUntil: row.fields.validUntil,
+      fromYear: row.fields.fromYear,
+      toYear: row.fields.toYear,
+      fromToPrecision: row.fields.fromToPrecision,
       names: row
         .follow(institution.fields.entityId, entity)
         .reverse(officialName.fields.entityId, officialName)
@@ -67,10 +68,11 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
         (m) => ({
           kind: m.follow(mandate.fields.mandateKindId, value).fields.code,
           description: m.fields.description,
-          validFrom: m.fields.validFrom,
-          validUntil: m.fields.validUntil,
+          fromYear: m.fields.fromYear,
+          toYear: m.fields.toYear,
+          fromToPrecision: m.fields.fromToPrecision,
         }),
-        (m) => [m.fields.validFrom.order("desc"), m.fields.id.order("asc")],
+        (m) => [m.fields.fromYear.order("desc"), m.fields.id.order("asc")],
       ),
       offices: row.reverse(office.fields.institutionId, office).select(
         (o) => ({
@@ -98,8 +100,9 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
         (h) => ({
           individualId: h.fields.individualId,
           appointment: h.follow(holder.fields.appointmentKindId, value).fields.code,
-          validFrom: h.fields.validFrom,
-          validUntil: h.fields.validUntil,
+          fromYear: h.fields.fromYear,
+          toYear: h.fields.toYear,
+          fromToPrecision: h.fields.fromToPrecision,
           names: h
             .follow(holder.fields.individualId, individual)
             .reverse(officialName.fields.individualId, officialName)
@@ -108,7 +111,7 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
               (n) => [n.fields.name.order("asc"), n.fields.id.order("asc")],
             ),
         }),
-        (h) => [h.fields.validFrom.order("desc"), h.fields.id.order("asc")],
+        (h) => [h.fields.fromYear.order("desc"), h.fields.id.order("asc")],
       ),
     }))
     .orderBy(({ fields }) => [fields.id.order("asc")])

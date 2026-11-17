@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+
 
 class OfficialRelationshipsRow(BaseModel):
     """One directed typed relationship between exactly two Official identities, optionally with an ownership share."""
@@ -26,15 +28,18 @@ class OfficialRelationshipsRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
+    ends_on: date | None = None
     from_entity_id: UUID | None = None
     from_individual_id: UUID | None = None
+    from_to_precision: DatePrecision | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     kind_id: UUID
     share_percentage: Annotated[float, Field(ge=0, le=100)] | None = None
     source_citation_id: UUID | None = None
+    starts_on: date | None = None
     to_entity_id: UUID | None = None
     to_individual_id: UUID | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
-    valid_from: date | None = None
-    valid_until: date | None = None
     version: Annotated[int, Field(ge=1)]

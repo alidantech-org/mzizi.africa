@@ -1,10 +1,12 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -12,9 +14,11 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
@@ -50,6 +54,25 @@ export class HoldersDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.fromToPrecision !== null)
+  @IsEnum(DatePrecision)
+  fromToPrecision?: DatePrecision | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  @Satisfies<HoldersDto>(
+    (object) =>
+      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
+    {
+      message: "Period Years Are Ordered",
+    },
+  )
+  fromYear?: Year | null;
+
   @IsString()
   @IsUUID()
   id!: Id;
@@ -57,6 +80,11 @@ export class HoldersDto {
   @IsString()
   @IsUUID()
   individualId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.leftOfficeOn !== null)
+  @IsISO8601({ strict: true })
+  leftOfficeOn?: CalendarDate | null;
 
   @IsString()
   @IsUUID()
@@ -68,25 +96,29 @@ export class HoldersDto {
   @IsUUID()
   sourceCitationId?: Id | null;
 
-  @IsISO8601({})
-  updatedAt!: Instant;
+  @IsOptional()
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.validFrom !== null)
+  @ValidateIf((object) => object.tookOfficeOn !== null)
   @IsISO8601({ strict: true })
   @Satisfies<HoldersDto>(
     (object) =>
-      object.validFrom == null || object.validUntil == null || object.validFrom < object.validUntil,
+      object.tookOfficeOn == null ||
+      object.leftOfficeOn == null ||
+      object.tookOfficeOn <= object.leftOfficeOn,
     {
-      message: "Validity Window Is Ordered",
+      message: "Holders Dates Are Ordered",
     },
   )
-  validFrom?: CalendarDate | null;
+  tookOfficeOn?: CalendarDate | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.validUntil !== null)
-  @IsISO8601({ strict: true })
-  validUntil?: CalendarDate | null;
+  @IsISO8601({})
+  updatedAt!: Instant;
 
   @IsInt()
   @Min(1)

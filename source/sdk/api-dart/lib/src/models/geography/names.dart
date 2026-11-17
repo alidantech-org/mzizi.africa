@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
 import 'package:mzizi_api/src/models/reference/language.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
 
 part 'names.g.dart';
 
@@ -19,8 +19,6 @@ class GeographyNames {
     required this.name,
     required this.nameKindId,
     required this.updatedAt,
-    this.validFrom,
-    this.validUntil,
     required this.version,
   });
   final DateTime createdAt;
@@ -32,8 +30,6 @@ class GeographyNames {
   final String name;
   final String nameKindId;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validUntil;
   final int version;
 
   factory GeographyNames.fromJson(Map<String, dynamic> json) => _$GeographyNamesFromJson(json);

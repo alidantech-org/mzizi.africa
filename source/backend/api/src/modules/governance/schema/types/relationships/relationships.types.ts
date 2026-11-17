@@ -37,8 +37,6 @@ export interface IRelationships extends B.IBase {
   relationshipKindId: string;
   sourceCitationId: string | null;
   subjectInstitutionId: string;
-  validFrom: Date | null;
-  validUntil: Date | null;
   readonly objectInstitution?: InstitutionsTypes.IInstitutions;
   readonly relationshipKind?: ValueTypes.IValue;
   readonly sourceCitation?: CitationsTypes.ICitations;

@@ -4,6 +4,7 @@ export interface GeographyFeatureGeometry {
   centroid: unknown;
   confidence?: number | null;
   featureId: string;
+  fromYear?: number | null;
   geometry: unknown;
   geometryId: string;
   geometryRoleId: string;
@@ -11,5 +12,4 @@ export interface GeographyFeatureGeometry {
   minZoom?: number | null;
   observedAt?: string | null;
   revision: number;
-  validFrom: string;
 }

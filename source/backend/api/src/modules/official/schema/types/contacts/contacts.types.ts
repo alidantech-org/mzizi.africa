@@ -39,8 +39,6 @@ export interface IContacts extends B.IBase {
   individualId: string | null;
   kindId: string;
   sourceCitationId: string | null;
-  validFrom: Date | null;
-  validUntil: Date | null;
   value: string;
   visibilityId: string;
   readonly entity?: EntitiesTypes.IEntities;

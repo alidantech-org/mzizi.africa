@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/reference/language_name_kind.dart';
 import 'package:mzizi_api/src/models/reference/language.dart';
-import 'package:mzizi_api/src/models/shared/validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
 
 part 'language_name.g.dart';
 
@@ -17,8 +17,6 @@ class ReferenceLanguageName {
     required this.name,
     required this.nameKind,
     required this.updatedAt,
-    this.validFrom,
-    this.validUntil,
     required this.version,
   });
   final DateTime createdAt;
@@ -29,8 +27,6 @@ class ReferenceLanguageName {
   final String name;
   final ReferenceLanguageNameKind nameKind;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validUntil;
   final int version;
 
   factory ReferenceLanguageName.fromJson(Map<String, dynamic> json) => _$ReferenceLanguageNameFromJson(json);

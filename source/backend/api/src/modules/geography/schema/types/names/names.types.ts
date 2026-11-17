@@ -38,8 +38,6 @@ export interface INames extends B.IBase {
   languageId: string;
   name: string;
   nameKindId: string;
-  validFrom: Date | null;
-  validUntil: Date | null;
   readonly feature?: FeaturesTypes.IFeatures;
   readonly language?: LanguageTypes.ILanguage;
   readonly nameKind?: ValueTypes.IValue;

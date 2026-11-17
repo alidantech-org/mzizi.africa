@@ -11,9 +11,11 @@ import {
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * One government institution specialization of an Official entity.
@@ -23,8 +25,12 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["entityId"])
 @Index(["sourceCitationId"])
 @Check(
-  "chk_institutions_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
+  "chk_institutions_period_years_are_ordered",
+  `from_year = null OR to_year = null OR from_year <= to_year`,
+)
+@Check(
+  "chk_institutions_institutions_dates_are_ordered",
+  `established_on = null OR dissolved_on = null OR established_on <= dissolved_on`,
 )
 export class InstitutionsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
@@ -39,12 +45,29 @@ export class InstitutionsEntity {
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
+  @Column({ name: "dissolved_on", type: "date", nullable: true })
+  dissolvedOn?: Date | null;
+
   @Column({ name: "entity_id", type: "uuid" })
   entityId!: Id;
 
   @ManyToOne(() => EntitiesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "entity_id" })
   entity?: Relation<EntitiesEntity>;
+
+  @Column({ name: "established_on", type: "date", nullable: true })
+  establishedOn?: Date | null;
+
+  @Column({
+    name: "from_to_precision",
+    type: "enum",
+    enum: DatePrecision,
+    nullable: true,
+  })
+  fromToPrecision?: DatePrecision | null;
+
+  @Column({ name: "from_year", type: "integer", nullable: true })
+  fromYear?: Year | null;
 
   @Column({ name: "institution_kind_id", type: "uuid" })
   institutionKindId!: Id;
@@ -60,14 +83,11 @@ export class InstitutionsEntity {
   @JoinColumn({ name: "source_citation_id" })
   sourceCitation?: Relation<CitationsEntity>;
 
+  @Column({ name: "to_year", type: "integer", nullable: true })
+  toYear?: Year | null;
+
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
 
   @Column({ name: "version", type: "integer" })
   version!: PositiveInteger;

@@ -8,29 +8,24 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * One dated classification of a feature by a scheme value, so a feature can answer several classification questions and change over time.
  */
 @Entity({ schema: "geography", name: "classifications" })
-@Index(["featureId", "valueId", "validFrom"], { unique: true })
+@Index(["featureId", "valueId", "fromYear"], { unique: true })
 @Index(["featureId"])
 @Index(["valueId"])
 @Check(
-  "chk_classifications_validity_window_is_ordered",
-  `valid_from = null OR valid_until = null OR valid_from < valid_until`,
-)
-@Check(
-  "chk_classifications_start_bounds_are_ordered",
-  `valid_from_earliest = null OR valid_from_latest = null OR valid_from_earliest < valid_from_latest`,
-)
-@Check(
-  "chk_classifications_end_bounds_are_ordered",
-  `valid_until_earliest = null OR valid_until_latest = null OR valid_until_earliest < valid_until_latest`,
+  "chk_classifications_period_years_are_ordered",
+  `from_year = null OR to_year = null OR from_year <= to_year`,
 )
 export class ClassificationsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
@@ -49,26 +44,22 @@ export class ClassificationsEntity {
   @JoinColumn({ name: "feature_id" })
   feature?: Relation<FeaturesEntity>;
 
+  @Column({
+    name: "from_to_precision",
+    type: "enum",
+    enum: DatePrecision,
+    nullable: true,
+  })
+  fromToPrecision?: DatePrecision | null;
+
+  @Column({ name: "from_year", type: "integer", nullable: true })
+  fromYear?: Year | null;
+
+  @Column({ name: "to_year", type: "integer", nullable: true })
+  toYear?: Year | null;
+
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;
-
-  @Column({ name: "valid_from", type: "date", nullable: true })
-  validFrom?: Date | null;
-
-  @Column({ name: "valid_from_earliest", type: "date", nullable: true })
-  validFromEarliest?: Date | null;
-
-  @Column({ name: "valid_from_latest", type: "date", nullable: true })
-  validFromLatest?: Date | null;
-
-  @Column({ name: "valid_until", type: "date", nullable: true })
-  validUntil?: Date | null;
-
-  @Column({ name: "valid_until_earliest", type: "date", nullable: true })
-  validUntilEarliest?: Date | null;
-
-  @Column({ name: "valid_until_latest", type: "date", nullable: true })
-  validUntilLatest?: Date | null;
 
   @Column({ name: "value_id", type: "uuid" })
   valueId!: Id;

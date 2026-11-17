@@ -246,6 +246,26 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                 if target.qualified_name != name:
                     edges[name].add(target.qualified_name)
 
+    # Periods: a row with an exact date always has the matching year filled, and a precision.
+    for name, rows in result.rows.items():
+        table = tables[name]
+        if "from_year" not in table.columns:
+            continue
+        date_columns = [c.name for c in table.columns.values() if c.kind == "date" and not c.managed]
+        for row in rows:
+            dates = [row.values.get(c, "") for c in date_columns if row.values.get(c, "")]
+            if not dates:
+                continue
+            where = f"{row.file.relative_to(root)}:{row.line}"
+            years = {row.values.get("from_year", ""), row.values.get("to_year", "")} - {""}
+            if not years:
+                result.problems.append(f"{where}: an exact date is given, so from_year or to_year must be filled")
+            for date in dates:
+                if date[:4].lstrip("0") not in {y.lstrip("0") for y in years}:
+                    result.problems.append(f"{where}: the year of {date} is not in from_year or to_year")
+            if not row.values.get("from_to_precision", ""):
+                result.problems.append(f"{where}: from_to_precision is required when a date is given")
+
     # Subjects: `subject_code` names a row of the table in `subject_table`.
     subject_edges: dict[str, set[str]] = {}
     for name, rows in result.rows.items():

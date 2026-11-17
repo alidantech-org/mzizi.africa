@@ -39,8 +39,6 @@
           ,"kind_code"
           ,"language_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
           ,"value"
         ],
         "required": [
@@ -121,18 +119,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
         ,"value": {
           "type": ["string", "null"],
           "x-type": "text",
@@ -181,8 +167,6 @@
           ,"individual_code"
           ,"kind_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
           ,"value"
           ,"visibility_code"
         ],
@@ -257,18 +241,6 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"value": {
           "type": "string",
@@ -440,8 +412,6 @@
           ,"namespace"
           ,"scheme_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
           ,"value"
         ],
         "required": [
@@ -519,18 +489,6 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"value": {
           "type": "string",
@@ -680,8 +638,6 @@
           ,"name"
           ,"name_kind_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
         ],
         "required": [
           "is_preferred"
@@ -766,18 +722,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
         ,"version": {
           "type": "integer",
           "x-type": "integer",
@@ -813,15 +757,18 @@
         ],
         "columns": [
           "code"
+          ,"ends_on"
           ,"from_entity_code"
           ,"from_individual_code"
+          ,"from_to_precision"
+          ,"from_year"
           ,"kind_code"
           ,"share_percentage"
           ,"source_citation_code"
+          ,"starts_on"
           ,"to_entity_code"
           ,"to_individual_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"to_year"
         ],
         "required": [
           "code"
@@ -851,6 +798,12 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"ends_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"from_entity_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
@@ -864,6 +817,17 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "from_individual_code" }
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"id": {
           "type": "string",
@@ -891,6 +855,12 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"starts_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"to_entity_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
@@ -905,24 +875,17 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "to_individual_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",

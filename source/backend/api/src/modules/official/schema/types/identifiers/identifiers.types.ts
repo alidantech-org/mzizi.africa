@@ -40,8 +40,6 @@ export interface IIdentifiers extends B.IBase {
   namespace: string | null;
   schemeId: string;
   sourceCitationId: string | null;
-  validFrom: Date | null;
-  validUntil: Date | null;
   value: string;
   readonly entity?: EntitiesTypes.IEntities;
   readonly individual?: IndividualsTypes.IIndividuals;

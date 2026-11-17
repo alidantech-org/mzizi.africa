@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import datetime
 from typing import Annotated, ClassVar
 from uuid import UUID
 
@@ -25,7 +25,5 @@ class ValueLabelRow(BaseModel):
     label_kind: ValueLabelKind
     language_id: UUID
     updated_at: datetime
-    valid_from: date | None = None
-    valid_until: date | None = None
     value_id: UUID
     version: Annotated[int, Field(ge=1)]

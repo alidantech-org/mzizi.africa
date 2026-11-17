@@ -39,6 +39,14 @@ export class DomainsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find domains by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<DomainsEntity>,
+    fromToPrecision: NonNullable<DomainsEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<DomainsEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find domains by source id, paged by the shared query. */
   async findBySource(
     query: BaseQueryDto<DomainsEntity>,

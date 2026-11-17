@@ -41,18 +41,22 @@ export const DOMAINS_SORTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "host",
   "id",
   "sourceId",
+  "startsOn",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly DomainsKey[];
 
 export const DOMAINS_SEARCHABLE_FIELDS = ["code", "host"] as const satisfies readonly DomainsKey[];
 
 export const DOMAINS_FILTERABLE_FIELDS = [
+  "fromToPrecision",
   "id",
   "sourceId",
 ] as const satisfies readonly DomainsKey[];
@@ -60,9 +64,9 @@ export const DOMAINS_FILTERABLE_FIELDS = [
 export const DOMAINS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "startsOn",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly DomainsKey[];
 
 export const DOMAINS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IDomains> = {
@@ -79,12 +83,15 @@ export const DOMAINS_SELECTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "host",
   "id",
   "sourceId",
+  "startsOn",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly DomainsKey[];
 
@@ -92,12 +99,15 @@ export const DOMAINS_DEFAULT_SELECT_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "host",
   "id",
   "sourceId",
+  "startsOn",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly DomainsSelectableField[];
 
@@ -107,10 +117,13 @@ export const DOMAINS_DEFAULT_SELECT_FIELDS = [
 
 export const DOMAINS_EDITABLE_FIELDS = [
   "code",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "host",
   "sourceId",
-  "validFrom",
-  "validUntil",
+  "startsOn",
+  "toYear",
 ] as const satisfies readonly DomainsKey[];
 
 // ----------------------------------

@@ -40,6 +40,14 @@ export class RelationshipsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find relationships by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<GeographyRelationshipsEntity>,
+    fromToPrecision: NonNullable<GeographyRelationshipsEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<GeographyRelationshipsEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find relationships by object feature id, paged by the shared query. */
   async findByObjectFeature(
     query: BaseQueryDto<GeographyRelationshipsEntity>,

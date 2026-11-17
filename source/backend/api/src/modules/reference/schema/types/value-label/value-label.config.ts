@@ -49,8 +49,6 @@ export const VALUE_LABEL_SORTABLE_FIELDS = [
   "labelKind",
   "languageId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "valueId",
   "version",
 ] as const satisfies readonly ValueLabelKey[];
@@ -68,8 +66,6 @@ export const VALUE_LABEL_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly ValueLabelKey[];
 
 export const VALUE_LABEL_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IValueLabel> = {
@@ -90,8 +86,6 @@ export const VALUE_LABEL_SELECTABLE_FIELDS = [
   "labelKind",
   "languageId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "valueId",
   "version",
 ] as const satisfies readonly ValueLabelKey[];
@@ -104,8 +98,6 @@ export const VALUE_LABEL_DEFAULT_SELECT_FIELDS = [
   "labelKind",
   "languageId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "valueId",
   "version",
 ] as const satisfies readonly ValueLabelSelectableField[];
@@ -118,8 +110,6 @@ export const VALUE_LABEL_EDITABLE_FIELDS = [
   "label",
   "labelKind",
   "languageId",
-  "validFrom",
-  "validUntil",
   "valueId",
 ] as const satisfies readonly ValueLabelKey[];
 

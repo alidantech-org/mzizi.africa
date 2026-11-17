@@ -2,6 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { featureEntryNamesExample } from "@test/modules/geography/schema/dto/examples/feature-entry-names.dto.example.ts";
 
 /** The contract shape of FeatureEntry, for generated tests. */
@@ -34,6 +35,18 @@ export const featureEntryExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "fromToPrecision",
+      optional: false,
+      nullable: true,
+      spec: { kind: "enum", values: Object.values(DatePrecision) },
+    },
+    {
+      name: "fromYear",
+      optional: false,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
       name: "names",
       optional: false,
       nullable: false,
@@ -41,16 +54,10 @@ export const featureEntryExample: ContractExample = contractExample({
       spec: { kind: "schema", example: () => featureEntryNamesExample },
     },
     {
-      name: "validFrom",
+      name: "toYear",
       optional: false,
       nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "validUntil",
-      optional: false,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
   ],
   invariants: [],

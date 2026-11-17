@@ -32,6 +32,12 @@ export const featureGeometryExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true },
+    },
+    {
       name: "geometry",
       optional: false,
       nullable: false,
@@ -72,12 +78,6 @@ export const featureGeometryExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 1 },
-    },
-    {
-      name: "validFrom",
-      optional: false,
-      nullable: false,
-      spec: { kind: "temporal", temporal: "instant" },
     },
   ],
   invariants: [],

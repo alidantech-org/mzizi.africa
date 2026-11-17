@@ -49,20 +49,24 @@ export const MANDATES_SORTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "description",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionId",
   "mandateKindId",
   "officeId",
   "sourceCitationId",
+  "startsOn",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly MandatesKey[];
 
 export const MANDATES_SEARCHABLE_FIELDS = ["description"] as const satisfies readonly MandatesKey[];
 
 export const MANDATES_FILTERABLE_FIELDS = [
+  "fromToPrecision",
   "id",
   "institutionId",
   "mandateKindId",
@@ -73,9 +77,9 @@ export const MANDATES_FILTERABLE_FIELDS = [
 export const MANDATES_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "endsOn",
+  "startsOn",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly MandatesKey[];
 
 export const MANDATES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IMandates> = {
@@ -92,14 +96,17 @@ export const MANDATES_SELECTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "description",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionId",
   "mandateKindId",
   "officeId",
   "sourceCitationId",
+  "startsOn",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly MandatesKey[];
 
@@ -107,14 +114,17 @@ export const MANDATES_DEFAULT_SELECT_FIELDS = [
   "createdAt",
   "deletedAt",
   "description",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "id",
   "institutionId",
   "mandateKindId",
   "officeId",
   "sourceCitationId",
+  "startsOn",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly MandatesSelectableField[];
 
@@ -124,12 +134,15 @@ export const MANDATES_DEFAULT_SELECT_FIELDS = [
 
 export const MANDATES_EDITABLE_FIELDS = [
   "description",
+  "endsOn",
+  "fromToPrecision",
+  "fromYear",
   "institutionId",
   "mandateKindId",
   "officeId",
   "sourceCitationId",
-  "validFrom",
-  "validUntil",
+  "startsOn",
+  "toYear",
 ] as const satisfies readonly MandatesKey[];
 
 // ----------------------------------

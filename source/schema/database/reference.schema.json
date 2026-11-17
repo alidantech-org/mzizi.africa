@@ -391,8 +391,6 @@
           ,"language_code"
           ,"name"
           ,"name_kind"
-          ,"valid_from"
-          ,"valid_until"
         ],
         "required": [
           "in_language_code"
@@ -456,18 +454,6 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -1018,8 +1004,6 @@
           "label"
           ,"label_kind"
           ,"language_code"
-          ,"valid_from"
-          ,"valid_until"
           ,"value_code"
         ],
         "required": [
@@ -1078,18 +1062,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
         ,"value_id": {
           "type": "string",
           "x-type": "uuid",
@@ -1133,8 +1105,6 @@
           "relation_kind"
           ,"source_value_code"
           ,"target_value_code"
-          ,"valid_from"
-          ,"valid_until"
         ],
         "required": [
           "relation_kind"
@@ -1183,18 +1153,6 @@
           "format": "uuid",
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "target_value_code" }
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
       }
     }

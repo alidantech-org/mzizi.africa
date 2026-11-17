@@ -1,7 +1,7 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
 import { ValueRelationKind } from "#/lib/types/value-relation-kind.enum.ts";
 
-/** A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind. */
+/** A directed, typed, relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind. */
 export interface ValueRelation {
   createdAt: string;
   deletedAt?: string | null;
@@ -9,8 +9,6 @@ export interface ValueRelation {
   relationKind: ValueRelationKind;
   sourceValueId: string;
   targetValueId: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
 }
 
 /** Field metadata for forms and results. */
@@ -27,6 +25,4 @@ export const ValueRelationFields: readonly FieldMeta[] = [
   },
   { name: "sourceValueId", label: "Source Value Id", kind: "string", required: true },
   { name: "targetValueId", label: "Target Value Id", kind: "string", required: true },
-  { name: "validFrom", label: "Valid From", kind: "date", required: false },
-  { name: "validUntil", label: "Valid Until", kind: "date", required: false },
 ];

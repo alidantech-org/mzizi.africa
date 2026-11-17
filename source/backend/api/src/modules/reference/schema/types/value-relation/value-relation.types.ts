@@ -30,13 +30,11 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** A directed, typed, time-aware relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind. */
+/** A directed, typed, relation between classification values; supports multi-parent and cross-scheme taxonomy, such as a regional label that maps to a broader global kind. */
 export interface IValueRelation extends B.IBase {
   relationKind: ValueRelationKind;
   sourceValueId: string;
   targetValueId: string;
-  validFrom: Date | null;
-  validUntil: Date | null;
   readonly sourceValue?: ValueTypes.IValue;
   readonly targetValue?: ValueTypes.IValue;
 }

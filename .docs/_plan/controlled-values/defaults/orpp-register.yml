@@ -19,4 +19,4 @@ reads_as:
   former name: { official.names: { name_kind_code: ofc.name.kind.former, is_preferred: "false" } }
 emit: [politics.parties]
 copy:
-  politics.parties.valid_from: official.entities.registered_on
+  politics.parties.registered_on: official.entities.registered_on

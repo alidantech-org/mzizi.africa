@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -38,11 +39,14 @@ export interface IHolders extends B.IBase {
   appointedByEntityId: string | null;
   appointmentKindId: string;
   code: string;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
   individualId: string;
+  leftOfficeOn: Date | null;
   officeId: string;
   sourceCitationId: string | null;
-  validFrom: Date | null;
-  validUntil: Date | null;
+  toYear: number | null;
+  tookOfficeOn: Date | null;
   readonly appointedByEntity?: EntitiesTypes.IEntities;
   readonly appointmentKind?: ValueTypes.IValue;
   readonly individual?: IndividualsTypes.IIndividuals;

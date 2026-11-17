@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+
 
 class DomainsRow(BaseModel):
     """A host name a source is served from. A host belongs to one source at a time; its validity period records moves."""
@@ -26,10 +28,13 @@ class DomainsRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
+    ends_on: date | None = None
+    from_to_precision: DatePrecision | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     host: Annotated[str, Field(min_length=1, max_length=255)]
     id: UUID
     source_id: UUID
+    starts_on: date | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
-    valid_from: date | None = None
-    valid_until: date | None = None
     version: Annotated[int, Field(ge=1)]

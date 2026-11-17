@@ -1,11 +1,14 @@
 import { Type } from "class-transformer";
 import {
   IsArray,
-  IsISO8601,
+  IsEnum,
+  IsInt,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
+  Min,
   MinLength,
   IsDefined,
   ValidateIf,
@@ -14,9 +17,10 @@ import {
 import { InstitutionDetailMandatesDto } from "#/modules/governance/schema/dto/institution-detail-mandates.dto.ts";
 import { InstitutionDetailNamesDto } from "#/modules/governance/schema/dto/institution-detail-names.dto.ts";
 import { InstitutionDetailOfficesDto } from "#/modules/governance/schema/dto/institution-detail-offices.dto.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * Institution Detail
@@ -31,6 +35,16 @@ export class InstitutionDetailDto {
     ),
   )
   code!: IdentityCode;
+
+  @ValidateIf((object) => object.fromToPrecision !== null)
+  @IsEnum(DatePrecision)
+  fromToPrecision!: DatePrecision | null;
+
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear!: Year | null;
 
   @IsString()
   @IsUUID()
@@ -64,11 +78,9 @@ export class InstitutionDetailDto {
   @Type(() => InstitutionDetailOfficesDto)
   offices!: InstitutionDetailOfficesDto[];
 
-  @ValidateIf((object) => object.validFrom !== null)
-  @IsISO8601({ strict: true })
-  validFrom!: CalendarDate | null;
-
-  @ValidateIf((object) => object.validUntil !== null)
-  @IsISO8601({ strict: true })
-  validUntil!: CalendarDate | null;
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear!: Year | null;
 }

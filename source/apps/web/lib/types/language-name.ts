@@ -11,8 +11,6 @@ export interface LanguageName {
   name: string;
   nameKind: LanguageNameKind;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   version: number;
 }
 
@@ -32,7 +30,5 @@ export const LanguageNameFields: readonly FieldMeta[] = [
     options: Object.values(LanguageNameKind),
   },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },
-  { name: "validFrom", label: "Valid From", kind: "date", required: false },
-  { name: "validUntil", label: "Valid Until", kind: "date", required: false },
   { name: "version", label: "Version", kind: "number", required: true },
 ];

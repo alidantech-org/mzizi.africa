@@ -41,15 +41,14 @@ export const FEATURES_SORTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endedOn",
+  "establishedOn",
   "featureTypeId",
+  "fromToPrecision",
+  "fromYear",
   "id",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly FeaturesKey[];
 
@@ -57,19 +56,16 @@ export const FEATURES_SEARCHABLE_FIELDS = ["code"] as const satisfies readonly F
 
 export const FEATURES_FILTERABLE_FIELDS = [
   "featureTypeId",
+  "fromToPrecision",
   "id",
 ] as const satisfies readonly FeaturesKey[];
 
 export const FEATURES_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
+  "endedOn",
+  "establishedOn",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
 ] as const satisfies readonly FeaturesKey[];
 
 export const FEATURES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IFeatures> = {
@@ -86,15 +82,14 @@ export const FEATURES_SELECTABLE_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endedOn",
+  "establishedOn",
   "featureTypeId",
+  "fromToPrecision",
+  "fromYear",
   "id",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly FeaturesKey[];
 
@@ -102,15 +97,14 @@ export const FEATURES_DEFAULT_SELECT_FIELDS = [
   "code",
   "createdAt",
   "deletedAt",
+  "endedOn",
+  "establishedOn",
   "featureTypeId",
+  "fromToPrecision",
+  "fromYear",
   "id",
+  "toYear",
   "updatedAt",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
   "version",
 ] as const satisfies readonly FeaturesSelectableField[];
 
@@ -120,13 +114,12 @@ export const FEATURES_DEFAULT_SELECT_FIELDS = [
 
 export const FEATURES_EDITABLE_FIELDS = [
   "code",
+  "endedOn",
+  "establishedOn",
   "featureTypeId",
-  "validFrom",
-  "validFromEarliest",
-  "validFromLatest",
-  "validUntil",
-  "validUntilEarliest",
-  "validUntilLatest",
+  "fromToPrecision",
+  "fromYear",
+  "toYear",
 ] as const satisfies readonly FeaturesKey[];
 
 // ----------------------------------

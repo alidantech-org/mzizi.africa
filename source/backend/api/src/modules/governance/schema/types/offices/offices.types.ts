@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -34,13 +35,16 @@ import type {
 
 /** One established public office, independent of any current holder and optionally scoped to a geographic unit. */
 export interface IOffices extends B.IBase {
+  abolishedOn: Date | null;
   code: string;
+  createdOn: Date | null;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
   institutionId: string;
   officeKindId: string;
   sourceCitationId: string | null;
+  toYear: number | null;
   unitFeatureId: string | null;
-  validFrom: Date | null;
-  validUntil: Date | null;
   readonly institution?: InstitutionsTypes.IInstitutions;
   readonly officeKind?: ValueTypes.IValue;
   readonly sourceCitation?: CitationsTypes.ICitations;

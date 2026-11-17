@@ -28,14 +28,17 @@ export const Features = geography
   .schema("Features", {
     /** Scheme geo.feature.kind. A kind says whether a feature is a country, county, river, dam, road or territory. */
     featureTypeId: belongsTo(() => Value).tags("scheme:ref.sch.geo.feature.kind"),
+    establishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    endedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedHistoricalEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("FeaturesDatesAreOrdered", rule.ordered("establishedOn", "endedOn", { allowEqual: true }))
   .description(
     "The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here.",
   )
   .role("entity")
   .facets({
-    storage: dryv.storage("features").index("featureTypeId").index("validFrom", "validUntil"),
+    storage: dryv.storage("features").index("featureTypeId").index("fromYear", "toYear"),
   });
 
 export const Names = geography
@@ -48,7 +51,7 @@ export const Names = geography
     /** The name shown when no other is asked for, in its language: at most one per feature and language. */
     isDefault: dryv.field(sharedProperties.Flag),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.Entity)
   .description(
     "A canonical, official, local, alternative, translated or historical name for a feature, with its language (`mul` or `und` when no single language applies), validity and provenance reference.",
   )
@@ -80,13 +83,13 @@ export const Classifications = geography
      */
     valueId: belongsTo(() => Value),
   })
-  .extends(baseSchemas.HistoricalValidityEntity)
+  .extends(baseSchemas.PeriodEntity)
   .description(
     "One dated classification of a feature by a scheme value, so a feature can answer several classification questions and change over time.",
   )
   .role("entity")
   .facets({
-    storage: dryv.storage("classifications").unique("featureId", "valueId", "validFrom").index("featureId").index("valueId"),
+    storage: dryv.storage("classifications").unique("featureId", "valueId", "fromYear").index("featureId").index("valueId"),
   });
 
 export const Identifiers = geography
@@ -137,7 +140,7 @@ export const Geometries = geography
     srid: dryv.field(sharedProperties.PositiveInteger),
     observedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
-  .extends(baseSchemas.HistoricalValidityEntity)
+  .extends(baseSchemas.PeriodEntity)
   .rule("ZoomRangeMustBeOrdered", rule.ordered("minZoom", "maxZoom"))
   .rule("GeometryMustNotSupersedeItself", rule.differs("id", "supersedesId"))
   .description(
@@ -146,13 +149,13 @@ export const Geometries = geography
   .role("entity");
 
 const geometryRules = geography.expressions({
-  CurrentGeometry: Geometries.check((row) => row.validUntil.isNull()),
+  CurrentGeometry: Geometries.check((row) => row.toYear.isNull()),
 });
 
 const geometryQueries = geography.queries({
   CurrentGeometries: dryv.readQuery
     .from(Geometries.asRef())
-    .where((row) => [row.fields.validUntil.isNull()])
+    .where((row) => [row.fields.toYear.isNull()])
     .select((row) => ({
       id: row.fields.id,
       featureId: row.fields.featureId,
@@ -169,7 +172,7 @@ Geometries.facets({
     .unique("featureId", "geometryRoleId")
     .where(geometryRules.CurrentGeometry)
     .index("featureId", "geometryRoleId")
-    .index("validFrom", "validUntil")
+    .index("fromYear", "toYear")
     .unique("id", "featureId")
     .index("basisId")
     .index("geometry")
@@ -184,8 +187,11 @@ export const Relationships = geography
     relationshipKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.relationship.kind"),
     /** Expected scheme: geo.relationship.system (administrative, electoral, statistical, hydrological, historical). */
     systemId: belongsTo(() => Value).tags("scheme:ref.sch.geo.relationship.system"),
+    startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.HistoricalValidityEntity)
+  .extends(baseSchemas.PeriodEntity)
+  .rule("RelationshipsDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .rule("RelationshipMustNotBeSelfReferential", rule.differs("subjectFeatureId", "objectFeatureId"))
   .description(
     "A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems.",
@@ -194,10 +200,10 @@ export const Relationships = geography
   .facets({
     storage: dryv
       .storage("relationships")
-      .unique("subjectFeatureId", "objectFeatureId", "relationshipKindId", "systemId", "validFrom")
+      .unique("subjectFeatureId", "objectFeatureId", "relationshipKindId", "systemId", "fromYear")
       .index("subjectFeatureId", "relationshipKindId")
       .index("objectFeatureId", "relationshipKindId")
-      .index("validFrom", "validUntil"),
+      .index("fromYear", "toYear"),
   });
 
 export const Changes = geography

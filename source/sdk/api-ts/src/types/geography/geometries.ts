@@ -1,3 +1,5 @@
+import { SharedDatePrecision } from "#sdk/types/enums/shared/date-precision.ts";
+
 /** One drawing of a feature: a revision with a role, a basis, a confidence, a zoom range, a validity period and the stored file it came from. A feature has many; the current one has no end date. */
 export interface GeographyGeometries {
   area: number;
@@ -8,6 +10,8 @@ export interface GeographyGeometries {
   deletedAt?: string | null;
   envelope: unknown;
   featureId: string;
+  fromToPrecision?: SharedDatePrecision | null;
+  fromYear?: number | null;
   geometry: unknown;
   geometryRoleId: string;
   id: string;
@@ -17,12 +21,7 @@ export interface GeographyGeometries {
   revision: number;
   srid: number;
   supersedesId?: string | null;
+  toYear?: number | null;
   updatedAt: string;
-  validFrom?: string | null;
-  validFromEarliest?: string | null;
-  validFromLatest?: string | null;
-  validUntil?: string | null;
-  validUntilEarliest?: string | null;
-  validUntilLatest?: string | null;
   version: number;
 }

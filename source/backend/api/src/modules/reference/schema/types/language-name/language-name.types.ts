@@ -36,8 +36,6 @@ export interface ILanguageName extends B.IBase {
   languageId: string;
   name: string;
   nameKind: LanguageNameKind;
-  validFrom: Date | null;
-  validUntil: Date | null;
   readonly inLanguage?: LanguageTypes.ILanguage;
   readonly language?: LanguageTypes.ILanguage;
 }

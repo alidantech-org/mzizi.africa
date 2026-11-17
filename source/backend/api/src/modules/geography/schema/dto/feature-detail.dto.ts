@@ -1,20 +1,24 @@
 import { Type } from "class-transformer";
 import {
   IsArray,
-  IsISO8601,
+  IsEnum,
+  IsInt,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
+  Min,
   MinLength,
   IsDefined,
   ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { FeatureDetailNamesDto } from "#/modules/geography/schema/dto/feature-detail-names.dto.ts";
+import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * Feature Detail
@@ -38,17 +42,25 @@ export class FeatureDetailDto {
   @IsUUID()
   featureTypeId!: Id;
 
+  @ValidateIf((object) => object.fromToPrecision !== null)
+  @IsEnum(DatePrecision)
+  fromToPrecision!: DatePrecision | null;
+
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear!: Year | null;
+
   @IsArray()
   @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => FeatureDetailNamesDto)
   names!: FeatureDetailNamesDto[];
 
-  @ValidateIf((object) => object.validFrom !== null)
-  @IsISO8601({ strict: true })
-  validFrom!: CalendarDate | null;
-
-  @ValidateIf((object) => object.validUntil !== null)
-  @IsISO8601({ strict: true })
-  validUntil!: CalendarDate | null;
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear!: Year | null;
 }

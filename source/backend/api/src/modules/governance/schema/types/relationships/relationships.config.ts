@@ -53,8 +53,6 @@ export const RELATIONSHIPS_SORTABLE_FIELDS = [
   "sourceCitationId",
   "subjectInstitutionId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly RelationshipsKey[];
 
@@ -72,8 +70,6 @@ export const RELATIONSHIPS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IRelationships> = {
@@ -95,8 +91,6 @@ export const RELATIONSHIPS_SELECTABLE_FIELDS = [
   "sourceCitationId",
   "subjectInstitutionId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly RelationshipsKey[];
 
@@ -109,8 +103,6 @@ export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
   "sourceCitationId",
   "subjectInstitutionId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly RelationshipsSelectableField[];
 
@@ -123,8 +115,6 @@ export const RELATIONSHIPS_EDITABLE_FIELDS = [
   "relationshipKindId",
   "sourceCitationId",
   "subjectInstitutionId",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly RelationshipsKey[];
 
 // ----------------------------------

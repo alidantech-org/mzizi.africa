@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'identifiers.g.dart';
@@ -21,8 +21,6 @@ class OfficialIdentifiers {
     required this.schemeId,
     this.sourceCitationId,
     required this.updatedAt,
-    this.validFrom,
-    this.validUntil,
     required this.value,
     required this.version,
   });
@@ -36,8 +34,6 @@ class OfficialIdentifiers {
   final String schemeId;
   final String? sourceCitationId;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validUntil;
   final String value;
   final int version;
 

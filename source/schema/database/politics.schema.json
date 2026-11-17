@@ -37,10 +37,11 @@
           "alignment_kind_code"
           ,"coalition_code"
           ,"code"
+          ,"from_to_precision"
+          ,"from_year"
           ,"party_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"to_year"
         ],
         "required": [
           "alignment_kind_code"
@@ -86,6 +87,17 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -107,24 +119,17 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -291,10 +296,13 @@
         "columns": [
           "coalition_kind_code"
           ,"code"
+          ,"dissolved_on"
+          ,"formed_on"
+          ,"from_to_precision"
+          ,"from_year"
           ,"name"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"to_year"
         ],
         "required": [
           "coalition_kind_code"
@@ -332,6 +340,29 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"dissolved_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"formed_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -353,24 +384,17 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -1009,12 +1033,15 @@
         ],
         "columns": [
           "code"
+          ,"from_to_precision"
+          ,"from_year"
           ,"individual_code"
+          ,"joined_on"
+          ,"left_on"
           ,"membership_kind_code"
           ,"party_code"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"to_year"
         ],
         "required": [
           "code"
@@ -1046,6 +1073,17 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -1059,6 +1097,18 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "individual_code" }
+        }
+        ,"joined_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"left_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
         }
         ,"membership_kind_id": {
           "type": "string",
@@ -1081,24 +1131,17 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -1247,11 +1290,14 @@
         ],
         "columns": [
           "code"
+          ,"deregistered_on"
           ,"entity_code"
+          ,"from_to_precision"
+          ,"from_year"
           ,"party_kind_code"
+          ,"registered_on"
           ,"source_citation_code"
-          ,"valid_from"
-          ,"valid_until"
+          ,"to_year"
         ],
         "required": [
           "code"
@@ -1282,12 +1328,29 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"deregistered_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"entity_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "entity_code" }
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"id": {
           "type": "string",
@@ -1303,6 +1366,12 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "party_kind_code" }
         }
+        ,"registered_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
         ,"source_citation_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
@@ -1310,24 +1379,17 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"valid_from": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"valid_until": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",

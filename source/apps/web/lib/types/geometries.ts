@@ -1,4 +1,5 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { DatePrecision } from "#/lib/types/date-precision.enum.ts";
 
 /** One drawing of a feature: a revision with a role, a basis, a confidence, a zoom range, a validity period and the stored file it came from. A feature has many; the current one has no end date. */
 export interface Geometries {
@@ -10,7 +11,8 @@ export interface Geometries {
   deletedAt?: string | null;
   envelope: unknown;
   featureId: string;
-  fileVersionRefId?: string | null;
+  fromToPrecision?: DatePrecision | null;
+  fromYear?: number | null;
   geometry: unknown;
   geometryRoleId: string;
   id: string;
@@ -20,13 +22,8 @@ export interface Geometries {
   revision: number;
   srid: number;
   supersedesId?: string | null;
+  toYear?: number | null;
   updatedAt: string;
-  validFrom?: string | null;
-  validFromEarliest?: string | null;
-  validFromLatest?: string | null;
-  validUntil?: string | null;
-  validUntilEarliest?: string | null;
-  validUntilLatest?: string | null;
   version: number;
 }
 
@@ -40,7 +37,14 @@ export const GeometriesFields: readonly FieldMeta[] = [
   { name: "deletedAt", label: "Deleted At", kind: "date", required: false },
   { name: "envelope", label: "Envelope", kind: "other", required: true },
   { name: "featureId", label: "Feature Id", kind: "string", required: true },
-  { name: "fileVersionRefId", label: "File Version Ref Id", kind: "string", required: false },
+  {
+    name: "fromToPrecision",
+    label: "From To Precision",
+    kind: "enum",
+    required: false,
+    options: Object.values(DatePrecision),
+  },
+  { name: "fromYear", label: "From Year", kind: "number", required: false },
   { name: "geometry", label: "Geometry", kind: "other", required: true },
   { name: "geometryRoleId", label: "Geometry Role Id", kind: "string", required: true },
   { name: "id", label: "Id", kind: "string", required: true },
@@ -50,12 +54,7 @@ export const GeometriesFields: readonly FieldMeta[] = [
   { name: "revision", label: "Revision", kind: "number", required: true },
   { name: "srid", label: "Srid", kind: "number", required: true },
   { name: "supersedesId", label: "Supersedes Id", kind: "string", required: false },
+  { name: "toYear", label: "To Year", kind: "number", required: false },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },
-  { name: "validFrom", label: "Valid From", kind: "date", required: false },
-  { name: "validFromEarliest", label: "Valid From Earliest", kind: "date", required: false },
-  { name: "validFromLatest", label: "Valid From Latest", kind: "date", required: false },
-  { name: "validUntil", label: "Valid Until", kind: "date", required: false },
-  { name: "validUntilEarliest", label: "Valid Until Earliest", kind: "date", required: false },
-  { name: "validUntilLatest", label: "Valid Until Latest", kind: "date", required: false },
   { name: "version", label: "Version", kind: "number", required: true },
 ];

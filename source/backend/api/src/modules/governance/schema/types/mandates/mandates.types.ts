@@ -4,6 +4,7 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
@@ -35,12 +36,15 @@ import type {
 /** One responsibility or authority assignment for an institution or office. */
 export interface IMandates extends B.IBase {
   description: string;
+  endsOn: Date | null;
+  fromToPrecision: DatePrecision | null;
+  fromYear: number | null;
   institutionId: string | null;
   mandateKindId: string;
   officeId: string | null;
   sourceCitationId: string | null;
-  validFrom: Date | null;
-  validUntil: Date | null;
+  startsOn: Date | null;
+  toYear: number | null;
   readonly institution?: InstitutionsTypes.IInstitutions;
   readonly mandateKind?: ValueTypes.IValue;
   readonly office?: OfficesTypes.IOffices;

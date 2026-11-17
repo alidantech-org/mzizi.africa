@@ -39,6 +39,14 @@ export class OfficesRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find offices by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<OfficesEntity>,
+    fromToPrecision: NonNullable<OfficesEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<OfficesEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find offices by institution id, paged by the shared query. */
   async findByInstitution(
     query: BaseQueryDto<OfficesEntity>,

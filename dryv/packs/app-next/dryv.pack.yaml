@@ -52,7 +52,28 @@ selections:
       not: { role: [list, detail] }
     scope: each
 
+  app_views:
+    subject: view
+    scope: all
+
+  route_pages:
+    subject: view
+    scope: each
+
 templates:
+  # Managed route and navigation data, one file per application.
+  routes:
+    $ref: '#/selections/app_views'
+
+  # Scaffold-once page at the view's root-level route; it borrows the generated reference page.
+  route-page:
+    $ref: '#/selections/route_pages'
+    output:
+      name: $(subject.name.kebab)
+      path:
+        - $(subject.name.kebab)
+      symbol: $(subject.name.pascal)Route
+
   enum:
     $ref: '#/selections/enums'
     output:

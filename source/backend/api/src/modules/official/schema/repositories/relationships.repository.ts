@@ -56,6 +56,14 @@ export class RelationshipsRepository
     return await this.findByQuery(query, { fromIndividualId, deletedAt: IsNull() });
   }
 
+  /** Find relationships by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<OfficialRelationshipsEntity>,
+    fromToPrecision: NonNullable<OfficialRelationshipsEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<OfficialRelationshipsEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find relationships by kind id, paged by the shared query. */
   async findByKind(
     query: BaseQueryDto<OfficialRelationshipsEntity>,

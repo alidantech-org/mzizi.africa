@@ -39,6 +39,14 @@ export class MandatesRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find mandates by from to precision, paged by the shared query. */
+  async findByFromToPrecision(
+    query: BaseQueryDto<MandatesEntity>,
+    fromToPrecision: NonNullable<MandatesEntity["fromToPrecision"]>,
+  ): Promise<IFindAllResponse<MandatesEntity>> {
+    return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
+  }
+
   /** Find mandates by institution id, paged by the shared query. */
   async findByInstitution(
     query: BaseQueryDto<MandatesEntity>,

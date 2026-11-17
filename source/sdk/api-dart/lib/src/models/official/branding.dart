@@ -3,7 +3,7 @@ import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
 import 'package:mzizi_api/src/models/reference/language.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'branding.g.dart';
@@ -22,8 +22,6 @@ class OfficialBranding {
     required this.languageId,
     this.sourceCitationId,
     required this.updatedAt,
-    this.validFrom,
-    this.validUntil,
     this.value,
     required this.version,
   });
@@ -37,8 +35,6 @@ class OfficialBranding {
   final String languageId;
   final String? sourceCitationId;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validUntil;
   final String? value;
   final int version;
 

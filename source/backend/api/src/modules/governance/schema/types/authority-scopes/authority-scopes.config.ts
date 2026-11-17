@@ -60,8 +60,6 @@ export const AUTHORITY_SCOPES_SORTABLE_FIELDS = [
   "sourceCitationId",
   "unitFeatureId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly AuthorityScopesKey[];
 
@@ -82,8 +80,6 @@ export const AUTHORITY_SCOPES_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "updatedAt",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly AuthorityScopesKey[];
 
 export const AUTHORITY_SCOPES_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IAuthorityScopes> =
@@ -108,8 +104,6 @@ export const AUTHORITY_SCOPES_SELECTABLE_FIELDS = [
   "sourceCitationId",
   "unitFeatureId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly AuthorityScopesKey[];
 
@@ -124,8 +118,6 @@ export const AUTHORITY_SCOPES_DEFAULT_SELECT_FIELDS = [
   "sourceCitationId",
   "unitFeatureId",
   "updatedAt",
-  "validFrom",
-  "validUntil",
   "version",
 ] as const satisfies readonly AuthorityScopesSelectableField[];
 
@@ -140,8 +132,6 @@ export const AUTHORITY_SCOPES_EDITABLE_FIELDS = [
   "officeId",
   "sourceCitationId",
   "unitFeatureId",
-  "validFrom",
-  "validUntil",
 ] as const satisfies readonly AuthorityScopesKey[];
 
 // ----------------------------------

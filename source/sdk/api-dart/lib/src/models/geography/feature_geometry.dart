@@ -10,6 +10,7 @@ class GeographyFeatureGeometry {
     required this.centroid,
     this.confidence,
     required this.featureId,
+    this.fromYear,
     required this.geometry,
     required this.geometryId,
     required this.geometryRoleId,
@@ -17,12 +18,12 @@ class GeographyFeatureGeometry {
     this.minZoom,
     this.observedAt,
     required this.revision,
-    required this.validFrom,
   });
   final String basisId;
   final Object? centroid;
   final double? confidence;
   final String featureId;
+  final int? fromYear;
   final Object? geometry;
   final String geometryId;
   final String geometryRoleId;
@@ -30,7 +31,6 @@ class GeographyFeatureGeometry {
   final int? minZoom;
   final DateTime? observedAt;
   final int revision;
-  final DateTime validFrom;
 
   factory GeographyFeatureGeometry.fromJson(Map<String, dynamic> json) => _$GeographyFeatureGeometryFromJson(json);
 

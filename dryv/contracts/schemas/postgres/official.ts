@@ -62,7 +62,7 @@ export const Names = official
     isPreferred: dryv.field(sharedProperties.Flag),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.Entity)
   .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
   .description(
     "One attested name form for exactly one entity or individual, with its language (`mul` or `und` when none applies) and validity.",
@@ -98,7 +98,7 @@ export const Identifiers = official
     value: dryv.field(sharedProperties.NonEmptyString1000),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.ValidityEntity)
+  .extends(baseSchemas.Entity)
   .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
   .description(
     "One exact external identifier assigned to an entity or individual under a Reference scheme and optional issuer.",
@@ -124,7 +124,7 @@ export const Contacts = official
     value: dryv.field(sharedProperties.NonEmptyString1000),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedEntity)
   .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
   .description("One sourced contact channel for exactly one identity; visibility class governs handling of private values.")
   .role("entity")
@@ -146,8 +146,11 @@ export const Relationships = official
     kindId: belongsTo(() => Value),
     sharePercentage: dryv.field(sharedProperties.Percentage).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
+    startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("RelationshipsDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .rule("HasExactlyOneFromIdentity", rule.exactlyOne("fromEntityId", "fromIndividualId"))
   .rule("HasExactlyOneToIdentity", rule.exactlyOne("toEntityId", "toIndividualId"))
   .rule("DoesNotLinkIdentityToItself", (v) =>
@@ -179,7 +182,7 @@ export const Branding = official
     languageId: belongsTo(() => Language),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
-  .extends(baseSchemas.CodedValidityEntity)
+  .extends(baseSchemas.CodedEntity)
   .rule("HasExactlyOneIdentityOwner", rule.exactlyOne("entityId", "individualId"))
   .description(
     "How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person.",

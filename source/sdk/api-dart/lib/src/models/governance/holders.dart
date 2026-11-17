@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/governance/offices.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_validity_entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
 part 'holders.g.dart';
@@ -17,13 +18,16 @@ class GovernanceHolders {
     required this.code,
     required this.createdAt,
     this.deletedAt,
+    this.fromToPrecision,
+    this.fromYear,
     required this.id,
     required this.individualId,
+    this.leftOfficeOn,
     required this.officeId,
     this.sourceCitationId,
+    this.toYear,
+    this.tookOfficeOn,
     required this.updatedAt,
-    this.validFrom,
-    this.validUntil,
     required this.version,
   });
   final String? appointedByEntityId;
@@ -31,13 +35,16 @@ class GovernanceHolders {
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
+  final SharedDatePrecision? fromToPrecision;
+  final int? fromYear;
   final String id;
   final String individualId;
+  final DateTime? leftOfficeOn;
   final String officeId;
   final String? sourceCitationId;
+  final int? toYear;
+  final DateTime? tookOfficeOn;
   final DateTime updatedAt;
-  final DateTime? validFrom;
-  final DateTime? validUntil;
   final int version;
 
   factory GovernanceHolders.fromJson(Map<String, dynamic> json) => _$GovernanceHoldersFromJson(json);

@@ -10,8 +10,6 @@ export interface ValueLabel {
   labelKind: ValueLabelKind;
   languageId: string;
   updatedAt: string;
-  validFrom?: string | null;
-  validUntil?: string | null;
   valueId: string;
   version: number;
 }
@@ -31,8 +29,6 @@ export const ValueLabelFields: readonly FieldMeta[] = [
   },
   { name: "languageId", label: "Language Id", kind: "string", required: true },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },
-  { name: "validFrom", label: "Valid From", kind: "date", required: false },
-  { name: "validUntil", label: "Valid Until", kind: "date", required: false },
   { name: "valueId", label: "Value Id", kind: "string", required: true },
   { name: "version", label: "Version", kind: "number", required: true },
 ];
