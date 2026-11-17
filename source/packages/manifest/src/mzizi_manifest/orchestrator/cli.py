@@ -25,7 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     verify.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
     datasets = sub.add_parser(
-        "datasets", help="write data/global/source/datasets.csv: one dataset row for every seed CSV"
+        "datasets", help="write the seed product, edition and artifact catalogue under data/global/source/: one artifact for every seed CSV"
     )
     datasets.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
     refs = sub.add_parser("refs", help="check that every source, mapping and terms code resolves")
@@ -67,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "datasets":
         from mzizi_manifest.features.data.datasets import write_datasets
 
-        print(f"wrote {write_datasets(args.root)} dataset rows")
+        print(f"wrote {write_datasets(args.root)} artifact rows")
         return 0
     if args.command == "verify":
         from mzizi_manifest.features.provenance.verify import verify as run_verify

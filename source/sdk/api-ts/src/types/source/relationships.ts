@@ -2,6 +2,7 @@ import { SharedSubjectTable } from "#sdk/types/enums/shared/subject-table.ts";
 
 /** A classified connection from an input to an output or a domain record: derivation, extraction, translation, support. Exact locations are citations on the relationship. */
 export interface SourceRelationships {
+  code: string;
   createdAt: string;
   deletedAt?: string | null;
   executionRef?: string | null;

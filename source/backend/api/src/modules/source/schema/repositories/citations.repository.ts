@@ -39,6 +39,14 @@ export class CitationsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find citations by address id, paged by the shared query. */
+  async findByAddress(
+    query: BaseQueryDto<CitationsEntity>,
+    addressId: NonNullable<CitationsEntity["addressId"]>,
+  ): Promise<IFindAllResponse<CitationsEntity>> {
+    return await this.findByQuery(query, { addressId, deletedAt: IsNull() });
+  }
+
   /** Find citations by artifact id, paged by the shared query. */
   async findByArtifact(
     query: BaseQueryDto<CitationsEntity>,
@@ -63,12 +71,12 @@ export class CitationsRepository
     return await this.findByQuery(query, { locatorKindId, deletedAt: IsNull() });
   }
 
-  /** Find citations by relationship id, paged by the shared query. */
-  async findByRelationship(
+  /** Find citations by subject table, paged by the shared query. */
+  async findBySubjectTable(
     query: BaseQueryDto<CitationsEntity>,
-    relationshipId: NonNullable<CitationsEntity["relationshipId"]>,
+    subjectTable: NonNullable<CitationsEntity["subjectTable"]>,
   ): Promise<IFindAllResponse<CitationsEntity>> {
-    return await this.findByQuery(query, { relationshipId, deletedAt: IsNull() });
+    return await this.findByQuery(query, { subjectTable, deletedAt: IsNull() });
   }
 
   /** Find the citations with this code (unique). */

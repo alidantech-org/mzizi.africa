@@ -1,0 +1,28 @@
+code,wording_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-132.cl-1.pa-c.sp-i.v-2010.s147-45b48f3532,ke.constitution-2010.art-132.cl-1.pa-c.sp-i.v-2010,,ke.constitution-2010.art-10,refers-to,147,157,Article 10,parser,proposed
+ke.constitution-2010.art-132.cl-2.pa-a.v-2010.s44-a361ff4191,ke.constitution-2010.art-132.cl-2.pa-a.v-2010,,ke.constitution-2010.art-152,in-accordance-with,44,55,Article 152,parser,proposed
+ke.constitution-2010.art-132.cl-2.pa-b.v-2010.s41-4260336e64,ke.constitution-2010.art-132.cl-2.pa-b.v-2010,,ke.constitution-2010.art-156,in-accordance-with,41,52,Article 156,parser,proposed
+ke.constitution-2010.art-132.cl-2.pa-c.v-2010.s48-9e03f4c103,ke.constitution-2010.art-132.cl-2.pa-c.v-2010,,ke.constitution-2010.art-154,in-accordance-with,48,59,Article 154,parser,proposed
+ke.constitution-2010.art-132.cl-2.pa-d.v-2010.s41-7d3ded665e,ke.constitution-2010.art-132.cl-2.pa-d.v-2010,,ke.constitution-2010.art-155,in-accordance-with,41,52,Article 155,parser,proposed
+ke.constitution-2010.art-132.cl-4.pa-d.v-2010.s11-d6dfd00270,ke.constitution-2010.art-132.cl-4.pa-d.v-2010,,ke.constitution-2010.art-58,subject-to,11,21,Article 58,parser,proposed
+ke.constitution-2010.art-134.cl-1.pa-b.v-2010.s82-96eaf93d1d,ke.constitution-2010.art-134.cl-1.pa-b.v-2010,,ke.constitution-2010.art-147.cl-3,refers-to,82,97,Article 147 (3),parser,proposed
+ke.constitution-2010.art-136.cl-2.pa-b.v-2010.s37-65ec7dad60,ke.constitution-2010.art-136.cl-2.pa-b.v-2010,,ke.constitution-2010.art-146,refers-to,37,48,Article 146,parser,proposed
+ke.constitution-2010.art-138.cl-3.pa-b.v-2010.s65-527988077c,ke.constitution-2010.art-138.cl-3.pa-b.v-2010,,ke.constitution-2010.art-101.cl-1,refers-to,65,80,Article 101 (1),parser,proposed
+ke.constitution-2010.art-141.cl-2.pa-a.v-2010.s133-5b74749648,ke.constitution-2010.art-141.cl-2.pa-a.v-2010,,ke.constitution-2010.art-140,under,133,144,Article 140,parser,proposed
+ke.constitution-2010.art-141.cl-2.pa-b.v-2010.s146-e6adac272f,ke.constitution-2010.art-141.cl-2.pa-b.v-2010,,ke.constitution-2010.art-140,under,146,157,Article 140,parser,proposed
+ke.constitution-2010.art-141.cl-3.v-2010.s195-7252b06623,ke.constitution-2010.art-141.cl-3.v-2010,,ke.constitution-2010.sch-3,refers-to,195,209,Third Schedule,parser,proposed
+ke.constitution-2010.art-142.cl-1.v-2010.s171-5ec7c9af6c,ke.constitution-2010.art-142.cl-1.v-2010,,ke.constitution-2010.art-136.cl-2.pa-a,in-accordance-with,171,190,Article 136 (2) (a),parser,proposed
+ke.constitution-2010.art-146.cl-1.pa-c.v-2010.s38-a6c434a83d,ke.constitution-2010.art-146.cl-1.pa-c.v-2010,,ke.constitution-2010.art-144,under,38,49,Article 144,parser,proposed
+ke.constitution-2010.art-146.cl-3.v-2010.s299-4ecf50a2e3,ke.constitution-2010.art-146.cl-3.v-2010,,ke.constitution-2010.art-136.cl-2.pa-a,under,299,318,Article 136 (2) (a),parser,proposed
+ke.constitution-2010.art-146.cl-4.v-2010.s227-a321ee6393,ke.constitution-2010.art-146.cl-4.v-2010,,ke.constitution-2010.art-142.cl-2,refers-to,227,242,Article 142 (2),parser,proposed
+ke.constitution-2010.art-146.cl-4.pa-a.v-2010.s193-bf6df14ea2,ke.constitution-2010.art-146.cl-4.pa-a.v-2010,,ke.constitution-2010.art-136.cl-2.pa-a,under,193,212,Article 136 (2) (a),parser,proposed
+ke.constitution-2010.art-147.cl-3.v-2010.s11-b4261ec42a,ke.constitution-2010.art-147.cl-3.v-2010,,ke.constitution-2010.art-134,subject-to,11,22,Article 134,parser,proposed
+ke.constitution-2010.art-148.cl-2.v-2010.s107-50caf72a49,ke.constitution-2010.art-148.cl-2.v-2010,,ke.constitution-2010.art-137.cl-1.pa-d,refers-to,107,126,Article 137 (1) (d),parser,proposed
+ke.constitution-2010.art-148.cl-5.pa-b.v-2010.s91-564d635c5a,ke.constitution-2010.art-148.cl-5.pa-b.v-2010,,ke.constitution-2010.sch-3,refers-to,91,105,Third Schedule,parser,proposed
+ke.constitution-2010.art-148.cl-6.pa-a.v-2010.s60-52349efebb,ke.constitution-2010.art-148.cl-6.pa-a.v-2010,,ke.constitution-2010.art-136.cl-2.pa-a,under,60,79,Article 136 (2) (a),parser,proposed
+ke.constitution-2010.art-149.cl-2.v-2010.s91-920d81fd66,ke.constitution-2010.art-149.cl-2.v-2010,,ke.constitution-2010.art-148.cl-8,refers-to,91,106,Article 148 (8),parser,proposed
+ke.constitution-2010.art-149.cl-2.pa-a.v-2010.s200-448e5c2e9d,ke.constitution-2010.art-149.cl-2.pa-a.v-2010,,ke.constitution-2010.art-136.cl-2.pa-a,under,200,219,Article 136 (2) (a),parser,proposed
+ke.constitution-2010.art-150.cl-2.v-2010.s18-9026a4ed3a,ke.constitution-2010.art-150.cl-2.v-2010,,ke.constitution-2010.art-144,refers-to,18,30,Articles 144,parser,proposed
+ke.constitution-2010.art-150.cl-2.v-2010.s35-547858341b,ke.constitution-2010.art-150.cl-2.v-2010,,ke.constitution-2010.art-145,refers-to,35,38,145,parser,proposed
+ke.constitution-2010.art-152.cl-4.pa-a.v-2010.s177-1a64478632,ke.constitution-2010.art-152.cl-4.pa-a.v-2010,,ke.constitution-2010.sch-3,refers-to,177,191,Third Schedule,parser,proposed
+ke.constitution-2010.art-158.cl-1.pa-b.v-2010.s20-915722cc08,ke.constitution-2010.art-158.cl-1.pa-b.v-2010,,ke.constitution-2010.ch-6,refers-to,20,31,Chapter Six,parser,proposed

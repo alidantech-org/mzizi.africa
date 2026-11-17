@@ -1066,6 +1066,7 @@ CREATE TABLE "legal"."provisions" (
 );
 
 CREATE TABLE "legal"."references" (
+    "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
@@ -1848,7 +1849,7 @@ CREATE TABLE "source"."addresses" (
     "method" text NOT NULL,
     "note" varchar(4000),
     "path" varchar(1000) NOT NULL,
-    "query" varchar(1000) NOT NULL,
+    "query" varchar(1000),
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -1902,14 +1903,15 @@ CREATE TABLE "source"."captures" (
     "response_metadata" text NOT NULL,
     "retrieved_at" timestamptz NOT NULL,
     "retrieved_url" varchar(2048),
-    "source_id" uuid NOT NULL,
+    "source_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "source"."citations" (
-    "artifact_id" uuid NOT NULL,
+    "address_id" uuid,
+    "artifact_id" uuid,
     "capture_id" uuid,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
@@ -1919,9 +1921,29 @@ CREATE TABLE "source"."citations" (
     "locator_kind_id" uuid NOT NULL,
     "quoted_hash" char(64),
     "recorded_at" timestamptz NOT NULL,
-    "relationship_id" uuid,
+    "subject_id" uuid,
+    "subject_table" text,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_citations_cites_something" CHECK (
+        (
+            ("artifact_id" IS NOT NULL)
+            OR ("capture_id" IS NOT NULL)
+            OR ("address_id" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_citations_subject_keys_together" CHECK (
+        (
+            (
+                ("subject_table" IS NULL)
+                AND ("subject_id" IS NULL)
+            )
+            OR (
+                ("subject_table" IS NOT NULL)
+                AND ("subject_id" IS NOT NULL)
+            )
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -2007,6 +2029,7 @@ CREATE TABLE "source"."publishers" (
 );
 
 CREATE TABLE "source"."relationships" (
+    "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "execution_ref" varchar(255),
@@ -3274,6 +3297,10 @@ ADD CONSTRAINT "fk_references_translation_id" FOREIGN KEY ("translation_id") REF
 ALTER TABLE "legal"."references"
 ADD CONSTRAINT "fk_references_wording_id" FOREIGN KEY ("wording_id") REFERENCES "legal"."wordings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+CREATE UNIQUE INDEX "uq_references__code_partial_1" ON "legal"."references" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
 CREATE UNIQUE INDEX "uq_references__wording_id_target_provision_id_span_start" ON "legal"."references" USING btree ("wording_id", "target_provision_id", "span_start");
 
 CREATE UNIQUE INDEX "uq_references__translation_id_target_provision_id_span_start" ON "legal"."references" USING btree (
@@ -4117,6 +4144,10 @@ WHERE
 
 CREATE UNIQUE INDEX "uq_addresses__domain_id_method_path_query" ON "source"."addresses" USING btree ("domain_id", "method", "path", "query");
 
+CREATE UNIQUE INDEX "uq_addresses__domain_id_method_path_partial_3" ON "source"."addresses" USING btree ("domain_id", "method", "path")
+WHERE
+    ("query" IS NULL);
+
 CREATE INDEX "ix_addresses__domain_id" ON "source"."addresses" USING btree ("domain_id");
 
 ALTER TABLE "source"."artifacts"
@@ -4184,6 +4215,9 @@ CREATE INDEX "ix_captures__discovery_id" ON "source"."captures" USING btree ("di
 CREATE INDEX "ix_captures__artifact_id" ON "source"."captures" USING btree ("artifact_id");
 
 ALTER TABLE "source"."citations"
+ADD CONSTRAINT "fk_citations_address_id" FOREIGN KEY ("address_id") REFERENCES "source"."addresses" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."citations"
 ADD CONSTRAINT "fk_citations_artifact_id" FOREIGN KEY ("artifact_id") REFERENCES "source"."artifacts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "source"."citations"
@@ -4191,9 +4225,6 @@ ADD CONSTRAINT "fk_citations_capture_id" FOREIGN KEY ("capture_id") REFERENCES "
 
 ALTER TABLE "source"."citations"
 ADD CONSTRAINT "fk_citations_locator_kind_id" FOREIGN KEY ("locator_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "source"."citations"
-ADD CONSTRAINT "fk_citations_relationship_id" FOREIGN KEY ("relationship_id") REFERENCES "source"."relationships" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_citations__code_partial_1" ON "source"."citations" USING btree ("code")
 WHERE
@@ -4203,7 +4234,9 @@ CREATE INDEX "ix_citations__artifact_id" ON "source"."citations" USING btree ("a
 
 CREATE INDEX "ix_citations__capture_id" ON "source"."citations" USING btree ("capture_id");
 
-CREATE INDEX "ix_citations__relationship_id" ON "source"."citations" USING btree ("relationship_id");
+CREATE INDEX "ix_citations__address_id" ON "source"."citations" USING btree ("address_id");
+
+CREATE INDEX "ix_citations__subject_table_subject_id" ON "source"."citations" USING btree ("subject_table", "subject_id");
 
 CREATE INDEX "ix_citations__locator_kind_id" ON "source"."citations" USING btree ("locator_kind_id");
 
@@ -4317,6 +4350,10 @@ ADD CONSTRAINT "fk_relationships_output_file_version_id" FOREIGN KEY ("output_fi
 
 ALTER TABLE "source"."relationships"
 ADD CONSTRAINT "fk_relationships_output_product_id" FOREIGN KEY ("output_product_id") REFERENCES "source"."products" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_relationships__code_partial_1" ON "source"."relationships" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
 
 CREATE INDEX "ix_relationships__kind_id" ON "source"."relationships" USING btree ("kind_id");
 

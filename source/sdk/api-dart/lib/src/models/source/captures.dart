@@ -22,7 +22,7 @@ class SourceCaptures {
     required this.responseMetadata,
     required this.retrievedAt,
     this.retrievedUrl,
-    required this.sourceId,
+    this.sourceId,
     required this.updatedAt,
     required this.version,
   });
@@ -37,7 +37,7 @@ class SourceCaptures {
   final String responseMetadata;
   final DateTime retrievedAt;
   final String? retrievedUrl;
-  final String sourceId;
+  final String? sourceId;
   final DateTime updatedAt;
   final int version;
 

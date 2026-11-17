@@ -2,13 +2,13 @@
 
 Two kinds of file are registered, both under caller-chosen folders (nothing here is a package default):
 
-- the downloaded originals listed in `seed/data/<scope>/source/_files.yaml` (a document code, where the local copy is, who
-  gets the credit and what the rights are), under `sources/downloads/<source code>/`;
-- every seed CSV the datasets table lists, under `seed/<path below data/>`.
+- the downloaded originals listed in `seed/data/<scope>/source/_files.yaml` (an artifact code, its product, where the local
+  copy is, who gets the credit and what the rights are), under `sources/downloads/<product code>/`;
+- every seed CSV artifact the catalogue lists (`seed.artifacts.csv`), under `seed/<path below data/>`.
 
 For each file the store keeps the bytes and a version row with the sha256. The same run then sets `file_version_id` on the
-`source.documents` or `source.datasets` row, and writes one `source.attributions` row per downloaded document (credit and
-rights tied to the exact stored version). Running again registers nothing new: the filesystem package sees the same bytes
+`source.artifacts` row, and writes one `source.attributions` row per downloaded artifact (credit and rights tied to the
+artifact, whose bytes are the exact stored version). Running again registers nothing new: the filesystem package sees the same bytes
 and reports `unchanged`, and the update statements change nothing. A dry run plans without touching the store or the database.
 """
 
@@ -35,6 +35,8 @@ from mzizi_filesystem import (
     Retention,
 )
 from mzizi_filesystem.features.placement.contracts import Placement
+from mzizi_manifest.features.codes.glossary import load_glossary
+from mzizi_manifest.features.codes.grammar import stored_code
 from mzizi_manifest.features.seeds.ids import stable_id
 
 DOWNLOAD_ROLE = "source-download"
@@ -46,6 +48,8 @@ class FileEntry(BaseModel):
 
     #: Path of the local copy, relative to the repository root.
     path: str
+    #: The product the artifact is a representation of; its folder under `sources/downloads/`.
+    product: str
     credit: str
     rights: str
 
@@ -53,13 +57,13 @@ class FileEntry(BaseModel):
 class FilesDocument(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    #: Document code to its file.
-    documents: dict[str, FileEntry]
+    #: Artifact code to its file.
+    artifacts: dict[str, FileEntry]
 
 
 @dataclass(frozen=True)
 class Planned:
-    kind: str  # "document" or "dataset"
+    kind: str  # "download" or "seed"
     code: str
     path: Path
     folders: tuple[str, ...]
@@ -85,30 +89,24 @@ def _rows(path: Path) -> list[dict[str, str]]:
         return list(csv.DictReader(handle))
 
 
-def plan_files(seed_root: Path) -> tuple[list[Planned], dict[str, FileEntry], dict[str, str]]:
-    """Every file to register, the credit entries, and each document's source code."""
+def plan_files(seed_root: Path) -> tuple[list[Planned], dict[str, FileEntry]]:
+    """Every file to register and the credit entries of the downloaded originals."""
     repo = seed_root.parent
     planned: list[Planned] = []
     entries: dict[str, FileEntry] = {}
-    source_of: dict[str, str] = {}
     for listing in sorted((seed_root / "data").rglob("_files.yaml")):
         document = FilesDocument.model_validate(yaml.safe_load(listing.read_text(encoding="utf-8")))
-        captures = _rows(listing.parent / "captures.csv") if (listing.parent / "captures.csv").is_file() else []
-        for capture in captures:
-            if capture.get("document_code"):
-                source_of[capture["document_code"]] = capture["source_code"]
-        for code, entry in document.documents.items():
+        for code, entry in document.artifacts.items():
             entries[code] = entry
-            folder = source_of.get(code, "unsorted")
             planned.append(
-                Planned("document", code, repo / entry.path, ("sources", "downloads", folder), DOWNLOAD_ROLE)
+                Planned("download", code, repo / entry.path, ("sources", "downloads", entry.product), DOWNLOAD_ROLE)
             )
-    datasets = seed_root / "data" / "global" / "source" / "datasets.csv"
-    for row in _rows(datasets) if datasets.is_file() else []:
+    catalogue = seed_root / "data" / "global" / "source" / "seed.artifacts.csv"
+    for row in _rows(catalogue) if catalogue.is_file() else []:
         path = repo / row["location"]
         below = path.relative_to(seed_root / "data").parts
-        planned.append(Planned("dataset", row["code"], path, ("seed", *below[:-1]), SEED_ROLE))
-    return planned, entries, source_of
+        planned.append(Planned("seed", row["code"], path, ("seed", *below[:-1]), SEED_ROLE))
+    return planned, entries
 
 
 def register_files(
@@ -120,7 +118,7 @@ def register_files(
     created_by: dict[str, str],
     items: Sequence[Planned] | None = None,
 ) -> FilesReport:
-    planned, entries, _ = plan_files(seed_root)
+    planned, entries = plan_files(seed_root)
     chosen = list(items) if items is not None else planned
     roles = PostgresReference(conn).role_ids({i.role for i in chosen}, create=apply)
     outcomes: Counter[str] = Counter()
@@ -146,7 +144,7 @@ def register_files(
             created_by=created_by,
             on_name_conflict=NameConflictPolicy.NEW_VERSION,
             on_duplicate=DuplicatePolicy.REUSE_EXISTING,
-            pinned=item.kind == "document",
+            pinned=item.kind == "download",
             dry_run=not apply,
         )
         result = fs.register(request, item.path)
@@ -156,7 +154,7 @@ def register_files(
             continue
         if not apply or result.version_id is None:
             continue
-        table = "source.documents" if item.kind == "document" else "source.datasets"
+        table = "source.artifacts"
         record = stable_id(table, item.code)
         updated = conn.execute(
             f"UPDATE {table} SET file_version_id = %s, updated_at = now(), version = version + 1 "
@@ -165,7 +163,7 @@ def register_files(
         )
         if updated.rowcount == 0 and not conn.execute(f"SELECT 1 FROM {table} WHERE id = %s", (record,)).fetchone():
             problems.append(f"{item.code}: no {table} row; seed first")
-        if item.kind == "document" and item.code in entries:
+        if item.kind == "download" and item.code in entries:
             attributions += _attribute(conn, item.code, entries[item.code], UUID(result.version_id))
     if apply:
         conn.commit()
@@ -175,17 +173,29 @@ def register_files(
 
 
 def _attribute(conn: Connection, code: str, entry: FileEntry, version: UUID) -> int:
-    """One attribution per stored document version: its publisher, the credit and the rights, assessed now."""
-    document = conn.execute(
-        "SELECT id, publisher_id FROM source.documents WHERE id = %s", (stable_id("source.documents", code),)
+    """One attribution per stored artifact: its product's publisher, the credit and the rights, assessed now."""
+    artifact = conn.execute(
+        "SELECT a.id, p.publisher_id FROM source.artifacts a JOIN source.editions e ON e.id = a.edition_id "
+        "JOIN source.products p ON p.id = e.product_id WHERE a.id = %s",
+        (stable_id("source.artifacts", code),),
     ).fetchone()
-    if document is None or document["publisher_id"] is None:
+    if artifact is None or artifact["publisher_id"] is None:
         return 0
-    row_id = stable_id("source.attributions", f"{code}|{version}")
+    identity = f"{code}~{str(version)[:8]}"
+    row_id = stable_id("source.attributions", identity)
+    stored = stored_code(load_glossary().tables["source.attributions"], identity)
     done = conn.execute(
-        "INSERT INTO source.attributions (id, version, created_at, updated_at, publisher_id, file_version_id, credit, "
-        "rights_statement, assessed_at, assessor_snapshot) VALUES (%s, 1, now(), now(), %s, %s, %s, %s, now(), %s) "
+        "INSERT INTO source.attributions (id, code, version, created_at, updated_at, publisher_id, artifact_id, credit, "
+        "rights_statement, assessed_at, assessor_snapshot) VALUES (%s, %s, 1, now(), now(), %s, %s, %s, %s, now(), %s) "
         "ON CONFLICT (id) DO NOTHING",
-        (row_id, document["publisher_id"], version, entry.credit, entry.rights, '{"task": "register source files"}'),
+        (
+            row_id,
+            stored,
+            artifact["publisher_id"],
+            artifact["id"],
+            entry.credit,
+            entry.rights,
+            '{"task": "register source files"}',
+        ),
     )
     return done.rowcount

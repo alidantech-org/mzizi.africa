@@ -9,10 +9,10 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
+import * as AddressesConfig from "#/modules/source/schema/types/addresses/addresses.config";
 import * as ArtifactsConfig from "#/modules/source/schema/types/artifacts/artifacts.config";
 import * as CapturesConfig from "#/modules/source/schema/types/captures/captures.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
-import * as RelationshipsConfig from "#/modules/source/schema/types/relationships/relationships.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -35,10 +35,10 @@ import type {
 // ----------------------------------
 
 export const CITATIONS_RELATION_KEYS = [
+  "address",
   "artifact",
   "capture",
   "locatorKind",
-  "relationship",
 ] as const satisfies readonly CitationsKey[];
 
 // ----------------------------------
@@ -46,6 +46,7 @@ export const CITATIONS_RELATION_KEYS = [
 // ----------------------------------
 
 export const CITATIONS_SORTABLE_FIELDS = [
+  "addressId",
   "artifactId",
   "captureId",
   "code",
@@ -56,7 +57,8 @@ export const CITATIONS_SORTABLE_FIELDS = [
   "locatorKindId",
   "quotedHash",
   "recordedAt",
-  "relationshipId",
+  "subjectId",
+  "subjectTable",
   "updatedAt",
   "version",
 ] as const satisfies readonly CitationsKey[];
@@ -67,11 +69,13 @@ export const CITATIONS_SEARCHABLE_FIELDS = [
 ] as const satisfies readonly CitationsKey[];
 
 export const CITATIONS_FILTERABLE_FIELDS = [
+  "addressId",
   "artifactId",
   "captureId",
   "id",
   "locatorKindId",
-  "relationshipId",
+  "subjectId",
+  "subjectTable",
 ] as const satisfies readonly CitationsKey[];
 
 export const CITATIONS_DATE_RANGE_FIELDS = [
@@ -92,6 +96,7 @@ export const CITATIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<ICitati
 // ----------------------------------
 
 export const CITATIONS_SELECTABLE_FIELDS = [
+  "addressId",
   "artifactId",
   "captureId",
   "code",
@@ -102,12 +107,14 @@ export const CITATIONS_SELECTABLE_FIELDS = [
   "locatorKindId",
   "quotedHash",
   "recordedAt",
-  "relationshipId",
+  "subjectId",
+  "subjectTable",
   "updatedAt",
   "version",
 ] as const satisfies readonly CitationsKey[];
 
 export const CITATIONS_DEFAULT_SELECT_FIELDS = [
+  "addressId",
   "artifactId",
   "captureId",
   "code",
@@ -118,7 +125,8 @@ export const CITATIONS_DEFAULT_SELECT_FIELDS = [
   "locatorKindId",
   "quotedHash",
   "recordedAt",
-  "relationshipId",
+  "subjectId",
+  "subjectTable",
   "updatedAt",
   "version",
 ] as const satisfies readonly CitationsSelectableField[];
@@ -128,6 +136,7 @@ export const CITATIONS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const CITATIONS_EDITABLE_FIELDS = [
+  "addressId",
   "artifactId",
   "captureId",
   "code",
@@ -135,7 +144,8 @@ export const CITATIONS_EDITABLE_FIELDS = [
   "locatorKindId",
   "quotedHash",
   "recordedAt",
-  "relationshipId",
+  "subjectId",
+  "subjectTable",
 ] as const satisfies readonly CitationsKey[];
 
 // ----------------------------------
@@ -165,6 +175,10 @@ export const CITATIONS_AS_MANY_RELATION_CONFIG = {
 
 export const CITATIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
+    () => AddressesConfig.ADDRESSES_AS_ONE_RELATION_CONFIG,
+    "address",
+  ),
+  Q.createRelationKeyMapper<CitationsRelationKey>().one(
     () => ArtifactsConfig.ARTIFACTS_AS_ONE_RELATION_CONFIG,
     "artifact",
   ),
@@ -175,10 +189,6 @@ export const CITATIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<CitationsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "locatorKind",
-  ),
-  Q.createRelationKeyMapper<CitationsRelationKey>().one(
-    () => RelationshipsConfig.RELATIONSHIPS_AS_ONE_RELATION_CONFIG,
-    "relationship",
   ),
 ] as const;
 

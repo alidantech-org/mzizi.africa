@@ -237,7 +237,7 @@ export const References = legal
     method: dryv.field(legalEnums.ReferenceMethod),
     reviewStatus: dryv.field(legalEnums.ReviewStatus),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .rule("ExactlyOneOrigin", rule.exactlyOne("wordingId", "translationId"))
   .rule("SpanMustBeOrdered", rule.ordered("spanStart", "spanEnd"))
   .rule("SpanMustBeNonEmpty", rule.differs("spanStart", "spanEnd"))

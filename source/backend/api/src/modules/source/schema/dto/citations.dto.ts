@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsJSON,
@@ -12,6 +13,9 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
+
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
@@ -21,11 +25,27 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
  * Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp. (entity)
+ *
+ * Invariant "SubjectKeysTogether" has no simple form, so it isn't validated here.
  */
 export class CitationsDto {
+  @IsOptional()
+  @ValidateIf((object) => object.addressId !== null)
   @IsString()
   @IsUUID()
-  artifactId!: Id;
+  addressId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.artifactId !== null)
+  @IsString()
+  @IsUUID()
+  @Satisfies<CitationsDto>(
+    (object) => object.artifactId != null || object.captureId != null || object.addressId != null,
+    {
+      message: "Cites Something",
+    },
+  )
+  artifactId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.captureId !== null)
@@ -74,10 +94,15 @@ export class CitationsDto {
   recordedAt!: Instant;
 
   @IsOptional()
-  @ValidateIf((object) => object.relationshipId !== null)
+  @ValidateIf((object) => object.subjectId !== null)
   @IsString()
   @IsUUID()
-  relationshipId?: Id | null;
+  subjectId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.subjectTable !== null)
+  @IsEnum(SubjectTable)
+  subjectTable?: SubjectTable | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

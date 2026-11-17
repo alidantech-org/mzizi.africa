@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/subject_table.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/source/addresses.dart';
 import 'package:mzizi_api/src/models/source/artifacts.dart';
 import 'package:mzizi_api/src/models/source/captures.dart';
-import 'package:mzizi_api/src/models/source/relationships.dart';
 
 part 'citations.g.dart';
 
@@ -11,7 +12,8 @@ part 'citations.g.dart';
 @JsonSerializable(includeIfNull: false)
 class SourceCitations {
   const SourceCitations({
-    required this.artifactId,
+    this.addressId,
+    this.artifactId,
     this.captureId,
     required this.code,
     required this.createdAt,
@@ -21,11 +23,13 @@ class SourceCitations {
     required this.locatorKindId,
     this.quotedHash,
     required this.recordedAt,
-    this.relationshipId,
+    this.subjectId,
+    this.subjectTable,
     required this.updatedAt,
     required this.version,
   });
-  final String artifactId;
+  final String? addressId;
+  final String? artifactId;
   final String? captureId;
   final String code;
   final DateTime createdAt;
@@ -35,7 +39,8 @@ class SourceCitations {
   final String locatorKindId;
   final String? quotedHash;
   final DateTime recordedAt;
-  final String? relationshipId;
+  final String? subjectId;
+  final SharedSubjectTable? subjectTable;
   final DateTime updatedAt;
   final int version;
 

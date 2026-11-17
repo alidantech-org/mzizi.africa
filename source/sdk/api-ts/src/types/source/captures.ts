@@ -11,7 +11,7 @@ export interface SourceCaptures {
   responseMetadata: string;
   retrievedAt: string;
   retrievedUrl?: string | null;
-  sourceId: string;
+  sourceId?: string | null;
   updatedAt: string;
   version: number;
 }

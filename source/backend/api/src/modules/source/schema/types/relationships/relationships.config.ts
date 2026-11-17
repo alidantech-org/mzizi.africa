@@ -55,6 +55,7 @@ export const RELATIONSHIPS_RELATION_KEYS = [
 // ----------------------------------
 
 export const RELATIONSHIPS_SORTABLE_FIELDS = [
+  "code",
   "createdAt",
   "deletedAt",
   "executionRef",
@@ -78,6 +79,7 @@ export const RELATIONSHIPS_SORTABLE_FIELDS = [
 ] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_SEARCHABLE_FIELDS = [
+  "code",
   "executionRef",
   "method",
 ] as const satisfies readonly RelationshipsKey[];
@@ -116,6 +118,7 @@ export const RELATIONSHIPS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IRe
 // ----------------------------------
 
 export const RELATIONSHIPS_SELECTABLE_FIELDS = [
+  "code",
   "createdAt",
   "deletedAt",
   "executionRef",
@@ -139,6 +142,7 @@ export const RELATIONSHIPS_SELECTABLE_FIELDS = [
 ] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
+  "code",
   "createdAt",
   "deletedAt",
   "executionRef",
@@ -166,6 +170,7 @@ export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const RELATIONSHIPS_EDITABLE_FIELDS = [
+  "code",
   "executionRef",
   "inputArtifactId",
   "inputCaptureId",

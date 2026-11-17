@@ -86,16 +86,24 @@ export const Addresses = source
     method: dryv.field(sourceEnums.HttpMethod),
     /** The path exactly as requested, starting with a slash; without the query. */
     path: dryv.field(sharedProperties.NonEmptyString1000),
-    /** The query string without the leading question mark; empty when there is none. Fragments and credentials are never stored. */
-    query: dryv.field(sharedProperties.NullableString1000),
+    /** The query string without the leading question mark; absent when there is none. Fragments and credentials are never stored. */
+    query: dryv.field(sharedProperties.NonEmptyString1000).maybe(),
     note: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .description("A page, listing, file or API endpoint on a domain, distinguished by method, path and query.")
-  .role("entity")
-  .facets({
-    storage: dryv.storage("addresses").unique("domainId", "method", "path", "query").index("domainId"),
-  });
+  .role("entity");
+
+const withoutQuery = source.expression("AddressWithoutQuery", Addresses.check((v) => v.query.isNull()));
+
+Addresses.facets({
+  storage: dryv
+    .storage("addresses")
+    .unique("domainId", "method", "path", "query")
+    .unique("domainId", "method", "path")
+    .where(withoutQuery)
+    .index("domainId"),
+});
 
 export const Discoveries = source
   .schema("Discoveries", {
@@ -172,7 +180,8 @@ export const Artifacts = source
 
 export const Captures = source
   .schema("Captures", {
-    sourceId: belongsTo(() => Sources),
+    /** The accepted channel; absent when the address belongs to no accepted source yet. A source is never invented to hold a link. */
+    sourceId: belongsTo(() => Sources).maybe(),
     addressId: belongsTo(() => Addresses).maybe(),
     discoveryId: belongsTo(() => Discoveries).maybe(),
     /** The content obtained; absent until the bytes are downloaded and hashed. */
@@ -215,7 +224,7 @@ export const Relationships = source
     /** Optional loose reference to an external execution; never a foreign key and never required. */
     executionRef: dryv.field(sharedProperties.NonEmptyString255).maybe(),
   })
-  .extends(baseSchemas.Entity)
+  .extends(baseSchemas.CodedEntity)
   .rule("SubjectKeysTogether", rule.allOrNone("subjectTable", "subjectId"))
   .rule(
     "ExactlyOneOutput",
@@ -233,20 +242,26 @@ export const Relationships = source
 
 export const Citations = source
   .schema("Citations", {
-    artifactId: belongsTo(() => Artifacts),
+    /** The exact representation cited; absent while only the address or capture is known. */
+    artifactId: belongsTo(() => Artifacts).maybe(),
     captureId: belongsTo(() => Captures).maybe(),
-    /** The connection this location supports, when it supports one. */
-    relationshipId: belongsTo(() => Relationships).maybe(),
+    /** A cited page known only by its address, before any capture or artifact exists. */
+    addressId: belongsTo(() => Addresses).maybe(),
+    /** The row this location supports (a relationship, a claim), named by the shared subject keys; both set or both absent. */
+    subjectTable: dryv.field(subjectProperties.SubjectTable).maybe(),
+    subjectId: dryv.field(sharedProperties.Id).maybe(),
     locatorKindId: belongsTo(() => Value),
     locator: dryv.field(sharedProperties.JsonText),
     quotedHash: dryv.field(sharedProperties.Sha256).maybe(),
     recordedAt: dryv.field(sharedProperties.Instant),
   })
   .extends(baseSchemas.CodedEntity)
+  .rule("CitesSomething", rule.atLeastOne("artifactId", "captureId", "addressId"))
+  .rule("SubjectKeysTogether", rule.allOrNone("subjectTable", "subjectId"))
   .description("Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp.")
   .role("entity")
   .facets({
-    storage: dryv.storage("citations").index("artifactId").index("captureId").index("relationshipId").index("locatorKindId"),
+    storage: dryv.storage("citations").index("artifactId").index("captureId").index("addressId").index("subjectTable", "subjectId").index("locatorKindId"),
   });
 
 export const Verifications = source

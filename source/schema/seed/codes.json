@@ -83,9 +83,6 @@
     "filesystem.file_extensions": {
       "short": "fxt"
     },
-    "filesystem.file_relations": {
-      "short": "frl"
-    },
     "filesystem.file_versions": {
       "short": "fvr"
     },
@@ -125,11 +122,14 @@
     "finance.funds": {
       "short": "fnd"
     },
+    "geography.assets": {
+      "short": "ast"
+    },
     "geography.changes": {
       "short": "chg"
     },
-    "geography.datasets": {
-      "short": "dts"
+    "geography.classifications": {
+      "short": "cls"
     },
     "geography.features": {
       "short": "ftr"
@@ -143,14 +143,8 @@
     "geography.names": {
       "short": "nam"
     },
-    "geography.places": {
-      "short": "plc"
-    },
     "geography.relationships": {
       "short": "rel"
-    },
-    "geography.units": {
-      "short": "unt"
     },
     "governance.authority_scopes": {
       "short": "asc"
@@ -170,29 +164,32 @@
     "governance.relationships": {
       "short": "rel"
     },
-    "legal.amendments": {
-      "short": "amd"
+    "legal.editions": {
+      "short": "edn"
     },
-    "legal.bases": {
-      "short": "bas"
-    },
-    "legal.instrument_versions": {
-      "short": "ivr"
+    "legal.effects": {
+      "short": "eff"
     },
     "legal.instruments": {
       "short": "ins"
     },
-    "legal.provision_references": {
-      "short": "prf"
-    },
-    "legal.provision_translations": {
-      "short": "ptr"
-    },
-    "legal.provision_versions": {
-      "short": "pvr"
+    "legal.names": {
+      "short": "nam"
     },
     "legal.provisions": {
       "short": "prv"
+    },
+    "legal.references": {
+      "short": "ref"
+    },
+    "legal.relationships": {
+      "short": "rel"
+    },
+    "legal.translations": {
+      "short": "trn"
+    },
+    "legal.wordings": {
+      "short": "wrd"
     },
     "official.branding": {
       "short": "brd"
@@ -276,6 +273,9 @@
     "reference.units": {
       "short": "unt"
     },
+    "reference.value_labels": {
+      "short": "vlb"
+    },
     "reference.value_relations": {
       "short": "vrl"
     },
@@ -283,6 +283,12 @@
       "short": "val",
       "kind": "member",
       "parent": "scheme_code"
+    },
+    "source.addresses": {
+      "short": "adr"
+    },
+    "source.artifacts": {
+      "short": "art"
     },
     "source.attributions": {
       "short": "att"
@@ -293,41 +299,23 @@
     "source.citations": {
       "short": "cit"
     },
-    "source.dataset_lineage": {
-      "short": "dsl"
-    },
-    "source.datasets": {
-      "short": "dts"
-    },
-    "source.documents": {
-      "short": "doc"
+    "source.discoveries": {
+      "short": "dsc"
     },
     "source.domains": {
       "short": "dom"
     },
-    "source.evidence": {
-      "short": "evd"
+    "source.editions": {
+      "short": "edn"
     },
-    "source.manifest_bindings": {
-      "short": "mbd"
-    },
-    "source.manifest_releases": {
-      "short": "mrl"
-    },
-    "source.manifests": {
-      "short": "mnf"
-    },
-    "source.paths": {
-      "short": "pth"
-    },
-    "source.provenance": {
-      "short": "prv"
-    },
-    "source.publication_receipts": {
-      "short": "prc"
+    "source.products": {
+      "short": "prd"
     },
     "source.publishers": {
       "short": "pub"
+    },
+    "source.relationships": {
+      "short": "rel"
     },
     "source.sources": {
       "short": "srs"

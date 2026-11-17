@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
+
 
 class CitationsRow(BaseModel):
     """Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp."""
@@ -16,7 +18,8 @@ class CitationsRow(BaseModel):
 
     table: ClassVar[str] = "source.citations"
 
-    artifact_id: UUID
+    address_id: UUID | None = None
+    artifact_id: UUID | None = None
     capture_id: UUID | None = None
     code: Annotated[
         str,
@@ -33,6 +36,7 @@ class CitationsRow(BaseModel):
     locator_kind_id: UUID
     quoted_hash: Annotated[str, Field(min_length=64, max_length=64, pattern="^[a-f0-9]{64}$")] | None = None
     recorded_at: datetime
-    relationship_id: UUID | None = None
+    subject_id: UUID | None = None
+    subject_table: SubjectTable | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

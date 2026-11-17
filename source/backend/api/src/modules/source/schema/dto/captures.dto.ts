@@ -82,9 +82,11 @@ export class CapturesDto {
   @MaxLength(2048)
   retrievedUrl?: Url | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.sourceId !== null)
   @IsString()
   @IsUUID()
-  sourceId!: Id;
+  sourceId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

@@ -87,8 +87,8 @@ export const capturesExample: ContractExample = contractExample({
     },
     {
       name: "sourceId",
-      optional: false,
-      nullable: false,
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {

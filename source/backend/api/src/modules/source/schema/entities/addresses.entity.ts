@@ -14,7 +14,6 @@ import type { Description } from "#/modules/shared/schema/type/description.type.
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-string1000.type.ts";
-import type { NullableString1000 } from "#/modules/shared/schema/type/nullable-string1000.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
@@ -23,6 +22,10 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Entity({ schema: "source", name: "addresses" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["domainId", "method", "path", "query"], { unique: true })
+@Index(["domainId", "method", "path"], {
+  unique: true,
+  where: '"query" IS NULL',
+})
 @Index(["domainId"])
 export class AddressesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
@@ -56,8 +59,8 @@ export class AddressesEntity {
   @Column({ name: "path", type: "varchar", length: 1000 })
   path!: NonEmptyString1000;
 
-  @Column({ name: "query", type: "varchar", length: 1000 })
-  query!: NullableString1000;
+  @Column({ name: "query", type: "varchar", length: 1000, nullable: true })
+  query?: NonEmptyString1000 | null;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

@@ -15,7 +15,6 @@ from mzizi_filesystem.shared.contracts import (
     NewFile,
     NewFolder,
     NewVersion,
-    RelationRecord,
     VersionRecord,
 )
 
@@ -25,7 +24,6 @@ class MemoryRegistry:
         self.folders: dict[str, FolderRecord] = {}
         self.files: dict[str, FileRecord] = {}
         self.versions: dict[str, VersionRecord] = {}
-        self.relations: list[RelationRecord] = []
         self.retired: list[str] = []
         self.ever: dict[str, int] = {}
         self._next = 0
@@ -101,18 +99,6 @@ class MemoryRegistry:
             ),
             None,
         )
-
-    def add_relation(self, relation: RelationRecord) -> bool:
-        if relation in self.relations:
-            return False
-        self.relations.append(relation)
-        return True
-
-    def relations_from(self, version_id: str) -> tuple[RelationRecord, ...]:
-        return tuple(r for r in self.relations if r.source_version_id == version_id)
-
-    def relations_to(self, version_id: str) -> tuple[RelationRecord, ...]:
-        return tuple(r for r in self.relations if r.derived_version_id == version_id)
 
     def next_revision(self, file_id: str) -> int:
         return self.ever.get(file_id, 0) + 1

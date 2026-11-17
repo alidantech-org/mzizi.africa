@@ -25,7 +25,6 @@ import { DomainsEntity } from "#/modules/source/schema/entities/domains.entity.t
 import { EditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
 import { ProductsEntity } from "#/modules/source/schema/entities/products.entity.ts";
 import { PublishersEntity } from "#/modules/source/schema/entities/publishers.entity.ts";
-import { SourceRelationshipsEntity } from "#/modules/source/schema/entities/relationships.entity.ts";
 import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import { GovernanceInstitutionsRepository } from "#/modules/governance/features/institutions/repositories/institutions.repository.ts";
 import { BrowseInstitutionsUseCase } from "#/modules/governance/features/institutions/use-cases/browse-institutions.usecase.ts";
@@ -66,7 +65,6 @@ import {
       EditionsEntity,
       ProductsEntity,
       PublishersEntity,
-      SourceRelationshipsEntity,
       SourcesEntity,
     ]),
   ],

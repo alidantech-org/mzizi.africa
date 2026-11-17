@@ -42,7 +42,7 @@ export interface ICaptures extends B.IBase {
   responseMetadata: string;
   retrievedAt: Date;
   retrievedUrl: string | null;
-  sourceId: string;
+  sourceId: string | null;
   readonly address?: AddressesTypes.IAddresses;
   readonly artifact?: ArtifactsTypes.IArtifacts;
   readonly discovery?: DiscoveriesTypes.IDiscoveries;

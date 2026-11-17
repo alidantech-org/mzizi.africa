@@ -74,9 +74,9 @@ export const addressesExample: ContractExample = contractExample({
     },
     {
       name: "query",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", maxLength: 1000 },
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 1000 },
     },
     {
       name: "updatedAt",

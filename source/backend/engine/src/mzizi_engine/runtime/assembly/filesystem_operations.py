@@ -32,7 +32,6 @@ from mzizi_filesystem import (
 from mzizi_filesystem.features.media.parse import load_media_formats
 from mzizi_filesystem.features.register.storage import Source
 from mzizi_filesystem.features.sync.sync import DirectorySpec
-from mzizi_filesystem.shared.contracts import RelationRecord
 from mzizi_manifest.features.seeds import seed_registry as seeds
 from mzizi_manifest.shared.paths import SEED_ROOT
 
@@ -219,30 +218,6 @@ def download(payload: Payload) -> Payload:
     )
 
 
-def relate(payload: Payload) -> Payload:
-    def act(fs: FilesystemOrchestrator, settings: _Wiring) -> Payload:
-        raw = payload.get("relation")
-        if not isinstance(raw, dict):
-            raise ValueError("'relation' must be an object")
-        return {"created": fs.relate(RelationRecord.model_validate(raw, strict=False))}
-
-    return _run(payload, act)
-
-
-def lineage(payload: Payload) -> Payload:
-    def act(fs: FilesystemOrchestrator, settings: _Wiring) -> Payload:
-        version = _text(payload, "version_id")
-        limit = payload.get("limit")
-        return {
-            "ancestry": [
-                r.model_dump(mode="json") for r in fs.ancestry(version, limit if isinstance(limit, int) else 50)
-            ],
-            "derivatives": [r.model_dump(mode="json") for r in fs.derivatives(version)],
-        }
-
-    return _run(payload, act)
-
-
 def change_access(payload: Payload) -> Payload:
     return _run(
         payload,
@@ -296,8 +271,6 @@ _OPERATIONS: tuple[tuple[str, str, Callable[[Payload], Payload]], ...] = (
     ("filesystem.upload_begin", "Presigned upload URL to a temporary key", upload_begin),
     ("filesystem.upload_finish", "Register uploaded bytes at a caller-chosen placement", upload_finish),
     ("filesystem.download", "Presigned download link for a registered version", download),
-    ("filesystem.relate", "Record that one version was derived from another", relate),
-    ("filesystem.lineage", "Ancestry and derivatives of a version", lineage),
     (
         "filesystem.change_access",
         "Give a folder and its subtree a new access class (needs a recorded authorization)",

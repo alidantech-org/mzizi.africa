@@ -77,8 +77,8 @@ export class CapturesEntity {
   })
   retrievedUrl?: Url | null;
 
-  @Column({ name: "source_id", type: "uuid" })
-  sourceId!: Id;
+  @Column({ name: "source_id", type: "uuid", nullable: true })
+  sourceId?: Id | null;
 
   @ManyToOne(() => SourcesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "source_id" })

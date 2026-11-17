@@ -2967,7 +2967,7 @@ describe("entity schema matches the contract", () => {
             ["method", false, false],
             ["note", true, false],
             ["path", false, false],
-            ["query", false, false],
+            ["query", true, false],
             ["updated_at", false, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
@@ -3143,7 +3143,7 @@ describe("entity schema matches the contract", () => {
             ["response_metadata", false, false],
             ["retrieved_at", false, false],
             ["retrieved_url", true, false],
-            ["source_id", false, false],
+            ["source_id", true, false],
             ["updated_at", false, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
@@ -3192,7 +3192,8 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
-            ["artifact_id", false, false],
+            ["address_id", true, false],
+            ["artifact_id", true, false],
             ["capture_id", true, false],
             ["code", false, false],
             ["created_at", false, false],
@@ -3202,7 +3203,8 @@ describe("entity schema matches the contract", () => {
             ["locator_kind_id", false, false],
             ["quoted_hash", true, false],
             ["recorded_at", false, false],
-            ["relationship_id", true, false],
+            ["subject_id", true, false],
+            ["subject_table", true, false],
             ["updated_at", false, false],
             ["version", false, false],
           ] as Array<[string, boolean, boolean]>
@@ -3216,10 +3218,10 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
+          "address_id->source.addresses",
           "artifact_id->source.artifacts",
           "capture_id->source.captures",
           "locator_kind_id->reference.values",
-          "relationship_id->source.relationships",
         ].sort(),
       );
     });
@@ -3232,7 +3234,13 @@ describe("entity schema matches the contract", () => {
         )
         .sort();
       expect(indexes).toEqual(
-        expect.arrayContaining(["artifact_id", "capture_id", "relationship_id", "locator_kind_id"]),
+        expect.arrayContaining([
+          "artifact_id",
+          "capture_id",
+          "address_id",
+          "subject_table,subject_id",
+          "locator_kind_id",
+        ]),
       );
     });
 
@@ -3511,6 +3519,7 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
+            ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["execution_ref", true, false],

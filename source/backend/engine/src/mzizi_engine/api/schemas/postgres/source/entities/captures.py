@@ -34,6 +34,6 @@ class CapturesRow(BaseModel):
     response_metadata: str
     retrieved_at: datetime
     retrieved_url: Annotated[str, Field(max_length=2048)] | None = None
-    source_id: UUID
+    source_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

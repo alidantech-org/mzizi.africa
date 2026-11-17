@@ -94,13 +94,6 @@ class NewVersion(Frozen):
     created_by: dict[str, str]
 
 
-class RelationRecord(Frozen):
-    source_version_id: str
-    derived_version_id: str
-    kind_id: str
-    processing_provenance: dict[str, str]
-
-
 class FolderChange(Frozen):
     """What a relocation changes about a folder; `None` fields stay as they are, `clear_parent` moves it to the top."""
 

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/shared/subject_table.dart';
 import 'package:mzizi_api/src/models/filesystem/file_versions.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 import 'package:mzizi_api/src/models/source/artifacts.dart';
 import 'package:mzizi_api/src/models/source/captures.dart';
 import 'package:mzizi_api/src/models/source/editions.dart';
@@ -14,6 +14,7 @@ part 'relationships.g.dart';
 @JsonSerializable(includeIfNull: false)
 class SourceRelationships {
   const SourceRelationships({
+    required this.code,
     required this.createdAt,
     this.deletedAt,
     this.executionRef,
@@ -35,6 +36,7 @@ class SourceRelationships {
     required this.updatedAt,
     required this.version,
   });
+  final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String? executionRef;

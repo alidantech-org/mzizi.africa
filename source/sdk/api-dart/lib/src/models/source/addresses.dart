@@ -19,7 +19,7 @@ class SourceAddresses {
     required this.method,
     this.note,
     required this.path,
-    required this.query,
+    this.query,
     required this.updatedAt,
     required this.version,
   });
@@ -32,7 +32,7 @@ class SourceAddresses {
   final SourceHttpMethod method;
   final String? note;
   final String path;
-  final String query;
+  final String? query;
   final DateTime updatedAt;
   final int version;
 

@@ -12,7 +12,7 @@ export interface SourceAddresses {
   method: SourceHttpMethod;
   note?: string | null;
   path: string;
-  query: string;
+  query?: string | null;
   updatedAt: string;
   version: number;
 }

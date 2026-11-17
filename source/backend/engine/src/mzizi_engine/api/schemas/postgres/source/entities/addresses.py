@@ -35,6 +35,6 @@ class AddressesRow(BaseModel):
     method: HttpMethod
     note: Annotated[str, Field(max_length=4000)] | None = None
     path: Annotated[str, Field(min_length=1, max_length=1000)]
-    query: Annotated[str, Field(max_length=1000)]
+    query: Annotated[str, Field(min_length=1, max_length=1000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -75,17 +75,37 @@ class Table:
 
     def seed_name(self, stored_column: str) -> str:
         """The seed column for a stored one: `scheme_id` is written `scheme_code`; any other column keeps its name."""
+        if stored_column == "subject_id" and self.has_subject:
+            return SUBJECT_ALIAS
         for column in self.columns.values():
             if column.name == stored_column and column.link:
                 return column.link.alias
         return stored_column
 
+    @property
+    def has_subject(self) -> bool:
+        """True when the table carries the shared subject keys (`subject_table`, `subject_id`)."""
+        return "subject_table" in self.columns and "subject_id" in self.columns
+
     def stored_name(self, seed_column: str) -> str:
         """The stored column a seed column fills: `scheme_code` fills `scheme_id`."""
+        if seed_column == SUBJECT_ALIAS and self.has_subject:
+            return "subject_id"
         for column in self.columns.values():
             if column.link and column.link.alias == seed_column:
                 return column.name
         return seed_column
+
+
+#: The seed alias of the shared subject key: a seed row names its subject by code, never by id.
+SUBJECT_ALIAS = "subject_code"
+
+
+def _seed_view(columns: tuple[str, ...], has_subject: bool) -> tuple[str, ...]:
+    """`subject_id` is written `subject_code` in a seed; `subject_table` stays as the table name."""
+    if not has_subject:
+        return columns
+    return tuple(sorted(SUBJECT_ALIAS if name == "subject_id" else name for name in columns))
 
 
 def _column(name: str, spec: dict, required: set[str]) -> Column:
@@ -114,6 +134,7 @@ def load_tables(schema_root: Path = SCHEMA_ROOT) -> dict[str, Table]:
         for definition in json.loads(path.read_text(encoding="utf-8"))["$defs"].values():
             required = set(definition["required"])
             seed = definition["x-seed"]
+            has_subject = {"subject_table", "subject_id"} <= set(definition["properties"])
             tables[definition["x-table"]] = Table(
                 id=definition["x-id"],
                 code=definition["x-code"],
@@ -122,7 +143,11 @@ def load_tables(schema_root: Path = SCHEMA_ROOT) -> dict[str, Table]:
                 unique_keys=tuple(tuple(key) for key in definition["x-uniqueKeys"]),
                 natural_key=tuple(definition["x-naturalKey"]),
                 seedable=bool(definition["x-seedable"]),
-                seed=Seed(tuple(seed["columns"]), tuple(seed["required"]), tuple(seed["system"])),
+                seed=Seed(
+                    _seed_view(tuple(seed["columns"]), has_subject),
+                    _seed_view(tuple(seed["required"]), has_subject),
+                    tuple(seed["system"]),
+                ),
                 columns={name: _column(name, spec, required) for name, spec in definition["properties"].items()},
             )
     return tables
@@ -167,8 +192,12 @@ def table_cycle(tables: dict[str, Table], names: set[str] | None = None) -> list
     return None
 
 
-def load_order(tables: dict[str, Table], names: set[str]) -> list[str]:
-    """The tables in `names` ordered so every table comes after the tables it links to (self-links ignored)."""
+def load_order(tables: dict[str, Table], names: set[str], subjects: dict[str, set[str]] | None = None) -> list[str]:
+    """The tables in `names` ordered so every table comes after the tables it links to (self-links ignored).
+
+    `subjects` adds the tables a table names as subjects, which must also be loaded first.
+    """
+    subjects = subjects or {}
     by_id = {table.id: table.qualified_name for table in tables.values()}
     remaining = set(names)
     ordered: list[str] = []
@@ -176,11 +205,14 @@ def load_order(tables: dict[str, Table], names: set[str]) -> list[str]:
         ready = sorted(
             name
             for name in remaining
-            if not {
-                by_id[c.link.table_id]
-                for c in tables[name].columns.values()
-                if c.link and c.link.table_id in by_id and by_id[c.link.table_id] not in (name, *ordered)
-            }
+            if not (
+                {
+                    by_id[c.link.table_id]
+                    for c in tables[name].columns.values()
+                    if c.link and c.link.table_id in by_id and by_id[c.link.table_id] not in (name, *ordered)
+                }
+                | {t for t in subjects.get(name, set()) if t != name and t not in ordered}
+            )
             & remaining
         )
         if not ready:

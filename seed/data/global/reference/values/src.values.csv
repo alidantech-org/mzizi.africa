@@ -4,9 +4,13 @@ src.publisher.kind.constitutional-commission,src.publisher.kind,Constitutional c
 src.publisher.kind.international-organisation,src.publisher.kind,International organisation
 src.publisher.kind.research-institution,src.publisher.kind,Research institution
 src.publisher.kind.non-profit,src.publisher.kind,Non profit
-src.document.kind.dataset-file,src.document.kind,Dataset file
-src.dataset.category.geography,src.dataset.category,Geography
-src.dataset.category.reference,src.dataset.category,Reference
-src.dataset.category.source,src.dataset.category,Source
-src.document.kind.legal-text,src.document.kind,Legal text
-src.dataset.category.legal,src.dataset.category,Legal
+src.product.kind.dataset-file,src.product.kind,Dataset file
+src.product.kind.legal-text,src.product.kind,Legal text
+src.product.kind.dataset,src.product.kind,Dataset
+src.relationship.kind.prepared-from,src.relationship.kind,Prepared from
+src.relationship.kind.built-from,src.relationship.kind,Built from
+src.relationship.kind.supports,src.relationship.kind,Supports
+src.relationship.kind.translated-from,src.relationship.kind,Translated from
+src.locator.kind.csv-line,src.locator.kind,CSV line
+src.locator.kind.page,src.locator.kind,Page
+src.locator.kind.url,src.locator.kind,Web address

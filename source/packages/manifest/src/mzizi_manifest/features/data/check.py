@@ -29,7 +29,7 @@ from mzizi_manifest.features.codes.grammar import (
     stored_code,
 )
 from mzizi_manifest.features.data.datasets import dataset_rows
-from mzizi_manifest.features.database.tables import Column, Table, load_order, load_tables, table_cycle
+from mzizi_manifest.features.database.tables import SUBJECT_ALIAS, Column, Table, load_order, load_tables, table_cycle
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
 SCOPE = re.compile(r"^(global|[a-z]{2,3})$")
@@ -246,19 +246,45 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                 if target.qualified_name != name:
                     edges[name].add(target.qualified_name)
 
-    if "source.datasets" in result.rows:
-        known = {row.values.get("code", "") for row in result.rows["source.datasets"]}
+    # Subjects: `subject_code` names a row of the table in `subject_table`.
+    subject_edges: dict[str, set[str]] = {}
+    for name, rows in result.rows.items():
+        if not tables[name].has_subject:
+            continue
+        for row in rows:
+            code = row.values.get(SUBJECT_ALIAS, "")
+            subject = row.values.get("subject_table", "")
+            where = f"{row.file.relative_to(root)}:{row.line}"
+            if not code and not subject:
+                continue
+            target = tables.get(subject)
+            if target is None or subject == "":
+                result.problems.append(f"{where}: subject_table {subject!r} is not a stored table")
+            elif target.natural_key != ("code",):
+                result.problems.append(f"{where}: {subject} cannot be a subject named by code")
+            elif subject not in result.rows:
+                result.problems.append(f"{where}: subject {code!r} is a {subject} code but that table has no seed file")
+            elif (code,) not in keys.get(subject, {}):
+                result.problems.append(f"{where}: unknown {subject} subject code {code!r}")
+            elif subject != name:
+                subject_edges.setdefault(name, set()).add(subject)
+
+    if "source.artifacts" in result.rows:
+        known = {row.values.get("code", "") for row in result.rows["source.artifacts"]}
         for expected in dataset_rows(root):
             if expected.code not in known:
                 result.problems.append(
-                    f"{expected.location}: no dataset row {expected.code!r}; run `mzizi-manifest datasets`"
+                    f"{expected.location}: no artifact row {expected.code!r}; run `mzizi-manifest datasets`"
                 )
 
     names = set(result.rows)
     if (cycle := table_cycle(tables, names)) is not None:
         result.problems.append(f"the tables link in a cycle: {' -> '.join(cycle)}")
     else:
-        result.order = load_order(tables, names)
+        try:
+            result.order = load_order(tables, names, subject_edges)
+        except ValueError as problem:
+            result.problems.append(str(problem))
 
     # Self-links: following them from any row must never come back to it.
     for name, rows in result.rows.items():

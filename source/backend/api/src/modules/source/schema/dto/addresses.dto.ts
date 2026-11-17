@@ -18,7 +18,6 @@ import type { Description } from "#/modules/shared/schema/type/description.type.
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-string1000.type.ts";
-import type { NullableString1000 } from "#/modules/shared/schema/type/nullable-string1000.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
@@ -69,9 +68,12 @@ export class AddressesDto {
   @MaxLength(1000)
   path!: NonEmptyString1000;
 
+  @IsOptional()
+  @ValidateIf((object) => object.query !== null)
   @IsString()
+  @MinLength(1)
   @MaxLength(1000)
-  query!: NullableString1000;
+  query?: NonEmptyString1000 | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

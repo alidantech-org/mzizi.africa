@@ -704,14 +704,16 @@
       "x-code": "sys.tbl.legal.references",
       "x-id": "#/schemas/legal.References",
       "x-table": "legal.references",
-      "x-primaryKey": ["id"],"x-naturalKey": ["wording_code", "target_provision_code", "span_start"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["wording_id", "target_provision_id", "span_start"]
+        ["code"]
+        ,["wording_id", "target_provision_id", "span_start"]
         ,["translation_id", "target_provision_id", "span_start"]
       ],
       "required": [
-        "id"
+        "code"
+        ,"id"
         ,"method"
         ,"relation"
         ,"review_status"
@@ -729,7 +731,8 @@
           ,"version"
         ],
         "columns": [
-          "method"
+          "code"
+          ,"method"
           ,"relation"
           ,"review_status"
           ,"span_end"
@@ -741,7 +744,8 @@
           ,"wording_code"
         ],
         "required": [
-          "method"
+          "code"
+          ,"method"
           ,"relation"
           ,"review_status"
           ,"span_end"
@@ -751,7 +755,15 @@
         ]
       },
       "properties": {
-        "created_at": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -798,7 +810,7 @@
         ,"span_start": {
           "type": "integer",
           "x-type": "integer",
-          "x-role": "key"
+          "x-role": "data"
         }
         ,"span_text": {
           "type": "string",
@@ -811,7 +823,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "target_provision_code" }
         }
         ,"target_wording_id": {
@@ -845,7 +857,7 @@
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Wordings", "column": "id", "alias": "wording_code" }
         }
       }

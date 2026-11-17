@@ -1,0 +1,4 @@
+code,wording_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-250.cl-4.v-2010.s109-9147c1bd8e,ke.constitution-2010.art-250.cl-4.v-2010,,ke.constitution-2010.art-10,refers-to,109,119,Article 10,parser,proposed
+ke.constitution-2010.art-251.cl-1.pa-a.v-2010.s86-c1597b59e9,ke.constitution-2010.art-251.cl-1.pa-a.v-2010,,ke.constitution-2010.ch-6,refers-to,86,97,Chapter Six,parser,proposed
+ke.constitution-2010.art-252.cl-2.v-2010.s139-fb4ec454d6,ke.constitution-2010.art-252.cl-2.v-2010,,ke.constitution-2010.art-22.cl-1,under,139,153,Article 22 (1),parser,proposed

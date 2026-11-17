@@ -11,8 +11,9 @@ from pydantic import NonNegativeInt
 from mzizi_engine import __version__
 from mzizi_engine.config import ConfigError, EngineConfig
 from mzizi_engine.persistence.mongo.run_ledger import MongoRunLedger
-from mzizi_engine.persistence.postgres.connection import connect
+from mzizi_engine.persistence.postgres.connection import Connection, connect
 from mzizi_engine.persistence.postgres.filesystem import PostgresRegistry
+from mzizi_engine.persistence.postgres.source import record_file_derivation
 from mzizi_engine.runtime.assembly.default_operations import build_operation_registry
 from mzizi_engine.runtime.assembly.filesystem_operations import _Wiring
 from mzizi_engine.runtime.assembly.run_operations import local_run_root
@@ -35,7 +36,6 @@ from mzizi_filesystem import (
 from mzizi_filesystem.features.media.parse import load_media_formats
 from mzizi_filesystem.features.placement.contracts import Placement
 from mzizi_filesystem.features.register.storage import StoredObject
-from mzizi_filesystem.shared.contracts import RelationRecord
 
 
 class PlacementEntry(Frozen):
@@ -146,7 +146,7 @@ def plan_release(run_id: UUID, placements: ReleaseManifest, config: EngineConfig
         return PlannedRelease(plan=plan, plan_hash=sha256(canonical_json(plan)).hexdigest())
 
 
-def _promote(fs: FilesystemOrchestrator, store: S3RunStore, plan: ReleasePlan) -> None:
+def _promote(fs: FilesystemOrchestrator, store: S3RunStore, plan: ReleasePlan, connection: Connection) -> None:
     versions: dict[str, str] = {}
     for entry in plan.files:
         artifact = entry.artifact
@@ -177,13 +177,12 @@ def _promote(fs: FilesystemOrchestrator, store: S3RunStore, plan: ReleasePlan) -
     if plan.relation_kind_id is not None:
         for entry in plan.files:
             for parent in entry.artifact.derived_from:
-                fs.relate(
-                    RelationRecord(
-                        source_version_id=versions[parent],
-                        derived_version_id=versions[entry.artifact.path],
-                        kind_id=str(plan.relation_kind_id),
-                        processing_provenance={"run_id": str(plan.run_id)},
-                    )
+                record_file_derivation(
+                    connection,
+                    input_version_id=versions[parent],
+                    output_version_id=versions[entry.artifact.path],
+                    kind_id=plan.relation_kind_id,
+                    method=f"promoted from run {plan.run_id}",
                 )
 
 
@@ -224,7 +223,10 @@ def release_run(
         catalog = MediaCatalog(load_media_formats(wiring.media_formats_path) if wiring.media_formats_path else {})
         with connect(wiring.database_url) as connection:
             _promote(
-                FilesystemOrchestrator(wiring.config, PostgresRegistry(connection), wiring.store, catalog), store, plan
+                FilesystemOrchestrator(wiring.config, PostgresRegistry(connection), wiring.store, catalog),
+                store,
+                plan,
+                connection,
             )
         for item in manifest.files:
             ledger.mark_promoted(run_id, item)

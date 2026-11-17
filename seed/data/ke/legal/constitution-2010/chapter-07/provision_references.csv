@@ -1,9 +1,0 @@
-source_version_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
-ke.constitution-2010.art-81.pa-a.v-2010,,ke.constitution-2010.art-38,under,61,71,Article 38,parser,proposed
-ke.constitution-2010.art-85.pa-b.sp-i.v-2010,,ke.constitution-2010.art-99.cl-1.pa-c,refers-to,0,18,Article 99 (1) (c),parser,proposed
-ke.constitution-2010.art-85.pa-b.sp-ii.v-2010,,ke.constitution-2010.art-193.cl-1.pa-c,refers-to,0,19,Article 193 (1) (c),parser,proposed
-ke.constitution-2010.art-88.cl-4.pa-k.v-2010,,ke.constitution-2010.art-82.cl-1.pa-b,refers-to,62,80,Article 82 (1) (b),parser,proposed
-ke.constitution-2010.art-89.cl-1.v-2010,,ke.constitution-2010.art-97.cl-1.pa-a,refers-to,142,160,Article 97 (1) (a),parser,proposed
-ke.constitution-2010.art-90.cl-1.v-2010,,ke.constitution-2010.art-97.cl-1.pa-c,under,57,75,Articles 97(1) (c),parser,proposed
-ke.constitution-2010.art-90.cl-1.v-2010,,ke.constitution-2010.art-98.cl-1.pa-b,under,80,90,98 (1) (b),parser,proposed
-ke.constitution-2010.art-90.cl-2.pa-b.v-2010,,ke.constitution-2010.art-98.cl-1.pa-b,under,51,69,Article 98 (1) (b),parser,proposed

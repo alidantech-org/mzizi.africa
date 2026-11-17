@@ -14,7 +14,6 @@ from mzizi_filesystem.shared.contracts import (
     NewFile,
     NewFolder,
     NewVersion,
-    RelationRecord,
     VersionRecord,
 )
 
@@ -62,18 +61,6 @@ class RegistryRepository(FolderLookup, Protocol):
         self, access: Access, sha256: str, size_bytes: int, excluding_file_id: str | None
     ) -> VersionRecord | None:
         """A version of another file with exactly these bytes in the same access class (dedup never crosses access)."""
-        ...
-
-    def add_relation(self, relation: RelationRecord) -> bool:
-        """Record one relation; `False` when exactly this relation already exists."""
-        ...
-
-    def relations_from(self, version_id: str) -> tuple[RelationRecord, ...]:
-        """Relations whose source is this version."""
-        ...
-
-    def relations_to(self, version_id: str) -> tuple[RelationRecord, ...]:
-        """Relations whose derived version is this one."""
         ...
 
     def next_revision(self, file_id: str) -> int:

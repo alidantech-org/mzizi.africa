@@ -37,6 +37,7 @@ import type {
 
 /** A classified connection from an input to an output or a domain record: derivation, extraction, translation, support. Exact locations are citations on the relationship. */
 export interface IRelationships extends B.IBase {
+  code: string;
   executionRef: string | null;
   inputArtifactId: string | null;
   inputCaptureId: string | null;

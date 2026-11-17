@@ -8,7 +8,9 @@ What it does, in the order it does it:
 3. Upserts each table in load order with `INSERT ... ON CONFLICT (id) DO UPDATE`, changing a row only when a seeded column
    really differs (`IS DISTINCT FROM`), so a run with no edits writes nothing, a small edit changes only that row, and the
    row's `version` and `updated_at` move only then.
-4. Writes one `source.provenance` row for every seeded record: its table, id, the dataset it came from and the CSV line.
+4. Writes the provenance of every seeded record as a `source.relationships` row (the record, prepared from the exact CSV
+   artifact) with one `source.citations` row for the CSV line. The artifact is named by the file's content hash, so a later
+   edit of the CSV never makes earlier provenance point at the new bytes.
 5. Reports, per table, rows inserted, updated, unchanged and rows present in the database that no seed file names. It never
    deletes: a row that left the seed is reported, and removing it is a separate decision.
 
@@ -20,8 +22,10 @@ schema is rejected by the check until the CSV is fixed.
 from __future__ import annotations
 
 import hashlib
+import json
 from collections import defaultdict
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 from uuid import UUID
 
@@ -31,16 +35,20 @@ from mzizi_engine.persistence.postgres.connection import Connection
 from mzizi_manifest.features.codes.glossary import Glossary, load_glossary
 from mzizi_manifest.features.codes.grammar import stored_code
 from mzizi_manifest.features.data.check import Row, check_data
-from mzizi_manifest.features.data.datasets import dataset_code
-from mzizi_manifest.features.database.tables import Table, load_tables
+from mzizi_manifest.features.data.datasets import artifact_code, is_catalogue
+from mzizi_manifest.features.database.tables import SUBJECT_ALIAS, Table, load_tables
 from mzizi_manifest.features.seeds.ids import stable_id
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
 type Cell = str | int | None
 
-PROVENANCE = "source.provenance"
-DATASETS = "source.datasets"
-BASES = "legal.bases"
+RELATIONSHIPS = "source.relationships"
+CITATIONS = "source.citations"
+ARTIFACTS = "source.artifacts"
+VALUES = "reference.values"
+#: Reference values the provenance rows use: the kind of connection and of locator.
+PREPARED_FROM = "src.relationship.kind.prepared-from"
+CSV_LINE = "src.locator.kind.csv-line"
 
 
 @dataclass(frozen=True)
@@ -96,7 +104,6 @@ def _desired(
     row: Row,
     tables_by_id: dict[str, Table],
     glossary: Glossary,
-    seed_root: Path,
 ) -> DesiredRow:
     values: dict[str, Cell] = {}
     needs: set[UUID] = set()
@@ -106,7 +113,9 @@ def _desired(
         column = table.columns.get(stored)
         if column is None:
             continue
-        if column.link is not None:
+        if name == SUBJECT_ALIAS and table.has_subject:
+            values["subject_id"] = str(stable_id(row.values.get("subject_table", ""), raw)) if raw else None
+        elif column.link is not None:
             target = tables_by_id[column.link.table_id]
             if raw == "":
                 values[stored] = None
@@ -119,13 +128,6 @@ def _desired(
             values[stored] = stored_code(glossary.tables[table.qualified_name], raw)
         else:
             values[stored] = _cell(raw)
-    if table.qualified_name == BASES and row.values.get("table_name") and row.values.get("record_code"):
-        values["record_id"] = str(stable_id(row.values["table_name"], row.values["record_code"]))
-    if table.qualified_name == DATASETS:
-        location = row.values.get("location", "")
-        local = seed_root.parent / location
-        if location and local.is_file():
-            values["sha256"] = hashlib.sha256(local.read_bytes()).hexdigest()
     return DesiredRow(own_id, values, frozenset(needs))
 
 
@@ -225,23 +227,45 @@ def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Pa
     by_id = {t.id: t for t in tables.values()}
     glossary = load_glossary(schema_root)
     desired: dict[str, list[DesiredRow]] = {}
-    provenance: list[DesiredRow] = []
-    provenance_table = tables[PROVENANCE]
+    relationships: list[DesiredRow] = []
+    citations: list[DesiredRow] = []
+    codes = glossary.tables
+    artifacts: dict[Path, str] = {}
     for name in checked.order:
         table = tables[name]
-        rows = [_desired(table, row, by_id, glossary, seed_root) for row in checked.rows[name]]
+        rows = [_desired(table, row, by_id, glossary) for row in checked.rows[name]]
         desired[name] = _ordered(rows)
         for row, item in zip(checked.rows[name], rows, strict=True):
-            dataset = dataset_code(seed_root, row.file)
-            prov_id = stable_id(PROVENANCE, f"{name}|{item.id}|{dataset}|{row.line}")
-            provenance.append(
+            if is_catalogue(seed_root, row.file):
+                continue
+            artifact = artifacts.setdefault(row.file, artifact_code(seed_root, row.file))
+            digest = hashlib.sha256(f"{name}|{item.id}|{artifact}|{row.line}".encode()).hexdigest()[:16]
+            path = f"p-{digest}"
+            relationship_id = stable_id(RELATIONSHIPS, path)
+            relationships.append(
                 DesiredRow(
-                    prov_id,
+                    relationship_id,
                     {
-                        "table_name": name,
-                        "record_id": str(item.id),
-                        "dataset_id": str(stable_id(DATASETS, dataset)),
-                        "line": row.line,
+                        "code": stored_code(codes[RELATIONSHIPS], path),
+                        "kind_id": str(stable_id(VALUES, PREPARED_FROM)),
+                        "subject_table": name,
+                        "subject_id": str(item.id),
+                        "input_artifact_id": str(stable_id(ARTIFACTS, artifact)),
+                        "method": "Loaded from the seed CSV row.",
+                    },
+                )
+            )
+            citations.append(
+                DesiredRow(
+                    stable_id(CITATIONS, path),
+                    {
+                        "code": stored_code(codes[CITATIONS], path),
+                        "artifact_id": str(stable_id(ARTIFACTS, artifact)),
+                        "subject_table": RELATIONSHIPS,
+                        "subject_id": str(relationship_id),
+                        "locator_kind_id": str(stable_id(VALUES, CSV_LINE)),
+                        "locator": json.dumps({"line": row.line}, sort_keys=True),
+                        "recorded_at": datetime.fromtimestamp(row.file.stat().st_mtime, UTC).isoformat(),
                     },
                 )
             )
@@ -250,10 +274,11 @@ def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Pa
             table_report = TableReport(name)
             _upsert(conn, tables[name], desired[name], table_report)
             report.tables.append(table_report)
-        prov_report = TableReport(PROVENANCE)
-        if DATASETS in desired:
-            _upsert(conn, provenance_table, provenance, prov_report)
-            report.tables.append(prov_report)
+        if ARTIFACTS in desired:
+            for table_name, rows in ((RELATIONSHIPS, relationships), (CITATIONS, citations)):
+                provenance_report = TableReport(table_name)
+                _upsert(conn, tables[table_name], rows, provenance_report)
+                report.tables.append(provenance_report)
     except Exception:
         conn.rollback()
         raise

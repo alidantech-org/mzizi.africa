@@ -1,4 +1,4 @@
-"""Filesystem capability: versioned files at caller-chosen placements, object storage, keys and lineage.
+"""Filesystem capability: versioned files at caller-chosen placements, object storage and keys.
 
 One orchestrator, `FilesystemOrchestrator`, exposes everything. This package never knows a database exists: the engine
 supplies a `RegistryRepository`, an `ObjectStore`, a `MediaCatalog` and a `FilesystemConfig`. It names no bucket, host,

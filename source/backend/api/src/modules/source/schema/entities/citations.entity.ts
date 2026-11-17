@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   Entity,
   Index,
@@ -7,10 +8,12 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { AddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
 import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
-import { SourceRelationshipsEntity } from "#/modules/source/schema/entities/relationships.entity.ts";
+import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
@@ -24,14 +27,27 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["artifactId"])
 @Index(["captureId"])
-@Index(["relationshipId"])
+@Index(["addressId"])
+@Index(["subjectTable", "subjectId"])
 @Index(["locatorKindId"])
+@Check(
+  "chk_citations_cites_something",
+  `artifact_id <> null OR capture_id <> null OR address_id <> null`,
+)
+// Invariant "SubjectKeysTogether" has no simple form, so it isn't enforced as a database check.
 export class CitationsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 
-  @Column({ name: "artifact_id", type: "uuid" })
-  artifactId!: Id;
+  @Column({ name: "address_id", type: "uuid", nullable: true })
+  addressId?: Id | null;
+
+  @ManyToOne(() => AddressesEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "address_id" })
+  address?: Relation<AddressesEntity>;
+
+  @Column({ name: "artifact_id", type: "uuid", nullable: true })
+  artifactId?: Id | null;
 
   @ManyToOne(() => ArtifactsEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "artifact_id" })
@@ -69,12 +85,16 @@ export class CitationsEntity {
   @Column({ name: "recorded_at", type: "timestamptz" })
   recordedAt!: Date;
 
-  @Column({ name: "relationship_id", type: "uuid", nullable: true })
-  relationshipId?: Id | null;
+  @Column({ name: "subject_id", type: "uuid", nullable: true })
+  subjectId?: Id | null;
 
-  @ManyToOne(() => SourceRelationshipsEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "relationship_id" })
-  relationship?: Relation<SourceRelationshipsEntity>;
+  @Column({
+    name: "subject_table",
+    type: "enum",
+    enum: SubjectTable,
+    nullable: true,
+  })
+  subjectTable?: SubjectTable | null;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

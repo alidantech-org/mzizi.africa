@@ -1,0 +1,11 @@
+code,wording_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-160.cl-1.v-2010.s72-78e0f13824,ke.constitution-2010.art-160.cl-1.v-2010,,ke.constitution-2010.art-161,refers-to,72,83,Article 161,parser,proposed
+ke.constitution-2010.art-160.cl-4.v-2010.s11-42bdc1e361,ke.constitution-2010.art-160.cl-4.v-2010,,ke.constitution-2010.art-168.cl-6,subject-to,11,25,Article 168(6),parser,proposed
+ke.constitution-2010.art-162.cl-4.v-2010.s56-f039f46e92,ke.constitution-2010.art-162.cl-4.v-2010,,ke.constitution-2010.art-169,under,56,67,Article 169,parser,proposed
+ke.constitution-2010.art-163.cl-3.pa-a.v-2010.s130-44f742d54e,ke.constitution-2010.art-163.cl-3.pa-a.v-2010,,ke.constitution-2010.art-140,under,130,141,Article 140,parser,proposed
+ke.constitution-2010.art-165.cl-3.pa-c.v-2010.s182-c1fa3e8b55,ke.constitution-2010.art-165.cl-3.pa-c.v-2010,,ke.constitution-2010.art-144,under,182,193,Article 144,parser,proposed
+ke.constitution-2010.art-165.cl-3.pa-d.sp-iv.v-2010.s46-1b0289d5d0,ke.constitution-2010.art-165.cl-3.pa-d.sp-iv.v-2010,,ke.constitution-2010.art-191,under,46,57,Article 191,parser,proposed
+ke.constitution-2010.art-165.cl-5.pa-b.v-2010.s62-785704a6ff,ke.constitution-2010.art-165.cl-5.pa-b.v-2010,,ke.constitution-2010.art-162.cl-2,refers-to,62,77,Article 162 (2),parser,proposed
+ke.constitution-2010.art-167.cl-4.v-2010.s210-b6d3c40bd0,ke.constitution-2010.art-167.cl-4.v-2010,,ke.constitution-2010.art-166.cl-1,in-accordance-with,210,225,Article 166 (1),parser,proposed
+ke.constitution-2010.art-168.cl-6.v-2010.s8-ec45b651c2,ke.constitution-2010.art-168.cl-6.v-2010,,ke.constitution-2010.art-160.cl-4,refers-to,8,23,Article 160 (4),parser,proposed
+ke.constitution-2010.art-169.cl-1.pa-d.v-2010.s130-46b80da674,ke.constitution-2010.art-169.cl-1.pa-d.v-2010,,ke.constitution-2010.art-162.cl-2,refers-to,130,145,Article 162 (2),parser,proposed

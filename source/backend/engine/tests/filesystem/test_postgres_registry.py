@@ -27,7 +27,6 @@ from mzizi_filesystem import (
     Retention,
 )
 from mzizi_filesystem.features.placement.contracts import Placement
-from mzizi_filesystem.shared.contracts import RelationRecord
 
 URL = os.environ.get("MZIZI_FS_TEST_DATABASE_URL")
 pytestmark = pytest.mark.skipif(not URL, reason="MZIZI_FS_TEST_DATABASE_URL is not set")
@@ -132,19 +131,11 @@ def test_replace_current_retires_the_old_version_and_a_revision_is_never_reused(
     assert third.revision == 3 and third.archived_key is None
 
 
-def test_lineage_and_relocation_through_postgres(fs: FilesystemOrchestrator, reference: tuple[str, str]) -> None:
+def test_relocation_through_postgres(fs: FilesystemOrchestrator, reference: tuple[str, str]) -> None:
     role, kind = reference
     root = f"t{uuid4().hex[:8]}"
     raw = fs.register(ask(role, root, "raw"), b"a\n1\n")
     clean = fs.register(ask(role, root, "clean"), b"a\n10\n")
-    edge = RelationRecord(
-        source_version_id=raw.version_id or "",
-        derived_version_id=clean.version_id or "",
-        kind_id=kind,
-        processing_provenance={"tool": "t"},
-    )
-    assert fs.relate(edge) is True and fs.relate(edge) is False
-    assert [r.source_version_id for r in fs.ancestry(clean.version_id or "", 5)] == [raw.version_id]
     folder = fs.plan(ask(role, root, "clean").placement).steps[-1].existing
     assert folder is not None
     report = fs.change_access(folder.id, Access.PRIVATE, "owner approved")

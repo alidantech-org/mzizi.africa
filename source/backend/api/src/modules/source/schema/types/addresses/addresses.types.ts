@@ -39,7 +39,7 @@ export interface IAddresses extends B.IBase {
   method: HttpMethod;
   note: string | null;
   path: string;
-  query: string;
+  query: string | null;
   readonly domain?: DomainsTypes.IDomains;
 }
 

@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
   IsUUID,
+  Matches,
   MaxLength,
   Min,
   MinLength,
@@ -13,6 +14,7 @@ import {
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
@@ -27,6 +29,16 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * Invariant "ExactlyOneInput" has no simple form, so it isn't validated here.
  */
 export class RelationshipsDto {
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  @Matches(
+    new RegExp(
+      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+    ),
+  )
+  code!: IdentityCode;
+
   @IsISO8601({})
   createdAt!: Instant;
 

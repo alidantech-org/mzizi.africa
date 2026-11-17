@@ -16,6 +16,7 @@ import { ProductsEntity } from "#/modules/source/schema/entities/products.entity
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -23,6 +24,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  * A classified connection from an input to an output or a domain record: derivation, extraction, translation, support. Exact locations are citations on the relationship.
  */
 @Entity({ schema: "source", name: "relationships" })
+@Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["kindId"])
 @Index(["subjectTable", "subjectId"])
 // Invariant "SubjectKeysTogether" has no simple form, so it isn't enforced as a database check.
@@ -31,6 +33,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 export class SourceRelationshipsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
+
+  @Column({ name: "code", type: "varchar", length: 255 })
+  code!: IdentityCode;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;

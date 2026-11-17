@@ -1,4 +1,4 @@
-"""Registering bytes at caller-chosen placements: versions, retention, duplicates, recovery and lineage."""
+"""Registering bytes at caller-chosen placements: versions, retention, duplicates and recovery."""
 
 from __future__ import annotations
 
@@ -6,7 +6,6 @@ import pytest
 from memory_registry import MemoryRegistry
 
 from mzizi_filesystem import MediaCatalog, MemoryObjectStore
-from mzizi_filesystem.features.lineage.lineage import LineageError, ancestry, derivatives, relate
 from mzizi_filesystem.features.placement.contracts import Placement
 from mzizi_filesystem.features.register.contracts import (
     DuplicatePolicy,
@@ -16,7 +15,7 @@ from mzizi_filesystem.features.register.contracts import (
 )
 from mzizi_filesystem.features.register.registrar import Registrar
 from mzizi_filesystem.shared.config import FilesystemConfig
-from mzizi_filesystem.shared.contracts import Access, RelationRecord, Retention
+from mzizi_filesystem.shared.contracts import Access, Retention
 
 CONFIG = FilesystemConfig(
     bucket="test",
@@ -152,26 +151,6 @@ def test_protected_prefixes_dry_runs_and_bad_content_are_refused_without_writing
     bad = registrar.register(request(name="x.pdf"), b"not a pdf")
     assert bad.outcome is Outcome.FAILED and "signature" in bad.detail
 
-
-def test_lineage_relates_exact_versions_and_refuses_cycles(parts) -> None:
-    repo, _, registrar = parts
-    raw = registrar.register(request("raw_src", name="a.csv"), b"a\n1\n")
-    cleaned = registrar.register(request("clean", name="a.csv"), b"a\n11\n")
-    final = registrar.register(request("final", name="a.csv"), b"a\n111\n")
-    edge = lambda s, d: RelationRecord(
-        source_version_id=s, derived_version_id=d, kind_id="derived", processing_provenance={}
-    )
-    assert relate(repo, edge(raw.version_id, cleaned.version_id)) is True
-    assert relate(repo, edge(raw.version_id, cleaned.version_id)) is False
-    relate(repo, edge(cleaned.version_id, final.version_id))
-    assert [r.source_version_id for r in ancestry(repo, final.version_id, 10)] == [cleaned.version_id, raw.version_id]
-    assert [r.derived_version_id for r in derivatives(repo, raw.version_id)] == [cleaned.version_id]
-    with pytest.raises(LineageError, match="derivative"):
-        relate(repo, edge(final.version_id, raw.version_id))
-    with pytest.raises(LineageError, match="itself"):
-        relate(repo, edge(raw.version_id, raw.version_id))
-    with pytest.raises(LineageError, match="does not exist"):
-        relate(repo, edge(raw.version_id, "missing"))
 
 
 def test_moves_renames_and_access_changes_carry_the_bytes_with_the_rows(parts) -> None:

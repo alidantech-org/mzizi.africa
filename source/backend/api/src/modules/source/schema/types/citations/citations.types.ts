@@ -4,14 +4,15 @@
 
 import * as Q from "#/modules/common/schema/types/query";
 import * as B from "#/modules/common/schema/types/base";
+import type { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum";
 
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as AddressesTypes from "#/modules/source/schema/types/addresses/addresses.types";
 import type * as ArtifactsTypes from "#/modules/source/schema/types/artifacts/artifacts.types";
 import type * as CapturesTypes from "#/modules/source/schema/types/captures/captures.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
-import type * as RelationshipsTypes from "#/modules/source/schema/types/relationships/relationships.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -34,18 +35,20 @@ import type {
 
 /** Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp. */
 export interface ICitations extends B.IBase {
-  artifactId: string;
+  addressId: string | null;
+  artifactId: string | null;
   captureId: string | null;
   code: string;
   locator: string;
   locatorKindId: string;
   quotedHash: string | null;
   recordedAt: Date;
-  relationshipId: string | null;
+  subjectId: string | null;
+  subjectTable: SubjectTable | null;
+  readonly address?: AddressesTypes.IAddresses;
   readonly artifact?: ArtifactsTypes.IArtifacts;
   readonly capture?: CapturesTypes.ICaptures;
   readonly locatorKind?: ValueTypes.IValue;
-  readonly relationship?: RelationshipsTypes.IRelationships;
 }
 
 // ----------------------------------
@@ -147,10 +150,10 @@ export type ICitationsAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface ICitationsRelationMap extends Record<CitationsRelationKey, unknown> {
+  address: AddressesTypes.IAddressesAsOneRelationQuery;
   artifact: ArtifactsTypes.IArtifactsAsOneRelationQuery;
   capture: CapturesTypes.ICapturesAsOneRelationQuery;
   locatorKind: ValueTypes.IValueAsOneRelationQuery;
-  relationship: RelationshipsTypes.IRelationshipsAsOneRelationQuery;
 }
 
 // ----------------------------------

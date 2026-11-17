@@ -12,7 +12,6 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from uuid import UUID, uuid4
 
-from mzizi_engine.api.schemas.postgres.filesystem.entities.file_relations import FileRelationsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.file_versions import FileVersionsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.files import FilesRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.folders import FoldersRow
@@ -26,7 +25,6 @@ from mzizi_filesystem.shared.contracts import (
     NewFile,
     NewFolder,
     NewVersion,
-    RelationRecord,
     Retention,
     VersionRecord,
 )
@@ -68,15 +66,6 @@ def _version(row: FileVersionsRow) -> VersionRecord:
         access=Access(row.access.value),
         pinned=row.pinned,
         verified_at=row.verified_at,
-    )
-
-
-def _relation(row: FileRelationsRow) -> RelationRecord:
-    return RelationRecord(
-        source_version_id=str(row.source_version_id),
-        derived_version_id=str(row.derived_version_id),
-        kind_id=str(row.kind_id),
-        processing_provenance=_string_map(row.processing_provenance),
     )
 
 
@@ -292,33 +281,3 @@ class PostgresRegistry:
             (s3_key,),
         ).fetchone()
         return row is not None
-
-    # ---- relations -------------------------------------------------------------------------------------
-    def add_relation(self, relation: RelationRecord) -> bool:
-        row = self._conn.execute(
-            "INSERT INTO filesystem.file_relations (id, created_at, updated_at, version, source_version_id, "
-            "derived_version_id, kind_id, processing_provenance) VALUES (%s, now(), now(), 1, %s, %s, %s, %s) "
-            "ON CONFLICT (source_version_id, derived_version_id, kind_id) DO NOTHING RETURNING id",
-            (
-                uuid4(),
-                UUID(relation.source_version_id),
-                UUID(relation.derived_version_id),
-                UUID(relation.kind_id),
-                json.dumps(relation.processing_provenance, sort_keys=True),
-            ),
-        ).fetchone()
-        return row is not None
-
-    def relations_from(self, version_id: str) -> tuple[RelationRecord, ...]:
-        rows = self._conn.execute(
-            "SELECT * FROM filesystem.file_relations WHERE source_version_id = %s AND deleted_at IS NULL ORDER BY created_at",
-            (UUID(version_id),),
-        ).fetchall()
-        return tuple(_relation(FileRelationsRow.model_validate(row)) for row in rows)
-
-    def relations_to(self, version_id: str) -> tuple[RelationRecord, ...]:
-        rows = self._conn.execute(
-            "SELECT * FROM filesystem.file_relations WHERE derived_version_id = %s AND deleted_at IS NULL ORDER BY created_at",
-            (UUID(version_id),),
-        ).fetchall()
-        return tuple(_relation(FileRelationsRow.model_validate(row)) for row in rows)

@@ -7,6 +7,7 @@ part of 'relationships.dart';
 // **************************************************************************
 
 SourceRelationships _$SourceRelationshipsFromJson(Map<String, dynamic> json) => SourceRelationships(
+  code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
   executionRef: json['executionRef'] as String?,
@@ -30,6 +31,7 @@ SourceRelationships _$SourceRelationshipsFromJson(Map<String, dynamic> json) => 
 );
 
 Map<String, dynamic> _$SourceRelationshipsToJson(SourceRelationships instance) => <String, dynamic>{
+  'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
   'executionRef': ?instance.executionRef,

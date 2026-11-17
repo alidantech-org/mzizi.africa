@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import BinaryIO
 
 from mzizi_filesystem.features.download.download import DownloadLink, download_link, open_version
-from mzizi_filesystem.features.lineage.lineage import ancestry, derivatives, relate
 from mzizi_filesystem.features.media.catalog import MediaCatalog
 from mzizi_filesystem.features.placement.contracts import Placement, PlacementPlan
 from mzizi_filesystem.features.placement.plan import plan_placement
@@ -23,7 +22,7 @@ from mzizi_filesystem.features.sync.sync import DirectorySpec, SyncReport, sync_
 from mzizi_filesystem.features.transitions.transitions import RelocationReport, Relocator
 from mzizi_filesystem.features.upload.upload import UploadTicket, begin_upload, discard_upload, finish_upload
 from mzizi_filesystem.shared.config import FilesystemConfig
-from mzizi_filesystem.shared.contracts import Access, RelationRecord, VersionRecord
+from mzizi_filesystem.shared.contracts import Access, VersionRecord
 
 
 class FilesystemOrchestrator:
@@ -59,16 +58,6 @@ class FilesystemOrchestrator:
 
     def open_version(self, version_id: str) -> tuple[BinaryIO, VersionRecord]:
         return open_version(self._repo, self._store, version_id)
-
-    # ---- lineage ----------------------------------------------------------------------------------------
-    def relate(self, relation: RelationRecord) -> bool:
-        return relate(self._repo, relation)
-
-    def ancestry(self, version_id: str, limit: int) -> tuple[RelationRecord, ...]:
-        return ancestry(self._repo, version_id, limit)
-
-    def derivatives(self, version_id: str) -> tuple[RelationRecord, ...]:
-        return derivatives(self._repo, version_id)
 
     # ---- relocation -------------------------------------------------------------------------------------
     def change_access(self, folder_id: str, access: Access, authorization: str) -> RelocationReport:

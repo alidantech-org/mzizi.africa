@@ -1,0 +1,5 @@
+code,wording_code,translation_code,target_provision_code,relation,span_start,span_end,span_text,method,review_status
+ke.constitution-2010.art-62.cl-1.pa-g.v-2010.s47-f75e1acbe8,ke.constitution-2010.art-62.cl-1.pa-g.v-2010,,ke.constitution-2010.art-63.cl-2.pa-d,refers-to,47,65,Article 63 (2) (d),parser,proposed
+ke.constitution-2010.art-63.cl-2.pa-d.sp-iii.v-2010.s134-553f56e1fd,ke.constitution-2010.art-63.cl-2.pa-d.sp-iii.v-2010,,ke.constitution-2010.art-62.cl-2,under,134,148,Article 62 (2),parser,proposed
+ke.constitution-2010.art-68.pa-b.v-2010.s75-463d1dde70,ke.constitution-2010.art-68.pa-b.v-2010,,ke.constitution-2010.art-60.cl-1,refers-to,75,89,Article 60 (1),parser,proposed
+ke.constitution-2010.art-70.cl-1.v-2010.s99-de7c66ce27,ke.constitution-2010.art-70.cl-1.v-2010,,ke.constitution-2010.art-42,under,99,109,Article 42,parser,proposed

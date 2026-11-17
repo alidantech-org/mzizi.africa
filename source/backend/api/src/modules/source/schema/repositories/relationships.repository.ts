@@ -135,4 +135,11 @@ export class RelationshipsRepository
   ): Promise<IFindAllResponse<SourceRelationshipsEntity>> {
     return await this.findByQuery(query, { subjectTable, deletedAt: IsNull() });
   }
+
+  /** Find the relationships with this code (unique). */
+  async findByCode(
+    code: NonNullable<SourceRelationshipsEntity["code"]>,
+  ): Promise<SourceRelationshipsEntity | null> {
+    return await this.findOne({ code, deletedAt: IsNull() });
+  }
 }
