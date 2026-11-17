@@ -87,3 +87,7 @@ Written: `.docs/_plan/guides/dryv-frontend-proposals.md`, section "Gap record fr
 ## Update: the feature-type filter is a real choice (Dryv proposal 2 withdrawn)
 
 The planner already references field-source operations from schemas; the page only needed `transitive: true` on its `operation.client` import. The pack now renders a field with an `options` source as a choice whose options come from the source operation (value and label fields marked by the contract's `option:value` and `option:label` field tags). Verified in the browser against the live API: 37 feature kinds in the select; choosing County listed 20 counties (all of the County type). See the revised proposals document.
+
+## Update: Dryv proposal 1 implemented
+
+Dryv commit `dfb0dd79` lets a present part bind its operation's input from view context. The web and app contracts now declare `part.present(GetFeature.out).context({ featureId: "featureId" })` (the tagged invoke part is gone) and the web and Flutter detail templates read `view.part.present.context`. Verified: both contracts compile, the web app typechecks and builds, `flutter analyze` is clean, and `/web/feature-detail?featureId=...` shows Kenya and its names against the live API. Dryv checks: engine generation and semantic tests (518) plus the new tests, TypeScript author tests, Python typechecks and the import check pass.

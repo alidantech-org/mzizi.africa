@@ -54,18 +54,18 @@ class _{{ file.symbol }}State extends State<{{ file.symbol }}> {
 {%- for item in view.context %}
     final {{ item.name.camel }} = address['{{ item.name.raw }}'];
 {%- endfor %}
-{%- for load in view.parts if load.kind == 'invoke' and 'run:on-open' in load.tags %}
+{%- if part.present.context | length > 0 %}
     if (
-{%- for b in load.invoke.context %}{{ b.source.name.camel }} == null{% if not loop.last %} || {% endif %}{% endfor %}) {
+{%- for b in part.present.context %}{{ b.source.name.camel }} == null{% if not loop.last %} || {% endif %}{% endfor %}) {
       setState(() => _error = 'Missing address value.');
       return;
     }
     final result = await {{ client_for(op) }}({{ pack.inputs.api_facade }}.connection).{{ op.name.camel }}(
-{%- for b in load.invoke.context %}
+{%- for b in part.present.context %}
       {{ b.target.field.camel }}: {{ b.source.name.camel }},
 {%- endfor %}
     );
-{%- endfor %}
+{%- endif %}
     if (!mounted) return;
     setState(() {
       if (result.isError) {

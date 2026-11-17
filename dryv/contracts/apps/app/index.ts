@@ -32,10 +32,8 @@ const views = features.views({
     .description("One geographic feature with its names.")
     .context("featureId", p.Id)
     .parts({
-      // Context can bind an operation's input only through an invoke part (a collect needs at least one
-      // collected path). The tag tells the assembler this one runs when the view opens, not on a tap.
-      load: part.invoke(geographyOperations.GetFeature, { featureId: "featureId" }).tags("run:on-open"),
-      feature: part.present(outputFrom(geographyOperations.GetFeature.out)),
+      // The detail view shows GetFeature for the identifier it holds as context.
+      feature: part.present(outputFrom(geographyOperations.GetFeature.out)).context({ featureId: "featureId" }),
     })
     .presentation("mobile", surfaces.Main),
 });

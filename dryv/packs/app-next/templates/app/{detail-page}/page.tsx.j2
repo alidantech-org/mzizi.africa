@@ -60,10 +60,10 @@ function {{ file.symbol }}Content() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-{%- for load in view.parts if load.kind == 'invoke' and 'run:on-open' in load.tags %}
+{%- if part.present.context | length > 0 %}
     void {{ bound_client(op) or own(op) }}(
       {{ own(op) }}Request({
-{%- for b in load.invoke.context %}
+{%- for b in part.present.context %}
         {{ b.target.field.camel }}: {{ b.source.name.camel }} ?? undefined,
 {%- endfor %}
       }) as never,
@@ -74,7 +74,7 @@ function {{ file.symbol }}Content() {
       }
       setRecord(response.body as Record_ | null);
     });
-{%- endfor %}
+{%- endif %}
   }, [{% for item in view.context %}{{ item.name.camel }}{% if not loop.last %}, {% endif %}{% endfor %}]);
 
   return (

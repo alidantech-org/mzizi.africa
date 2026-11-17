@@ -8,7 +8,7 @@ extra: {status: proposal, dryv_changes: not_approved, evidence: phase_2_prototyp
 
 # Dryv frontend proposals from the Mzizi phase 2 prototype
 
-**PROPOSALS ONLY. Nothing here changes the Dryv repository; each needs the owner's approval first.** They follow Dryv's own discovery method (reuse, compose, then a narrow extension of the natural owner) and its principles: intent stays neutral and in the IR, packs decide implementation, and concerns are not mixed. Evidence is the probes recorded in task TSK-A08E18BDB85F (`.docs/todo/work/W47/.../010-phase-2-...`), where the stock Next.js pack and a throwaway template read the generation context.
+**Proposal 1 is implemented in the Dryv repository (commit `dfb0dd79` on its `develop`, not pushed); the rest are proposals only, each needing the owner's approval first.** They follow Dryv's own discovery method (reuse, compose, then a narrow extension of the natural owner) and its principles: intent stays neutral and in the IR, packs decide implementation, and concerns are not mixed. Evidence is the probes recorded in task TSK-A08E18BDB85F (`.docs/todo/work/W47/.../010-phase-2-...`), where the stock Next.js pack and a throwaway template read the generation context.
 
 ## 1. A present part can bind its operation's input from view context
 
@@ -38,7 +38,7 @@ Every gap met while assembling geography browse, detail and search-select for we
 
 | # | Gap | Failing example | Where it was worked around |
 | --- | --- | --- | --- |
-| 1 | A `present` part cannot bind its operation's input from view context. | `part.collect(inputFrom(GetFeature.in, [], { featureId: "featureId" }))` fails with "input collection selector must be omitted when empty". | An `invoke` part tagged `run:on-open` carries the binding. |
+| 1 | (Implemented in Dryv `dfb0dd79`.) A `present` part could not bind its operation's input from view context. | `part.collect(inputFrom(GetFeature.in, [], { featureId: "featureId" }))` fails with "input collection selector must be omitted when empty". | An `invoke` part tagged `run:on-open` carries the binding. |
 | 2 | (Resolved, no Dryv change.) A field source's operation was missing from the page's dependencies. | The browse page's `file.dependencies` held `browseFeatures` but not `BrowseFeatureKinds`. | `transitive: true` on the `operation.client` import reaches it; the filter is now a choice. An `options` source still names no value or label field, so the contract tags them (`option:value`, `option:label`). |
 | 3 | A transition carries no context bindings. | `.transition("openFeature", "browse", "detail", { operation: GetFeature })` cannot say that the row's `featureId` becomes the detail view's `featureId`. | The list passes every text value of the row as address values; the detail view reads the ones it needs by name. |
 | 4 | Part order is lost (the IR sorts parts by name). | `parts({ filters, features })` renders `features` before `filters` in the stock pack. | The pattern template places collect parts in its filter slot and present parts in its results slot. Free-form views would still need an authored order, best on the view's presentation. |
@@ -56,3 +56,7 @@ Every gap met while assembling geography browse, detail and search-select for we
 ### What the prototype proved works with existing Dryv
 
 Role selection of view patterns, part tags and the `collection` hint, field `sources` in the part's port context, paging from `operation.persistence`, view context values, application destinations and transitions, and the theme. The web slice ran end to end against the live API; the Flutter slice analyzes clean and its device run is pending.
+
+### Proposal 1 outcome
+
+Implemented in the Dryv repository: `part.present(...).context({ inputField: "contextName" })` in the TypeScript author (index-keyed in the Python author), lowered to a `context` list on the IR present part and validated with the Invoke rules (`ir.part.present.*` codes). The shared binding types are now `OperationInputBinding`, `OperationInputBindingContext` and `OperationInputBindingState`. Mzizi's web and app detail views now use it and the `run:on-open` invoke stand-in and its tag are gone; the web detail page loaded Kenya with its names from the present part's binding. Remaining in Dryv task `TSK-785EF148A4F5`: a Python author test and a compiler-level TypeScript test for the lowering.
