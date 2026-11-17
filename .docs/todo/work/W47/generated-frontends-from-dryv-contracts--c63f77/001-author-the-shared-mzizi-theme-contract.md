@@ -1,5 +1,5 @@
 ---
-{id: TSK-3977B5D078D4,name: Author the shared Mzizi theme contract,type: task,status: in-progress,priority: medium,created_at: 2026-11-17T07:26:09.791Z,updated_at: 2026-11-17T07:30:21.095Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T07:29:04.531Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3977B5D078D4/1794900544533-start,started_at: 2026-11-17T07:29:05.557Z}]}}}
+{id: TSK-3977B5D078D4,name: Author the shared Mzizi theme contract,type: task,status: completed,priority: medium,created_at: 2026-11-17T07:26:09.791Z,updated_at: 2026-11-17T11:52:55.337Z,order: 1024,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T07:29:04.531Z},{from: in-progress,to: completed,at: 2026-11-17T11:52:55.337Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-3977B5D078D4/1794900544533-start,started_at: 2026-11-17T07:29:05.557Z,end_ref: refs/tracking/TSK-3977B5D078D4/1794916375340-end,ended_at: 2026-11-17T11:52:55.338Z,summary: {files: 1054,insertions: 28602,deletions: 2963}}]}}}
 ---
 
 # Author the shared Mzizi theme contract
@@ -16,6 +16,6 @@ Dryv implements Themes (decision 0017, `reference/ir/themes.md` in the Dryv repo
 
 - [x] A theme contract exists under `dryv/contracts/` with foundation tokens for every www colour, radius, font stack and shadow.
 - [x] All eight semantic roles are bound, and a dark colour-scheme mode overrides the surface and content roles.
-- [ ] `bun run typecheck` and the Dryv doctor and compile checks pass for the contract.
+- [x] `bun run typecheck` and the Dryv doctor and compile checks pass for the contract.
 - [x] The README of the contracts folder documents where the theme lives and that www is the palette's origin.
 - [x] `task validate` passes.

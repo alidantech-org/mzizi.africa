@@ -1,5 +1,5 @@
 ---
-{id: TSK-A08E18BDB85F,name: "Phase 2: geography browse, detail and search-select from contracts",type: task,status: in-progress,priority: medium,created_at: 2026-11-17T09:37:30.843Z,updated_at: 2026-11-17T09:40:14.693Z,order: 10240,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T09:40:14.693Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-A08E18BDB85F/1794908414703-start,started_at: 2026-11-17T09:40:15.563Z}]}}}
+{id: TSK-A08E18BDB85F,name: "Phase 2: geography browse, detail and search-select from contracts",type: task,status: completed,priority: medium,created_at: 2026-11-17T09:37:30.843Z,updated_at: 2026-11-17T11:53:00.906Z,order: 10240,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T09:40:14.693Z},{from: in-progress,to: completed,at: 2026-11-17T11:53:00.906Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-A08E18BDB85F/1794908414703-start,started_at: 2026-11-17T09:40:15.563Z,end_ref: refs/tracking/TSK-A08E18BDB85F/1794916380909-end,ended_at: 2026-11-17T11:53:00.907Z,summary: {files: 117,insertions: 3563,deletions: 202}}]}}}
 ---
 
 # Phase 2: geography browse, detail and search-select from contracts

@@ -1,5 +1,5 @@
 ---
-{id: TSK-31F5C007B2DF,name: Generate the theme as CSS tokens and a Flutter ThemeData,type: task,status: in-progress,priority: medium,created_at: 2026-11-17T07:44:52.748Z,updated_at: 2026-11-17T07:45:05.794Z,order: 5120,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T07:45:05.794Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-31F5C007B2DF/1794901505796-start,started_at: 2026-11-17T07:45:06.136Z}]}}}
+{id: TSK-31F5C007B2DF,name: Generate the theme as CSS tokens and a Flutter ThemeData,type: task,status: completed,priority: medium,created_at: 2026-11-17T07:44:52.748Z,updated_at: 2026-11-17T11:52:57.767Z,order: 5120,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T07:45:05.794Z},{from: in-progress,to: completed,at: 2026-11-17T11:52:57.767Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-31F5C007B2DF/1794901505796-start,started_at: 2026-11-17T07:45:06.136Z,end_ref: refs/tracking/TSK-31F5C007B2DF/1794916377769-end,ended_at: 2026-11-17T11:52:57.767Z,summary: {files: 875,insertions: 19476,deletions: 3325}}]}}}
 ---
 
 # Generate the theme as CSS tokens and a Flutter ThemeData

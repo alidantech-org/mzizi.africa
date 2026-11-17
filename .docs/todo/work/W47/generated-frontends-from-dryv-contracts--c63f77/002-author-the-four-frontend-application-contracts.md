@@ -1,5 +1,5 @@
 ---
-{id: TSK-C664D03AC84E,name: Author the four frontend application contracts,type: task,status: in-progress,priority: medium,created_at: 2026-11-17T07:30:20.896Z,updated_at: 2026-11-17T07:30:53.942Z,order: 2048,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T07:30:53.942Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-C664D03AC84E/1794900653945-start,started_at: 2026-11-17T07:30:54.408Z}]}}}
+{id: TSK-C664D03AC84E,name: Author the four frontend application contracts,type: task,status: completed,priority: medium,created_at: 2026-11-17T07:30:20.896Z,updated_at: 2026-11-17T11:52:56.325Z,order: 2048,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T07:30:53.942Z},{from: in-progress,to: completed,at: 2026-11-17T11:52:56.325Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-C664D03AC84E/1794900653945-start,started_at: 2026-11-17T07:30:54.408Z,end_ref: refs/tracking/TSK-C664D03AC84E/1794916376327-end,ended_at: 2026-11-17T11:52:56.326Z,summary: {files: 1045,insertions: 28443,deletions: 2925}}]}}}
 ---
 
 # Author the four frontend application contracts

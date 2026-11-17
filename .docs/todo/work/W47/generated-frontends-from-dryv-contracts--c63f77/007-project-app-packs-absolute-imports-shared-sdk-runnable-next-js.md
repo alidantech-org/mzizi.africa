@@ -1,5 +1,5 @@
 ---
-{id: TSK-70E25E4F7C06,name: "Project app packs: absolute imports, shared SDK, runnable Next.js",type: task,status: planned,priority: medium,created_at: 2026-11-17T08:28:33.869Z,updated_at: 2026-11-17T08:28:33.869Z,order: 7168}
+{id: TSK-70E25E4F7C06,name: "Project app packs: absolute imports, shared SDK, runnable Next.js",type: task,status: completed,priority: medium,created_at: 2026-11-17T08:28:33.869Z,updated_at: 2026-11-17T11:52:59.344Z,order: 7168,extra: {status_history: [{from: planned,to: completed,at: 2026-11-17T11:52:59.344Z}]}}
 ---
 
 # Project app packs: absolute imports, shared SDK, runnable Next.js

@@ -1,5 +1,5 @@
 ---
-{id: TSK-66BADAC8CE62,name: "Plan and inventory: assembling frontends from contracts",type: task,status: in-progress,priority: medium,created_at: 2026-11-17T09:01:12.124Z,updated_at: 2026-11-17T09:01:18.482Z,order: 8192,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T09:01:18.482Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-66BADAC8CE62/1794906078485-start,started_at: 2026-11-17T09:01:19.082Z}]}}}
+{id: TSK-66BADAC8CE62,name: "Plan and inventory: assembling frontends from contracts",type: task,status: completed,priority: medium,created_at: 2026-11-17T09:01:12.124Z,updated_at: 2026-11-17T11:52:59.626Z,order: 8192,extra: {status_history: [{from: planned,to: in-progress,at: 2026-11-17T09:01:18.482Z},{from: in-progress,to: completed,at: 2026-11-17T11:52:59.626Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-66BADAC8CE62/1794906078485-start,started_at: 2026-11-17T09:01:19.082Z,end_ref: refs/tracking/TSK-66BADAC8CE62/1794916379628-end,ended_at: 2026-11-17T11:52:59.626Z,summary: {files: 193,insertions: 5359,deletions: 257}}]}}}
 ---
 
 # Plan and inventory: assembling frontends from contracts
