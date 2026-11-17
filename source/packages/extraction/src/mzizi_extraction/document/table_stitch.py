@@ -49,21 +49,27 @@ def stitch_tables(pages: tuple[Page, ...]) -> list[LogicalTable]:
     """Logical tables that span two or more pages, in document order. The header becomes one row."""
     chains: list[list[tuple[int, TableBlock]]] = []
     for page in pages:
+        taken: set[int] = set()  # a chain continues in at most one table of the next page
         for block in page.blocks:
             if not isinstance(block, TableBlock) or not block.rows:
                 continue
-            if chains:
-                last_page, last = chains[-1][-1]
-                head = chains[-1][0][1]
-                adjacent = page.number == last_page + 1
-                if (
-                    adjacent
-                    and len(block.rows[0]) == len(head.rows[0])
-                    and (_repeated_rows(head, block) > 0 or block.header_rows == 0)
-                ):
-                    chains[-1].append((page.number, block))
-                    continue
-            chains.append([(page.number, block)])
+            match = next(
+                (
+                    position
+                    for position, chain in enumerate(chains)
+                    if position not in taken
+                    and chain[-1][0] == page.number - 1
+                    and len(block.rows[0]) == len(chain[0][1].rows[0])
+                    and (_repeats_header(chain[0][1], block) or block.header_rows == 0)
+                ),
+                None,
+            )
+            if match is None:
+                chains.append([(page.number, block)])
+                taken.add(len(chains) - 1)
+            else:
+                chains[match].append((page.number, block))
+                taken.add(match)
     logical: list[LogicalTable] = []
     for chain in chains:
         if len(chain) < 2:

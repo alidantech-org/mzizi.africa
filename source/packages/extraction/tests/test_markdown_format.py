@@ -87,3 +87,21 @@ def test_continuation_tables_are_stitched_without_repeated_headers() -> None:
     merged = stitch_tables(pages)
     assert len(merged) == 1 and merged[0].pages == (1, 2, 3)
     assert [row[0] for row in merged[0].rows] == ["No", "1", "2", "3", "4"] and merged[0].rows[0] == head
+
+
+def test_stitching_follows_each_table_when_a_page_has_several() -> None:
+    from mzizi_extraction.document.models import BBox, Page, TableBlock
+    from mzizi_extraction.document.table_stitch import stitch_tables
+
+    box: BBox = (0.0, 0.0, 1.0, 1.0)
+
+    def table(number: int, index: int, rows: tuple[tuple[str, ...], ...]) -> TableBlock:
+        return TableBlock(index=index, rows=rows, header_rows=1, page=number, bbox=box)
+
+    a, b = ("Name", "Age"), ("Item", "Cost", "Note")
+    pages = tuple(
+        Page(number=n, width=1.0, height=1.0, blocks=(table(n, 1, (a, (str(n), "x"))), table(n, 2, (b, (str(n), "y", "z")))))
+        for n in (1, 2, 3)
+    )
+    merged = stitch_tables(pages)
+    assert [m.pages for m in merged] == [(1, 2, 3), (1, 2, 3)]
