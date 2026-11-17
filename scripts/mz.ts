@@ -216,7 +216,7 @@ export const commands: Record<string, Command> = {
     run: () => group("dev:data", [rootStep("dev data", ["bash", "scripts/dev/dev-data.sh"])]),
   },
   "dev:stack": {
-    summary: "run one dev service against the dev database: dev:stack api | engine | web | portal | flutter | stop",
+    summary: "run one dev service against the dev database: dev:stack api | engine | web | portal | flutter | smoke | stop",
     run: ({ rest }) => group("dev:stack", [rootStep("stack", ["bash", "scripts/dev/stack.sh", ...rest])]),
   },
   seed: passthrough("mzizi-manifest", "seed registry: seed check | lock | report | validate-structure <dir>"),

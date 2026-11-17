@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
@@ -7,18 +7,16 @@ import { createElement } from 'react';
 import { DATA_CATALOG } from '../src/lib/review/data-catalog';
 import { ago, Badge, Pager } from '../src/app/review/ui';
 
-const controllers = join(import.meta.dir, '../../../backend/api/src/modules');
+const catalogFile = join(import.meta.dir, '../../../backend/api/src/system/catalog/catalog.json');
 
+/** The list routes of the API's generated catalog: GET, role "list", two path segments (the rule scripts/data-catalog.ts applies). */
 function listRoutes(): Set<string> {
+  const { operations } = JSON.parse(readFileSync(catalogFile, 'utf8')) as { operations: { method: string; path: string; role: string }[] };
   const found = new Set<string>();
-  const walk = (dir: string) => {
-    for (const name of readdirSync(dir)) {
-      const path = join(dir, name);
-      if (statSync(path).isDirectory()) walk(path);
-      else if (name.endsWith('.controller.ts')) for (const m of readFileSync(path, 'utf8').matchAll(/@Get\("\/v1\/([a-z-]+)\/([a-z-]+)"\)/g)) if (m[1] !== 'pipeline') found.add(`${m[1]}/${m[2]}`);
-    }
-  };
-  walk(controllers);
+  for (const operation of operations) {
+    const m = operation.method === 'GET' && operation.role === 'list' ? /^\/v1\/([a-z-]+)\/([a-z-]+)$/.exec(operation.path) : null;
+    if (m && m[1] !== 'pipeline') found.add(`${m[1]}/${m[2]}`);
+  }
   return found;
 }
 

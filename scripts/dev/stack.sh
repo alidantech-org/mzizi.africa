@@ -6,6 +6,7 @@
 #   stack.sh portal    developer portal on :3400 (forwards to the engine; the service key stays on the server)
 #   stack.sh flutter   builds the Flutter web app and serves it on :8090
 #   stack.sh stop      stops everything above
+#   stack.sh smoke     checks the running stack end to end (scripts/dev/smoke.sh)
 # Logs go to .dev/logs/. Each start replaces whatever listens on that port.
 set -euo pipefail
 cd "$(dirname "$0")/../.."
@@ -34,8 +35,10 @@ case "${1:-}" in
     free 8090
     (cd source/apps/app && flutter build web --release --dart-define=API_URL=http://127.0.0.1:8700)
     (cd source/apps/app/build/web && nohup python3 -m http.server 8090 --bind 127.0.0.1 > "$ROOT/.dev/logs/flutter.log" 2>&1 &) ;;
+  smoke)
+    bash scripts/dev/smoke.sh ;;
   stop)
     for port in 8700 8800 3300 3400 8090; do free "$port"; done ;;
   *)
-    echo "usage: stack.sh api|engine|web|portal|flutter|stop"; exit 2 ;;
+    echo "usage: stack.sh api|engine|web|portal|flutter|smoke|stop"; exit 2 ;;
 esac
