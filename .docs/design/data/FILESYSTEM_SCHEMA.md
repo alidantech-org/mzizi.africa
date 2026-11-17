@@ -4,6 +4,9 @@
 
 # Filesystem schema and operations
 
+**Status:** This guide contains historical implementation/design details and is not the agreed redesign target. See [Source, Filesystem and geographic asset ownership](SOURCE_FILESYSTEM_GEOGRAPHY.md) for the owner-approved target of 17 November 2026, including table removals and media/GIS associations. The target is not yet implemented; verify current behavior against active contracts and runtime code.
+
+
 Implemented in local `mzizi_new` by task `TSK-3EA8C40B0F60`. SQL: `source/schema/database/filesystem/0001_filesystem.sql` (applied through `bun run db migrate`). Package: `source/packages/filesystem`. Engine endpoints: `source/backend/engine` (`/v1/filesystem/...`). Command: `uv run mzizi-filesystem`. The Python package still owns direct PostgreSQL filesystem persistence during the TypeScript database-owner migration. These decisions supersede the earlier object/file-type/variant/attachment proposals.
 
 ## Decisions

@@ -4,6 +4,9 @@
 
 # Sourcing design
 
+**Status:** This guide contains historical implementation/design details and is not the agreed redesign target. See [Source, Filesystem and geographic asset ownership](SOURCE_FILESYSTEM_GEOGRAPHY.md) for the owner-approved target of 17 November 2026, including table removals and media/GIS associations. The target is not yet implemented; verify current behavior against active contracts and runtime code.
+
+
 AGENTS.md section 4 requires every meaningful claim to answer where it came from, which artifact supports it, when it was obtained, what it describes, how it was produced, how confident we are, whether it is disputed and which version is current. The `source` schema answers all of that for every other schema without any of them depending on it.
 
 ## The shape of the answer

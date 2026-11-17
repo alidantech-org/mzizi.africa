@@ -12,6 +12,8 @@ Canonical data, evidence, identity, file metadata and place design. These docume
 - [DATABASE_FOUNDATION](DATABASE_FOUNDATION.md)
 - [FILESYSTEM_SCHEMA](FILESYSTEM_SCHEMA.md)
 - [SOURCING_DESIGN](SOURCING_DESIGN.md)
+- [SOURCE_FILESYSTEM_GEOGRAPHY](SOURCE_FILESYSTEM_GEOGRAPHY.md) — owner-approved target responsibilities and tables; not implemented, with media mentions, central sourcing and GIS asset associations
+- [LEGAL_SCHEMA](LEGAL_SCHEMA.md) — owner-approved seven-table Legal target, exact wording, legal relationships/effects and migration requirements; not implemented
 - [PEOPLE_DESIGN](PEOPLE_DESIGN.md)
 - [ENTITY_RESOLUTION](ENTITY_RESOLUTION.md) — proposal: scored matching of extracted data to candidates, review loop, biometric limits
 - [PLACES_AND_PRESENCE_ASSESSMENT](PLACES_AND_PRESENCE_ASSESSMENT.md)
