@@ -1,0 +1,21 @@
+import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/routers/navigation.dart';
+
+/// The first screen, at `/`. Scaffolded by Dryv once; this file belongs to the app: design it by hand.
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('{{ application.name.title }}')),
+      body: ListView(
+        children: [
+          for (final destination in appDestinations)
+            ListTile(title: Text(destination.label), onTap: () => context.go(destination.path)),
+        ],
+      ),
+    );
+  }
+}

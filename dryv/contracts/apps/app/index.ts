@@ -11,6 +11,7 @@ import { reference } from "#/schemas/postgres/reference.ts";
 import api from "#/apps/api/index.ts";
 import { brand, themes } from "#/schemas/theme.ts";
 import { geographyOperations } from "#/apps/api/geography.ts";
+import { locality, localityOperations } from "#/apps/api/locality.ts";
 
 const app = dryv.group({ name: "app" }).description("The mobile app: its surface and views.");
 const surfaces = app.surfaces({ Main: surface.mobile() });
@@ -36,17 +37,59 @@ const views = features.views({
       feature: part.present(outputFrom(geographyOperations.GetFeature.out)).context({ featureId: "featureId" }),
     })
     .presentation("mobile", surfaces.Main),
+
+  PlaceSearch: view()
+    .role("list")
+    .description("Find a place by name and open its profile.")
+    .parts({
+      filters: part.collect(inputFrom(localityOperations.SearchLocalities.in, ["query"])).flow("inline"),
+      places: part.present(outputFrom(localityOperations.SearchLocalities.out, ["places"])).collection("table"),
+    })
+    .presentation("mobile", surfaces.Main),
+
+  PlaceProfile: view()
+    .role("detail")
+    .description("Who serves a place: officials, procurement, media and the evidence for each claim.")
+    .context("featureId", p.Id)
+    .parts({
+      profile: part.present(outputFrom(localityOperations.GetLocality.out)).context({ featureId: "featureId" }),
+    })
+    .presentation("mobile", surfaces.Main),
+
+  SourceBrowse: view()
+    .role("list")
+    .description("The data sources behind the platform.")
+    .parts({
+      filters: part.collect(inputFrom(localityOperations.BrowseSources.in, ["query"])).flow("inline"),
+      sources: part.present(outputFrom(localityOperations.BrowseSources.out, ["sources"])).collection("table"),
+    })
+    .presentation("mobile", surfaces.Main),
+
+  EvidenceView: view()
+    .role("detail")
+    .description("One citation with its source and files.")
+    .context("citationId", p.Id)
+    .parts({
+      evidence: part.present(outputFrom(localityOperations.GetEvidence.out)).context({ citationId: "citationId" }),
+    })
+    .presentation("mobile", surfaces.Main),
+
 });
 
 const app_app = dryv
   .app({ name: "mzizi-app" })
   .info({ title: "Mzizi mobile app", version: "0.1.0" })
-  .groups(shared, reference, geography, brand, app)
+  .groups(shared, reference, geography, locality, brand, app)
   .surfaces(surfaces.Main)
   .theme(themes.Mzizi)
-  .consumes(api, geographyOperations.BrowseFeatures, geographyOperations.GetFeature, geographyOperations.BrowseFeatureKinds)
+  .consumes(api, localityOperations.GetLocality, localityOperations.SearchLocalities, localityOperations.BrowseSources, localityOperations.GetEvidence, localityOperations.ListLanguages, localityOperations.ResolveLocality, geographyOperations.BrowseFeatures, geographyOperations.GetFeature, geographyOperations.BrowseFeatureKinds)
+  .destination("places", views.PlaceSearch)
+  .destination("sources", views.SourceBrowse)
   .destination("browse", views.FeatureBrowse)
   .destination("detail", views.FeatureDetail)
+  .destination("place", views.PlaceProfile)
+  .destination("evidence", views.EvidenceView)
+  .transition("openPlace", "places", "place", { operation: localityOperations.GetLocality })
   .transition("openFeature", "browse", "detail", { operation: geographyOperations.GetFeature });
 
 export default dryv.project({ name: "mzizi-app" }).apps(api, app_app);

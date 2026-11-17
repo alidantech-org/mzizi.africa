@@ -24,7 +24,9 @@ import { sharedFailures as f } from "#/schemas/_shared.ts";
 
 const engine = group({ name: "engine" }).description("The Python engine: capabilities and jobs, offered to the API.");
 
-const { JobStatus, CapabilityKind, JobId, IdempotencyKey, Count, Reason, Blurb } = engine.properties({
+const { JobStatus, CapabilityKind, JobId, IdempotencyKey, Count, Reason, Blurb, Version, PackageName } = engine.properties({
+  Version: property.string().length({ min: 1, max: 50 }),
+  PackageName: property.string().length({ min: 1, max: 100 }),
   JobStatus: property.enum(["queued", "running", "succeeded", "failed", "cancelled"]),
   CapabilityKind: property.string().length({ min: 1, max: 200 }),
   JobId: property.string.uuid(),
@@ -56,8 +58,11 @@ const { Job, Capability, SubmitJobBody, ListJobsInput } = jobs.schemas({
     error: field(Reason).optional(),
     result: field(dynamic()).optional(),
   }),
+  // The shape the engine returns: a registered capability with its package and version (`input_schema` is not modelled).
   Capability: schema({
-    kind: field(CapabilityKind),
+    name: field(CapabilityKind),
+    version: field(Version),
+    package: field(PackageName),
     description: field(Blurb).optional(),
   }),
   SubmitJobBody: schema({

@@ -36,7 +36,7 @@ sources:
     # support; switch back to the GitHub repository once that commit is published.
     official:
       repository: file:///home/alidante/Projects/personal/alidantech-org/codepot/packs
-      ref: c8bac0850ae3ed2a54dfc18d32b22fe81f96ca6d
+      ref: a5693954038a7916a7436076efcb8f3173d05898
       root: packs
     project: { path: dryv/packs }
 
@@ -349,6 +349,7 @@ packs:
   catalog-engine:
     source: { $ref: "#/sources/packs/project", path: system-catalog }
     destination: { $ref: "#/destinations/catalog-engine" }
+
 
   postgres-sql:
     source: { $ref: "#/sources/packs/project", path: postgres-sql }

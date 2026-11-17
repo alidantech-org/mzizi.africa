@@ -7,13 +7,15 @@
 
 {%- macro ts_type(value) -%}
 {%- if value.is.schema -%}{{ symbol_for(value.schema) or 'unknown' }}
-{%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) }}
+{%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) or 'string' }}
 {%- elif value.is.property and value.is.primitive -%}{{ value.property.primitive.type }}
 {%- elif value.is.property and value.is.temporal -%}string
 {%- else -%}unknown
 {%- endif -%}
 {%- endmacro -%}
 {%- set http = operation.facets.http -%}
+{%- set shape = namespace(query_object=false) -%}
+{%- for binding in http.inputs %}{% if binding.is.query_object %}{% set shape.query_object = true %}{% endif %}{% endfor -%}
 import { type ClientInput, type ClientResponse, type FieldMeta, type PageNames, send } from "#/lib/dryv/transport.ts";
 {%- for dependency in file.dependencies %}{% if dependency.symbol %}
 {%- if dependency.template == 'model' %}
@@ -53,6 +55,10 @@ export const {{ file.symbol }}Page: PageNames | undefined = undefined;
 
 /** Values for each input port of {{ operation.name.title }}. */
 export type {{ operation.name.pascal }}Ports = {
+{%- if not shape.query_object %}
+  /** Query values by field name, for callers (such as the generated list pages) that build them generically. */
+  input?: Record<string, unknown>;
+{%- endif %}
 {%- for binding in http.inputs %}
   {{ binding.port.name.camel }}?: {{ ts_type(binding.port.value) }};
 {%- endfor %}
@@ -67,6 +73,9 @@ export function {{ file.symbol }}Request(ports: {{ operation.name.pascal }}Ports
 {%- endif %}{% endfor %}
     },
     query: {
+{%- if not shape.query_object %}
+      ...ports.input,
+{%- endif %}
 {%- for binding in http.inputs %}{% if binding.is.query %}
       "{{ binding.name }}": ports.{{ binding.port.name.camel }},
 {%- elif binding.is.query_object %}

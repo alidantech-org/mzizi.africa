@@ -28,3 +28,7 @@ A `present` part loads when the screen opens, unless a `collect` part of the sam
 The [executable Usage fixture](tests/fixture/dryv.yaml) shows the current source collection, destination and pack activation for this pack.
 
 Run it with `flutter run --dart-define=API_URL=https://your-api`.
+
+## Ownership (Mzizi project copy)
+
+Managed, regenerated every time: `lib/presentation/routers/navigation.dart` (`AppRoutes`, root-level paths, and `appDestinations`), the feature routers and the reference screens under `screens/<feature>/`. Scaffolded once and then owned by the app: `routers/go_router.dart` (a `ShellRoute` over the generated routes), `shell/app_shell.dart` (bottom navigation) and `screens/home/home_screen.dart`. Replace any of them with hand-built screens; the generated ones are references.

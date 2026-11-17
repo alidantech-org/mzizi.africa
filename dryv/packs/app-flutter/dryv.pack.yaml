@@ -86,6 +86,17 @@ templates:
   router:
     $ref: '#/selections/app_views'
 
+  # Managed: every view's root-level path and the navigation destinations.
+  navigation:
+    $ref: '#/selections/app_views'
+
+  # Scaffold once: the frame (bottom navigation) and the home screen. They belong to the app after the first run.
+  shell:
+    $ref: '#/selections/app_views'
+
+  home:
+    $ref: '#/selections/app_views'
+
   routes:
     $ref: '#/selections/features'
     output:

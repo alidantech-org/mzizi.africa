@@ -2,6 +2,6 @@
 abstract final class {{ file.symbol }} {
 {%- for view in views %}
   /// {{ view.description or view.name.title }}
-  static const String {{ view.name.camel }} = '/{{ view.group.name.kebab }}/{{ view.name.kebab }}';
+  static const String {{ view.name.camel }} = '/{{ view.name.kebab }}';
 {%- endfor %}
 }

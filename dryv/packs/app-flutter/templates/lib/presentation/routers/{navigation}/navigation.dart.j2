@@ -1,0 +1,23 @@
+/// The destinations of the app's navigation, generated from its views. Managed by Dryv: regenerated every time.
+/// Detail views need context (a record to open), so they are routes but not destinations.
+class AppDestination {
+  const AppDestination({required this.label, required this.path});
+
+  final String label;
+  final String path;
+}
+
+/// Every view's root-level path.
+abstract final class AppRoutes {
+{%- for view in views %}
+  /// {{ view.description or view.name.title }}
+  static const String {{ view.name.camel }} = '/{{ view.name.kebab }}';
+{%- endfor %}
+}
+
+/// The entries for a bottom bar, drawer or menu, in view order.
+const appDestinations = <AppDestination>[
+{%- for view in views %}{% if view.role != 'detail' %}
+  AppDestination(label: '{{ view.name.title }}', path: AppRoutes.{{ view.name.camel }}),
+{%- endif %}{% endfor %}
+];

@@ -25,3 +25,4 @@ Canonical data, evidence, identity, file metadata and place design. These docume
 - [ENGINE_PERSISTENCE](ENGINE_PERSISTENCE.md) — the engine's PostgreSQL, MongoDB and vector persistence: one folder per store, ports for packages, vector as a skeleton
 
 Implementation authorization and delivery requirements: [schema ownership implementation handoff](../../handoffs/HANDOFF-IMPLEMENT-SCHEMA-OWNERSHIP.md).
+- [LOCALITY_READS](LOCALITY_READS.md): the screen-shaped place operations, how evidence and language resolve, and the development data.

@@ -1,0 +1,28 @@
+import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/routers/navigation.dart';
+
+/// The frame around every screen: a bottom navigation bar built from the generated destinations. Scaffolded by Dryv
+/// once; this file belongs to the app, so restyle it, reorder the items or swap the bar for a drawer.
+class AppShell extends StatelessWidget {
+  const AppShell({super.key, required this.location, required this.child});
+
+  final String location;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final entries = <AppDestination>[const AppDestination(label: 'Home', path: '/'), ...appDestinations];
+    final selected = entries.indexWhere((entry) => entry.path == '/' ? location == '/' : location.startsWith(entry.path));
+    return Scaffold(
+      body: child,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selected < 0 ? 0 : selected,
+        onDestinationSelected: (index) => context.go(entries[index].path),
+        destinations: [
+          for (final entry in entries) NavigationDestination(icon: const Icon(Icons.circle_outlined), label: entry.label),
+        ],
+      ),
+    );
+  }
+}
