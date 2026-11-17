@@ -260,9 +260,9 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
             years = {row.values.get("from_year", ""), row.values.get("to_year", "")} - {""}
             if not years:
                 result.problems.append(f"{where}: an exact date is given, so from_year or to_year must be filled")
-            for date in dates:
-                if date[:4].lstrip("0") not in {y.lstrip("0") for y in years}:
-                    result.problems.append(f"{where}: the year of {date} is not in from_year or to_year")
+            for exact in dates:
+                if exact[:4].lstrip("0") not in {y.lstrip("0") for y in years}:
+                    result.problems.append(f"{where}: the year of {exact} is not in from_year or to_year")
             if not row.values.get("from_to_precision", ""):
                 result.problems.append(f"{where}: from_to_precision is required when a date is given")
 
