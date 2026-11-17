@@ -33,6 +33,7 @@ class InMemoryDatabaseModule {}
 const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/account"],
   ["GET", "/v1/admin/accounts"],
+  ["GET", "/v1/geography/feature-kinds"],
   ["GET", "/v1/geography/features"],
   ["GET", "/v1/geography/geometries"],
   [

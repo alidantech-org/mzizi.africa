@@ -24,6 +24,17 @@
       "summary": "Page through accounts, optionally by status. Administrators only."
     },
     {
+      "name": "BrowseFeatureKinds",
+      "group": "geography",
+      "feature": "places",
+      "method": "GET",
+      "path": "/v1/geography/feature-kinds",
+      "role": "list",
+      "inputs": [],
+      "output": "FeatureKindCollection",
+      "summary": "The kinds a geographic feature can have, in code order, for choosing a feature type."
+    },
+    {
       "name": "BrowseFeatures",
       "group": "geography",
       "feature": "places",

@@ -13,9 +13,37 @@ const places = geography.feature("Places").failureDefaults(apiHttp);
 const feature = Features.asRef();
 const name = Names.asRef();
 
+/**
+ * The feature kinds a feature can have (country, county, river, road, ...): the options of every feature-type filter.
+ * A hand-written use case reads them from the reference scheme the `featureTypeId` field is tagged with, because a
+ * Dryv query cannot bind a constant parameter (only an operation input or a policy value).
+ */
+const kindShapes = geography.schemas({
+  FeatureKind: dryv.schema({
+    id: dryv.field(p.Id),
+    code: dryv.field(p.IdentityCode),
+    label: dryv.field(p.Name),
+  }),
+});
+const kindIo = geography.schemas({
+  FeatureKindCollection: dryv.schema({ kinds: dryv.field(kindShapes.FeatureKind).array() }),
+});
+const kindOperations = places.operations({
+  BrowseFeatureKinds: dryv
+    .operation()
+    .role("list")
+    .description("The kinds a geographic feature can have, in code order, for choosing a feature type.")
+    .output(kindIo.FeatureKindCollection)
+    .facets(({ output }) => ({
+      http: dryv.http("GET", "/v1/geography/feature-kinds").output(output),
+    })),
+});
+/** Choose a feature kind: the options of any field that holds a feature type id. */
+const featureKindChoices = { choices: dryv.source.options(kindOperations.BrowseFeatureKinds).output() };
+
 const FeatureWindow = geography
   .schema("FeatureWindow", {
-    featureTypeId: dryv.field(p.Id).optional(),
+    featureTypeId: dryv.field(p.Id).optional().sources(featureKindChoices),
     codePrefix: dryv.field(p.IdentityCode).optional(),
   })
   .extends(PageWindow)
@@ -42,7 +70,7 @@ const GeometryWindow = geography
     east: dryv.field(coordinates.Longitude),
     north: dryv.field(coordinates.Latitude),
     zoom: dryv.field(p.NonNegativeInteger),
-    featureTypeId: dryv.field(p.Id).optional(),
+    featureTypeId: dryv.field(p.Id).optional().sources(featureKindChoices),
     simplifyTolerance: dryv.field(coordinates.Tolerance).optional(),
   })
   .extends(PageWindow)
@@ -118,53 +146,59 @@ const io = places.schemas({
   FeatureCollection: dryv.schema({ features: dryv.field(rows.FeatureEntry).array() }),
 });
 
-export const geographyOperations = places.operations({
-  BrowseFeatures: dryv
-    .operation()
-    .role("list")
-    .description("Browse geographic features with their names, optionally of one type or by code prefix.")
-    .input(FeatureWindow)
-    .output(io.FeatureCollection)
-    .queryFromInput(ScanFeatures, { envelope: { features: "rows" } })
-    .facets(({ input, output }) => ({
-      http: dryv.http("GET", "/v1/geography/features").input(input, dryv.queryObject()).output(output),
-    })),
+export const geographyOperations = {
+  ...kindOperations,
+  ...places.operations({
+    BrowseFeatures: dryv
+      .operation()
+      .role("list")
+      .description("Browse geographic features with their names, optionally of one type or by code prefix.")
+      .input(FeatureWindow)
+      .output(io.FeatureCollection)
+      .queryFromInput(ScanFeatures, { envelope: { features: "rows" } })
+      .facets(({ input, output }) => ({
+        http: dryv.http("GET", "/v1/geography/features").input(input, dryv.queryObject()).output(output),
+      })),
 
-  GetFeature: dryv
-    .operation()
-    .role("detail")
-    .description("One geographic feature with its names.")
-    .input(FeatureKey)
-    .output(rows.FeatureDetail)
-    .queryFromInput(FindFeature, { missing: f.NotFound })
-    .facets(({ inputField, output }) => ({
-      http: dryv.http("GET", "/v1/geography/features/{featureId}").input(inputField("featureId"), dryv.path()).output(output),
-    })),
+    GetFeature: dryv
+      .operation()
+      .role("detail")
+      .description("One geographic feature with its names.")
+      .input(FeatureKey)
+      .output(rows.FeatureDetail)
+      .queryFromInput(FindFeature, { missing: f.NotFound })
+      .facets(({ inputField, output }) => ({
+        http: dryv
+          .http("GET", "/v1/geography/features/{featureId}")
+          .input(inputField("featureId"), dryv.path())
+          .output(output),
+      })),
 
-  ListFeatureGeometries: dryv
-    .operation()
-    .role("list")
-    .description(
-      "The current drawings of one feature, each with its role, basis, revision, confidence, zoom range and validity. A feature with no drawing returns an empty list.",
-    )
-    .input(FeatureKey)
-    .output(geometryIo.FeatureGeometryCollection)
-    .facets(({ inputField, output }) => ({
-      http: dryv
-        .http("GET", "/v1/geography/features/{featureId}/geometries")
-        .input(inputField("featureId"), dryv.path())
-        .output(output),
-    })),
+    ListFeatureGeometries: dryv
+      .operation()
+      .role("list")
+      .description(
+        "The current drawings of one feature, each with its role, basis, revision, confidence, zoom range and validity. A feature with no drawing returns an empty list.",
+      )
+      .input(FeatureKey)
+      .output(geometryIo.FeatureGeometryCollection)
+      .facets(({ inputField, output }) => ({
+        http: dryv
+          .http("GET", "/v1/geography/features/{featureId}/geometries")
+          .input(inputField("featureId"), dryv.path())
+          .output(output),
+      })),
 
-  BrowseGeometries: dryv
-    .operation()
-    .role("search")
-    .description(
-      "The current drawings whose envelope meets a map's bounds and whose zoom range includes the zoom, optionally of one feature type and simplified to a tolerance.",
-    )
-    .input(GeometryWindow)
-    .output(geometryIo.FeatureGeometryCollection)
-    .facets(({ input, output }) => ({
-      http: dryv.http("GET", "/v1/geography/geometries").input(input, dryv.queryObject()).output(output),
-    })),
-});
+    BrowseGeometries: dryv
+      .operation()
+      .role("search")
+      .description(
+        "The current drawings whose envelope meets a map's bounds and whose zoom range includes the zoom, optionally of one feature type and simplified to a tolerance.",
+      )
+      .input(GeometryWindow)
+      .output(geometryIo.FeatureGeometryCollection)
+      .facets(({ input, output }) => ({
+        http: dryv.http("GET", "/v1/geography/geometries").input(input, dryv.queryObject()).output(output),
+      })),
+  }),
+};

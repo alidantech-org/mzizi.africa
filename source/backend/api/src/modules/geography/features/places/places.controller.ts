@@ -3,6 +3,7 @@ import { Controller, Get, HttpCode, Param, Query } from "@nestjs/common";
 import { FeatureCollectionDto } from "#/modules/geography/schema/dto/feature-collection.dto.ts";
 import { FeatureDetailDto } from "#/modules/geography/schema/dto/feature-detail.dto.ts";
 import { FeatureGeometryCollectionDto } from "#/modules/geography/schema/dto/feature-geometry-collection.dto.ts";
+import { FeatureKindCollectionDto } from "#/modules/geography/schema/dto/feature-kind-collection.dto.ts";
 import { FeatureWindowDto } from "#/modules/geography/schema/dto/feature-window.dto.ts";
 import { GeometryWindowDto } from "#/modules/geography/schema/dto/geometry-window.dto.ts";
 import { GeographyPlacesService } from "./places.service.ts";
@@ -10,6 +11,12 @@ import { GeographyPlacesService } from "./places.service.ts";
 @Controller()
 export class GeographyPlacesController {
   constructor(private readonly service: GeographyPlacesService) {}
+
+  @Get("/v1/geography/feature-kinds")
+  @HttpCode(200)
+  browseFeatureKinds(): Promise<FeatureKindCollectionDto> {
+    return this.service.browseFeatureKinds();
+  }
 
   @Get("/v1/geography/features")
   @HttpCode(200)

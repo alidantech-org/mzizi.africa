@@ -8,6 +8,7 @@ import { featureCollectionExample } from "@test/modules/geography/schema/dto/exa
 import { featureDetailExample } from "@test/modules/geography/schema/dto/examples/feature-detail.dto.example.ts";
 import { featureGeometryCollectionExample } from "@test/modules/geography/schema/dto/examples/feature-geometry-collection.dto.example.ts";
 import { featureKeyExample } from "@test/modules/geography/schema/dto/examples/feature-key.dto.example.ts";
+import { featureKindCollectionExample } from "@test/modules/geography/schema/dto/examples/feature-kind-collection.dto.example.ts";
 import { featureWindowExample } from "@test/modules/geography/schema/dto/examples/feature-window.dto.example.ts";
 import { geometryWindowExample } from "@test/modules/geography/schema/dto/examples/geometry-window.dto.example.ts";
 
@@ -39,6 +40,7 @@ import { GeographyPlacesService } from "#/modules/geography/features/places/plac
 class InMemoryDataSourceModule {}
 
 const service = {
+  browseFeatureKinds: vi.fn(),
   browseFeatures: vi.fn(),
   browseGeometries: vi.fn(),
   getFeature: vi.fn(),
@@ -102,6 +104,24 @@ async function send(method: string, path: string, sent: Sent): Promise<Response>
     body: sent.body === undefined ? undefined : JSON.stringify(sent.body),
   });
 }
+
+describe("GET /v1/geography/feature-kinds (browseFeatureKinds)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: {},
+      headers: {},
+    };
+    const result = featureKindCollectionExample.valid();
+    service.browseFeatureKinds.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/geography/feature-kinds", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.browseFeatureKinds).toHaveBeenCalledTimes(1);
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
 
 describe("GET /v1/geography/features (browseFeatures)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {

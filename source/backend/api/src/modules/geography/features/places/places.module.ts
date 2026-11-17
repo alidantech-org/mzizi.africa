@@ -5,6 +5,7 @@ import { GeographyNamesEntity } from "#/modules/geography/schema/entities/names.
 import { SchemeEntity } from "#/modules/reference/schema/entities/scheme.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { GeographyPlacesRepository } from "#/modules/geography/features/places/repositories/places.repository.ts";
+import { BrowseFeatureKindsUseCase } from "#/modules/geography/features/places/use-cases/browse-feature-kinds.usecase.ts";
 import { BrowseFeaturesUseCase } from "#/modules/geography/features/places/use-cases/browse-features.usecase.ts";
 import { BrowseGeometriesUseCase } from "#/modules/geography/features/places/use-cases/browse-geometries.usecase.ts";
 import { GetFeatureUseCase } from "#/modules/geography/features/places/use-cases/get-feature.usecase.ts";
@@ -23,6 +24,7 @@ import { GeographyPlacesService, GeographyPlacesServiceImpl } from "./places.ser
       provide: GeographyPlacesService,
       useClass: GeographyPlacesServiceImpl satisfies Type<GeographyPlacesService>,
     },
+    BrowseFeatureKindsUseCase,
     BrowseFeaturesUseCase,
     BrowseGeometriesUseCase,
     GetFeatureUseCase,
