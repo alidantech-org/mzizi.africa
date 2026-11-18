@@ -8,24 +8,24 @@ const word = (code: string): string => code.replace(/^.*\./, "");
 
 export async function listMotions(db: DataSource, institutionId: string | undefined, limit: number) {
   const rows: Record<string, unknown>[] = await db.query(
-    `select m.code, m.title, m.summary, s.held_on::text as held_on, (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as institution, i.id as institution_id,
+    `select m.code, m.title, m.summary, (coalesce(so.actual_starts_on, so.planned_starts_on))::text as held_on, (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as institution, i.id as institution_id,
        regexp_replace(mk.code, '^.*\\.', '') as kind, regexp_replace(oc.code, '^.*\\.', '') as outcome,
        count(*) filter (where vp.code like '%.yes') as yes, count(*) filter (where vp.code like '%.no') as no,
        count(*) filter (where vp.code like '%.abstain') as abstain, count(*) filter (where vp.code like '%.absent') as absent
-     from activities.motions m join activities.sittings s on s.id = m.sitting_id join governance.institutions i on i.id = s.institution_id
+     from governance.motions m join governance.sittings s on s.id = m.sitting_id join event.occurrences so on so.id = s.occurrence_id join governance.institutions i on i.id = s.institution_id
      join reference.values mk on mk.id = m.motion_kind_id join reference.values oc on oc.id = m.outcome_id
-     left join activities.votes v on v.motion_id = m.id left join reference.values vp on vp.id = v.position_id
-     where ($1::uuid is null or s.institution_id = $1) group by m.id, s.held_on, i.id, i.entity_id, mk.code, oc.code order by s.held_on desc limit $2`,
+     left join governance.votes v on v.motion_id = m.id left join reference.values vp on vp.id = v.position_id
+     where ($1::uuid is null or s.institution_id = $1) group by m.id, (coalesce(so.actual_starts_on, so.planned_starts_on)), i.id, i.entity_id, mk.code, oc.code order by (coalesce(so.actual_starts_on, so.planned_starts_on)) desc limit $2`,
     [institutionId ?? null, Math.min(Math.max(limit, 1), 200)]);
   return { motions: rows.map((r) => ({ ...r, code: shortCode(String(r.code)), yes: Number(r.yes), no: Number(r.no), abstain: Number(r.abstain), absent: Number(r.absent) })) };
 }
 
 export async function motionDetail(db: DataSource, code: string) {
   const motions: Record<string, unknown>[] = await db.query(
-    `select m.id, m.code, m.title, m.summary, s.held_on::text as held_on, s.title as sitting, i.id as institution_id, (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as institution,
+    `select m.id, m.code, m.title, m.summary, (coalesce(so.actual_starts_on, so.planned_starts_on))::text as held_on, s.title as sitting, i.id as institution_id, (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as institution,
        regexp_replace(mk.code, '^.*\\.', '') as kind, regexp_replace(oc.code, '^.*\\.', '') as outcome, m.instrument_id, m.provision_id, m.budget_version_id, m.fiscal_period_id,
        (select ${personName("h.individual_id")} from governance.holders h where h.id = m.moved_by_holder_id) as moved_by
-     from activities.motions m join activities.sittings s on s.id = m.sitting_id join governance.institutions i on i.id = s.institution_id
+     from governance.motions m join governance.sittings s on s.id = m.sitting_id join event.occurrences so on so.id = s.occurrence_id join governance.institutions i on i.id = s.institution_id
      join reference.values mk on mk.id = m.motion_kind_id join reference.values oc on oc.id = m.outcome_id where m.code = $1`, [storedCode("act.mot", code)]);
   const motion = motions[0];
   if (!motion) throw new NotFoundException("No such motion.");
@@ -34,7 +34,7 @@ export async function motionDetail(db: DataSource, code: string) {
        (select pt.code from politics.memberships mm join politics.parties pt on pt.id = mm.party_id where mm.individual_id = h.individual_id and mm.left_on is null order by mm.joined_on desc nulls last limit 1) as party_code,
        regexp_replace(vp.code, '^.*\\.', '') as position, (select ${featureName("o.unit_feature_id", "'en'")} from governance.offices o where o.id = h.office_id) as unit,
        (select k.label from governance.offices o join reference.values k on k.id = o.office_kind_id where o.id = h.office_id) as office
-     from activities.votes v join governance.holders h on h.id = v.holder_id join reference.values vp on vp.id = v.position_id where v.motion_id = $1 order by 5, name`, [motion.id]);
+     from governance.votes v join governance.holders h on h.id = v.holder_id join reference.values vp on vp.id = v.position_id where v.motion_id = $1 order by 5, name`, [motion.id]);
   const tally = { yes: 0, no: 0, abstain: 0, absent: 0 } as Record<string, number>;
   const byParty = new Map<string, Record<string, number>>();
   type Row = { party: string } & Record<string, number | string>;
@@ -58,7 +58,7 @@ export async function motionDetail(db: DataSource, code: string) {
   }
   const speeches: Record<string, unknown>[] = await db.query(
     `select c.summary, c.word_count, regexp_replace(k.code, '^.*\\.', '') as kind, h.id as holder_id, ${personName("h.individual_id")} as name, ${partyOf("h.individual_id")} as party
-     from activities.contributions c join governance.holders h on h.id = c.holder_id join reference.values k on k.id = c.contribution_kind_id
+     from governance.speeches c join governance.holders h on h.id = c.holder_id join reference.values k on k.id = c.speech_kind_id
      where c.motion_id = $1 order by c.word_count desc nulls last limit 30`, [motion.id]);
   const clean = { ...motion, code: shortCode(String(motion.code)), contributions: speeches } as Record<string, unknown>;
   for (const k of ["id", "instrument_id", "provision_id", "budget_version_id", "fiscal_period_id"]) delete clean[k];
@@ -74,18 +74,18 @@ export async function motionDetail(db: DataSource, code: string) {
 export async function leaderActivity(db: DataSource, individualId: string) {
   const [tally]: { yes: string; no: string; abstain: string; absent: string }[] = await db.query(
     `select count(*) filter (where p.code like '%.yes') as yes, count(*) filter (where p.code like '%.no') as no, count(*) filter (where p.code like '%.abstain') as abstain, count(*) filter (where p.code like '%.absent') as absent
-     from activities.votes v join governance.holders h on h.id = v.holder_id join reference.values p on p.id = v.position_id where h.individual_id = $1`, [individualId]);
+     from governance.votes v join governance.holders h on h.id = v.holder_id join reference.values p on p.id = v.position_id where h.individual_id = $1`, [individualId]);
   const recent: Record<string, unknown>[] = await db.query(
-    `select m.code, m.title, s.held_on::text as held_on, regexp_replace(p.code, '^.*\\.', '') as position, regexp_replace(oc.code, '^.*\\.', '') as outcome
-     from activities.votes v join governance.holders h on h.id = v.holder_id join activities.motions m on m.id = v.motion_id join activities.sittings s on s.id = m.sitting_id
-     join reference.values p on p.id = v.position_id join reference.values oc on oc.id = m.outcome_id where h.individual_id = $1 order by s.held_on desc limit 12`, [individualId]);
+    `select m.code, m.title, (coalesce(so.actual_starts_on, so.planned_starts_on))::text as held_on, regexp_replace(p.code, '^.*\\.', '') as position, regexp_replace(oc.code, '^.*\\.', '') as outcome
+     from governance.votes v join governance.holders h on h.id = v.holder_id join governance.motions m on m.id = v.motion_id join governance.sittings s on s.id = m.sitting_id join event.occurrences so on so.id = s.occurrence_id
+     join reference.values p on p.id = v.position_id join reference.values oc on oc.id = m.outcome_id where h.individual_id = $1 order by (coalesce(so.actual_starts_on, so.planned_starts_on)) desc limit 12`, [individualId]);
   const [contrib]: { n: string; words: string | null }[] = await db.query(
-    `select count(*)::text as n, sum(c.word_count)::text as words from activities.contributions c join governance.holders h on h.id = c.holder_id where h.individual_id = $1`, [individualId]);
+    `select count(*)::text as n, sum(c.word_count)::text as words from governance.speeches c join governance.holders h on h.id = c.holder_id where h.individual_id = $1`, [individualId]);
   const speeches: Record<string, unknown>[] = await db.query(
-    `select m.code as motion_code, m.title as motion, s.held_on::text as held_on, regexp_replace(k.code, '^.*\\.', '') as kind, c.summary, c.word_count
-     from activities.contributions c join governance.holders h on h.id = c.holder_id join activities.sittings s on s.id = c.sitting_id
-     left join activities.motions m on m.id = c.motion_id join reference.values k on k.id = c.contribution_kind_id
-     where h.individual_id = $1 order by s.held_on desc limit 12`, [individualId]);
+    `select m.code as motion_code, m.title as motion, (coalesce(so.actual_starts_on, so.planned_starts_on))::text as held_on, regexp_replace(k.code, '^.*\\.', '') as kind, c.summary, c.word_count
+     from governance.speeches c join governance.holders h on h.id = c.holder_id join governance.sittings s on s.id = c.sitting_id join event.occurrences so on so.id = s.occurrence_id
+     left join governance.motions m on m.id = c.motion_id join reference.values k on k.id = c.speech_kind_id
+     where h.individual_id = $1 order by (coalesce(so.actual_starts_on, so.planned_starts_on)) desc limit 12`, [individualId]);
   const t = { yes: Number(tally?.yes ?? 0), no: Number(tally?.no ?? 0), abstain: Number(tally?.abstain ?? 0), absent: Number(tally?.absent ?? 0) };
   const total = t.yes + t.no + t.abstain + t.absent;
   return {

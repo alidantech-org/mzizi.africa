@@ -71,11 +71,11 @@ const METRICS: Metric[] = [
   { code: "act.attendance", title: "Attendance at votes", domain: "activity", unit: "%", higherIsBetter: true, subject: "leader", describe: "Share of recorded divisions the member took part in (voted yes, no or abstained) rather than being absent.",
     sql: `select h.id, 100 * count(*) filter (where p.code not like '%.absent')::float8 / count(*) as value,
             ${personName("h.individual_id")} || ' · ' || coalesce(${partyOf("h.individual_id")}, 'no party') as detail
-          from governance.holders h join activities.votes v on v.holder_id = h.id join reference.values p on p.id = v.position_id group by h.id, h.individual_id having count(*) >= 3` },
+          from governance.holders h join governance.votes v on v.holder_id = h.id join reference.values p on p.id = v.position_id group by h.id, h.individual_id having count(*) >= 3` },
   { code: "act.yes-rate", title: "Share of votes in favour", domain: "activity", unit: "%", higherIsBetter: true, subject: "leader", describe: "Of the votes a member cast, how many were in favour.",
     sql: `select h.id, 100 * count(*) filter (where p.code like '%.yes')::float8 / nullif(count(*) filter (where p.code not like '%.absent'), 0) as value,
             ${personName("h.individual_id")} || ' · ' || coalesce(${partyOf("h.individual_id")}, 'no party') as detail
-          from governance.holders h join activities.votes v on v.holder_id = h.id join reference.values p on p.id = v.position_id group by h.id, h.individual_id having count(*) >= 3` },
+          from governance.holders h join governance.votes v on v.holder_id = h.id join reference.values p on p.id = v.position_id group by h.id, h.individual_id having count(*) >= 3` },
 ];
 
 export function listMetrics(statisticMetrics: { code: string; name: string; unit: string | null; higher_is_better: boolean | null; description: string }[]) {

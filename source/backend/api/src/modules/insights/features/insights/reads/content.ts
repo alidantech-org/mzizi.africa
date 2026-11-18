@@ -69,7 +69,9 @@ export interface ContentItem {
   unresolvedMedia: string[];
 }
 
-const SELECT = (lang: string) => `select c.code, c.slug, l.iso6391 as language, c.title, c.summary, cat.code as category,
+const SLUG = `(select sl.slug from source.slugs sl where sl.subject_table = 'filesystem.contents' and sl.subject_id = c.id and sl.to_year is null limit 1)`;
+
+const SELECT = (lang: string) => `select c.code, ${SLUG} as slug, l.iso6391 as language, c.title, c.summary, cat.code as category,
     ${valueLabel("cat.id", `'${lang}'`)} as category_label, cls.code as classification,
     case when cls.id is null then null else ${valueLabel("cls.id", `'${lang}'`)} end as classification_label,
     c.body, c.is_development_text, c.subject_table,
@@ -134,11 +136,11 @@ export async function getContent(
   const gaps: string[] = [];
   let rows: ContentRow[] = [];
   if (input.slug) {
-    rows = await db.query(`${SELECT(lang)} where c.slug = $1 and c.deleted_at is null order by (l.iso6391 = '${lang}') desc limit 1`, [input.slug]);
+    rows = await db.query(`${SELECT(lang)} where ${SLUG} = $1 and c.deleted_at is null order by (l.iso6391 = '${lang}') desc limit 1`, [input.slug]);
   } else if (input.subjectTable && input.subjectCode && SUBJECT_PREFIX[input.subjectTable]) {
     rows = await db.query(
       `${SELECT(lang)} where c.deleted_at is null and c.subject_table = $1 and c.subject_id = (select s.id from ${input.subjectTable} s where (s.code = $2 or s.id::text = $3))
-       order by (l.iso6391 = '${lang}') desc, c.slug limit 6`,
+       order by (l.iso6391 = '${lang}') desc, c.code limit 6`,
       [input.subjectTable, storedCode(SUBJECT_PREFIX[input.subjectTable]!, input.subjectCode), input.subjectCode],
     );
   }

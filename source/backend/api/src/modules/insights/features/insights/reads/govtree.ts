@@ -46,7 +46,7 @@ async function performance(db: DataSource, ids: string[]): Promise<Map<string, P
   if (ids.length === 0) return new Map();
   const rows: Perf[] = await db.query(
     `with att as (select h.id, 100 * count(*) filter (where p.code not like '%.absent')::float8 / count(*) as v, count(*) as n from governance.holders h
-         join activities.votes v on v.holder_id = h.id join reference.values p on p.id = v.position_id group by h.id having count(*) >= 1),
+         join governance.votes v on v.holder_id = h.id join reference.values p on p.id = v.position_id group by h.id having count(*) >= 1),
        comp as (select p.scope_unit_feature_id as uid, 100 * count(*) filter (where s.code like '%.completed')::float8 / count(*) as v, count(*) as n
          from civic.projects p join reference.values s on s.id = p.status_id where p.scope_unit_feature_id is not null group by 1 having count(*) >= 2),
        scored as (select h.id as holder_id, o.office_kind_id, coalesce(att.v, comp.v) as score, coalesce(att.n, comp.n) as n,
