@@ -12,6 +12,7 @@ abstract final class MziziTokens {
   static const Color clay = Color(0xFFC45629);
   static const Color cream = Color(0xFFFDFAF3);
   static const Color danger = Color(0xFFC02C26);
+  static const Color deepBark = Color(0xFF40352E);
   static const List<String> fontBody = [
     'ui-sans-serif',
     '-apple-system',
@@ -48,6 +49,7 @@ abstract final class MziziTokens {
   static const Color inkSoft = Color(0xFF735F4F);
   static const Color lagoon = Color(0xFF0698A4);
   static const Color line = Color(0xFFE2D8C7);
+  static const Color mist = Color(0xFFC7BCAC);
   static const Color oat = Color(0xFFF7F2E8);
   static const Color plum = Color(0xFF89396B);
   static const double radius = 20.0;
@@ -75,6 +77,8 @@ abstract final class MziziTokens {
       spreadRadius: -18.0,
     ),
   ];
+  static const Color sky = Color(0xFF6EC3EB);
+  static const Color skyDark = Color(0xFF1A5B82);
 }
 
 /// The light theme: the semantic roles mapped onto a Material colour scheme.

@@ -8,6 +8,7 @@
   --clay: oklch(0.585 0.152 41);
   --cream: oklch(0.985 0.009 85);
   --danger: oklch(0.53 0.185 28);
+  --deep-bark: oklch(0.34 0.02 55);
   --font-body: ui-sans-serif, -apple-system, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
   --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -22,6 +23,7 @@
   --ink-soft: oklch(0.5 0.035 60);
   --lagoon: oklch(0.62 0.105 205);
   --line: oklch(0.885 0.025 80);
+  --mist: oklch(0.8 0.025 75);
   --oat: oklch(0.962 0.014 85);
   --plum: oklch(0.47 0.125 345);
   --radius: 20.0px;
@@ -35,6 +37,8 @@
   --sand: oklch(0.915 0.03 82);
   --shadow: 0.0px 8.0px 24.0px -12.0px oklch(0.3 0.04 55 / 0.22);
   --shadow-lift: 0.0px 22.0px 44.0px -18.0px oklch(0.3 0.04 55 / 0.34);
+  --sky: oklch(0.78 0.1 230);
+  --sky-dark: oklch(0.45 0.09 240);
   --action-accent: var(--calabash);
   --action-danger: var(--danger);
   --action-primary: var(--clay);
@@ -54,28 +58,34 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
+    --action-accent: var(--sky);
     --border-default: var(--bark-line);
     --border-glass: var(--glass-edge-dark);
     --content-inverse: var(--ink);
+    --content-muted: var(--mist);
     --content-primary: var(--cream);
     --focus-indicator: var(--calabash);
     --surface-background: var(--ink);
     --surface-elevated: var(--bark);
     --surface-glass: var(--glass-dark);
     --surface-glassStrong: var(--glass-strong-dark);
+    --surface-sunken: var(--deep-bark);
   }
 }
 
 :root[data-theme="dark"] {
+  --action-accent: var(--sky);
   --border-default: var(--bark-line);
   --border-glass: var(--glass-edge-dark);
   --content-inverse: var(--ink);
+  --content-muted: var(--mist);
   --content-primary: var(--cream);
   --focus-indicator: var(--calabash);
   --surface-background: var(--ink);
   --surface-elevated: var(--bark);
   --surface-glass: var(--glass-dark);
   --surface-glassStrong: var(--glass-strong-dark);
+  --surface-sunken: var(--deep-bark);
 }
 
 /* Tailwind v4 utilities: radius, font and shadow tokens as literals (rounded-lg, font-display, shadow-lift), and colours and roles as variables (bg-clay, bg-surface-background). */
@@ -99,6 +109,7 @@
   --color-clay: var(--clay);
   --color-cream: var(--cream);
   --color-danger: var(--danger);
+  --color-deep-bark: var(--deep-bark);
   --color-glass: var(--glass);
   --color-glass-dark: var(--glass-dark);
   --color-glass-edge: var(--glass-edge);
@@ -110,6 +121,7 @@
   --color-ink-soft: var(--ink-soft);
   --color-lagoon: var(--lagoon);
   --color-line: var(--line);
+  --color-mist: var(--mist);
   --color-oat: var(--oat);
   --color-plum: var(--plum);
   --color-raffia: var(--raffia);
@@ -117,6 +129,8 @@
   --color-ramp-low: var(--ramp-low);
   --color-ramp-mid: var(--ramp-mid);
   --color-sand: var(--sand);
+  --color-sky: var(--sky);
+  --color-sky-dark: var(--sky-dark);
   --color-action-accent: var(--action-accent);
   --color-action-danger: var(--action-danger);
   --color-action-primary: var(--action-primary);

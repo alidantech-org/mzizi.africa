@@ -56,7 +56,11 @@ export async function motionDetail(db: DataSource, code: string) {
     const b: Record<string, unknown>[] = await db.query("select fp.code, fp.starts_on::text as starts_on, fp.ends_on::text as ends_on from finance.fiscal_periods fp where fp.id = $1", [motion.fiscal_period_id]);
     budget = b[0] ? { ...b[0], code: shortCode(String(b[0].code)) } : null;
   }
-  const clean = { ...motion, code: shortCode(String(motion.code)) } as Record<string, unknown>;
+  const speeches: Record<string, unknown>[] = await db.query(
+    `select c.summary, c.word_count, regexp_replace(k.code, '^.*\\.', '') as kind, h.id as holder_id, ${personName("h.individual_id")} as name, ${partyOf("h.individual_id")} as party
+     from activities.contributions c join governance.holders h on h.id = c.holder_id join reference.values k on k.id = c.contribution_kind_id
+     where c.motion_id = $1 order by c.word_count desc nulls last limit 30`, [motion.id]);
+  const clean = { ...motion, code: shortCode(String(motion.code)), contributions: speeches } as Record<string, unknown>;
   for (const k of ["id", "instrument_id", "provision_id", "budget_version_id", "fiscal_period_id"]) delete clean[k];
   return {
     motion: clean, tally: { ...tally, total: members.length, passed: tally.yes > tally.no },
@@ -77,12 +81,18 @@ export async function leaderActivity(db: DataSource, individualId: string) {
      join reference.values p on p.id = v.position_id join reference.values oc on oc.id = m.outcome_id where h.individual_id = $1 order by s.held_on desc limit 12`, [individualId]);
   const [contrib]: { n: string; words: string | null }[] = await db.query(
     `select count(*)::text as n, sum(c.word_count)::text as words from activities.contributions c join governance.holders h on h.id = c.holder_id where h.individual_id = $1`, [individualId]);
+  const speeches: Record<string, unknown>[] = await db.query(
+    `select m.code as motion_code, m.title as motion, s.held_on::text as held_on, regexp_replace(k.code, '^.*\\.', '') as kind, c.summary, c.word_count
+     from activities.contributions c join governance.holders h on h.id = c.holder_id join activities.sittings s on s.id = c.sitting_id
+     left join activities.motions m on m.id = c.motion_id join reference.values k on k.id = c.contribution_kind_id
+     where h.individual_id = $1 order by s.held_on desc limit 12`, [individualId]);
   const t = { yes: Number(tally?.yes ?? 0), no: Number(tally?.no ?? 0), abstain: Number(tally?.abstain ?? 0), absent: Number(tally?.absent ?? 0) };
   const total = t.yes + t.no + t.abstain + t.absent;
   return {
     votes: { ...t, total, attendance: total ? (total - t.absent) / total : null },
     contributions: { count: Number(contrib?.n ?? 0), words: Number(contrib?.words ?? 0) },
     recent: recent.map((r) => ({ ...r, code: shortCode(String(r.code)) })),
+    speeches: speeches.map((r) => ({ ...r, motion_code: r.motion_code ? shortCode(String(r.motion_code)) : null })),
     recorded: total > 0,
   };
 }

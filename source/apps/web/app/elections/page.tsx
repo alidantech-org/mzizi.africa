@@ -3,6 +3,7 @@
 /** Route `/elections`: every election on record, newest first, with the national result and how many people were registered. */
 import Link from "next/link";
 
+import { ElectionTimeline } from "#/components/site/election-timeline.tsx";
 import { AsyncView } from "#/components/site/async-view.tsx";
 import { Stacked } from "#/components/site/ui/charts.tsx";
 import { Breadcrumbs, Gaps, PageFrame } from "#/components/site/ui/primitives.tsx";
@@ -21,6 +22,7 @@ export default function ElectionsRoute() {
       <AsyncView loaded={loaded}>
         {({ elections: list }) => (
           <>
+            <div className="mt-8"><ElectionTimeline elections={list} /></div>
             <ol className="mt-8 grid gap-5 lg:grid-cols-3">
               {list.map((e, index) => (
                 <li key={e.electionId}>

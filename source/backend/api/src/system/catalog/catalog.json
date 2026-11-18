@@ -167,6 +167,17 @@
       "summary": "A leader: offices, contacts, media, voting and attendance record, the fund they oversee and evidence."
     },
     {
+      "name": "GetLeaderTree",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/leaders/tree",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "LeaderTree",
+      "summary": "The leaders above and at a place, as a family tree: national first, then county, constituency and ward, split into elected, appointed and nominated."
+    },
+    {
       "name": "GetLeaderboard",
       "group": "insights",
       "feature": "insights",
@@ -275,6 +286,17 @@
       "inputs": [],
       "output": "ElectionList",
       "summary": "Every election the system knows, newest first."
+    },
+    {
+      "name": "ListFacts",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/facts",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "FactList",
+      "summary": "Did-you-know facts about the country, and those tagged to a place and the places above it."
     },
     {
       "name": "ListLeaderboardMetrics",

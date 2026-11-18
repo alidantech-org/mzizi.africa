@@ -16,7 +16,7 @@ except Exception as e:
 API=${API:-http://127.0.0.1:8700}
 profile=$(curl -s -m10 "$API/v1/locality/at?latitude=-1.2676&longitude=36.8108")
 check "API position lookup returns the Karura chain" "$(echo "$profile" | json "'ok' if [u['name'] for u in d['chain']][-3:]==['Nairobi','Westlands','Karura'] else 'no'")"
-check "API officials carry evidence" "$(echo "$profile" | json "'ok' if len(d['officials'])==3 and all(o['evidence'] for o in d['officials']) else 'no'")"
+check "API officials carry evidence" "$(echo "$profile" | json "'ok' if len(d['officials'])>=3 and all(o['evidence'] for o in d['officials']) else 'no'")"
 check "API procurement is summarised in KES" "$(echo "$profile" | json "'ok' if d['procurement']['count']>0 and d['procurement']['currency']=='KES' else 'no'")"
 sw=$(curl -s -m10 "$API/v1/locality/at?latitude=-1.2676&longitude=36.8108&languageCode=sw")
 check "API serves Swahili labels" "$(echo "$sw" | json "'ok' if d['languageServed']=='sw' and any(o['officeTitle'].startswith('Mbunge') for o in d['officials']) else 'no'")"
@@ -36,6 +36,8 @@ check "leaderboard ranks constituencies" "$(curl -s -m30 "$API/v1/leaderboards/f
 check "presidential 2022 matches the published total" "$(curl -s -m30 "$API/v1/elections" | json "'ok' if d['elections'][0]['winner']['votes']==7176141 else 'no'")"
 check "motion outcome agrees with its votes" "$(curl -s -m30 "$API/v1/motions?limit=20" | json "'ok' if all((m['outcome']=='passed')==(m['yes']>m['no']) for m in d['motions'] if m['yes']+m['no']>0) else 'no'")"
 check "tenders list says what is not published" "$(curl -s -m30 "$API/v1/tenders?limit=3" | json "'ok' if d['gaps'] and len(d['tenders'])==3 else 'no'")"
+check "facts: did-you-know list" "$(curl -s -m20 "$API/v1/facts?limit=3" | json "'ok' if len(d['facts'])>=1 else 'no'")"
+check "leader tree: national level groups by how seats are held" "$(curl -s -m20 "$API/v1/leaders/tree" | json "'ok' if d['levels'][0]['groups']['elected'] and d['levels'][0]['groups']['appointed'] else 'no'")"
 check "engine serves registered media" "$(curl -s -m20 -o /dev/null -w '%{http_code}' "http://127.0.0.1:8800/media/$(ls .dev/media | head -1)" | grep -q 200 && echo ok || echo no)"
 check "engine is healthy" "$(curl -s -m10 http://127.0.0.1:8800/health | json "'ok' if d['status']=='ok' else 'no'")"
 check "portal proxy reaches engine capabilities" "$(curl -s -m20 http://127.0.0.1:3400/api/engine/capabilities | json "'ok' if len(d['capabilities'])>0 else 'no'")"

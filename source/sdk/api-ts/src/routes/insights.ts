@@ -15,6 +15,8 @@ export const insightsRoutes = {
     `/v1/statistics/indicators/${params.indicatorCode}/series`,
   /** GET /v1/leaders/{id} */
   getLeaderProfile: (params: { id: string }) => `/v1/leaders/${params.id}`,
+  /** GET /v1/leaders/tree */
+  getLeaderTree: "/v1/leaders/tree",
   /** GET /v1/leaderboards/{metricCode} */
   getLeaderboard: (params: { metricCode: string }) => `/v1/leaderboards/${params.metricCode}`,
   /** GET /v1/motions/{code} */
@@ -36,6 +38,8 @@ export const insightsRoutes = {
   globalSearch: "/v1/search",
   /** GET /v1/elections */
   listElections: "/v1/elections",
+  /** GET /v1/facts */
+  listFacts: "/v1/facts",
   /** GET /v1/leaderboards */
   listLeaderboardMetrics: "/v1/leaderboards",
   /** GET /v1/motions */

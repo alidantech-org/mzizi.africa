@@ -108,7 +108,7 @@ class PlaceProfilePage extends ConsumerWidget {
                 ),
                 onLabel: tr(language, 'savedPlace'),
                 offLabel: tr(language, 'savePlace'),
-                icon: Icons.star_border,
+                icon: 'sparkle',
               ),
               if (latitude != null && longitude != null)
                 KeepChip(
@@ -122,7 +122,7 @@ class PlaceProfilePage extends ConsumerWidget {
                   ),
                   onLabel: tr(language, 'spotSaved'),
                   offLabel: tr(language, 'saveSpot'),
-                  icon: Icons.my_location,
+                  icon: 'locate',
                 ),
             ],
           ),

@@ -12,7 +12,7 @@
     "typecheck": "bun run contracts:imports && bunx --bun tsc --noEmit -p tsconfig.json",
     "contracts:doctor": "bun --bun x dryv-ts doctor contracts/apps/api/index.ts",
     "contracts:compile": "bun --bun x dryv-ts compile contracts/apps/api/index.ts",
-    "check": "bun run typecheck && bun run contracts:doctor && bun run contracts:compile > /dev/null && bun run engine:doctor && bun run engine:compile > /dev/null && bun run subjects:check",
+    "check": "bun run typecheck && bun run contracts:doctor && bun run contracts:compile > /dev/null && bun run engine:doctor && bun run engine:compile > /dev/null && bun run tables:check && bun run subjects:check",
     "engine:doctor": "bun --bun x dryv-ts doctor contracts/apps/engine/index.ts",
     "engine:compile": "bun --bun x dryv-ts compile contracts/apps/engine/index.ts",
     "link": "bash scripts/link-dryv.sh",
@@ -24,6 +24,8 @@
     "database:format": "bunx --bun @biomejs/biome format --write contracts/schemas/_shared.ts contracts/schemas/postgres/*.ts contracts/apps/api/*.ts contracts/apps/engine/*.ts contracts/apps/pgsql/*.ts package.json",
     "database:format:check": "bunx --bun @biomejs/biome format contracts/schemas/_shared.ts contracts/schemas/postgres/*.ts contracts/apps/api/*.ts contracts/apps/engine/*.ts contracts/apps/pgsql/*.ts package.json",
     "database:typecheck": "bun run contracts:imports && bunx --bun tsc --noEmit -p tsconfig.database.json",
+    "tables:check": "bun tools/sync-tables.ts --check",
+    "tables:sync": "bun tools/sync-tables.ts",
     "subjects:check": "bun tools/subject-integrity.ts --check"
   },
   "devDependencies": {

@@ -18,6 +18,9 @@ class InsightsEndpoints {
   /// GET /v1/leaders/{id}
   String getLeaderProfile({required String id}) => '/v1/leaders/$id';
 
+  /// GET /v1/leaders/tree
+  String get getLeaderTree => '/v1/leaders/tree';
+
   /// GET /v1/leaderboards/{metricCode}
   String getLeaderboard({required String metricCode}) => '/v1/leaderboards/$metricCode';
 
@@ -47,6 +50,9 @@ class InsightsEndpoints {
 
   /// GET /v1/elections
   String get listElections => '/v1/elections';
+
+  /// GET /v1/facts
+  String get listFacts => '/v1/facts';
 
   /// GET /v1/leaderboards
   String get listLeaderboardMetrics => '/v1/leaderboards';

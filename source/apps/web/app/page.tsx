@@ -1,94 +1,94 @@
 "use client";
 
-/** Home page at `/`. Scaffolded by Dryv once; this file belongs to the app. */
+/** Home: starts from Kenya in numbers, then your places compared with the country, then ways to explore. */
 import Link from "next/link";
 
+import { Icon, type IconName } from "#/components/brand/icon.tsx";
 import { LocateButton } from "#/components/site/locate-button.tsx";
 import { PlaceSearchBox } from "#/components/site/place-search-box.tsx";
+import { StatMap } from "#/components/site/stat-map.tsx";
+import { AsyncView } from "#/components/site/async-view.tsx";
+import { Section, Stat } from "#/components/site/ui/primitives.tsx";
+import { LineChart } from "#/components/site/ui/charts.tsx";
+import { FactStrip } from "#/components/site/fact-strip.tsx";
+import { n, n1, short } from "#/lib/site/format.ts";
+import { boardOf, browse, elections, mapOf, seriesOf, statisticsOf, tenders } from "#/lib/site/insights.ts";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 import { useSaved } from "#/lib/site/saved.tsx";
-import { routes } from "#/lib/dryv/routes.ts";
+import { useAsync } from "#/lib/site/use-async.ts";
+
+const MORE: readonly { href: string; icon: IconName; title: string }[] = [
+  { href: "/browse", icon: "pin", title: "Browse places" }, { href: "/leaders", icon: "tree", title: "Leaders tree" }, { href: "/statistics", icon: "chart", title: "Statistics" },
+  { href: "/elections", icon: "vote", title: "Elections" }, { href: "/parliament", icon: "parliament", title: "Parliament" }, { href: "/civic", icon: "build", title: "Money & projects" },
+  { href: "/tenders", icon: "document", title: "Tenders" }, { href: "/parties", icon: "flag", title: "Parties" },
+];
+
+function Compare({ id, name }: { id: string; name: string }) {
+  const stats = useAsync(() => statisticsOf(id), `home-stat-${id}`);
+  return (
+    <AsyncView loaded={stats}>
+      {(s) => {
+        const pop = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.total");
+        const density = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.density");
+        return (
+          <Link href={`/statistics/${id}`} className="glass card card-lift block">
+            <p className="kicker">Your place</p><p className="font-display text-2xl">{name}</p>
+            <p className="mt-2 text-sm text-content-muted">{short(pop?.latest.value)} people · {n(density?.latest.value)} per km²</p>
+            {s.siblings.population ? <p className="mt-1 text-sm">#{s.siblings.population.position} of {s.siblings.population.of} by population</p> : null}
+          </Link>
+        );
+      }}
+    </AsyncView>
+  );
+}
 
 export default function HomePage() {
   const { t } = useLanguage();
   const saved = useSaved();
+  const root = useAsync(() => browse(), "home-root");
+  const series = useAsync(async () => (root.state === "ready" && root.value.place ? seriesOf("sta.population.total", root.value.place.featureId) : Promise.reject(new Error("wait"))), `home-series-${root.state}`);
+  const map = useAsync(() => mapOf("sta.population.density", undefined, "county"), "home-map");
+  const votes = useAsync(() => elections(), "home-elections");
+  const tend = useAsync(() => tenders("open"), "home-tenders");
+  const board = useAsync(() => boardOf("civ.projects.per-100k", "constituency", undefined, 5), "home-board");
   return (
     <div>
       <section className="pattern-bg overflow-hidden">
-        <div
-          aria-hidden
-          className="drift pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-calabash/25 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="drift pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-clay/25 blur-3xl [animation-delay:-3s]"
-        />
-        <div className="relative mx-auto max-w-4xl px-5 py-20 text-center sm:py-28">
-          <p className="reveal text-sm font-semibold uppercase tracking-[0.2em] text-clay">Mzizi</p>
-          <h1 className="reveal reveal-1 mt-4 text-4xl leading-tight sm:text-6xl">
-            {t("heroTitle")}
-          </h1>
-          <p className="reveal reveal-2 mx-auto mt-5 max-w-2xl text-lg text-content-muted">
-            {t("heroBody")}
-          </p>
-          <div className="reveal reveal-3 mt-9 flex flex-col items-center gap-6">
+        <div className="relative mx-auto max-w-5xl px-5 py-14 text-center sm:py-20">
+          <p className="reveal kicker">{t("tagline")}</p>
+          <h1 className="reveal reveal-1 hero-title mt-3 text-4xl sm:text-6xl">{t("heroTitle")}</h1>
+          <p className="reveal reveal-2 mx-auto mt-4 max-w-2xl text-lg text-content-muted">{t("heroBody")}</p>
+          <div className="reveal reveal-3 mx-auto mt-8 flex max-w-xl flex-col items-center gap-4">
             <LocateButton />
-            <div className="w-full max-w-xl">
-              <PlaceSearchBox />
-            </div>
+            <div className="w-full"><PlaceSearchBox /></div>
           </div>
         </div>
       </section>
-      {saved.places.length + saved.spots.length > 0 ? (
-        <section className="reveal mx-auto max-w-6xl px-5 pt-10">
-          <h2 className="mb-3 text-lg">{t("myPlaces")}</h2>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {saved.places.map((place) => (
-              <Link
-                key={place.id}
-                href={`${routes.placeProfile}?featureId=${place.id}`}
-                className="shrink-0 rounded-full border border-border-default bg-surface-elevated px-5 py-2 text-sm shadow-[var(--shadow)] transition hover:border-clay"
-              >
-                ★ {place.name}
-              </Link>
-            ))}
-            {saved.spots.map((spot) => (
-              <Link
-                key={spot.id}
-                href={`${routes.placeProfile}?lat=${spot.latitude}&lng=${spot.longitude}`}
-                className="shrink-0 rounded-full border border-border-default bg-surface-elevated px-5 py-2 text-sm shadow-[var(--shadow)] transition hover:border-raffia"
-              >
-                ◎ {spot.label}
-              </Link>
-            ))}
+      <div className="mx-auto max-w-7xl px-5 pb-8">
+        <Section kicker="The country" title="Kenya at a glance">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <AsyncView loaded={series}>{(s) => <Stat label="People" value={short(s.points.at(-1)?.value)} hint={`${s.points.at(-1)?.period.slice(0, 4)} estimate · ${n(s.points.at(-1)?.value)}`} />}</AsyncView>
+            <AsyncView loaded={votes}>{({ elections: list }) => <Stat label="Registered voters" value={short(list[0]?.registeredVoters)} hint={`${list[0]?.year} election`} />}</AsyncView>
+            <AsyncView loaded={tend}>{(d) => <Stat label="Open tenders" value={n(d.summary.byStatus.find((x) => x.status === "open")?.count)} hint="Buyers asking for bids now" />}</AsyncView>
+            <AsyncView loaded={board}>{(b) => <Stat label="Most projects per 100,000" value={b.rows[0]?.name ?? "—"} hint={`${n1(b.rows[0]?.value)} projects`} />}</AsyncView>
           </div>
-        </section>
-      ) : null}
-      <section className="mx-auto max-w-7xl px-5 py-14">
-        <p className="kicker">Explore</p>
-        <h2 className="font-display text-3xl sm:text-4xl">Everything about your country, in one place</h2>
-        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { href: "/browse", icon: "📍", title: t("navPlaces"), body: "Browse counties, constituencies, wards, towns and villages the way the electoral commission lists them." },
-            { href: "/statistics", icon: "📊", title: t("navStats"), body: "Population, age, communities, languages, health, schools, water and poverty — mapped and ranked." },
-            { href: "/elections", icon: "🗳", title: t("navElections"), body: "Who won, with how many votes, where. Heat maps, turnout and how the voters' register has grown." },
-            { href: "/parliament", icon: "🏛", title: t("navParliament"), body: "Bills, budgets and appointments — with the round-table of how every member voted." },
-            { href: "/civic", icon: "🏗", title: t("navCivic"), body: "Development fund allocations, what they were spent on, and the schools and roads built." },
-            { href: "/leaderboards", icon: "🏆", title: t("navBoards"), body: "Rank places and leaders on spending, delivery, attendance and statistics." },
-            { href: "/tenders", icon: "📄", title: t("navTenders"), body: "Open, awarded and completed tenders, with suppliers and what each discloses." },
-            { href: "/parties", icon: "🎗", title: t("navParties"), body: "Parties ranked by votes, members, office holders and public funding." },
-            { href: routes.sourceBrowse, icon: "📚", title: t("sources"), body: t("sourcesBody") },
-          ].map((card, i) => (
-            <li key={card.href}>
-              <Link href={card.href} style={{ animationDelay: `${i * 60}ms` }} className="glass card card-lift reveal block h-full">
-                <span aria-hidden className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-clay/20 to-calabash/25 text-2xl">{card.icon}</span>
-                <h3 className="mt-4 font-display text-2xl">{card.title}</h3>
-                <p className="mt-1 text-sm text-content-muted">{card.body}</p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+        </Section>
+        <div className="mt-6"><FactStrip /></div>
+        {saved.places.length > 0 ? (
+          <Section kicker="Close to you" title="Your places against the country">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{saved.places.slice(0, 3).map((p) => <Compare key={p.id} id={p.id} name={p.name} />)}</div>
+          </Section>
+        ) : null}
+        <Section kicker="Across Kenya" title="Where people live">
+          <AsyncView loaded={map}>{(m) => <StatMap data={m} height={400} />}</AsyncView>
+          <p className="mt-2 text-xs text-content-muted">People per square kilometre in each county. Darker is more crowded. <Link className="underline" href="/statistics">More statistics →</Link></p>
+        </Section>
+        <AsyncView loaded={series}>{(s) => (<Section kicker="Growth" title="How the population has grown"><div className="glass card"><LineChart points={s.points} unit="people" label="Kenya's population over time" /></div></Section>)}</AsyncView>
+        <Section kicker="Keep exploring" title="More to look at">
+          <ul className="flex flex-wrap gap-2">{MORE.map((m) => <li key={m.href}><Link href={m.href} className="btn btn-ghost"><Icon name={m.icon} size={18} />{m.title}</Link></li>)}</ul>
+          <p className="mt-6 text-xs text-content-muted">{t("sampleNotice")}</p>
+        </Section>
+      </div>
     </div>
   );
 }

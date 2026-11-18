@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart' hide Path;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/insights/kit.dart';
 import 'package:mzizi_app/presentation/widgets/async_page.dart';
@@ -27,7 +28,7 @@ class CivicHubScreen extends StatelessWidget {
         const Heading('Money & projects', kicker: 'Where the money goes'),
         FilledButton.icon(
           onPressed: () => context.go('/browse'),
-          icon: const Icon(Icons.search),
+          icon: MzIcon('search'),
           label: const Text('Find your area'),
         ),
         Heading(d.metric.title),
@@ -187,8 +188,8 @@ class _CivicScreenState extends State<CivicScreen> {
                             height: 34,
                             child: GestureDetector(
                               onTap: () => _project(context, p.p),
-                              child: Icon(
-                                Icons.location_on,
+                              child: MzIcon(
+                                'pin',
                                 color: toneColor(asText(p.p['status'])),
                                 size: 34,
                               ),
@@ -220,7 +221,7 @@ class _CivicScreenState extends State<CivicScreen> {
                         errorBuilder: (_, __, ___) => const SizedBox(
                           width: 64,
                           height: 64,
-                          child: Icon(Icons.construction),
+                          child: MzIcon('build'),
                         ),
                       ),
                     )
@@ -228,7 +229,7 @@ class _CivicScreenState extends State<CivicScreen> {
                     const SizedBox(
                       width: 64,
                       height: 64,
-                      child: Icon(Icons.construction),
+                      child: MzIcon('build'),
                     ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -338,7 +339,7 @@ class ProjectScreen extends StatelessWidget {
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => const SizedBox(
                               width: 200,
-                              child: Icon(Icons.image_not_supported),
+                              child: MzIcon('image'),
                             ),
                           ),
                         ),
@@ -517,7 +518,7 @@ class _RankingsScreenState extends State<RankingsScreen> {
           children: [
             const Heading('Rankings', kicker: 'Who is doing what'),
             OutlinedButton.icon(
-              icon: const Icon(Icons.tune),
+              icon: MzIcon('filter'),
               label: Text(
                 list.metrics
                     .firstWhere(

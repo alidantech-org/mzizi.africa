@@ -1,7 +1,9 @@
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
+import 'package:mzizi_app/presentation/brand/mz_logo.dart';
+import 'package:mzizi_app/presentation/user/user_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
 import 'package:mzizi_app/presentation/saved/saved_store.dart';
@@ -15,41 +17,43 @@ class AppShell extends ConsumerWidget {
   final Widget child;
 
   static const _tabs =
-      <({String word, String path, IconData icon, IconData selectedIcon})>[
+      <({String word, String path, String icon, String selectedIcon})>[
         (
           word: 'home',
           path: '/',
-          icon: Icons.home_outlined,
-          selectedIcon: Icons.home,
+          icon: 'home',
+          selectedIcon: 'home',
+        ),
+        (
+          word: 'rankings',
+          path: '/rankings',
+          icon: 'trophy',
+          selectedIcon: 'trophy',
         ),
         (
           word: 'search',
           path: '/search',
-          icon: Icons.search,
-          selectedIcon: Icons.search,
-        ),
-        (
-          word: 'explore',
-          path: '/explore',
-          icon: Icons.explore_outlined,
-          selectedIcon: Icons.explore,
+          icon: 'search',
+          selectedIcon: 'search',
         ),
         (
           word: 'saved',
           path: '/saved',
-          icon: Icons.favorite_border,
-          selectedIcon: Icons.favorite,
+          icon: 'heart',
+          selectedIcon: 'heart',
         ),
       ];
 
   /// Profile and evidence screens belong to the Places tab.
   int _selected() {
     if (location == '/') return 0;
+    if (location.startsWith('/rankings')) return 1;
     if (location.startsWith('/search') ||
-        location.startsWith(AppRoutes.placeSearch))
-      return 1;
+        location.startsWith(AppRoutes.placeSearch)) {
+      return 2;
+    }
     if (location.startsWith('/saved')) return 3;
-    return 2;
+    return 0;
   }
 
   @override
@@ -59,27 +63,15 @@ class AppShell extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 16,
-        title: Row(
-          children: [
-            const CircleAvatar(
-              radius: 15,
-              backgroundColor: MziziTokens.clay,
-              child: Text(
-                'M',
-                style: TextStyle(
-                  color: MziziTokens.cream,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Text(
-              'Mzizi',
-              style: TextStyle(fontFamily: 'Georgia', fontSize: 22),
-            ),
-          ],
-        ),
+        title: const MzLogo(size: 30),
         actions: [
+          IconButton(
+            tooltip: 'Light or dark',
+            icon: MzIcon(Theme.of(context).brightness == Brightness.dark ? 'sun' : 'moon'),
+            onPressed: () => UserStore.instance.setThemeMode(
+              Theme.of(context).brightness == Brightness.dark ? ThemeMode.light : ThemeMode.dark,
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: SegmentedButton<String>(
@@ -106,12 +98,12 @@ class AppShell extends ConsumerWidget {
               icon: Badge(
                 isLabelVisible: tab.path == '/saved' && savedCount > 0,
                 label: Text('$savedCount'),
-                child: Icon(tab.icon),
+                child: MzIcon(tab.icon),
               ),
               selectedIcon: Badge(
                 isLabelVisible: tab.path == '/saved' && savedCount > 0,
                 label: Text('$savedCount'),
-                child: Icon(tab.selectedIcon),
+                child: MzIcon(tab.selectedIcon),
               ),
               label: tr(language, tab.word),
             ),

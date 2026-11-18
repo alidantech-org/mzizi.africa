@@ -11,6 +11,8 @@ export enum SharedSubjectTable {
   CIVIC_PROJECT_FEATURES = "civic.project_features",
   CIVIC_PROJECTS = "civic.projects",
   CIVIC_SERVICES = "civic.services",
+  FACTS_FACT_PLACES = "facts.fact_places",
+  FACTS_FACTS = "facts.facts",
   FILESYSTEM_FILE_EXTENSIONS = "filesystem.file_extensions",
   FILESYSTEM_FILE_VERSIONS = "filesystem.file_versions",
   FILESYSTEM_FILES = "filesystem.files",

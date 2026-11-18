@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { Icon } from "#/components/brand/icon.tsx";
 import { AsyncView } from "#/components/site/async-view.tsx";
 import { Gaps, PageFrame, PlaceTabs, PlaceTrail } from "#/components/site/ui/primitives.tsx";
 import { n, short } from "#/lib/site/format.ts";
@@ -43,7 +44,7 @@ function Body({ data, featureId, filter, setFilter }: { data: Awaited<ReturnType
       </p>
       {data.place && featureId ? <p className="mt-4"><Link className="btn btn-primary" href={`/place-profile?featureId=${featureId}`}>Who serves {data.place.name} →</Link></p> : null}
       {data.children.length > 8 ? (
-        <label className="glass mt-6 flex max-w-sm items-center gap-2 rounded-full px-4 py-2"><span aria-hidden>🔎</span>
+        <label className="glass mt-6 flex max-w-sm items-center gap-2 rounded-full px-4 py-2"><Icon name="search" size={18} />
           <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter this list" className="min-w-0 flex-1 bg-transparent text-sm outline-none" aria-label="Filter this list" />
         </label>
       ) : null}

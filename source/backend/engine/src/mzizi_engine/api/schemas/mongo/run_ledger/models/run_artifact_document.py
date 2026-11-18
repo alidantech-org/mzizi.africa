@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 from typing import Annotated
 from uuid import UUID
 
@@ -15,7 +16,7 @@ class RunArtifactDocument(BaseModel):
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
-    derived_from: list[Annotated[str, Field(min_length=1)]] = Field(alias="derivedFrom")
+    derived_from: builtins.list[Annotated[str, Field(min_length=1)]] = Field(alias="derivedFrom")
     media_type: Annotated[str, Field(min_length=1)] = Field(alias="mediaType")
     path: Annotated[str, Field(min_length=1)] = Field(alias="path")
     run_id: UUID = Field(alias="runId")

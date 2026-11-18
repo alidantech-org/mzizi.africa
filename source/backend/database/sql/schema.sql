@@ -16,6 +16,8 @@ CREATE SCHEMA "auth";
 
 CREATE SCHEMA "civic";
 
+CREATE SCHEMA "facts";
+
 CREATE SCHEMA "filesystem";
 
 CREATE SCHEMA "finance";
@@ -412,6 +414,31 @@ CREATE TABLE "civic"."services" (
             OR ("starts_on" <= "ends_on")
         )
     ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "facts"."fact_places" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "fact_id" uuid NOT NULL,
+    "feature_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "facts"."facts" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "detail" varchar(4000),
+    "id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "statement" varchar(300) NOT NULL,
+    "topic_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
     PRIMARY KEY ("id")
 );
 
@@ -2714,6 +2741,30 @@ CREATE INDEX "ix_services__place_feature_id" ON "civic"."services" USING btree (
 CREATE INDEX "ix_services__scope_unit_feature_id" ON "civic"."services" USING btree ("scope_unit_feature_id");
 
 CREATE INDEX "ix_services__source_citation_id" ON "civic"."services" USING btree ("source_citation_id");
+
+ALTER TABLE "facts"."fact_places"
+ADD CONSTRAINT "fk_fact_places_fact_id" FOREIGN KEY ("fact_id") REFERENCES "facts"."facts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "facts"."fact_places"
+ADD CONSTRAINT "fk_fact_places_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_fact_places__fact_id_feature_id" ON "facts"."fact_places" USING btree ("fact_id", "feature_id");
+
+CREATE INDEX "ix_fact_places__feature_id" ON "facts"."fact_places" USING btree ("feature_id");
+
+ALTER TABLE "facts"."facts"
+ADD CONSTRAINT "fk_facts_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "facts"."facts"
+ADD CONSTRAINT "fk_facts_topic_id" FOREIGN KEY ("topic_id") REFERENCES "reference"."topics" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_facts__code_partial_1" ON "facts"."facts" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_facts__topic_id" ON "facts"."facts" USING btree ("topic_id");
+
+CREATE INDEX "ix_facts__source_citation_id" ON "facts"."facts" USING btree ("source_citation_id");
 
 CREATE UNIQUE INDEX "uq_file_extensions__code_partial_1" ON "filesystem"."file_extensions" USING btree ("code")
 WHERE

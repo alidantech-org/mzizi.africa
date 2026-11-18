@@ -25,6 +25,8 @@ dependencies:
   # The hand-written components the pattern screens import.
   mzizi_ui:
     path: ../../ui/flutter
+  flutter_svg: ^2.4.0
+  google_fonts: ^9.0.0
 
 dev_dependencies:
   flutter_test:

@@ -6,7 +6,7 @@ from uuid import UUID
 import pytest
 
 from mzizi_manifest.features.data.check import check_data
-from mzizi_manifest.features.database.tables import load_order, load_tables, table_cycle
+from mzizi_manifest.features.database.tables import deferred_links, load_order, load_tables, table_cycle
 from mzizi_manifest.features.seeds.ids import SEED_NAMESPACE, stable_id
 from mzizi_manifest.orchestrator.cli import main
 
@@ -325,3 +325,41 @@ def test_a_link_no_row_fills_does_not_close_a_cycle() -> None:
     unused: dict[str, frozenset[str]] = {name: frozenset() for name in names}
     assert table_cycle(tables, names, unused) is None
     assert set(load_order(tables, names, None, unused)) == names
+
+
+def test_a_nullable_link_that_closes_a_cycle_is_deferred_to_a_second_phase() -> None:
+    tables = load_tables()
+    names = {"filesystem.files", "filesystem.file_versions"}
+    both = {name: frozenset(c.name for c in tables[name].columns.values() if c.link) for name in names}
+    assert table_cycle(tables, names, both) is not None
+    # The nullable `files.current_version_id` is the link to hold back; `file_versions.file_id` is required.
+    deferred = deferred_links(tables, names, both)
+    assert deferred == {"filesystem.files": frozenset({"current_version_id"})}
+    remaining = {name: both[name] - deferred.get(name, frozenset()) for name in names}
+    assert table_cycle(tables, names, remaining) is None
+    assert load_order(tables, names, None, remaining) == ["filesystem.files", "filesystem.file_versions"]
+
+
+def test_a_cycle_of_required_links_is_not_deferred() -> None:
+    tables = load_tables()
+    names = {"filesystem.files", "filesystem.file_versions"}
+    only_required = {
+        "filesystem.files": frozenset(),
+        "filesystem.file_versions": frozenset({"file_id"}),
+    }
+    assert deferred_links(tables, names, only_required) == {}
+
+
+def test_a_release_with_files_and_their_versions_checks_and_names_the_deferred_link(tmp_path: Path) -> None:
+    files = {
+        **good(),
+        "global/filesystem/files.csv": "code,folder_code,name,retention,current_version_code\nf1,root,a.txt,keep,f1|1\n",
+        "global/filesystem/file_versions.csv": (
+            "file_code,revision,access,content_type,created_by_snapshot,pinned,provenance,s3_key,sha256,size_bytes,verified_at\n"
+            "f1,1,private,text/plain,test,false,upload,k,abc,1,2026-01-01T00:00:00Z\n"
+        ),
+    }
+    result = check_data(tree(tmp_path, files))
+    assert not any("cycle" in p for p in result.problems), result.problems
+    assert result.deferred == {"filesystem.files": frozenset({"current_version_id"})}
+    assert result.order.index("filesystem.files") < result.order.index("filesystem.file_versions")

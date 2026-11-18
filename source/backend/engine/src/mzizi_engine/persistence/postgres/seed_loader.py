@@ -7,7 +7,8 @@ What it does, in the order it does it:
    a link is written as the target's id, derived the same way, so the loader never has to look an id up.
 3. Upserts each table in load order with `INSERT ... ON CONFLICT (id) DO UPDATE`, changing a row only when a seeded column
    really differs (`IS DISTINCT FROM`), so a run with no edits writes nothing, a small edit changes only that row, and the
-   row's `version` and `updated_at` move only then.
+   row's `version` and `updated_at` move only then. A nullable link that closes a cycle between tables (a file and its
+   current version) is left out of this phase and written afterwards, once every table is in (two-phase load).
 4. Writes the provenance of every seeded record as a `source.relationships` row (the record, prepared from the exact CSV
    artifact) with one `source.citations` row for the CSV line. The artifact is named by the file's content hash, so a later
    edit of the CSV never makes earlier provenance point at the new bytes.
@@ -223,6 +224,27 @@ def _upsert(
         report.absent = int(found["n"]) if found else 0
 
 
+def _fill_links(conn: Connection, table: Table, links: list[tuple[UUID, dict[str, Cell]]]) -> None:
+    """Second phase: write the deferred links of rows that are all in, changing a row only when a link differs."""
+    schema, name = table.qualified_name.split(".", 1)
+    target = sql.SQL("{}.{}").format(sql.Identifier(schema), sql.Identifier(name))
+    with conn.cursor() as cursor:
+        for row_id_, values in links:
+            columns = sorted(values)
+            sets = [sql.SQL("{c} = %s").format(c=sql.Identifier(c)) for c in columns]
+            if "version" in table.columns:
+                sets.append(sql.SQL("version = version + 1"))  # type: ignore
+            if "updated_at" in table.columns:
+                sets.append(sql.SQL("updated_at = now()"))  # type: ignore
+            differs = sql.SQL(" OR ").join(
+                sql.SQL("{c} IS DISTINCT FROM %s").format(c=sql.Identifier(c)) for c in columns
+            )
+            statement = sql.SQL("UPDATE {target} SET {sets} WHERE id = %s AND ({differs})").format(
+                target=target, sets=sql.SQL(", ").join(sets), differs=differs
+            )
+            cursor.execute(statement, [*(values[c] for c in columns), str(row_id_), *(values[c] for c in columns)])
+
+
 def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Path = SCHEMA_ROOT) -> SeedReport:
     """Load every seed CSV under `seed_root`. With `apply` false the work is done and rolled back."""
     report = SeedReport(applied=apply)
@@ -239,9 +261,15 @@ def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Pa
     codes = glossary.tables
     recorded_at = datetime.now(UTC).isoformat()  # written when a citation is first recorded, never rewritten
     artifacts: dict[Path, str] = {}
+    later: dict[str, list[tuple[UUID, dict[str, Cell]]]] = {}
     for name in checked.order:
         table = tables[name]
         rows = [_desired(table, row, by_id, glossary) for row in checked.rows[name]]
+        held = checked.deferred.get(name, frozenset())
+        if held:
+            # Links that close a cycle between tables are written after every table is in.
+            later[name] = [(r.id, {c: r.values.pop(c) for c in held if c in r.values}) for r in rows]
+            later[name] = [(i, v) for i, v in later[name] if any(x is not None for x in v.values())]
         desired[name] = _ordered(rows)
         for row, item in zip(checked.rows[name], rows, strict=True):
             if is_catalogue(seed_root, row.file):
@@ -282,6 +310,8 @@ def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Pa
             table_report = TableReport(name)
             _upsert(conn, tables[name], desired[name], table_report)
             report.tables.append(table_report)
+        for name, links in later.items():
+            _fill_links(conn, tables[name], links)
         if ARTIFACTS in desired:
             for table_name, rows in ((RELATIONSHIPS, relationships), (CITATIONS, citations)):
                 provenance_report = TableReport(table_name)

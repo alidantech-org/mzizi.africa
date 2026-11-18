@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/insights/kit.dart';
@@ -19,14 +20,14 @@ String hitPath(InsightsSearchHit hit) => switch (hit.kind) {
 };
 
 const _icons = {
-  'place': Icons.place,
-  'leader': Icons.person,
-  'party': Icons.flag,
-  'project': Icons.construction,
-  'tender': Icons.description,
-  'indicator': Icons.bar_chart,
-  'source': Icons.menu_book,
-  'law': Icons.gavel,
+  'place': 'pin',
+  'leader': 'user',
+  'party': 'flag',
+  'project': 'build',
+  'tender': 'document',
+  'indicator': 'chart',
+  'source': 'book',
+  'law': 'shield',
 };
 
 /// Search across everything; each hit is labelled with what it is and where it sits in the hierarchy.
@@ -62,7 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
         textInputAction: TextInputAction.search,
         onChanged: _run,
         decoration: const InputDecoration(
-          prefixIcon: Icon(Icons.search),
+          prefixIcon: MzIcon('search'),
           hintText: 'Westlands, a leader, a party, a project…',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(40)),
@@ -133,8 +134,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           backgroundColor: MziziTokens.clay.withValues(
                             alpha: 0.15,
                           ),
-                          child: Icon(
-                            _icons[hit.kind] ?? Icons.circle,
+                          child: MzIcon(
+                            _icons[hit.kind] ?? 'info',
                             color: MziziTokens.clay,
                           ),
                         ),
@@ -180,60 +181,60 @@ class _SearchScreenState extends State<SearchScreen> {
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key});
   static const _items =
-      <({String title, String body, String path, IconData icon})>[
+      <({String title, String body, String path, String icon})>[
         (
           title: 'Browse places',
           body: 'County, constituency, ward, town, village',
           path: '/browse',
-          icon: Icons.account_tree_outlined,
+          icon: 'tree',
         ),
         (
           title: 'Statistics',
           body: 'Population, health, schools, water',
           path: '/stats',
-          icon: Icons.bar_chart,
+          icon: 'chart',
         ),
         (
           title: 'Elections',
           body: 'Results, turnout, heat maps',
           path: '/elections',
-          icon: Icons.how_to_vote_outlined,
+          icon: 'vote',
         ),
         (
           title: 'Parliament',
           body: 'Bills and how members voted',
           path: '/parliament',
-          icon: Icons.account_balance_outlined,
+          icon: 'parliament',
         ),
         (
           title: 'Money & projects',
           body: 'Funds, spending, works',
           path: '/civic',
-          icon: Icons.construction,
+          icon: 'build',
         ),
         (
           title: 'Rankings',
           body: 'Places and leaders compared',
           path: '/rankings',
-          icon: Icons.emoji_events_outlined,
+          icon: 'trophy',
         ),
         (
           title: 'Tenders',
           body: 'Open, awarded, complete',
           path: '/tenders',
-          icon: Icons.description_outlined,
+          icon: 'document',
         ),
         (
           title: 'Parties',
           body: 'Votes, members, funding',
           path: '/parties',
-          icon: Icons.flag_outlined,
+          icon: 'flag',
         ),
         (
           title: 'Sources',
           body: 'Where every claim comes from',
           path: '/source-browse',
-          icon: Icons.menu_book_outlined,
+          icon: 'book',
         ),
       ];
   @override
@@ -248,7 +249,7 @@ class ExploreScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(i.icon, color: MziziTokens.clay, size: 30),
+                  MzIcon(i.icon, color: MziziTokens.clay, size: 30),
                   const SizedBox(height: 10),
                   Text(
                     i.title,
@@ -435,7 +436,7 @@ class StatsScreen extends StatelessWidget {
                 ])
                   if (asMaps(b[key]).isNotEmpty)
                     ActionChip(
-                      avatar: const Icon(Icons.pie_chart_outline, size: 18),
+                      avatar: MzIcon('chart', size: 18),
                       label: Text(words(key == 'sex' ? 'women and men' : key)),
                       onPressed: () => showInfoSheet(
                         context,

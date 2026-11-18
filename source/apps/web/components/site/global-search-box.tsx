@@ -5,12 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { Icon, type IconName } from "#/components/brand/icon.tsx";
 import { Avatar } from "#/components/site/ui/media.tsx";
 import { hrefFor } from "#/lib/site/hit-links.ts";
 import { search, type SearchResults } from "#/lib/site/insights.ts";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 
-const ICON: Record<string, string> = { place: "📍", leader: "👤", party: "🏛", project: "🏗", tender: "📄", indicator: "📊", source: "📚", law: "⚖" };
+const ICON: Record<string, IconName> = { place: "pin", leader: "user", party: "flag", project: "build", tender: "document", indicator: "chart", source: "book", law: "shield" };
 
 export function GlobalSearchBox({ compact = false, autoFocus = false }: { compact?: boolean; autoFocus?: boolean }) {
   const { t } = useLanguage();
@@ -46,7 +47,7 @@ export function GlobalSearchBox({ compact = false, autoFocus = false }: { compac
       <form role="search" onSubmit={(e) => { e.preventDefault(); go(); }}>
         <label className="sr-only" htmlFor="global-search">{t("searchEverything")}</label>
         <div className={`glass flex items-center gap-2 rounded-full px-4 ${compact ? "py-1.5" : "py-3"}`}>
-          <span aria-hidden>🔎</span>
+          <Icon name="search" size={18} />
           <input id="global-search" ref={input} value={text} autoFocus={autoFocus} onChange={(e) => { setText(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)}
             onBlur={() => setTimeout(() => setOpen(false), 160)} placeholder={t("searchEverything")} autoComplete="off" className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-content-muted" />
           <kbd aria-hidden className="hidden rounded-md border border-border-default px-1.5 text-[10px] text-content-muted sm:block">/</kbd>
@@ -58,7 +59,7 @@ export function GlobalSearchBox({ compact = false, autoFocus = false }: { compac
           {results && results.hits.length === 0 ? <p className="p-3 text-sm text-content-muted">Nothing matches “{results.query}”.</p> : null}
           {results?.hits.map((hit) => (
             <Link key={`${hit.kind}-${hit.id}`} href={hrefFor(hit)} onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-2xl px-3 py-2 hover:bg-surface-sunken">
-              {hit.kind === "leader" ? <Avatar src={hit.imageUrl} name={hit.title} size={32} /> : <span aria-hidden className="grid h-8 w-8 place-items-center text-lg">{ICON[hit.kind] ?? "•"}</span>}
+              {hit.kind === "leader" ? <Avatar src={hit.imageUrl} name={hit.title} size={32} /> : <span aria-hidden className="grid h-8 w-8 place-items-center rounded-full bg-surface-sunken text-clay"><Icon name={ICON[hit.kind] ?? "info"} size={16} /></span>}
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-semibold">{hit.title}</span>
                 <span className="block truncate text-xs text-content-muted">{hit.subtitle ?? ""}{hit.path.length > 1 ? ` · ${hit.path.slice(1).join(" › ")}` : ""}</span>

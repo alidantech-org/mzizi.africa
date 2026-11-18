@@ -6,10 +6,13 @@ import 'package:mzizi_api/src/models/insights/code_input.dart';
 import 'package:mzizi_api/src/models/insights/election_detail.dart';
 import 'package:mzizi_api/src/models/insights/election_input.dart';
 import 'package:mzizi_api/src/models/insights/election_list.dart';
+import 'package:mzizi_api/src/models/insights/fact_list.dart';
+import 'package:mzizi_api/src/models/insights/facts_input.dart';
 import 'package:mzizi_api/src/models/insights/id_input.dart';
 import 'package:mzizi_api/src/models/insights/indicator_map.dart';
 import 'package:mzizi_api/src/models/insights/indicator_series.dart';
 import 'package:mzizi_api/src/models/insights/leader_profile.dart';
+import 'package:mzizi_api/src/models/insights/leader_tree.dart';
 import 'package:mzizi_api/src/models/insights/leaderboard.dart';
 import 'package:mzizi_api/src/models/insights/leaderboard_metric_list.dart';
 import 'package:mzizi_api/src/models/insights/map_input.dart';
@@ -31,6 +34,7 @@ import 'package:mzizi_api/src/models/insights/search_results.dart';
 import 'package:mzizi_api/src/models/insights/series_input.dart';
 import 'package:mzizi_api/src/models/insights/tender_input.dart';
 import 'package:mzizi_api/src/models/insights/tender_list.dart';
+import 'package:mzizi_api/src/models/insights/tree_input.dart';
 
 /// Typed client for the Insights group. Every method runs through the package's
 /// ApiConnection and tags its request with a stable operation ID.
@@ -123,6 +127,20 @@ class InsightsFeature {
         endpoint: _routes.getLeaderProfile(id: id),
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getLeaderProfile'),
         fromJson: (json) => InsightsLeaderProfile.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// The leaders above and at a place, as a family tree: national first, then county, constituency and ward, split into elected, appointed and nominated.
+  ///
+  /// GET /v1/leaders/tree
+  Future<ApiResult<InsightsLeaderTree>> getLeaderTree({InsightsTreeInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsLeaderTree>(
+        endpoint: _routes.getLeaderTree,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getLeaderTree'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsLeaderTree.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }
@@ -266,6 +284,20 @@ class InsightsFeature {
         endpoint: _routes.listElections,
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listElections'),
         fromJson: (json) => InsightsElectionList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Did-you-know facts about the country, and those tagged to a place and the places above it.
+  ///
+  /// GET /v1/facts
+  Future<ApiResult<InsightsFactList>> listFacts({InsightsFactsInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsFactList>(
+        endpoint: _routes.listFacts,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listFacts'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsFactList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }

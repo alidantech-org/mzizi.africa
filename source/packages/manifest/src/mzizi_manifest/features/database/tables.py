@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from itertools import pairwise
 from pathlib import Path
 
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
@@ -198,6 +199,37 @@ def table_cycle(
         if state.get(name) is None and (found := visit(name)):
             return found
     return None
+
+
+def deferred_links(
+    tables: dict[str, Table], names: set[str], used: dict[str, frozenset[str]]
+) -> dict[str, frozenset[str]]:
+    """Nullable link columns, per table, that a two-phase load must write after every table is in.
+
+    While `used` still closes a cycle among `names`, the first table on the cycle whose links to the next table are all
+    nullable has those columns deferred: the rows are inserted with the link empty and the link is filled afterwards.
+    A cycle made only of required links is left alone; `table_cycle` on the remaining links reports it.
+    """
+    by_id = {table.id: table.qualified_name for table in tables.values()}
+    remaining = dict(used)
+    deferred: dict[str, frozenset[str]] = {}
+    while (cycle := table_cycle(tables, names, remaining)) is not None:
+        for source, target in pairwise(cycle):
+            columns = [
+                column
+                for column in tables[source].columns.values()
+                if column.link is not None
+                and by_id.get(column.link.table_id) == target
+                and column.name in remaining.get(source, frozenset())
+            ]
+            if columns and all(column.nullable for column in columns):
+                chosen = frozenset(column.name for column in columns)
+                deferred[source] = deferred.get(source, frozenset()) | chosen
+                remaining[source] = remaining[source] - chosen
+                break
+        else:
+            return deferred
+    return deferred
 
 
 def load_order(

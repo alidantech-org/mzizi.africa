@@ -118,6 +118,8 @@ const web_app = dryv
     insightOperations.GetProject,
     insightOperations.ListTenders,
     insightOperations.GetNearbyProjects,
+    insightOperations.ListFacts,
+    insightOperations.GetLeaderTree,
   )
   .destination("places", views.PlaceSearch)
   .destination("sources", views.SourceBrowse)

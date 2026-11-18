@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 from datetime import datetime
 from typing import Annotated
 from uuid import UUID
@@ -18,7 +19,7 @@ class Candidate(BaseModel):
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
-    capture_ids: list[UUID] = Field(alias="captureIds")
+    capture_ids: builtins.list[UUID] = Field(alias="captureIds")
     confidence: Annotated[float, Field(ge=0, le=1)] | None = Field(default=None, alias="confidence")
     created_at: datetime = Field(alias="createdAt")
     decided_at: datetime | None = Field(default=None, alias="decidedAt")

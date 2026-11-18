@@ -1,5 +1,5 @@
 ---
-{id: TSK-A7FBFA1B238D,name: "Insights: statistics, elections, activity, civic money, media, search and a modern interface",type: task,status: planned,priority: medium,created_at: 2026-11-18T05:22:57.312Z,updated_at: 2026-11-18T05:22:57.312Z,order: 1024}
+{id: TSK-A7FBFA1B238D,name: "Insights: statistics, elections, activity, civic money, media, search and a modern interface",type: task,status: completed,priority: medium,created_at: 2026-11-18T05:22:57.312Z,updated_at: 2026-11-18T05:34:26.962Z,order: 1024,extra: {status_history: [{from: planned,to: completed,at: 2026-11-18T05:34:26.962Z}]}}
 ---
 
 # Insights: statistics, elections, activity, civic money, media, search and a modern interface

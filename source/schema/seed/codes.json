@@ -19,7 +19,8 @@
     "reference": "ref",
     "source": "src",
     "statistics": "sta",
-    "activities": "act"
+    "activities": "act",
+    "facts": "fac"
   },
   "tables": {
     "audit.decisions": {
@@ -342,6 +343,12 @@
     },
     "activities.contributions": {
       "short": "ctb"
+    },
+    "facts.fact_places": {
+      "short": "fac"
+    },
+    "facts.facts": {
+      "short": "fa2"
     }
   }
 }

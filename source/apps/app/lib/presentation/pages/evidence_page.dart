@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/widgets/async_page.dart';
@@ -28,7 +29,7 @@ class EvidencePage extends ConsumerWidget {
             child: TextButton.icon(
               onPressed: () =>
                   context.canPop() ? context.pop() : context.go('/'),
-              icon: const Icon(Icons.arrow_back),
+              icon: MzIcon('chevron-left'),
               label: Text(tr(language, 'evidence')),
             ),
           ),

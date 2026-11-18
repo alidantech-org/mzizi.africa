@@ -21,6 +21,7 @@ from dev_seed.civic import build_ngcdf, build_party_fund, build_tenders, finish_
 from dev_seed.common import DATA, MERGED, read_features
 from dev_seed.contacts import build_contacts
 from dev_seed.elections import add_real_parties, build_elections
+from dev_seed.facts import build_facts
 from dev_seed.geometry import build_geometries, write_geometries
 from dev_seed.media import build_media
 from dev_seed.merge import merge_trees
@@ -62,6 +63,7 @@ def main() -> None:
     tenders = build_tenders(b, t, counties)
     finish_projects(b, geometries)
     names = {n["individual_code"]: n["name"] for n in b.names if n.get("individual_code")}
+    build_facts(t, counties)
     build_contacts(b, t, names)
     build_media(b, t, counties, constituencies, places, [p["code"] for p in b.projects], names)
     write_people(b)

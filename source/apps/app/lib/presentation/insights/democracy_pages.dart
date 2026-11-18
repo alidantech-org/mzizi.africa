@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/insights/kit.dart';
@@ -459,7 +460,7 @@ class MotionScreen extends StatelessWidget {
             ),
           const SizedBox(height: 8),
           OutlinedButton.icon(
-            icon: const Icon(Icons.list),
+            icon: MzIcon('menu'),
             label: const Text('Every vote'),
             onPressed: () => showInfoSheet(
               context,
@@ -703,7 +704,7 @@ class LeaderScreen extends StatelessWidget {
             children: [
               for (final c in asMaps(d.contacts))
                 ActionChip(
-                  avatar: Icon(_contactIcon(asText(c['kind'])), size: 18),
+                  avatar: MzIcon(_contactIcon(asText(c['kind'])), size: 18),
                   label: Text(words(asText(c['kind']))),
                   onPressed: () => showInfoSheet(
                     context,
@@ -766,10 +767,10 @@ class LeaderScreen extends StatelessWidget {
   );
 }
 
-IconData _contactIcon(String kind) => switch (kind) {
-  'email' => Icons.email_outlined,
-  'mobile' || 'telephone' => Icons.phone_outlined,
-  'website' => Icons.public,
-  'physical-address' => Icons.place_outlined,
-  _ => Icons.alternate_email,
+String _contactIcon(String kind) => switch (kind) {
+  'email' => 'mail',
+  'mobile' || 'telephone' => 'phone',
+  'website' => 'globe',
+  'physical-address' => 'pin',
+  _ => 'link',
 };

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
 import 'package:mzizi_app/presentation/saved/saved_store.dart';
@@ -43,7 +44,7 @@ class SavedPage extends ConsumerWidget {
                     color: Theme.of(
                       context,
                     ).colorScheme.error.withValues(alpha: 0.2),
-                    child: const Icon(Icons.delete_outline),
+                    child: MzIcon('close'),
                   ),
                   onDismissed: (_) =>
                       ref.read(savedProvider.notifier).toggle(kind, item),
@@ -53,7 +54,7 @@ class SavedPage extends ConsumerWidget {
                       subtitle: item.subtitle == null
                           ? null
                           : Text(item.subtitle!),
-                      trailing: const Icon(Icons.chevron_right),
+                      trailing: MzIcon('chevron-right'),
                       onTap: () => context.go(route(item)),
                     ),
                   ),

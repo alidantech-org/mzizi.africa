@@ -54,6 +54,13 @@ export default function MotionRoute() {
                 </div>
               </Section>
             ) : null}
+            {d.motion.contributions && d.motion.contributions.length > 0 ? (
+              <Section kicker="In the chamber" title="Who spoke">
+                <ul className="grid gap-3 md:grid-cols-2">{d.motion.contributions.map((c, i) => (
+                  <li key={i} className="glass card !py-3"><div className="flex items-center justify-between gap-2"><Link className="font-semibold hover:underline" href={`/leaders/${c.holder_id}`}>{c.name}</Link><Pill>{words(c.kind)}</Pill></div><p className="text-xs text-content-muted">{c.party ?? "No party"}{c.word_count ? ` · ${c.word_count} words` : ""}</p><p className="mt-1 text-sm">{c.summary}</p></li>
+                ))}</ul>
+              </Section>
+            ) : null}
             <Section kicker="Members" title="Every vote">
               <div className="glass card max-h-[32rem] overflow-auto">
                 <table className="table-clean"><thead><tr><th>Member</th><th>Party</th><th>Seat</th><th>Vote</th></tr></thead>

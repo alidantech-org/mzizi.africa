@@ -75,6 +75,11 @@ export default function LeaderRoute() {
                   </div>
                 </div>
               </Section>
+              {d.activity.speeches.length > 0 ? (
+                <Section kicker="In the chamber" title="Speeches and questions">
+                  <ul className="space-y-2">{d.activity.speeches.map((sp, i) => <li key={i} className="glass card !py-3 text-sm"><div className="flex items-center justify-between gap-2"><span className="font-semibold">{words(sp.kind)}{sp.motion ? ` on ${sp.motion}` : ""}</span><span className="text-xs text-content-muted">{date(sp.held_on)}{sp.word_count ? ` · ${sp.word_count} words` : ""}</span></div><p className="text-content-muted">{sp.summary}</p></li>)}</ul>
+                </Section>
+              ) : null}
               {d.fund ? (
                 <Section kicker="Public money" title={`Constituency development fund · ${d.fund.place.name}`} action={<Link className="btn btn-primary" href={`/civic/${d.fund.place.featureId}`}>Everything funded here →</Link>}>
                   <div className="grid gap-4 lg:grid-cols-2">

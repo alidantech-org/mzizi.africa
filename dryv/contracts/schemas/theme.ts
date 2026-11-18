@@ -29,6 +29,11 @@ export const themes = brand.themes({
       danger: token.color("oklch(0.53 0.185 28)"),
       bark: token.color("oklch(0.285 0.02 55)"),
       barkLine: token.color("oklch(0.385 0.022 55)"),
+      // Dark-mode text and sunken surfaces, graded for contrast on the bark surfaces.
+      mist: token.color("oklch(0.8 0.025 75)"),
+      deepBark: token.color("oklch(0.34 0.02 55)"),
+      sky: token.color("oklch(0.78 0.1 230)"),
+      skyDark: token.color("oklch(0.45 0.09 240)"),
       // Glass: translucent surfaces for cards, bars and sheets, with a bright rim (use with backdrop blur).
       glass: token.color("oklch(0.99 0.006 85 / 0.62)"),
       glassStrong: token.color("oklch(0.99 0.006 85 / 0.82)"),
@@ -104,6 +109,9 @@ export const themes = brand.themes({
           "surface.elevated": "bark",
           "border.default": "barkLine",
           "focus.indicator": "calabash",
+          "content.muted": "mist",
+          "surface.sunken": "deepBark",
+          "action.accent": "sky",
           "surface.glass": "glassDark",
           "surface.glassStrong": "glassStrongDark",
           "border.glass": "glassEdgeDark",

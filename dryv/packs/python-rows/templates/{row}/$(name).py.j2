@@ -21,7 +21,7 @@
   {%- elif value.property.temporal.is.duration or value.property.temporal.is.interval -%}timedelta
   {%- else -%}datetime
   {%- endif -%}
-{%- elif value.is.record -%}dict[str, JsonValue]
+{%- elif value.is.record -%}builtins.dict[str, JsonValue]
 {%- else -%}JsonValue
 {%- endif -%}
 {%- endmacro -%}
@@ -42,7 +42,7 @@
 {%- set inner = value_type(field.value) -%}
 {%- set limits = constraints(field.value) | trim | trim(',') -%}
 {%- if field.array is not none -%}
-list[{% if limits %}Annotated[{{ inner }}, Field({{ limits }})]{% else %}{{ inner }}{% endif %}]
+builtins.list[{% if limits %}Annotated[{{ inner }}, Field({{ limits }})]{% else %}{{ inner }}{% endif %}]
 {%- elif limits -%}Annotated[{{ inner }}, Field({{ limits }})]
 {%- else -%}{{ inner }}
 {%- endif -%}
@@ -52,6 +52,7 @@ list[{% if limits %}Annotated[{{ inner }}, Field({{ limits }})]{% else %}{{ inne
 
 from __future__ import annotations
 
+import builtins
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from typing import Annotated, ClassVar

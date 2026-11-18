@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 
+import { Icon } from "#/components/brand/icon.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 import { routes } from "#/lib/dryv/routes.ts";
 
@@ -13,24 +14,13 @@ export function PlaceSearchBox({ initial = "" }: { initial?: string }) {
   const [text, setText] = useState(initial);
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (text.trim().length >= 2)
-      router.push(`${routes.placeSearch}?q=${encodeURIComponent(text.trim())}`);
+    if (text.trim().length >= 2) router.push(`${routes.placeSearch}?q=${encodeURIComponent(text.trim())}`);
   };
   return (
-    <form onSubmit={submit} className="flex w-full gap-2">
-      <input
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-        placeholder={t("searchPlaceholder")}
-        aria-label={t("searchPlaceholder")}
-        className="min-w-0 flex-1 rounded-full border border-border-default bg-surface-elevated px-5 py-3 text-base shadow-[var(--shadow)] outline-none focus:border-clay"
-      />
-      <button
-        type="submit"
-        className="rounded-full bg-content-primary px-6 py-3 text-sm font-semibold text-content-inverse hover:opacity-90"
-      >
-        {t("search")}
-      </button>
+    <form onSubmit={submit} role="search" className="glass flex w-full items-center gap-2 rounded-full p-1.5 pl-5">
+      <Icon name="search" size={20} className="shrink-0 text-content-muted" />
+      <input value={text} onChange={(e) => setText(e.target.value)} placeholder={t("searchPlaceholder")} aria-label={t("searchPlaceholder")} className="min-w-0 flex-1 bg-transparent py-2 text-base outline-none placeholder:text-content-muted" />
+      <button type="submit" className="btn btn-primary !px-5">{t("search")}</button>
     </form>
   );
 }

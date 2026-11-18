@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { Icon } from "#/components/brand/icon.tsx";
 import { Pill, statusTone } from "#/components/site/ui/primitives.tsx";
 import { ksh, words } from "#/lib/site/format.ts";
 import type { CivicProject } from "#/lib/site/insights.ts";
@@ -10,7 +11,7 @@ export function ProjectCard({ p }: { p: CivicProject }) {
   return (
     <Link href={`/projects/${p.code}`} className="glass card-lift group block overflow-hidden rounded-[var(--radius)]">
       <div className="relative aspect-[16/9] bg-surface-sunken">
-        {p.media ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={p.media.url} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /> : <div className="grid h-full place-items-center text-4xl opacity-30">🏗</div>}
+        {p.media ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={p.media.url} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /> : <div className="grid h-full place-items-center opacity-30"><Icon name="build" size={44} /></div>}
         <span className="absolute left-3 top-3"><Pill tone={statusTone(p.status)}>{words(p.status)}</Pill></span>
       </div>
       <div className="p-4">

@@ -33,6 +33,13 @@ Real, read from `.dev/`: geoBoundaries outlines; the county table (area, 2009 an
 
 Invented (tagged `dev`, never in `seed/`): everything below the county in statistics, every breakdown, survey indicators, the other 285 constituencies' fund allocations, governor and MP contests, parliament divisions, project locations (random points inside the unit), leaders' contacts and the Pexels and DiceBear avatars.
 
+## Facts, the leaders tree and the mobile journey
+
+- `facts.facts` and `facts.fact_places` record "Did you know?" statements for the country, optionally tagged to one or more places (`GET /v1/facts?featureId=`). A fact tagged to a place is shown for that place and the places below it; an untagged fact is national.
+- `GET /v1/leaders/tree?featureId=` returns levels (national, county, constituency, ward) with leaders grouped by how the seat is held: elected, appointed, nominated.
+- The Flutter app opens on onboarding (welcome, what it does, device location or a place search), stores "my place" on the device only, then shows Home (the place's figures compared with every county or constituency), a Rankings tab with one top tab per metric and "yours is N% above/below the average and the top", place switching, a compare screen and the leaders tree. Theme (light, dark, system) is chosen in the app bar.
+- Not verified here: the Flutter screens were compiled, analysed and unit-tested but not looked at on a rendered canvas, because the built-in browser pane could not paint the Flutter web build (CPU-only rendering, blank frames).
+
 ## Limits
 
 Ward-level election results, the Senate, county assemblies other than Nairobi, awards from the tenders portal (it publishes none through a public service) and per-user accounts are not recorded. Media bytes are served from a development folder; in production `s3_key` resolves in the object store.

@@ -2,9 +2,12 @@ import { Controller, Get, HttpCode, Param, ParseIntPipe, Query } from "@nestjs/c
 import { BrowseInputDto } from "#/modules/insights/schema/dto/browse-input.dto.ts";
 import { ElectionDetailDto } from "#/modules/insights/schema/dto/election-detail.dto.ts";
 import { ElectionListDto } from "#/modules/insights/schema/dto/election-list.dto.ts";
+import { FactListDto } from "#/modules/insights/schema/dto/fact-list.dto.ts";
+import { FactsInputDto } from "#/modules/insights/schema/dto/facts-input.dto.ts";
 import { IndicatorMapDto } from "#/modules/insights/schema/dto/indicator-map.dto.ts";
 import { IndicatorSeriesDto } from "#/modules/insights/schema/dto/indicator-series.dto.ts";
 import { LeaderProfileDto } from "#/modules/insights/schema/dto/leader-profile.dto.ts";
+import { LeaderTreeDto } from "#/modules/insights/schema/dto/leader-tree.dto.ts";
 import { LeaderboardMetricListDto } from "#/modules/insights/schema/dto/leaderboard-metric-list.dto.ts";
 import { LeaderboardDto } from "#/modules/insights/schema/dto/leaderboard.dto.ts";
 import { MotionDetailDto } from "#/modules/insights/schema/dto/motion-detail.dto.ts";
@@ -23,6 +26,7 @@ import { SearchQueryDto } from "#/modules/insights/schema/dto/search-query.dto.t
 import { SearchResultsDto } from "#/modules/insights/schema/dto/search-results.dto.ts";
 import { TenderInputDto } from "#/modules/insights/schema/dto/tender-input.dto.ts";
 import { TenderListDto } from "#/modules/insights/schema/dto/tender-list.dto.ts";
+import { TreeInputDto } from "#/modules/insights/schema/dto/tree-input.dto.ts";
 import { InsightsInsightsService } from "./insights.service.ts";
 
 @Controller()
@@ -33,6 +37,12 @@ export class InsightsInsightsController {
   @HttpCode(200)
   browsePlaces(@Query() input: BrowseInputDto): Promise<PlaceBrowseDto> {
     return this.service.browsePlaces(input);
+  }
+
+  @Get("/v1/leaders/tree")
+  @HttpCode(200)
+  getLeaderTree(@Query() input: TreeInputDto): Promise<LeaderTreeDto> {
+    return this.service.getLeaderTree(input);
   }
 
   @Get("/v1/projects/near")
@@ -51,6 +61,12 @@ export class InsightsInsightsController {
   @HttpCode(200)
   listElections(): Promise<ElectionListDto> {
     return this.service.listElections();
+  }
+
+  @Get("/v1/facts")
+  @HttpCode(200)
+  listFacts(@Query() input: FactsInputDto): Promise<FactListDto> {
+    return this.service.listFacts(input);
   }
 
   @Get("/v1/leaderboards")

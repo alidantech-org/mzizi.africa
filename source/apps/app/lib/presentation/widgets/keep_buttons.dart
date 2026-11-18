@@ -1,3 +1,4 @@
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
@@ -60,8 +61,8 @@ class _HeartButtonState extends ConsumerState<HeartButton>
           padding: const EdgeInsets.all(8),
           child: ScaleTransition(
             scale: _pop,
-            child: Icon(
-              on ? Icons.favorite : Icons.favorite_border,
+            child: MzIcon(
+              on ? 'heart' : 'heart',
               color: on ? MziziTokens.clay : null,
               size: 22,
             ),
@@ -87,7 +88,7 @@ class KeepChip extends ConsumerWidget {
   final SavedItem item;
   final String onLabel;
   final String offLabel;
-  final IconData icon;
+  final String icon;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -115,8 +116,8 @@ class KeepChip extends ConsumerWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                on ? Icons.check : icon,
+              MzIcon(
+                on ? 'check' : icon,
                 size: 18,
                 color: on ? MziziTokens.cream : null,
               ),

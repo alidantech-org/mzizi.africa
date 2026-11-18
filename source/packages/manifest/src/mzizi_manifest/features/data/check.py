@@ -29,7 +29,15 @@ from mzizi_manifest.features.codes.grammar import (
     stored_code,
 )
 from mzizi_manifest.features.data.datasets import dataset_rows
-from mzizi_manifest.features.database.tables import SUBJECT_ALIAS, Column, Table, load_order, load_tables, table_cycle
+from mzizi_manifest.features.database.tables import (
+    SUBJECT_ALIAS,
+    Column,
+    Table,
+    deferred_links,
+    load_order,
+    load_tables,
+    table_cycle,
+)
 from mzizi_manifest.shared.paths import SCHEMA_ROOT
 
 SCOPE = re.compile(r"^(global|[a-z]{2,3})$")
@@ -50,6 +58,8 @@ class DataResult:
     rows: dict[str, list[Row]] = field(default_factory=dict)
     #: The order tables must be loaded in.
     order: list[str] = field(default_factory=list)
+    #: Nullable link columns (stored names) per table that close a cycle: load them in a second phase.
+    deferred: dict[str, frozenset[str]] = field(default_factory=dict)
 
 
 def seed_value_problem(column: Column, value: str) -> str | None:
@@ -318,11 +328,13 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
         by_seed = _columns_by_seed_name(tables[name])
         filled = {seed for row in rows for seed, value in row.values.items() if value != ""}
         used[name] = frozenset(by_seed[seed].name for seed in filled if seed in by_seed)
-    if (cycle := table_cycle(tables, names, used)) is not None:
+    result.deferred = deferred_links(tables, names, used)
+    ordering = {name: used[name] - result.deferred.get(name, frozenset()) for name in used}
+    if (cycle := table_cycle(tables, names, ordering)) is not None:
         result.problems.append(f"the tables link in a cycle: {' -> '.join(cycle)}")
     else:
         try:
-            result.order = load_order(tables, names, subject_edges, used)
+            result.order = load_order(tables, names, subject_edges, ordering)
         except ValueError as problem:
             result.problems.append(str(problem))
 

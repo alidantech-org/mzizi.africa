@@ -2,6 +2,11 @@ import 'package:go_router/go_router.dart';
 import 'package:mzizi_app/presentation/insights/civic_pages.dart';
 import 'package:mzizi_app/presentation/insights/democracy_pages.dart';
 import 'package:mzizi_app/presentation/insights/explore_pages.dart';
+import 'package:mzizi_app/presentation/insights/leader_tree_screen.dart';
+import 'package:mzizi_app/presentation/insights/rankings_tab.dart';
+import 'package:mzizi_app/presentation/home/compare_screen.dart';
+import 'package:mzizi_app/presentation/onboarding/onboarding_screen.dart';
+import 'package:mzizi_app/presentation/user/user_store.dart';
 import 'package:mzizi_app/presentation/pages/evidence_page.dart';
 import 'package:mzizi_app/presentation/pages/place_profile_page.dart';
 import 'package:mzizi_app/presentation/pages/places_page.dart';
@@ -16,7 +21,17 @@ import 'package:mzizi_app/presentation/shell/app_shell.dart';
 /// `AppRoutes`; the screens are hand-built (the generated reference screens in `screens/features/` are not routed).
 final appRouter = GoRouter(
   initialLocation: '/',
+  refreshListenable: UserStore.instance,
+  redirect: (context, state) {
+    final done = UserStore.instance.onboarded;
+    if (!done && state.uri.path != '/welcome') return '/welcome';
+    if (done && state.uri.path == '/welcome') return '/';
+    return null;
+  },
   routes: [
+    GoRoute(path: '/welcome', builder: (c, s) => const OnboardingScreen()),
+    GoRoute(path: '/compare', builder: (c, s) => const CompareScreen()),
+    GoRoute(path: '/leaders-tree', builder: (c, s) => const LeaderTreeScreen()),
     ShellRoute(
       builder: (context, state, child) =>
           AppShell(location: state.uri.path, child: child),
@@ -43,6 +58,10 @@ final appRouter = GoRouter(
               ),
             ),
           ),
+        ),
+        GoRoute(
+          path: '/rankings',
+          pageBuilder: (c, s) => fadeTransition(child: RankingsTab(metric: s.uri.queryParameters['metric'])),
         ),
         GoRoute(
           path: '/search',

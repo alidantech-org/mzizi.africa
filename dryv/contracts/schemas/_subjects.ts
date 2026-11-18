@@ -5,7 +5,7 @@ import { shared, sharedProperties } from "./_shared.ts";
 /**
  * The closed set of tables a generic single-subject association may point at, spelled exactly as the fully qualified
  * SQL table name. Every table here has a UUID primary key. The `audit` and `auth` schemas are operational, not subjects.
- * `dryv/tools/check-subject-tables.ts` fails when this list and the generated schema disagree.
+ * `bun dryv/tools/sync-tables.ts` derives this list from the generated schema; `bun run check` fails when it is out of sync.
  */
 export const subjectProperties = shared.properties({
   SubjectTable: dryv.property.enum({
@@ -102,6 +102,8 @@ export const subjectProperties = shared.properties({
     SourceRelationships: "source.relationships",
     SourceSources: "source.sources",
     SourceVerifications: "source.verifications",
+    FactsFactPlaces: "facts.fact_places",
+    FactsFacts: "facts.facts",
   }),
 });
 

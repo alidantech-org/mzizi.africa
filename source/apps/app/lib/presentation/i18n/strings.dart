@@ -13,6 +13,7 @@ const _words = <String, Map<String, String>>{
     'places': 'Places',
     'search': 'Search',
     'explore': 'Explore',
+    'rankings': 'Rankings',
     'sources': 'Sources',
     'heroTitle': 'Know your place in Kenya',
     'heroBody':
@@ -67,6 +68,7 @@ const _words = <String, Map<String, String>>{
     'places': 'Maeneo',
     'search': 'Tafuta',
     'explore': 'Gundua',
+    'rankings': 'Viwango',
     'sources': 'Vyanzo',
     'heroTitle': 'Jua eneo lako nchini Kenya',
     'heroBody':

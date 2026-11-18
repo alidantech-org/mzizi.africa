@@ -10,10 +10,13 @@ import { codeInputExample } from "@test/modules/insights/schema/dto/examples/cod
 import { electionDetailExample } from "@test/modules/insights/schema/dto/examples/election-detail.dto.example.ts";
 import { electionInputExample } from "@test/modules/insights/schema/dto/examples/election-input.dto.example.ts";
 import { electionListExample } from "@test/modules/insights/schema/dto/examples/election-list.dto.example.ts";
+import { factListExample } from "@test/modules/insights/schema/dto/examples/fact-list.dto.example.ts";
+import { factsInputExample } from "@test/modules/insights/schema/dto/examples/facts-input.dto.example.ts";
 import { idInputExample } from "@test/modules/insights/schema/dto/examples/id-input.dto.example.ts";
 import { indicatorMapExample } from "@test/modules/insights/schema/dto/examples/indicator-map.dto.example.ts";
 import { indicatorSeriesExample } from "@test/modules/insights/schema/dto/examples/indicator-series.dto.example.ts";
 import { leaderProfileExample } from "@test/modules/insights/schema/dto/examples/leader-profile.dto.example.ts";
+import { leaderTreeExample } from "@test/modules/insights/schema/dto/examples/leader-tree.dto.example.ts";
 import { leaderboardMetricListExample } from "@test/modules/insights/schema/dto/examples/leaderboard-metric-list.dto.example.ts";
 import { leaderboardExample } from "@test/modules/insights/schema/dto/examples/leaderboard.dto.example.ts";
 import { mapInputExample } from "@test/modules/insights/schema/dto/examples/map-input.dto.example.ts";
@@ -35,6 +38,7 @@ import { searchResultsExample } from "@test/modules/insights/schema/dto/examples
 import { seriesInputExample } from "@test/modules/insights/schema/dto/examples/series-input.dto.example.ts";
 import { tenderInputExample } from "@test/modules/insights/schema/dto/examples/tender-input.dto.example.ts";
 import { tenderListExample } from "@test/modules/insights/schema/dto/examples/tender-list.dto.example.ts";
+import { treeInputExample } from "@test/modules/insights/schema/dto/examples/tree-input.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 import { InsightsInsightsModule } from "#/modules/insights/features/insights/insights.module.ts";
@@ -69,6 +73,7 @@ const service = {
   getIndicatorMap: vi.fn(),
   getIndicatorSeries: vi.fn(),
   getLeaderProfile: vi.fn(),
+  getLeaderTree: vi.fn(),
   getLeaderboard: vi.fn(),
   getMotion: vi.fn(),
   getNearbyProjects: vi.fn(),
@@ -79,6 +84,7 @@ const service = {
   getProject: vi.fn(),
   globalSearch: vi.fn(),
   listElections: vi.fn(),
+  listFacts: vi.fn(),
   listLeaderboardMetrics: vi.fn(),
   listMotions: vi.fn(),
   listParties: vi.fn(),
@@ -261,6 +267,25 @@ describe("GET /v1/leaders/{id} (getLeaderProfile)", () => {
         id: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
       }),
     );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/leaders/tree (getLeaderTree)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(treeInputExample.valid()) },
+      headers: {},
+    };
+    const result = leaderTreeExample.valid();
+    service.getLeaderTree.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/leaders/tree", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getLeaderTree).toHaveBeenCalledTimes(1);
+    expect(service.getLeaderTree).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -479,6 +504,25 @@ describe("GET /v1/elections (listElections)", () => {
 
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.listElections).toHaveBeenCalledTimes(1);
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/facts (listFacts)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(factsInputExample.valid()) },
+      headers: {},
+    };
+    const result = factListExample.valid();
+    service.listFacts.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/facts", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.listFacts).toHaveBeenCalledTimes(1);
+    expect(service.listFacts).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

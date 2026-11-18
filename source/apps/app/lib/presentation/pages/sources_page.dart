@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/widgets/async_page.dart';
@@ -33,7 +34,7 @@ class _SourcesPageState extends ConsumerState<SourcesPage> {
           onChanged: (value) => setState(() => _query = value.trim()),
           decoration: InputDecoration(
             hintText: tr(language, 'filterSources'),
-            prefixIcon: const Icon(Icons.filter_list),
+            prefixIcon: MzIcon('filter'),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),
             filled: true,
           ),

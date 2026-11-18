@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AsyncView } from "#/components/site/async-view.tsx";
 import { Breadcrumbs, PageFrame, Section } from "#/components/site/ui/primitives.tsx";
 import { n1, short } from "#/lib/site/format.ts";
+import { Icon } from "#/components/brand/icon.tsx";
 import { ProjectsMapLazy } from "#/components/site/map/projects-map-lazy.tsx";
 import { ProjectCard } from "#/components/site/project-card.tsx";
 import { Gaps } from "#/components/site/ui/primitives.tsx";
@@ -40,7 +41,7 @@ function NearYou() {
   };
   return (
     <Section kicker="Near you" title="Projects around your position">
-      <button className="btn btn-primary" onClick={locate} disabled={state.phase === "locating"}>{state.phase === "locating" ? "Finding you…" : "📍 Show projects near me"}</button>
+      <button className="btn btn-primary" onClick={locate} disabled={state.phase === "locating"}>{state.phase === "locating" ? "Finding you…" : <><Icon name="locate" size={18} /> Show projects near me</>}</button>
       {state.phase === "error" ? <p role="alert" className="mt-3 text-sm text-danger">{state.message}</p> : null}
       {state.phase === "done" ? (
         <>

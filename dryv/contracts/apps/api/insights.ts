@@ -175,6 +175,12 @@ const documents = insights.schemas({
     evidence: dryv.field(dryv.dynamic()).array(),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
+  LeaderTree: dryv.schema({
+    place: dryv.field(shapes.PlaceCrumb).maybe(),
+    levels: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  FactList: dryv.schema({ facts: dryv.field(dryv.dynamic()).array(), gaps: dryv.field(p.NonEmptyString500).array() }),
   NearbyProjects: dryv.schema({
     radiusKm: dryv.field(p.Number),
     projects: dryv.field(dryv.dynamic()).array(),
@@ -216,6 +222,8 @@ const inputs = insights.schemas({
   CodeInput: dryv.schema({ code: dryv.field(props.Code) }),
   IdInput: dryv.schema({ id: dryv.field(p.Id) }),
   MotionsInput: dryv.schema({ institutionId: dryv.field(p.Id).optional(), limit: dryv.field(props.Limit).optional() }),
+  TreeInput: dryv.schema({ featureId: dryv.field(p.Id).optional() }),
+  FactsInput: dryv.schema({ featureId: dryv.field(p.Id).optional(), limit: dryv.field(props.Limit).optional() }),
   NearbyInput: dryv.schema({
     latitude: dryv.field(props.Latitude),
     longitude: dryv.field(props.Longitude),
@@ -442,5 +450,27 @@ export const insightOperations = reads.operations({
     .output(documents.NearbyProjects)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/projects/near").input(input, dryv.queryObject()).output(output),
+    })),
+
+  ListFacts: dryv
+    .operation()
+    .role("list")
+    .description("Did-you-know facts about the country, and those tagged to a place and the places above it.")
+    .input(inputs.FactsInput)
+    .output(documents.FactList)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/facts").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetLeaderTree: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "The leaders above and at a place, as a family tree: national first, then county, constituency and ward, split into elected, appointed and nominated.",
+    )
+    .input(inputs.TreeInput)
+    .output(documents.LeaderTree)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/leaders/tree").input(input, dryv.queryObject()).output(output),
     })),
 });

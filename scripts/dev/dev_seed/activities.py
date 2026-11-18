@@ -9,97 +9,9 @@ import csv
 import random
 
 from dev_seed.common import SEED, Row
+from dev_seed.motion_data import COUNTY, GOVERNMENT_PARTIES, NATIONAL
 from dev_seed.people import Builder
 from dev_seed.store import Tables
-
-GOVERNMENT_PARTIES = {"uda", "anc", "kanu", "ford-kenya"}
-# (code, title, kind, outcome, summary, provision slug, budget, pass probability for the government line, sitting index)
-NATIONAL: list[tuple[str, str, str, str, str, str, bool, float, int]] = [
-    (
-        "finance-bill-2025",
-        "The Finance Bill, 2025",
-        "bill",
-        "passed",
-        "Changes to taxes and charges for the next financial year.",
-        "art-209",
-        False,
-        0.72,
-        0,
-    ),
-    (
-        "appropriations-bill-2025",
-        "The Appropriations Bill, 2025",
-        "budget",
-        "passed",
-        "Authorises the national budget estimates for the financial year 2025/26.",
-        "art-201",
-        True,
-        0.8,
-        1,
-    ),
-    (
-        "bps-2026",
-        "Adoption of the Budget Policy Statement 2026",
-        "motion",
-        "passed",
-        "Sets the ceilings and priorities for the 2026/27 budget.",
-        "art-201",
-        True,
-        0.76,
-        2,
-    ),
-    (
-        "cs-vetting-2025",
-        "Approval of nominated Cabinet Secretaries",
-        "appointment",
-        "passed",
-        "The House considers the committee's report on the nominees.",
-        "",
-        False,
-        0.82,
-        3,
-    ),
-    (
-        "county-revenue-allocation",
-        "County Allocation of Revenue Bill, 2025",
-        "bill",
-        "rejected",
-        "Divides the counties' share of national revenue among the 47 counties.",
-        "art-201",
-        True,
-        0.45,
-        4,
-    ),
-]
-COUNTY: list[tuple[str, str, str, str, str, bool, float]] = [
-    (
-        "nairobi-finance-bill",
-        "The Nairobi City County Finance Bill",
-        "bill",
-        "passed",
-        "Fees, levies and charges the county may collect.",
-        False,
-        0.7,
-    ),
-    (
-        "nairobi-supplementary",
-        "Supplementary Appropriation (No. 1)",
-        "budget",
-        "passed",
-        "Moves money between county programmes.",
-        True,
-        0.66,
-    ),
-    (
-        "nairobi-ceo-approval",
-        "Approval of nominated County Executive Committee members",
-        "appointment",
-        "rejected",
-        "Vetting of the governor's nominees.",
-        False,
-        0.4,
-    ),
-]
 
 
 def _provision_exists(slug: str) -> bool:
@@ -182,6 +94,75 @@ def build_activities(b: Builder, t: Tables) -> None:
                 }
             )
             cabinet_people.append(b.holders[-1])
+    # the presidency and nominated members, so the leaders tree has every kind of office
+    b.entity("ke.institution.presidency", "ofc.entity.kind.public-body", "The Presidency")
+    b.institutions.append(
+        {
+            "code": "ke.institution.presidency",
+            "entity_code": "ke.institution.presidency",
+            "institution_kind_code": "gov.institution.kind.independent-office",
+        }
+    )
+    deputy = "ke.person.kithure-kindiki"
+    b.individuals.append({"code": deputy, "birth_date": ""})
+    b.names.append(
+        {
+            "individual_code": deputy,
+            "name_kind_code": "ofc.name.kind.official",
+            "language_code": "en",
+            "is_preferred": "true",
+            "name": "Kithure Kindiki",
+        }
+    )
+    for office, person, label in (
+        ("ke.office.president", "ke.person.william-ruto", "head"),
+        ("ke.office.deputy-president", deputy, "deputy"),
+    ):
+        b.offices.append(
+            {
+                "code": office,
+                "institution_code": "ke.institution.presidency",
+                "office_kind_code": f"gov.office.kind.{label}",
+                "unit_feature_code": "ke",
+                "from_year": "2022",
+                "from_to_precision": "exact",
+            }
+        )
+        b.holders.append(
+            {
+                "code": f"{office}.2022",
+                "office_code": office,
+                "individual_code": person,
+                "appointment_kind_code": "gov.appointment.kind.elected",
+                "took_office_on": "2022-09-13",
+                "from_year": "2022",
+                "from_to_precision": "exact",
+            }
+        )
+    for n in range(1, 13):
+        office = f"ke.office.mp.nominated-{n:02d}"
+        b.offices.append(
+            {
+                "code": office,
+                "institution_code": "ke.institution.national-assembly",
+                "office_kind_code": "gov.office.kind.member-of-parliament",
+                "unit_feature_code": "",
+                "from_year": "2022",
+                "from_to_precision": "exact",
+            }
+        )
+        person = b.person(rng)
+        b.holders.append(
+            {
+                "code": f"{office}.2022",
+                "office_code": office,
+                "individual_code": person,
+                "appointment_kind_code": "gov.appointment.kind.nominated",
+                "took_office_on": "2022-09-08",
+                "from_year": "2022",
+                "from_to_precision": "exact",
+            }
+        )
     cabinet = [h for h in b.holders if h["office_code"].startswith("ke.office.cabinet.")]
     judges = [h for h in b.holders if h["office_code"].startswith("ke.office.supreme-court.")]
 

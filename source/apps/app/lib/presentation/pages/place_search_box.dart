@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
@@ -43,9 +44,9 @@ class _PlaceSearchBoxState extends ConsumerState<PlaceSearchBox> {
       onSubmitted: (_) => _submit(),
       decoration: InputDecoration(
         hintText: tr(language, 'searchHint'),
-        prefixIcon: const Icon(Icons.search),
+        prefixIcon: MzIcon('search'),
         suffixIcon: IconButton(
-          icon: const Icon(Icons.arrow_forward),
+          icon: MzIcon('chevron-right'),
           onPressed: _submit,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),

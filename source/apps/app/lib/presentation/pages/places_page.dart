@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/pages/place_search_box.dart';
@@ -49,7 +50,7 @@ class PlacesPage extends ConsumerWidget {
                               ),
                             ),
                             subtitle: Text(place.kindLabel),
-                            trailing: const Icon(Icons.chevron_right),
+                            trailing: MzIcon('chevron-right'),
                             onTap: () => context.go(
                               '${AppRoutes.placeProfile}?featureId=${place.featureId}',
                             ),

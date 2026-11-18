@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart' hide Path;
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 
 /// Small helpers to read the open JSON sections of the insight documents without casts at every use.
@@ -288,7 +289,7 @@ class GapsNote extends StatelessWidget {
             const SizedBox(height: 8),
             FilledButton.icon(
               onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.mail_outline),
+              icon: MzIcon('mail'),
               label: Text('Ask for this data: $topic'),
             ),
             const SizedBox(height: 8),
@@ -297,7 +298,7 @@ class GapsNote extends StatelessWidget {
                 Navigator.of(context).pop();
                 context.go('/source-browse');
               },
-              icon: const Icon(Icons.menu_book_outlined),
+              icon: MzIcon('book'),
               label: const Text('Check the official sources yourself'),
             ),
           ],
@@ -305,7 +306,7 @@ class GapsNote extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, color: MziziTokens.calabash),
+          MzIcon('info', color: MziziTokens.calabash),
           const SizedBox(width: 12),
           Expanded(
             child: Text(

@@ -18,6 +18,7 @@ import { legal } from "#/schemas/postgres/legal.ts";
 import { official } from "#/schemas/postgres/official.ts";
 import { politics } from "#/schemas/postgres/politics.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
+import { facts } from "#/schemas/postgres/facts.ts";
 import { activities } from "#/schemas/postgres/activities.ts";
 import { statistics } from "#/schemas/postgres/statistics.ts";
 import { source } from "#/schemas/postgres/source.ts";
@@ -44,4 +45,5 @@ export default dryv
     accountability,
     statistics,
     activities,
+    facts,
   );

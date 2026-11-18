@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 from datetime import datetime
 from typing import Annotated
 from uuid import UUID
@@ -21,9 +22,9 @@ class RunSummaryDocument(BaseModel):
 
     approval_json: str | None = Field(default=None, alias="approvalJson")
     approver: Annotated[str, Field(min_length=1)] | None = Field(default=None, alias="approver")
-    counts: list[LedgerStageCount] = Field(alias="counts")
-    decisions: list[LedgerDecision] = Field(alias="decisions")
-    files: list[RunArtifactDocument] = Field(alias="files")
+    counts: builtins.list[LedgerStageCount] = Field(alias="counts")
+    decisions: builtins.list[LedgerDecision] = Field(alias="decisions")
+    files: builtins.list[RunArtifactDocument] = Field(alias="files")
     finished_at: datetime = Field(alias="finishedAt")
     manifest_hash: Annotated[str, Field(min_length=64, max_length=64, pattern="^[a-f0-9]{64}$")] | None = Field(
         default=None, alias="manifestHash"

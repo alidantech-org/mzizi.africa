@@ -165,3 +165,41 @@ def test_a_subject_must_exist_and_a_referenced_subject_cannot_be_deleted(conn: C
     with pytest.raises(psycopg.errors.ForeignKeyViolation, match="still referenced"):
         conn.execute("DELETE FROM geography.features")
     conn.rollback()
+
+
+def make_filesystem_seed(tmp_path: Path, current: str = "fil.file.one|1") -> Path:
+    """A file and its version point at each other: the version names its file, the file its current version."""
+    root = tmp_path / "seed"
+    files = {
+        "global/reference/schemes.csv": SCHEMES + "fil.folder.role,Folder roles,test\n",
+        "global/reference/values.csv": VALUES + "fil.folder.role.uploads,fil.folder.role,Uploads\n",
+        "global/filesystem/folders.csv": "code,name,access,role_code\nfil.folder.root,root,private,fil.folder.role.uploads\n",
+        "global/filesystem/files.csv": (
+            f"code,folder_code,name,retention,current_version_code\nfil.file.one,fil.folder.root,a.txt,preserve_history,{current}\n"
+        ),
+        "global/filesystem/file_versions.csv": (
+            "file_code,revision,access,content_type,created_by_snapshot,pinned,provenance,s3_key,sha256,size_bytes,verified_at\n"
+            f"fil.file.one,1,private,text/plain,test,false,upload,k,{'a' * 64},1,2026-01-01T00:00:00Z\n"
+        ),
+    }
+    for name, text in files.items():
+        path = root / "data" / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text, encoding="utf-8")
+    write_datasets(root)
+    return root
+
+
+def test_two_tables_that_point_at_each_other_load_in_two_phases(conn: Connection, tmp_path: Path) -> None:
+    root = make_filesystem_seed(tmp_path)
+    first = load_seed(conn, root, apply=True)
+    assert first.ok, first.problems
+    row = conn.execute(
+        "SELECT f.current_version_id, v.id AS version_id FROM filesystem.files f, filesystem.file_versions v"
+    ).fetchone()
+    assert row["current_version_id"] == row["version_id"]
+    again = load_seed(conn, root, apply=True)
+    assert not again.changed
+    assert conn.execute("SELECT version FROM filesystem.files").fetchone()["version"] == 2  # phase two moved it once
+    load_seed(conn, root, apply=True)
+    assert conn.execute("SELECT version FROM filesystem.files").fetchone()["version"] == 2

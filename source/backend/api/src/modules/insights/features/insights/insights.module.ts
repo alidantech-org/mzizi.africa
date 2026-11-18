@@ -5,6 +5,7 @@ import { GetElectionUseCase } from "#/modules/insights/features/insights/use-cas
 import { GetIndicatorMapUseCase } from "#/modules/insights/features/insights/use-cases/get-indicator-map.usecase.ts";
 import { GetIndicatorSeriesUseCase } from "#/modules/insights/features/insights/use-cases/get-indicator-series.usecase.ts";
 import { GetLeaderProfileUseCase } from "#/modules/insights/features/insights/use-cases/get-leader-profile.usecase.ts";
+import { GetLeaderTreeUseCase } from "#/modules/insights/features/insights/use-cases/get-leader-tree.usecase.ts";
 import { GetLeaderboardUseCase } from "#/modules/insights/features/insights/use-cases/get-leaderboard.usecase.ts";
 import { GetMotionUseCase } from "#/modules/insights/features/insights/use-cases/get-motion.usecase.ts";
 import { GetNearbyProjectsUseCase } from "#/modules/insights/features/insights/use-cases/get-nearby-projects.usecase.ts";
@@ -15,6 +16,7 @@ import { GetPlaceStatisticsUseCase } from "#/modules/insights/features/insights/
 import { GetProjectUseCase } from "#/modules/insights/features/insights/use-cases/get-project.usecase.ts";
 import { GlobalSearchUseCase } from "#/modules/insights/features/insights/use-cases/global-search.usecase.ts";
 import { ListElectionsUseCase } from "#/modules/insights/features/insights/use-cases/list-elections.usecase.ts";
+import { ListFactsUseCase } from "#/modules/insights/features/insights/use-cases/list-facts.usecase.ts";
 import { ListLeaderboardMetricsUseCase } from "#/modules/insights/features/insights/use-cases/list-leaderboard-metrics.usecase.ts";
 import { ListMotionsUseCase } from "#/modules/insights/features/insights/use-cases/list-motions.usecase.ts";
 import { ListPartiesUseCase } from "#/modules/insights/features/insights/use-cases/list-parties.usecase.ts";
@@ -35,6 +37,7 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
     GetIndicatorMapUseCase,
     GetIndicatorSeriesUseCase,
     GetLeaderProfileUseCase,
+    GetLeaderTreeUseCase,
     GetLeaderboardUseCase,
     GetMotionUseCase,
     GetNearbyProjectsUseCase,
@@ -45,6 +48,7 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
     GetProjectUseCase,
     GlobalSearchUseCase,
     ListElectionsUseCase,
+    ListFactsUseCase,
     ListLeaderboardMetricsUseCase,
     ListMotionsUseCase,
     ListPartiesUseCase,

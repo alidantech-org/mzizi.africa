@@ -55,6 +55,10 @@ cd source/backend/api && bun run typecheck && bun run test
 - a contract names a country (Kenya is data, never contract);
 - an HTTP operation is not under `/v1/` or maps no failures.
 
+### Table lists derived from the contracts
+
+`SubjectTable` (`contracts/schemas/_subjects.ts`) and `source/schema/seed/codes.json` are derived from the generated tables in `source/backend/database/sql/schema.sql`, not edited by hand. After generating a new table run `bun run tables:sync`; `bun run tables:check` (part of `bun run check`) fails when either file is out of sync. Existing entries are preserved (hand-chosen `short` names, `kind`, `parent`, enum member names); a new table gets the first three letters of its name as `short`, made unique within its schema, and audit and auth tables are never subjects. Tool: `tools/sync-tables.ts`.
+
 The local Dryv checkout is used instead of the published packages (they are out of date): `bun install` links it through `scripts/link-dryv.sh` (set `DRYV_HOME`).
 
 ## Database naming

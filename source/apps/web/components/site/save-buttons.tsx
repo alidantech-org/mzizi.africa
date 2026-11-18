@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { Icon } from "#/components/brand/icon.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 import {
   type SavedLeader,
@@ -29,7 +30,7 @@ function Heart({ on, label, onClick }: { on: boolean; label: string; onClick: ()
       }`}
     >
       <span key={pops} className={pops > 0 ? "heart-pop" : ""} aria-hidden>
-        {on ? "♥" : "♡"}
+        <Icon name="heart" size={18} className={on ? "fill-current" : ""} />
       </span>
     </button>
   );

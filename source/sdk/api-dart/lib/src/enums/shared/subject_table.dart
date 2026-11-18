@@ -24,6 +24,10 @@ enum SharedSubjectTable {
   civicProjects,
   @JsonValue('civic.services')
   civicServices,
+  @JsonValue('facts.fact_places')
+  factsFactPlaces,
+  @JsonValue('facts.facts')
+  factsFacts,
   @JsonValue('filesystem.file_extensions')
   filesystemFileExtensions,
   @JsonValue('filesystem.file_versions')

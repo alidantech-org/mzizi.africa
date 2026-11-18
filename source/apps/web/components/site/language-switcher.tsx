@@ -13,7 +13,7 @@ export function LanguageSwitcher() {
     <div
       role="group"
       aria-label={t("language")}
-      className="glass flex rounded-full p-0.5"
+      className="glass flex h-10 items-center rounded-full p-1"
     >
       {CHOICES.map((choice) => (
         <button
