@@ -13,6 +13,12 @@ export const institutionsExample: ContractExample = contractExample({
   name: "Institutions",
   fields: [
     {
+      name: "armId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "code",
       optional: false,
       nullable: false,
@@ -54,6 +60,12 @@ export const institutionsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "establishmentBasisId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "fromToPrecision",

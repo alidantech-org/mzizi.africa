@@ -1,3 +1,4 @@
+import 'package:mzizi_app/presentation/governance/content_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -48,13 +49,7 @@ class PlaceProfilePage extends ConsumerWidget {
       load: (lang) {
         final feature = LocalityFeature(MziziApi.connection);
         if (featureId != null) {
-          return feature.getLocality(
-            featureId: featureId!,
-            input: LocalityPlaceInput(
-              featureId: featureId!,
-              languageCode: lang,
-            ),
-          );
+          return feature.getLocality(featureId: featureId!, languageCode: lang);
         }
         return feature.resolveLocality(
           input: LocalityPositionInput(
@@ -67,33 +62,23 @@ class PlaceProfilePage extends ConsumerWidget {
       builder: (context, profile) => ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              for (var i = 0; i < profile.chain.length - 1; i++) ...[
-                if (i > 0) const Text(' › '),
-                GestureDetector(
-                  onTap: () => context.go(
-                    '${AppRoutes.placeProfile}?featureId=${profile.chain[i].featureId}',
-                  ),
-                  child: Text(
-                    profile.chain[i].name,
-                    style: text.bodySmall?.copyWith(
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ],
-              if (profile.chain.length > 1) const Text(' › '),
-            ],
-          ),
-          const SizedBox(height: 6),
           Text(
             profile.place.name,
             style: text.displaySmall?.copyWith(fontFamily: 'Georgia'),
           ),
           const SizedBox(height: 6),
           Chip(label: Text(profile.place.kindLabel)),
+          LegalBasisSection(
+            subjectTable: 'geography.features',
+            subjectCode: profile.place.code,
+          ),
+          TextButton.icon(
+            onPressed: () => context.push(
+              '/content?subjectTable=geography.features&subjectCode=${Uri.encodeQueryComponent(profile.place.code)}',
+            ),
+            icon: const Icon(Icons.menu_book_outlined),
+            label: const Tx('About this place'),
+          ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
@@ -229,7 +214,7 @@ class PlaceProfilePage extends ConsumerWidget {
                                       padding: EdgeInsets.zero,
                                       minimumSize: const Size(0, 32),
                                     ),
-                                    onPressed: () => context.go(
+                                    onPressed: () => context.push(
                                       '${AppRoutes.evidenceView}?citationId=${item.evidence.first.citationId}',
                                     ),
                                     child: Text(

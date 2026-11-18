@@ -12,9 +12,11 @@ class AsyncPage<T> extends ConsumerStatefulWidget {
     required this.reloadKey,
     required this.load,
     required this.builder,
+    this.loading = const LoadingView(),
   });
 
   final String reloadKey;
+  final Widget loading;
   final Future<ApiResult<T>> Function(String language) load;
   final Widget Function(BuildContext context, T value) builder;
 
@@ -39,7 +41,7 @@ class _AsyncPageState<T> extends ConsumerState<AsyncPage<T>> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const LoadingView();
+          return widget.loading;
         }
         final result = snapshot.data;
         final value = result?.dataOrNull;
@@ -50,7 +52,13 @@ class _AsyncPageState<T> extends ConsumerState<AsyncPage<T>> {
             onRetry: () => setState(() => _start(language)),
           );
         }
-        return widget.builder(context, value);
+        return RefreshIndicator(
+          onRefresh: () async {
+            setState(() => _start(language));
+            await _future;
+          },
+          child: widget.builder(context, value),
+        );
       },
     );
   }

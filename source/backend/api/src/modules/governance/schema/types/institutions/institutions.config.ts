@@ -9,8 +9,8 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
-import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
 
 // ----------------------------------
@@ -34,7 +34,9 @@ import type {
 // ----------------------------------
 
 export const INSTITUTIONS_RELATION_KEYS = [
+  "arm",
   "entity",
+  "establishmentBasis",
   "institutionKind",
   "sourceCitation",
 ] as const satisfies readonly InstitutionsKey[];
@@ -44,12 +46,14 @@ export const INSTITUTIONS_RELATION_KEYS = [
 // ----------------------------------
 
 export const INSTITUTIONS_SORTABLE_FIELDS = [
+  "armId",
   "code",
   "createdAt",
   "deletedAt",
   "dissolvedOn",
   "entityId",
   "establishedOn",
+  "establishmentBasisId",
   "fromToPrecision",
   "fromYear",
   "id",
@@ -65,7 +69,9 @@ export const INSTITUTIONS_SEARCHABLE_FIELDS = [
 ] as const satisfies readonly InstitutionsKey[];
 
 export const INSTITUTIONS_FILTERABLE_FIELDS = [
+  "armId",
   "entityId",
+  "establishmentBasisId",
   "fromToPrecision",
   "id",
   "institutionKindId",
@@ -91,12 +97,14 @@ export const INSTITUTIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IIns
 // ----------------------------------
 
 export const INSTITUTIONS_SELECTABLE_FIELDS = [
+  "armId",
   "code",
   "createdAt",
   "deletedAt",
   "dissolvedOn",
   "entityId",
   "establishedOn",
+  "establishmentBasisId",
   "fromToPrecision",
   "fromYear",
   "id",
@@ -108,12 +116,14 @@ export const INSTITUTIONS_SELECTABLE_FIELDS = [
 ] as const satisfies readonly InstitutionsKey[];
 
 export const INSTITUTIONS_DEFAULT_SELECT_FIELDS = [
+  "armId",
   "code",
   "createdAt",
   "deletedAt",
   "dissolvedOn",
   "entityId",
   "establishedOn",
+  "establishmentBasisId",
   "fromToPrecision",
   "fromYear",
   "id",
@@ -129,10 +139,12 @@ export const INSTITUTIONS_DEFAULT_SELECT_FIELDS = [
 // ----------------------------------
 
 export const INSTITUTIONS_EDITABLE_FIELDS = [
+  "armId",
   "code",
   "dissolvedOn",
   "entityId",
   "establishedOn",
+  "establishmentBasisId",
   "fromToPrecision",
   "fromYear",
   "institutionKindId",
@@ -167,8 +179,16 @@ export const INSTITUTIONS_AS_MANY_RELATION_CONFIG = {
 
 export const INSTITUTIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "arm",
+  ),
+  Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
     () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "entity",
+  ),
+  Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "establishmentBasis",
   ),
   Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,

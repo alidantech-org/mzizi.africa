@@ -117,6 +117,8 @@ export const Value = reference
     supersedesId: belongsTo(dryv.self).maybe(),
     /** The broader value in the same scheme (river under water body, water body under natural); a value has at most one. */
     parentId: belongsTo(dryv.self).maybe(),
+    /** Display order among the values of the scheme (ascending); values without one sort after those with one, by label. */
+    position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .rule("ValueDoesNotSupersedeItself", (v) => v.id.ne(v.supersedesId))

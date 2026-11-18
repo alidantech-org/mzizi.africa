@@ -8,6 +8,7 @@ from mzizi_engine.runtime.contracts.base import Frozen
 from mzizi_engine.runtime.runs.artifacts import ArtifactMetadata, ArtifactRef
 from mzizi_engine.runtime.runs.contracts.spec import NonEmpty
 from mzizi_extraction.core import Diagnostic, Limits, Status
+from mzizi_extraction.document.positioned_models import PositionedTable
 from mzizi_extraction.document.table_models import BBox
 
 
@@ -34,6 +35,7 @@ class TableDraftRequest(Frozen):
     languages: NonEmpty
     lookup: DraftLookup
     bindings: tuple[DraftBinding, ...] = Field(default=(), strict=False)
+    positioned_tables: tuple[PositionedTable, ...] = Field(default=(), strict=False)
 
     @model_validator(mode="after")
     def check_selection(self) -> Self:
@@ -43,6 +45,13 @@ class TableDraftRequest(Frozen):
             raise ValueError("Headings must be unique")
         if any(heading in self.headings for heading in ("page", "table", "row", self.lookup.target_column)):
             raise ValueError("Headings collide with draft export columns")
+        for table in self.positioned_tables:
+            if not self.first_page <= table.page <= self.last_page:
+                raise ValueError("Positioned table lies outside the requested page range")
+            if tuple(column.name for column in table.columns) != self.headings:
+                raise ValueError("Positioned table columns must match the requested headings")
+        if len(self.positioned_tables) > Limits().table_page_limit:
+            raise ValueError("Too many positioned table regions")
         return self
 
 

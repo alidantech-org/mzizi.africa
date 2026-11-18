@@ -65,7 +65,11 @@ def write_people(b: Builder) -> None:
         ["entity_code", "individual_code", "name_kind_code", "language_code", "is_preferred", "name"],
         b.names,
     )
-    write_csv("ke/governance/institutions.csv", ["code", "entity_code", "institution_kind_code"], b.institutions)
+    write_csv(
+        "ke/governance/institutions.csv",
+        ["code", "entity_code", "institution_kind_code", "arm_code", "establishment_basis_code"],
+        b.institutions,
+    )
     write_csv(
         "ke/governance/offices.csv",
         ["code", "institution_code", "office_kind_code", "unit_feature_code", "from_year", "from_to_precision"],

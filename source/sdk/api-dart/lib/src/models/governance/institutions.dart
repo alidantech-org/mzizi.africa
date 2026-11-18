@@ -11,12 +11,14 @@ part 'institutions.g.dart';
 @JsonSerializable(includeIfNull: false)
 class GovernanceInstitutions {
   const GovernanceInstitutions({
+    this.armId,
     required this.code,
     required this.createdAt,
     this.deletedAt,
     this.dissolvedOn,
     required this.entityId,
     this.establishedOn,
+    this.establishmentBasisId,
     this.fromToPrecision,
     this.fromYear,
     required this.id,
@@ -26,12 +28,14 @@ class GovernanceInstitutions {
     required this.updatedAt,
     required this.version,
   });
+  final String? armId;
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? dissolvedOn;
   final String entityId;
   final DateTime? establishedOn;
+  final String? establishmentBasisId;
   final SharedDatePrecision? fromToPrecision;
   final int? fromYear;
   final String id;

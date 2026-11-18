@@ -20,9 +20,11 @@ from dev_seed.activities import build_activities
 from dev_seed.civic import build_ngcdf, build_party_fund, build_tenders, finish_projects
 from dev_seed.common import DATA, MERGED, read_features
 from dev_seed.contacts import build_contacts
+from dev_seed.content import build_content
 from dev_seed.elections import add_real_parties, build_elections
 from dev_seed.facts import build_facts
 from dev_seed.geometry import build_geometries, write_geometries
+from dev_seed.governance import build_governance
 from dev_seed.media import build_media
 from dev_seed.merge import merge_trees
 from dev_seed.output import write_people
@@ -52,6 +54,7 @@ def main() -> None:
     figures, fund = read_county_figures(), read_party_fund()
     build_reference(t)
     build_people(b, counties, constituencies, wards)
+    build_governance(b, t, counties)
     build_procurement(b, counties, constituencies, wards)
     parties = add_real_parties(b, fund)
     places = build_places(t, geometries, [*counties, *constituencies, *wards])
@@ -64,6 +67,7 @@ def main() -> None:
     finish_projects(b, geometries)
     names = {n["individual_code"]: n["name"] for n in b.names if n.get("individual_code")}
     build_facts(t, counties)
+    build_content(t)
     build_contacts(b, t, names)
     build_media(b, t, counties, constituencies, places, [p["code"] for p in b.projects], names)
     write_people(b)

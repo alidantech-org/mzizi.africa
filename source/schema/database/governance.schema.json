@@ -305,10 +305,12 @@
           ,"version"
         ],
         "columns": [
-          "code"
+          "arm_code"
+          ,"code"
           ,"dissolved_on"
           ,"entity_code"
           ,"established_on"
+          ,"establishment_basis_code"
           ,"from_to_precision"
           ,"from_year"
           ,"institution_kind_code"
@@ -322,7 +324,14 @@
         ]
       },
       "properties": {
-        "code": {
+        "arm_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "arm_code", "scheme": "ref.sch.gov.arm" }
+        }
+        ,"code": {
           "type": "string",
           "x-type": "text",
           "maxLength": 255,
@@ -362,6 +371,13 @@
           "x-type": "date",
           "format": "date",
           "x-role": "data"
+        }
+        ,"establishment_basis_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "establishment_basis_code", "scheme": "ref.sch.gov.establishment.basis" }
         }
         ,"from_to_precision": {
           "type": ["string", "null"],

@@ -3,18 +3,34 @@ import 'package:mzizi_api/src/endpoints/insights_endpoints.dart';
 import 'package:mzizi_api/src/models/insights/board_input.dart';
 import 'package:mzizi_api/src/models/insights/browse_input.dart';
 import 'package:mzizi_api/src/models/insights/code_input.dart';
+import 'package:mzizi_api/src/models/insights/compare_options.dart';
+import 'package:mzizi_api/src/models/insights/compare_options_input.dart';
+import 'package:mzizi_api/src/models/insights/comparison.dart';
+import 'package:mzizi_api/src/models/insights/comparison_input.dart';
+import 'package:mzizi_api/src/models/insights/content_input.dart';
+import 'package:mzizi_api/src/models/insights/content_list.dart';
+import 'package:mzizi_api/src/models/insights/content_list_input.dart';
+import 'package:mzizi_api/src/models/insights/content_page.dart';
 import 'package:mzizi_api/src/models/insights/election_detail.dart';
 import 'package:mzizi_api/src/models/insights/election_input.dart';
 import 'package:mzizi_api/src/models/insights/election_list.dart';
 import 'package:mzizi_api/src/models/insights/fact_list.dart';
 import 'package:mzizi_api/src/models/insights/facts_input.dart';
+import 'package:mzizi_api/src/models/insights/gov_tree_input.dart';
+import 'package:mzizi_api/src/models/insights/governance_tabs.dart';
+import 'package:mzizi_api/src/models/insights/governance_tree.dart';
 import 'package:mzizi_api/src/models/insights/id_input.dart';
 import 'package:mzizi_api/src/models/insights/indicator_map.dart';
 import 'package:mzizi_api/src/models/insights/indicator_series.dart';
+import 'package:mzizi_api/src/models/insights/institution_detail.dart';
+import 'package:mzizi_api/src/models/insights/institution_list.dart';
+import 'package:mzizi_api/src/models/insights/institutions_input.dart';
 import 'package:mzizi_api/src/models/insights/leader_profile.dart';
 import 'package:mzizi_api/src/models/insights/leader_tree.dart';
 import 'package:mzizi_api/src/models/insights/leaderboard.dart';
 import 'package:mzizi_api/src/models/insights/leaderboard_metric_list.dart';
+import 'package:mzizi_api/src/models/insights/legal_basis.dart';
+import 'package:mzizi_api/src/models/insights/legal_basis_input.dart';
 import 'package:mzizi_api/src/models/insights/map_input.dart';
 import 'package:mzizi_api/src/models/insights/motion_detail.dart';
 import 'package:mzizi_api/src/models/insights/motion_list.dart';
@@ -59,6 +75,48 @@ class InsightsFeature {
     );
   }
 
+  /// Places worth comparing a place with: the ten closest by geography, the ten top performers, and the ladder of the units above it, saying plainly which rungs do not exist.
+  ///
+  /// GET /v1/compare/options
+  Future<ApiResult<InsightsCompareOptions>> getCompareOptions({InsightsCompareOptionsInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsCompareOptions>(
+        endpoint: _routes.getCompareOptions,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getCompareOptions'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsCompareOptions.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Two places on the same figures, aligned, with the difference in percent.
+  ///
+  /// GET /v1/compare
+  Future<ApiResult<InsightsComparison>> getComparison({InsightsComparisonInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsComparison>(
+        endpoint: _routes.getComparison,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getComparison'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsComparison.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// One explanatory text by its address or by the record it is about, with image references resolved to addresses.
+  ///
+  /// GET /v1/content
+  Future<ApiResult<InsightsContentPage>> getContent({InsightsContentInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsContentPage>(
+        endpoint: _routes.getContent,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getContent'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsContentPage.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
   /// One election: its contests, and results by unit under a parent, for tables and heat maps.
   ///
   /// GET /v1/elections/{electionId}
@@ -77,6 +135,33 @@ class InsightsFeature {
           if (contestKind != null) 'contestKind': contestKind,
         },
         fromJson: (json) => InsightsElectionDetail.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// The ways to look at leaders (elected, nominated, appointed) and the bodies to switch to, all read from the reference schemes.
+  ///
+  /// GET /v1/governance/tabs
+  Future<ApiResult<InsightsGovernanceTabs>> getGovernanceTabs({ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsGovernanceTabs>(
+        endpoint: _routes.getGovernanceTabs,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getGovernanceTabs'),
+        fromJson: (json) => InsightsGovernanceTabs.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// A tree of leaders for one tab or one body: nodes with their tier, how they got the seat, a performance bar and the reference codes behind them; edges from superior to deputy or body to member; and a side rail of the levels of government.
+  ///
+  /// GET /v1/governance/tree
+  Future<ApiResult<InsightsGovernanceTree>> getGovernanceTree({InsightsGovTreeInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsGovernanceTree>(
+        endpoint: _routes.getGovernanceTree,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getGovernanceTree'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsGovernanceTree.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }
@@ -114,6 +199,19 @@ class InsightsFeature {
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getIndicatorSeries'),
         query: <String, Object?>{if (featureId != null) 'featureId': featureId},
         fromJson: (json) => InsightsIndicatorSeries.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// One body: what it is for, what created it (with the Constitution articles or Acts), who leads it, the bodies it belongs to and oversees, and explanatory texts.
+  ///
+  /// GET /v1/institutions/{code}
+  Future<ApiResult<InsightsInstitutionDetail>> getInstitution({required String code, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsInstitutionDetail>(
+        endpoint: _routes.getInstitution(code: code),
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getInstitution'),
+        fromJson: (json) => InsightsInstitutionDetail.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }
@@ -165,6 +263,20 @@ class InsightsFeature {
           if (limit != null) 'limit': limit,
         },
         fromJson: (json) => InsightsLeaderboard.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// The Constitution articles and Acts that establish, authorise or govern one record (a body, an office, a place).
+  ///
+  /// GET /v1/legal-basis
+  Future<ApiResult<InsightsLegalBasis>> getLegalBasis({InsightsLegalBasisInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsLegalBasis>(
+        endpoint: _routes.getLegalBasis,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getLegalBasis'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsLegalBasis.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }
@@ -275,6 +387,20 @@ class InsightsFeature {
     );
   }
 
+  /// Explanatory texts by category or tag, for the Learn section.
+  ///
+  /// GET /v1/content/list
+  Future<ApiResult<InsightsContentList>> listContent({InsightsContentListInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsContentList>(
+        endpoint: _routes.listContent,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listContent'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsContentList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
   /// Every election the system knows, newest first.
   ///
   /// GET /v1/elections
@@ -298,6 +424,20 @@ class InsightsFeature {
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listFacts'),
         query: input?.toJson(),
         fromJson: (json) => InsightsFactList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Every public body grouped by arm of government and kind, with what created it and how many leaders it has. The groups and labels come from the reference schemes.
+  ///
+  /// GET /v1/institutions
+  Future<ApiResult<InsightsInstitutionList>> listInstitutions({InsightsInstitutionsInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsInstitutionList>(
+        endpoint: _routes.listInstitutions,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listInstitutions'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsInstitutionList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }

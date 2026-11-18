@@ -14,6 +14,7 @@ class ReferenceValue {
     required this.id,
     required this.label,
     this.parentId,
+    this.position,
     required this.schemeId,
     this.supersedesId,
     required this.updatedAt,
@@ -25,6 +26,7 @@ class ReferenceValue {
   final String id;
   final String label;
   final String? parentId;
+  final int? position;
   final String schemeId;
   final String? supersedesId;
   final DateTime updatedAt;

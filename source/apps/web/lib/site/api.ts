@@ -30,7 +30,7 @@ export const profileAt = (
   body(resolveLocality(resolveLocalityRequest({ input: { latitude, longitude, languageCode } })));
 
 export const profileOf = (featureId: string, languageCode: string): Promise<LocalityProfile> =>
-  body(getLocality(getLocalityRequest({ featureId, input: { featureId, languageCode } })));
+  body(getLocality(getLocalityRequest({ featureId, languageCode })));
 
 export const findPlaces = (query: string, languageCode: string): Promise<LocalityMatches> =>
   body(searchLocalities(searchLocalitiesRequest({ input: { query, languageCode } })));

@@ -17,7 +17,8 @@ from mzizi_engine.runtime.contracts.table_draft import (
 )
 from mzizi_engine.runtime.runs.artifacts import ArtifactAccess, ArtifactReader, ArtifactReadError
 from mzizi_extraction import DocumentProfile, TableColumn, TableSchema, extract_pdf_document
-from mzizi_extraction.document.models import TableBlock
+from mzizi_extraction.document.models import DocumentOutput, TableBlock
+from mzizi_extraction.document.positioned_tables import extract_positioned_tables
 from mzizi_manifest.features.codes.grammar import segments_problem
 from mzizi_manifest.features.data.check import seed_value_problem
 from mzizi_manifest.features.database.tables import load_tables
@@ -38,6 +39,24 @@ def _reference_codes(data: bytes, lookup: DraftLookup) -> dict[str, set[str]]:
         return codes
     except (UnicodeDecodeError, csv.Error) as error:
         raise ArtifactReadError(422, "Reference artifact must be a valid UTF-8 CSV") from error
+
+
+def _document(data: bytes, request: TableDraftRequest) -> DocumentOutput:
+    if request.positioned_tables:
+        try:
+            return extract_positioned_tables(data, request.positioned_tables)
+        except ValueError as error:
+            raise ArtifactReadError(422, str(error)) from error
+    return extract_pdf_document(
+        data,
+        DocumentProfile(
+            first_page=request.first_page,
+            last_page=request.last_page,
+            languages=request.languages,
+            figures=False,
+            table_schema=TableSchema(columns=tuple(TableColumn(name=heading) for heading in request.headings)),
+        ),
+    )
 
 
 def table_draft(reader: ArtifactReader, access: ArtifactAccess, request: TableDraftRequest) -> TableDraftReport:
@@ -89,16 +108,7 @@ def table_draft(reader: ArtifactReader, access: ArtifactAccess, request: TableDr
     )
     codes = _reference_codes(names, lookup)
     source_index = request.headings.index(lookup.source_heading)
-    document = extract_pdf_document(
-        data,
-        DocumentProfile(
-            first_page=request.first_page,
-            last_page=request.last_page,
-            languages=request.languages,
-            figures=False,
-            table_schema=TableSchema(columns=tuple(TableColumn(name=heading) for heading in request.headings)),
-        ),
-    )
+    document = _document(data, request)
     stream = StringIO(newline="")
     writer = csv.writer(stream, lineterminator="\n")
     writer.writerow(("page", "table", "row", *request.headings, lookup.target_column))

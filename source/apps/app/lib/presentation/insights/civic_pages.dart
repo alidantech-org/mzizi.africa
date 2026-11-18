@@ -4,7 +4,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_api/api.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/insights/kit.dart';
+import 'package:mzizi_app/presentation/widgets/map_kit.dart';
+import 'package:mzizi_app/presentation/widgets/media_gallery.dart';
 import 'package:mzizi_app/presentation/widgets/async_page.dart';
 
 InsightsFeature get _api => InsightsFeature(MziziApi.connection);
@@ -27,16 +30,16 @@ class CivicHubScreen extends StatelessWidget {
       children: [
         const Heading('Money & projects', kicker: 'Where the money goes'),
         FilledButton.icon(
-          onPressed: () => context.go('/browse'),
+          onPressed: () => context.push('/browse'),
           icon: MzIcon('search'),
-          label: const Text('Find your area'),
+          label: Tx('Find your area'),
         ),
         Heading(d.metric.title),
         for (final r in d.rows)
           GlassCard(
             margin: const EdgeInsets.only(bottom: 6),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            onTap: () => context.go('/civic/${r.featureId}'),
+            onTap: () => context.push('/civic/${r.featureId}'),
             child: Row(
               children: [
                 SizedBox(width: 28, child: Text('${r.rank}')),
@@ -62,6 +65,13 @@ class CivicScreen extends StatefulWidget {
 
 class _CivicScreenState extends State<CivicScreen> {
   String _status = 'all';
+  final _map = MapController();
+  @override
+  void dispose() {
+    _map.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => AsyncPage<InsightsPlaceCivic>(
     reloadKey: 'civic|${widget.id}',
@@ -156,50 +166,95 @@ class _CivicScreenState extends State<CivicScreen> {
           ),
           const SizedBox(height: 10),
           if (pins.isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(22),
-              child: SizedBox(
-                height: 300,
-                child: FlutterMap(
+            Builder(
+              builder: (context) {
+                final bounds = LatLngBounds.fromPoints([
+                  for (final p in pins) p.at,
+                ]);
+                Widget map(MapController c) => FlutterMap(
+                  mapController: c,
                   options: MapOptions(
                     initialCameraFit: CameraFit.bounds(
-                      bounds: LatLngBounds.fromPoints([
-                        for (final p in pins) p.at,
-                      ]),
+                      bounds: bounds,
                       padding: const EdgeInsets.all(30),
                       maxZoom: 15,
                     ),
                     interactionOptions: const InteractionOptions(
-                      flags: InteractiveFlag.drag | InteractiveFlag.pinchZoom,
+                      flags:
+                          InteractiveFlag.drag |
+                          InteractiveFlag.pinchZoom |
+                          InteractiveFlag.doubleTapZoom |
+                          InteractiveFlag.flingAnimation,
                     ),
                   ),
                   children: [
-                    TileLayer(
-                      urlTemplate:
-                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      userAgentPackageName: 'africa.mzizi.app',
-                    ),
-                    MarkerLayer(
+                    const MapTiles(),
+                    ClusteredPins(
                       markers: [
                         for (final p in pins)
                           Marker(
                             point: p.at,
-                            width: 34,
-                            height: 34,
+                            width: 38,
+                            height: 38,
                             child: GestureDetector(
                               onTap: () => _project(context, p.p),
                               child: MzIcon(
                                 'pin',
                                 color: toneColor(asText(p.p['status'])),
-                                size: 34,
+                                size: 38,
                               ),
                             ),
                           ),
                       ],
                     ),
                   ],
-                ),
-              ),
+                );
+                return MapFrame(
+                  controller: _map,
+                  height: 380,
+                  bounds: bounds,
+                  map: map(_map),
+                  legend: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      for (final k in const [
+                        ('completed', 'Done'),
+                        ('ongoing', 'Ongoing'),
+                        ('planned', 'Planned'),
+                        ('stalled', 'Stalled'),
+                      ])
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 9,
+                              height: 9,
+                              decoration: BoxDecoration(
+                                color: toneColor(k.$1),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Tx(
+                              k.$2,
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                  onExpand: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      fullscreenDialog: true,
+                      builder: (_) => FullMapPage(
+                        title: t(context, 'On the map'),
+                        builder: (c, ctl) => map(ctl),
+                      ),
+                    ),
+                  ),
+                );
+              },
             )
           else
             const Text('No project here has a map location yet.'),
@@ -260,7 +315,7 @@ class _CivicScreenState extends State<CivicScreen> {
                 dense: true,
                 title: Text(asText(o['personName'])),
                 subtitle: Text(asText(o['officeTitle'])),
-                onTap: () => context.go('/leader/${o['holderId']}'),
+                onTap: () => context.push('/leader/${o['holderId']}'),
               ),
           ],
           GapsNote(
@@ -289,7 +344,7 @@ class _CivicScreenState extends State<CivicScreen> {
         FilledButton(
           onPressed: () {
             Navigator.of(context).pop();
-            context.go('/project/${p['code']}');
+            context.push('/project/${p['code']}');
           },
           child: const Text('Everything about this project'),
         ),
@@ -322,30 +377,17 @@ class ProjectScreen extends StatelessWidget {
           Text(asText(p['description'])),
           if (d.media.isNotEmpty) ...[
             const Heading('Pictures'),
-            SizedBox(
-              height: 150,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (final m in asMaps(d.media))
-                    if (m['stored'] == true || m['platform'] == 'pexels')
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(
-                            asText(m['url']),
-                            width: 200,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => const SizedBox(
-                              width: 200,
-                              child: MzIcon('image'),
-                            ),
-                          ),
-                        ),
-                      ),
-                ],
-              ),
+            ImageCarousel(
+              items: [
+                for (final m in asMaps(d.media))
+                  if (m['stored'] == true || m['platform'] == 'pexels')
+                    (
+                      url: asText(m['url']),
+                      caption: m['caption'] == null
+                          ? null
+                          : asText(m['caption']),
+                    ),
+              ],
             ),
           ],
           if (d.money.isNotEmpty) ...[
@@ -579,7 +621,7 @@ class _Board extends StatelessWidget {
           GlassCard(
             margin: const EdgeInsets.only(bottom: 6),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            onTap: () => context.go(
+            onTap: () => context.push(
               r.subjectId != null
                   ? '/leader/${r.subjectId}'
                   : '/civic/${r.featureId}',

@@ -51,7 +51,7 @@ class PlacesPage extends ConsumerWidget {
                             ),
                             subtitle: Text(place.kindLabel),
                             trailing: MzIcon('chevron-right'),
-                            onTap: () => context.go(
+                            onTap: () => context.push(
                               '${AppRoutes.placeProfile}?featureId=${place.featureId}',
                             ),
                           ),

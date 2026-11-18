@@ -54,11 +54,10 @@ describe.skipIf(url === undefined)("locality reads (dev database)", () => {
     const id = (await featureAt(db, KARURA.latitude, KARURA.longitude)) as string;
     const unitIds = (await chainOf(db, id, "en")).map((unit) => unit.featureId).reverse();
     const officials = await officialsFor(db, unitIds, "sw", undefined);
-    expect(officials.map((official) => official.officeTitle.split(",")[0])).toEqual([
-      "Mwakilishi wa Wadi",
-      "Mbunge",
-      "Gavana",
-    ]);
+    const titles = officials.map((official) => official.officeTitle.split(",")[0]);
+    // nearest first: the ward's MCA, the constituency's MP, then the county's leaders and the head of state
+    expect(titles.slice(0, 2)).toEqual(["Mwakilishi wa Wadi", "Mbunge"]);
+    expect(titles).toEqual(expect.arrayContaining(["Gavana", "Naibu Gavana", "Seneta", "Mwakilishi wa Wanawake", "Rais", "Naibu Rais"]));
     expect(officials.every((official) => official.evidence.length > 0)).toBe(true);
     const detail = await evidenceDetail(db, officials[0]?.evidence[0]?.citationId as string);
     expect(detail?.evidence.locator).toMatch(/^Line \d+ of the source file$/);

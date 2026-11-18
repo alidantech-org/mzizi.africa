@@ -6,14 +6,32 @@ class InsightsEndpoints {
   /// GET /v1/browse
   String get browsePlaces => '/v1/browse';
 
+  /// GET /v1/compare/options
+  String get getCompareOptions => '/v1/compare/options';
+
+  /// GET /v1/compare
+  String get getComparison => '/v1/compare';
+
+  /// GET /v1/content
+  String get getContent => '/v1/content';
+
   /// GET /v1/elections/{electionId}
   String getElection({required String electionId}) => '/v1/elections/$electionId';
+
+  /// GET /v1/governance/tabs
+  String get getGovernanceTabs => '/v1/governance/tabs';
+
+  /// GET /v1/governance/tree
+  String get getGovernanceTree => '/v1/governance/tree';
 
   /// GET /v1/statistics/indicators/{indicatorCode}/map
   String getIndicatorMap({required String indicatorCode}) => '/v1/statistics/indicators/$indicatorCode/map';
 
   /// GET /v1/statistics/indicators/{indicatorCode}/series
   String getIndicatorSeries({required String indicatorCode}) => '/v1/statistics/indicators/$indicatorCode/series';
+
+  /// GET /v1/institutions/{code}
+  String getInstitution({required String code}) => '/v1/institutions/$code';
 
   /// GET /v1/leaders/{id}
   String getLeaderProfile({required String id}) => '/v1/leaders/$id';
@@ -23,6 +41,9 @@ class InsightsEndpoints {
 
   /// GET /v1/leaderboards/{metricCode}
   String getLeaderboard({required String metricCode}) => '/v1/leaderboards/$metricCode';
+
+  /// GET /v1/legal-basis
+  String get getLegalBasis => '/v1/legal-basis';
 
   /// GET /v1/motions/{code}
   String getMotion({required String code}) => '/v1/motions/$code';
@@ -48,11 +69,17 @@ class InsightsEndpoints {
   /// GET /v1/search
   String get globalSearch => '/v1/search';
 
+  /// GET /v1/content/list
+  String get listContent => '/v1/content/list';
+
   /// GET /v1/elections
   String get listElections => '/v1/elections';
 
   /// GET /v1/facts
   String get listFacts => '/v1/facts';
+
+  /// GET /v1/institutions
+  String get listInstitutions => '/v1/institutions';
 
   /// GET /v1/leaderboards
   String get listLeaderboardMetrics => '/v1/leaderboards';

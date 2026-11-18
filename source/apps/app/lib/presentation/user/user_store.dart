@@ -12,11 +12,13 @@ class UserStore extends ChangeNotifier {
   String? placeId;
   String? placeName;
   String? placeKind;
+
   /// The constituency (or county) the place sits in: the unit it is ranked as part of on the leaderboards.
   String? boardId;
   String? boardName;
   String boardKindCode = 'constituency';
   ThemeMode themeMode = ThemeMode.system;
+  String language = 'en';
   SharedPreferences? _prefs;
 
   Future<void> load() async {
@@ -28,11 +30,18 @@ class UserStore extends ChangeNotifier {
     boardId = p.getString('boardId');
     boardName = p.getString('boardName');
     boardKindCode = p.getString('boardKind') ?? 'constituency';
-    final own = (placeKind ?? '').toLowerCase();
-    final isBoardUnit = own.endsWith('county') || own.endsWith('constituency');
-    if (placeId != null && (boardId == null || (boardId == placeId && !isBoardUnit))) {
-      _resolveBoard(placeId!, placeName ?? '', placeKind).then((_) => notifyListeners());
+    if (placeId != null) _validatePlace(placeId!);
+    final own = (placeKind ?? '').toLowerCase().split('.').last;
+    final isBoardUnit = own == 'county' || own == 'constituency';
+    if (placeId != null &&
+        (boardId == null || (boardId == placeId && !isBoardUnit))) {
+      _resolveBoard(
+        placeId!,
+        placeName ?? '',
+        placeKind,
+      ).then((_) => notifyListeners());
     }
+    language = p.getString('language') ?? 'en';
     themeMode = switch (p.getString('themeMode')) {
       'light' => ThemeMode.light,
       'dark' => ThemeMode.dark,
@@ -54,20 +63,46 @@ class UserStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Forgets a saved place the data no longer knows (the data set was rebuilt), so Home asks for one again.
+  Future<void> _validatePlace(String id) async {
+    final r = await LocalityFeature(
+      MziziApi.connection,
+    ).getLocality(featureId: id);
+    if (r.dataOrNull == null && r.message.contains('No such place')) {
+      await clearPlace();
+    }
+  }
+
   /// Finds the constituency or county that holds [id] (the place itself when it is one) so rankings can place it.
   Future<void> _resolveBoard(String id, String name, String? kind) async {
-    final k = (kind ?? '').toLowerCase();
-    String bid = id, bname = name, bkind = k.endsWith('county') ? 'county' : 'constituency';
-    if (!k.endsWith('county') && !k.endsWith('constituency')) {
-      final r = await LocalityFeature(MziziApi.connection).getLocality(featureId: id, input: LocalityPlaceInput(featureId: id));
+    final k = (kind ?? '').toLowerCase().split('.').last;
+    String bid = id,
+        bname = name,
+        bkind = k == 'county' ? 'county' : 'constituency';
+    if (k != 'county' && k != 'constituency') {
+      final r = await LocalityFeature(
+        MziziApi.connection,
+      ).getLocality(featureId: id);
       final chain = r.dataOrNull?.chain ?? const [];
-      final hit = chain.where((u) => u.kindCode.toLowerCase().endsWith('constituency')).lastOrNull ??
-          chain.where((u) => u.kindCode.toLowerCase().endsWith('county')).lastOrNull;
+      final hit =
+          chain
+              .where(
+                (u) =>
+                    u.kindCode.toLowerCase().split('.').last == 'constituency',
+              )
+              .lastOrNull ??
+          chain
+              .where(
+                (u) => u.kindCode.toLowerCase().split('.').last == 'county',
+              )
+              .lastOrNull;
       if (hit == null) return; // could not place it; try again next launch
       {
         bid = hit.featureId;
         bname = hit.name;
-        bkind = hit.kindCode.toLowerCase().endsWith('county') ? 'county' : 'constituency';
+        bkind = hit.kindCode.toLowerCase().split('.').last == 'county'
+            ? 'county'
+            : 'constituency';
       }
     }
     boardId = bid;
@@ -87,6 +122,36 @@ class UserStore extends ChangeNotifier {
   Future<void> setThemeMode(ThemeMode mode) async {
     themeMode = mode;
     await _prefs?.setString('themeMode', mode.name);
+    notifyListeners();
+  }
+
+  Future<void> setLanguage(String code) async {
+    language = code;
+    await _prefs?.setString('language', code);
+    notifyListeners();
+  }
+
+  /// Forgets "my place" (Home then asks for one again).
+  Future<void> clearPlace() async {
+    placeId = placeName = placeKind = boardId = boardName = null;
+    boardKindCode = 'constituency';
+    for (final k in [
+      'placeId',
+      'placeName',
+      'placeKind',
+      'boardId',
+      'boardName',
+      'boardKind',
+    ]) {
+      await _prefs?.remove(k);
+    }
+    notifyListeners();
+  }
+
+  /// Shows the welcome screens again on the next navigation.
+  Future<void> resetOnboarding() async {
+    onboarded = false;
+    await _prefs?.setBool('onboarded', false);
     notifyListeners();
   }
 }

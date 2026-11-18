@@ -1,113 +1,127 @@
-import 'package:mzizi_app/presentation/brand/mz_icon.dart';
-import 'package:mzizi_app/presentation/brand/mz_logo.dart';
-import 'package:mzizi_app/presentation/user/user_store.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
-import 'package:mzizi_app/presentation/routers/navigation.dart';
-import 'package:mzizi_app/presentation/saved/saved_store.dart';
+import 'package:mzizi_app/presentation/shell/shell_bar.dart';
 
-/// The frame around every screen: an app bar with the language switch and a bottom navigation bar. The paths come
-/// from the generated `AppRoutes`; the icons, labels and the choice of destinations are hand-built.
-class AppShell extends ConsumerWidget {
-  const AppShell({super.key, required this.location, required this.child});
+/// One bottom tab: a short word, where it goes and its icon.
+typedef ShellTab = ({String word, String path, String icon});
+
+/// The five tabs, TikTok-style: Home, Explore, the raised Leaderboard trophy in the middle (no text), Search, Profile.
+/// Every other screen is pushed on top of one of them with its own bar and a back button.
+const shellTabs = <ShellTab>[
+  (word: 'home', path: '/', icon: 'home'),
+  (word: 'explore', path: '/explore', icon: 'compass'),
+  (word: 'rankings', path: '/rankings', icon: 'trophy'),
+  (word: 'search', path: '/search', icon: 'search'),
+  (word: 'profile', path: '/profile', icon: 'user'),
+];
+
+/// The title a pushed screen shows in its app bar, by the start of its path. The first match wins.
+const _titles = <(String, String)>[
+  ('/place-search', 'Places'),
+  ('/place-profile', 'Place'),
+  ('/browse', 'Places'),
+  ('/stats', 'Statistics'),
+  ('/elections', 'Elections'),
+  ('/election/', 'Election'),
+  ('/place-elections/', 'Elections'),
+  ('/parliament', 'Parliament'),
+  ('/motion/', 'Motion'),
+  ('/parties', 'Parties'),
+  ('/party/', 'Party'),
+  ('/leader/', 'Leader'),
+  ('/civic', 'Money & projects'),
+  ('/project/', 'Project'),
+  ('/tenders', 'Tenders'),
+  ('/saved', 'Saved'),
+  ('/source-browse', 'Sources'),
+  ('/evidence-view', 'Evidence'),
+  ('/feature-browse', 'Places'),
+  ('/feature-detail', 'Place'),
+];
+
+String? _titleFor(String location) {
+  for (final (prefix, title) in _titles) {
+    if (location == prefix ||
+        location.startsWith(prefix.endsWith('/') ? prefix : '$prefix/') ||
+        location.startsWith('$prefix?')) {
+      return title;
+    }
+  }
+  return null;
+}
+
+/// Which tab a location belongs to, so the right one stays lit while a screen is open on top of it.
+int tabFor(String location) {
+  for (var i = 0; i < shellTabs.length; i++) {
+    final path = shellTabs[i].path;
+    if (path == '/'
+        ? location == '/'
+        : location == path || location.startsWith('$path/')) {
+      return i;
+    }
+  }
+  if (location.startsWith('/saved') || location.startsWith('/settings')) {
+    return 4;
+  }
+  if (location.startsWith('/place') || location.startsWith('/browse')) return 0;
+  return 1;
+}
+
+bool _isRoot(String location) => shellTabs.any((t) => t.path == location);
+
+/// The frame around every screen: a bottom bar with four short tabs. Screens opened from a tab get an app bar with a
+/// back button and a title (no breadcrumbs); the tabs themselves draw their own headers.
+class AppShell extends StatelessWidget {
+  const AppShell({
+    super.key,
+    required this.location,
+    required this.child,
+    this.pageOwnsScaffold = false,
+  });
 
   final String location;
   final Widget child;
+  final bool pageOwnsScaffold;
 
-  static const _tabs =
-      <({String word, String path, String icon, String selectedIcon})>[
-        (
-          word: 'home',
-          path: '/',
-          icon: 'home',
-          selectedIcon: 'home',
-        ),
-        (
-          word: 'rankings',
-          path: '/rankings',
-          icon: 'trophy',
-          selectedIcon: 'trophy',
-        ),
-        (
-          word: 'search',
-          path: '/search',
-          icon: 'search',
-          selectedIcon: 'search',
-        ),
-        (
-          word: 'saved',
-          path: '/saved',
-          icon: 'heart',
-          selectedIcon: 'heart',
-        ),
-      ];
-
-  /// Profile and evidence screens belong to the Places tab.
-  int _selected() {
-    if (location == '/') return 0;
-    if (location.startsWith('/rankings')) return 1;
-    if (location.startsWith('/search') ||
-        location.startsWith(AppRoutes.placeSearch)) {
-      return 2;
+  void _back(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go(shellTabs[tabFor(location)].path);
     }
-    if (location.startsWith('/saved')) return 3;
-    return 0;
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final language = ref.watch(languageProvider);
-    final savedCount = ref.watch(savedProvider.select((s) => s.count));
+  Widget build(BuildContext context) {
+    // These destinations own their Scaffold and top bar. Keeping them in the same ShellRoute
+    // avoids re-entering a buried shell (and duplicating its Navigator page key) on detail pushes.
+    if (pageOwnsScaffold) return child;
+    final root = _isRoot(location);
+    final title = _titleFor(location);
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 16,
-        title: const MzLogo(size: 30),
-        actions: [
-          IconButton(
-            tooltip: 'Light or dark',
-            icon: MzIcon(Theme.of(context).brightness == Brightness.dark ? 'sun' : 'moon'),
-            onPressed: () => UserStore.instance.setThemeMode(
-              Theme.of(context).brightness == Brightness.dark ? ThemeMode.light : ThemeMode.dark,
+      appBar: root
+          ? null
+          : AppBar(
+              leading: IconButton(
+                tooltip: t(context, 'Back'),
+                icon: MzIcon('chevron-left'),
+                onPressed: () => _back(context),
+              ),
+              title: Text(title == null ? '' : t(context, title)),
+              centerTitle: false,
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: SegmentedButton<String>(
-              showSelectedIcon: false,
-              style: const ButtonStyle(visualDensity: VisualDensity.compact),
-              segments: const [
-                ButtonSegment(value: 'en', label: Text('EN')),
-                ButtonSegment(value: 'sw', label: Text('SW')),
-              ],
-              selected: {language},
-              onSelectionChanged: (choice) =>
-                  ref.read(languageProvider.notifier).state = choice.first,
-            ),
-          ),
-        ],
-      ),
       body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selected(),
-        onDestinationSelected: (index) => context.go(_tabs[index].path),
-        destinations: [
-          for (final tab in _tabs)
-            NavigationDestination(
-              icon: Badge(
-                isLabelVisible: tab.path == '/saved' && savedCount > 0,
-                label: Text('$savedCount'),
-                child: MzIcon(tab.icon),
-              ),
-              selectedIcon: Badge(
-                isLabelVisible: tab.path == '/saved' && savedCount > 0,
-                label: Text('$savedCount'),
-                child: MzIcon(tab.selectedIcon),
-              ),
-              label: tr(language, tab.word),
-            ),
-        ],
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: TrophyButton(
+        selected: tabFor(location) == 2,
+        label: tr(uiLanguage, 'rankings'),
+        onTap: () => context.go('/rankings'),
+      ),
+      bottomNavigationBar: ShellBar(
+        selected: tabFor(location),
+        onSelect: (i) => context.go(shellTabs[i].path),
       ),
     );
   }

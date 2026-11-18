@@ -13,6 +13,7 @@ import { SchemeEntity } from "#/modules/reference/schema/entities/scheme.entity.
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
+import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
@@ -47,6 +48,9 @@ export class ValueEntity {
   @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "parent_id" })
   parent?: Relation<ValueEntity>;
+
+  @Column({ name: "position", type: "integer", nullable: true })
+  position?: NonNegativeInteger | null;
 
   @Column({ name: "scheme_id", type: "uuid" })
   schemeId!: Id;

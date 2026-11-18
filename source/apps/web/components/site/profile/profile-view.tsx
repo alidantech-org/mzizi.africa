@@ -1,5 +1,6 @@
 "use client";
 
+import { LegalBasisSection, SubjectContentSection } from "#/components/site/governance/shared.tsx";
 import { PlaceMapLazy } from "#/components/site/map/place-map-lazy.tsx";
 import { SavePlace, SaveSpot } from "#/components/site/save-buttons.tsx";
 import { OfficialCard } from "#/components/site/profile/official-card.tsx";
@@ -97,6 +98,8 @@ export function ProfileView({
           </ul>
         </section>
       ) : null}
+      <SubjectContentSection table="geography.features" code={profile.place.featureId} title="About this place" />
+      <LegalBasisSection table="geography.features" code={profile.place.featureId} />
     </div>
   );
 }

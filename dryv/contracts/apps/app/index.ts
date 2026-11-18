@@ -115,6 +115,15 @@ const app_app = dryv
     insightOperations.GetNearbyProjects,
     insightOperations.ListFacts,
     insightOperations.GetLeaderTree,
+    insightOperations.ListInstitutions,
+    insightOperations.GetInstitution,
+    insightOperations.GetGovernanceTabs,
+    insightOperations.GetGovernanceTree,
+    insightOperations.GetContent,
+    insightOperations.ListContent,
+    insightOperations.GetLegalBasis,
+    insightOperations.GetCompareOptions,
+    insightOperations.GetComparison,
   )
   .destination("places", views.PlaceSearch)
   .destination("sources", views.SourceBrowse)

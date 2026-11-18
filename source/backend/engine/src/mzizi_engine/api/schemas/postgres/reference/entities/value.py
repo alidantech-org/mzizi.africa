@@ -29,6 +29,7 @@ class ValueRow(BaseModel):
     id: UUID
     label: Annotated[str, Field(min_length=1, max_length=300)]
     parent_id: UUID | None = None
+    position: Annotated[int, Field(ge=0)] | None = None
     scheme_id: UUID
     supersedes_id: UUID | None = None
     updated_at: datetime

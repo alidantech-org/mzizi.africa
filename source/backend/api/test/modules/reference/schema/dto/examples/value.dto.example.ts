@@ -53,6 +53,12 @@ export const valueExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "position",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
       name: "schemeId",
       optional: false,
       nullable: false,

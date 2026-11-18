@@ -23,6 +23,7 @@ import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 @Entity({ schema: "governance", name: "institutions" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["entityId"])
+@Index(["armId"])
 @Index(["sourceCitationId"])
 @Check(
   "chk_institutions_period_years_are_ordered",
@@ -35,6 +36,13 @@ import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 export class InstitutionsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
+
+  @Column({ name: "arm_id", type: "uuid", nullable: true })
+  armId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "arm_id" })
+  arm?: Relation<ValueEntity>;
 
   @Column({ name: "code", type: "varchar", length: 255 })
   code!: IdentityCode;
@@ -57,6 +65,13 @@ export class InstitutionsEntity {
 
   @Column({ name: "established_on", type: "date", nullable: true })
   establishedOn?: Date | null;
+
+  @Column({ name: "establishment_basis_id", type: "uuid", nullable: true })
+  establishmentBasisId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "establishment_basis_id" })
+  establishmentBasis?: Relation<ValueEntity>;
 
   @Column({
     name: "from_to_precision",

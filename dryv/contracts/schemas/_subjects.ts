@@ -104,6 +104,8 @@ export const subjectProperties = shared.properties({
     SourceVerifications: "source.verifications",
     FactsFactPlaces: "facts.fact_places",
     FactsFacts: "facts.facts",
+    FilesystemContentTags: "filesystem.content_tags",
+    FilesystemContents: "filesystem.contents",
   }),
 });
 

@@ -155,7 +155,7 @@ describe("GET /v1/locality/{featureId} (getLocality)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
       params: { featureId: "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11" },
-      query: { ...queryOf(placeInputExample.valid()) },
+      query: { languageCode: "value" },
       headers: {},
     };
     const result = localityProfileExample.valid();
@@ -165,7 +165,12 @@ describe("GET /v1/locality/{featureId} (getLocality)", () => {
 
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getLocality).toHaveBeenCalledTimes(1);
-    expect(service.getLocality).toHaveBeenCalledWith(expect.anything());
+    expect(service.getLocality).toHaveBeenCalledWith(
+      expect.objectContaining({
+        featureId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
+        languageCode: String("value"),
+      }),
+    );
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

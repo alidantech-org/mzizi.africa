@@ -123,6 +123,7 @@ export function PlaceTabs({ featureId }: { featureId: string }) {
     { href: `/elections/place/${featureId}`, label: "Elections", match: "/elections/place" },
     { href: `/civic/${featureId}`, label: "Money & projects", match: "/civic" },
     { href: `/browse/${featureId}`, label: "Places inside", match: "/browse" },
+    { href: `/compare?place=${featureId}`, label: "Compare", match: "/compare" },
   ];
   return (
     <div role="tablist" aria-label="About this place" className="glass mb-6 flex gap-1 overflow-x-auto rounded-full p-1">

@@ -18,6 +18,7 @@ class InstitutionsRow(BaseModel):
 
     table: ClassVar[str] = "governance.institutions"
 
+    arm_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -31,6 +32,7 @@ class InstitutionsRow(BaseModel):
     dissolved_on: date | None = None
     entity_id: UUID
     established_on: date | None = None
+    establishment_basis_id: UUID | None = None
     from_to_precision: DatePrecision | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID

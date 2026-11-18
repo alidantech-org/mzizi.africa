@@ -28,6 +28,10 @@ enum SharedSubjectTable {
   factsFactPlaces,
   @JsonValue('facts.facts')
   factsFacts,
+  @JsonValue('filesystem.content_tags')
+  filesystemContentTags,
+  @JsonValue('filesystem.contents')
+  filesystemContents,
   @JsonValue('filesystem.file_extensions')
   filesystemFileExtensions,
   @JsonValue('filesystem.file_versions')

@@ -55,7 +55,7 @@ class SavedPage extends ConsumerWidget {
                           ? null
                           : Text(item.subtitle!),
                       trailing: MzIcon('chevron-right'),
-                      onTap: () => context.go(route(item)),
+                      onTap: () => context.push(route(item)),
                     ),
                   ),
                 ),

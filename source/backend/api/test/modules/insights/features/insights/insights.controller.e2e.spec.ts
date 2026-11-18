@@ -7,18 +7,34 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 import { boardInputExample } from "@test/modules/insights/schema/dto/examples/board-input.dto.example.ts";
 import { browseInputExample } from "@test/modules/insights/schema/dto/examples/browse-input.dto.example.ts";
 import { codeInputExample } from "@test/modules/insights/schema/dto/examples/code-input.dto.example.ts";
+import { compareOptionsInputExample } from "@test/modules/insights/schema/dto/examples/compare-options-input.dto.example.ts";
+import { compareOptionsExample } from "@test/modules/insights/schema/dto/examples/compare-options.dto.example.ts";
+import { comparisonInputExample } from "@test/modules/insights/schema/dto/examples/comparison-input.dto.example.ts";
+import { comparisonExample } from "@test/modules/insights/schema/dto/examples/comparison.dto.example.ts";
+import { contentInputExample } from "@test/modules/insights/schema/dto/examples/content-input.dto.example.ts";
+import { contentListInputExample } from "@test/modules/insights/schema/dto/examples/content-list-input.dto.example.ts";
+import { contentListExample } from "@test/modules/insights/schema/dto/examples/content-list.dto.example.ts";
+import { contentPageExample } from "@test/modules/insights/schema/dto/examples/content-page.dto.example.ts";
 import { electionDetailExample } from "@test/modules/insights/schema/dto/examples/election-detail.dto.example.ts";
 import { electionInputExample } from "@test/modules/insights/schema/dto/examples/election-input.dto.example.ts";
 import { electionListExample } from "@test/modules/insights/schema/dto/examples/election-list.dto.example.ts";
 import { factListExample } from "@test/modules/insights/schema/dto/examples/fact-list.dto.example.ts";
 import { factsInputExample } from "@test/modules/insights/schema/dto/examples/facts-input.dto.example.ts";
+import { govTreeInputExample } from "@test/modules/insights/schema/dto/examples/gov-tree-input.dto.example.ts";
+import { governanceTabsExample } from "@test/modules/insights/schema/dto/examples/governance-tabs.dto.example.ts";
+import { governanceTreeExample } from "@test/modules/insights/schema/dto/examples/governance-tree.dto.example.ts";
 import { idInputExample } from "@test/modules/insights/schema/dto/examples/id-input.dto.example.ts";
 import { indicatorMapExample } from "@test/modules/insights/schema/dto/examples/indicator-map.dto.example.ts";
 import { indicatorSeriesExample } from "@test/modules/insights/schema/dto/examples/indicator-series.dto.example.ts";
+import { institutionDetailExample } from "@test/modules/insights/schema/dto/examples/institution-detail.dto.example.ts";
+import { institutionListExample } from "@test/modules/insights/schema/dto/examples/institution-list.dto.example.ts";
+import { institutionsInputExample } from "@test/modules/insights/schema/dto/examples/institutions-input.dto.example.ts";
 import { leaderProfileExample } from "@test/modules/insights/schema/dto/examples/leader-profile.dto.example.ts";
 import { leaderTreeExample } from "@test/modules/insights/schema/dto/examples/leader-tree.dto.example.ts";
 import { leaderboardMetricListExample } from "@test/modules/insights/schema/dto/examples/leaderboard-metric-list.dto.example.ts";
 import { leaderboardExample } from "@test/modules/insights/schema/dto/examples/leaderboard.dto.example.ts";
+import { legalBasisInputExample } from "@test/modules/insights/schema/dto/examples/legal-basis-input.dto.example.ts";
+import { legalBasisExample } from "@test/modules/insights/schema/dto/examples/legal-basis.dto.example.ts";
 import { mapInputExample } from "@test/modules/insights/schema/dto/examples/map-input.dto.example.ts";
 import { motionDetailExample } from "@test/modules/insights/schema/dto/examples/motion-detail.dto.example.ts";
 import { motionListExample } from "@test/modules/insights/schema/dto/examples/motion-list.dto.example.ts";
@@ -69,12 +85,19 @@ class InMemoryDataSourceModule {}
 
 const service = {
   browsePlaces: vi.fn(),
+  getCompareOptions: vi.fn(),
+  getComparison: vi.fn(),
+  getContent: vi.fn(),
   getElection: vi.fn(),
+  getGovernanceTabs: vi.fn(),
+  getGovernanceTree: vi.fn(),
   getIndicatorMap: vi.fn(),
   getIndicatorSeries: vi.fn(),
+  getInstitution: vi.fn(),
   getLeaderProfile: vi.fn(),
   getLeaderTree: vi.fn(),
   getLeaderboard: vi.fn(),
+  getLegalBasis: vi.fn(),
   getMotion: vi.fn(),
   getNearbyProjects: vi.fn(),
   getParty: vi.fn(),
@@ -83,8 +106,10 @@ const service = {
   getPlaceStatistics: vi.fn(),
   getProject: vi.fn(),
   globalSearch: vi.fn(),
+  listContent: vi.fn(),
   listElections: vi.fn(),
   listFacts: vi.fn(),
+  listInstitutions: vi.fn(),
   listLeaderboardMetrics: vi.fn(),
   listMotions: vi.fn(),
   listParties: vi.fn(),
@@ -168,6 +193,63 @@ describe("GET /v1/browse (browsePlaces)", () => {
   });
 });
 
+describe("GET /v1/compare/options (getCompareOptions)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(compareOptionsInputExample.valid()) },
+      headers: {},
+    };
+    const result = compareOptionsExample.valid();
+    service.getCompareOptions.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/compare/options", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getCompareOptions).toHaveBeenCalledTimes(1);
+    expect(service.getCompareOptions).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/compare (getComparison)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(comparisonInputExample.valid()) },
+      headers: {},
+    };
+    const result = comparisonExample.valid();
+    service.getComparison.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/compare", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getComparison).toHaveBeenCalledTimes(1);
+    expect(service.getComparison).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/content (getContent)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(contentInputExample.valid()) },
+      headers: {},
+    };
+    const result = contentPageExample.valid();
+    service.getContent.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/content", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getContent).toHaveBeenCalledTimes(1);
+    expect(service.getContent).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/elections/{electionId} (getElection)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -192,6 +274,43 @@ describe("GET /v1/elections/{electionId} (getElection)", () => {
         contestKind: String("value"),
       }),
     );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/governance/tabs (getGovernanceTabs)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: {},
+      headers: {},
+    };
+    const result = governanceTabsExample.valid();
+    service.getGovernanceTabs.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/governance/tabs", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getGovernanceTabs).toHaveBeenCalledTimes(1);
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/governance/tree (getGovernanceTree)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(govTreeInputExample.valid()) },
+      headers: {},
+    };
+    const result = governanceTreeExample.valid();
+    service.getGovernanceTree.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/governance/tree", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getGovernanceTree).toHaveBeenCalledTimes(1);
+    expect(service.getGovernanceTree).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -243,6 +362,27 @@ describe("GET /v1/statistics/indicators/{indicatorCode}/series (getIndicatorSeri
         indicatorCode: String("value"),
         featureId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
       }),
+    );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/institutions/{code} (getInstitution)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: { code: "value" },
+      query: {},
+      headers: {},
+    };
+    const result = institutionDetailExample.valid();
+    service.getInstitution.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/institutions/{code}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getInstitution).toHaveBeenCalledTimes(1);
+    expect(service.getInstitution).toHaveBeenCalledWith(
+      expect.objectContaining({ code: String("value") }),
     );
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
@@ -316,6 +456,25 @@ describe("GET /v1/leaderboards/{metricCode} (getLeaderboard)", () => {
         limit: 1,
       }),
     );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/legal-basis (getLegalBasis)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(legalBasisInputExample.valid()) },
+      headers: {},
+    };
+    const result = legalBasisExample.valid();
+    service.getLegalBasis.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/legal-basis", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getLegalBasis).toHaveBeenCalledTimes(1);
+    expect(service.getLegalBasis).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -490,6 +649,25 @@ describe("GET /v1/search (globalSearch)", () => {
   });
 });
 
+describe("GET /v1/content/list (listContent)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(contentListInputExample.valid()) },
+      headers: {},
+    };
+    const result = contentListExample.valid();
+    service.listContent.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/content/list", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.listContent).toHaveBeenCalledTimes(1);
+    expect(service.listContent).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/elections (listElections)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -523,6 +701,25 @@ describe("GET /v1/facts (listFacts)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.listFacts).toHaveBeenCalledTimes(1);
     expect(service.listFacts).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/institutions (listInstitutions)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(institutionsInputExample.valid()) },
+      headers: {},
+    };
+    const result = institutionListExample.valid();
+    service.listInstitutions.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/institutions", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.listInstitutions).toHaveBeenCalledTimes(1);
+    expect(service.listInstitutions).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

@@ -142,3 +142,23 @@ export async function leaderboard(db: DataSource, metricCode: string, kind: stri
     gaps,
   };
 }
+
+
+/** The value of one metric for specific places, and how the metric is described; used to compare places side by side. */
+export async function metricValues(db: DataSource, metricCode: string, ids: string[]) {
+  const builtin = METRICS.find((m) => m.code === metricCode);
+  if (builtin && builtin.subject === "leader") return null;
+  const stat = builtin ? null : (await db.query(
+    "select i.code, i.name, u.symbol as unit, i.higher_is_better from statistics.indicators i left join reference.units u on u.id = i.unit_id where i.code = $1",
+    [indicatorStored(metricCode)],
+  ))[0];
+  if (!builtin && !stat) return null;
+  const rows: { id: string; value: number | null }[] = builtin
+    ? await db.query(builtin.sql, [ids])
+    : await db.query(`select f.id, ${latestBaseline(indicatorStored(metricCode), "f.id")}::float8 as value from geography.features f where f.id = any($1::uuid[])`, [ids]);
+  return {
+    title: builtin ? builtin.title : (stat.name as string), unit: builtin ? builtin.unit : (stat.unit as string | null),
+    higherIsBetter: builtin ? builtin.higherIsBetter : ((stat.higher_is_better as boolean | null) ?? true),
+    values: new Map(rows.map((r) => [r.id, r.value === null ? null : Number(r.value)])),
+  };
+}

@@ -8,7 +8,7 @@ import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Value } from "./reference.ts";
+import { Language, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -176,3 +176,50 @@ export const Media = filesystem
   .facets({
     storage: dryv.storage("media").index("subjectTable", "subjectId").index("kindId").index("fileVersionId"),
   });
+
+/*---------------- contents ----------------*/
+export const Contents = filesystem
+  .schema("Contents", {
+    /** The page address, unique per language: `institution/iebc`, `explainer/devolution`. */
+    slug: dryv.field(sharedProperties.NonEmptyString255),
+    languageId: belongsTo(() => Language),
+    title: dryv.field(sharedProperties.Name),
+    /** One or two sentences for lists and previews. */
+    summary: dryv.field(sharedProperties.Description).maybe(),
+    /** Scheme fil.content.category: institution, arm, constitution, place, person, explainer, blog. */
+    categoryId: belongsTo(() => Value).tags("scheme:ref.sch.fil.content.category"),
+    /** Scheme fil.content.classification: how a screen places it (overview, history, how-it-works, biography, ...). */
+    classificationId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.fil.content.classification"),
+    /** Markdown with optional front matter. Inline images are written `![alt](media:<media code>)`; the API resolves them. */
+    body: dryv.field(sharedProperties.NonEmptyString),
+    /** The registered file when the text also exists as stored bytes. */
+    fileVersionId: belongsTo(() => FileVersions).maybe(),
+    /** True for explanatory text written for the interface and not yet sourced. */
+    isDevelopmentText: dryv.field(sharedProperties.Flag),
+  })
+  .extends(baseSchemas.CodedSubjectEntity)
+  .description(
+    "One authored text (markdown) about a subject record: an institution, a place, a person, the Constitution or general knowledge. Media is referenced, never embedded.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("contents")
+      .unique("slug", "languageId")
+      .index("subjectTable", "subjectId")
+      .index("categoryId")
+      .index("classificationId"),
+  });
+
+/*---------------- content_tags ----------------*/
+export const ContentTags = filesystem
+  .schema("ContentTags", {
+    contentId: belongsTo(() => Contents),
+    tagId: belongsTo(() => Tags),
+  })
+  .extends(baseSchemas.Entity)
+  .description("Tags a content text; a text may have several.")
+  .role("entity")
+  .facets({ storage: dryv.storage("content_tags").unique("contentId", "tagId").index("tagId") });

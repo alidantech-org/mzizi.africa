@@ -8,6 +8,7 @@ export interface Value {
   id: string;
   label: string;
   parentId?: string | null;
+  position?: number | null;
   schemeId: string;
   supersedesId?: string | null;
   updatedAt: string;
@@ -22,6 +23,7 @@ export const ValueFields: readonly FieldMeta[] = [
   { name: "id", label: "Id", kind: "string", required: true },
   { name: "label", label: "Label", kind: "string", required: true },
   { name: "parentId", label: "Parent Id", kind: "string", required: false },
+  { name: "position", label: "Position", kind: "number", required: false },
   { name: "schemeId", label: "Scheme Id", kind: "string", required: true },
   { name: "supersedesId", label: "Supersedes Id", kind: "string", required: false },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },

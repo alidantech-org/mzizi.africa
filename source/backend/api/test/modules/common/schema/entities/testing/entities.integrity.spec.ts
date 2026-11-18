@@ -15,6 +15,8 @@ import { RoleAssignmentsEntity } from "#/modules/auth/schema/entities/role-assig
 import { RolePermissionsEntity } from "#/modules/auth/schema/entities/role-permissions.entity.ts";
 import { RolesEntity } from "#/modules/auth/schema/entities/roles.entity.ts";
 import { ScopesEntity } from "#/modules/auth/schema/entities/scopes.entity.ts";
+import { ContentTagsEntity } from "#/modules/filesystem/schema/entities/content-tags.entity.ts";
+import { ContentsEntity } from "#/modules/filesystem/schema/entities/contents.entity.ts";
 import { FileExtensionsEntity } from "#/modules/filesystem/schema/entities/file-extensions.entity.ts";
 import { FileVersionsEntity } from "#/modules/filesystem/schema/entities/file-versions.entity.ts";
 import { FilesEntity } from "#/modules/filesystem/schema/entities/files.entity.ts";
@@ -83,6 +85,8 @@ const entities = [
   RolePermissionsEntity,
   RolesEntity,
   ScopesEntity,
+  ContentTagsEntity,
+  ContentsEntity,
   FileExtensionsEntity,
   FileVersionsEntity,
   FilesEntity,
@@ -174,6 +178,8 @@ beforeAll(async () => {
     "auth",
     "auth",
     "auth",
+    "filesystem",
+    "filesystem",
     "filesystem",
     "filesystem",
     "filesystem",
@@ -767,6 +773,118 @@ describe("entity schema matches the contract", () => {
     it("rejects a row without its required columns", async () => {
       await expect(
         dataSource.query('INSERT INTO "auth"."scopes" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("ContentTags", () => {
+    const metadata = () => dataSource.getMetadata(ContentTagsEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("content_tags");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["content_id", false, false],
+            ["created_at", false, false],
+            ["deleted_at", true, false],
+            ["id", false, true],
+            ["tag_id", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(["content_id->filesystem.contents", "tag_id->filesystem.tags"].sort());
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map(
+          (index) =>
+            `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
+        )
+        .sort();
+      expect(indexes).toEqual(expect.arrayContaining(["unique:content_id,tag_id", "tag_id"]));
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "filesystem"."content_tags" DEFAULT VALUES'),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Contents", () => {
+    const metadata = () => dataSource.getMetadata(ContentsEntity);
+
+    it("maps its contract table and columns", () => {
+      expect(metadata().tableName).toBe("contents");
+      expect(columns(metadata())).toEqual(
+        (
+          [
+            ["body", false, false],
+            ["category_id", false, false],
+            ["classification_id", true, false],
+            ["code", false, false],
+            ["created_at", false, false],
+            ["deleted_at", true, false],
+            ["file_version_id", true, false],
+            ["id", false, true],
+            ["is_development_text", false, false],
+            ["language_id", false, false],
+            ["slug", false, false],
+            ["subject_id", false, false],
+            ["subject_table", false, false],
+            ["summary", true, false],
+            ["title", false, false],
+            ["updated_at", false, false],
+            ["version", false, false],
+          ] as Array<[string, boolean, boolean]>
+        ).sort(([left], [right]) => left.localeCompare(right)),
+      );
+    });
+
+    it("references the contract's related tables", () => {
+      const keys = metadata()
+        .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
+        .sort();
+      expect(keys).toEqual(
+        [
+          "category_id->reference.values",
+          "classification_id->reference.values",
+          "file_version_id->filesystem.file_versions",
+          "language_id->reference.languages",
+        ].sort(),
+      );
+    });
+
+    it("declares the contract's indexes", () => {
+      const indexes = metadata()
+        .indices.map(
+          (index) =>
+            `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
+        )
+        .sort();
+      expect(indexes).toEqual(
+        expect.arrayContaining([
+          "unique:slug,language_id",
+          "subject_table,subject_id",
+          "category_id",
+          "classification_id",
+        ]),
+      );
+    });
+
+    it("rejects a row without its required columns", async () => {
+      await expect(
+        dataSource.query('INSERT INTO "filesystem"."contents" DEFAULT VALUES'),
       ).rejects.toThrow();
     });
   });
@@ -1748,12 +1866,14 @@ describe("entity schema matches the contract", () => {
       expect(columns(metadata())).toEqual(
         (
           [
+            ["arm_id", true, false],
             ["code", false, false],
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["dissolved_on", true, false],
             ["entity_id", false, false],
             ["established_on", true, false],
+            ["establishment_basis_id", true, false],
             ["from_to_precision", true, false],
             ["from_year", true, false],
             ["id", false, true],
@@ -1773,7 +1893,9 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(keys).toEqual(
         [
+          "arm_id->reference.values",
           "entity_id->official.entities",
+          "establishment_basis_id->reference.values",
           "institution_kind_id->reference.values",
           "source_citation_id->source.citations",
         ].sort(),
@@ -1787,7 +1909,9 @@ describe("entity schema matches the contract", () => {
             `${index.isUnique ? "unique:" : ""}${index.columns.map((item) => item.databaseName).join(",")}`,
         )
         .sort();
-      expect(indexes).toEqual(expect.arrayContaining(["entity_id", "source_citation_id"]));
+      expect(indexes).toEqual(
+        expect.arrayContaining(["entity_id", "arm_id", "source_citation_id"]),
+      );
     });
 
     it("rejects a row without its required columns", async () => {
@@ -2798,6 +2922,7 @@ describe("entity schema matches the contract", () => {
             ["id", false, true],
             ["label", false, false],
             ["parent_id", true, false],
+            ["position", true, false],
             ["scheme_id", false, false],
             ["supersedes_id", true, false],
             ["updated_at", false, false],

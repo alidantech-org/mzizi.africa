@@ -19,6 +19,8 @@ class SubjectTable(StrEnum):
     CIVIC_SERVICES = "civic.services"
     FACTS_FACT_PLACES = "facts.fact_places"
     FACTS_FACTS = "facts.facts"
+    FILESYSTEM_CONTENT_TAGS = "filesystem.content_tags"
+    FILESYSTEM_CONTENTS = "filesystem.contents"
     FILESYSTEM_FILE_EXTENSIONS = "filesystem.file_extensions"
     FILESYSTEM_FILE_VERSIONS = "filesystem.file_versions"
     FILESYSTEM_FILES = "filesystem.files"

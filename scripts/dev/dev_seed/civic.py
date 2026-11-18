@@ -90,7 +90,17 @@ def build_ngcdf(b: Builder, t: Tables, constituencies: list[Feature], geometries
                 "code": institution,
                 "entity_code": institution,
                 "institution_kind_code": "gov.institution.kind.commission",
+                "arm_code": "gov.arm.funds",
+                "establishment_basis_code": "gov.establishment.basis.act",
             }
+        )
+        t.add(
+            "ke/governance/relationships.csv",
+            {
+                "subject_institution_code": institution,
+                "object_institution_code": "ke.institution.ngcdf",
+                "relationship_kind_code": "gov.relationship.kind.part-of",
+            },
         )
         t.add(
             "ke/finance/funds.csv",
@@ -169,7 +179,8 @@ def build_ngcdf(b: Builder, t: Tables, constituencies: list[Feature], geometries
 
 
 def build_party_fund(b: Builder, t: Tables, fund: list[PartyAllocation], registry_to_party: dict[str, str]) -> None:
-    b.entity("ke.institution.orpp", "ofc.entity.kind.public-body", "Office of the Registrar of Political Parties")
+    if not any(e["code"] == "ke.institution.orpp" for e in b.entities):
+        b.entity("ke.institution.orpp", "ofc.entity.kind.public-body", "Office of the Registrar of Political Parties")
     t.add(
         "ke/finance/funds.csv",
         {

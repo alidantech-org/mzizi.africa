@@ -1,15 +1,31 @@
 import { Controller, Get, HttpCode, Param, ParseIntPipe, Query } from "@nestjs/common";
 import { BrowseInputDto } from "#/modules/insights/schema/dto/browse-input.dto.ts";
+import { CompareOptionsInputDto } from "#/modules/insights/schema/dto/compare-options-input.dto.ts";
+import { CompareOptionsDto } from "#/modules/insights/schema/dto/compare-options.dto.ts";
+import { ComparisonInputDto } from "#/modules/insights/schema/dto/comparison-input.dto.ts";
+import { ComparisonDto } from "#/modules/insights/schema/dto/comparison.dto.ts";
+import { ContentInputDto } from "#/modules/insights/schema/dto/content-input.dto.ts";
+import { ContentListInputDto } from "#/modules/insights/schema/dto/content-list-input.dto.ts";
+import { ContentListDto } from "#/modules/insights/schema/dto/content-list.dto.ts";
+import { ContentPageDto } from "#/modules/insights/schema/dto/content-page.dto.ts";
 import { ElectionDetailDto } from "#/modules/insights/schema/dto/election-detail.dto.ts";
 import { ElectionListDto } from "#/modules/insights/schema/dto/election-list.dto.ts";
 import { FactListDto } from "#/modules/insights/schema/dto/fact-list.dto.ts";
 import { FactsInputDto } from "#/modules/insights/schema/dto/facts-input.dto.ts";
+import { GovTreeInputDto } from "#/modules/insights/schema/dto/gov-tree-input.dto.ts";
+import { GovernanceTabsDto } from "#/modules/insights/schema/dto/governance-tabs.dto.ts";
+import { GovernanceTreeDto } from "#/modules/insights/schema/dto/governance-tree.dto.ts";
 import { IndicatorMapDto } from "#/modules/insights/schema/dto/indicator-map.dto.ts";
 import { IndicatorSeriesDto } from "#/modules/insights/schema/dto/indicator-series.dto.ts";
+import { InstitutionDetailDto } from "#/modules/insights/schema/dto/institution-detail.dto.ts";
+import { InstitutionListDto } from "#/modules/insights/schema/dto/institution-list.dto.ts";
+import { InstitutionsInputDto } from "#/modules/insights/schema/dto/institutions-input.dto.ts";
 import { LeaderProfileDto } from "#/modules/insights/schema/dto/leader-profile.dto.ts";
 import { LeaderTreeDto } from "#/modules/insights/schema/dto/leader-tree.dto.ts";
 import { LeaderboardMetricListDto } from "#/modules/insights/schema/dto/leaderboard-metric-list.dto.ts";
 import { LeaderboardDto } from "#/modules/insights/schema/dto/leaderboard.dto.ts";
+import { LegalBasisInputDto } from "#/modules/insights/schema/dto/legal-basis-input.dto.ts";
+import { LegalBasisDto } from "#/modules/insights/schema/dto/legal-basis.dto.ts";
 import { MotionDetailDto } from "#/modules/insights/schema/dto/motion-detail.dto.ts";
 import { MotionListDto } from "#/modules/insights/schema/dto/motion-list.dto.ts";
 import { MotionsInputDto } from "#/modules/insights/schema/dto/motions-input.dto.ts";
@@ -39,10 +55,46 @@ export class InsightsInsightsController {
     return this.service.browsePlaces(input);
   }
 
+  @Get("/v1/compare/options")
+  @HttpCode(200)
+  getCompareOptions(@Query() input: CompareOptionsInputDto): Promise<CompareOptionsDto> {
+    return this.service.getCompareOptions(input);
+  }
+
+  @Get("/v1/compare")
+  @HttpCode(200)
+  getComparison(@Query() input: ComparisonInputDto): Promise<ComparisonDto> {
+    return this.service.getComparison(input);
+  }
+
+  @Get("/v1/content")
+  @HttpCode(200)
+  getContent(@Query() input: ContentInputDto): Promise<ContentPageDto> {
+    return this.service.getContent(input);
+  }
+
+  @Get("/v1/governance/tabs")
+  @HttpCode(200)
+  getGovernanceTabs(): Promise<GovernanceTabsDto> {
+    return this.service.getGovernanceTabs();
+  }
+
+  @Get("/v1/governance/tree")
+  @HttpCode(200)
+  getGovernanceTree(@Query() input: GovTreeInputDto): Promise<GovernanceTreeDto> {
+    return this.service.getGovernanceTree(input);
+  }
+
   @Get("/v1/leaders/tree")
   @HttpCode(200)
   getLeaderTree(@Query() input: TreeInputDto): Promise<LeaderTreeDto> {
     return this.service.getLeaderTree(input);
+  }
+
+  @Get("/v1/legal-basis")
+  @HttpCode(200)
+  getLegalBasis(@Query() input: LegalBasisInputDto): Promise<LegalBasisDto> {
+    return this.service.getLegalBasis(input);
   }
 
   @Get("/v1/projects/near")
@@ -57,6 +109,12 @@ export class InsightsInsightsController {
     return this.service.globalSearch(input);
   }
 
+  @Get("/v1/content/list")
+  @HttpCode(200)
+  listContent(@Query() input: ContentListInputDto): Promise<ContentListDto> {
+    return this.service.listContent(input);
+  }
+
   @Get("/v1/elections")
   @HttpCode(200)
   listElections(): Promise<ElectionListDto> {
@@ -67,6 +125,12 @@ export class InsightsInsightsController {
   @HttpCode(200)
   listFacts(@Query() input: FactsInputDto): Promise<FactListDto> {
     return this.service.listFacts(input);
+  }
+
+  @Get("/v1/institutions")
+  @HttpCode(200)
+  listInstitutions(@Query() input: InstitutionsInputDto): Promise<InstitutionListDto> {
+    return this.service.listInstitutions(input);
   }
 
   @Get("/v1/leaderboards")
@@ -128,6 +192,12 @@ export class InsightsInsightsController {
     @Query("featureId") featureId: string,
   ): Promise<IndicatorSeriesDto> {
     return this.service.getIndicatorSeries({ indicatorCode, featureId });
+  }
+
+  @Get("/v1/institutions/:code")
+  @HttpCode(200)
+  getInstitution(@Param("code") code: string): Promise<InstitutionDetailDto> {
+    return this.service.getInstitution({ code });
   }
 
   @Get("/v1/leaders/:id")

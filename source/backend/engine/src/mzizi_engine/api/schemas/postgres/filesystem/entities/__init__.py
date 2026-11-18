@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from mzizi_engine.api.schemas.postgres.filesystem.entities.content_tags import ContentTagsRow
+from mzizi_engine.api.schemas.postgres.filesystem.entities.contents import ContentsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.file_extensions import FileExtensionsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.file_versions import FileVersionsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.files import FilesRow
@@ -9,13 +11,17 @@ from mzizi_engine.api.schemas.postgres.filesystem.entities.folders import Folder
 from mzizi_engine.api.schemas.postgres.filesystem.entities.media import MediaRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.taggings import TaggingsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.tags import TagsRow
+from mzizi_engine.api.schemas.postgres.reference.entities.language import LanguageRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
 
 __all__ = [
+    "ContentTagsRow",
+    "ContentsRow",
     "FileExtensionsRow",
     "FileVersionsRow",
     "FilesRow",
     "FoldersRow",
+    "LanguageRow",
     "MediaRow",
     "TaggingsRow",
     "TagsRow",

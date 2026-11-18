@@ -6,7 +6,7 @@ import {
   send,
 } from "#/lib/dryv/transport.ts";
 import { type LocalityProfile, LocalityProfileFields } from "#/lib/types/locality-profile.ts";
-import { type PlaceInput, PlaceInputFields } from "#/lib/types/place-input.ts";
+import { PlaceInputFields } from "#/lib/types/place-input.ts";
 
 /** Field metadata of the input fields whose value is a schema, by field name. A schema
  * input is listed whole under "input". */
@@ -20,8 +20,10 @@ export const getLocalityPage: PageNames | undefined = undefined;
 
 /** Values for each input port of Get Locality. */
 export type GetLocalityPorts = {
+  /** Query values by field name, for callers (such as the generated list pages) that build them generically. */
+  input?: Record<string, unknown>;
   featureId?: string;
-  input?: PlaceInput;
+  languageCode?: string;
 };
 
 /** Maps port values to the HTTP request parts of the operation.client convention. */
@@ -31,7 +33,8 @@ export function getLocalityRequest(ports: GetLocalityPorts = {}): ClientInput {
       featureId: String(ports.featureId),
     },
     query: {
-      ...(ports.input as Record<string, unknown> | undefined),
+      ...ports.input,
+      languageCode: ports.languageCode,
     },
   };
 }

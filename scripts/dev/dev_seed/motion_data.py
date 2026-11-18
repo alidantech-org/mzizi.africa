@@ -90,3 +90,30 @@ COUNTY: list[tuple[str, str, str, str, str, bool, float]] = [
         0.4,
     ),
 ]
+
+
+# Invented speech openings per kind; development data, never real Hansard.
+_OPENINGS = {
+    "speech": (
+        "Mr Speaker, I rise in support of the position taken on {t}. Our people in the constituency are waiting to see how this changes their lives.",
+        "Mr Speaker, on {t}, I wish to be clear: the figures must follow the people, and the people must see the benefit.",
+        "I thank the mover. On {t}, I have two concerns for this House, the timeline and the oversight of how the money is spent.",
+    ),
+    "question": (
+        "Could the mover tell the House, on {t}, how the cost was arrived at and which communities were consulted?",
+        "On {t}, what safeguards are in place so that funds reach the wards they are meant for?",
+    ),
+    "statement": (
+        "A statement on {t}: the committee has reviewed the submissions and notes the points raised by the public.",
+        "For the record on {t}, the members of my party will vote in line with the views collected in the constituencies.",
+    ),
+    "statement-judge": (
+        "On {t}, in my opinion the question turns on whether the levy is a tax within the meaning of the Constitution.",
+    ),
+}
+
+
+def speech_text(kind: str, title: str, pick: int) -> str:
+    """A short invented contribution, labelled as development data so nobody mistakes it for the record."""
+    options = _OPENINGS.get(kind, _OPENINGS["statement"])
+    return options[pick % len(options)].format(t=title) + " [Development data: invented text]"

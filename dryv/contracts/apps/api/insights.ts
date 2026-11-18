@@ -180,6 +180,64 @@ const documents = insights.schemas({
     levels: dryv.field(dryv.dynamic()).array(),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
+  InstitutionList: dryv.schema({
+    arms: dryv.field(dryv.dynamic()).array(),
+    total: dryv.field(p.NonNegativeInteger),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  InstitutionDetail: dryv.schema({
+    institution: dryv.field(dryv.dynamic()),
+    leaders: dryv.field(dryv.dynamic()).array(),
+    legalBasis: dryv.field(dryv.dynamic()).array(),
+    content: dryv.field(dryv.dynamic()).array(),
+    parents: dryv.field(dryv.dynamic()).array(),
+    children: dryv.field(dryv.dynamic()).array(),
+    metrics: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  GovernanceTabs: dryv.schema({
+    tabs: dryv.field(dryv.dynamic()).array(),
+    arms: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  GovernanceTree: dryv.schema({
+    tab: dryv.field(dryv.dynamic()),
+    place: dryv.field(shapes.PlaceCrumb).maybe(),
+    nodes: dryv.field(dryv.dynamic()).array(),
+    edges: dryv.field(dryv.dynamic()).array(),
+    rail: dryv.field(dryv.dynamic()).array(),
+    legend: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  ContentPage: dryv.schema({
+    content: dryv.field(dryv.dynamic()).maybe(),
+    related: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  ContentList: dryv.schema({
+    items: dryv.field(dryv.dynamic()).array(),
+    categories: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  LegalBasis: dryv.schema({
+    subject: dryv.field(dryv.dynamic()),
+    items: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  CompareOptions: dryv.schema({
+    place: dryv.field(dryv.dynamic()),
+    nearby: dryv.field(dryv.dynamic()).array(),
+    top: dryv.field(dryv.dynamic()).array(),
+    hierarchy: dryv.field(dryv.dynamic()).array(),
+    metrics: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  Comparison: dryv.schema({
+    a: dryv.field(dryv.dynamic()),
+    b: dryv.field(dryv.dynamic()),
+    rows: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
   FactList: dryv.schema({ facts: dryv.field(dryv.dynamic()).array(), gaps: dryv.field(p.NonEmptyString500).array() }),
   NearbyProjects: dryv.schema({
     radiusKm: dryv.field(p.Number),
@@ -222,6 +280,39 @@ const inputs = insights.schemas({
   CodeInput: dryv.schema({ code: dryv.field(props.Code) }),
   IdInput: dryv.schema({ id: dryv.field(p.Id) }),
   MotionsInput: dryv.schema({ institutionId: dryv.field(p.Id).optional(), limit: dryv.field(props.Limit).optional() }),
+  InstitutionsInput: dryv.schema({
+    armCode: dryv.field(props.Code).optional(),
+    kindCode: dryv.field(props.Code).optional(),
+    query: dryv.field(props.Text).optional(),
+  }),
+  GovTreeInput: dryv.schema({
+    tab: dryv.field(props.Code).optional(),
+    institution: dryv.field(props.Code).optional(),
+    featureId: dryv.field(p.Id).optional(),
+  }),
+  ContentInput: dryv.schema({
+    slug: dryv.field(p.NonEmptyString255).optional(),
+    subjectTable: dryv.field(p.NonEmptyString100).optional(),
+    subjectCode: dryv.field(props.Code).optional(),
+    languageCode: dryv.field(p.NonEmptyString100).optional(),
+  }),
+  ContentListInput: dryv.schema({
+    category: dryv.field(props.Code).optional(),
+    tag: dryv.field(props.Code).optional(),
+    query: dryv.field(props.Text).optional(),
+    languageCode: dryv.field(p.NonEmptyString100).optional(),
+    limit: dryv.field(props.Limit).optional(),
+  }),
+  LegalBasisInput: dryv.schema({
+    subjectTable: dryv.field(p.NonEmptyString100),
+    subjectCode: dryv.field(props.Code),
+  }),
+  CompareOptionsInput: dryv.schema({ featureId: dryv.field(p.Id), metric: dryv.field(props.Code).optional() }),
+  ComparisonInput: dryv.schema({
+    a: dryv.field(p.Id),
+    b: dryv.field(p.Id),
+    metrics: dryv.field(p.NonEmptyString1000).optional(),
+  }),
   TreeInput: dryv.schema({ featureId: dryv.field(p.Id).optional() }),
   FactsInput: dryv.schema({ featureId: dryv.field(p.Id).optional(), limit: dryv.field(props.Limit).optional() }),
   NearbyInput: dryv.schema({
@@ -472,5 +563,106 @@ export const insightOperations = reads.operations({
     .output(documents.LeaderTree)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/leaders/tree").input(input, dryv.queryObject()).output(output),
+    })),
+
+  ListInstitutions: dryv
+    .operation()
+    .role("list")
+    .description(
+      "Every public body grouped by arm of government and kind, with what created it and how many leaders it has. The groups and labels come from the reference schemes.",
+    )
+    .input(inputs.InstitutionsInput)
+    .output(documents.InstitutionList)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/institutions").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetInstitution: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "One body: what it is for, what created it (with the Constitution articles or Acts), who leads it, the bodies it belongs to and oversees, and explanatory texts.",
+    )
+    .input(inputs.CodeInput)
+    .output(documents.InstitutionDetail)
+    .facets(({ inputField, output }) => ({
+      http: dryv.http("GET", "/v1/institutions/{code}").input(inputField("code"), dryv.path()).output(output),
+    })),
+
+  GetGovernanceTabs: dryv
+    .operation()
+    .role("list")
+    .description(
+      "The ways to look at leaders (elected, nominated, appointed) and the bodies to switch to, all read from the reference schemes.",
+    )
+    .output(documents.GovernanceTabs)
+    .facets(({ output }) => ({ http: dryv.http("GET", "/v1/governance/tabs").output(output) })),
+
+  GetGovernanceTree: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "A tree of leaders for one tab or one body: nodes with their tier, how they got the seat, a performance bar and the reference codes behind them; edges from superior to deputy or body to member; and a side rail of the levels of government.",
+    )
+    .input(inputs.GovTreeInput)
+    .output(documents.GovernanceTree)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/governance/tree").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetContent: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "One explanatory text by its address or by the record it is about, with image references resolved to addresses.",
+    )
+    .input(inputs.ContentInput)
+    .output(documents.ContentPage)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/content").input(input, dryv.queryObject()).output(output),
+    })),
+
+  ListContent: dryv
+    .operation()
+    .role("list")
+    .description("Explanatory texts by category or tag, for the Learn section.")
+    .input(inputs.ContentListInput)
+    .output(documents.ContentList)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/content/list").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetLegalBasis: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "The Constitution articles and Acts that establish, authorise or govern one record (a body, an office, a place).",
+    )
+    .input(inputs.LegalBasisInput)
+    .output(documents.LegalBasis)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/legal-basis").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetCompareOptions: dryv
+    .operation()
+    .role("list")
+    .description(
+      "Places worth comparing a place with: the ten closest by geography, the ten top performers, and the ladder of the units above it, saying plainly which rungs do not exist.",
+    )
+    .input(inputs.CompareOptionsInput)
+    .output(documents.CompareOptions)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/compare/options").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetComparison: dryv
+    .operation()
+    .role("detail")
+    .description("Two places on the same figures, aligned, with the difference in percent.")
+    .input(inputs.ComparisonInput)
+    .output(documents.Comparison)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/compare").input(input, dryv.queryObject()).output(output),
     })),
 });

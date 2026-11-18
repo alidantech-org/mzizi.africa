@@ -66,6 +66,9 @@ const routes: Array<[method: string, path: string]> = [
     ),
   ],
   ["GET", "/v1/browse"],
+  ["GET", "/v1/compare/options"],
+  ["GET", "/v1/compare"],
+  ["GET", "/v1/content"],
   [
     "GET",
     "/v1/elections/{electionId}".replace(
@@ -73,6 +76,8 @@ const routes: Array<[method: string, path: string]> = [
       encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
     ),
   ],
+  ["GET", "/v1/governance/tabs"],
+  ["GET", "/v1/governance/tree"],
   [
     "GET",
     "/v1/statistics/indicators/{indicatorCode}/map".replace(
@@ -87,6 +92,7 @@ const routes: Array<[method: string, path: string]> = [
       encodeURIComponent(String("value")),
     ),
   ],
+  ["GET", "/v1/institutions/{code}".replace("{code}", encodeURIComponent(String("value")))],
   [
     "GET",
     "/v1/leaders/{id}".replace(
@@ -99,6 +105,7 @@ const routes: Array<[method: string, path: string]> = [
     "GET",
     "/v1/leaderboards/{metricCode}".replace("{metricCode}", encodeURIComponent(String("value"))),
   ],
+  ["GET", "/v1/legal-basis"],
   ["GET", "/v1/motions/{code}".replace("{code}", encodeURIComponent(String("value")))],
   ["GET", "/v1/projects/near"],
   ["GET", "/v1/parties/{code}".replace("{code}", encodeURIComponent(String("value")))],
@@ -125,8 +132,10 @@ const routes: Array<[method: string, path: string]> = [
   ],
   ["GET", "/v1/projects/{code}".replace("{code}", encodeURIComponent(String("value")))],
   ["GET", "/v1/search"],
+  ["GET", "/v1/content/list"],
   ["GET", "/v1/elections"],
   ["GET", "/v1/facts"],
+  ["GET", "/v1/institutions"],
   ["GET", "/v1/leaderboards"],
   ["GET", "/v1/motions"],
   ["GET", "/v1/parties"],

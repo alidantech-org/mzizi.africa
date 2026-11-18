@@ -5,6 +5,9 @@ import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/insights/kit.dart';
 import 'package:mzizi_app/presentation/widgets/async_page.dart';
+import 'package:mzizi_app/presentation/widgets/state_views.dart';
+import 'package:mzizi_app/presentation/widgets/charts.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 
 InsightsFeature get _api => InsightsFeature(MziziApi.connection);
 
@@ -42,6 +45,12 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<ApiResult<InsightsSearchResults>>? _future;
   String _kind = 'all';
 
+  @override
+  void dispose() {
+    _text.dispose();
+    super.dispose();
+  }
+
   void _run(String q) => setState(
     () => _future = q.trim().length < 2
         ? null
@@ -51,219 +60,145 @@ class _SearchScreenState extends State<SearchScreen> {
   );
 
   @override
-  Widget build(BuildContext context) => PageFrame(
-    children: [
-      Heading(
-        'Search everything',
-        kicker: 'Places · leaders · parties · projects',
-      ),
-      TextField(
-        controller: _text,
-        autofocus: false,
-        textInputAction: TextInputAction.search,
-        onChanged: _run,
-        decoration: const InputDecoration(
-          prefixIcon: MzIcon('search'),
-          hintText: 'Westlands, a leader, a party, a project…',
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(40)),
+  Widget build(BuildContext context) => SafeArea(
+    bottom: false,
+    child: PageFrame(
+      children: [
+        Heading(
+          'Search everything',
+          kicker: 'Places · leaders · parties · projects',
+        ),
+        TextField(
+          controller: _text,
+          autofocus: false,
+          textInputAction: TextInputAction.search,
+          onChanged: _run,
+          decoration: const InputDecoration(
+            prefixIcon: MzIcon('search'),
+            hintText: 'Westlands, a leader, a party, a project…',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(40)),
+            ),
           ),
         ),
-      ),
-      const SizedBox(height: 12),
-      if (_future == null)
-        const GlassCard(
-          child: Text(
-            'Type at least two letters. Results are labelled so you can tell a ward from a person from a project.',
-          ),
-        )
-      else
-        FutureBuilder<ApiResult<InsightsSearchResults>>(
-          future: _future,
-          builder: (context, snap) {
-            if (snap.connectionState != ConnectionState.done)
-              return const Padding(
-                padding: EdgeInsets.all(32),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            final data = snap.data?.dataOrNull;
-            if (data == null)
-              return Text(snap.data?.message ?? 'Search failed');
-            final counts = asMap(data.counts);
-            final shown = data.hits
-                .where((h) => _kind == 'all' || h.kind == _kind)
-                .toList();
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: ChoiceChip(
-                          label: Text('All · ${data.total}'),
-                          selected: _kind == 'all',
-                          onSelected: (_) => setState(() => _kind = 'all'),
-                        ),
-                      ),
-                      for (final e in counts.entries.where(
-                        (e) => (e.value as num) > 0,
-                      ))
+        const SizedBox(height: 12),
+        if (_future == null)
+          const GlassCard(
+            child: Text(
+              'Type at least two letters. Results are labelled so you can tell a ward from a person from a project.',
+            ),
+          )
+        else
+          FutureBuilder<ApiResult<InsightsSearchResults>>(
+            future: _future,
+            builder: (context, snap) {
+              if (snap.connectionState != ConnectionState.done) {
+                return const LoadingView(layout: LoadingLayout.compact);
+              }
+              final data = snap.data?.dataOrNull;
+              if (data == null) {
+                return ErrorView(
+                  message: snap.data?.message ?? 'Search failed',
+                  retryLabel: t(context, 'Try again'),
+                  onRetry: () => _run(_text.text),
+                );
+              }
+              final counts = asMap(data.counts);
+              final shown = data.hits
+                  .where((h) => _kind == 'all' || h.kind == _kind)
+                  .toList();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (shown.isEmpty)
+                    EmptyState(
+                      icon: 'search',
+                      title: t(context, 'No results match your search.'),
+                      body: t(context, 'Try another name or category.'),
+                    ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
                         Padding(
                           padding: const EdgeInsets.only(right: 6),
                           child: ChoiceChip(
-                            label: Text('${words(e.key)} · ${e.value}'),
-                            selected: _kind == e.key,
-                            onSelected: (_) => setState(() => _kind = e.key),
+                            label: Text('All · ${data.total}'),
+                            selected: _kind == 'all',
+                            onSelected: (_) => setState(() => _kind = 'all'),
                           ),
                         ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                if (shown.isEmpty) const Text('Nothing matches.'),
-                for (final hit in shown)
-                  GlassCard(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    onTap: () => context.go(hitPath(hit)),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: MziziTokens.clay.withValues(
-                            alpha: 0.15,
+                        for (final e in counts.entries.where(
+                          (e) => (e.value as num) > 0,
+                        ))
+                          Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: ChoiceChip(
+                              label: Text('${words(e.key)} · ${e.value}'),
+                              selected: _kind == e.key,
+                              onSelected: (_) => setState(() => _kind = e.key),
+                            ),
                           ),
-                          child: MzIcon(
-                            _icons[hit.kind] ?? 'info',
-                            color: MziziTokens.clay,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                hit.title,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              if (hit.subtitle != null)
-                                Text(
-                                  hit.subtitle!,
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                              if (hit.path.length > 1)
-                                Text(
-                                  hit.path.skip(1).join(' › '),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                            ],
-                          ),
-                        ),
-                        Pill(hit.kindLabel),
                       ],
                     ),
                   ),
-              ],
-            );
-          },
-        ),
-    ],
-  );
-}
-
-/// The hub: every section of the app as a tile.
-class ExploreScreen extends StatelessWidget {
-  const ExploreScreen({super.key});
-  static const _items =
-      <({String title, String body, String path, String icon})>[
-        (
-          title: 'Browse places',
-          body: 'County, constituency, ward, town, village',
-          path: '/browse',
-          icon: 'tree',
-        ),
-        (
-          title: 'Statistics',
-          body: 'Population, health, schools, water',
-          path: '/stats',
-          icon: 'chart',
-        ),
-        (
-          title: 'Elections',
-          body: 'Results, turnout, heat maps',
-          path: '/elections',
-          icon: 'vote',
-        ),
-        (
-          title: 'Parliament',
-          body: 'Bills and how members voted',
-          path: '/parliament',
-          icon: 'parliament',
-        ),
-        (
-          title: 'Money & projects',
-          body: 'Funds, spending, works',
-          path: '/civic',
-          icon: 'build',
-        ),
-        (
-          title: 'Rankings',
-          body: 'Places and leaders compared',
-          path: '/rankings',
-          icon: 'trophy',
-        ),
-        (
-          title: 'Tenders',
-          body: 'Open, awarded, complete',
-          path: '/tenders',
-          icon: 'document',
-        ),
-        (
-          title: 'Parties',
-          body: 'Votes, members, funding',
-          path: '/parties',
-          icon: 'flag',
-        ),
-        (
-          title: 'Sources',
-          body: 'Where every claim comes from',
-          path: '/source-browse',
-          icon: 'book',
-        ),
-      ];
-  @override
-  Widget build(BuildContext context) => PageFrame(
-    children: [
-      Heading('Explore', kicker: 'Everything about Kenya'),
-      TileGrid(
-        children: [
-          for (final i in _items)
-            GlassCard(
-              onTap: () => context.go(i.path),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MzIcon(i.icon, color: MziziTokens.clay, size: 30),
-                  const SizedBox(height: 10),
-                  Text(
-                    i.title,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.titleMedium?.copyWith(fontFamily: 'Georgia'),
-                  ),
-                  Text(i.body, style: Theme.of(context).textTheme.bodySmall),
+                  const SizedBox(height: 8),
+                  if (shown.isEmpty) const Text('Nothing matches.'),
+                  for (final hit in shown)
+                    GlassCard(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      onTap: () => context.push(hitPath(hit)),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: MziziTokens.clay.withValues(
+                              alpha: 0.15,
+                            ),
+                            child: MzIcon(
+                              _icons[hit.kind] ?? 'info',
+                              color: MziziTokens.clay,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  hit.title,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                if (hit.subtitle != null)
+                                  Text(
+                                    hit.subtitle!,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                  ),
+                                if (hit.path.length > 1)
+                                  Text(
+                                    hit.path.skip(1).join(' › '),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                              ],
+                            ),
+                          ),
+                          Pill(hit.kindLabel),
+                        ],
+                      ),
+                    ),
                 ],
-              ),
-            ),
-        ],
-      ),
-    ],
+              );
+            },
+          ),
+      ],
+    ),
   );
 }
 
@@ -290,19 +225,19 @@ class BrowseScreen extends StatelessWidget {
             children: [
               FilledButton(
                 onPressed: () =>
-                    context.go('/place-profile?featureId=$featureId'),
+                    context.push('/place-profile?featureId=$featureId'),
                 child: const Text('Who serves here'),
               ),
               OutlinedButton(
-                onPressed: () => context.go('/stats/$featureId'),
+                onPressed: () => context.push('/stats/$featureId'),
                 child: const Text('Statistics'),
               ),
               OutlinedButton(
-                onPressed: () => context.go('/place-elections/$featureId'),
+                onPressed: () => context.push('/place-elections/$featureId'),
                 child: const Text('Elections'),
               ),
               OutlinedButton(
-                onPressed: () => context.go('/civic/$featureId'),
+                onPressed: () => context.push('/civic/$featureId'),
                 child: const Text('Money'),
               ),
             ],
@@ -311,7 +246,7 @@ class BrowseScreen extends StatelessWidget {
         for (final c in d.children)
           GlassCard(
             margin: const EdgeInsets.only(bottom: 8),
-            onTap: () => context.go(
+            onTap: () => context.push(
               c.childCount > 0
                   ? '/browse/${c.featureId}'
                   : '/place-profile?featureId=${c.featureId}',
@@ -418,7 +353,8 @@ class StatsScreen extends StatelessWidget {
               child: SeriesChart(
                 values: [for (final p in series) asNum(p['value']) ?? 0],
                 labels: [
-                  for (final p in series) asText(p['period']).substring(0, 4),
+                  for (final p in series)
+                    asText(p['period']).padRight(4).substring(0, 4),
                 ],
               ),
             ),
@@ -490,13 +426,25 @@ class StatsScreen extends StatelessWidget {
                         ],
                         labels: [
                           for (final p in asMaps(i['series']))
-                            asText(p['period']).substring(0, 4),
+                            asText(p['period']).padRight(4).substring(0, 4),
                         ],
                       ),
                     ),
                     child: Row(
                       children: [
                         Expanded(child: Text(asText(i['name']))),
+                        if (asMaps(i['series']).length > 1) ...[
+                          Sparkline(
+                            values: [
+                              for (final point in asMaps(i['series']))
+                                if (asNum(point['value']) != null)
+                                  asNum(point['value'])!,
+                            ],
+                            width: 64,
+                            height: 28,
+                          ),
+                          const SizedBox(width: 10),
+                        ],
                         Text(
                           '${compact(asNum(asMap(i['latest'])['value']))} ${asText(i['unit'])}',
                           style: const TextStyle(fontWeight: FontWeight.w700),
@@ -561,14 +509,14 @@ class _NationalStats extends StatelessWidget {
                 ),
             ],
             height: 330,
-            onTap: (id) => context.go('/stats/$id'),
+            onTap: (id) => context.push('/stats/$id'),
           ),
           const SizedBox(height: 12),
           for (final u in units.take(47))
             GlassCard(
               margin: const EdgeInsets.only(bottom: 6),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              onTap: () => context.go('/stats/${u['featureId']}'),
+              onTap: () => context.push('/stats/${u['featureId']}'),
               child: Row(
                 children: [
                   SizedBox(width: 28, child: Text('${u['rank'] ?? ''}')),

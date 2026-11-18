@@ -15,14 +15,17 @@ import { useSaved } from "#/lib/site/saved.tsx";
 interface Section { readonly href: string; readonly word: Word; readonly icon: IconName }
 const MAIN: readonly Section[] = [
   { href: "/browse", word: "navPlaces", icon: "pin" },
+  { href: "/leaders", word: "navLeaders", icon: "tree" },
   { href: "/statistics", word: "navStats", icon: "chart" },
   { href: "/elections", word: "navElections", icon: "vote" },
   { href: "/parliament", word: "navParliament", icon: "parliament" },
   { href: "/leaderboards", word: "navBoards", icon: "trophy" },
 ];
 const MORE: readonly Section[] = [
+  { href: "/institutions", word: "navInstitutions", icon: "parliament" },
+  { href: "/constitution", word: "navConstitution", icon: "book" },
+  { href: "/compare", word: "navCompare", icon: "chart" },
   { href: "/civic", word: "navCivic", icon: "build" },
-  { href: "/leaders", word: "navLeaders", icon: "tree" },
   { href: "/tenders", word: "navTenders", icon: "document" },
   { href: "/parties", word: "navParties", icon: "flag" },
   { href: "/source-browse", word: "navSources", icon: "book" },
@@ -62,6 +65,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <div className="hidden w-64 2xl:block"><GlobalSearchBox compact /></div>
           <Link href="/search" className="btn btn-ghost hidden !h-10 !w-10 !justify-center !p-0 sm:inline-flex 2xl:hidden" aria-label="Search"><Icon name="search" /></Link>
+          <Link href="/profile" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0" aria-label="Profile and preferences" title="Profile and preferences"><Icon name="user" /></Link>
           <ThemeToggle />
           <div className="hidden sm:block"><LanguageSwitcher /></div>
           <Link href="/saved" className="btn btn-ghost relative !h-10 !w-10 !justify-center !p-0" aria-label={t("navSaved")}>

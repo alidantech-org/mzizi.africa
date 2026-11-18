@@ -34,6 +34,7 @@ export interface IValue extends B.IBase {
   code: string;
   label: string;
   parentId: string | null;
+  position: number | null;
   schemeId: string;
   supersedesId: string | null;
   readonly parent?: IValue;

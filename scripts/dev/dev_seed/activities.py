@@ -9,7 +9,7 @@ import csv
 import random
 
 from dev_seed.common import SEED, Row
-from dev_seed.motion_data import COUNTY, GOVERNMENT_PARTIES, NATIONAL
+from dev_seed.motion_data import COUNTY, GOVERNMENT_PARTIES, NATIONAL, speech_text
 from dev_seed.people import Builder
 from dev_seed.store import Tables
 
@@ -57,112 +57,7 @@ def build_activities(b: Builder, t: Tables) -> None:
                 "released_on": f"{year}-06-15",
             },
         )
-    # extra bodies: Cabinet and Supreme Court
-    cabinet_people: list[Row] = []
-    for code, name, kind in (
-        ("ke.institution.cabinet", "The Cabinet", "gov.institution.kind.ministry"),
-        ("ke.institution.supreme-court", "Supreme Court of Kenya", "gov.institution.kind.court"),
-    ):
-        b.entity(code, "ofc.entity.kind.public-body", name)
-        b.institutions.append({"code": code, "entity_code": code, "institution_kind_code": kind})
-    for body, count, label, kind, base in (
-        ("cabinet", 22, "secretary", "gov.office.kind.secretary", "ke.institution.cabinet"),
-        ("supreme-court", 7, "judge", "gov.office.kind.member", "ke.institution.supreme-court"),
-    ):
-        for n in range(1, count + 1):
-            office = f"ke.office.{body}.{label}-{n:02d}"
-            b.offices.append(
-                {
-                    "code": office,
-                    "institution_code": base,
-                    "office_kind_code": kind,
-                    "unit_feature_code": "",
-                    "from_year": "2022",
-                    "from_to_precision": "exact",
-                }
-            )
-            person = b.person(rng)
-            b.holders.append(
-                {
-                    "code": f"{office}.2022",
-                    "office_code": office,
-                    "individual_code": person,
-                    "appointment_kind_code": "gov.appointment.kind.appointed",
-                    "took_office_on": "2022-09-27",
-                    "from_year": "2022",
-                    "from_to_precision": "exact",
-                }
-            )
-            cabinet_people.append(b.holders[-1])
-    # the presidency and nominated members, so the leaders tree has every kind of office
-    b.entity("ke.institution.presidency", "ofc.entity.kind.public-body", "The Presidency")
-    b.institutions.append(
-        {
-            "code": "ke.institution.presidency",
-            "entity_code": "ke.institution.presidency",
-            "institution_kind_code": "gov.institution.kind.independent-office",
-        }
-    )
-    deputy = "ke.person.kithure-kindiki"
-    b.individuals.append({"code": deputy, "birth_date": ""})
-    b.names.append(
-        {
-            "individual_code": deputy,
-            "name_kind_code": "ofc.name.kind.official",
-            "language_code": "en",
-            "is_preferred": "true",
-            "name": "Kithure Kindiki",
-        }
-    )
-    for office, person, label in (
-        ("ke.office.president", "ke.person.william-ruto", "head"),
-        ("ke.office.deputy-president", deputy, "deputy"),
-    ):
-        b.offices.append(
-            {
-                "code": office,
-                "institution_code": "ke.institution.presidency",
-                "office_kind_code": f"gov.office.kind.{label}",
-                "unit_feature_code": "ke",
-                "from_year": "2022",
-                "from_to_precision": "exact",
-            }
-        )
-        b.holders.append(
-            {
-                "code": f"{office}.2022",
-                "office_code": office,
-                "individual_code": person,
-                "appointment_kind_code": "gov.appointment.kind.elected",
-                "took_office_on": "2022-09-13",
-                "from_year": "2022",
-                "from_to_precision": "exact",
-            }
-        )
-    for n in range(1, 13):
-        office = f"ke.office.mp.nominated-{n:02d}"
-        b.offices.append(
-            {
-                "code": office,
-                "institution_code": "ke.institution.national-assembly",
-                "office_kind_code": "gov.office.kind.member-of-parliament",
-                "unit_feature_code": "",
-                "from_year": "2022",
-                "from_to_precision": "exact",
-            }
-        )
-        person = b.person(rng)
-        b.holders.append(
-            {
-                "code": f"{office}.2022",
-                "office_code": office,
-                "individual_code": person,
-                "appointment_kind_code": "gov.appointment.kind.nominated",
-                "took_office_on": "2022-09-08",
-                "from_year": "2022",
-                "from_to_precision": "exact",
-            }
-        )
+    # the Cabinet, Supreme Court, Presidency and nominated members are built by dev_seed.governance
     cabinet = [h for h in b.holders if h["office_code"].startswith("ke.office.cabinet.")]
     judges = [h for h in b.holders if h["office_code"].startswith("ke.office.supreme-court.")]
 
@@ -254,6 +149,7 @@ def build_activities(b: Builder, t: Tables) -> None:
         )
         division(f"ke.motion.na.{slug_}", mps, prob)
         for member in rng.sample(mps, 12):
+            ckind = rng.choice(["speech", "speech", "question", "statement"])
             t.add(
                 "ke/activities/contributions.csv",
                 {
@@ -261,8 +157,8 @@ def build_activities(b: Builder, t: Tables) -> None:
                     "sitting_code": sit,
                     "holder_code": member["code"],
                     "motion_code": f"ke.motion.na.{slug_}",
-                    "contribution_kind_code": f"act.contribution.kind.{rng.choice(['speech', 'speech', 'question', 'statement'])}",
-                    "summary": f"Contribution on {title.lower()}.",
+                    "contribution_kind_code": f"act.contribution.kind.{ckind}",
+                    "summary": speech_text(ckind, title, rng.randint(0, 9)),
                     "word_count": str(rng.randint(120, 1500)),
                 },
             )
@@ -298,7 +194,7 @@ def build_activities(b: Builder, t: Tables) -> None:
                     "holder_code": member["code"],
                     "motion_code": f"ke.motion.nairobi.{slug_}",
                     "contribution_kind_code": "act.contribution.kind.speech",
-                    "summary": f"Contribution on {title.lower()}.",
+                    "summary": speech_text("speech", title, rng.randint(0, 9)),
                     "word_count": str(rng.randint(80, 900)),
                 },
             )
@@ -319,6 +215,19 @@ def build_activities(b: Builder, t: Tables) -> None:
             cabinet[index]["code"],
         )
         division(f"ke.motion.cabinet.{index + 1}", cabinet, 0.95, whole=True)
+        for member in cabinet[:6]:
+            t.add(
+                "ke/activities/contributions.csv",
+                {
+                    "code": f"ke.contribution.cabinet.{index + 1}.{member['code'].rsplit('.', 2)[-2]}",
+                    "sitting_code": sit,
+                    "holder_code": member["code"],
+                    "motion_code": f"ke.motion.cabinet.{index + 1}",
+                    "contribution_kind_code": "act.contribution.kind.statement",
+                    "summary": speech_text("statement", title, rng.randint(0, 9)),
+                    "word_count": str(rng.randint(60, 400)),
+                },
+            )
     sit = "ke.sitting.supreme-court.2025-01"
     sitting(sit, "ke.institution.supreme-court", "bench", "Full bench: advisory and petition judgments", "2025-06-24")
     motion(
@@ -338,6 +247,19 @@ def build_activities(b: Builder, t: Tables) -> None:
                 "motion_code": "ke.motion.supreme-court.1",
                 "holder_code": judge["code"],
                 "position_code": "act.vote.position.yes" if number < 5 else "act.vote.position.no",
+            },
+        )
+    for judge in judges[:5]:
+        t.add(
+            "ke/activities/contributions.csv",
+            {
+                "code": f"ke.contribution.supreme-court.1.{judge['code'].rsplit('.', 2)[-2]}",
+                "sitting_code": sit,
+                "holder_code": judge["code"],
+                "motion_code": "ke.motion.supreme-court.1",
+                "contribution_kind_code": "act.contribution.kind.statement",
+                "summary": speech_text("statement-judge", "the constitutionality of a county levy", rng.randint(0, 9)),
+                "word_count": str(rng.randint(400, 2500)),
             },
         )
     _outcomes_follow_votes(t)

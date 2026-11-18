@@ -1,11 +1,10 @@
-import 'package:geolocator/geolocator.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_app/presentation/brand/mz_logo.dart';
-import 'package:mzizi_app/presentation/insights/kit.dart';
+import 'package:mzizi_app/presentation/home/locate.dart';
+import 'package:mzizi_app/presentation/home/place_picker.dart';
 import 'package:mzizi_app/presentation/user/user_store.dart';
 
 /// First launch: a welcome, what the app does, then "where are you?" (device location or a search). Choosing a place
@@ -18,11 +17,8 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pages = PageController();
-  final _query = TextEditingController();
   int _page = 0;
   String _status = '';
-  bool _busy = false;
-  List<LocalityLocalityUnit> _matches = const [];
 
   static const _slides = <({String icon, String title, String body})>[
     (
@@ -48,7 +44,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void dispose() {
     _pages.dispose();
-    _query.dispose();
     super.dispose();
   }
 
@@ -56,65 +51,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await UserStore.instance.setPlace(place.id, place.name, place.kind);
     await UserStore.instance.finishOnboarding();
     if (mounted) context.go('/');
-  }
-
-  Future<void> _locate() async {
-    setState(() {
-      _busy = true;
-      _status = 'Finding where you are…';
-    });
-    try {
-      var permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        throw StateError('denied');
-      }
-      final p = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.low,
-          timeLimit: Duration(seconds: 12),
-        ),
-      );
-      final result = await LocalityFeature(MziziApi.connection).resolveLocality(
-        input: LocalityPositionInput(
-          latitude: p.latitude,
-          longitude: p.longitude,
-        ),
-      );
-      final profile = result.dataOrNull;
-      if (profile == null) throw StateError('none');
-      await _choose(
-        LocalityUnitLite(
-          profile.place.featureId,
-          profile.place.name,
-          profile.place.kindCode,
-        ),
-      );
-    } catch (_) {
-      if (mounted) {
-        setState(() {
-          _busy = false;
-          _status =
-              'We could not read your location. You can allow it in settings, or search for your place below.';
-        });
-      }
-    }
-  }
-
-  Future<void> _search(String text) async {
-    if (text.trim().length < 2) {
-      setState(() => _matches = const []);
-      return;
-    }
-    final result = await LocalityFeature(MziziApi.connection).searchLocalities(
-      input: LocalitySearchInput(query: text.trim(), languageCode: 'en'),
-    );
-    if (mounted) {
-      setState(() => _matches = result.dataOrNull?.places ?? const []);
-    }
   }
 
   @override
@@ -227,62 +163,52 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _whereAreYou(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Tx('Where are you?', style: text.headlineMedium),
-        const SizedBox(height: 8),
-        Tx(
-          'We use your place to show the numbers and leaders that matter to you. Your location stays on this phone.',
-          style: text.bodyMedium,
-        ),
-        const SizedBox(height: 20),
-        FilledButton.icon(
-          onPressed: _busy ? null : _locate,
-          icon: MzIcon('locate', color: Colors.white),
-          label: Tx(t(context, 'Use my location')),
-        ),
-        if (_status.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Tx(_status, style: text.bodySmall),
-          ),
-        const SizedBox(height: 20),
-        Tx('Or search for a county, town or ward', style: text.labelLarge),
-        const SizedBox(height: 8),
-        TextField(
-          controller: _query,
-          onChanged: _search,
-          decoration: InputDecoration(
-            hintText: t(context, 'For example Kisumu or Kibera'),
-            prefixIcon: MzIcon('search'),
-            filled: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(32),
-            ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Tx('Where are you?', style: text.headlineMedium),
+              const SizedBox(height: 6),
+              Tx(
+                'We use your place to show the numbers and leaders that matter to you. Your location stays on this phone.',
+                style: text.bodyMedium,
+              ),
+              if (_status.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Tx(_status, style: text.bodySmall),
+                ),
+            ],
           ),
         ),
-        const SizedBox(height: 8),
-        for (final m in _matches.take(8))
-          GlassCard(
-            margin: const EdgeInsets.only(bottom: 6),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            onTap: () => _choose(LocalityUnitLite(m.featureId, m.name, m.kindCode)),
-            child: Row(
-              children: [
-                MzIcon('pin', size: 20),
-                const SizedBox(width: 10),
-                Expanded(child: Tx(m.name)),
-                Tx(m.kindLabel, style: text.labelSmall),
-              ],
-            ),
+        Expanded(
+          child: PlacePicker(
+            onLocate: () async {
+              final here = await locateMe();
+              if (here != null) {
+                await _choose(LocalityUnitLite(here.id, here.name, here.kind));
+              } else if (mounted) {
+                setState(
+                  () => _status =
+                      'We could not read your location. You can allow it in settings, or search for your place below.',
+                );
+              }
+            },
+            onPicked: (p) => _choose(LocalityUnitLite(p.id, p.name, p.kind)),
           ),
-        TextButton(
-          onPressed: () async {
-            await UserStore.instance.finishOnboarding();
-            if (context.mounted) context.go('/');
-          },
-          child: Tx(t(context, 'Not now, show me Kenya')),
+        ),
+        Center(
+          child: TextButton(
+            onPressed: () async {
+              await UserStore.instance.finishOnboarding();
+              if (context.mounted) context.go('/');
+            },
+            child: Tx('Not now, show me Kenya'),
+          ),
         ),
       ],
     );

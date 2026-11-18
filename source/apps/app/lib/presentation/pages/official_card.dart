@@ -85,7 +85,7 @@ class OfficialCard extends StatelessWidget {
                             padding: EdgeInsets.zero,
                             minimumSize: const Size(0, 36),
                           ),
-                          onPressed: () => context.go(
+                          onPressed: () => context.push(
                             '${AppRoutes.evidenceView}?citationId=${evidence.citationId}',
                           ),
                           child: Text('${tr(language, 'seeEvidence')} ›'),

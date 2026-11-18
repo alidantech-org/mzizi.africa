@@ -38,7 +38,8 @@ class Standing {
       mine == null || average == 0 ? null : (mine! - average) / average * 100;
   double? get vsTop =>
       mine == null || top == 0 ? null : (mine! - top) / top * 100;
-  bool get better => metric.higherIsBetter ? (vsAverage ?? 0) >= 0 : (vsAverage ?? 0) <= 0;
+  bool get better =>
+      metric.higherIsBetter ? (vsAverage ?? 0) >= 0 : (vsAverage ?? 0) <= 0;
 
   static Standing from(InsightsLeaderboard board, String? featureId) {
     final rows = board.rows;
@@ -70,7 +71,12 @@ String percentWords(BuildContext context, double? pct, String versus) {
 
 /// A card that says where "yours" stands, in plain words, with a bar against the best.
 class StandingCard extends StatelessWidget {
-  const StandingCard({super.key, required this.standing, this.onTap, this.place});
+  const StandingCard({
+    super.key,
+    required this.standing,
+    this.onTap,
+    this.place,
+  });
   final Standing standing;
   final VoidCallback? onTap;
   final String? place;
@@ -88,48 +94,63 @@ class StandingCard extends StatelessWidget {
     final share = s.top == 0 || s.mine == null
         ? 0.0
         : (s.mine! / s.top).clamp(0.0, 1.0);
-    return GlassCard(
-      margin: const EdgeInsets.only(bottom: 10),
+    return InkWell(
       onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(s.metric.title, style: text.titleSmall),
-          const SizedBox(height: 6),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                s.mine == null ? '—' : compact(s.mine),
-                style: text.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.6),
+            ),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(s.metric.title, style: text.titleSmall),
+            const SizedBox(height: 6),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  s.mine == null ? '—' : compact(s.mine),
+                  style: text.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(unit, style: text.bodySmall),
+                const Spacer(),
+                if (s.rank != null)
+                  Pill(tf(context, '#{} of {}', [s.rank, s.of])),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: share,
+                minHeight: 8,
+                color: tone,
+                backgroundColor: tone.withValues(alpha: 0.15),
               ),
-              const SizedBox(width: 6),
-              Text(unit, style: text.bodySmall),
-              const Spacer(),
-              if (s.rank != null) Pill(tf(context, '#{} of {}', [s.rank, s.of])),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: share,
-              minHeight: 8,
-              color: tone,
-              backgroundColor: tone.withValues(alpha: 0.15),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            percentWords(context, s.vsAverage, t(context, 'the average')),
-            style: text.bodyMedium?.copyWith(color: tone, fontWeight: FontWeight.w600),
-          ),
-          if (s.vsTop != null && s.rank != 1)
+            const SizedBox(height: 8),
             Text(
-              '${percentWords(context, s.vsTop, tf(context, 'the top, {}', [s.topName]))} (${compact(s.top)} $unit)',
-              style: text.bodySmall,
+              percentWords(context, s.vsAverage, t(context, 'the average')),
+              style: text.bodyMedium?.copyWith(
+                color: tone,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-        ],
+            if (s.vsTop != null && s.rank != 1)
+              Text(
+                '${percentWords(context, s.vsTop, tf(context, 'the top, {}', [s.topName]))} (${compact(s.top)} $unit)',
+                style: text.bodySmall,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -143,7 +164,9 @@ class StandingLoader extends StatelessWidget {
     required this.kind,
     required this.featureId,
     this.onTap,
+    this.onLoaded,
   });
+  final void Function(Standing standing)? onLoaded;
   final String metric;
   final String kind;
   final String? featureId;
@@ -155,7 +178,14 @@ class StandingLoader extends StatelessWidget {
     load: (_) => InsightsFeature(
       MziziApi.connection,
     ).getLeaderboard(metricCode: metric, kindCode: kind, limit: 500),
-    builder: (context, board) =>
-        StandingCard(standing: Standing.from(board, featureId), onTap: onTap),
+    builder: (context, board) {
+      final standing = Standing.from(board, featureId);
+      if (onLoaded != null) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => onLoaded!(standing),
+        );
+      }
+      return StandingCard(standing: standing, onTap: onTap);
+    },
   );
 }

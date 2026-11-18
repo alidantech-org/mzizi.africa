@@ -1,9 +1,15 @@
+import 'package:mzizi_app/presentation/governance/parse/documents.dart';
+import 'package:mzizi_app/presentation/governance/speech_list.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
+import 'package:mzizi_app/presentation/governance/content_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/insights/kit.dart';
+import 'package:mzizi_app/presentation/widgets/media_gallery.dart';
+import 'package:mzizi_app/presentation/widgets/charts.dart';
 import 'package:mzizi_app/presentation/widgets/async_page.dart';
 
 InsightsFeature get _api => InsightsFeature(MziziApi.connection);
@@ -24,7 +30,7 @@ class ElectionsScreen extends StatelessWidget {
         for (final e in asMaps(d.elections))
           GlassCard(
             margin: const EdgeInsets.only(bottom: 12),
-            onTap: () => context.go('/election/${e['electionId']}'),
+            onTap: () => context.push('/election/${e['electionId']}'),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -84,6 +90,14 @@ class _ElectionScreenState extends State<ElectionScreen> {
           '${compact(asNum(u['registered']))} registered · turnout ${pct(asNum(u['turnout']))}',
         ),
         const SizedBox(height: 12),
+        DonutChart(
+          centre: pct(asNum(u['turnout'])),
+          slices: [
+            for (final c in asMaps(u['candidates']).take(6))
+              (label: '${c['name']}', value: asNum(c['votes']) ?? 0),
+          ],
+        ),
+        const SizedBox(height: 12),
         BarList(
           items: [
             for (final c in asMaps(u['candidates']).take(6))
@@ -99,7 +113,7 @@ class _ElectionScreenState extends State<ElectionScreen> {
         FilledButton(
           onPressed: () {
             Navigator.of(context).pop();
-            context.go('/place-elections/${u['featureId']}');
+            context.push('/place-elections/${u['featureId']}');
           },
           child: const Text("This place's history"),
         ),
@@ -276,17 +290,32 @@ class PlaceElectionsScreen extends StatelessWidget {
               onTap: () => showInfoSheet(
                 context,
                 title: '${e['year']} · ${words(asText(c['kind']))}',
-                builder: (_) => BarList(
-                  items: [
-                    for (final x in asMaps(c['candidates']))
-                      (
-                        label:
-                            '${x['won'] == true ? '★ ' : ''}${x['name']} (${x['party'] ?? 'ind.'})',
-                        value: asNum(x['share']) ?? 0,
-                        note: compact(asNum(x['votes'])),
-                      ),
+                builder: (_) => Column(
+                  children: [
+                    DonutChart(
+                      centre: pct(asNum(c['turnout'])),
+                      slices: [
+                        for (final x in asMaps(c['candidates']).take(6))
+                          (
+                            label: '${x['name']}',
+                            value: asNum(x['votes']) ?? 0,
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    BarList(
+                      items: [
+                        for (final x in asMaps(c['candidates']))
+                          (
+                            label:
+                                '${x['won'] == true ? '★ ' : ''}${x['name']} (${x['party'] ?? 'ind.'})',
+                            value: asNum(x['share']) ?? 0,
+                            note: compact(asNum(x['votes'])),
+                          ),
+                      ],
+                      format: (v) => pct(v),
+                    ),
                   ],
-                  format: (v) => pct(v),
                 ),
               ),
               child: Column(
@@ -325,7 +354,7 @@ class ParliamentScreen extends StatelessWidget {
         for (final m in asMaps(d.motions))
           GlassCard(
             margin: const EdgeInsets.only(bottom: 10),
-            onTap: () => context.go('/motion/${m['code']}'),
+            onTap: () => context.push('/motion/${m['code']}'),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -434,7 +463,7 @@ class MotionScreen extends StatelessWidget {
                     FilledButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        context.go('/leader/${m['holderId']}');
+                        context.push('/leader/${m['holderId']}');
                       },
                       child: const Text('Open leader'),
                     ),
@@ -479,13 +508,18 @@ class MotionScreen extends StatelessWidget {
                       ),
                       onTap: () {
                         Navigator.of(context).pop();
-                        context.go('/leader/${m['holderId']}');
+                        context.push('/leader/${m['holderId']}');
                       },
                     ),
                 ],
               ),
             ),
           ),
+          SpeechList(
+            items: SpeechCollection.parse(motion['contributions']).items,
+          ),
+          if (d.legal != null)
+            LegalBasisList(items: [LegalItem.parse(d.legal)]),
           GapsNote(items: d.gaps, topic: asText(motion['title'])),
         ],
       );
@@ -509,7 +543,7 @@ class PartiesScreen extends StatelessWidget {
         for (final (i, p) in asMaps(d.parties).indexed)
           GlassCard(
             margin: const EdgeInsets.only(bottom: 8),
-            onTap: () => context.go('/party/${p['code']}'),
+            onTap: () => context.push('/party/${p['code']}'),
             child: Row(
               children: [
                 SizedBox(width: 30, child: Text('${i + 1}')),
@@ -597,7 +631,7 @@ class PartyScreen extends StatelessWidget {
               ),
               onTap: m['holderId'] == null
                   ? null
-                  : () => context.go('/leader/${m['holderId']}'),
+                  : () => context.push('/leader/${m['holderId']}'),
             ),
           GapsNote(items: d.gaps, topic: asText(party['name'])),
         ],
@@ -636,22 +670,26 @@ class LeaderScreen extends StatelessWidget {
           GlassCard(
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 38,
-                  backgroundColor: MziziTokens.clay,
-                  foregroundImage: photo == null
+                GestureDetector(
+                  onTap: photo == null
                       ? null
-                      : NetworkImage(asText(photo['url'])),
-                  child: Text(
-                    asText(l['name'])
-                        .split(' ')
-                        .map((w) => w.isEmpty ? '' : w[0])
-                        .take(2)
-                        .join(),
-                    style: const TextStyle(
-                      color: MziziTokens.cream,
-                      fontSize: 24,
-                    ),
+                      : () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            fullscreenDialog: true,
+                            builder: (_) => GalleryPage(
+                              items: [
+                                (
+                                  url: asText(photo['url']),
+                                  caption: asText(l['name']),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                  child: Portrait(
+                    name: asText(l['name']),
+                    url: photo == null ? null : asText(photo['url']),
+                    size: 76,
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -733,7 +771,7 @@ class LeaderScreen extends StatelessWidget {
             GlassCard(
               margin: const EdgeInsets.only(bottom: 6),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              onTap: () => context.go('/motion/${r['code']}'),
+              onTap: () => context.push('/motion/${r['code']}'),
               child: Row(
                 children: [
                   Expanded(
@@ -754,12 +792,24 @@ class LeaderScreen extends StatelessWidget {
             Heading('Development fund · ${asMap(fund['place'])['name']}'),
             GlassCard(
               onTap: () =>
-                  context.go('/civic/${asMap(fund['place'])['featureId']}'),
+                  context.push('/civic/${asMap(fund['place'])['featureId']}'),
               child: Text(
                 '${ksh(asNum(asMap(fund['latestYear'])['total']))} in ${asMap(fund['latestYear'])['year']} · ${asMap(fund['infrastructure'])['projects']} projects. Tap for everything funded here.',
               ),
             ),
           ],
+          SpeechList(items: SpeechCollection.parse(a['speeches']).items),
+          LegalBasisSection(
+            subjectTable: 'governance.holders',
+            subjectCode: id,
+          ),
+          TextButton.icon(
+            onPressed: () => context.push(
+              '/content?subjectTable=official.individuals&subjectCode=${Uri.encodeQueryComponent(asText(l['individualId']))}',
+            ),
+            icon: const Icon(Icons.menu_book_outlined),
+            label: const Tx('Biography & background'),
+          ),
           GapsNote(items: d.gaps, topic: asText(l['name'])),
         ],
       );

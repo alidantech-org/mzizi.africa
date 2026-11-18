@@ -26,6 +26,12 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
  * One government institution specialization of an Official entity. (entity)
  */
 export class InstitutionsDto {
+  @IsOptional()
+  @ValidateIf((object) => object.armId !== null)
+  @IsString()
+  @IsUUID()
+  armId?: Id | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -66,6 +72,12 @@ export class InstitutionsDto {
     },
   )
   establishedOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.establishmentBasisId !== null)
+  @IsString()
+  @IsUUID()
+  establishmentBasisId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fromToPrecision !== null)

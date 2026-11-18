@@ -16,6 +16,7 @@ final featuresRouterRoutes = <GoRoute>[
   GoRoute(
     path: FeaturesScreensRoutes.evidenceView,
     pageBuilder: (context, state) => fadeTransition(
+      key: state.pageKey,
       child: const AppNetworkRequiredGate(
         title: 'Evidence View',
         child: EvidenceViewScreen(),
@@ -25,6 +26,7 @@ final featuresRouterRoutes = <GoRoute>[
   GoRoute(
     path: FeaturesScreensRoutes.featureBrowse,
     pageBuilder: (context, state) => fadeTransition(
+      key: state.pageKey,
       child: const AppNetworkRequiredGate(
         title: 'Feature Browse',
         child: FeatureBrowseScreen(),
@@ -34,6 +36,7 @@ final featuresRouterRoutes = <GoRoute>[
   GoRoute(
     path: FeaturesScreensRoutes.featureDetail,
     pageBuilder: (context, state) => fadeTransition(
+      key: state.pageKey,
       child: const AppNetworkRequiredGate(
         title: 'Feature Detail',
         child: FeatureDetailScreen(),
@@ -43,6 +46,7 @@ final featuresRouterRoutes = <GoRoute>[
   GoRoute(
     path: FeaturesScreensRoutes.placeProfile,
     pageBuilder: (context, state) => fadeTransition(
+      key: state.pageKey,
       child: const AppNetworkRequiredGate(
         title: 'Place Profile',
         child: PlaceProfileScreen(),
@@ -52,6 +56,7 @@ final featuresRouterRoutes = <GoRoute>[
   GoRoute(
     path: FeaturesScreensRoutes.placeSearch,
     pageBuilder: (context, state) => fadeTransition(
+      key: state.pageKey,
       child: const AppNetworkRequiredGate(
         title: 'Place Search',
         child: PlaceSearchScreen(),
@@ -61,6 +66,7 @@ final featuresRouterRoutes = <GoRoute>[
   GoRoute(
     path: FeaturesScreensRoutes.sourceBrowse,
     pageBuilder: (context, state) => fadeTransition(
+      key: state.pageKey,
       child: const AppNetworkRequiredGate(
         title: 'Source Browse',
         child: SourceBrowseScreen(),

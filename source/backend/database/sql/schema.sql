@@ -442,6 +442,38 @@ CREATE TABLE "facts"."facts" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "filesystem"."content_tags" (
+    "content_id" uuid NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "tag_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "filesystem"."contents" (
+    "body" text NOT NULL,
+    "category_id" uuid NOT NULL,
+    "classification_id" uuid,
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "file_version_id" uuid,
+    "id" uuid NOT NULL,
+    "is_development_text" boolean NOT NULL,
+    "language_id" uuid NOT NULL,
+    "slug" varchar(255) NOT NULL,
+    "subject_id" uuid NOT NULL,
+    "subject_table" text NOT NULL,
+    "summary" varchar(4000),
+    "title" varchar(300) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "filesystem"."file_extensions" (
     "code" varchar(255) NOT NULL,
     "content_type" varchar(255) NOT NULL,
@@ -929,12 +961,14 @@ CREATE TABLE "governance"."holders" (
 );
 
 CREATE TABLE "governance"."institutions" (
+    "arm_id" uuid,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "dissolved_on" date,
     "entity_id" uuid NOT NULL,
     "established_on" date,
+    "establishment_basis_id" uuid,
     "from_to_precision" text,
     "from_year" integer,
     "id" uuid NOT NULL,
@@ -1875,6 +1909,7 @@ CREATE TABLE "reference"."values" (
     "id" uuid NOT NULL,
     "label" varchar(300) NOT NULL,
     "parent_id" uuid,
+    "position" integer,
     "scheme_id" uuid NOT NULL,
     "supersedes_id" uuid,
     "updated_at" timestamptz NOT NULL,
@@ -2766,6 +2801,40 @@ CREATE INDEX "ix_facts__topic_id" ON "facts"."facts" USING btree ("topic_id");
 
 CREATE INDEX "ix_facts__source_citation_id" ON "facts"."facts" USING btree ("source_citation_id");
 
+ALTER TABLE "filesystem"."content_tags"
+ADD CONSTRAINT "fk_content_tags_content_id" FOREIGN KEY ("content_id") REFERENCES "filesystem"."contents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."content_tags"
+ADD CONSTRAINT "fk_content_tags_tag_id" FOREIGN KEY ("tag_id") REFERENCES "filesystem"."tags" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_content_tags__content_id_tag_id" ON "filesystem"."content_tags" USING btree ("content_id", "tag_id");
+
+CREATE INDEX "ix_content_tags__tag_id" ON "filesystem"."content_tags" USING btree ("tag_id");
+
+ALTER TABLE "filesystem"."contents"
+ADD CONSTRAINT "fk_contents_category_id" FOREIGN KEY ("category_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."contents"
+ADD CONSTRAINT "fk_contents_classification_id" FOREIGN KEY ("classification_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."contents"
+ADD CONSTRAINT "fk_contents_file_version_id" FOREIGN KEY ("file_version_id") REFERENCES "filesystem"."file_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "filesystem"."contents"
+ADD CONSTRAINT "fk_contents_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_contents__code_partial_1" ON "filesystem"."contents" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_contents__slug_language_id" ON "filesystem"."contents" USING btree ("slug", "language_id");
+
+CREATE INDEX "ix_contents__subject_table_subject_id" ON "filesystem"."contents" USING btree ("subject_table", "subject_id");
+
+CREATE INDEX "ix_contents__category_id" ON "filesystem"."contents" USING btree ("category_id");
+
+CREATE INDEX "ix_contents__classification_id" ON "filesystem"."contents" USING btree ("classification_id");
+
 CREATE UNIQUE INDEX "uq_file_extensions__code_partial_1" ON "filesystem"."file_extensions" USING btree ("code")
 WHERE
     ("deleted_at" IS NULL);
@@ -3324,7 +3393,13 @@ CREATE INDEX "ix_holders__individual_id" ON "governance"."holders" USING btree (
 CREATE INDEX "ix_holders__source_citation_id" ON "governance"."holders" USING btree ("source_citation_id");
 
 ALTER TABLE "governance"."institutions"
+ADD CONSTRAINT "fk_institutions_arm_id" FOREIGN KEY ("arm_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."institutions"
 ADD CONSTRAINT "fk_institutions_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."institutions"
+ADD CONSTRAINT "fk_institutions_establishment_basis_id" FOREIGN KEY ("establishment_basis_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."institutions"
 ADD CONSTRAINT "fk_institutions_institution_kind_id" FOREIGN KEY ("institution_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3337,6 +3412,8 @@ WHERE
     ("deleted_at" IS NULL);
 
 CREATE INDEX "ix_institutions__entity_id" ON "governance"."institutions" USING btree ("entity_id");
+
+CREATE INDEX "ix_institutions__arm_id" ON "governance"."institutions" USING btree ("arm_id");
 
 CREATE INDEX "ix_institutions__source_citation_id" ON "governance"."institutions" USING btree ("source_citation_id");
 
@@ -4787,6 +4864,108 @@ CREATE TRIGGER "civic_scheme_procurements_status_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "civic"."scheme_procurements_status_id_code" ();
 
+CREATE FUNCTION "filesystem"."scheme_contents_category_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."category_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."category_id" AND s."code" = 'ref.sch.fil.content.category'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_contents_category_id"
+BEFORE INSERT OR UPDATE OF "category_id" ON "filesystem"."contents" FOR EACH ROW
+EXECUTE FUNCTION "filesystem"."scheme_contents_category_id" ();
+
+CREATE FUNCTION "filesystem"."scheme_contents_category_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "filesystem"."contents" t WHERE t."category_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "filesystem_scheme_contents_category_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "filesystem"."scheme_contents_category_id_membership" ();
+
+CREATE FUNCTION "filesystem"."scheme_contents_category_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.fil.content.category' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "filesystem"."contents" t
+    JOIN "reference"."values" v ON v."id" = t."category_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "filesystem_scheme_contents_category_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "filesystem"."scheme_contents_category_id_code" ();
+
+CREATE FUNCTION "filesystem"."scheme_contents_classification_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."classification_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."classification_id" AND s."code" = 'ref.sch.fil.content.classification'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_contents_classification_id"
+BEFORE INSERT OR UPDATE OF "classification_id" ON "filesystem"."contents" FOR EACH ROW
+EXECUTE FUNCTION "filesystem"."scheme_contents_classification_id" ();
+
+CREATE FUNCTION "filesystem"."scheme_contents_classification_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "filesystem"."contents" t WHERE t."classification_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "filesystem_scheme_contents_classification_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "filesystem"."scheme_contents_classification_id_membership" ();
+
+CREATE FUNCTION "filesystem"."scheme_contents_classification_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.fil.content.classification' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "filesystem"."contents" t
+    JOIN "reference"."values" v ON v."id" = t."classification_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "filesystem_scheme_contents_classification_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "filesystem"."scheme_contents_classification_id_code" ();
+
 CREATE FUNCTION "filesystem"."scheme_media_platform_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."platform_id" IS NOT NULL AND NOT EXISTS (
@@ -5359,6 +5538,108 @@ $scheme$;
 CREATE TRIGGER "geography_scheme_relationships_system_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "geography"."scheme_relationships_system_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_institutions_arm_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."arm_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."arm_id" AND s."code" = 'ref.sch.gov.arm'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_institutions_arm_id"
+BEFORE INSERT OR UPDATE OF "arm_id" ON "governance"."institutions" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_institutions_arm_id" ();
+
+CREATE FUNCTION "governance"."scheme_institutions_arm_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."institutions" t WHERE t."arm_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_institutions_arm_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_institutions_arm_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_institutions_arm_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.arm' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."institutions" t
+    JOIN "reference"."values" v ON v."id" = t."arm_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_institutions_arm_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_institutions_arm_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_institutions_establishment_basis_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."establishment_basis_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."establishment_basis_id" AND s."code" = 'ref.sch.gov.establishment.basis'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_institutions_establishment_basis_id"
+BEFORE INSERT OR UPDATE OF "establishment_basis_id" ON "governance"."institutions" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_institutions_establishment_basis_id" ();
+
+CREATE FUNCTION "governance"."scheme_institutions_establishment_basis_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."institutions" t WHERE t."establishment_basis_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_institutions_establishment_basis_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_institutions_establishment_basis_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_institutions_establishment_basis_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.establishment.basis' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."institutions" t
+    JOIN "reference"."values" v ON v."id" = t."establishment_basis_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_institutions_establishment_basis_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_institutions_establishment_basis_id_code" ();
 
 CREATE FUNCTION "reference"."scheme_countries_continent_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN

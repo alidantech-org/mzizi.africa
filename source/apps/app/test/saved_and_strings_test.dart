@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mzizi_app/presentation/explore/explore_catalog.dart';
 import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/saved/saved_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +27,14 @@ void main() {
         expect(tr('sw', key), isNot(tr('en', key)), reason: key);
       }
     });
+  });
+
+  test('every Explore card has Swahili for its title, text and tags', () {
+    for (final e in exploreCatalog) {
+      for (final text in [e.title, e.body, ...e.finds]) {
+        expect(hasSwahili(text), isTrue, reason: text);
+      }
+    }
   });
 
   group('SavedNotifier', () {

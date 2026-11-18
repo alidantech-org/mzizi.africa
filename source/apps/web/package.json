@@ -6,7 +6,8 @@
     "dev": "bun --bun next dev -p 3300",
     "build": "bun --bun next build",
     "start": "bun --bun next start -p 3300",
-    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json"
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
+    "test": "bun test tests"
   },
   "dependencies": {
     "@mzizi/api-client": "workspace:*",
@@ -14,7 +15,9 @@
     "leaflet": "^1.9.4",
     "next": "^16.4.6",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",
@@ -22,6 +25,7 @@
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "bun-types": "^1.4.4",
     "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2"
   }

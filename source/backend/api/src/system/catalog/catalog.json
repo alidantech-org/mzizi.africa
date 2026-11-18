@@ -123,6 +123,39 @@
       "summary": "The country\u0027s hierarchy one level at a time (county, constituency, ward, town, village), with the path to the current unit."
     },
     {
+      "name": "GetCompareOptions",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/compare/options",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "CompareOptions",
+      "summary": "Places worth comparing a place with: the ten closest by geography, the ten top performers, and the ladder of the units above it, saying plainly which rungs do not exist."
+    },
+    {
+      "name": "GetComparison",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/compare",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Comparison",
+      "summary": "Two places on the same figures, aligned, with the difference in percent."
+    },
+    {
+      "name": "GetContent",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/content",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "ContentPage",
+      "summary": "One explanatory text by its address or by the record it is about, with image references resolved to addresses."
+    },
+    {
       "name": "GetElection",
       "group": "insights",
       "feature": "insights",
@@ -132,6 +165,28 @@
       "inputs": ["electionId", "parentFeatureId", "contestKind"],
       "output": "ElectionDetail",
       "summary": "One election: its contests, and results by unit under a parent, for tables and heat maps."
+    },
+    {
+      "name": "GetGovernanceTabs",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/governance/tabs",
+      "role": "list",
+      "inputs": [],
+      "output": "GovernanceTabs",
+      "summary": "The ways to look at leaders (elected, nominated, appointed) and the bodies to switch to, all read from the reference schemes."
+    },
+    {
+      "name": "GetGovernanceTree",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/governance/tree",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "GovernanceTree",
+      "summary": "A tree of leaders for one tab or one body: nodes with their tier, how they got the seat, a performance bar and the reference codes behind them; edges from superior to deputy or body to member; and a side rail of the levels of government."
     },
     {
       "name": "GetIndicatorMap",
@@ -154,6 +209,17 @@
       "inputs": ["indicatorCode", "featureId"],
       "output": "IndicatorSeries",
       "summary": "One indicator over time for one place, optionally broken down."
+    },
+    {
+      "name": "GetInstitution",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/institutions/{code}",
+      "role": "detail",
+      "inputs": ["code"],
+      "output": "InstitutionDetail",
+      "summary": "One body: what it is for, what created it (with the Constitution articles or Acts), who leads it, the bodies it belongs to and oversees, and explanatory texts."
     },
     {
       "name": "GetLeaderProfile",
@@ -187,6 +253,17 @@
       "inputs": ["metricCode", "kindCode", "parentFeatureId", "limit"],
       "output": "Leaderboard",
       "summary": "Places (or leaders, parties) ranked by one metric, within a parent area and a level."
+    },
+    {
+      "name": "GetLegalBasis",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/legal-basis",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "LegalBasis",
+      "summary": "The Constitution articles and Acts that establish, authorise or govern one record (a body, an office, a place)."
     },
     {
       "name": "GetMotion",
@@ -277,6 +354,17 @@
       "summary": "One search over places, leaders, parties, projects, tenders, indicators, sources and laws; every hit says what it is."
     },
     {
+      "name": "ListContent",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/content/list",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "ContentList",
+      "summary": "Explanatory texts by category or tag, for the Learn section."
+    },
+    {
       "name": "ListElections",
       "group": "insights",
       "feature": "insights",
@@ -297,6 +385,17 @@
       "inputs": ["input"],
       "output": "FactList",
       "summary": "Did-you-know facts about the country, and those tagged to a place and the places above it."
+    },
+    {
+      "name": "ListInstitutions",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/institutions",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "InstitutionList",
+      "summary": "Every public body grouped by arm of government and kind, with what created it and how many leaders it has. The groups and labels come from the reference schemes."
     },
     {
       "name": "ListLeaderboardMetrics",
@@ -371,7 +470,7 @@
       "method": "GET",
       "path": "/v1/locality/{featureId}",
       "role": "detail",
-      "inputs": ["featureId", "input"],
+      "inputs": ["featureId", "languageCode"],
       "output": "LocalityProfile",
       "summary": "The same place document for a known feature, for visitors who pick a place by name instead of position."
     },

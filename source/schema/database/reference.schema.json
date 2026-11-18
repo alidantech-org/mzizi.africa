@@ -891,6 +891,7 @@
           "code"
           ,"label"
           ,"parent_code"
+          ,"position"
           ,"scheme_code"
           ,"supersedes_code"
         ],
@@ -943,6 +944,11 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "parent_code" }
+        }
+        ,"position": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"scheme_id": {
           "type": "string",

@@ -7,6 +7,10 @@ import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart' hide Path;
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_app/presentation/brand/mz_icon.dart';
+import 'package:mzizi_app/presentation/widgets/map_kit.dart';
+import 'package:flutter/services.dart';
+import 'package:mzizi_app/presentation/widgets/charts.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 
 /// Small helpers to read the open JSON sections of the insight documents without casts at every use.
@@ -27,8 +31,9 @@ String compact(num? value) {
   final v = value.toDouble();
   if (v.abs() >= 1e9) return '${(v / 1e9).toStringAsFixed(1)}B';
   if (v.abs() >= 1e6) return '${(v / 1e6).toStringAsFixed(1)}M';
-  if (v.abs() >= 1e3)
+  if (v.abs() >= 1e3) {
     return '${(v / 1e3).toStringAsFixed(v.abs() >= 1e4 ? 0 : 1)}K';
+  }
   return v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
 }
 
@@ -96,17 +101,16 @@ class GlassCard extends StatelessWidget {
 
 /// A page frame: scrolling content with the standard gutter and bottom space for the navigation bar.
 class PageFrame extends StatelessWidget {
+  /// [crumbs] is accepted for the screens that still pass it; on a phone the app bar and back button replace it.
   const PageFrame({super.key, required this.children, this.crumbs = const []});
   final List<Widget> children;
   final List<({String label, String? path})> crumbs;
 
   @override
   Widget build(BuildContext context) => ListView(
-    padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-    children: [
-      if (crumbs.isNotEmpty) Crumbs(items: crumbs),
-      ...children,
-    ],
+    padding: const EdgeInsets.fromLTRB(16, 4, 16, 96),
+    physics: const AlwaysScrollableScrollPhysics(),
+    children: children,
   );
 }
 
@@ -130,7 +134,7 @@ class Crumbs extends StatelessWidget {
           items[i].path != null && i < items.length - 1
               ? InkWell(
                   borderRadius: BorderRadius.circular(8),
-                  onTap: () => context.go(items[i].path!),
+                  onTap: () => context.push(items[i].path!),
                   child: Padding(
                     padding: const EdgeInsets.all(4),
                     child: Text(
@@ -170,7 +174,7 @@ class Heading extends StatelessWidget {
       children: [
         if (kicker != null)
           Text(
-            kicker!.toUpperCase(),
+            t(context, kicker!).toUpperCase(),
             style: const TextStyle(
               color: MziziTokens.clay,
               fontSize: 11,
@@ -179,7 +183,7 @@ class Heading extends StatelessWidget {
             ),
           ),
         Text(
-          title,
+          t(context, title),
           style: Theme.of(
             context,
           ).textTheme.headlineSmall?.copyWith(fontFamily: 'Georgia'),
@@ -196,49 +200,124 @@ class StatTile extends StatelessWidget {
     required this.value,
     this.hint,
     this.color,
+    this.info,
   });
   final String label;
   final String value;
   final String? hint;
   final Color? color;
+
+  /// What the figure means; shown from the small info icon. A missing figure always gets an explanation.
+  final String? info;
+
+  bool get _missing =>
+      value.trim().isEmpty || value.trim() == '—' || value.startsWith('— ');
+
   @override
-  Widget build(BuildContext context) => GlassCard(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label.toUpperCase(),
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            letterSpacing: 1,
-            fontWeight: FontWeight.w700,
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    final muted = text.bodySmall?.color?.withValues(alpha: 0.55);
+    final explain = _missing
+        ? '${info ?? ''}${info == null ? '' : '\n\n'}${t(context, 'No figure is recorded for this place yet. Smaller places such as towns and wards often have none; the next place up usually does.')}'
+        : info;
+    final scheme = Theme.of(context).colorScheme;
+    return Material(
+      color: scheme.primary.withValues(
+        alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.07,
+      ),
+      borderRadius: BorderRadius.circular(20),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: explain == null
+            ? null
+            : () => showInfoSheet(
+                context,
+                title: t(context, label),
+                initial: 0.4,
+                builder: (c) => Text(explain),
+              ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 96),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        t(context, label).toUpperCase(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: text.labelSmall?.copyWith(
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    if (explain != null)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: MzIcon('info', size: 16, color: muted),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    _missing ? '—' : value,
+                    style: text.headlineMedium?.copyWith(
+                      fontFamily: 'Georgia',
+                      color: _missing ? muted : color,
+                    ),
+                  ),
+                ),
+                Text(
+                  _missing ? t(context, 'Not recorded') : (hint ?? ''),
+                  style: text.bodySmall?.copyWith(
+                    color: _missing ? muted : null,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontFamily: 'Georgia',
-            color: color,
-          ),
-        ),
-        if (hint != null)
-          Text(hint!, style: Theme.of(context).textTheme.bodySmall),
-      ],
-    ),
-  );
+      ),
+    );
+  }
 }
 
-/// A two-column grid of tiles that stays two columns on phones.
+/// A two-column grid of tiles; every row is as tall as its tallest tile, so cards line up.
 class TileGrid extends StatelessWidget {
   const TileGrid({super.key, required this.children});
   final List<Widget> children;
   @override
-  Widget build(BuildContext context) => Wrap(
-    spacing: 10,
-    runSpacing: 10,
+  Widget build(BuildContext context) => Column(
     children: [
-      for (final c in children)
-        SizedBox(width: (MediaQuery.sizeOf(context).width - 42) / 2, child: c),
+      for (var i = 0; i < children.length; i += 2)
+        Padding(
+          padding: EdgeInsets.only(bottom: i + 2 < children.length ? 10 : 0),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: children[i]),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: i + 1 < children.length
+                      ? children[i + 1]
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        ),
     ],
   );
 }
@@ -259,7 +338,15 @@ class Pill extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: Color.lerp(
+            c,
+            Theme.of(context).colorScheme.onSurface,
+            Theme.of(context).brightness == Brightness.dark ? 0.55 : 0.1,
+          ),
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -296,7 +383,7 @@ class GapsNote extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () {
                 Navigator.of(context).pop();
-                context.go('/source-browse');
+                context.push('/source-browse');
               },
               icon: MzIcon('book'),
               label: const Text('Check the official sources yourself'),
@@ -447,87 +534,8 @@ class SeriesChart extends StatelessWidget {
   final List<String> labels;
   final double height;
   @override
-  Widget build(BuildContext context) => SizedBox(
-    height: height,
-    width: double.infinity,
-    child: CustomPaint(
-      painter: _SeriesPainter(
-        values,
-        labels,
-        Theme.of(context).textTheme.bodySmall?.color ?? MziziTokens.inkSoft,
-      ),
-    ),
-  );
-}
-
-class _SeriesPainter extends CustomPainter {
-  _SeriesPainter(this.values, this.labels, this.ink);
-  final List<double> values;
-  final List<String> labels;
-  final Color ink;
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (values.length < 2) return;
-    final lo = values.reduce(math.min), hi = values.reduce(math.max);
-    final span = (hi - lo) == 0 ? 1 : hi - lo;
-    const pad = 22.0;
-    Offset at(int i) => Offset(
-      8 + i * (size.width - 16) / (values.length - 1),
-      pad + (1 - (values[i] - lo) / span) * (size.height - pad * 2),
-    );
-    final path = Path()..moveTo(at(0).dx, at(0).dy);
-    for (var i = 1; i < values.length; i++) {
-      path.lineTo(at(i).dx, at(i).dy);
-    }
-    final fill = Path.from(path)
-      ..lineTo(at(values.length - 1).dx, size.height - pad)
-      ..lineTo(at(0).dx, size.height - pad)
-      ..close();
-    canvas.drawPath(
-      fill,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            MziziTokens.clay.withValues(alpha: 0.35),
-            MziziTokens.clay.withValues(alpha: 0),
-          ],
-        ).createShader(Offset.zero & size),
-    );
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = MziziTokens.clay
-        ..strokeWidth = 2.6
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round,
-    );
-    canvas.drawCircle(
-      at(values.length - 1),
-      5,
-      Paint()..color = MziziTokens.clay,
-    );
-    for (final i in {0, values.length ~/ 2, values.length - 1}) {
-      final tp = TextPainter(
-        text: TextSpan(
-          text: labels[i],
-          style: TextStyle(color: ink, fontSize: 10),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      tp.paint(
-        canvas,
-        Offset(
-          (at(i).dx - tp.width / 2).clamp(0, size.width - tp.width),
-          size.height - 14,
-        ),
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_SeriesPainter old) => old.values != values;
+  Widget build(BuildContext context) =>
+      AreaLineChart(values: values, labels: labels, height: height);
 }
 
 /// Every member as a dot on concentric arcs; colour is the position taken. Tap a dot for the member.
@@ -654,8 +662,12 @@ class RegionMap extends StatefulWidget {
     super.key,
     required this.regions,
     this.onTap,
-    this.height = 300,
+    this.height = 340,
+    this.legend,
+    this.title,
   });
+  final Widget? legend;
+  final String? title;
   final List<({String id, String name, Object? geometry, Color fill})> regions;
   final void Function(String id)? onTap;
   final double height;
@@ -685,43 +697,50 @@ class _RegionMapState extends State<RegionMap> {
       }
     }
     final bounds = points.isEmpty ? null : LatLngBounds.fromPoints(points);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
-      child: SizedBox(
-        height: widget.height,
-        child: FlutterMap(
-          mapController: _controller,
-          options: MapOptions(
-            initialCameraFit: bounds == null
-                ? null
-                : CameraFit.bounds(
-                    bounds: bounds,
-                    padding: const EdgeInsets.all(14),
-                  ),
-            initialCenter: const LatLng(0.5, 38),
-            initialZoom: 5.2,
-            interactionOptions: const InteractionOptions(
-              flags:
-                  InteractiveFlag.drag |
-                  InteractiveFlag.pinchZoom |
-                  InteractiveFlag.doubleTapZoom,
-            ),
-            onTap: (_, __) {
-              final result = _hit.value;
-              if (result != null && result.hitValues.isNotEmpty)
-                widget.onTap?.call(result.hitValues.first);
-            },
-          ),
-          children: [
-            Opacity(
-              opacity: 0.45,
-              child: TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'africa.mzizi.app',
+    Widget map(MapController controller) => FlutterMap(
+      mapController: controller,
+      options: MapOptions(
+        initialCameraFit: bounds == null
+            ? null
+            : CameraFit.bounds(
+                bounds: bounds,
+                padding: const EdgeInsets.all(14),
               ),
-            ),
-            PolygonLayer<String>(polygons: polygons, hitNotifier: _hit),
-          ],
+        initialCenter: const LatLng(0.5, 38),
+        initialZoom: 5.2,
+        interactionOptions: const InteractionOptions(
+          flags:
+              InteractiveFlag.drag |
+              InteractiveFlag.pinchZoom |
+              InteractiveFlag.doubleTapZoom |
+              InteractiveFlag.flingAnimation,
+        ),
+        onTap: (_, _) {
+          final result = _hit.value;
+          if (result != null && result.hitValues.isNotEmpty) {
+            HapticFeedback.selectionClick();
+            widget.onTap?.call(result.hitValues.first);
+          }
+        },
+      ),
+      children: [
+        const MapTiles(opacity: 0.55),
+        PolygonLayer<String>(polygons: polygons, hitNotifier: _hit),
+      ],
+    );
+    return MapFrame(
+      controller: _controller,
+      height: widget.height,
+      bounds: bounds,
+      map: map(_controller),
+      legend: widget.legend,
+      onExpand: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          fullscreenDialog: true,
+          builder: (_) => FullMapPage(
+            title: widget.title ?? '',
+            builder: (c, ctl) => map(ctl),
+          ),
         ),
       ),
     );

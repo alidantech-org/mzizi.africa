@@ -39,12 +39,28 @@ export class InstitutionsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find institutions by arm id, paged by the shared query. */
+  async findByArm(
+    query: BaseQueryDto<InstitutionsEntity>,
+    armId: NonNullable<InstitutionsEntity["armId"]>,
+  ): Promise<IFindAllResponse<InstitutionsEntity>> {
+    return await this.findByQuery(query, { armId, deletedAt: IsNull() });
+  }
+
   /** Find institutions by entity id, paged by the shared query. */
   async findByEntity(
     query: BaseQueryDto<InstitutionsEntity>,
     entityId: NonNullable<InstitutionsEntity["entityId"]>,
   ): Promise<IFindAllResponse<InstitutionsEntity>> {
     return await this.findByQuery(query, { entityId, deletedAt: IsNull() });
+  }
+
+  /** Find institutions by establishment basis id, paged by the shared query. */
+  async findByEstablishmentBasis(
+    query: BaseQueryDto<InstitutionsEntity>,
+    establishmentBasisId: NonNullable<InstitutionsEntity["establishmentBasisId"]>,
+  ): Promise<IFindAllResponse<InstitutionsEntity>> {
+    return await this.findByQuery(query, { establishmentBasisId, deletedAt: IsNull() });
   }
 
   /** Find institutions by from to precision, paged by the shared query. */

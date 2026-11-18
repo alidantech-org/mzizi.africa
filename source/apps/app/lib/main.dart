@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mzizi_api/api.dart';
@@ -22,16 +23,43 @@ class MziziAppApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final language = ref.watch(languageProvider);
+    uiLanguage = language;
     return ListenableBuilder(
       listenable: UserStore.instance,
       builder: (context, _) => MaterialApp.router(
         title: 'Mzizi',
-        theme: buildMziziLightTheme(),
-        darkTheme: buildMziziDarkTheme(),
-        locale: Locale(language),
+        debugShowCheckedModeBanner: false,
+
+        theme: _tuned(buildMziziLightTheme()),
+        darkTheme: _tuned(buildMziziDarkTheme()),
+        builder: (context, child) {
+          final dark = Theme.of(context).brightness == Brightness.dark;
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value:
+                (dark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+                    .copyWith(
+                      statusBarColor: Colors.transparent,
+                      systemNavigationBarColor: Colors.transparent,
+                    ),
+            child: KeyedSubtree(
+              key: ValueKey(language),
+              child: child ?? const SizedBox.shrink(),
+            ),
+          );
+        },
         themeMode: UserStore.instance.themeMode,
         routerConfig: appRouter,
       ),
     );
   }
 }
+
+/// The generated theme plus the few app-level choices: flat app bars that keep the page colour (no tinted bar).
+ThemeData _tuned(ThemeData base) => base.copyWith(
+  appBarTheme: AppBarTheme(
+    backgroundColor: base.colorScheme.surface,
+    surfaceTintColor: Colors.transparent,
+    scrolledUnderElevation: 0,
+    elevation: 0,
+  ),
+);

@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+import { LegalBasisSection, SubjectContentSection } from "#/components/site/governance/shared.tsx";
 import { AsyncView } from "#/components/site/async-view.tsx";
 import { BarList, Donut } from "#/components/site/ui/charts.tsx";
 import { Avatar, Gallery } from "#/components/site/ui/media.tsx";
@@ -96,6 +97,8 @@ export default function LeaderRoute() {
                 <Section kicker="Sources" title="Evidence"><ul className="space-y-2 text-sm">{d.evidence.map((e) => <li key={e.citationId}><Link className="underline" href={`/evidence-view?citationId=${e.citationId}`}>{e.sourceName}</Link> <span className="text-content-muted">· {e.locator}</span></li>)}</ul></Section>
               ) : null}
               <p className="mt-8 flex items-center gap-3 text-sm text-content-muted"><LikeLeader leader={{ id: l.holderId, name: l.name, office: l.office, unitId: l.unitId }} /> Follow this leader</p>
+              <SubjectContentSection table="official.individuals" code={l.individualId} title="About this person" />
+              <LegalBasisSection table="governance.holders" code={l.holderId} />
               <Gaps items={d.gaps} topic={l.name} />
             </>
           );

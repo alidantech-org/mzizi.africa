@@ -28,6 +28,9 @@ export function Embed({ item }: { item: MediaItem }) {
           <a className="btn btn-ghost shrink-0 !py-1.5 !text-white" href={item.url} target="_blank" rel="noreferrer">Open on {label} ↗</a>
         )}
       </div>
+      <div className="relative">
+        {item.embedUrl ? null : <span className="mt-1 inline-block rounded-full bg-black/55 px-2 py-0.5 text-[11px] text-white/90">Embed not available: this is a profile link, not a single post</span>}
+      </div>
     </div>
   );
 }

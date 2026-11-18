@@ -349,6 +349,12 @@
     },
     "facts.facts": {
       "short": "fa2"
+    },
+    "filesystem.content_tags": {
+      "short": "con"
+    },
+    "filesystem.contents": {
+      "short": "co2"
     }
   }
 }

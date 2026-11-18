@@ -22,7 +22,7 @@ export function PlacePicker({ base }: { base: string }) {
       </label>
       {hits.length > 0 ? (
         <ul className="glass-strong absolute left-0 right-0 z-20 mt-2 rounded-3xl p-2">{hits.map((h) => (
-          <li key={h.id}><Link href={`${base}?place=${h.id}`} className="flex items-center justify-between gap-3 rounded-2xl px-3 py-2 hover:bg-surface-sunken"><span className="font-semibold">{h.title}</span><span className="truncate text-xs text-content-muted">{h.path.slice(1, -1).join(" › ")} · {h.subtitle}</span></Link></li>
+          <li key={h.id}><Link onClick={() => { setHits([]); setText(""); }} href={`${base}?place=${h.id}`} className="flex items-center justify-between gap-3 rounded-2xl px-3 py-2 hover:bg-surface-sunken"><span className="font-semibold">{h.title}</span><span className="truncate text-xs text-content-muted">{h.path.slice(1, -1).join(" › ")} · {h.subtitle}</span></Link></li>
         ))}</ul>
       ) : null}
     </div>

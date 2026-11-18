@@ -174,11 +174,11 @@ export const localityOperations = reads.operations({
     .description("The same place document for a known feature, for visitors who pick a place by name instead of position.")
     .input(inputs.PlaceInput)
     .output(documents.LocalityProfile)
-    .facets(({ inputField, input, output }) => ({
+    .facets(({ inputField, output }) => ({
       http: dryv
         .http("GET", "/v1/locality/{featureId}")
         .input(inputField("featureId"), dryv.path())
-        .input(input, dryv.queryObject())
+        .input(inputField("languageCode"), dryv.query("languageCode"))
         .output(output),
     })),
 

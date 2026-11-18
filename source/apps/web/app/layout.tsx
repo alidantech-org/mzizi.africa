@@ -4,6 +4,7 @@ import { Fraunces, Inter } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "#/app/globals.css";
+import { MobileNav } from "#/components/site/mobile-nav.tsx";
 import { SiteFooter } from "#/components/site/site-footer.tsx";
 import { SiteHeader } from "#/components/site/site-header.tsx";
 import { THEME_INIT } from "#/components/site/theme-toggle.tsx";
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <SiteHeader />
             <main>{children}</main>
             <SiteFooter />
+            <MobileNav />
           </SavedProvider>
         </LanguageProvider>
       </body>

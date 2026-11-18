@@ -8,9 +8,8 @@
 
 import { api, type ActionInput, requestOptions } from "#sdk/helpers/index.ts";
 import type { LocalityLocalityProfile } from "#sdk/types/locality/locality-profile.ts";
-import type { LocalityPlaceInput } from "#sdk/types/locality/place-input.ts";
 
-export type GetLocalityInput = ActionInput<{ featureId: string }, LocalityPlaceInput, never>;
+export type GetLocalityInput = ActionInput<{ featureId: string }, { languageCode?: string }, never>;
 
 export async function getLocality(input: GetLocalityInput) {
   const options = requestOptions(input.options, input.query, false);

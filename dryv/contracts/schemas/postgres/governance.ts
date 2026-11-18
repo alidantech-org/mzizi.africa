@@ -24,6 +24,14 @@ export const Institutions = governance
   .schema("Institutions", {
     entityId: belongsTo(() => Entities),
     institutionKindId: belongsTo(() => Value),
+    /** Scheme gov.arm: the arm of government or kind of body this belongs to (executive, legislature, judiciary, ...). */
+    armId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.gov.arm"),
+    /** Scheme gov.establishment.basis: what created it (the Constitution, an Act, an executive order, a county law). */
+    establishmentBasisId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.gov.establishment.basis"),
     sourceCitationId: belongsTo(() => Citations).maybe(),
     establishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     dissolvedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
@@ -33,7 +41,7 @@ export const Institutions = governance
   .description("One government institution specialization of an Official entity.")
   .role("entity")
   .facets({
-    storage: dryv.storage("institutions").index("entityId").index("sourceCitationId"),
+    storage: dryv.storage("institutions").index("entityId").index("armId").index("sourceCitationId"),
   });
 
 /*---------------- governance.offices ----------------*/

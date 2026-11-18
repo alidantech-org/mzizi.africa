@@ -63,6 +63,8 @@ const _$SharedSubjectTableEnumMap = {
   SharedSubjectTable.civicServices: 'civic.services',
   SharedSubjectTable.factsFactPlaces: 'facts.fact_places',
   SharedSubjectTable.factsFacts: 'facts.facts',
+  SharedSubjectTable.filesystemContentTags: 'filesystem.content_tags',
+  SharedSubjectTable.filesystemContents: 'filesystem.contents',
   SharedSubjectTable.filesystemFileExtensions: 'filesystem.file_extensions',
   SharedSubjectTable.filesystemFileVersions: 'filesystem.file_versions',
   SharedSubjectTable.filesystemFiles: 'filesystem.files',

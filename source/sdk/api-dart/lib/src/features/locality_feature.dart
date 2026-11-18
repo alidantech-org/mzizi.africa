@@ -50,12 +50,12 @@ class LocalityFeature {
   /// The same place document for a known feature, for visitors who pick a place by name instead of position.
   ///
   /// GET /v1/locality/{featureId}
-  Future<ApiResult<LocalityLocalityProfile>> getLocality({required String featureId, LocalityPlaceInput? input, ApiGetRequestOptions? options}) {
+  Future<ApiResult<LocalityLocalityProfile>> getLocality({required String featureId, String? languageCode, ApiGetRequestOptions? options}) {
     return _connection.execute(
       GetRequest<LocalityLocalityProfile>(
         endpoint: _routes.getLocality(featureId: featureId),
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'locality.getLocality'),
-        query: input?.toJson(),
+        query: <String, Object?>{if (languageCode != null) 'languageCode': languageCode},
         fromJson: (json) => LocalityLocalityProfile.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );

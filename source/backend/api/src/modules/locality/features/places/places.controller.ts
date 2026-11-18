@@ -1,10 +1,8 @@
 import { Controller, Get, HttpCode, Param, Query } from "@nestjs/common";
-
 import { EvidenceDetailDto } from "#/modules/locality/schema/dto/evidence-detail.dto.ts";
 import { LanguageListDto } from "#/modules/locality/schema/dto/language-list.dto.ts";
 import { LocalityMatchesDto } from "#/modules/locality/schema/dto/locality-matches.dto.ts";
 import { LocalityProfileDto } from "#/modules/locality/schema/dto/locality-profile.dto.ts";
-import { PlaceInputDto } from "#/modules/locality/schema/dto/place-input.dto.ts";
 import { PositionInputDto } from "#/modules/locality/schema/dto/position-input.dto.ts";
 import { SearchInputDto } from "#/modules/locality/schema/dto/search-input.dto.ts";
 import { SourceCollectionDto } from "#/modules/locality/schema/dto/source-collection.dto.ts";
@@ -49,8 +47,8 @@ export class LocalityPlacesController {
   @HttpCode(200)
   getLocality(
     @Param("featureId") featureId: string,
-    @Query() input: PlaceInputDto,
+    @Query("languageCode") languageCode: string,
   ): Promise<LocalityProfileDto> {
-    return this.service.getLocality(input);
+    return this.service.getLocality({ featureId, languageCode });
   }
 }

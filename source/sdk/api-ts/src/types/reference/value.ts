@@ -6,6 +6,7 @@ export interface ReferenceValue {
   id: string;
   label: string;
   parentId?: string | null;
+  position?: number | null;
   schemeId: string;
   supersedesId?: string | null;
   updatedAt: string;
