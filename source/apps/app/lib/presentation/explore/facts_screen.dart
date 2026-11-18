@@ -10,17 +10,17 @@ import 'package:mzizi_app/presentation/widgets/async_page.dart';
 class FactsScreen extends StatelessWidget {
   const FactsScreen({super.key});
   @override
-  Widget build(BuildContext context) => AsyncPage<InsightsFactList>(
+  Widget build(BuildContext context) => AsyncPage<ExperienceFactList>(
     reloadKey: 'facts|${UserStore.instance.placeId}',
-    load: (_) => InsightsFeature(MziziApi.connection).listFacts(
-      input: InsightsFactsInput(
+    load: (_) => ExperienceFeature(MziziApi.connection).listFacts(
+      input: ExperienceFactsInput(
         featureId: UserStore.instance.placeId,
         limit: 100,
       ),
     ),
     builder: (context, d) => PageFrame(
       children: [
-        for (final f in asMaps(d.facts))
+        for (final f in d.facts)
           GlassCard(
             margin: const EdgeInsets.only(bottom: 10),
             child: Column(
@@ -30,24 +30,22 @@ class FactsScreen extends StatelessWidget {
                   children: [
                     MzIcon('sparkle', size: 18),
                     const SizedBox(width: 6),
-                    if (asText(f['topic']).isNotEmpty) Pill(asText(f['topic'])),
-                    if (f['tagged'] == true &&
-                        asText(f['place']).isNotEmpty) ...[
+                    if (f.tagged && (f.place ?? '').isNotEmpty) ...[
                       const SizedBox(width: 6),
-                      Pill(asText(f['place'])),
+                      Pill(f.place!),
                     ],
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  asText(f['statement']),
+                  f.statement,
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
-                if (asText(f['detail']).isNotEmpty)
+                if ((f.detail ?? '').isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      asText(f['detail']),
+                      f.detail!,
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ),

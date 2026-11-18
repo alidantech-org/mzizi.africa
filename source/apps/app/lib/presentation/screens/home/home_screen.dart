@@ -309,13 +309,13 @@ class _DidYouKnow extends StatelessWidget {
   const _DidYouKnow({super.key, this.featureId});
   final String? featureId;
   @override
-  Widget build(BuildContext context) => AsyncPage<InsightsFactList>(
+  Widget build(BuildContext context) => AsyncPage<ExperienceFactList>(
     reloadKey: 'fact|$featureId',
-    load: (_) => InsightsFeature(
+    load: (_) => ExperienceFeature(
       MziziApi.connection,
-    ).listFacts(input: InsightsFactsInput(featureId: featureId, limit: 1)),
+    ).listFacts(input: ExperienceFactsInput(featureId: featureId, limit: 1)),
     builder: (context, d) {
-      final facts = asMaps(d.facts);
+      final facts = d.facts;
       if (facts.isEmpty) return const SizedBox.shrink();
       final f = facts.first;
       return GlassCard(
@@ -333,12 +333,12 @@ class _DidYouKnow extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 6),
-            Tx(asText(f['statement'])),
-            if (asText(f['detail']).isNotEmpty)
+            Tx(f.statement),
+            if ((f.detail ?? '').isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Tx(
-                  asText(f['detail']),
+                  f.detail!,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
