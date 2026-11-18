@@ -1,10 +1,12 @@
 "use client";
 
 /** Small shared building blocks: breadcrumbs with hints, section headings, stat tiles, tabs and the "what is missing" notice. */
+import { Hint } from "#/components/site/ui/hint.tsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { useLanguage } from "#/lib/site/i18n.tsx";
 import type { Crumb } from "#/lib/site/insights.ts";
 
 export interface TrailItem {
@@ -16,6 +18,7 @@ export interface TrailItem {
 
 /** Where you are, with a hint for each level. The last item is the current page and is not a link. */
 export function Breadcrumbs({ items }: { items: readonly TrailItem[] }) {
+  const { tr } = useLanguage();
   return (
     <nav aria-label="Breadcrumb" className="crumbs mb-5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-content-muted">
       {items.map((item, index) => {
@@ -24,12 +27,12 @@ export function Breadcrumbs({ items }: { items: readonly TrailItem[] }) {
           <span key={`${item.label}-${index}`} className="flex items-center gap-1.5">
             {index > 0 ? <span aria-hidden className="opacity-50">›</span> : null}
             {item.href && !last ? (
-              <Link href={item.href} title={item.hint} className="rounded-md px-1.5 py-0.5 hover:bg-surface-sunken hover:text-content-primary">
-                {item.label}
+              <Link href={item.href} title={item.hint ? tr(item.hint) : undefined} className="rounded-md px-1.5 py-0.5 hover:bg-surface-sunken hover:text-content-primary">
+                {tr(item.label)}
               </Link>
             ) : (
-              <span aria-current={last ? "page" : undefined} title={item.hint} className={last ? "px-1.5 font-semibold text-content-primary" : "px-1.5"}>
-                {item.label}
+              <span aria-current={last ? "page" : undefined} title={item.hint ? tr(item.hint) : undefined} className={last ? "px-1.5 font-semibold text-content-primary" : "px-1.5"}>
+                {tr(item.label)}
               </span>
             )}
           </span>
@@ -65,12 +68,13 @@ export function PlaceTrail({ chain, section, after }: { chain: readonly Crumb[];
 }
 
 export function Section({ title, kicker, action, children, id }: { title: string; kicker?: string; action?: ReactNode; children: ReactNode; id?: string }) {
+  const { tr } = useLanguage();
   return (
     <section id={id} className="mt-12 scroll-mt-24">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div>
-          {kicker ? <p className="kicker">{kicker}</p> : null}
-          <h2 className="font-display text-2xl sm:text-3xl">{title}</h2>
+          {kicker ? <p className="kicker">{tr(kicker)}</p> : null}
+          <h2 className="font-display text-2xl sm:text-3xl">{tr(title)}</h2>
         </div>
         {action}
       </div>
@@ -79,12 +83,33 @@ export function Section({ title, kicker, action, children, id }: { title: string
   );
 }
 
+/** Plain-words meanings for terms that appear as statistic labels. The first entry whose word occurs in the label is shown. */
+const GLOSSARY: readonly (readonly [RegExp, string])[] = [
+  [/per km²|density/i, "How many people live in each square kilometre. Higher means more crowded."],
+  [/registered voters|voters/i, "People who signed up on the IEBC register and can vote."],
+  [/turnout/i, "Of everyone registered, the share who actually voted."],
+  [/open tenders/i, "Government buying notices still accepting bids from suppliers."],
+  [/tender/i, "A public notice asking suppliers to bid to build or supply something for government."],
+  [/per 100,000/i, "A fair way to compare places of different sizes: the count for every 100,000 residents."],
+  [/ngcdf|development fund/i, "The National Government Constituency Development Fund: money each constituency gets for local projects."],
+  [/completion/i, "Of the projects on record, the share that are finished."],
+  [/rank/i, "Position among similar places. #1 is the highest."],
+  [/population|people/i, "Counted by the national census, or estimated between censuses."],
+  [/area/i, "Land and inland water within the boundary, in square kilometres."],
+  [/division|vote/i, "A recorded vote in the house: yes, no, abstain or absent."],
+];
+
 export function Stat({ label, value, hint, tone }: { label: string; value: ReactNode; hint?: ReactNode; tone?: "good" | "bad" | "plain" }) {
+  const { tr } = useLanguage();
+  const meaning = GLOSSARY.find(([re]) => re.test(label))?.[1];
   return (
     <div className="glass card card-lift">
-      <p className="text-xs font-semibold uppercase tracking-wide text-content-muted">{label}</p>
+      <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-content-muted">
+        {tr(label)}
+        {meaning ? <Hint label={tr("What does this mean?")}>{tr(meaning)}</Hint> : null}
+      </p>
       <p className={`num mt-1 font-display text-3xl ${tone === "good" ? "text-raffia" : tone === "bad" ? "text-danger" : ""}`}>{value}</p>
-      {hint ? <p className="mt-1 text-xs text-content-muted">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-content-muted">{typeof hint === "string" ? tr(hint) : hint}</p> : null}
     </div>
   );
 }

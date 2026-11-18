@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/home/standing.dart';
@@ -50,21 +51,21 @@ class _MetricBoard extends StatelessWidget {
     listenable: UserStore.instance,
     builder: (context, _) {
       final me = UserStore.instance;
-      final kind = boardKind(me.placeKind);
+      final kind = me.boardKindCode;
       return AsyncPage<InsightsLeaderboard>(
         reloadKey: 'rank|${metric.code}|$kind',
         load: (_) => InsightsFeature(MziziApi.connection).getLeaderboard(metricCode: metric.code, kindCode: kind, limit: 500),
         builder: (context, board) {
-          final s = Standing.from(board, me.placeId);
+          final s = Standing.from(board, me.boardId ?? me.placeId);
           final top = board.rows.take(10).toList();
           final text = Theme.of(context).textTheme;
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Text(metric.describe, style: text.bodySmall),
+              Tx(metric.describe, style: text.bodySmall),
               const SizedBox(height: 10),
               if (me.placeId != null && s.mine != null) StandingCard(standing: s),
-              Text('Top ${top.length}', style: text.titleMedium),
+              Tx(tf(context, 'Top {}', [top.length]), style: text.titleMedium),
               const SizedBox(height: 6),
               for (final r in top)
                 GlassCard(
@@ -73,9 +74,9 @@ class _MetricBoard extends StatelessWidget {
                   onTap: r.featureId == null ? null : () => context.push('/civic/${r.featureId}'),
                   child: Row(
                     children: [
-                      SizedBox(width: 28, child: Text('${r.rank}', style: const TextStyle(fontWeight: FontWeight.w700))),
-                      Expanded(child: Text(r.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: r.featureId == me.placeId ? FontWeight.w800 : null))),
-                      Text('${compact(r.value)} ${metric.unit ?? ''}', style: const TextStyle(fontWeight: FontWeight.w700)),
+                      SizedBox(width: 28, child: Tx('${r.rank}', style: const TextStyle(fontWeight: FontWeight.w700))),
+                      Expanded(child: Tx(r.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontWeight: r.featureId == (me.boardId ?? me.placeId) ? FontWeight.w800 : null))),
+                      Tx('${compact(r.value)} ${metric.unit ?? ''}', style: const TextStyle(fontWeight: FontWeight.w700)),
                     ],
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/core/theme/mzizi_theme.dart';
 import 'package:mzizi_app/presentation/insights/kit.dart';
@@ -59,12 +60,12 @@ class Standing {
   }
 }
 
-String percentWords(double? pct, bool higherIsBetter, String versus) {
-  if (pct == null) return 'Not enough data to compare';
+String percentWords(BuildContext context, double? pct, String versus) {
+  if (pct == null) return t(context, 'Not enough data to compare');
   final abs = pct.abs();
-  if (abs < 1) return 'About the same as $versus';
+  if (abs < 1) return tf(context, 'About the same as {}', [versus]);
   final text = '${abs.toStringAsFixed(abs < 10 ? 1 : 0)}%';
-  return pct > 0 ? '$text above $versus' : '$text below $versus';
+  return tf(context, pct > 0 ? '{} above {}' : '{} below {}', [text, versus]);
 }
 
 /// A card that says where "yours" stands, in plain words, with a bar against the best.
@@ -105,7 +106,7 @@ class StandingCard extends StatelessWidget {
               const SizedBox(width: 6),
               Text(unit, style: text.bodySmall),
               const Spacer(),
-              if (s.rank != null) Pill('#${s.rank} of ${s.of}'),
+              if (s.rank != null) Pill(tf(context, '#{} of {}', [s.rank, s.of])),
             ],
           ),
           const SizedBox(height: 8),
@@ -120,12 +121,12 @@ class StandingCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            percentWords(s.vsAverage, s.metric.higherIsBetter, 'the average'),
+            percentWords(context, s.vsAverage, t(context, 'the average')),
             style: text.bodyMedium?.copyWith(color: tone, fontWeight: FontWeight.w600),
           ),
           if (s.vsTop != null && s.rank != 1)
             Text(
-              '${percentWords(s.vsTop, s.metric.higherIsBetter, 'the top, ${s.topName}')} (${compact(s.top)} $unit)',
+              '${percentWords(context, s.vsTop, tf(context, 'the top, {}', [s.topName]))} (${compact(s.top)} $unit)',
               style: text.bodySmall,
             ),
         ],

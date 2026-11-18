@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/brand/mz_icon.dart';
@@ -18,7 +19,7 @@ class HomeScreen extends StatelessWidget {
     builder: (context, _) {
       final me = UserStore.instance;
       final text = Theme.of(context).textTheme;
-      final kind = boardKind(me.placeKind);
+      final kind = me.boardKindCode;
       return ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
@@ -28,14 +29,14 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(me.placeId == null ? 'Kenya' : 'Your place', style: text.labelMedium),
-                    Text(me.placeName ?? 'All of Kenya', style: text.headlineMedium),
+                    Tx(me.placeId == null ? 'Kenya' : 'Your place', style: text.labelMedium),
+                    Tx(me.placeName ?? 'All of Kenya', style: text.headlineMedium),
                   ],
                 ),
               ),
               OutlinedButton.icon(
                 icon: MzIcon('pin', size: 18),
-                label: Text(me.placeId == null ? 'Set place' : 'Switch'),
+                label: Tx(me.placeId == null ? 'Set place' : 'Switch'),
                 onPressed: () => showPlaceSwitcher(context),
               ),
             ],
@@ -44,11 +45,13 @@ class HomeScreen extends StatelessWidget {
           if (me.placeId != null) ...[
             _PlaceFigures(featureId: me.placeId!),
             const SizedBox(height: 8),
-            Text('How ${me.placeName} compares', style: text.titleMedium),
-            Text(
-              'Against every ${kind == 'county' ? 'county' : 'constituency'} in Kenya.',
+            Tx(tf(context, 'How {} compares', [me.placeName]), style: text.titleMedium),
+            Tx(
+              kind == 'county' ? 'Against every county in Kenya.' : 'Against every constituency in Kenya.',
               style: text.bodySmall,
             ),
+            if (me.boardId != null && me.boardId != me.placeId)
+              Tx(tf(context, 'Ranked as part of {}', [me.boardName]), style: text.bodySmall),
             const SizedBox(height: 8),
             for (final m in const [
               'sta.population.density',
@@ -58,7 +61,7 @@ class HomeScreen extends StatelessWidget {
               StandingLoader(
                 metric: m,
                 kind: kind,
-                featureId: me.placeId,
+                featureId: me.boardId ?? me.placeId,
                 onTap: () => context.go('/rankings?metric=$m'),
               ),
             Row(
@@ -66,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     icon: MzIcon('chart', size: 18),
-                    label: const Text('Compare places'),
+                    label: Tx(t(context, 'Compare places')),
                     onPressed: () => context.push('/compare'),
                   ),
                 ),
@@ -74,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     icon: MzIcon('tree', size: 18),
-                    label: const Text('Your leaders'),
+                    label: Tx(t(context, 'Your leaders')),
                     onPressed: () => context.push('/leaders-tree'),
                   ),
                 ),
@@ -97,7 +100,7 @@ class HomeScreen extends StatelessWidget {
               ])
                 ActionChip(
                   avatar: MzIcon(c.$3, size: 16),
-                  label: Text(c.$1),
+                  label: Tx(c.$1),
                   onPressed: () => context.go(c.$2),
                 ),
             ],
@@ -126,10 +129,10 @@ class _PlaceFigures extends StatelessWidget {
       final pos = asMap(asMap(d.siblings)['population']);
       return TileGrid(
         children: [
-          StatTile(label: 'People', value: compact(v('sta.population.total'))),
-          StatTile(label: 'People per km²', value: compact(v('sta.population.density'))),
-          StatTile(label: 'Area', value: '${compact(v('sta.area.km2'))} km²'),
-          StatTile(label: 'Size rank', value: '#${pos['position'] ?? '—'}', hint: 'of ${pos['of'] ?? '—'} alike'),
+          StatTile(label: t(context, 'People'), value: compact(v('sta.population.total'))),
+          StatTile(label: t(context, 'People per km²'), value: compact(v('sta.population.density'))),
+          StatTile(label: t(context, 'Area'), value: '${compact(v('sta.area.km2'))} km²'),
+          StatTile(label: t(context, 'Size rank'), value: '#${pos['position'] ?? '—'}', hint: 'of ${pos['of'] ?? '—'} alike'),
         ],
       );
     },
@@ -140,7 +143,7 @@ class _Nationwide extends StatelessWidget {
   @override
   Widget build(BuildContext context) => GlassCard(
     onTap: () => showPlaceSwitcher(context),
-    child: const Text('Choose your place to see how it compares with the rest of Kenya.'),
+    child: Tx(t(context, 'Choose your place to see how it compares with the rest of Kenya.')),
   );
 }
 
@@ -159,10 +162,10 @@ class _DidYouKnow extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [MzIcon('sparkle', size: 18), const SizedBox(width: 6), Text('Did you know?', style: Theme.of(context).textTheme.titleSmall)]),
+            Row(children: [MzIcon('sparkle', size: 18), const SizedBox(width: 6), Tx('Did you know?', style: Theme.of(context).textTheme.titleSmall)]),
             const SizedBox(height: 6),
-            Text(asText(f['statement'])),
-            if (asText(f['detail']).isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: Text(asText(f['detail']), style: Theme.of(context).textTheme.bodySmall)),
+            Tx(asText(f['statement'])),
+            if (asText(f['detail']).isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: Tx(asText(f['detail']), style: Theme.of(context).textTheme.bodySmall)),
           ],
         ),
       );

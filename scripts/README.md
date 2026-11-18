@@ -144,3 +144,9 @@ Use `bun run dryv:database:plan`, `bun run dryv:database:generate` or
 Dryv API only when needed and do not assemble/apply SQL releases or change database roles.
 
 `bun run dev:stack -- db` starts the local PostGIS container (`postgis`) if it is stopped and waits until it answers; `dev:data` calls it first.
+
+## Android and remote domains
+
+`scripts/dev/android.sh [dev|prod] [run|install|shot]` runs the Flutter app on the USB-connected Android device. `dev` points the app at the API on this computer through `adb reverse tcp:8700 tcp:8700` (config: `source/apps/app/config/development.json`); `prod` uses `https://mz-api.alidantech.org` (`config/production.json`). `install` builds the debug APK, installs it and starts it; `shot` saves a screenshot to `.dev/shots/`. VS Code launch entries for both configs are in `source/apps/app/.vscode/launch.json`.
+
+Cloudflare tunnel hostnames: `mz-web.alidantech.org` → site :3300 (its `/v1/*` is proxied to the API, so visitors never call the API host), `mz-api.alidantech.org` → API :8700, `mz-app.alidantech.org` → Flutter web :3500. `stack.sh api` allows those origins in `CORS_ORIGINS`; `next.config.ts` allows them as dev origins. A Flutter web build served from any `*.alidantech.org` host talks to the public API automatically. The photo and media links the API returns may point at the engine on :8800, which is not tunnelled.

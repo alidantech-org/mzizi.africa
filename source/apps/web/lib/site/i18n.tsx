@@ -15,6 +15,8 @@ import {
   useState,
 } from "react";
 
+import { SW_PHRASES } from "#/lib/site/phrases.ts";
+
 export type Language = "en" | "sw";
 
 const WORDS = {
@@ -170,6 +172,8 @@ interface LanguageState {
   language: Language;
   setLanguage: (language: Language) => void;
   t: (word: Word) => string;
+  /** Translates a sentence or heading of the newer pages; `{}` holes take the values in order. */
+  tr: (english: string, ...values: (string | number | null | undefined)[]) => string;
 }
 
 const LanguageContext = createContext<LanguageState | null>(null);
@@ -194,7 +198,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   }, []);
   const value = useMemo<LanguageState>(
-    () => ({ language, setLanguage, t: (word) => WORDS[language][word] }),
+    () => ({
+      language,
+      setLanguage,
+      t: (word) => WORDS[language][word],
+      tr: (english, ...values) => {
+        let text = language === "sw" ? (SW_PHRASES[english] ?? english) : english;
+        for (const v of values) text = text.replace("{}", String(v ?? "—"));
+        return text;
+      },
+    }),
     [language, setLanguage],
   );
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
@@ -204,4 +217,9 @@ export function useLanguage(): LanguageState {
   const value = useContext(LanguageContext);
   if (value === null) throw new Error("useLanguage needs a LanguageProvider");
   return value;
+}
+
+/** A sentence or heading of the newer pages, shown in the interface language. */
+export function T({ children }: { children: string }) {
+  return <>{useLanguage().tr(children)}</>;
 }

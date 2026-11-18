@@ -11,7 +11,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   return (
     <section className="reveal">
       <h2 className="mb-3 text-xl">{title}</h2>
-      <ul className="grid gap-3 sm:grid-cols-2">{children}</ul>
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">{children}</ul>
     </section>
   );
 }

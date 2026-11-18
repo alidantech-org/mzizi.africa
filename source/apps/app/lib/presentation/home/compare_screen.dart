@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/home/place_switcher.dart';
 import 'package:mzizi_app/presentation/home/standing.dart';
@@ -26,19 +27,19 @@ class _CompareScreenState extends State<CompareScreen> {
     final me = UserStore.instance;
     final text = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Compare places')),
+      appBar: AppBar(title: Tx(t(context, 'Compare places'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Compare ${me.placeName ?? 'Kenya'} with another place', style: text.titleMedium),
+          Tx(tf(context, 'Compare {} with another place', [me.placeName ?? 'Kenya']), style: text.titleMedium),
           const SizedBox(height: 12),
           FilledButton.tonal(
             onPressed: () => showPlaceSwitcher(
               context,
-              title: 'Compare with',
+              title: t(context, 'Compare with'),
               onPick: (p) => setState(() => _other = p),
             ),
-            child: Text(_other?.name ?? 'Choose a place'),
+            child: Tx(_other?.name ?? 'Choose a place'),
           ),
           const SizedBox(height: 16),
           if (me.placeId != null && _other != null)
@@ -81,16 +82,16 @@ class _Pair extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(r.$2, style: Theme.of(context).textTheme.titleSmall),
+                      Tx(r.$2, style: Theme.of(context).textTheme.titleSmall),
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          Expanded(child: Text('$aName\n${compact(x)}')),
-                          Expanded(child: Text('$bName\n${compact(y)}')),
+                          Expanded(child: Tx('$aName\n${compact(x)}')),
+                          Expanded(child: Tx('$bName\n${compact(y)}')),
                         ],
                       ),
                       const SizedBox(height: 6),
-                      Text(percentWords(diff, true, bName)),
+                      Tx(percentWords(context, diff, bName)),
                     ],
                   );
                 },

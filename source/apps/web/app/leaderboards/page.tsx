@@ -2,6 +2,7 @@
 
 /** Route `/leaderboards`: rank places, leaders and parties by finance, civic delivery, elections, activity and statistics. */
 import Link from "next/link";
+import { T } from "#/lib/site/i18n.tsx";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
@@ -25,8 +26,8 @@ function Boards() {
     <PageFrame wide>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Rankings" }]} />
       <p className="kicker">Who is doing what</p>
-      <h1 className="hero-title text-4xl sm:text-5xl">Rankings</h1>
-      <p className="mt-2 max-w-2xl text-content-muted">Rank counties and constituencies — and leaders — on the money spent, the projects delivered, the votes cast and the statistics published. Every ranking says how it is worked out.</p>
+      <h1 className="hero-title text-4xl sm:text-5xl"><T>{"Rankings"}</T></h1>
+      <p className="mt-2 max-w-2xl text-content-muted"><T>{"Rank counties and constituencies — and leaders — on the money spent, the projects delivered, the votes cast and the statistics published. Every ranking says how it is worked out."}</T></p>
       <div className="mt-8 grid gap-6 lg:grid-cols-[18rem_1fr]">
         <AsyncView loaded={list}>
           {({ metrics: all }) => (

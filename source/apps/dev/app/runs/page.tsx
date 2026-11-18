@@ -8,6 +8,7 @@ import { AsyncView } from "#/components/portal/async-view.tsx";
 import { ago, buttonPrimary, duration, Empty, StatusMark } from "#/components/portal/ui.tsx";
 import { explore, type Job, type JsonValue } from "#/lib/portal/explore.ts";
 import { useAsync } from "#/lib/portal/use-async.ts";
+import { Icon } from "#/components/brand/icon.tsx";
 
 const FILTERS = ["all", "running", "queued", "succeeded", "failed"] as const;
 
@@ -64,7 +65,7 @@ export default function RunsRoute() {
           ))}
         </div>
         <Link href="/runs/new" className={buttonPrimary}>
-          ＋ New run
+          <span className="inline-flex items-center gap-1.5"><Icon name="plus" size={16} />New run</span>
         </Link>
       </div>
       <AsyncView loaded={loaded}>

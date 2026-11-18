@@ -8,6 +8,7 @@ import { AsyncView } from "#/components/portal/async-view.tsx";
 import { Card, Crumbs, field, Grid, Pager } from "#/components/portal/ui.tsx";
 import { explore } from "#/lib/portal/explore.ts";
 import { useAsync } from "#/lib/portal/use-async.ts";
+import { Icon } from "#/components/brand/icon.tsx";
 
 export default function TableRoute() {
   const { domain, table } = useParams<{ domain: string; table: string }>();
@@ -36,7 +37,7 @@ export default function TableRoute() {
                     onClick={() => { setOrder(column.name); setDirection(order === column.name && direction === "asc" ? "desc" : "asc"); setOffset(0); }}
                     className={`rounded-full border px-2.5 py-0.5 ${page.order === column.name ? "border-clay bg-clay text-cream" : "border-border-default hover:bg-surface-sunken"}`}
                   >
-                    {column.primary ? "🔑 " : ""}{column.name}{page.order === column.name ? (page.direction === "asc" ? " ↑" : " ↓") : ""}
+                    {column.primary ? <Icon name="shield" size={14} className="mr-1 inline" /> : null}{column.name}{page.order === column.name ? (page.direction === "asc" ? " ↑" : " ↓") : ""}
                   </button>
                 ))}
               </div>

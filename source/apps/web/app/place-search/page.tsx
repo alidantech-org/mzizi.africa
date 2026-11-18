@@ -21,7 +21,7 @@ function Results({ query }: { query: string }) {
         matches.places.length === 0 ? (
           <p className="text-content-muted">{t("noResults")}</p>
         ) : (
-          <ul className="grid gap-3 sm:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {matches.places.map((place) => (
               <li key={place.featureId}>
                 <Link

@@ -2,6 +2,7 @@
 
 /** Route `/parliament`: what public bodies decided — bills, motions, budgets, appointments and judgments — with the tally of each. */
 import Link from "next/link";
+import { T } from "#/lib/site/i18n.tsx";
 
 import { AsyncView } from "#/components/site/async-view.tsx";
 import { Stacked } from "#/components/site/ui/charts.tsx";
@@ -16,8 +17,8 @@ export default function ParliamentRoute() {
     <PageFrame>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Parliament and other bodies" }]} />
       <p className="kicker">Decisions</p>
-      <h1 className="hero-title text-4xl sm:text-5xl">Parliament and other bodies</h1>
-      <p className="mt-2 max-w-2xl text-content-muted">The National Assembly, a county assembly, the Cabinet and the Supreme Court. Open a decision to see how every member voted — yes, no, abstained or absent.</p>
+      <h1 className="hero-title text-4xl sm:text-5xl"><T>{"Parliament and other bodies"}</T></h1>
+      <p className="mt-2 max-w-2xl text-content-muted"><T>{"The National Assembly, a county assembly, the Cabinet and the Supreme Court. Open a decision to see how every member voted — yes, no, abstained or absent."}</T></p>
       <AsyncView loaded={loaded}>
         {({ motions: list }) => (
           <>

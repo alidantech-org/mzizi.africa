@@ -24,6 +24,7 @@ const MORE: readonly { href: string; icon: IconName; title: string }[] = [
 ];
 
 function Compare({ id, name }: { id: string; name: string }) {
+  const { tr } = useLanguage();
   const stats = useAsync(() => statisticsOf(id), `home-stat-${id}`);
   return (
     <AsyncView loaded={stats}>
@@ -32,9 +33,9 @@ function Compare({ id, name }: { id: string; name: string }) {
         const density = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.density");
         return (
           <Link href={`/statistics/${id}`} className="glass card card-lift block">
-            <p className="kicker">Your place</p><p className="font-display text-2xl">{name}</p>
-            <p className="mt-2 text-sm text-content-muted">{short(pop?.latest.value)} people · {n(density?.latest.value)} per km²</p>
-            {s.siblings.population ? <p className="mt-1 text-sm">#{s.siblings.population.position} of {s.siblings.population.of} by population</p> : null}
+            <p className="kicker">{tr("Your place")}</p><p className="font-display text-2xl">{name}</p>
+            <p className="mt-2 text-sm text-content-muted">{tr("{} people", short(pop?.latest.value))} · {tr("{} per km²", n(density?.latest.value))}</p>
+            {s.siblings.population ? <p className="mt-1 text-sm">{tr("#{} of {} by population", s.siblings.population.position, s.siblings.population.of)}</p> : null}
           </Link>
         );
       }}
@@ -43,7 +44,7 @@ function Compare({ id, name }: { id: string; name: string }) {
 }
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { t, tr } = useLanguage();
   const saved = useSaved();
   const root = useAsync(() => browse(), "home-root");
   const series = useAsync(async () => (root.state === "ready" && root.value.place ? seriesOf("sta.population.total", root.value.place.featureId) : Promise.reject(new Error("wait"))), `home-series-${root.state}`);
@@ -67,8 +68,8 @@ export default function HomePage() {
       <div className="mx-auto max-w-7xl px-5 pb-8">
         <Section kicker="The country" title="Kenya at a glance">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <AsyncView loaded={series}>{(s) => <Stat label="People" value={short(s.points.at(-1)?.value)} hint={`${s.points.at(-1)?.period.slice(0, 4)} estimate · ${n(s.points.at(-1)?.value)}`} />}</AsyncView>
-            <AsyncView loaded={votes}>{({ elections: list }) => <Stat label="Registered voters" value={short(list[0]?.registeredVoters)} hint={`${list[0]?.year} election`} />}</AsyncView>
+            <AsyncView loaded={series}>{(s) => <Stat label="People" value={short(s.points.at(-1)?.value)} hint={`${tr("{} estimate", s.points.at(-1)?.period.slice(0, 4))} · ${n(s.points.at(-1)?.value)}`} />}</AsyncView>
+            <AsyncView loaded={votes}>{({ elections: list }) => <Stat label="Registered voters" value={short(list[0]?.registeredVoters)} hint={tr("{} election", list[0]?.year)} />}</AsyncView>
             <AsyncView loaded={tend}>{(d) => <Stat label="Open tenders" value={n(d.summary.byStatus.find((x) => x.status === "open")?.count)} hint="Buyers asking for bids now" />}</AsyncView>
             <AsyncView loaded={board}>{(b) => <Stat label="Most projects per 100,000" value={b.rows[0]?.name ?? "—"} hint={`${n1(b.rows[0]?.value)} projects`} />}</AsyncView>
           </div>
@@ -81,11 +82,11 @@ export default function HomePage() {
         ) : null}
         <Section kicker="Across Kenya" title="Where people live">
           <AsyncView loaded={map}>{(m) => <StatMap data={m} height={400} />}</AsyncView>
-          <p className="mt-2 text-xs text-content-muted">People per square kilometre in each county. Darker is more crowded. <Link className="underline" href="/statistics">More statistics →</Link></p>
+          <p className="mt-2 text-xs text-content-muted">{tr("People per square kilometre in each county. Darker is more crowded.")} <Link className="underline" href="/statistics">{tr("More statistics →")}</Link></p>
         </Section>
-        <AsyncView loaded={series}>{(s) => (<Section kicker="Growth" title="How the population has grown"><div className="glass card"><LineChart points={s.points} unit="people" label="Kenya's population over time" /></div></Section>)}</AsyncView>
+        <AsyncView loaded={series}>{(s) => (<Section kicker="Growth" title="How the population has grown"><div className="glass card"><LineChart points={s.points} unit="people" label={tr("Kenya's population over time")} /></div></Section>)}</AsyncView>
         <Section kicker="Keep exploring" title="More to look at">
-          <ul className="flex flex-wrap gap-2">{MORE.map((m) => <li key={m.href}><Link href={m.href} className="btn btn-ghost"><Icon name={m.icon} size={18} />{m.title}</Link></li>)}</ul>
+          <ul className="flex flex-wrap gap-2">{MORE.map((m) => <li key={m.href}><Link href={m.href} className="btn btn-ghost"><Icon name={m.icon} size={18} />{tr(m.title)}</Link></li>)}</ul>
           <p className="mt-6 text-xs text-content-muted">{t("sampleNotice")}</p>
         </Section>
       </div>

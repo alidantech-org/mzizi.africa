@@ -25,7 +25,7 @@ case "${1:-}" in
     pg_isready -h 127.0.0.1 -p "$(echo "$DATABASE_URL" | sed -E 's#.*:([0-9]+)/.*#\1#')" ;;
   api)
     free 8700
-    export PORT=8700 CORS_ORIGINS="http://127.0.0.1:3300,http://localhost:3300,http://127.0.0.1:3400,http://localhost:3400,http://127.0.0.1:8090,http://localhost:8090"
+    export PORT=8700 CORS_ORIGINS="https://mz-web.alidantech.org,https://mz-app.alidantech.org,https://mz-api.alidantech.org,http://127.0.0.1:3300,http://localhost:3300,http://127.0.0.1:3400,http://localhost:3400,http://127.0.0.1:8090,http://localhost:8090,http://127.0.0.1:3500,http://localhost:3500"
     (cd source/backend/api && nohup bun src/main.ts > "$ROOT/.dev/logs/api.log" 2>&1 &) ;;
   engine)
     free 8800
@@ -38,12 +38,14 @@ case "${1:-}" in
   flutter)
     # Serve only after the build: `flutter build web` recreates the folder, which would leave an older server on a deleted one.
     free 8090
+    free 3500
     (cd source/apps/app && flutter build web --release --dart-define=API_URL=http://127.0.0.1:8700)
-    (cd source/apps/app/build/web && nohup python3 -m http.server 8090 --bind 127.0.0.1 > "$ROOT/.dev/logs/flutter.log" 2>&1 &) ;;
+    (cd source/apps/app/build/web && nohup python3 -m http.server 8090 --bind 127.0.0.1 > "$ROOT/.dev/logs/flutter.log" 2>&1 &)
+    (cd source/apps/app/build/web && nohup python3 -m http.server 3500 --bind 127.0.0.1 > "$ROOT/.dev/logs/flutter-3500.log" 2>&1 &) ;;
   smoke)
     bash scripts/dev/smoke.sh ;;
   stop)
-    for port in 8700 8800 3300 3400 8090; do free "$port"; done ;;
+    for port in 8700 8800 3300 3400 8090 3500; do free "$port"; done ;;
   *)
     echo "usage: stack.sh db|api|engine|web|portal|flutter|smoke|stop"; exit 2 ;;
 esac

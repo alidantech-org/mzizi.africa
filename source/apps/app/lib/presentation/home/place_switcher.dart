@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_app/presentation/brand/mz_icon.dart';
 import 'package:mzizi_app/presentation/insights/kit.dart';
@@ -53,7 +54,7 @@ class _SwitcherState extends State<_Switcher> {
         autofocus: true,
         onChanged: _search,
         decoration: InputDecoration(
-          hintText: 'Search a county, town or ward',
+          hintText: t(context, 'Search a county, town or ward'),
           prefixIcon: MzIcon('search'),
           filled: true,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),
@@ -63,8 +64,8 @@ class _SwitcherState extends State<_Switcher> {
       for (final m in _matches.take(10))
         ListTile(
           leading: MzIcon('pin'),
-          title: Text(m.name),
-          subtitle: Text(m.kindLabel),
+          title: Tx(m.name),
+          subtitle: Tx(m.kindLabel),
           onTap: () => widget.onPick(m),
         ),
     ],

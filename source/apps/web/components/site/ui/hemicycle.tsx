@@ -16,7 +16,7 @@ const LABEL: Record<string, string> = { yes: "Voted yes", no: "Voted no", abstai
 
 function layout(count: number): { x: number; y: number }[] {
   const rows = Math.max(2, Math.round(Math.sqrt(count / 3.2)));
-  const radii = Array.from({ length: rows }, (_, i) => 90 + (i * 170) / Math.max(1, rows - 1));
+  const radii = Array.from({ length: rows }, (_, i) => 95 + (i * 165) / Math.max(1, rows - 1));
   const total = radii.reduce((a, r) => a + r, 0);
   const seats: { angle: number; r: number }[] = [];
   radii.forEach((r, i) => {
@@ -24,7 +24,7 @@ function layout(count: number): { x: number; y: number }[] {
     for (let k = 0; k < n; k++) seats.push({ angle: Math.PI * (n === 1 ? 0.5 : k / (n - 1)), r });
   });
   seats.sort((a, b) => b.angle - a.angle || a.r - b.r);
-  return seats.map((s) => ({ x: 270 - Math.cos(s.angle) * s.r * 1.5, y: 270 - Math.sin(s.angle) * s.r * 1.5 }));
+  return seats.map((s) => ({ x: 280 - Math.cos(s.angle) * s.r, y: 270 - Math.sin(s.angle) * s.r }));
 }
 
 export function Hemicycle({ members, selectedParty }: { members: readonly MotionMember[]; selectedParty?: string | null }) {
@@ -34,7 +34,7 @@ export function Hemicycle({ members, selectedParty }: { members: readonly Motion
   const size = ordered.length > 200 ? 4.2 : ordered.length > 60 ? 6 : 9;
   return (
     <div>
-      <svg role="img" aria-label={`Seating chart of ${ordered.length} members and how each voted`} viewBox="0 0 560 300" className="w-full">
+      <svg role="img" aria-label={`Seating chart of ${ordered.length} members and how each voted`} viewBox="0 0 560 306" className="w-full">
         {ordered.map((m, i) => {
           const seat = seats[i]!;
           const dim = selectedParty && m.party !== selectedParty;
@@ -45,7 +45,7 @@ export function Hemicycle({ members, selectedParty }: { members: readonly Motion
             </circle>
           );
         })}
-        <text x="280" y="262" textAnchor="middle" fontSize="13" fill="var(--content-muted)">{active ? `${active.name} · ${active.party ?? "no party"} · ${LABEL[active.position]}` : "Hover a dot"}</text>
+        <text x="280" y="299" textAnchor="middle" fontSize="13" fill="var(--content-muted)">{active ? `${active.name} · ${active.party ?? "no party"} · ${LABEL[active.position]}` : "Hover a dot"}</text>
       </svg>
       <ul className="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1 text-xs">
         {Object.entries(LABEL).map(([key, label]) => (

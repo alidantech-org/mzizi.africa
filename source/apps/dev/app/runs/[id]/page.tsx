@@ -20,6 +20,7 @@ import {
 } from "#/components/portal/ui.tsx";
 import { explore, type JobDetail, type JsonValue } from "#/lib/portal/explore.ts";
 import { useAsync } from "#/lib/portal/use-async.ts";
+import { Icon } from "#/components/brand/icon.tsx";
 
 interface Page {
   number: number;
@@ -161,7 +162,7 @@ export default function RunDetailRoute() {
                     {detail.output.entries.map((entry) => (
                       <li key={entry.path}>
                         <Link href={filesLink(detail.output!.root, entry.path)} className="rounded-lg border border-border-default px-2.5 py-1 hover:bg-surface-sunken">
-                          {entry.directory ? "📁" : "📄"} {entry.name}
+                          <span className="inline-flex items-center gap-1.5"><Icon name={entry.directory ? "map" : "document"} size={16} />{entry.name}</span>
                         </Link>
                       </li>
                     ))}

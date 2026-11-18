@@ -5,6 +5,7 @@ import 'package:mzizi_api/api.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/mzizi_theme.dart';
 import 'presentation/routers/go_router.dart';
+import 'presentation/i18n/strings.dart';
 import 'presentation/user/user_store.dart';
 
 /// Scaffolded by Dryv once; this file belongs to the app.
@@ -15,17 +16,19 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MziziAppApp()));
 }
 
-class MziziAppApp extends StatelessWidget {
+class MziziAppApp extends ConsumerWidget {
   const MziziAppApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final language = ref.watch(languageProvider);
     return ListenableBuilder(
       listenable: UserStore.instance,
       builder: (context, _) => MaterialApp.router(
         title: 'Mzizi',
         theme: buildMziziLightTheme(),
         darkTheme: buildMziziDarkTheme(),
+        locale: Locale(language),
         themeMode: UserStore.instance.themeMode,
         routerConfig: appRouter,
       ),

@@ -183,3 +183,80 @@ def test_draft_preserves_source_cells_and_flags_unsupported_fields(
     assert "3,1,2,One,Old mill,ke.one" in report["csv"]
     assert report["source"]["artifact"]["sha256"] == pdf.sha256
     assert report["reference"]["artifact"]["sha256"] == reference.sha256
+
+
+def test_knbs_style_county_table_drafts_statistics_observations(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A county table as the statistics bureau publishes it (county name, population) becomes a reviewable draft of
+    statistics.observations rows: county names resolve to feature codes through a reference artifact and the value
+    column binds to `value`. Missing required fields (indicator, period, source) are flagged, never invented."""
+    from mzizi_engine.runtime.assembly import table_draft
+    from mzizi_extraction import DocumentProfile
+    from mzizi_extraction.core import Status
+    from mzizi_extraction.document.models import DocumentOutput, Page, TableBlock
+
+    headings = ("County", "Population")
+    table = TableBlock(
+        page=12,
+        index=1,
+        rows=(headings, ("Mombasa", "1,208,333"), ("Kwale", "866,820"), ("Narnia", "1")),
+        header_rows=1,
+        bbox=(2.0, 4.0, 5.0, 7.0),
+    )
+
+    def extract(data: bytes, profile: DocumentProfile) -> DocumentOutput:
+        return DocumentOutput(status=Status.SUCCEEDED, pages=(Page(number=12, width=100, height=100, blocks=(table,)),))
+
+    monkeypatch.setattr(table_draft, "extract_pdf_document", extract)
+    registry = build_operation_registry()
+    spec = parse_job_spec(
+        '{"spec_version":1,"kind":"collection","name":"fixture","stages":[{"operation":"scraping.crawl",'
+        '"params":{"url":"https://example.org/","out_dir":"unused"}}]}',
+        registry,
+    )
+    run = RunRecord(
+        run_id=uuid4(), spec=spec, spec_hash=spec_hash(spec), requested_at=datetime.now(UTC), state=RunState.COMPLETED
+    )
+    store = LocalRunStore(tmp_path)
+    pdf = store.put(
+        run.run_id, "artifacts/census.pdf", BytesIO(b"pdf"), ArtifactProvenance(media_type="application/pdf", stage="f")
+    )
+    reference = store.put(
+        run.run_id,
+        "artifacts/counties.csv",
+        BytesIO(b"name,feature_code\nMombasa,ke.mombasa\nKwale,ke.kwale\n"),
+        ArtifactProvenance(media_type="text/csv", stage="f"),
+    )
+    reader = ArtifactReader(lambda _: run, lambda _: store)
+    app = create_app(
+        ServerConfig(auth="service", service_token="test-engine-key"), registry=registry, research_reader=reader
+    )
+    with TestClient(app) as client:
+        res = client.post(
+            "/v1/research/table-draft",
+            headers=TOKEN,
+            json={
+                "source": ArtifactRef(run_id=run.run_id, path=pdf.path, sha256=pdf.sha256).model_dump(mode="json"),
+                "first_page": 12,
+                "last_page": 12,
+                "headings": headings,
+                "languages": "eng",
+                "target_table": "statistics.observations",
+                "bindings": [{"source_heading": "Population", "target_column": "value"}],
+                "lookup": {
+                    "reference": ArtifactRef(
+                        run_id=run.run_id, path=reference.path, sha256=reference.sha256
+                    ).model_dump(mode="json"),
+                    "source_heading": "County",
+                    "name_column": "name",
+                    "code_column": "feature_code",
+                    "target_column": "feature_code",
+                    "target_table": "geography.features",
+                },
+            },
+        )
+    assert res.status_code == 200, res.text
+    report = res.json()
+    assert [row["resolved_code"] for row in report["rows"]] == ["ke.mombasa", "ke.kwale", None]
+    assert "unresolved" in {issue["kind"] for issue in report["issues"]}

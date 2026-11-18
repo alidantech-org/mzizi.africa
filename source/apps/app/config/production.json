@@ -1,0 +1,4 @@
+{
+  "APP_ENV": "production",
+  "API_URL": "https://mz-api.alidantech.org"
+}

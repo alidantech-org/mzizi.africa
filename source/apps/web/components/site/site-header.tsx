@@ -61,9 +61,9 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-2">
           <div className="hidden w-64 2xl:block"><GlobalSearchBox compact /></div>
-          <Link href="/search" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0 2xl:hidden" aria-label="Search"><Icon name="search" /></Link>
+          <Link href="/search" className="btn btn-ghost hidden !h-10 !w-10 !justify-center !p-0 sm:inline-flex 2xl:hidden" aria-label="Search"><Icon name="search" /></Link>
           <ThemeToggle />
-          <LanguageSwitcher />
+          <div className="hidden sm:block"><LanguageSwitcher /></div>
           <Link href="/saved" className="btn btn-ghost relative !h-10 !w-10 !justify-center !p-0" aria-label={t("navSaved")}>
             <Icon name="heart" />
             {count > 0 ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-calabash px-1 text-[10px] font-bold text-ink">{count}</span> : null}
@@ -75,6 +75,10 @@ export function SiteHeader() {
       </div>
       {menu ? (
         <nav aria-label="Main (menu)" className="mx-auto grid max-w-7xl grid-cols-2 gap-2 px-5 pb-4 sm:grid-cols-3 xl:hidden">
+          <div className="col-span-full flex items-center justify-between gap-3 sm:hidden">
+            <Link href="/search" onClick={() => setMenu(false)} className="btn btn-ghost flex-1 !justify-center"><Icon name="search" size={18} />{t("search")}</Link>
+            <LanguageSwitcher />
+          </div>
           {[...MAIN, ...MORE].map((s) => (
             <Link key={s.href} href={s.href} onClick={() => setMenu(false)} className="glass flex items-center gap-2.5 rounded-2xl px-4 py-3 text-sm font-semibold" data-active={active(s.href)}>
               <Icon name={s.icon} size={18} />{t(s.word)}

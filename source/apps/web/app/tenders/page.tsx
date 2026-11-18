@@ -2,6 +2,7 @@
 
 /** Route `/tenders`: tenders and contracts — open, closed, awarded and complete — with suppliers and how much each discloses. */
 import { useRouter, useSearchParams } from "next/navigation";
+import { T } from "#/lib/site/i18n.tsx";
 import { Suspense } from "react";
 
 import { AsyncView } from "#/components/site/async-view.tsx";
@@ -20,8 +21,8 @@ function List() {
     <PageFrame wide>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Tenders" }]} />
       <p className="kicker">Public procurement</p>
-      <h1 className="hero-title text-4xl sm:text-5xl">Tenders &amp; contracts</h1>
-      <p className="mt-2 max-w-2xl text-content-muted">What public bodies are buying, who is bidding, who won and for how much. Each row shows how much of the basic information was published, so gaps in transparency are visible.</p>
+      <h1 className="hero-title text-4xl sm:text-5xl"><T>{"Tenders & contracts"}</T></h1>
+      <p className="mt-2 max-w-2xl text-content-muted"><T>{"What public bodies are buying, who is bidding, who won and for how much. Each row shows how much of the basic information was published, so gaps in transparency are visible."}</T></p>
       <AsyncView loaded={loaded}>
         {(d) => (
           <>

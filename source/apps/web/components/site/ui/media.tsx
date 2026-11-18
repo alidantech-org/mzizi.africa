@@ -71,9 +71,11 @@ export function Gallery({ items, empty }: { items: readonly MediaItem[]; empty?:
 export function Avatar({ src, name, size = 56 }: { src?: string | null; name: string; size?: number }) {
   const [broken, setBroken] = useState(false);
   const initials = name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
-  return src && !broken ? (
+  // Generated placeholder portraits (DiceBear) come out pale and low-contrast; the branded initials read better in both themes.
+  const real = src && !/dicebear\.com/.test(src) ? src : null;
+  return real && !broken ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt="" width={size} height={size} loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} className="shrink-0 rounded-full border-2 border-cream object-cover shadow" style={{ width: size, height: size }} />
+    <img src={real} alt="" width={size} height={size} loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} className="shrink-0 rounded-full border-2 border-cream object-cover shadow" style={{ width: size, height: size }} />
   ) : (
     <span aria-hidden className="grid shrink-0 place-items-center rounded-full bg-gradient-to-br from-clay to-calabash font-bold text-cream shadow" style={{ width: size, height: size, fontSize: size / 2.6 }}>{initials}</span>
   );

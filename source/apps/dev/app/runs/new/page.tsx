@@ -13,6 +13,7 @@ import {
   type SchemaProperty,
 } from "#/lib/portal/explore.ts";
 import { useAsync } from "#/lib/portal/use-async.ts";
+import { Icon } from "#/components/brand/icon.tsx";
 
 type Values = Record<string, JsonValue>;
 
@@ -229,7 +230,7 @@ function Setup({ capabilities, devRoot }: { capabilities: readonly CapabilityInf
           )}
           {message ? <p role="alert" className="text-sm text-danger">{message}</p> : null}
           <button className={buttonPrimary} disabled={busy} onClick={start}>
-            {busy ? "Starting…" : "▶ Start run"}
+            {busy ? "Starting…" : <span className="inline-flex items-center gap-1.5"><Icon name="play" size={16} />Start run</span>}
           </button>
         </div>
       </Card>

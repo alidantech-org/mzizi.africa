@@ -37,7 +37,7 @@ export default function PartyRoute() {
             </Section>
             {d.party.media.length > 0 ? <Section title="Media" kicker="Social"><Gallery items={d.party.media} /></Section> : null}
             <Section kicker="People" title={`Members (${d.members.length}${d.members.length >= 400 ? "+" : ""})`}>
-              <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {d.members.map((m) => (
                   <li key={m.individualId}>
                     {m.holderId ? <Link href={`/leaders/${m.holderId}`} className="glass card card-lift block !py-3"><span className="block font-semibold">{m.name}</span><span className="text-xs text-content-muted">{m.office ?? "Member"}{m.unit ? ` · ${m.unit}` : ""}</span></Link>

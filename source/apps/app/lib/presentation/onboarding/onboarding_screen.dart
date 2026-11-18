@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_api/api.dart';
@@ -137,7 +138,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeOut,
                       ),
-                      child: const Text('Skip'),
+                      child: Tx(t(context, 'Skip')),
                     ),
                 ],
               ),
@@ -171,13 +172,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                           ),
                           const SizedBox(height: 32),
-                          Text(
+                          Tx(
                             s.title,
                             textAlign: TextAlign.center,
                             style: text.headlineMedium,
                           ),
                           const SizedBox(height: 12),
-                          Text(
+                          Tx(
                             s.body,
                             textAlign: TextAlign.center,
                             style: text.bodyLarge,
@@ -213,7 +214,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeOut,
                       ),
-                      child: const Text('Next'),
+                      child: Tx(t(context, 'Next')),
                     ),
                 ],
               ),
@@ -229,9 +230,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       children: [
-        Text('Where are you?', style: text.headlineMedium),
+        Tx('Where are you?', style: text.headlineMedium),
         const SizedBox(height: 8),
-        Text(
+        Tx(
           'We use your place to show the numbers and leaders that matter to you. Your location stays on this phone.',
           style: text.bodyMedium,
         ),
@@ -239,21 +240,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         FilledButton.icon(
           onPressed: _busy ? null : _locate,
           icon: MzIcon('locate', color: Colors.white),
-          label: const Text('Use my location'),
+          label: Tx(t(context, 'Use my location')),
         ),
         if (_status.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child: Text(_status, style: text.bodySmall),
+            child: Tx(_status, style: text.bodySmall),
           ),
         const SizedBox(height: 20),
-        Text('Or search for a county, town or ward', style: text.labelLarge),
+        Tx('Or search for a county, town or ward', style: text.labelLarge),
         const SizedBox(height: 8),
         TextField(
           controller: _query,
           onChanged: _search,
           decoration: InputDecoration(
-            hintText: 'For example Kisumu or Kibera',
+            hintText: t(context, 'For example Kisumu or Kibera'),
             prefixIcon: MzIcon('search'),
             filled: true,
             border: OutlineInputBorder(
@@ -271,8 +272,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 MzIcon('pin', size: 20),
                 const SizedBox(width: 10),
-                Expanded(child: Text(m.name)),
-                Text(m.kindLabel, style: text.labelSmall),
+                Expanded(child: Tx(m.name)),
+                Tx(m.kindLabel, style: text.labelSmall),
               ],
             ),
           ),
@@ -281,7 +282,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             await UserStore.instance.finishOnboarding();
             if (context.mounted) context.go('/');
           },
-          child: const Text('Not now, show me Kenya'),
+          child: Tx(t(context, 'Not now, show me Kenya')),
         ),
       ],
     );

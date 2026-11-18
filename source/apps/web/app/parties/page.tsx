@@ -2,6 +2,7 @@
 
 /** Route `/parties`: registered parties ranked by votes, members, office holders and the public money they receive. */
 import Link from "next/link";
+import { T } from "#/lib/site/i18n.tsx";
 
 import { AsyncView } from "#/components/site/async-view.tsx";
 import { Breadcrumbs, Gaps, PageFrame } from "#/components/site/ui/primitives.tsx";
@@ -15,7 +16,7 @@ export default function PartiesRoute() {
     <PageFrame wide>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Parties" }]} />
       <p className="kicker">Political parties</p>
-      <h1 className="hero-title text-4xl sm:text-5xl">Parties, ranked</h1>
+      <h1 className="hero-title text-4xl sm:text-5xl"><T>{"Parties, ranked"}</T></h1>
       <AsyncView loaded={loaded}>
         {({ parties: list, gaps }) => {
           const topVotes = Math.max(...list.map((p) => p.votes2022), 1);

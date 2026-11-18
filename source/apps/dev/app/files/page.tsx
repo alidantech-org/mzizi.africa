@@ -10,8 +10,9 @@ import { bytes, Card, Crumbs, filesLink } from "#/components/portal/ui.tsx";
 import { FileViewer } from "#/components/portal/viewer.tsx";
 import { explore } from "#/lib/portal/explore.ts";
 import { useAsync } from "#/lib/portal/use-async.ts";
+import { Icon, type IconName } from "#/components/brand/icon.tsx";
 
-const ICON: Record<string, string> = { folder: "📁", markdown: "📝", csv: "📊", json: "🧾", jsonl: "🧾", yaml: "⚙", pdf: "📕", image: "🖼", text: "📄", binary: "📦" };
+const ICON: Record<string, IconName> = { folder: "map", markdown: "book", csv: "chart", json: "document", jsonl: "document", yaml: "build", pdf: "document", image: "image", text: "document", binary: "shield" };
 
 function Browser() {
   const params = useSearchParams();
@@ -61,7 +62,7 @@ function Browser() {
                       href={filesLink(root, item.path)}
                       className={`flex items-center gap-2 rounded px-2 py-1 hover:bg-surface-sunken ${item.path === path ? "bg-sand/60 font-medium" : ""}`}
                     >
-                      <span aria-hidden>{ICON[item.kind] ?? "📄"}</span>
+                      <Icon name={ICON[item.kind] ?? "document"} size={18} />
                       <span className="min-w-0 flex-1 truncate">{item.name}</span>
                       {item.directory ? null : <span className="text-[11px] text-content-muted">{bytes(item.size)}</span>}
                     </Link>

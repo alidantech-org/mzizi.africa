@@ -2,6 +2,7 @@
 
 /** Route `/civic`: money and projects. Pick a county or constituency to see its fund, spending and works; or rank them. */
 import Link from "next/link";
+import { T } from "#/lib/site/i18n.tsx";
 
 import { AsyncView } from "#/components/site/async-view.tsx";
 import { Breadcrumbs, PageFrame, Section } from "#/components/site/ui/primitives.tsx";
@@ -59,9 +60,9 @@ export default function CivicRoute() {
     <PageFrame wide>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Money & projects" }]} />
       <p className="kicker">Where the money goes</p>
-      <h1 className="hero-title text-4xl sm:text-5xl">Money &amp; projects</h1>
-      <p className="mt-2 max-w-2xl text-content-muted">Development fund allocations, what they were spent on, and the schools, roads and clinics built — mapped, with the people responsible and the evidence.</p>
-      <p className="mt-4"><Link className="btn btn-primary" href="/browse">Find your area →</Link> <Link className="btn btn-ghost ml-2" href="/tenders">See tenders</Link></p>
+      <h1 className="hero-title text-4xl sm:text-5xl"><T>{"Money & projects"}</T></h1>
+      <p className="mt-2 max-w-2xl text-content-muted"><T>{"Development fund allocations, what they were spent on, and the schools, roads and clinics built — mapped, with the people responsible and the evidence."}</T></p>
+      <p className="mt-4"><Link className="btn btn-primary" href="/browse"><T>Find your area →</T></Link> <Link className="btn btn-ghost ml-2" href="/tenders"><T>See tenders</T></Link></p>
       <Section kicker="Highlights" title="Who delivers the most">
         <div className="grid gap-4 lg:grid-cols-3">
           <Mini metric="civ.projects.per-100k" title="Projects per 100,000 people" kind="constituency" />

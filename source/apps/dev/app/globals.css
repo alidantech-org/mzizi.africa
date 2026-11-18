@@ -31,26 +31,26 @@ h3 {
   box-shadow: var(--shadow);
 }
 
-/* Scheme-aware tokens the hand-built pages use, so text and surfaces keep their contrast in light and dark. */
-:root {
-  --content-muted: #6a5b4c;
-  --surface-sunken: var(--sand);
-  --link: var(--indigo);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --content-muted: #c9b9a3;
-    --surface-sunken: #4a3e33;
-    --link: #e0b25a;
-  }
-}
+/* Muted text, sunken surfaces and glass are theme roles (theme.css) and follow light, dark and the toggle. Links get their own pair. */
+:root { --link: var(--indigo); }
+:root[data-theme="dark"] { --link: var(--sky); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --link: var(--sky); } }
 
 @theme inline {
-  --color-content-muted: var(--content-muted);
-  --color-surface-sunken: var(--surface-sunken);
   --color-link: var(--link);
 }
+
+.glass-strong {
+  background: var(--surface-glassStrong);
+  -webkit-backdrop-filter: blur(calc(var(--blur-glass) * 1.4)) saturate(1.6);
+  backdrop-filter: blur(calc(var(--blur-glass) * 1.4)) saturate(1.6);
+  border: 1px solid var(--border-glass);
+}
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+.btn:active { transform: scale(0.97); }
+.btn-ghost { border: 1px solid var(--border-default); background: var(--surface-glass); }
+.btn-ghost:hover { background: var(--surface-glassStrong); }
+:focus-visible { outline: 2px solid var(--focus-indicator); outline-offset: 2px; border-radius: 8px; }
 
 /* Motion and decoration for the hand-built pages. Everything animated stops under prefers-reduced-motion. */
 @keyframes rise {

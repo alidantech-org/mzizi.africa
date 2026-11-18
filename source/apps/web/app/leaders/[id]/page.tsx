@@ -45,7 +45,7 @@ export default function LeaderRoute() {
               </div>
               <Section kicker="Get in touch" title="Contact">
                 {d.contacts.length === 0 ? <p className="text-sm text-content-muted">No public contact details are recorded.</p> : (
-                  <ul className="grid gap-3 sm:grid-cols-2">
+                  <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {d.contacts.map((c) => {
                       const href = hrefFor(c.kind, c.value);
                       return (
@@ -89,7 +89,7 @@ export default function LeaderRoute() {
                 </Section>
               ) : null}
               {d.offices.length > 1 ? (
-                <Section title="Offices held" kicker="Career"><ul className="grid gap-2 sm:grid-cols-2">{d.offices.map((o) => <li key={o.holderId} className="glass card !py-3"><span className="font-semibold">{o.office}</span><span className="text-content-muted">{o.unit ? ` · ${o.unit}` : ""}</span><span className="block text-xs text-content-muted">{date(o.tookOfficeOn)} – {o.leftOfficeOn ? date(o.leftOfficeOn) : "now"}</span></li>)}</ul></Section>
+                <Section title="Offices held" kicker="Career"><ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">{d.offices.map((o) => <li key={o.holderId} className="glass card !py-3"><span className="font-semibold">{o.office}</span><span className="text-content-muted">{o.unit ? ` · ${o.unit}` : ""}</span><span className="block text-xs text-content-muted">{date(o.tookOfficeOn)} – {o.leftOfficeOn ? date(o.leftOfficeOn) : "now"}</span></li>)}</ul></Section>
               ) : null}
               {d.media.length > 0 ? <Section title="Pictures and posts" kicker="Media"><Gallery items={d.media} /></Section> : null}
               {d.evidence.length > 0 ? (

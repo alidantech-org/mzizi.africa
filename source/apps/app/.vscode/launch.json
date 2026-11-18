@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Mzizi — Development (USB device: run `adb reverse tcp:8700 tcp:8700` first)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "debug",
+      "toolArgs": ["--dart-define-from-file=config/development.json"]
+    },
+    {
+      "name": "Mzizi — Production (https://mz-api.alidantech.org)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "toolArgs": ["--dart-define-from-file=config/production.json"]
+    }
+  ]
+}

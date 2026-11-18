@@ -9,6 +9,7 @@ import remarkGfm from "remark-gfm";
 
 import { bytes, button, buttonPrimary, field, Grid, JsonTree, Pager } from "#/components/portal/ui.tsx";
 import { explore, rawUrl, type FileView } from "#/lib/portal/explore.ts";
+import { Icon } from "#/components/brand/icon.tsx";
 
 const EDITABLE = new Set(["markdown", "yaml", "json", "text", "csv"]);
 const PAGE = 50;
@@ -25,7 +26,7 @@ function CsvView({ file }: { file: FileView }) {
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm text-content-muted">{file.header.length} columns</p>
         <Link href={`/csv?root=${file.root}&path=${encodeURIComponent(file.path)}`} className={buttonPrimary}>
-          ✎ Prepare this CSV
+          <Icon name="swap" size={16} className="mr-1.5 inline" />Prepare this CSV
         </Link>
       </div>
       <Grid header={page.header} rows={page.rows.slice(0, PAGE)} caption={file.name} />
@@ -112,7 +113,7 @@ export function FileViewer({ file, reload }: { file: FileView; reload: () => voi
           <button className={button} onClick={() => setSource(!source)}>{source ? "Tree view" : "Source"}</button>
         ) : null}
         {file.root === "dev" && EDITABLE.has(file.kind) && !editing && !file.truncated ? (
-          <button className={button} onClick={() => setEditing(true)}>✎ Edit</button>
+          <button className={button} onClick={() => setEditing(true)}><Icon name="filter" size={16} className="mr-1.5 inline" />Edit</button>
         ) : null}
         {file.actions.includes("extraction.pdf") ? (
           <>

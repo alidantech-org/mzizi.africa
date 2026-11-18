@@ -64,8 +64,8 @@ export default function PlaceCivicRoute() {
               </Section>
               {d.leadership.length > 0 ? (
                 <Section kicker="Responsible" title="Leadership here">
-                  <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{d.leadership.slice(0, 9).map((o) => (
-                    <li key={o.holderId}><Link href={`/leaders/${o.holderId}`} className="glass card card-lift flex items-center gap-3 !py-3"><Avatar name={o.personName} size={44} /><span className="min-w-0"><span className="block truncate font-semibold">{o.personName}</span><span className="block truncate text-xs text-content-muted">{o.officeTitle}{o.partyName ? ` · ${o.partyName}` : ""}</span></span></Link></li>
+                  <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">{d.leadership.slice(0, 9).map((o) => (
+                    <li key={o.holderId} className="min-w-0"><Link href={`/leaders/${o.holderId}`} className="glass card card-lift flex min-w-0 items-center gap-3 !py-3"><Avatar name={o.personName} size={44} /><span className="min-w-0"><span className="block truncate font-semibold">{o.personName}</span><span className="block truncate text-xs text-content-muted">{o.officeTitle}{o.partyName ? ` · ${o.partyName}` : ""}</span></span></Link></li>
                   ))}</ul>
                 </Section>
               ) : null}
