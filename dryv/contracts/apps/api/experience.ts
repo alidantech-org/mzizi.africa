@@ -27,6 +27,8 @@ const props = experience.properties({
 });
 
 const leaf = experience.schemas({
+  /** One interface wording: the copy key a screen declares and its text in the asked language. */
+  CopyEntry: dryv.schema({ key: dryv.field(props.Code), text: dryv.field(p.NonEmptyString500) }),
   /** A place as the address and the breadcrumbs know it. */
   PlaceRef: dryv.schema({
     featureId: dryv.field(p.Id),
@@ -188,6 +190,10 @@ const documents = experience.schemas({
     facts: dryv.field(shapes.FactRow).array(),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
+  CopyCatalog: dryv.schema({
+    languageCode: dryv.field(props.Language),
+    entries: dryv.field(shapes.CopyEntry).array(),
+  }),
 });
 
 const inputs = experience.schemas({
@@ -215,6 +221,12 @@ const inputs = experience.schemas({
     limit: dryv.field(props.Limit).optional(),
   }),
   FacilityKey: dryv.schema({ code: dryv.field(props.Code), languageCode: dryv.field(props.Language).optional() }),
+  CopyInput: dryv.schema({
+    languageCode: dryv.field(props.Language).optional(),
+    countryCode: dryv.field(props.Code).optional(),
+    /** Only the keys under this prefix, for a screen that needs few. */
+    prefix: dryv.field(props.Code).optional(),
+  }),
   FactsInput: dryv.schema({ featureId: dryv.field(p.Id).optional(), limit: dryv.field(props.Limit).optional() }),
 });
 
@@ -284,5 +296,17 @@ export const experienceOperations = reads.operations({
     .output(documents.FactList)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/facts").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetCopy: dryv
+    .operation()
+    .role("list")
+    .description(
+      "The interface wording for one language, with the country's own wording where it differs. Screens declare copy keys; the words are delivered from here.",
+    )
+    .input(inputs.CopyInput)
+    .output(documents.CopyCatalog)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/copy").input(input, dryv.queryObject()).output(output),
     })),
 });

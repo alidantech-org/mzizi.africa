@@ -46,6 +46,17 @@
       "summary": "Who and where the visitor is: the country and how it was decided, the language, the place resolved from the clean address path, the levels of the country\u0027s ladder and the countries that can be chosen."
     },
     {
+      "name": "GetCopy",
+      "group": "experience",
+      "feature": "experience",
+      "method": "GET",
+      "path": "/v1/copy",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "CopyCatalog",
+      "summary": "The interface wording for one language, with the country\u0027s own wording where it differs. Screens declare copy keys; the words are delivered from here."
+    },
+    {
       "name": "GetFacility",
       "group": "experience",
       "feature": "experience",

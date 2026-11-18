@@ -4,6 +4,10 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
+import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { codedPeriodSubjectEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-subject-entity.dto.example.ts";
 
 /** The contract shape of Slugs, for generated tests. */
 export const slugsExample: ContractExample = contractExample({

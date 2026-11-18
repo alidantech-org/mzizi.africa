@@ -1,7 +1,11 @@
 "use client";
 
 /** Small SVG charts drawn from the theme's colours: no chart library, every one readable with a text alternative. */
-import { n, n1, pct, short } from "#/lib/site/format.ts";
+import { ksh, n, n1, pct, short } from "#/lib/site/format.ts";
+
+const FORMATS = { n, short, ksh: (v: number) => ksh(v), pct: (v: number) => pct(v) } as const;
+/** The number styles a bar list can show: named so a server page can ask for one without passing a function. */
+export type BarFormat = keyof typeof FORMATS;
 
 export function Sparkline({ points, height = 56, width = 220, label }: { points: readonly number[]; height?: number; width?: number; label: string }) {
   if (points.length < 2) return null;
@@ -63,7 +67,8 @@ export function LineChart({ points, unit, label, height = 220 }: { points: reado
   );
 }
 
-export function BarList({ items, format = n, max }: { items: readonly { label: string; value: number; note?: string }[]; format?: (v: number) => string; max?: number }) {
+export function BarList({ items, unit = "n", max }: { items: readonly { label: string; value: number; note?: string }[]; unit?: BarFormat; max?: number }) {
+  const format = FORMATS[unit];
   const top = max ?? Math.max(...items.map((i) => i.value), 1);
   return (
     <ul className="space-y-2.5">

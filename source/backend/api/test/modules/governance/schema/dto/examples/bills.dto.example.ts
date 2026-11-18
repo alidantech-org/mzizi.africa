@@ -2,6 +2,14 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { holdersExample } from "@test/modules/governance/schema/dto/examples/holders.dto.example.ts";
+import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
+import { termsExample } from "@test/modules/governance/schema/dto/examples/terms.dto.example.ts";
+import { instrumentsExample } from "@test/modules/legal/schema/dto/examples/instruments.dto.example.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
 /** The contract shape of Bills, for generated tests. */
 export const billsExample: ContractExample = contractExample({

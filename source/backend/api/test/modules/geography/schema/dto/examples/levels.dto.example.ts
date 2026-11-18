@@ -2,6 +2,9 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 
 /** The contract shape of Levels, for generated tests. */
 export const levelsExample: ContractExample = contractExample({

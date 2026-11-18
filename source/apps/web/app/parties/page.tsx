@@ -1,23 +1,19 @@
-"use client";
-
 /** Route `/parties`: registered parties ranked by votes, members, office holders and the public money they receive. */
 import Link from "next/link";
 import { T } from "#/lib/site/i18n.tsx";
 
-import { AsyncView } from "#/components/site/async-view.tsx";
+import { Loaded } from "#/components/site/loaded.tsx";
 import { Breadcrumbs, Gaps, PageFrame } from "#/components/site/ui/primitives.tsx";
 import { ksh, n, short } from "#/lib/site/format.ts";
 import { parties } from "#/lib/site/insights.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
 
 export default function PartiesRoute() {
-  const loaded = useAsync(() => parties(), "parties");
   return (
     <PageFrame wide>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Parties" }]} />
       <p className="kicker">Political parties</p>
       <h1 className="hero-title text-4xl sm:text-5xl"><T>{"Parties, ranked"}</T></h1>
-      <AsyncView loaded={loaded}>
+      <Loaded read={() => parties()}>
         {({ parties: list, gaps }) => {
           const topVotes = Math.max(...list.map((p) => p.votes2022), 1);
           return (
@@ -38,7 +34,7 @@ export default function PartiesRoute() {
             </>
           );
         }}
-      </AsyncView>
+      </Loaded>
     </PageFrame>
   );
 }

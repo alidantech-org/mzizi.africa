@@ -3,6 +3,10 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
+import { fileVersionsExample } from "@test/modules/filesystem/schema/dto/examples/file-versions.dto.example.ts";
+import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { codedSubjectEntityExample } from "@test/modules/shared/schema/dto/examples/coded-subject-entity.dto.example.ts";
 
 /** The contract shape of Contents, for generated tests. */
 export const contentsExample: ContractExample = contractExample({

@@ -3,6 +3,8 @@ import type { CalendarInputDto } from "#/modules/experience/schema/dto/calendar-
 import type { CalendarDto } from "#/modules/experience/schema/dto/calendar.dto.ts";
 import type { ContextInputDto } from "#/modules/experience/schema/dto/context-input.dto.ts";
 import type { ContextDto } from "#/modules/experience/schema/dto/context.dto.ts";
+import type { CopyCatalogDto } from "#/modules/experience/schema/dto/copy-catalog.dto.ts";
+import type { CopyInputDto } from "#/modules/experience/schema/dto/copy-input.dto.ts";
 import type { FacilitiesInputDto } from "#/modules/experience/schema/dto/facilities-input.dto.ts";
 import type { FacilityDetailDto } from "#/modules/experience/schema/dto/facility-detail.dto.ts";
 import type { FacilityKeyDto } from "#/modules/experience/schema/dto/facility-key.dto.ts";
@@ -11,6 +13,7 @@ import type { FactListDto } from "#/modules/experience/schema/dto/fact-list.dto.
 import type { FactsInputDto } from "#/modules/experience/schema/dto/facts-input.dto.ts";
 import { GetCalendarUseCase } from "#/modules/experience/features/experience/use-cases/get-calendar.usecase.ts";
 import { GetContextUseCase } from "#/modules/experience/features/experience/use-cases/get-context.usecase.ts";
+import { GetCopyUseCase } from "#/modules/experience/features/experience/use-cases/get-copy.usecase.ts";
 import { GetFacilityUseCase } from "#/modules/experience/features/experience/use-cases/get-facility.usecase.ts";
 import { ListFacilitiesUseCase } from "#/modules/experience/features/experience/use-cases/list-facilities.usecase.ts";
 import { ListFactsUseCase } from "#/modules/experience/features/experience/use-cases/list-facts.usecase.ts";
@@ -22,6 +25,7 @@ import { ListFactsUseCase } from "#/modules/experience/features/experience/use-c
 export abstract class ExperienceExperienceService {
   abstract getCalendar(input: CalendarInputDto): Promise<CalendarDto>;
   abstract getContext(input: ContextInputDto): Promise<ContextDto>;
+  abstract getCopy(input: CopyInputDto): Promise<CopyCatalogDto>;
   abstract getFacility(input: FacilityKeyDto): Promise<FacilityDetailDto>;
   abstract listFacilities(input: FacilitiesInputDto): Promise<FacilityListDto>;
   abstract listFacts(input: FactsInputDto): Promise<FactListDto>;
@@ -32,6 +36,7 @@ export class ExperienceExperienceServiceImpl extends ExperienceExperienceService
   constructor(
     private readonly getCalendarUseCase: GetCalendarUseCase,
     private readonly getContextUseCase: GetContextUseCase,
+    private readonly getCopyUseCase: GetCopyUseCase,
     private readonly getFacilityUseCase: GetFacilityUseCase,
     private readonly listFacilitiesUseCase: ListFacilitiesUseCase,
     private readonly listFactsUseCase: ListFactsUseCase,
@@ -45,6 +50,10 @@ export class ExperienceExperienceServiceImpl extends ExperienceExperienceService
 
   getContext(input: ContextInputDto): Promise<ContextDto> {
     return this.getContextUseCase.execute(input);
+  }
+
+  getCopy(input: CopyInputDto): Promise<CopyCatalogDto> {
+    return this.getCopyUseCase.execute(input);
   }
 
   getFacility(input: FacilityKeyDto): Promise<FacilityDetailDto> {

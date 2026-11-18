@@ -130,6 +130,7 @@ const web_app = dryv
     insightOperations.GetCompareOptions,
     insightOperations.GetComparison,
     experienceOperations.GetContext,
+    experienceOperations.GetCopy,
     experienceOperations.GetCalendar,
     experienceOperations.ListFacilities,
     experienceOperations.GetFacility,

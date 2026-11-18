@@ -2,6 +2,13 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
+import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { productsExample } from "@test/modules/source/schema/dto/examples/products.dto.example.ts";
+import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Coverage, for generated tests. */
 export const coverageExample: ContractExample = contractExample({

@@ -2,6 +2,9 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
+import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
 
 /** The contract shape of Copy, for generated tests. */
 export const copyExample: ContractExample = contractExample({

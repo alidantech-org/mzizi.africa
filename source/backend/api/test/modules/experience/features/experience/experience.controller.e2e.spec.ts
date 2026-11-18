@@ -8,6 +8,8 @@ import { calendarInputExample } from "@test/modules/experience/schema/dto/exampl
 import { calendarExample } from "@test/modules/experience/schema/dto/examples/calendar.dto.example.ts";
 import { contextInputExample } from "@test/modules/experience/schema/dto/examples/context-input.dto.example.ts";
 import { contextExample } from "@test/modules/experience/schema/dto/examples/context.dto.example.ts";
+import { copyCatalogExample } from "@test/modules/experience/schema/dto/examples/copy-catalog.dto.example.ts";
+import { copyInputExample } from "@test/modules/experience/schema/dto/examples/copy-input.dto.example.ts";
 import { facilitiesInputExample } from "@test/modules/experience/schema/dto/examples/facilities-input.dto.example.ts";
 import { facilityDetailExample } from "@test/modules/experience/schema/dto/examples/facility-detail.dto.example.ts";
 import { facilityKeyExample } from "@test/modules/experience/schema/dto/examples/facility-key.dto.example.ts";
@@ -45,6 +47,7 @@ class InMemoryDataSourceModule {}
 const service = {
   getCalendar: vi.fn(),
   getContext: vi.fn(),
+  getCopy: vi.fn(),
   getFacility: vi.fn(),
   listFacilities: vi.fn(),
   listFacts: vi.fn(),
@@ -155,6 +158,25 @@ describe("GET /v1/context (getContext)", () => {
         edgeCountry: String("value"),
       }),
     );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/copy (getCopy)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(copyInputExample.valid()) },
+      headers: {},
+    };
+    const result = copyCatalogExample.valid();
+    service.getCopy.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/copy", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getCopy).toHaveBeenCalledTimes(1);
+    expect(service.getCopy).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

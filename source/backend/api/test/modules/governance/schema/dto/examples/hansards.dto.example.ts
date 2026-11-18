@@ -2,6 +2,11 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { sittingsExample } from "@test/modules/governance/schema/dto/examples/sittings.dto.example.ts";
+import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { artifactsExample } from "@test/modules/source/schema/dto/examples/artifacts.dto.example.ts";
+import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
 /** The contract shape of Hansards, for generated tests. */
 export const hansardsExample: ContractExample = contractExample({

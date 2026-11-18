@@ -8,7 +8,7 @@ import { AppFrame } from "#/components/shell/app-frame.tsx";
 import { THEME_INIT } from "#/components/site/theme-toggle.tsx";
 import { LanguageProvider } from "#/lib/site/i18n.tsx";
 import { SavedProvider } from "#/lib/site/saved.tsx";
-import { loadContext } from "#/lib/server/data.ts";
+import { loadContext, loadCopy, serverLanguage } from "#/lib/server/data.ts";
 
 const display = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap", axes: ["opsz"] });
 const body = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -18,8 +18,12 @@ export const metadata: Metadata = {
   description: "Who serves you, where the money goes, and the evidence behind it.",
 };
 
+const context_language = (value: string): "en" | "sw" => (value === "sw" ? "sw" : "en");
+
 export default async function RootLayout({ children }: { children: ReactNode }) {
+  const language = context_language(await serverLanguage());
   const context = await loadContext();
+  const copy = await loadCopy(language, context?.country.code);
   const shell = {
     countryName: context?.country.name ?? "Mzizi",
     place: context?.place ?? null,
@@ -30,7 +34,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang={context?.languageCode ?? "en"} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT }} /></head>
       <body className={`${display.variable} ${body.variable}`}>
-        <LanguageProvider>
+        <LanguageProvider initialLanguage={language} copy={copy}>
           <SavedProvider>
             <AppFrame context={shell}>{children}</AppFrame>
           </SavedProvider>

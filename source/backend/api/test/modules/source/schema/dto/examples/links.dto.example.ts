@@ -3,6 +3,9 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { periodEntityExample } from "@test/modules/shared/schema/dto/examples/period-entity.dto.example.ts";
+import { slugsExample } from "@test/modules/source/schema/dto/examples/slugs.dto.example.ts";
 
 /** The contract shape of Links, for generated tests. */
 export const linksExample: ContractExample = contractExample({

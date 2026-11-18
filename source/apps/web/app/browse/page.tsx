@@ -1,7 +1,12 @@
-"use client";
+import { Suspense } from "react";
 
-import { BrowseView } from "#/components/site/browse-view.tsx";
+import View from "./view.tsx";
 
-export default function BrowseRoot() {
-  return <BrowseView />;
+/** The route is a server page; the interactive view below it is the only client code. */
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-8" aria-busy="true" />}>
+      <View />
+    </Suspense>
+  );
 }

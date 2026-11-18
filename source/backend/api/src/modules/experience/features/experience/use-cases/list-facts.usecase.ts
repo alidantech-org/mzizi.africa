@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { listFacts } from "#/modules/insights/features/insights/reads/facts.ts";
 import type { FactListDto } from "#/modules/experience/schema/dto/fact-list.dto";

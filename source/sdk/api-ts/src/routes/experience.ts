@@ -7,6 +7,8 @@ export const experienceRoutes = {
   getCalendar: "/v1/calendar",
   /** GET /v1/context */
   getContext: "/v1/context",
+  /** GET /v1/copy */
+  getCopy: "/v1/copy",
   /** GET /v1/facilities/{code} */
   getFacility: (params: { code: string }) => `/v1/facilities/${params.code}`,
   /** GET /v1/facilities */

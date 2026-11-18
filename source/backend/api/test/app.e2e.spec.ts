@@ -35,6 +35,7 @@ const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/admin/accounts"],
   ["GET", "/v1/calendar"],
   ["GET", "/v1/context"],
+  ["GET", "/v1/copy"],
   ["GET", "/v1/facilities/{code}".replace("{code}", encodeURIComponent(String("value")))],
   ["GET", "/v1/facilities"],
   ["GET", "/v1/facts"],

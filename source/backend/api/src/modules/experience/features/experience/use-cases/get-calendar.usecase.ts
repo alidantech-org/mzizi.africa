@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { calendar } from "#/modules/experience/features/experience/reads/calendar.ts";
 import type { CalendarInputDto } from "#/modules/experience/schema/dto/calendar-input.dto";

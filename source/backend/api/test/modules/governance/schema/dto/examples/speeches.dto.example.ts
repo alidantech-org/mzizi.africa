@@ -2,6 +2,14 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { billsExample } from "@test/modules/governance/schema/dto/examples/bills.dto.example.ts";
+import { hansardsExample } from "@test/modules/governance/schema/dto/examples/hansards.dto.example.ts";
+import { holdersExample } from "@test/modules/governance/schema/dto/examples/holders.dto.example.ts";
+import { motionsExample } from "@test/modules/governance/schema/dto/examples/motions.dto.example.ts";
+import { sittingsExample } from "@test/modules/governance/schema/dto/examples/sittings.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
 /** The contract shape of Speeches, for generated tests. */
 export const speechesExample: ContractExample = contractExample({

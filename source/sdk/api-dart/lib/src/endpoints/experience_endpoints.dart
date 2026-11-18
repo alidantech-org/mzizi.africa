@@ -9,6 +9,9 @@ class ExperienceEndpoints {
   /// GET /v1/context
   String get getContext => '/v1/context';
 
+  /// GET /v1/copy
+  String get getCopy => '/v1/copy';
+
   /// GET /v1/facilities/{code}
   String getFacility({required String code}) => '/v1/facilities/$code';
 

@@ -1,26 +1,22 @@
-"use client";
-
 /** Route `/elections`: every election on record, newest first, with the national result and how many people were registered. */
 import Link from "next/link";
 import { T } from "#/lib/site/i18n.tsx";
 
 import { ElectionTimeline } from "#/components/site/election-timeline.tsx";
-import { AsyncView } from "#/components/site/async-view.tsx";
+import { Loaded } from "#/components/site/loaded.tsx";
 import { Stacked } from "#/components/site/ui/charts.tsx";
 import { Breadcrumbs, Gaps, PageFrame } from "#/components/site/ui/primitives.tsx";
 import { date, n, pct } from "#/lib/site/format.ts";
 import { elections } from "#/lib/site/insights.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
 
 export default function ElectionsRoute() {
-  const loaded = useAsync(() => elections(), "elections");
   return (
     <PageFrame wide>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Elections" }]} />
       <p className="kicker">Votes and voters</p>
       <h1 className="hero-title text-4xl sm:text-5xl"><T>{"Elections"}</T></h1>
       <p className="mt-2 max-w-2xl text-content-muted"><T>{"Who won, with how many votes, where — and how the voters' register has grown. Open an election for the heat map, or a place for its own history."}</T></p>
-      <AsyncView loaded={loaded}>
+      <Loaded read={() => elections()}>
         {({ elections: list }) => (
           <>
             <div className="mt-8"><ElectionTimeline elections={list} /></div>
@@ -48,7 +44,7 @@ export default function ElectionsRoute() {
             <Gaps topic="election results" items={["Presidential totals are the published figures; the split by county and the governor and member-of-parliament results are sample data for development. Ward-level results are not recorded."]} />
           </>
         )}
-      </AsyncView>
+      </Loaded>
     </PageFrame>
   );
 }

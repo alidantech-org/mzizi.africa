@@ -1,23 +1,18 @@
-"use client";
-
 /** Route `/parties/<code>`: a party's members, its votes by election and the fund money it received. */
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
-import { AsyncView } from "#/components/site/async-view.tsx";
+import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList } from "#/components/site/ui/charts.tsx";
 import { Gallery } from "#/components/site/ui/media.tsx";
 import { Breadcrumbs, Gaps, PageFrame, Section, Stat } from "#/components/site/ui/primitives.tsx";
-import { ksh, n, short, words } from "#/lib/site/format.ts";
+import { ksh, n, words } from "#/lib/site/format.ts";
 import { partyOf } from "#/lib/site/insights.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
 
-export default function PartyRoute() {
-  const { code } = useParams<{ code: string }>();
-  const loaded = useAsync(() => partyOf(decodeURIComponent(code)), `party-${code}`);
+export default async function PartyRoute({ params }: { params: Promise<{ code: string }> }) {
+  const { code } = await params;
   return (
     <PageFrame>
-      <AsyncView loaded={loaded}>
+      <Loaded read={() => partyOf(decodeURIComponent(code))}>
         {(d) => (
           <>
             <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Parties", href: "/parties" }, { label: d.party.name }]} />
@@ -33,7 +28,7 @@ export default function PartyRoute() {
                 <table className="table-clean"><thead><tr><th>Year</th><th>Contest</th><th>Candidates</th><th>Votes</th></tr></thead>
                   <tbody>{d.results.map((r) => <tr key={`${r.year}-${r.contest}`}><td className="num">{r.year}</td><td>{words(r.contest)}</td><td className="num">{r.candidates}</td><td className="num">{n(r.votes)}</td></tr>)}</tbody></table>
               </div>
-              {d.results.length > 0 ? <div className="glass card mt-4"><BarList items={d.results.map((r) => ({ label: `${r.year} · ${words(r.contest)}`, value: r.votes }))} format={short} /></div> : null}
+              {d.results.length > 0 ? <div className="glass card mt-4"><BarList items={d.results.map((r) => ({ label: `${r.year} · ${words(r.contest)}`, value: r.votes }))} unit="short" /></div> : null}
             </Section>
             {d.party.media.length > 0 ? <Section title="Media" kicker="Social"><Gallery items={d.party.media} /></Section> : null}
             <Section kicker="People" title={`Members (${d.members.length}${d.members.length >= 400 ? "+" : ""})`}>
@@ -49,7 +44,7 @@ export default function PartyRoute() {
             <Gaps items={d.gaps} topic={d.party.name} />
           </>
         )}
-      </AsyncView>
+      </Loaded>
     </PageFrame>
   );
 }

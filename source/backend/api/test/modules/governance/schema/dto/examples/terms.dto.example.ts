@@ -2,6 +2,12 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
+import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
 /** The contract shape of Terms, for generated tests. */
 export const termsExample: ContractExample = contractExample({

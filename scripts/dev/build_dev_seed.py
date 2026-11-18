@@ -21,6 +21,7 @@ from dev_seed.civic import build_ngcdf, build_party_fund, build_tenders, finish_
 from dev_seed.common import DATA, MERGED, read_features
 from dev_seed.contacts import build_contacts
 from dev_seed.content import build_content
+from dev_seed.copy import build_copy
 from dev_seed.elections import add_real_parties, build_elections
 from dev_seed.facts import build_facts
 from dev_seed.geometry import build_geometries, write_geometries
@@ -76,6 +77,7 @@ def main() -> None:
     build_extra(b, t, counties, constituencies, wards, geometries)
     write_people(b)
     reshape(t)
+    build_copy(t)
     build_bills(t)
     t.write()
     slugs = build_slugs()

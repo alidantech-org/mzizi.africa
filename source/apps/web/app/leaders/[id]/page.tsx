@@ -1,29 +1,24 @@
-"use client";
-
 /** Route `/leaders/<holder>`: a leader — who they are, how to reach them, how they got the seat, how they vote and the fund they oversee. */
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
 import { LegalBasisSection, SubjectContentSection } from "#/components/site/governance/shared.tsx";
-import { AsyncView } from "#/components/site/async-view.tsx";
+import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList, Donut } from "#/components/site/ui/charts.tsx";
 import { Avatar, Gallery } from "#/components/site/ui/media.tsx";
 import { Breadcrumbs, Gaps, PageFrame, Pill, Section, Stat } from "#/components/site/ui/primitives.tsx";
 import { date, ksh, n, pct, words } from "#/lib/site/format.ts";
 import { leaderOf } from "#/lib/site/insights.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
 import { LikeLeader } from "#/components/site/save-buttons.tsx";
 
 const CONTACT_ICON: Record<string, string> = { email: "✉️", telephone: "☎️", mobile: "📱", website: "🌐", x: "𝕏", facebook: "f", instagram: "◎", tiktok: "♪", youtube: "▶", "physical-address": "📍", "postal-address": "📮", "social-media": "🔗" };
 const hrefFor = (kind: string, value: string): string | null =>
   kind === "email" ? `mailto:${value}` : kind === "mobile" || kind === "telephone" ? `tel:${value.replace(/\s+/g, "")}` : /^https?:/.test(value) ? value : null;
 
-export default function LeaderRoute() {
-  const { id } = useParams<{ id: string }>();
-  const loaded = useAsync(() => leaderOf(id), `leader-${id}`);
+export default async function LeaderRoute({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
     <PageFrame>
-      <AsyncView loaded={loaded}>
+      <Loaded read={() => leaderOf(id)}>
         {(d) => {
           const l = d.leader;
           const portrait = d.media.find((m) => m.kind === "portrait") ?? d.media[0];
@@ -85,7 +80,7 @@ export default function LeaderRoute() {
                 <Section kicker="Public money" title={`Constituency development fund · ${d.fund.place.name}`} action={<Link className="btn btn-primary" href={`/civic/${d.fund.place.featureId}`}>Everything funded here →</Link>}>
                   <div className="grid gap-4 lg:grid-cols-2">
                     <div className="glass card"><p className="kicker">Latest year</p><p className="num font-display text-3xl">{ksh(d.fund.latestYear?.total)}</p><p className="text-sm text-content-muted">{d.fund.latestYear?.year} allocation · {d.fund.infrastructure.projects} projects · {pct(d.fund.infrastructure.completionRate, 0)} completed</p></div>
-                    <div className="glass card"><BarList items={d.fund.classes.slice(0, 5).map((c) => ({ label: c.label, value: c.amount }))} format={ksh} /></div>
+                    <div className="glass card"><BarList items={d.fund.classes.slice(0, 5).map((c) => ({ label: c.label, value: c.amount }))} unit="ksh" /></div>
                   </div>
                 </Section>
               ) : null}
@@ -103,7 +98,7 @@ export default function LeaderRoute() {
             </>
           );
         }}
-      </AsyncView>
+      </Loaded>
     </PageFrame>
   );
 }

@@ -2,6 +2,7 @@ import "server-only";
 
 import { cookies, headers } from "next/headers";
 
+import { getCopy } from "@mzizi/api-client/actions/experience/get-copy.actions.ts";
 import { getContext } from "@mzizi/api-client/actions/experience/get-context.actions.ts";
 import type { ExperienceContext } from "@mzizi/api-client/types/experience/context.ts";
 
@@ -37,4 +38,10 @@ export async function loadContext(path?: string, featureId?: string): Promise<Ex
 export async function serverLanguage(): Promise<string> {
   const jar = await cookies();
   return jar.get("mz_lang")?.value ?? "en";
+}
+
+/** The interface wording for a language, as one key-to-text map; empty when the API is unreachable (screens then show English). */
+export async function loadCopy(languageCode: string, countryCode?: string): Promise<Record<string, string>> {
+  const catalog = await unwrap(getCopy({ query: { languageCode, countryCode } }));
+  return Object.fromEntries((catalog?.entries ?? []).map((entry) => [entry.key, entry.text]));
 }

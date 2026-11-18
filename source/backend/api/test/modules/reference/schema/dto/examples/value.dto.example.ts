@@ -2,6 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { schemeExample } from "@test/modules/reference/schema/dto/examples/scheme.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 
 /** The contract shape of Value, for generated tests. */
 export const valueExample: ContractExample = contractExample({

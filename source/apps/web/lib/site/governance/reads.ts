@@ -1,98 +1,35 @@
-/** Generated request clients followed immediately by validation into named screen documents. */
-import {
-  listInstitutions,
-  listInstitutionsRequest,
-} from "#/lib/api/insights/list-institutions.ts";
-import {
-  getInstitution,
-  getInstitutionRequest,
-} from "#/lib/api/insights/get-institution.ts";
-import { getGovernanceTabs } from "#/lib/api/insights/get-governance-tabs.ts";
-import {
-  getGovernanceTree,
-  getGovernanceTreeRequest,
-} from "#/lib/api/insights/get-governance-tree.ts";
-import {
-  getContent,
-  getContentRequest,
-} from "#/lib/api/insights/get-content.ts";
-import {
-  listContent,
-  listContentRequest,
-} from "#/lib/api/insights/list-content.ts";
-import {
-  getLegalBasis,
-  getLegalBasisRequest,
-} from "#/lib/api/insights/get-legal-basis.ts";
-import {
-  getCompareOptions,
-  getCompareOptionsRequest,
-} from "#/lib/api/insights/get-compare-options.ts";
-import {
-  getComparison,
-  getComparisonRequest,
-} from "#/lib/api/insights/get-comparison.ts";
-import type { ClientResponse } from "#/lib/dryv/transport.ts";
+/** Generated server actions followed immediately by validation into named screen documents. */
+import { listInstitutions } from "@mzizi/api-client/actions/insights/list-institutions.actions.ts";
+import { getInstitution } from "@mzizi/api-client/actions/insights/get-institution.actions.ts";
+import { getGovernanceTabs } from "@mzizi/api-client/actions/insights/get-governance-tabs.actions.ts";
+import { getGovernanceTree } from "@mzizi/api-client/actions/insights/get-governance-tree.actions.ts";
+import { getContent } from "@mzizi/api-client/actions/insights/get-content.actions.ts";
+import { listContent } from "@mzizi/api-client/actions/insights/list-content.actions.ts";
+import { getLegalBasis } from "@mzizi/api-client/actions/insights/get-legal-basis.actions.ts";
+import { getCompareOptions } from "@mzizi/api-client/actions/insights/get-compare-options.actions.ts";
+import { getComparison } from "@mzizi/api-client/actions/insights/get-comparison.actions.ts";
 import type { ContentInput } from "#/lib/types/content-input.ts";
 import type { ContentListInput } from "#/lib/types/content-list-input.ts";
 import type { GovTreeInput } from "#/lib/types/gov-tree-input.ts";
 import type { InstitutionsInput } from "#/lib/types/institutions-input.ts";
 import * as parse from "#/lib/site/governance/parse/documents.ts";
 
-async function decoded<I, O>(
-  pending: Promise<ClientResponse<I>>,
-  decode: (input: I) => O,
-): Promise<O> {
+interface Outcome<I> { readonly success: boolean; readonly body: I | null; readonly message?: string }
+
+async function decoded<I, O>(pending: Promise<Outcome<I>>, decode: (input: I) => O): Promise<O> {
   const result = await pending;
-  if (!result.success || result.body === null)
-    throw new Error(
-      result.message ||
-        "This information could not be loaded. Please try again.",
-    );
+  if (!result.success || result.body === null) throw new Error(result.message || "This information could not be loaded. Please try again.");
   return decode(result.body);
 }
-export const institutions = (input: InstitutionsInput = {}) =>
-  decoded(
-    listInstitutions(listInstitutionsRequest({ input })),
-    parse.directory,
-  );
-export const institution = (code: string, languageCode: string) =>
-  decoded(
-    getInstitution(getInstitutionRequest({ code, input: { languageCode } })),
-    parse.institution,
-  );
-export const treeOptions = (languageCode: string) =>
-  decoded(getGovernanceTabs({ query: { languageCode } }), parse.options);
-export const governanceTree = (input: GovTreeInput, languageCode: string) => {
-  const request = getGovernanceTreeRequest({ input });
-  return decoded(
-    getGovernanceTree({
-      ...request,
-      query: { ...request.query, languageCode },
-    }),
-    parse.tree,
-  );
-};
-export const content = (input: ContentInput) =>
-  decoded(getContent(getContentRequest({ input })), parse.contentPage);
-export const library = (input: ContentListInput = {}) =>
-  decoded(listContent(listContentRequest({ input })), parse.library);
-export const legalBasis = (subjectTable: string, subjectCode: string) =>
-  decoded(
-    getLegalBasis(
-      getLegalBasisRequest({ input: { subjectTable, subjectCode } }),
-    ),
-    parse.legalBasis,
-  );
-export const compareOptions = (featureId: string, metric?: string) =>
-  decoded(
-    getCompareOptions(
-      getCompareOptionsRequest({ input: { featureId, metric } }),
-    ),
-    parse.compareOptions,
-  );
-export const compare = (a: string, b: string, metrics?: string) =>
-  decoded(
-    getComparison(getComparisonRequest({ input: { a, b, metrics } })),
-    parse.comparison,
-  );
+const opt = <T extends object>(o: T): Partial<T> =>
+  Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined && v !== "")) as Partial<T>;
+
+export const institutions = (input: InstitutionsInput = {}) => decoded(listInstitutions({ query: opt(input) }), parse.directory);
+export const institution = (code: string, _languageCode?: string) => decoded(getInstitution({ params: { code } }), parse.institution);
+export const treeOptions = (_languageCode?: string) => decoded(getGovernanceTabs({}), parse.options);
+export const governanceTree = (input: GovTreeInput, _languageCode?: string) => decoded(getGovernanceTree({ query: opt(input) }), parse.tree);
+export const content = (input: ContentInput) => decoded(getContent({ query: opt(input) }), parse.contentPage);
+export const library = (input: ContentListInput = {}) => decoded(listContent({ query: opt(input) }), parse.library);
+export const legalBasis = (subjectTable: string, subjectCode: string) => decoded(getLegalBasis({ query: { subjectTable, subjectCode } }), parse.legalBasis);
+export const compareOptions = (featureId: string, metric?: string) => decoded(getCompareOptions({ query: { featureId, ...opt({ metric }) } }), parse.compareOptions);
+export const compare = (a: string, b: string, metrics?: string) => decoded(getComparison({ query: { a, b, ...opt({ metrics }) } }), parse.comparison);

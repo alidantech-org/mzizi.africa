@@ -1,22 +1,17 @@
-"use client";
-
 /** Route `/elections/place/<id>`: a place's elections over time — who won and how, turnout, and how registration has grown. */
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
-import { AsyncView } from "#/components/site/async-view.tsx";
+import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList, LineChart, Stacked } from "#/components/site/ui/charts.tsx";
 import { Gaps, PageFrame, PlaceTabs, PlaceTrail, Section, Stat } from "#/components/site/ui/primitives.tsx";
 import { date, n, pct, words } from "#/lib/site/format.ts";
 import { placeElections } from "#/lib/site/insights.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
 
-export default function PlaceElectionsRoute() {
-  const { id } = useParams<{ id: string }>();
-  const loaded = useAsync(() => placeElections(id), `pe-${id}`);
+export default async function PlaceElectionsRoute({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   return (
     <PageFrame>
-      <AsyncView loaded={loaded}>
+      <Loaded read={() => placeElections(id)}>
         {(d) => {
           const latest = d.elections[0]?.contests[0];
           return (
@@ -43,7 +38,7 @@ export default function PlaceElectionsRoute() {
                         <h3 className="font-display text-xl">{words(c.kind)}</h3>
                         <p className="text-sm text-content-muted">{n(c.registered)} registered · turnout {pct(c.turnout)}</p>
                         <div className="my-3"><Stacked label="Share of votes" parts={c.candidates.map((x) => ({ label: x.name, value: x.votes }))} /></div>
-                        <BarList items={c.candidates.slice(0, 5).map((x) => ({ label: `${x.won ? "★ " : ""}${x.name}${x.party ? ` (${x.party})` : ""}`, value: x.share, note: n(x.votes) }))} format={(v) => pct(v)} />
+                        <BarList items={c.candidates.slice(0, 5).map((x) => ({ label: `${x.won ? "★ " : ""}${x.name}${x.party ? ` (${x.party})` : ""}`, value: x.share, note: n(x.votes) }))} unit="pct" />
                         {c.candidates[0]?.individualId ? <p className="mt-3 text-xs text-content-muted">Winner: {c.candidates[0].name}</p> : null}
                       </div>
                     ))}
@@ -54,7 +49,7 @@ export default function PlaceElectionsRoute() {
             </>
           );
         }}
-      </AsyncView>
+      </Loaded>
     </PageFrame>
   );
 }

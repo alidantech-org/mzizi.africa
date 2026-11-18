@@ -1,86 +1,42 @@
 /**
- * Typed reads of the insight screens. The generated clients carry the request shapes; the sections the API leaves open
- * (`dynamic`) are typed here, once, so pages never cast. Each read returns the body or throws the API's message.
+ * Typed reads of the insight screens, through the generated server actions (the browser never calls the API). The
+ * sections the API leaves open (`dynamic`) are typed here, once, so pages never cast. Each read returns the body or
+ * throws the API's message.
  */
-import {
-  browsePlaces,
-  browsePlacesRequest,
-} from "#/lib/api/insights/browse-places.ts";
-import {
-  getElection,
-  getElectionRequest,
-} from "#/lib/api/insights/get-election.ts";
-import {
-  getIndicatorMap,
-  getIndicatorMapRequest,
-} from "#/lib/api/insights/get-indicator-map.ts";
-import {
-  getIndicatorSeries,
-  getIndicatorSeriesRequest,
-} from "#/lib/api/insights/get-indicator-series.ts";
-import {
-  getLeaderProfile,
-  getLeaderProfileRequest,
-} from "#/lib/api/insights/get-leader-profile.ts";
-import {
-  getLeaderboard,
-  getLeaderboardRequest,
-} from "#/lib/api/insights/get-leaderboard.ts";
-import { getMotion, getMotionRequest } from "#/lib/api/insights/get-motion.ts";
-import { getParty, getPartyRequest } from "#/lib/api/insights/get-party.ts";
-import {
-  getPlaceCivic,
-  getPlaceCivicRequest,
-} from "#/lib/api/insights/get-place-civic.ts";
-import {
-  getPlaceElections,
-  getPlaceElectionsRequest,
-} from "#/lib/api/insights/get-place-elections.ts";
-import {
-  getPlaceStatistics,
-  getPlaceStatisticsRequest,
-} from "#/lib/api/insights/get-place-statistics.ts";
-import {
-  getProject,
-  getProjectRequest,
-} from "#/lib/api/insights/get-project.ts";
-import {
-  globalSearch,
-  globalSearchRequest,
-} from "#/lib/api/insights/global-search.ts";
-import {
-  getLeaderTree,
-  getLeaderTreeRequest,
-} from "#/lib/api/insights/get-leader-tree.ts";
-import { listFacts, listFactsRequest } from "#/lib/api/insights/list-facts.ts";
-import {
-  getNearbyProjects,
-  getNearbyProjectsRequest,
-} from "#/lib/api/insights/get-nearby-projects.ts";
-import {
-  listElections,
-  listElectionsRequest,
-} from "#/lib/api/insights/list-elections.ts";
-import { listLeaderboardMetrics } from "#/lib/api/insights/list-leaderboard-metrics.ts";
-import {
-  listMotions,
-  listMotionsRequest,
-} from "#/lib/api/insights/list-motions.ts";
-import { listParties } from "#/lib/api/insights/list-parties.ts";
-import {
-  listTenders,
-  listTendersRequest,
-} from "#/lib/api/insights/list-tenders.ts";
-import type { ClientResponse } from "#/lib/dryv/transport.ts";
+import { globalSearch } from "@mzizi/api-client/actions/insights/global-search.actions.ts";
+import { browsePlaces } from "@mzizi/api-client/actions/insights/browse-places.actions.ts";
+import { getPlaceStatistics } from "@mzizi/api-client/actions/insights/get-place-statistics.actions.ts";
+import { getIndicatorSeries } from "@mzizi/api-client/actions/insights/get-indicator-series.actions.ts";
+import { getIndicatorMap } from "@mzizi/api-client/actions/insights/get-indicator-map.actions.ts";
+import { listLeaderboardMetrics } from "@mzizi/api-client/actions/insights/list-leaderboard-metrics.actions.ts";
+import { getLeaderboard } from "@mzizi/api-client/actions/insights/get-leaderboard.actions.ts";
+import { listElections } from "@mzizi/api-client/actions/insights/list-elections.actions.ts";
+import { getElection } from "@mzizi/api-client/actions/insights/get-election.actions.ts";
+import { getPlaceElections } from "@mzizi/api-client/actions/insights/get-place-elections.actions.ts";
+import { listParties } from "@mzizi/api-client/actions/insights/list-parties.actions.ts";
+import { getParty } from "@mzizi/api-client/actions/insights/get-party.actions.ts";
+import { listMotions } from "@mzizi/api-client/actions/insights/list-motions.actions.ts";
+import { getMotion } from "@mzizi/api-client/actions/insights/get-motion.actions.ts";
+import { getLeaderProfile } from "@mzizi/api-client/actions/insights/get-leader-profile.actions.ts";
+import { getPlaceCivic } from "@mzizi/api-client/actions/insights/get-place-civic.actions.ts";
+import { getProject } from "@mzizi/api-client/actions/insights/get-project.actions.ts";
+import { listTenders } from "@mzizi/api-client/actions/insights/list-tenders.actions.ts";
+import { getNearbyProjects } from "@mzizi/api-client/actions/insights/get-nearby-projects.actions.ts";
+import { getLeaderTree } from "@mzizi/api-client/actions/insights/get-leader-tree.actions.ts";
+import { listFacts } from "@mzizi/api-client/actions/insights/list-facts.actions.ts";
 
-async function body<T>(pending: Promise<ClientResponse<unknown>>): Promise<T> {
+interface Outcome { readonly success: boolean; readonly body: unknown; readonly message?: string }
+
+async function body<T>(pending: Promise<Outcome>): Promise<T> {
   const response = await pending;
   if (!response.success || response.body === null) {
     const detail = (response.body as { message?: string } | null)?.message;
-    throw new Error(detail ?? response.message);
+    throw new Error(detail ?? response.message ?? "This information could not be loaded.");
   }
   return response.body as T;
 }
+const opt = <T extends Record<string, unknown>>(o: T): Partial<T> =>
+  Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined && v !== "")) as Partial<T>;
 
 /* ---------------------------------------------------------------------------------------------- shapes */
 export interface Crumb {
@@ -618,110 +574,33 @@ export interface Leader {
 }
 
 /* ---------------------------------------------------------------------------------------------- reads */
-export const search = (query: string, kinds?: string, limit = 30) =>
-  body<SearchResults>(
-    globalSearch(
-      globalSearchRequest({
-        input: { query, ...(kinds ? { kinds } : {}), limit },
-      }),
-    ),
-  );
-export const browse = (featureId?: string) =>
-  body<Browse>(
-    browsePlaces(
-      browsePlacesRequest({ input: featureId ? { featureId } : {} }),
-    ),
-  );
-export const statisticsOf = (featureId: string) =>
-  body<PlaceStatistics>(
-    getPlaceStatistics(getPlaceStatisticsRequest({ featureId })),
-  );
-export const seriesOf = (indicatorCode: string, featureId: string) =>
-  body<Series>(
-    getIndicatorSeries(getIndicatorSeriesRequest({ indicatorCode, featureId })),
-  );
-export const mapOf = (
-  indicatorCode: string,
-  parentFeatureId?: string,
-  kindCode?: string,
-) =>
-  body<IndicatorMap>(
-    getIndicatorMap(
-      getIndicatorMapRequest({
-        indicatorCode,
-        ...(parentFeatureId ? { parentFeatureId } : {}),
-        ...(kindCode ? { kindCode } : {}),
-      }),
-    ),
-  );
-export const metrics = () =>
-  body<{ metrics: Metric[] }>(listLeaderboardMetrics({}));
-export const boardOf = (
-  metricCode: string,
-  kindCode?: string,
-  parentFeatureId?: string,
-  limit = 100,
-) =>
-  body<Board>(
-    getLeaderboard(
-      getLeaderboardRequest({
-        metricCode,
-        ...(kindCode ? { kindCode } : {}),
-        ...(parentFeatureId ? { parentFeatureId } : {}),
-        limit,
-      }),
-    ),
-  );
-export const elections = () =>
-  body<{ elections: ElectionSummary[] }>(listElections(listElectionsRequest()));
-export const electionOf = (
-  electionId: string,
-  parentFeatureId?: string,
-  contestKind?: string,
-) =>
-  body<ElectionDetail>(
-    getElection(
-      getElectionRequest({
-        electionId,
-        ...(parentFeatureId ? { parentFeatureId } : {}),
-        ...(contestKind ? { contestKind } : {}),
-      }),
-    ),
-  );
-export const placeElections = (featureId: string) =>
-  body<PlaceElections>(
-    getPlaceElections(getPlaceElectionsRequest({ featureId })),
-  );
-export const parties = () =>
-  body<{ parties: PartyRow[]; gaps: string[] }>(listParties({}));
-export const partyOf = (code: string) =>
-  body<PartyDetail>(getParty(getPartyRequest({ code })));
-export const motions = (institutionId?: string) =>
-  body<{ motions: MotionRow[] }>(
-    listMotions(
-      listMotionsRequest({ input: institutionId ? { institutionId } : {} }),
-    ),
-  );
-export const motionOf = (code: string) =>
-  body<MotionDetail>(getMotion(getMotionRequest({ code })));
-export const leaderOf = (id: string) =>
-  body<Leader>(getLeaderProfile(getLeaderProfileRequest({ id })));
-export const civicOf = (featureId: string) =>
-  body<PlaceCivic>(getPlaceCivic(getPlaceCivicRequest({ featureId })));
-export const projectOf = (code: string) =>
-  body<ProjectDetail>(getProject(getProjectRequest({ code })));
-export const tenders = (status?: string, featureId?: string) =>
-  body<TenderList>(
-    listTenders(
-      listTendersRequest({
-        input: {
-          ...(status ? { status } : {}),
-          ...(featureId ? { featureId } : {}),
-          limit: 80,
-        },
-      }),
-    ),
-  );
+export const search = (query: string, kinds?: string, limit = 30) => body<SearchResults>(globalSearch({ query: { query, ...opt({ kinds }), limit } }));
+export const browse = (featureId?: string) => body<Browse>(browsePlaces({ query: opt({ featureId }) }));
+export const statisticsOf = (featureId: string) => body<PlaceStatistics>(getPlaceStatistics({ params: { featureId } }));
+export const seriesOf = (indicatorCode: string, featureId: string) => body<Series>(getIndicatorSeries({ params: { indicatorCode }, query: { featureId } }));
+export const mapOf = (indicatorCode: string, parentFeatureId?: string, kindCode?: string) =>
+  body<IndicatorMap>(getIndicatorMap({ params: { indicatorCode }, query: opt({ parentFeatureId, kindCode }) }));
+export const metrics = () => body<{ metrics: Metric[] }>(listLeaderboardMetrics({}));
+export const boardOf = (metricCode: string, kindCode?: string, parentFeatureId?: string, limit = 100) =>
+  body<Board>(getLeaderboard({ params: { metricCode }, query: { ...opt({ kindCode, parentFeatureId }), limit } }));
+export const elections = () => body<{ elections: ElectionSummary[] }>(listElections({}));
+export const electionOf = (electionId: string, parentFeatureId?: string, contestKind?: string) =>
+  body<ElectionDetail>(getElection({ params: { electionId }, query: opt({ parentFeatureId, contestKind }) }));
+export const placeElections = (featureId: string) => body<PlaceElections>(getPlaceElections({ params: { featureId } }));
+export const parties = () => body<{ parties: PartyRow[]; gaps: string[] }>(listParties({}));
+export const partyOf = (code: string) => body<PartyDetail>(getParty({ params: { code } }));
+export const motions = (institutionId?: string) => body<{ motions: MotionRow[] }>(listMotions({ query: opt({ institutionId }) }));
+export const motionOf = (code: string) => body<MotionDetail>(getMotion({ params: { code } }));
+export const leaderOf = (id: string) => body<Leader>(getLeaderProfile({ params: { id } }));
+export const civicOf = (featureId: string) => body<PlaceCivic>(getPlaceCivic({ params: { featureId } }));
+export const projectOf = (code: string) => body<ProjectDetail>(getProject({ params: { code } }));
+export const tenders = (status?: string, featureId?: string) => body<TenderList>(listTenders({ query: { ...opt({ status, featureId }), limit: 80 } }));
+export const nearbyOf = (latitude: number, longitude: number, radiusKm = 10) =>
+  body<{ radiusKm: number; projects: NearbyProject[]; gaps: string[] }>(getNearbyProjects({ query: { latitude, longitude, radiusKm } }));
+export const treeOf = (featureId?: string) =>
+  body<{ place: Crumb | null; levels: TreeLevel[]; gaps: string[] }>(getLeaderTree({ query: opt({ featureId }) }));
+export const facts = (featureId?: string) => body<{ facts: Fact[]; gaps: string[] }>(listFacts({ query: { ...opt({ featureId }), limit: 30 } }));
+
 export interface NearbyProject extends Omit<
   CivicProject,
   "started_on" | "completed_on" | "description" | "unit_id"
@@ -729,12 +608,6 @@ export interface NearbyProject extends Omit<
   distance_km: number;
   responsible: string | null;
 }
-export const nearbyOf = (latitude: number, longitude: number, radiusKm = 10) =>
-  body<{ radiusKm: number; projects: NearbyProject[]; gaps: string[] }>(
-    getNearbyProjects(
-      getNearbyProjectsRequest({ input: { latitude, longitude, radiusKm } }),
-    ),
-  );
 
 export interface TreeLeader {
   holderId: string;
@@ -747,6 +620,7 @@ export interface TreeLeader {
   photo: string | null;
   code: string;
 }
+
 export interface TreeLevel {
   level: string;
   label: string;
@@ -754,12 +628,7 @@ export interface TreeLevel {
   total: number;
   groups: Record<string, TreeLeader[]>;
 }
-export const treeOf = (featureId?: string) =>
-  body<{ place: Crumb | null; levels: TreeLevel[]; gaps: string[] }>(
-    getLeaderTree(
-      getLeaderTreeRequest({ input: featureId ? { featureId } : {} }),
-    ),
-  );
+
 export interface Fact {
   code: string;
   statement: string;
@@ -769,11 +638,3 @@ export interface Fact {
   tagged: boolean;
   source: string | null;
 }
-export const facts = (featureId?: string) =>
-  body<{ facts: Fact[]; gaps: string[] }>(
-    listFacts(
-      listFactsRequest({
-        input: { ...(featureId ? { featureId } : {}), limit: 30 },
-      }),
-    ),
-  );

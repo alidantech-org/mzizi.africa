@@ -4,6 +4,8 @@ import 'package:mzizi_api/src/models/experience/calendar.dart';
 import 'package:mzizi_api/src/models/experience/calendar_input.dart';
 import 'package:mzizi_api/src/models/experience/context.dart';
 import 'package:mzizi_api/src/models/experience/context_input.dart';
+import 'package:mzizi_api/src/models/experience/copy_catalog.dart';
+import 'package:mzizi_api/src/models/experience/copy_input.dart';
 import 'package:mzizi_api/src/models/experience/facilities_input.dart';
 import 'package:mzizi_api/src/models/experience/facility_detail.dart';
 import 'package:mzizi_api/src/models/experience/facility_key.dart';
@@ -55,6 +57,20 @@ class ExperienceFeature {
           if (featureId != null) 'featureId': featureId,
         },
         fromJson: (json) => ExperienceContext.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// The interface wording for one language, with the country's own wording where it differs. Screens declare copy keys; the words are delivered from here.
+  ///
+  /// GET /v1/copy
+  Future<ApiResult<ExperienceCopyCatalog>> getCopy({ExperienceCopyInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<ExperienceCopyCatalog>(
+        endpoint: _routes.getCopy,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'experience.getCopy'),
+        query: input?.toJson(),
+        fromJson: (json) => ExperienceCopyCatalog.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }

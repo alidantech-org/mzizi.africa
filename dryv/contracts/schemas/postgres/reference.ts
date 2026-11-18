@@ -10,7 +10,6 @@
  * Not yet enforced: cycles through an edge table such as value_relations.
  */
 import * as dryv from "@dryvcode/author";
-import { rule } from "@dryvcode/author";
 
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";

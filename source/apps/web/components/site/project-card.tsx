@@ -3,7 +3,8 @@
 import Link from "next/link";
 
 import { Icon } from "#/components/brand/icon.tsx";
-import { Pill, statusTone } from "#/components/site/ui/primitives.tsx";
+import { Pill } from "#/components/site/ui/primitives.tsx";
+import { statusTone } from "#/components/site/ui/status.ts";
 import { ksh, words } from "#/lib/site/format.ts";
 import type { CivicProject } from "#/lib/site/insights.ts";
 

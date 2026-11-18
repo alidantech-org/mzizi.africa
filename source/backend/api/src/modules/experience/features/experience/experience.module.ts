@@ -2,6 +2,7 @@ import { Module, type Type } from "@nestjs/common";
 import { ExperienceExperienceRepository } from "#/modules/experience/features/experience/repositories/experience.repository.ts";
 import { GetCalendarUseCase } from "#/modules/experience/features/experience/use-cases/get-calendar.usecase.ts";
 import { GetContextUseCase } from "#/modules/experience/features/experience/use-cases/get-context.usecase.ts";
+import { GetCopyUseCase } from "#/modules/experience/features/experience/use-cases/get-copy.usecase.ts";
 import { GetFacilityUseCase } from "#/modules/experience/features/experience/use-cases/get-facility.usecase.ts";
 import { ListFacilitiesUseCase } from "#/modules/experience/features/experience/use-cases/list-facilities.usecase.ts";
 import { ListFactsUseCase } from "#/modules/experience/features/experience/use-cases/list-facts.usecase.ts";
@@ -21,6 +22,7 @@ import {
     },
     GetCalendarUseCase,
     GetContextUseCase,
+    GetCopyUseCase,
     GetFacilityUseCase,
     ListFacilitiesUseCase,
     ListFactsUseCase,

@@ -3,6 +3,13 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
+import { provisionsExample } from "@test/modules/legal/schema/dto/examples/provisions.dto.example.ts";
+import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
+import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
 /** The contract shape of Obligations, for generated tests. */
 export const obligationsExample: ContractExample = contractExample({

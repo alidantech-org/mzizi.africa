@@ -1,10 +1,12 @@
-"use client";
+import { Suspense } from "react";
 
-import { useParams } from "next/navigation";
+import View from "./view.tsx";
 
-import { BrowseView } from "#/components/site/browse-view.tsx";
-
-export default function BrowsePlace() {
-  const { id } = useParams<{ id: string }>();
-  return <BrowseView featureId={id} />;
+/** The route is a server page; the interactive view below it is the only client code. */
+export default function Page() {
+  return (
+    <Suspense fallback={<div className="p-8" aria-busy="true" />}>
+      <View />
+    </Suspense>
+  );
 }

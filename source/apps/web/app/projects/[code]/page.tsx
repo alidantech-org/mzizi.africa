@@ -1,24 +1,20 @@
-"use client";
-
 /** Route `/projects/<code>`: one project — where, who is responsible, the money, the tender and bids, pictures and evidence. */
 import Link from "next/link";
-import { useParams } from "next/navigation";
 
-import { AsyncView } from "#/components/site/async-view.tsx";
+import { Loaded } from "#/components/site/loaded.tsx";
 import { ProjectsMapLazy } from "#/components/site/map/projects-map-lazy.tsx";
 import { Gallery } from "#/components/site/ui/media.tsx";
-import { Breadcrumbs, Gaps, PageFrame, Pill, Section, Stat, statusTone } from "#/components/site/ui/primitives.tsx";
+import { Breadcrumbs, Gaps, PageFrame, Pill, Section, Stat } from "#/components/site/ui/primitives.tsx";
+import { statusTone } from "#/components/site/ui/status.ts";
 import { LikeProject } from "#/components/site/save-buttons.tsx";
 import { date, ksh, words } from "#/lib/site/format.ts";
 import { projectOf } from "#/lib/site/insights.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
 
-export default function ProjectRoute() {
-  const { code } = useParams<{ code: string }>();
-  const loaded = useAsync(() => projectOf(decodeURIComponent(code)), `project-${code}`);
+export default async function ProjectRoute({ params }: { params: Promise<{ code: string }> }) {
+  const { code } = await params;
   return (
     <PageFrame>
-      <AsyncView loaded={loaded}>
+      <Loaded read={() => projectOf(decodeURIComponent(code))}>
         {(d) => {
           const p = d.project;
           const total = d.money.reduce((a, m) => a + (m.amount ?? 0), 0);
@@ -52,7 +48,7 @@ export default function ProjectRoute() {
             </>
           );
         }}
-      </AsyncView>
+      </Loaded>
     </PageFrame>
   );
 }
