@@ -21,6 +21,23 @@ tags: [portal, engine, acquisition, seeds]
 
 See the [dashboard](../../../source/apps/admin/README.md), [engine](../../../source/backend/engine/README.md), [acquisition runtime](../acquisition/WEB_ACQUISITION_RUNTIME.md) and [seed guide](../../../seed/README.md). Current entry points include the [HTTP operation routes](../../../source/backend/engine/src/mzizi_engine/runtime/http/app.py), [crawler replay](../../../source/packages/crawler/src/mzizi_crawler/features/replay/replay.py), [generated table reader](../../../source/packages/manifest/src/mzizi_manifest/features/database/tables.py) and [seed loader](../../../source/backend/engine/src/mzizi_engine/persistence/postgres/seed_loader.py).
 
+## Explorer, collection proof and what the portal shows now
+
+The engine serves read-only exploration endpoints under `/v1/explore` (see [explore.py](../../../source/backend/engine/src/mzizi_engine/runtime/http/explore.py)) and the developer portal (`source/apps/dev`, port 3400) puts a page on each. The portal reaches them only through its server-side proxy, which keeps the engine service key off the browser.
+
+| Portal page | What it does | Engine endpoint |
+|---|---|---|
+| Runs | Lists runs with status and duration; a run opens as a pipeline (queued, running, finished), its fetched pages, result, input, output files and event timeline; run again or cancel | `/v1/jobs`, `/v1/explore/jobs/{id}` |
+| New run | A form built from the chosen capability's input schema, an advanced and a raw JSON mode, and ready setups that load their files from the dev root | `/capabilities`, `/v1/jobs` |
+| Files and viewers | Browse the seed, dev, run-output and docs folders; Markdown renders, CSV opens as a paged table, JSON and YAML as trees, PDFs and images inline; text files under the dev root can be edited and saved; a PDF can be sent to the extraction capabilities | `/v1/explore/files`, `file`, `file/raw`, `PUT file` |
+| CSV preparation | Choose, rename and clean columns with the fixed transform library, preview live, save a copy under `.dev/prepared/` (never overwrites) | `/v1/explore/csv/prepare` |
+| Database | Curated data lists (SQL shipped with the engine in `persistence/postgres/datalists/`) and every raw table grouped by schema, with search, sorting and paging; read-only role, read-only transaction, statement timeout | `/v1/explore/db/*` |
+| Terms and knowledge | The engine's term groups and a tester that tags text with them | `/v1/explore/terms` |
+
+Job history survives an engine restart when `ENGINE_STATE_FILE` is set (the dev stack sets it); production persistence is still the planned engine store.
+
+**Procurement API proof.** The Kenya tenders portal (`tenders.go.ke`, robots allow `/api/`) answers `GET /api/active-tenders?page=N` with JSON (ten tenders per page, 436 on the day checked) and `GET /api/counties` with the 47 counties. `/api/awarded-tenders` and `/api/contracts` return the site's HTML shell, so awards are not available as a public API there. The response embeds staff contact details under `created_by`; the module never reads them. The new `api.collect` capability (crawler package, `features/api_collect/`) takes an API source manifest and a module, pages with the manifest's pagination rule, keeps each raw page and writes `records.csv`, `records.jsonl` and `summary.json`. The development source and module are in `.dev/sources/ke-tenders/` and are not in `seed/` until the owner approves them. A full run collected all 436 tenders over 45 pages with no extraction errors. Mapping those rows into the `civic.*` tables is not done.
+
 ## Shared workflow over HTTP
 
 The portal, CLI and agent use the same typed engine operations. Each research or data-preparation action available to the agent must have a human path in the portal. The portal uses a server-side integration that enforces the developer's permissions. The engine validates operation inputs, checks access to the referenced data and executes the action. Replay uses authorized capture or workspace references over HTTP. A caller-supplied server path is outside that interface.

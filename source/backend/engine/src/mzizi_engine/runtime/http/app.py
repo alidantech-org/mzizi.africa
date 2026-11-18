@@ -21,12 +21,13 @@ from pydantic import BaseModel, Field
 from mzizi_engine import __version__
 from mzizi_engine.api.routes.catalog.seed_catalog import build_catalog_seed_catalog_router
 from mzizi_engine.config import EngineConfig, ServerConfig
+from mzizi_engine.config.explore import ExploreConfig
 from mzizi_engine.runtime.assembly import DRAIN_TIMEOUT_SECONDS, build_default_runtime
 from mzizi_engine.runtime.assembly.artifact_reader import artifact_reader
 from mzizi_engine.runtime.assembly.run_operations import local_run_root
 from mzizi_engine.runtime.contracts.config import RuntimeConfig
 from mzizi_engine.runtime.executor.executor import Executor
-from mzizi_engine.runtime.executor.memory_store import MemoryStore, Store
+from mzizi_engine.runtime.executor.memory_store import FileStore, MemoryStore, Store
 from mzizi_engine.runtime.http.auth import (
     Authority,
     DatabaseServiceAuthority,
@@ -35,6 +36,7 @@ from mzizi_engine.runtime.http.auth import (
     oidc_verifier,
     require,
 )
+from mzizi_engine.runtime.http.explore import explore_router
 from mzizi_engine.runtime.http.overview import SystemOverview, build_overview
 from mzizi_engine.runtime.http.research import research_router
 from mzizi_engine.runtime.http.scripts import scripts_router
@@ -57,7 +59,8 @@ class RunRequest(BaseModel):
 
 
 def _store(settings: ServerConfig) -> Store:
-    return MemoryStore()
+    state = ExploreConfig.load().state_file
+    return FileStore(state) if state else MemoryStore()
 
 
 def create_app(
@@ -148,6 +151,7 @@ def create_app(
     )
 
     app.include_router(research_router(reader))
+    app.include_router(explore_router(ExploreConfig.load()))
     app.include_router(scripts_router())
 
     @app.post("/internal/v1/capabilities/execute")

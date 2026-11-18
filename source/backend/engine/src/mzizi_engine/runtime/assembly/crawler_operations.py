@@ -6,6 +6,7 @@ shape every front door speaks.
 
 from __future__ import annotations
 
+from mzizi_crawler.features.api_collect import api_collect
 from mzizi_crawler.features.batch import batch
 from mzizi_crawler.features.changes import changes
 from mzizi_crawler.features.crawl_site import crawl_site as crawl
@@ -18,6 +19,7 @@ from mzizi_crawler.features.sections import sections
 from mzizi_crawler.features.site import site
 from mzizi_crawler.features.survey import survey
 from mzizi_crawler.shared.requests import (
+    ApiCollectRequest,
     BatchRequest,
     CrawlRequest,
     DiffRequest,
@@ -173,6 +175,14 @@ def register_crawler(registry: OperationRegistry) -> None:
             ),
             operation(
                 "web.diff", "Compare two crawls: pages added, removed and changed", DiffRequest, changes.diff_crawls, 1
+            ),
+            operation(
+                "api.collect",
+                "Collect a public JSON API endpoint page by page and extract fields with a module",
+                ApiCollectRequest,
+                api_collect.collect_api,
+                1,
+                requires=NETWORK,
             ),
             operation(
                 "fetch.url",

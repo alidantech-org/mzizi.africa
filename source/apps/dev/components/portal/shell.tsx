@@ -18,10 +18,26 @@ const SECTIONS: readonly {
     items: [
       { href: "/", label: "Overview", icon: "◧" },
       { href: routes.capabilityList, label: "Capabilities", icon: "⚙" },
-      { href: routes.jobList, label: "Jobs", icon: "▶" },
+      { href: "/runs", label: "Runs", icon: "▶" },
+      { href: routes.jobList, label: "Jobs (table)", icon: "☰" },
     ],
   },
-  { title: "Data", items: [{ href: routes.seedTableList, label: "Seed tables", icon: "▤" }] },
+  {
+    title: "Work",
+    items: [
+      { href: "/runs/new", label: "New run", icon: "＋" },
+      { href: "/files", label: "Files & viewers", icon: "🗂" },
+      { href: "/csv", label: "CSV preparation", icon: "✎" },
+    ],
+  },
+  {
+    title: "Data",
+    items: [
+      { href: "/database", label: "Database", icon: "◈" },
+      { href: routes.seedTableList, label: "Seed tables", icon: "▤" },
+      { href: "/knowledge", label: "Terms & knowledge", icon: "✦" },
+    ],
+  },
 ];
 
 function StatusPill() {
@@ -41,9 +57,11 @@ function StatusPill() {
 
 export function PortalShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const current = SECTIONS.flatMap((section) => section.items).find(
-    (item) => item.href === pathname,
-  );
+  const current =
+    SECTIONS.flatMap((section) => section.items).find((item) => item.href === pathname) ??
+    SECTIONS.flatMap((section) => section.items)
+      .filter((item) => item.href !== "/" && pathname.startsWith(item.href))
+      .sort((a, b) => b.href.length - a.href.length)[0];
   return (
     <div className="min-h-screen md:grid md:grid-cols-[16rem_1fr]">
       <aside className="border-b border-border-default bg-surface-elevated md:sticky md:top-0 md:h-screen md:border-b-0 md:border-r">
@@ -67,7 +85,9 @@ export function PortalShell({ children }: { children: ReactNode }) {
               </p>
               <ul className="flex gap-1 md:block md:space-y-0.5">
                 {section.items.map((item) => {
-                  const active = pathname === item.href;
+                  const active = item.href === "/" ? pathname === "/" : pathname === item.href ||
+                    (item.href === "/runs" && pathname.startsWith("/runs/") && pathname !== "/runs/new") ||
+                    (item.href !== "/runs" && pathname.startsWith(`${item.href}/`));
                   return (
                     <li key={item.href}>
                       <Link
@@ -97,7 +117,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
           <h1 className="text-xl">{current?.label ?? "Developer portal"}</h1>
           <StatusPill />
         </header>
-        <main className="px-6 py-6">{children}</main>
+        <main className="min-w-0 px-4 py-5 md:px-6">{children}</main>
       </div>
     </div>
   );

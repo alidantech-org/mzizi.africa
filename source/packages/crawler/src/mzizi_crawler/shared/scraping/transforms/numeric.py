@@ -14,7 +14,7 @@ DEFAULT_DATE_FORMAT = "%Y-%m-%d"
 def to_date(value: JsonValue, fmt: JsonValue = DEFAULT_DATE_FORMAT) -> JsonValue:
     if value in (None, ""):
         return None
-    return datetime.strptime(str(value).strip(), str(fmt)).date().isoformat()
+    return datetime.strptime(str(value).strip(), str(fmt or DEFAULT_DATE_FORMAT)).date().isoformat()
 
 
 def to_decimal(value: JsonValue, options: JsonValue = None) -> JsonValue:

@@ -1,0 +1,21 @@
+domain: geography
+lists:
+  - code: places
+    title: Places and their default names
+    describe: Every geographic unit with its default name and kind.
+    sql: |
+      select f.code, n.name, v.label as kind, f.from_year, f.to_year
+      from geography.features f
+      left join geography.names n on n.feature_id = f.id and n.is_default and n.deleted_at is null
+      left join reference.values v on v.id = f.feature_type_id
+      where f.deleted_at is null
+      order by v.label, n.name
+    columns: [code, name, kind, from_year, to_year]
+  - code: places-by-kind
+    title: Places by kind
+    describe: How many units of each kind the database holds.
+    sql: |
+      select v.label as kind, count(*) as places
+      from geography.features f left join reference.values v on v.id = f.feature_type_id
+      where f.deleted_at is null group by v.label order by places desc
+    columns: [kind, places]

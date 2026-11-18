@@ -1,0 +1,15 @@
+domain: source
+lists:
+  - code: sources
+    title: Sources
+    describe: Every registered source with its kind.
+    sql: |
+      select s.code, s.title, s.kind, s.description from source.sources s where s.deleted_at is null order by s.code
+    columns: [code, title, kind, description]
+  - code: citations-by-table
+    title: Citations by the table they support
+    describe: Which tables the evidence points at, and how much.
+    sql: |
+      select subject_table, count(*) as citations from source.citations
+      where deleted_at is null group by subject_table order by citations desc
+    columns: [subject_table, citations]

@@ -1,0 +1,22 @@
+domain: governance
+lists:
+  - code: office-holders
+    title: Office holders
+    describe: Each holding with the office, the unit it covers and when it began.
+    sql: |
+      select i.code as person, o.code as office, f.code as unit, h.took_office_on, h.left_office_on
+      from governance.holders h
+      join official.individuals i on i.id = h.individual_id
+      join governance.offices o on o.id = h.office_id
+      left join geography.features f on f.id = o.unit_feature_id
+      where h.deleted_at is null
+      order by o.code
+    columns: [person, office, unit, took_office_on, left_office_on]
+  - code: offices-by-kind
+    title: Offices by kind
+    describe: How many offices of each kind exist.
+    sql: |
+      select v.label as kind, count(*) as offices
+      from governance.offices o left join reference.values v on v.id = o.office_kind_id
+      where o.deleted_at is null group by v.label order by offices desc
+    columns: [kind, offices]

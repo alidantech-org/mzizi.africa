@@ -1,0 +1,24 @@
+domain: civic
+lists:
+  - code: procurement-overview
+    title: Projects with their procurement and contract
+    describe: One row per project that was procured, with the contract value in major units.
+    sql: |
+      select pr.code as project, pr.name, p.published_on, c.signed_on,
+             round(c.amount_minor_units / 100.0, 2) as contract_amount, cur.code as currency
+      from civic.procurements p
+      join civic.projects pr on pr.id = p.project_id
+      left join civic.contracts c on c.procurement_id = p.id
+      left join reference.values cur on cur.id = c.currency_id
+      where p.deleted_at is null
+      order by p.published_on desc nulls last
+    columns: [project, name, published_on, signed_on, contract_amount, currency]
+  - code: bids-per-procurement
+    title: Bids per procurement
+    describe: How many bids each procurement drew and their range.
+    sql: |
+      select p.code as procurement, count(b.id) as bids,
+             round(min(b.amount_minor_units) / 100.0, 2) as lowest, round(max(b.amount_minor_units) / 100.0, 2) as highest
+      from civic.procurements p left join civic.bids b on b.procurement_id = p.id
+      where p.deleted_at is null group by p.code order by bids desc, p.code
+    columns: [procurement, bids, lowest, highest]

@@ -234,3 +234,13 @@ class SearchRequest(Workspace):
     count: int = 10
     offset: int = 0
     formats: tuple[ExportFormat, ...] = (ExportFormat.CSV, ExportFormat.JSON)
+
+
+class ApiCollectRequest(Workspace):
+    """Collect one endpoint of an API source (`kind: api` manifest) page by page and extract fields with a module."""
+
+    source_yaml: str
+    module_yaml: str
+    endpoint: str
+    max_pages: int = Field(default=3, ge=1, le=1000)
+    delay: float = 1.0

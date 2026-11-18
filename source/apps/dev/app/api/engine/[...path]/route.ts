@@ -14,6 +14,7 @@ const ALLOWED = [
   "v1/runs",
   "v1/catalog",
   "v1/events",
+  "v1/explore",
 ];
 
 async function forward(
@@ -38,7 +39,7 @@ async function forward(
       body: hasBody ? await request.text() : undefined,
       cache: "no-store",
     });
-    return new Response(await response.text(), {
+    return new Response(await response.arrayBuffer(), {
       status: response.status,
       headers: { "content-type": response.headers.get("content-type") ?? "application/json" },
     });
@@ -52,4 +53,4 @@ async function forward(
   }
 }
 
-export { forward as GET, forward as POST };
+export { forward as GET, forward as POST, forward as PUT };

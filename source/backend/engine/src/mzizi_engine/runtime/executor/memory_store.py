@@ -5,8 +5,10 @@ The Bun database service that once held persistent job state was removed; persis
 
 from __future__ import annotations
 
+import json
 import uuid
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from typing import Any, Protocol
 
 
@@ -155,3 +157,44 @@ class MemoryStore:
         row["last_error"] = error
         row["status"] = "dead" if row["attempts"] >= max_attempts else "pending"
         row["next_attempt_at"] = _now() + timedelta(seconds=retry_in)
+
+
+class FileStore(MemoryStore):
+    """A memory store that keeps its jobs, runs and events in one JSON file, so history survives an engine restart (development)."""
+
+    def __init__(self, path: Path) -> None:
+        super().__init__()
+        self.path = path
+        if path.is_file():
+            try:
+                saved = json.loads(path.read_text(encoding="utf-8"))
+                self.runs, self.jobs, self.events = saved["runs"], saved["jobs"], saved["events"]
+            except (OSError, ValueError, KeyError):
+                pass
+
+    def _save(self) -> None:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        snapshot = {"runs": self.runs, "jobs": self.jobs, "events": self.events[-5000:]}
+        temporary = self.path.with_suffix(".tmp")
+        temporary.write_text(json.dumps(snapshot, default=str), encoding="utf-8")
+        temporary.replace(self.path)
+
+    def create_run(self, name: str, requested_by: str | None) -> dict:
+        run = super().create_run(name, requested_by)
+        self._save()
+        return run
+
+    def create_job(self, *args: Any, **kwargs: Any) -> tuple[dict, bool]:
+        result = super().create_job(*args, **kwargs)
+        self._save()
+        return result
+
+    def update_job(self, job_id: str, **fields: Any) -> dict:
+        job = super().update_job(job_id, **fields)
+        self._save()
+        return job
+
+    def add_event(self, kind: str, job_id: str | None, run_id: str | None, data: dict, targets: list[str]) -> dict:
+        event = super().add_event(kind, job_id, run_id, data, targets)
+        self._save()
+        return event

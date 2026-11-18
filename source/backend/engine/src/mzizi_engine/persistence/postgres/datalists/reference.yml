@@ -1,0 +1,16 @@
+domain: reference
+lists:
+  - code: languages
+    title: Languages
+    describe: The languages the system can show.
+    sql: |
+      select code, name, iso6391, iso6393 from reference.languages where deleted_at is null order by name
+    columns: [code, name, iso6391, iso6393]
+  - code: value-schemes
+    title: Reference values by scheme
+    describe: The controlled vocabularies and how many values each holds.
+    sql: |
+      select s.code as scheme, count(v.id) as values
+      from reference.schemes s left join reference.values v on v.scheme_id = s.id
+      group by s.code order by values desc
+    columns: [scheme, values]

@@ -7,6 +7,7 @@ from mzizi_cli.features.ports.models import Port, declare
 PKG = "mzizi-crawler"
 
 WEB: tuple[Port, ...] = (
+    declare("api.collect", "mzizi-crawler", "Collect a public JSON API endpoint and extract fields with a module", 3),
     declare("fetch.url", "mzizi-fetch", "One identified, policy-checked request", 3),
     declare("fetch.robots", "mzizi-fetch", "The recorded robots.txt decision for a URL", 3),
     declare("web.links", PKG, "Every link, image, media and embed URL on a page, classified", 3),

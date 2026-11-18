@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@mzizi/api-client": "file:../../sdk/api-ts",
+    "@mzizi/ui-web": "workspace:*",
     "next": "^16.4.6",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "@mzizi/ui-web": "workspace:*"
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.5",

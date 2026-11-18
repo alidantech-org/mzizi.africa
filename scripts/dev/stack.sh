@@ -24,7 +24,7 @@ case "${1:-}" in
     (cd source/backend/api && nohup bun src/main.ts > "$ROOT/.dev/logs/api.log" 2>&1 &) ;;
   engine)
     free 8800
-    nohup uv run mzizi-engine serve > .dev/logs/engine.log 2>&1 & ;;
+    ENGINE_STATE_FILE="$ROOT/.dev/engine/state.json" nohup uv run mzizi-engine serve > .dev/logs/engine.log 2>&1 & ;;
   web | portal)
     port=3300; app=web
     if [ "$1" = portal ]; then port=3400; app=dev; fi
