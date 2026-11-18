@@ -39,7 +39,7 @@ Create work with `task create --title "..." --group <group-id> --status planned 
 
 ## Flutter mobile
 
-Use `source/apps/mobile/README.md` as the source for SDK and platform setup. The app reads compile-time values such as `MZIZI_API_BASE_URL` through Dart defines; a `.env.local` file is not automatically loaded unless application code explicitly implements that behavior. Use the API origin reachable from the chosen target (Chrome, Android emulator, or physical device), and keep backend secrets out of the client.
+Use `source/apps/app/README.md` for the Flutter app (the earlier `source/apps/mobile` prototype is deferred and removed). The app reads compile-time values such as `MZIZI_API_BASE_URL` through Dart defines; a `.env.local` file is not automatically loaded unless application code explicitly implements that behavior. Use the API origin reachable from the chosen target (Chrome, Android emulator, or physical device), and keep backend secrets out of the client.
 
 ## API and sites
 

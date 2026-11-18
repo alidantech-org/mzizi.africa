@@ -3,10 +3,12 @@ id: DEC-FRONTEND-ASSEMBLY-20261117
 name: Frontends are assembled from contracts, SDKs and hand-written components
 type: decision
 tags: [frontend, dryv, sdk, patterns, owner-approved]
-extra: {status: accepted, approved_by: project owner, approved_on: 2026-11-17, implementation: phase_2_web_and_flutter_slice}
+extra: {status: superseded, approved_by: project owner, approved_on: 2026-11-17, superseded_by: DEC-CONTRACT-FIRST-FRONTENDS-20261118, implementation: phase_2_web_and_flutter_slice}
 ---
 
 # Frontends are assembled from contracts, SDKs and hand-written components
+
+> **Superseded on 2026-11-18** by [DEC-CONTRACT-FIRST-FRONTENDS-20261118](DEC-CONTRACT-FIRST-FRONTENDS-20261118.md). Rule 1 ("implementation is hand-written") and the statement that `admin` and `mobile` are hand-written and untouched no longer hold; both apps are deferred and removed. Kept as history.
 
 The project owner approved these rules for every Mzizi frontend (`source/apps/{app,web,dev}`; `admin` and `mobile` are hand-written and untouched):
 

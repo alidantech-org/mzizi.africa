@@ -17,3 +17,7 @@ System architecture details. These documents are supporting detail; the eight ro
 - [DATABASE_ACCESS_AND_LIFECYCLE](DATABASE_ACCESS_AND_LIFECYCLE.md) — superseded stub (see DATABASE_ARCHITECTURE)
 - [WORKERS_AND_RUNS](WORKERS_AND_RUNS.md) — implemented HTTP acquisition stages, with broader stage composition planned
 - [DEVELOPER_PORTAL](DEVELOPER_PORTAL.md) — agreed direction for shared HTTP operations, data workspaces and draft export
+- [UI_INFORMATION_ARCHITECTURE](UI_INFORMATION_ARCHITECTURE.md) — proposal: addresses, navigation, page templates and screen mapping
+- [USER_INTERACTIONS_AND_TRUST](USER_INTERACTIONS_AND_TRUST.md) — proposal: device identity, likes and views, mobile-only posting, GPS proof, moderation, privacy
+- [CONTRACT_AUTHORING_FOR_FRONTENDS](CONTRACT_AUTHORING_FOR_FRONTENDS.md) — proposal: features, views, intents, composed reads, server rendering, gates
+- [DRYV_CAPABILITY_PLAN](DRYV_CAPABILITY_PLAN.md) — proposal: Dryv capabilities needed, order and proving slice

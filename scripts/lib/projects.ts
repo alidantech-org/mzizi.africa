@@ -3,7 +3,7 @@
  * so adding a project here is the only change needed to include it in setup, checks, builds and dev.
  *
  * Tooling rule (user direction, 11 November 2026): Python projects use uv, JavaScript and TypeScript
- * projects use Bun. The Flutter app is opt-in (`--only mobile`) because it needs the Flutter SDK.
+ * projects use Bun. The Flutter app is opt-in (`--only app`) because it needs the Flutter SDK.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -76,13 +76,6 @@ export const projects: readonly Project[] = [
     byDefault: true,
   },
   {
-    name: "admin",
-    kind: "bun",
-    dir: "source/apps/admin",
-    summary: "administrative portal: research and review dashboard (Next.js)",
-    byDefault: true,
-  },
-  {
     name: "sdk-ts",
     kind: "bun",
     dir: "source/sdk/api-ts",
@@ -106,18 +99,11 @@ export const projects: readonly Project[] = [
     byDefault: false,
   },
   { name: "www", kind: "bun", dir: "source/apps/www", summary: "public site (Next.js)", byDefault: true },
-  {
-    name: "mobile",
-    kind: "flutter",
-    dir: "source/apps/mobile",
-    summary: "Flutter app (opt-in: --only mobile)",
-    byDefault: false,
-  },
 ];
 
 /**
  * Each service has its own default port so processes never collide. `PORT` from `.env` is not passed
- * through; override one service with `API_PORT`, `ENGINE_PORT`, `ADMIN_PORT`, `WWW_PORT` or `APP_PORT`. `{port}` in a command
+ * through; override one service with `API_PORT`, `ENGINE_PORT`, `WWW_PORT` or `APP_PORT`. `{port}` in a command
  * is replaced with the resolved port.
  */
 export const services: readonly Service[] = [
@@ -136,14 +122,6 @@ export const services: readonly Service[] = [
     start: ["uv", "run", "mzizi-engine", "serve"],
     port: 8800,
     portEnv: "ENGINE_PORT",
-  },
-  {
-    name: "admin",
-    dir: "source/apps/admin",
-    dev: ["bun", "--bun", "next", "dev", "-p", "{port}"],
-    start: ["bun", "--bun", "next", "start", "-p", "{port}"],
-    port: 3100,
-    portEnv: "PORT",
   },
   {
     name: "web",

@@ -243,7 +243,7 @@ The emphasis is:
 - canonical publication;
 - audit history.
 
-This is primarily `source/apps/admin` plus the supporting services.
+This is primarily the `source/apps/dev` portal plus the supporting services. The earlier admin app is deferred and removed (2026-11-18) until an admin app is funded.
 
 ## What Mzizi should never become
 

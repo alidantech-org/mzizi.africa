@@ -26,3 +26,5 @@ Canonical data, evidence, identity, file metadata and place design. These docume
 
 Implementation authorization and delivery requirements: [schema ownership implementation handoff](../../handoffs/HANDOFF-IMPLEMENT-SCHEMA-OWNERSHIP.md).
 - [LOCALITY_READS](LOCALITY_READS.md): the screen-shaped place operations, how evidence and language resolve, and the development data.
+- [CONTEXT_AND_LOCALISATION](CONTEXT_AND_LOCALISATION.md) — proposal: country, language, region and concepts from data; Cloudflare country header
+- [EVENTS_INFRASTRUCTURE_AND_SPENDING_MODEL](EVENTS_INFRASTRUCTURE_AND_SPENDING_MODEL.md) — proposal: events and calendar, facilities and polling stations, buyer, supplier, beneficiary and funder roles, coverage

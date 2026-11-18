@@ -207,7 +207,7 @@ The user now authorizes the local agent to establish the new structure, move reu
 | source/packages/ | Reusable capability packages with independent contracts, metadata, tests and documentation. |
 | source/backend/engine/ | One complete Python project: orchestration, job/run lifecycle, scheduling/admission, workers and its own operational API. |
 | source/apps/api/ | Existing NestJS product/domain API, relocated from source/backend/api so backend contains only engine; preserve finished auth behavior and update Dryv/build paths atomically. |
-| source/apps/admin, source/apps/www, source/apps/mobile | Existing application surfaces. |
+| source/apps/www (the earlier admin and mobile apps are deferred and removed) | Existing application surfaces. |
 | source/schema/ | Shared input-artifact schemas and validation contracts, with deliberate package exports. |
 | seed/ | All prepared seed artifacts, patterns and source manifests; reusable code does not move into seed/. |
 | scripts/ | Thin repository/operator entry points using package APIs instead of duplicating filesystem/database/network logic. |

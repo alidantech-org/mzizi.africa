@@ -17,9 +17,9 @@ describe("parse", () => {
     expect(parse([]).command).toBe("help");
   });
   test("keeps positional arguments and extracts --only in both forms", () => {
-    expect(parse(["dev", "api", "admin"]).context).toEqual({ rest: ["api", "admin"], only: undefined });
+    expect(parse(["dev", "api", "web"]).context).toEqual({ rest: ["api", "web"], only: undefined });
     expect(parse(["test", "--only", "python", "-x"]).context).toEqual({ rest: ["-x"], only: "python" });
-    expect(parse(["test", "--only=api,admin"]).context).toEqual({ rest: [], only: "api,admin" });
+    expect(parse(["test", "--only=api,web"]).context).toEqual({ rest: [], only: "api,web" });
   });
 });
 
@@ -35,13 +35,13 @@ describe("package.json", () => {
 
 describe("select", () => {
   test("default set leaves out opt-in projects", () => {
-    expect(select().map((project) => project.name)).not.toContain("mobile");
+    expect(select().map((project) => project.name)).not.toContain("app");
   });
   test("names, kinds and all", () => {
-    expect(select("api,admin").map((project) => project.name)).toEqual(["api", "admin"]);
+    expect(select("api,web").map((project) => project.name)).toEqual(["api", "web"]);
     expect(select("python").map((project) => project.name)).toEqual(["python"]);
     expect(select("all")).toHaveLength(projects.length);
-    expect(select("mobile").map((project) => project.name)).toEqual(["mobile"]);
+    expect(select("app").map((project) => project.name)).toEqual(["app"]);
   });
   test("unknown names are an error", () => {
     expect(() => select("nope")).toThrow("unknown project");

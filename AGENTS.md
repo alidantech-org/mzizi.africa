@@ -20,7 +20,7 @@ Use `.docs/docs/ROADMAP.md` for current priorities. Proposals under `.docs/_plan
 ```text
 source/sdk/{api-ts,api-dart}      Generated API client SDKs (Dryv)
 source/ui/{web,flutter}            Hand-written components the generated screens assemble
-source/apps/{mobile,admin,www}     Flutter client and Next.js applications (app, web, dev are generated from dryv/contracts/apps; source/package.json is the Bun workspace for the SDK and the Next.js apps)
+source/apps/{app,web,dev,www}      Flutter app and Next.js applications (app, web, dev are generated from dryv/contracts/apps; source/package.json is the Bun workspace for the SDK and the Next.js apps). The earlier admin and mobile apps are deferred and removed (2026-11-18); `dev` is the administrative interface until an admin app is funded
 source/backend/api                 NestJS product API
 source/backend/database            Bun CLI, generated SQL and immutable migrations for the single PostgreSQL database
 source/backend/engine               Python runtime: EngineRuntime, its HTTP front door and executor, persistence adapters, Dryv-generated code
@@ -29,7 +29,7 @@ source/packages/{browser,cli,crawler,extraction,fetch,filesystem,manifest,search
 source/schema/{database,engine,seed,sources}
 ```
 
-Read the local maps for current ownership and commands: `source/backend/README.md`, `source/packages/README.md`, `source/schema/README.md`, `source/apps/admin/README.md`, `source/apps/www/README.md`, and `scripts/README.md`.
+Read the local maps for current ownership and commands: `source/backend/README.md`, `source/packages/README.md`, `source/schema/README.md`, `source/apps/www/README.md`, and `scripts/README.md`.
 
 The [developer portal design](.docs/design/architecture/DEVELOPER_PORTAL.md) records the planned shared HTTP operations for the portal, CLI and agent. The current web app provides the review workbench.
 

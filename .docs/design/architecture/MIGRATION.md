@@ -268,9 +268,7 @@ Priority routes remain conceptually aligned with:
 
 ### `source/apps/admin`
 
-The old Katiba Book dashboard should evolve into the Mzizi research and stewardship workbench.
-
-Old political-finance screens can remain useful, but the dashboard's core identity changes from a hackathon political-finance product into the internal data/research platform for all Mzizi domains.
+Deferred and removed (2026-11-18); the `dev` portal is the administrative interface until an admin app is funded. The old Katiba Book dashboard and its review workbench were removed from the tree; the code stays in git history, and the workbench behaviour is to be rebuilt in `dev` (see [BLAST_RADIUS_AND_MIGRATION](../operations/BLAST_RADIUS_AND_MIGRATION.md)).
 
 ## Phase 10 — Retire the Python API shell
 

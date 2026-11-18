@@ -144,6 +144,21 @@ The earlier question (server actions or server-side SDK) is superseded by the ow
   - Country discovery for first-time visitors (IP, position) must handle countries the system has no data for, with a structured gap rather than a fallback to Kenya.
   - Questions 2 to 12 remain open. New questions this raises: which countries load first and in what order, and are country-specific sources and legal rules (privacy, collection) tracked per country as the policy docs require?
 
+- **Q2 answered (2026-11-18): IP detection uses a CDN country header.** Consequences to plan:
+  - Country comes from a header the CDN or proxy sets (for example a two-letter country code, and region where offered), read by the API, never by the browser and never by a third-party lookup. No IP database file and no stored IP address.
+  - The header must be trusted only from the configured edge: the API accepts it when the request comes through the CDN and ignores it otherwise, so a client cannot forge its country. Local development and tests need an authored override, not a hard-coded country.
+  - A header gives country (sometimes region), not a place: the finer region still comes from device position or manual selection. The context object records the source as `cdn_header`, between `device_position` and `default`.
+  - The mobile app reaches the API through the same edge, so it gets the same header; direct-to-origin calls have no header and fall to the default with a gap flag.
+  - Open: which CDN or proxy (it fixes the header names and region granularity), and the privacy rule for logging the derived country (suggest: log the country code only, never the address).
+
+- **Q2b answered (2026-11-18): the edge is Cloudflare.** Consequences to plan:
+  - Country arrives in `CF-IPCountry` (ISO 3166-1 alpha-2; the values `XX` for unknown and `T1` for Tor mean "no country" and must become a gap, not a country). Finer location (region, city, latitude and longitude, timezone) is only sent when the "Add visitor location headers" managed transform is enabled on the zone; plan for it as optional and treat region granularity as unconfirmed until it is switched on.
+  - Trust: the origin must accept the header only from Cloudflare (restrict origin traffic to Cloudflare, by its published IP ranges or authenticated origin pulls or a tunnel), otherwise any client can forge `CF-IPCountry`. The trust rule is configuration, authored and testable, not code in each read.
+  - Proxy chain: dev and test have no Cloudflare, so the authored override from Q2 stands in for it; the override must be impossible to enable in production.
+  - Caching: pages and reads that vary by country must vary on the context (country, language), and Cloudflare caching rules must not serve one country's cached page to another; the server-rendered pages need a context-aware cache key.
+  - The country code is mapped to the `Country` reference row by ISO code; countries with no row yield a structured gap.
+  - Logging: log the derived country code only, never the visitor address (suggested; owner to confirm).
+
 ## 10. What to do next (agreed first, then planned, then built)
 
 1. Owner answers sections 9 and the open questions in the [critic](HANDOFF-FRONTEND-CRITIC-20261118.md).

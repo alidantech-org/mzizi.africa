@@ -51,9 +51,6 @@ export const linkSteps = (): Step[] => [inDryv("Link local Dryv checkout", "link
 /** Typecheck, audit, doctor and compile the contracts, and check the exported access rules, API boundary and schema. */
 export const checkSteps = (): Step[] => [inDryv("Contract checks", "check")];
 
-/** Regenerate the web dashboard's data catalog from the generated API list routes. */
-export const catalogSteps = (): Step[] => [step("Web data catalog", at("source/apps/admin"), ["bun", "run", "catalog"])];
-
 /** The Dryv engine API in the foreground (Ctrl+C stops it). */
 export const apiStep = (): Step => step(`Dryv engine API on :${dryvApiPort()}`, dryvHome(), apiCommand());
 

@@ -13,3 +13,4 @@ Developer setup, repository layout and verification commands. These documents ar
 - [testing-guide](testing-guide.md)
 - [repository-map](repository-map.md)
 - [running-dryv](running-dryv.md)
+- [BLAST_RADIUS_AND_MIGRATION](BLAST_RADIUS_AND_MIGRATION.md) — measured surface, hidden dependencies of the removed apps, migration order and estimates

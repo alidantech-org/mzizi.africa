@@ -1,6 +1,6 @@
 # Mzizi Flutter app
 
-The public app lives here; `source/apps/mobile` is the separate earlier geography client. Dryv generates the API client and reference screens. The router assembles the hand-written presentation screens through `mzizi_api`; it does not write canonical domain data.
+The public app lives here; The earlier separate geography client (`source/apps/mobile`) is deferred and removed (2026-11-18). Dryv generates the API client and reference screens. The router assembles the hand-written presentation screens through `mzizi_api`; it does not write canonical domain data.
 
 ## Run and verify
 

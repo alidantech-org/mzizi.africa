@@ -36,7 +36,7 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS and other local 
 | `bun run dryv:verify`                     | fails when the tracked generated output is not what the contracts generate now                                                                   |
 | `bun run dryv:api` / `dryv:api:stop`      | runs or stops the local Dryv engine API by hand                                                                                                  |
 | `bun scripts/mz.ts dryv:trust`            | trusts the project packs (once per machine)                                                                                                      |
-| `bun run catalog`                         | regenerates the dashboard's data catalog from the API list routes                                                                                |
+| `bun run catalog`                         | regenerates the system catalogs with Dryv                                                                                                       |
 | `bun run schemas:sync`                    | regenerates the Dryv table schemas and the job schema (`-- --prune` also deletes orphaned public objects), checks the schemas and examples, then uploads changed schemas to the public prefix (`-- --local`, `-- --dry-run`, `-- --no-dryv`) |
 | `bun run schemas:forget-cache`            | deletes the YAML extension's cached copies of the published schemas; then reload the editor window |
 | `bun run db:up` / `db:down`               | starts or stops the local PostGIS container (`MZIZI_PG_CONTAINER`, default `postgis`)                                                            |
@@ -57,12 +57,12 @@ Project commands (`sync`, `format`, `lint`, `typecheck`, `test`, `build`, `check
 
 ```bash
 bun scripts/mz.ts test --only python
-bun scripts/mz.ts typecheck --only api,admin
+bun scripts/mz.ts typecheck --only api,web
 bun scripts/mz.ts check --only bun
-bun scripts/mz.ts test --only mobile      # the Flutter app is opt-in
+bun scripts/mz.ts test --only app         # the Flutter app is opt-in
 ```
 
-Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/engine`), `scripts` (this directory and the Dryv tooling), `dryv`, `api`, `admin`, `www`, `mobile`. Kinds: `python`, `bun`, `flutter`, or `all`.
+Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/engine`), `scripts` (this directory and the Dryv tooling), `dryv`, `api`, `web`, `dev`, `www`, `app`. Kinds: `python`, `bun`, `flutter`, or `all`.
 
 ## Services and ports
 
@@ -70,7 +70,6 @@ Projects: `python` (the uv workspace: `source/packages/*` and `source/backend/en
 | ----------- | -------------------------- | ---- | ---------------- |
 | `api`       | `source/backend/api`       | 8700 | `API_PORT`       |
 | `engine`    | `source/backend/engine`    | 8800 | `ENGINE_PORT`    |
-| `admin`     | `source/apps/admin`        | 3100 | `ADMIN_PORT`     |
 | `www`       | `source/apps/www`          | 3200 | `WWW_PORT`       |
 | `web`       | `source/apps/web`          | 3300 | `WEB_PORT`       |
 | `dev`       | `source/apps/dev`          | 3400 | `DEV_PORT`       |
