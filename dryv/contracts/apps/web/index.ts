@@ -12,6 +12,7 @@ import api from "#/apps/api/index.ts";
 import { brand, themes } from "#/schemas/theme.ts";
 import { geographyOperations } from "#/apps/api/geography.ts";
 import { insightOperations, insights } from "#/apps/api/insights.ts";
+import { experience, experienceOperations } from "#/apps/api/experience.ts";
 import { locality, localityOperations } from "#/apps/api/locality.ts";
 
 const web = dryv.group({ name: "web" }).description("The public website: its surface and views.");
@@ -84,7 +85,7 @@ const views = features.views({
 const web_app = dryv
   .app({ name: "mzizi-web" })
   .info({ title: "Mzizi public website", version: "0.1.0" })
-  .groups(shared, reference, geography, locality, insights, brand, web)
+  .groups(shared, reference, geography, locality, insights, experience, brand, web)
   .surfaces(surfaces.Main)
   .theme(themes.Mzizi)
   .consumes(
@@ -128,6 +129,11 @@ const web_app = dryv
     insightOperations.GetLegalBasis,
     insightOperations.GetCompareOptions,
     insightOperations.GetComparison,
+    experienceOperations.GetContext,
+    experienceOperations.GetCalendar,
+    experienceOperations.ListFacilities,
+    experienceOperations.GetFacility,
+    experienceOperations.ListFacts,
   )
   .destination("places", views.PlaceSearch)
   .destination("sources", views.SourceBrowse)

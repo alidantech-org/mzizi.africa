@@ -5,7 +5,7 @@ import type { DataSource } from "typeorm";
 import { evidenceFor } from "#/modules/locality/features/places/reads/evidence.ts";
 import { leaderActivity } from "./activity.ts";
 import { placeCivic } from "./civic.ts";
-import { featureName, mediaFor, partyOf, personName, shortCode } from "./shared.ts";
+import { featureName, mediaFor, partyOf, personName, shortCode, entityName } from "./shared.ts";
 
 interface HolderRow {
   id: string; individual_id: string; office_id: string; name: string; party: string | null; office: string; unit_id: string | null; unit: string | null;
@@ -16,7 +16,7 @@ export async function leaderProfile(db: DataSource, holderId: string) {
   const rows: HolderRow[] = await db.query(
     `select h.id, h.individual_id, h.office_id, ${personName("h.individual_id")} as name, ${partyOf("h.individual_id")} as party,
        (select k.label from reference.values k where k.id = o.office_kind_id) as office, o.unit_feature_id as unit_id, ${featureName("o.unit_feature_id", "'en'")} as unit,
-       (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as institution, h.took_office_on::text, ind.birth_date::text, i.entity_id
+       ${entityName("i.entity_id")} as institution, h.took_office_on::text, ind.birth_date::text, i.entity_id
      from governance.holders h join governance.offices o on o.id = h.office_id join official.individuals ind on ind.id = h.individual_id
      left join governance.institutions i on i.id = o.institution_id where h.id = $1`, [holderId]);
   const holder = rows[0];

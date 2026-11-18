@@ -2030,7 +2030,12 @@ describe("entity schema matches the contract", () => {
         )
         .sort();
       expect(indexes).toEqual(
-        expect.arrayContaining(["event_id", "rule_kind_id", "source_citation_id"]),
+        expect.arrayContaining([
+          "unique:event_id,rule_kind_id",
+          "event_id",
+          "rule_kind_id",
+          "source_citation_id",
+        ]),
       );
     });
 
@@ -2355,7 +2360,6 @@ describe("entity schema matches the contract", () => {
             ["id", false, true],
             ["is_development_text", false, false],
             ["language_id", false, false],
-            ["slug", false, false],
             ["subject_id", false, false],
             ["subject_table", false, false],
             ["summary", true, false],
@@ -2390,7 +2394,7 @@ describe("entity schema matches the contract", () => {
         .sort();
       expect(indexes).toEqual(
         expect.arrayContaining([
-          "unique:slug,language_id",
+          "language_id",
           "subject_table,subject_id",
           "category_id",
           "classification_id",

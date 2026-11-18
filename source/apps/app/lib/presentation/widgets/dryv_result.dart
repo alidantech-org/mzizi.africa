@@ -6,10 +6,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Shows an operation's result: its JSON fields (only [select] when given), or the error.
 class DryvResultView extends StatelessWidget {
-  const DryvResultView({super.key, required this.result, this.select = const <String>[]});
+  const DryvResultView({
+    super.key,
+    required this.result,
+    this.select = const <String>[],
+  });
 
   /// A result that loads when the screen opens.
-  static Widget async(AsyncValue<ApiResult<Object?>> value, {List<String> select = const <String>[]}) {
+  static Widget async(
+    AsyncValue<ApiResult<Object?>> value, {
+    List<String> select = const <String>[],
+  }) {
     return value.when(
       data: (result) => DryvResultView(result: result, select: select),
       loading: () => const Padding(
@@ -25,11 +32,18 @@ class DryvResultView extends StatelessWidget {
 
   Widget _value(Object? value) {
     if (value is Map) {
-      final entries = value.entries.where((entry) => select.isEmpty || select.contains('${entry.key}'));
+      final entries = value.entries.where(
+        (entry) => select.isEmpty || select.contains('${entry.key}'),
+      );
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (final entry in entries) ListTile(dense: true, title: Text('${entry.key}'), subtitle: Text('${entry.value}')),
+          for (final entry in entries)
+            ListTile(
+              dense: true,
+              title: Text('${entry.key}'),
+              subtitle: Text('${entry.value}'),
+            ),
         ],
       );
     }
@@ -47,9 +61,12 @@ class DryvResultView extends StatelessWidget {
     final current = result;
     if (current == null) return const SizedBox.shrink();
     return current.when(
-      success: (data, message, statusCode) => _value(jsonDecode(jsonEncode(data))),
-      error: (error, message, statusCode) =>
-          Text(message, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+      success: (data, message, statusCode) =>
+          _value(jsonDecode(jsonEncode(data))),
+      error: (error, message, statusCode) => Text(
+        message,
+        style: TextStyle(color: Theme.of(context).colorScheme.error),
+      ),
     );
   }
 }

@@ -7,7 +7,7 @@ import type { DataSource } from "typeorm";
 
 import { evidenceFor } from "#/modules/locality/features/places/reads/evidence.ts";
 import { officialsFor } from "#/modules/locality/features/places/reads/officials.ts";
-import { AREA, POPULATION, crumbs, descendantIds, featureName, latestBaseline, mediaFor, money, shortCode, storedCode } from "./shared.ts";
+import { AREA, POPULATION, crumbs, descendantIds, featureName, latestBaseline, mediaFor, money, shortCode, storedCode, entityName } from "./shared.ts";
 
 const word = (code: string | null): string | null => (code === null ? null : code.replace(/^.*\./, ""));
 
@@ -17,7 +17,7 @@ export async function placeCivic(db: DataSource, featureId: string) {
   const place = chain[chain.length - 1]!;
   const ids = await descendantIds(db, featureId);
   const funds: { id: string; code: string; unit_id: string; managing: string | null }[] = await db.query(
-    `select f.id, f.code, f.scope_unit_feature_id as unit_id, (select n.name from official.names n where n.entity_id = f.managing_entity_id limit 1) as managing
+    `select f.id, f.code, f.scope_unit_feature_id as unit_id, ${entityName("f.managing_entity_id")} as managing
      from finance.funds f where f.scope_unit_feature_id = any($1::uuid[]) order by f.code`, [ids]);
   const flows: { year: number; class_code: string; label: string; amount: string; n: string }[] = await db.query(
     `select extract(year from fl.occurred_on)::int as year, regexp_replace(c.code, '^.*\\.', '') as class_code, c.label, sum(fl.amount_minor_units)::text as amount, count(*)::text as n
@@ -76,7 +76,7 @@ export async function projectDetail(db: DataSource, code: string) {
   const rows: Record<string, unknown>[] = await db.query(
     `select p.id, p.code, p.name, p.description, regexp_replace(s.code, '^.*\\.', '') as status, p.started_on::text as started_on, p.completed_on::text as completed_on,
        p.scope_unit_feature_id as unit_id, ${featureName("p.scope_unit_feature_id", "'en'")} as unit,
-       (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as responsible,
+       ${entityName("i.entity_id")} as responsible,
        case when p.location is null then null else st_asgeojson(p.location)::json end as location
      from civic.projects p join reference.values s on s.id = p.status_id left join governance.institutions i on i.id = p.responsible_institution_id where p.code = $1`, [storedCode("civ.prj", code)]);
   const project = rows[0];
@@ -87,16 +87,16 @@ export async function projectDetail(db: DataSource, code: string) {
      from finance.flows fl join reference.values k on k.id = fl.flow_kind_id where fl.project_id = $1 order by fl.occurred_on`, [id]);
   const procurement: Record<string, unknown>[] = await db.query(
     `select pr.id, pr.code, pr.title, pr.reference, regexp_replace(st.code, '^.*\\.', '') as status, regexp_replace(pk.code, '^.*\\.', '') as procedure, pr.published_on::text as published_on, pr.closes_on::text as closes_on, pr.awarded_on::text as awarded_on,
-       (select n.name from official.names n where n.entity_id = pr.buyer_entity_id limit 1) as buyer
+       ${entityName("pr.buyer_entity_id")} as buyer
      from civic.procurements pr left join reference.values st on st.id = pr.status_id join reference.values pk on pk.id = pr.procedure_kind_id where pr.project_id = $1 limit 1`, [id]);
   let detail: unknown = null;
   if (procurement[0]) {
     const pid = String(procurement[0].id);
     const bids: Record<string, unknown>[] = await db.query(
-      `select (select n.name from official.names n where n.entity_id = b.bidder_entity_id limit 1) as bidder, b.amount_minor_units::text as amount, regexp_replace(o.code, '^.*\\.', '') as outcome
+      `select ${entityName("b.bidder_entity_id")} as bidder, b.amount_minor_units::text as amount, regexp_replace(o.code, '^.*\\.', '') as outcome
        from civic.bids b join reference.values o on o.id = b.outcome_id where b.procurement_id = $1 order by b.amount_minor_units`, [pid]);
     const contracts: Record<string, unknown>[] = await db.query(
-      `select (select n.name from official.names n where n.entity_id = c.contractor_entity_id limit 1) as contractor, c.amount_minor_units::text as amount, c.signed_on::text as signed_on, regexp_replace(s.code, '^.*\\.', '') as status
+      `select ${entityName("c.contractor_entity_id")} as contractor, c.amount_minor_units::text as amount, c.signed_on::text as signed_on, regexp_replace(s.code, '^.*\\.', '') as status
        from civic.contracts c join reference.values s on s.id = c.status_id where c.procurement_id = $1`, [pid]);
     detail = { ...procurement[0], id: undefined, code: shortCode(String(procurement[0].code)), bids: bids.map((b) => ({ ...b, amount: money(b.amount as string) })), contracts: contracts.map((c) => ({ ...c, amount: money(c.amount as string) })) };
   }
@@ -121,7 +121,7 @@ export async function listTenders(db: DataSource, status: string | undefined, fe
   const rows: Record<string, unknown>[] = await db.query(
     `select pr.code, coalesce(pr.title, pr.code) as title, pr.reference, regexp_replace(st.code, '^.*\\.', '') as status, regexp_replace(pk.code, '^.*\\.', '') as procedure,
        pr.published_on::text as published_on, pr.closes_on::text as closes_on, pr.awarded_on::text as awarded_on,
-       (select n.name from official.names n where n.entity_id = pr.buyer_entity_id limit 1) as buyer,
+       ${entityName("pr.buyer_entity_id")} as buyer,
        (select ${featureName("p.scope_unit_feature_id", "'en'")} from civic.projects p where p.id = pr.project_id) as place,
        (select c.amount_minor_units::text from civic.contracts c where c.procurement_id = pr.id limit 1) as amount,
        (select n.name from civic.contracts c join official.names n on n.entity_id = c.contractor_entity_id where c.procurement_id = pr.id limit 1) as supplier,

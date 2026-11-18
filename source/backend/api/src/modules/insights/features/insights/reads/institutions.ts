@@ -1,5 +1,6 @@
 /** Public bodies: the directory grouped by arm and kind (every group and label read from the reference schemes), and one body's profile. */
 import type { DataSource } from "typeorm";
+import { entityName } from "./shared.ts";
 
 import { activeGovernance, activeInstitution, activeMandate } from "./governance-active.ts";
 import { getContent } from "./content.ts";
@@ -20,7 +21,7 @@ interface Row {
 
 const PURPOSE = `(select m.description from governance.mandates m join reference.values mk on mk.id = m.mandate_kind_id
     where m.institution_id = i.id and ${activeMandate()} and mk.code = 'ref.val.gov.mandate.kind.purpose' limit 1)`;
-const NAME = (alias: string) => `(select n.name from official.names n where n.entity_id = ${alias}.entity_id order by n.is_preferred desc, n.name limit 1)`;
+const NAME = (alias: string) => entityName(`${alias}.entity_id`);
 
 const baseSelect = (lang: string) => `select i.id, i.code, ${NAME("i")} as name, kv.code as kind, ${valueLabel("kv.id", `'${lang}'`)} as kind_label,
     av.code as arm, case when av.id is null then null else ${valueLabel("av.id", `'${lang}'`)} end as arm_label, av.position as arm_pos,

@@ -41,7 +41,6 @@ export interface IContents extends B.IBase {
   fileVersionId: string | null;
   isDevelopmentText: boolean;
   languageId: string;
-  slug: string;
   subjectId: string;
   subjectTable: SubjectTable;
   summary: string | null;

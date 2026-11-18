@@ -7,7 +7,8 @@ class AppNetworkRequiredGate extends StatelessWidget {
     super.key,
     required this.title,
     required this.child,
-    this.message = 'This screen needs an internet connection. Reconnect to continue.',
+    this.message =
+        'This screen needs an internet connection. Reconnect to continue.',
   });
 
   final String title;

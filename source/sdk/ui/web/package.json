@@ -13,7 +13,8 @@
     "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json"
   },
   "peerDependencies": {
-    "react": ">=19"
+    "react": ">=19",
+    "next": ">=16"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

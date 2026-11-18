@@ -16,6 +16,8 @@ mkdir -p .dev/logs
 set -a; . ./.env; set +a
 DEV_DB="${DEV_DB:-mzizi_ux}"
 swap() { echo "$1" | sed -E "s#/[^/?]+(\?.*)?\$#/$DEV_DB#"; }
+# the web app reads the API through the generated server SDK; the root .env may still name the retired API on :4000
+export SERVER_URL="http://127.0.0.1:8700"
 export DATABASE_URL=$(swap "$DATABASE_URL") DATABASE_WRITE_URL=$(swap "$DATABASE_WRITE_URL")
 free() { for pid in $(ss -ltnp 2>/dev/null | grep ":$1 " | grep -o 'pid=[0-9]*' | cut -d= -f2); do kill "$pid" || true; done; sleep 1; }
 case "${1:-}" in

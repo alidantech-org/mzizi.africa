@@ -21,6 +21,7 @@ import type { Year } from "#/modules/shared/schema/type/year.type.ts";
  * How the dates of an event are produced, with the adjustment the law applies when a date falls on a rest day. Occurrences generated from a rule are projected until announced.
  */
 @Entity({ schema: "event", name: "rules" })
+@Index(["eventId", "ruleKindId"], { unique: true })
 @Index(["eventId"])
 @Index(["ruleKindId"])
 @Index(["sourceCitationId"])

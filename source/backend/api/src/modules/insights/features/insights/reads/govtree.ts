@@ -6,7 +6,7 @@
 import type { DataSource } from "typeorm";
 
 import { activeGovernance, activeInstitution, activeMandate } from "./governance-active.ts";
-import { crumbs, lastWord, mediaFor, shortCode, storedCode } from "./shared.ts";
+import { crumbs, lastWord, mediaFor, shortCode, storedCode, entityName } from "./shared.ts";
 import { holderSelect, langOf, listInstitutions, type HolderRow } from "./institutions.ts";
 import { valueLabel } from "#/modules/locality/features/places/reads/language.ts";
 
@@ -105,7 +105,7 @@ export async function governanceTree(db: DataSource, input: { tab?: string; inst
     `with recursive up as (select i.id, i.code from governance.institutions i where i.code = any($1::text[]) and ${activeInstitution()}
        union select p.id, p.code from up u join governance.relationships r on r.subject_institution_id = u.id
          join reference.values rk on rk.id = r.relationship_kind_id and rk.code = 'ref.val.gov.relationship.kind.part-of' join governance.institutions p on p.id = r.object_institution_id where r.deleted_at is null and ${activeInstitution("p")})
-     select i.code, (select n.name from official.names n where n.entity_id = i.entity_id order by n.is_preferred desc limit 1) as name,
+     select i.code, ${entityName("i.entity_id")} as name,
        (select p.code from governance.relationships r join reference.values rk on rk.id = r.relationship_kind_id and rk.code = 'ref.val.gov.relationship.kind.part-of'
           join governance.institutions p on p.id = r.object_institution_id where r.subject_institution_id = i.id and r.deleted_at is null and ${activeInstitution("p")} limit 1) as parent,
        av.code as arm, case when av.id is null then null else ${valueLabel("av.id", `'${language}'`)} end as arm_label,

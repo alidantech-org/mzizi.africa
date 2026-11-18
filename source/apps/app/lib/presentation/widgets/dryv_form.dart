@@ -34,7 +34,8 @@ class DryvForm extends StatefulWidget {
   });
 
   final List<DryvField> fields;
-  final Future<ApiResult<Object?>> Function(Map<String, Object?> values) onSubmit;
+  final Future<ApiResult<Object?>> Function(Map<String, Object?> values)
+  onSubmit;
   final String submitLabel;
 
   @override
@@ -84,8 +85,13 @@ class _DryvFormState extends State<DryvForm> {
       case DryvFieldKind.choice:
         return DropdownButtonFormField<String>(
           decoration: InputDecoration(labelText: field.label),
-          items: [for (final option in field.options) DropdownMenuItem(value: option, child: Text(option))],
-          validator: (value) => field.required && value == null ? '${field.label} is required' : null,
+          items: [
+            for (final option in field.options)
+              DropdownMenuItem(value: option, child: Text(option)),
+          ],
+          validator: (value) => field.required && value == null
+              ? '${field.label} is required'
+              : null,
           onChanged: (_) {},
           onSaved: (value) => _values[field.name] = value,
         );
@@ -93,9 +99,13 @@ class _DryvFormState extends State<DryvForm> {
         return TextFormField(
           decoration: InputDecoration(labelText: field.label),
           keyboardType: TextInputType.number,
-          validator: (value) => _requiredText(field, value) ??
-              (value != null && value.isNotEmpty && num.tryParse(value) == null ? 'Enter a number' : null),
-          onSaved: (value) => _values[field.name] = value == null || value.isEmpty ? null : num.parse(value),
+          validator: (value) =>
+              _requiredText(field, value) ??
+              (value != null && value.isNotEmpty && num.tryParse(value) == null
+                  ? 'Enter a number'
+                  : null),
+          onSaved: (value) => _values[field.name] =
+              value == null || value.isEmpty ? null : num.parse(value),
         );
       case DryvFieldKind.date:
       case DryvFieldKind.text:
@@ -105,7 +115,8 @@ class _DryvFormState extends State<DryvForm> {
             hintText: field.kind == DryvFieldKind.date ? 'YYYY-MM-DD' : null,
           ),
           validator: (value) => _requiredText(field, value),
-          onSaved: (value) => _values[field.name] = value == null || value.isEmpty ? null : value,
+          onSaved: (value) => _values[field.name] =
+              value == null || value.isEmpty ? null : value,
         );
     }
   }
@@ -122,13 +133,19 @@ class _DryvFormState extends State<DryvForm> {
           FilledButton(
             onPressed: _submitting ? null : _submit,
             child: _submitting
-                ? const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : Text(widget.submitLabel),
           ),
           if (_message != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Text(_message!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              child: Text(
+                _message!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
             ),
         ],
       ),

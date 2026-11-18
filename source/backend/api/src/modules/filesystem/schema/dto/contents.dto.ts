@@ -19,7 +19,6 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString } from "#/modules/shared/schema/type/non-empty-string.type.ts";
-import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
@@ -75,11 +74,6 @@ export class ContentsDto {
   @IsString()
   @IsUUID()
   languageId!: Id;
-
-  @IsString()
-  @MinLength(1)
-  @MaxLength(255)
-  slug!: NonEmptyString255;
 
   @IsString()
   @IsUUID()

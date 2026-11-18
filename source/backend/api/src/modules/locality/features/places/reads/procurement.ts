@@ -3,6 +3,7 @@
  * Amounts are stored in minor units and returned in major units with the currency's code.
  */
 import type { DataSource } from "typeorm";
+import { entityName } from "./language.ts";
 
 import type { ProcurementItem } from "#/modules/locality/schema/interface/procurement-item.interface.ts";
 import type { ProcurementSummary } from "#/modules/locality/schema/interface/procurement-summary.interface.ts";
@@ -47,7 +48,7 @@ export async function procurementFor(
   const rows: ItemRow[] = await db.query(
     `select pr.id as procurement_id, p.name as title, regexp_replace(st.code, '^.*\\.', '') as status,
        (ct.amount_minor_units / 100.0)::text as amount, upper(regexp_replace(cur.code, '^.*\\.', '')) as currency,
-       (select n.name from official.names n where n.entity_id = ct.contractor_entity_id order by n.is_preferred desc limit 1) as awarded_to,
+       ${entityName("ct.contractor_entity_id")} as awarded_to,
        extract(year from pr.published_on)::int as year
      ${ITEM_FROM}
      order by array_position($1::uuid[], p.scope_unit_feature_id) desc, pr.published_on desc nulls last, pr.code

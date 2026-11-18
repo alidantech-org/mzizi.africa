@@ -17,7 +17,6 @@ import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString } from "#/modules/shared/schema/type/non-empty-string.type.ts";
-import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
@@ -25,7 +24,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
  */
 @Entity({ schema: "filesystem", name: "contents" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
-@Index(["slug", "languageId"], { unique: true })
+@Index(["languageId"])
 @Index(["subjectTable", "subjectId"])
 @Index(["categoryId"])
 @Index(["classificationId"])
@@ -75,9 +74,6 @@ export class ContentsEntity {
   @ManyToOne(() => LanguageEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "language_id" })
   language?: Relation<LanguageEntity>;
-
-  @Column({ name: "slug", type: "varchar", length: 255 })
-  slug!: NonEmptyString255;
 
   @Column({ name: "subject_id", type: "uuid" })
   subjectId!: Id;

@@ -4,12 +4,11 @@ import { Fraunces, Inter } from "next/font/google";
 import type { ReactNode } from "react";
 
 import "#/app/globals.css";
-import { MobileNav } from "#/components/site/mobile-nav.tsx";
-import { SiteFooter } from "#/components/site/site-footer.tsx";
-import { SiteHeader } from "#/components/site/site-header.tsx";
+import { AppFrame } from "#/components/shell/app-frame.tsx";
 import { THEME_INIT } from "#/components/site/theme-toggle.tsx";
 import { LanguageProvider } from "#/lib/site/i18n.tsx";
 import { SavedProvider } from "#/lib/site/saved.tsx";
+import { loadContext } from "#/lib/server/data.ts";
 
 const display = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap", axes: ["opsz"] });
 const body = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -19,17 +18,21 @@ export const metadata: Metadata = {
   description: "Who serves you, where the money goes, and the evidence behind it.",
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const context = await loadContext();
+  const shell = {
+    countryName: context?.country.name ?? "Mzizi",
+    place: context?.place ?? null,
+    chain: (context?.chain ?? []).map((unit) => ({ name: unit.name, path: unit.path })),
+    rest: context?.rest ?? [],
+  };
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={context?.languageCode ?? "en"} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT }} /></head>
       <body className={`${display.variable} ${body.variable}`}>
         <LanguageProvider>
           <SavedProvider>
-            <SiteHeader />
-            <main>{children}</main>
-            <SiteFooter />
-            <MobileNav />
+            <AppFrame context={shell}>{children}</AppFrame>
           </SavedProvider>
         </LanguageProvider>
       </body>

@@ -17,8 +17,10 @@ export interface TrailItem {
 }
 
 /** Where you are, with a hint for each level. The last item is the current page and is not a link. */
+/** The app bar carries the breadcrumbs now; pages that still declare a trail render nothing for it. */
 export function Breadcrumbs({ items }: { items: readonly TrailItem[] }) {
   const { tr } = useLanguage();
+  if (items.length >= 0) return null;
   return (
     <nav aria-label="Breadcrumb" className="crumbs mb-5 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm text-content-muted">
       {items.map((item, index) => {

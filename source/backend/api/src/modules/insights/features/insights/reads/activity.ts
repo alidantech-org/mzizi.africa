@@ -2,13 +2,13 @@
 import { NotFoundException } from "@nestjs/common";
 import type { DataSource } from "typeorm";
 
-import { featureName, partyOf, personName, shortCode, storedCode } from "./shared.ts";
+import { featureName, partyOf, personName, shortCode, storedCode, entityName } from "./shared.ts";
 
 const word = (code: string): string => code.replace(/^.*\./, "");
 
 export async function listMotions(db: DataSource, institutionId: string | undefined, limit: number) {
   const rows: Record<string, unknown>[] = await db.query(
-    `select m.code, m.title, m.summary, (coalesce(so.actual_starts_on, so.planned_starts_on))::text as held_on, (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as institution, i.id as institution_id,
+    `select m.code, m.title, m.summary, (coalesce(so.actual_starts_on, so.planned_starts_on))::text as held_on, ${entityName("i.entity_id")} as institution, i.id as institution_id,
        regexp_replace(mk.code, '^.*\\.', '') as kind, regexp_replace(oc.code, '^.*\\.', '') as outcome,
        count(*) filter (where vp.code like '%.yes') as yes, count(*) filter (where vp.code like '%.no') as no,
        count(*) filter (where vp.code like '%.abstain') as abstain, count(*) filter (where vp.code like '%.absent') as absent
@@ -22,7 +22,7 @@ export async function listMotions(db: DataSource, institutionId: string | undefi
 
 export async function motionDetail(db: DataSource, code: string) {
   const motions: Record<string, unknown>[] = await db.query(
-    `select m.id, m.code, m.title, m.summary, (coalesce(so.actual_starts_on, so.planned_starts_on))::text as held_on, s.title as sitting, i.id as institution_id, (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as institution,
+    `select m.id, m.code, m.title, m.summary, (coalesce(so.actual_starts_on, so.planned_starts_on))::text as held_on, s.title as sitting, i.id as institution_id, ${entityName("i.entity_id")} as institution,
        regexp_replace(mk.code, '^.*\\.', '') as kind, regexp_replace(oc.code, '^.*\\.', '') as outcome, m.instrument_id, m.provision_id, m.budget_version_id, m.fiscal_period_id,
        (select ${personName("h.individual_id")} from governance.holders h where h.id = m.moved_by_holder_id) as moved_by
      from governance.motions m join governance.sittings s on s.id = m.sitting_id join event.occurrences so on so.id = s.occurrence_id join governance.institutions i on i.id = s.institution_id

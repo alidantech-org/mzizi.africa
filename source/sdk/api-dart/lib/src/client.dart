@@ -1,5 +1,6 @@
 import 'package:flutter_api_bridge/flutter_api_bridge.dart';
 import 'package:mzizi_api/src/features/auth_feature.dart';
+import 'package:mzizi_api/src/features/experience_feature.dart';
 import 'package:mzizi_api/src/features/geography_feature.dart';
 import 'package:mzizi_api/src/features/governance_feature.dart';
 import 'package:mzizi_api/src/features/insights_feature.dart';
@@ -14,6 +15,9 @@ class MziziApiClient {
 
   /// Auth operations.
   late final auth = AuthFeature(_connection);
+
+  /// Experience operations.
+  late final experience = ExperienceFeature(_connection);
 
   /// Geography operations.
   late final geography = GeographyFeature(_connection);

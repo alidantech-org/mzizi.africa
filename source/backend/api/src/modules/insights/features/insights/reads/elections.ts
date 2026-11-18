@@ -5,7 +5,7 @@
 import { NotFoundException } from "@nestjs/common";
 import type { DataSource } from "typeorm";
 
-import { crumbs, featureName, mediaFor, partyOf, personName, shortCode, storedCode, toleranceFor, unitsUnder } from "./shared.ts";
+import { crumbs, featureName, mediaFor, partyOf, personName, shortCode, storedCode, toleranceFor, unitsUnder, entityName } from "./shared.ts";
 
 interface ContestRow { contest_id: string; code: string; kind: string }
 interface ResultRow {
@@ -134,7 +134,7 @@ export async function placeElections(db: DataSource, featureId: string) {
 
 export async function listParties(db: DataSource) {
   const rows: { id: string; code: string; name: string; members: string; votes: string | null; seats: string | null; funding: string | null }[] = await db.query(
-    `select pt.id, pt.code, (select n.name from official.names n where n.entity_id = pt.entity_id order by n.is_preferred desc limit 1) as name,
+    `select pt.id, pt.code, ${entityName("pt.entity_id")} as name,
        (select count(distinct m.individual_id) from politics.memberships m where m.party_id = pt.id and m.left_on is null)::text as members,
        (select sum(r.votes) from politics.results r join politics.candidates ca on ca.id = r.candidate_id join politics.contests c on c.id = ca.contest_id and c.code like '%.2022.%' where ca.party_id_at_election = pt.id)::text as votes,
        (select count(*) from governance.holders h join politics.memberships m on m.individual_id = h.individual_id and m.party_id = pt.id and m.left_on is null where h.left_office_on is null)::text as seats,
@@ -147,7 +147,7 @@ export async function listParties(db: DataSource) {
 
 export async function partyDetail(db: DataSource, code: string) {
   const rows: { id: string; code: string; entity_id: string; name: string; registered_on: string | null }[] = await db.query(
-    `select pt.id, pt.code, pt.entity_id, (select n.name from official.names n where n.entity_id = pt.entity_id order by n.is_preferred desc limit 1) as name, pt.registered_on::text from politics.parties pt where pt.code = $1`, [storedCode("pol.par", code)]);
+    `select pt.id, pt.code, pt.entity_id, ${entityName("pt.entity_id")} as name, pt.registered_on::text from politics.parties pt where pt.code = $1`, [storedCode("pol.par", code)]);
   const party = rows[0];
   if (!party) throw new NotFoundException("No such party.");
   const members: { holder_id: string | null; individual_id: string; name: string; office: string | null; unit: string | null; unit_id: string | null }[] = await db.query(

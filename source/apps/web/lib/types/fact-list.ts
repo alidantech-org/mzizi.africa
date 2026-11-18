@@ -1,8 +1,9 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type FactRow } from "#/lib/types/fact-row.ts";
 
 /** Fact List */
 export interface FactList {
-  facts: unknown[];
+  facts: FactRow[];
   gaps: string[];
 }
 

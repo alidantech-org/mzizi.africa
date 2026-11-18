@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_api/api.dart';
@@ -52,9 +53,8 @@ class _FeatureBrowseScreenState extends State<FeatureBrowseScreen> {
       input[paging.limit] = min(_window.limit, paging.maxLimit);
       input[paging.offset] = _window.offset;
     }
-    final result = await GeographyFeature(MziziApi.connection).browseFeatures(
-      input: GeographyFeatureWindow.fromJson(input),
-    );
+    final result = await GeographyFeature(MziziApi.connection)
+        .browseFeatures(input: GeographyFeatureWindow.fromJson(input));
     if (!mounted) return;
     setState(() {
       if (result.isError) {
@@ -100,9 +100,15 @@ class _FeatureBrowseScreenState extends State<FeatureBrowseScreen> {
                   // The row's text values travel as the target's context values, matched by name.
                   final values = <String, String>{
                     for (final entry in row.entries)
-                      if (entry.value is String) entry.key: entry.value as String,
+                      if (entry.value is String)
+                        entry.key: entry.value as String,
                   };
-                  context.go(Uri(path: '/feature-detail', queryParameters: values).toString());
+                  context.go(
+                    Uri(
+                      path: '/feature-detail',
+                      queryParameters: values,
+                    ).toString(),
+                  );
                 },
               ),
               MziziPaginationBar(

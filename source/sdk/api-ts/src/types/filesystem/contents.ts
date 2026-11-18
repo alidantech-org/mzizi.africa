@@ -12,7 +12,6 @@ export interface FilesystemContents {
   id: string;
   isDevelopmentText: boolean;
   languageId: string;
-  slug: string;
   subjectId: string;
   subjectTable: SharedSubjectTable;
   summary?: string | null;

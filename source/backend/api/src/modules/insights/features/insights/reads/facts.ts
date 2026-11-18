@@ -11,13 +11,17 @@ export async function listFacts(db: DataSource, featureId: string | undefined, l
        case when c.subject_table = 'geography.features' then ${featureName("c.subject_id", "'en'")} end as place,
        (c.subject_table = 'geography.features') as tagged
      from filesystem.contents c
-     join reference.values cat on cat.id = c.category_id and cat.code = 'fil.content.category.fun-fact'
+     join reference.values cat on cat.id = c.category_id and cat.code = 'ref.val.fil.content.category.fun-fact'
      where c.deleted_at is null
        and (c.subject_table <> 'geography.features' or cardinality($1::uuid[]) = 0 or c.subject_id = any($1::uuid[]))
      order by (case when c.subject_table = 'geography.features' and c.subject_id = any($1::uuid[]) then 0 else 1 end), c.code limit $2`,
-    [ids, Math.min(Math.max(limit, 1), 100)]);
+    [ids, Math.min(Math.max(limit, 1), 100)],
+  );
   return {
     facts: rows.map((r) => ({ ...r, code: shortCode(String(r.code)) })),
-    gaps: rows.length === 0 ? ["No fun facts are recorded for this place yet. You can suggest one."] : [],
+    gaps:
+      rows.length === 0
+        ? ["No fun facts are recorded for this place yet. You can suggest one."]
+        : [],
   };
 }

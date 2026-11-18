@@ -20,6 +20,7 @@ import { official } from "#/schemas/postgres/official.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
 import { source } from "#/schemas/postgres/source.ts";
 import { authOperations } from "./auth.ts";
+import { experience, experienceOperations } from "./experience.ts";
 import { geographyOperations } from "./geography.ts";
 import { governanceOperations } from "./governance.ts";
 import { insightOperations, insights } from "./insights.ts";
@@ -38,6 +39,7 @@ export default dryv
     ...Object.values(governanceOperations),
     ...Object.values(localityOperations),
     ...Object.values(insightOperations),
+    ...Object.values(experienceOperations),
   )
   .groups(
     shared,
@@ -54,4 +56,5 @@ export default dryv
     filesystem,
     locality,
     insights,
+    experience,
   );

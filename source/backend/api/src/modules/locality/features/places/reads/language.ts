@@ -55,3 +55,15 @@ export async function languageChoices(db: DataSource): Promise<LanguageChoice[]>
     from reference.languages l where l.iso6391 is not null order by l.iso6391`);
   return rows.map((row) => ({ code: row.code, name: row.name, nativeName: row.native_name }));
 }
+
+/**
+ * The display name of an organisation: its preferred full name with its abbreviation in brackets when it has one, for example
+ * `Independent Electoral and Boundaries Commission (IEBC)`. Every list, card and title shows names this way, so people who know
+ * an institution by its abbreviation recognise it. An organisation without an abbreviation shows its name alone.
+ */
+export const entityName = (entityId: string): string => `(select o.name || coalesce(' (' || ab.name || ')', '')
+    from official.names o join reference.values ok on ok.id = o.name_kind_id
+    left join lateral (select a.name from official.names a join reference.values ak on ak.id = a.name_kind_id and ak.code = 'ref.val.ofc.name.kind.abbreviation'
+                        where a.entity_id = o.entity_id and a.deleted_at is null order by a.is_preferred desc, a.name limit 1) ab on true
+   where o.entity_id = ${entityId} and o.deleted_at is null and ok.code <> 'ref.val.ofc.name.kind.abbreviation'
+   order by o.is_preferred desc, (ok.code = 'ref.val.ofc.name.kind.official') desc, o.name limit 1)`;

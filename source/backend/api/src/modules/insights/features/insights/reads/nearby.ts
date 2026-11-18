@@ -1,7 +1,7 @@
 /** Projects close to a position, nearest first, using PostGIS geography distance on the project's point. */
 import type { DataSource } from "typeorm";
 
-import { featureName, mediaFor, money, shortCode } from "./shared.ts";
+import { featureName, mediaFor, money, shortCode, entityName } from "./shared.ts";
 
 export async function nearbyProjects(db: DataSource, latitude: number, longitude: number, radiusKm: number | undefined) {
   const radius = Math.min(Math.max(radiusKm ?? 10, 0.5), 100);
@@ -10,7 +10,7 @@ export async function nearbyProjects(db: DataSource, latitude: number, longitude
        st_distance(p.location::geography, st_setsrid(st_makepoint($2, $1), 4326)::geography) / 1000 as distance_km, st_asgeojson(p.location)::json as location,
        (select sum(fl.amount_minor_units)::text from finance.flows fl where fl.project_id = p.id) as amount,
        (select n.name from civic.contracts c join official.names n on n.entity_id = c.contractor_entity_id where c.project_id = p.id limit 1) as contractor,
-       (select n.name from official.names n where n.entity_id = i.entity_id limit 1) as responsible
+       ${entityName("i.entity_id")} as responsible
      from civic.projects p join reference.values s on s.id = p.status_id left join governance.institutions i on i.id = p.responsible_institution_id
      where p.location is not null and st_dwithin(p.location::geography, st_setsrid(st_makepoint($2, $1), 4326)::geography, $3 * 1000)
      order by distance_km limit 40`, [latitude, longitude, radius]);

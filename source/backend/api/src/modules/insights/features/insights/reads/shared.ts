@@ -5,9 +5,9 @@
 import type { DataSource } from "typeorm";
 
 import { chainOf } from "#/modules/locality/features/places/reads/places.ts";
-import { featureName, valueLabel } from "#/modules/locality/features/places/reads/language.ts";
+import { entityName, featureName, valueLabel } from "#/modules/locality/features/places/reads/language.ts";
 
-export { featureName, valueLabel };
+export { entityName, featureName, valueLabel };
 
 export interface Crumb {
   featureId: string;
@@ -51,7 +51,8 @@ export function embedFor(platform: string | null, url: string): string | null {
   try {
     const u = new URL(url);
     if (platform === "youtube") {
-      const id = u.searchParams.get("v") ?? (u.hostname === "youtu.be" ? u.pathname.slice(1) : null);
+      const id =
+        u.searchParams.get("v") ?? (u.hostname === "youtu.be" ? u.pathname.slice(1) : null);
       return id ? `https://www.youtube-nocookie.com/embed/${id}` : null;
     }
     if (platform === "vimeo") {
@@ -161,7 +162,8 @@ export const money = (minorUnits: string | number | null): number | null =>
 export const gap = (what: string): string => what;
 
 /** The stored form of an indicator code: seeds write `sta.population.total`, the table stores `sta.ind.sta.population.total`. */
-export const indicatorStored = (code: string): string => (code.startsWith("sta.ind.") ? code : `sta.ind.${code}`);
+export const indicatorStored = (code: string): string =>
+  code.startsWith("sta.ind.") ? code : `sta.ind.${code}`;
 export const indicatorShort = (stored: string): string => stored.replace(/^sta\.ind\./, "");
 
 /** Tolerance (degrees) to simplify outlines for a map of units of a kind, so a whole-country map stays small. */
@@ -200,7 +202,8 @@ export async function unitsUnder(
 }
 
 /** `pol.par.ke.party.uda` as written in a seed (`ke.party.uda`), and back. */
-export const shortCode = (stored: string): string => stored.replace(/^[a-z]{2,4}\.[a-z]{2,4}\./, "");
+export const shortCode = (stored: string): string =>
+  stored.replace(/^[a-z][a-z0-9]{1,3}\.[a-z][a-z0-9]{1,3}\./, "");
 export const storedCode = (prefix: string, short: string): string =>
   short.startsWith(`${prefix}.`) ? short : `${prefix}.${short}`;
 
@@ -210,6 +213,6 @@ export const personName = (individual: string): string => `coalesce(
 
 /** The party (official name) an individual belongs to now, if any. */
 export const partyOf = (individual: string): string => `(
-  select (select n.name from official.names n where n.entity_id = pt.entity_id order by n.is_preferred desc limit 1)
+  select ${entityName("pt.entity_id")}
   from politics.memberships m join politics.parties pt on pt.id = m.party_id
   where m.individual_id = ${individual} and m.left_on is null order by m.joined_on desc nulls last limit 1)`;

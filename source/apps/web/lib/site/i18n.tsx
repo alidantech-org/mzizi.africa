@@ -190,7 +190,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored === "en" || stored === "sw") setLanguageState(stored);
+      if (stored === "en" || stored === "sw") { setLanguageState(stored); document.cookie = `mz_lang=${stored}; path=/; max-age=31536000; samesite=lax`; }
     } catch {
       // The choice is only a convenience; the page works without storage.
     }
@@ -199,6 +199,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     setLanguageState(next);
     try {
       window.localStorage.setItem(STORAGE_KEY, next);
+      document.cookie = `mz_lang=${next}; path=/; max-age=31536000; samesite=lax`;
     } catch {
       // Ignored: see above.
     }

@@ -189,7 +189,7 @@ def _facilities(b: Builder, t: Tables, counties, constituencies, wards, geometri
                   "ke.candidate.2022.presidential.george-wajackoyah", "ke.candidate.2022.presidential.david-mwaure"]
     shares = [0.50, 0.48, 0.015, 0.005]
 
-    def feature(code: str, name: str, kind: str, near: str, from_year: str = "2013") -> str | None:
+    def feature(code: str, name: str, kind: str, near: str, from_year: str = "2013", part_of: str | None = None) -> str | None:
         shape = geometries.get(near)
         if shape is None:
             return None
@@ -197,6 +197,10 @@ def _facilities(b: Builder, t: Tables, counties, constituencies, wards, geometri
         t.add("ke/geo/dev-facilities/names.csv", {"feature_code": code, "name": name, "name_kind_code": "geo.name.kind.official", "language_code": "en", "is_default": "true"})
         t.add("ke/geo/dev-facilities/geometries.csv", {"feature_code": code, "geometry_role_code": "geo.geometry.role.label-point", "basis_code": "geo.geometry.basis.approximate",
                                                       "revision": "1", "srid": "4326", "geometry": _point(shape), "confidence": "0.4", "from_year": from_year, "from_to_precision": "approximate"})
+        if part_of:
+            t.add("ke/geo/dev-facilities/relationships.csv", {"subject_feature_code": code, "object_feature_code": part_of,
+                                                             "relationship_kind_code": "geo.relationship.kind.part-of", "system_code": "geo.relationship.system.administrative",
+                                                             "from_year": "2013", "from_to_precision": "approximate"})
         return code
 
     def facility(code: str, feat: str, klass: str, operator: str, ownership: str = "public", status: str = "operational") -> None:
@@ -222,7 +226,7 @@ def _facilities(b: Builder, t: Tables, counties, constituencies, wards, geometri
         for kind, name, klass, operator in [("governor-office", f"Office of the Governor, {county.name}", "governor-office", gov),
                                             ("assembly-office", f"{county.name} County Assembly offices", "county-assembly", assembly),
                                             ("referral-hospital", f"{county.name} County Referral Hospital", "county-referral-hospital", gov)]:
-            f = feature(f"{county.code}.{kind}", name, "building", county.code)
+            f = feature(f"{county.code}.{kind}", name, "building", county.code, part_of=county.code)
             if f:
                 facility(f"ke.facility.{slug}.{kind}", f, klass, operator)
                 if klass == "county-referral-hospital":
@@ -233,7 +237,7 @@ def _facilities(b: Builder, t: Tables, counties, constituencies, wards, geometri
         for kind, name, klass, operator, near in [("ngcdf-office", f"{con.name} NG-CDF office", "constituency-fund-office", ngcdf, con.code),
                                                   ("health-centre", f"{con.name} Health Centre", "health-centre", f"ke.institution.{parts[0]}.government", con.code),
                                                   ("police-station", f"{con.name} Police Station", "police-station", "ke.institution.national-police-service", con.code)]:
-            f = feature(f"{con.code}.{kind}", name, "building", near)
+            f = feature(f"{con.code}.{kind}", name, "building", near, part_of=con.code)
             if f:
                 facility(f"ke.facility.{'.'.join(parts)}.{kind}", f, klass, operator)
                 if klass == "health-centre":
@@ -321,15 +325,15 @@ def _accountability(b: Builder, t: Tables, counties: list[Feature]) -> None:
                                          "level_code": f"src.coverage.level.{level}", "checked_on": "2026-11-19", "note": note + " " + DEV})
 
 
-def _abbreviations(t: Tables) -> None:
+def _abbreviations(b: Builder) -> None:
     for entity, abbr in [("iebc", "IEBC"), ("orpp", "ORPP"), ("knbs", "KNBS"), ("eacc", "EACC"), ("kra", "KRA"), ("ntsa", "NTSA"), ("nema", "NEMA"),
                          ("nlc", "NLC"), ("psc", "PSC"), ("tsc", "TSC"), ("src", "SRC"), ("cra", "CRA"), ("ppra", "PPRA"), ("dpp", "ODPP"),
                          ("ngec", "NGEC"), ("knchr", "KNCHR"), ("ncic", "NCIC"), ("ca", "CA"), ("ipoa", "IPOA")]:
-        t.add("ke/official/names.csv", {"entity_code": f"ke.institution.{entity}", "name_kind_code": "ofc.name.kind.abbreviation",
-                                        "language_code": "mul", "is_preferred": "false", "name": abbr})
+        b.names.append({"entity_code": f"ke.institution.{entity}", "name_kind_code": "ofc.name.kind.abbreviation",
+                        "language_code": "mul", "is_preferred": "false", "name": abbr})
     for party, abbr in [("uda", "UDA"), ("odm", "ODM"), ("jubilee", "Jubilee")]:
-        t.add("ke/official/names.csv", {"entity_code": f"ke.party.{party}", "name_kind_code": "ofc.name.kind.abbreviation",
-                                        "language_code": "mul", "is_preferred": "false", "name": abbr})
+        b.names.append({"entity_code": f"ke.party.{party}", "name_kind_code": "ofc.name.kind.abbreviation",
+                        "language_code": "mul", "is_preferred": "false", "name": abbr})
 
 
 def _metrics(t: Tables) -> None:
@@ -348,6 +352,6 @@ def build_extra(b: Builder, t: Tables, counties, constituencies, wards, geometri
     _terms(t)
     _calendar_and_events(t, counties)
     _facilities(b, t, counties, constituencies, wards, geometries)
-    _abbreviations(t)
+    _abbreviations(b)
     _metrics(t)
     _accountability(b, t, counties)

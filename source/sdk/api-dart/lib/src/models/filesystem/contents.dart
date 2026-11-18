@@ -21,7 +21,6 @@ class FilesystemContents {
     required this.id,
     required this.isDevelopmentText,
     required this.languageId,
-    required this.slug,
     required this.subjectId,
     required this.subjectTable,
     this.summary,
@@ -39,7 +38,6 @@ class FilesystemContents {
   final String id;
   final bool isDevelopmentText;
   final String languageId;
-  final String slug;
   final String subjectId;
   final SharedSubjectTable subjectTable;
   final String? summary;
