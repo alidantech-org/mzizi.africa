@@ -74,7 +74,7 @@ class DataList(BaseModel):
 
 
 class DataListPage(BaseModel):
-    list: DataList
+    definition: DataList
     rows: tuple[dict[str, JsonValue], ...]
     total: int
     limit: int
@@ -224,7 +224,7 @@ class Browser:
             total = db.execute(f"select count(*) as n from ({spec.sql}) as q").fetchone()
             rows = db.execute(f"select * from ({spec.sql}) as q limit %s offset %s", (limit, max(0, offset))).fetchall()
         return DataListPage(
-            list=spec,
+            definition=spec,
             rows=tuple(_row(r) for r in rows),
             total=int(total["n"]) if total else 0,
             limit=limit,

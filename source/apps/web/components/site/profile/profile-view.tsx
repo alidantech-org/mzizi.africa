@@ -1,13 +1,14 @@
 "use client";
 
-import Link from "next/link";
-
 import { PlaceMapLazy } from "#/components/site/map/place-map-lazy.tsx";
 import { SavePlace, SaveSpot } from "#/components/site/save-buttons.tsx";
 import { OfficialCard } from "#/components/site/profile/official-card.tsx";
 import { ProcurementPanel } from "#/components/site/profile/procurement-panel.tsx";
+import { Gallery } from "#/components/site/ui/media.tsx";
+import { PlaceTabs, PlaceTrail } from "#/components/site/ui/primitives.tsx";
+import { browse } from "#/lib/site/insights.ts";
+import { useAsync } from "#/lib/site/use-async.ts";
 import { useLanguage } from "#/lib/site/i18n.tsx";
-import { routes } from "#/lib/dryv/routes.ts";
 import type { LocalityProfile } from "#/lib/types/locality-profile.ts";
 
 export function ProfileView({
@@ -18,29 +19,12 @@ export function ProfileView({
   position: { latitude: number; longitude: number } | null;
 }) {
   const { t } = useLanguage();
+  const gallery = useAsync(() => browse(profile.place.featureId), `gallery-${profile.place.featureId}`);
   return (
     <div className="space-y-12">
       <header className="reveal">
-        <nav
-          aria-label={t("chainLabel")}
-          className="flex flex-wrap items-center gap-1 text-sm text-content-muted"
-        >
-          {profile.chain.map((unit, index) => (
-            <span key={unit.featureId} className="flex items-center gap-1">
-              {index > 0 ? <span aria-hidden>›</span> : null}
-              {index < profile.chain.length - 1 ? (
-                <Link
-                  className="hover:underline"
-                  href={`${routes.placeProfile}?featureId=${unit.featureId}`}
-                >
-                  {unit.name}
-                </Link>
-              ) : (
-                <span className="font-medium text-content-primary">{unit.name}</span>
-              )}
-            </span>
-          ))}
-        </nav>
+        <PlaceTrail chain={profile.chain} section={{ label: "Places", href: "/browse" }} />
+        <PlaceTabs featureId={profile.place.featureId} />
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <h1 className="text-4xl sm:text-5xl">{profile.place.name}</h1>
           <span className="rounded-full bg-surface-sunken px-3 py-1 text-sm font-medium text-content-muted">
@@ -85,6 +69,9 @@ export function ProfileView({
           </div>
         )}
       </section>
+      {gallery.state === "ready" && gallery.value.media.length > 0 ? (
+        <section aria-label="Pictures and videos" className="reveal reveal-2"><h2 className="mb-4 text-2xl">Pictures and videos</h2><Gallery items={gallery.value.media} /></section>
+      ) : null}
       <section aria-labelledby="proc" className="reveal reveal-3">
         <h2 id="proc" className="mb-4 text-2xl">
           {t("procurement")}

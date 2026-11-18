@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.jsonvalue import JsonValue
+
 
 class ProjectsRow(BaseModel):
     """One public development or infrastructure project with responsible institution, status, geographic scope and evidence."""
@@ -31,6 +33,7 @@ class ProjectsRow(BaseModel):
     description: Annotated[str, Field(max_length=4000)]
     id: UUID
     implementing_entity_id: UUID | None = None
+    location: JsonValue | None = None
     name: Annotated[str, Field(min_length=1, max_length=300)]
     responsible_institution_id: UUID | None = None
     scope_unit_feature_id: UUID | None = None

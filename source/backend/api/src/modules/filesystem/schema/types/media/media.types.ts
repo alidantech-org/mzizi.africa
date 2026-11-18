@@ -36,15 +36,19 @@ export interface IMedia extends B.IBase {
   altText: string | null;
   code: string;
   description: string | null;
-  fileVersionId: string;
+  externalUrl: string | null;
+  fileVersionId: string | null;
   kindId: string;
+  platformId: string | null;
   position: number | null;
   purpose: string | null;
   subjectId: string;
   subjectTable: SubjectTable;
+  thumbnailUrl: string | null;
   title: string;
   readonly fileVersion?: FileVersionsTypes.IFileVersions;
   readonly kind?: ValueTypes.IValue;
+  readonly platform?: ValueTypes.IValue;
 }
 
 // ----------------------------------
@@ -131,6 +135,7 @@ export type IMediaAsManyRelationQuery = Q.IAsManyRelationQuery<
 export interface IMediaRelationMap extends Record<MediaRelationKey, unknown> {
   fileVersion: FileVersionsTypes.IFileVersionsAsOneRelationQuery;
   kind: ValueTypes.IValueAsOneRelationQuery;
+  platform: ValueTypes.IValueAsOneRelationQuery;
 }
 
 // ----------------------------------

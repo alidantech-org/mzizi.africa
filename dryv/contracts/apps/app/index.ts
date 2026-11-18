@@ -11,6 +11,7 @@ import { reference } from "#/schemas/postgres/reference.ts";
 import api from "#/apps/api/index.ts";
 import { brand, themes } from "#/schemas/theme.ts";
 import { geographyOperations } from "#/apps/api/geography.ts";
+import { insightOperations, insights } from "#/apps/api/insights.ts";
 import { locality, localityOperations } from "#/apps/api/locality.ts";
 
 const app = dryv.group({ name: "app" }).description("The mobile app: its surface and views.");
@@ -78,7 +79,7 @@ const views = features.views({
 const app_app = dryv
   .app({ name: "mzizi-app" })
   .info({ title: "Mzizi mobile app", version: "0.1.0" })
-  .groups(shared, reference, geography, locality, brand, app)
+  .groups(shared, reference, geography, locality, insights, brand, app)
   .surfaces(surfaces.Main)
   .theme(themes.Mzizi)
   .consumes(
@@ -93,6 +94,25 @@ const app_app = dryv
     geographyOperations.GetFeature,
     geographyOperations.BrowseFeatureKinds,
     geographyOperations.ListFeatureGeometries,
+    insightOperations.GlobalSearch,
+    insightOperations.BrowsePlaces,
+    insightOperations.GetPlaceStatistics,
+    insightOperations.GetIndicatorSeries,
+    insightOperations.GetIndicatorMap,
+    insightOperations.ListLeaderboardMetrics,
+    insightOperations.GetLeaderboard,
+    insightOperations.GetPlaceElections,
+    insightOperations.ListElections,
+    insightOperations.GetElection,
+    insightOperations.ListParties,
+    insightOperations.GetParty,
+    insightOperations.ListMotions,
+    insightOperations.GetMotion,
+    insightOperations.GetLeaderProfile,
+    insightOperations.GetPlaceCivic,
+    insightOperations.GetProject,
+    insightOperations.ListTenders,
+    insightOperations.GetNearbyProjects,
   )
   .destination("places", views.PlaceSearch)
   .destination("sources", views.SourceBrowse)

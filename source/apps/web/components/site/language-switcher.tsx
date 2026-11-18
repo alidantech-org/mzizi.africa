@@ -13,7 +13,7 @@ export function LanguageSwitcher() {
     <div
       role="group"
       aria-label={t("language")}
-      className="flex rounded-full border border-border-default p-0.5"
+      className="glass flex rounded-full p-0.5"
     >
       {CHOICES.map((choice) => (
         <button
@@ -21,11 +21,8 @@ export function LanguageSwitcher() {
           type="button"
           onClick={() => setLanguage(choice.code)}
           aria-pressed={language === choice.code}
-          className={`rounded-full px-3 py-1 text-xs font-semibold transition ${
-            language === choice.code
-              ? "bg-content-primary text-content-inverse"
-              : "text-content-muted hover:text-content-primary"
-          }`}
+          data-active={language === choice.code}
+          className="tab !px-3 !py-1 !text-xs"
         >
           {choice.label}
         </button>

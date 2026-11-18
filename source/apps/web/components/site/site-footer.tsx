@@ -8,7 +8,7 @@ import { routes } from "#/lib/dryv/routes.ts";
 export function SiteFooter() {
   const { t } = useLanguage();
   return (
-    <footer className="mt-24 border-t border-border-default bg-surface-sunken/60">
+    <footer className="glass mt-24 rounded-none border-x-0 border-b-0">
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:grid-cols-3">
         <div>
           <p className="font-display text-xl">Mzizi</p>
@@ -19,11 +19,11 @@ export function SiteFooter() {
             {t("footerData")}
           </p>
           <ul className="mt-3 space-y-2 text-sm">
-            <li>
-              <Link className="hover:underline" href={routes.placeSearch}>
-                {t("navPlaces")}
-              </Link>
-            </li>
+            {[["/browse", "navPlaces"], ["/statistics", "navStats"], ["/elections", "navElections"], ["/parliament", "navParliament"], ["/civic", "navCivic"], ["/leaderboards", "navBoards"], ["/tenders", "navTenders"], ["/parties", "navParties"]].map(([href, word]) => (
+              <li key={href}>
+                <Link className="hover:underline" href={href!}>{t(word as Parameters<typeof t>[0])}</Link>
+              </li>
+            ))}
             <li>
               <Link className="hover:underline" href={routes.sourceBrowse}>
                 {t("navSources")}

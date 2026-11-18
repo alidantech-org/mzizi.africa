@@ -109,12 +109,25 @@ def write_people(b: Builder) -> None:
             "responsible_institution_code",
             "country_code",
             "started_on",
+            "location",
         ],
         b.projects,
     )
     write_csv(
         "ke/civic/procurements.csv",
-        ["code", "buyer_entity_code", "procedure_kind_code", "project_code", "published_on", "country_code"],
+        [
+            "code",
+            "buyer_entity_code",
+            "procedure_kind_code",
+            "project_code",
+            "title",
+            "reference",
+            "status_code",
+            "published_on",
+            "closes_on",
+            "awarded_on",
+            "country_code",
+        ],
         b.procurements,
     )
     write_csv(

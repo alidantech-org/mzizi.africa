@@ -5,6 +5,7 @@ import { DatabaseModule } from "./database/database.module.ts";
 import { AuthModule } from "#/modules/auth/auth.module.ts";
 import { GeographyModule } from "#/modules/geography/geography.module.ts";
 import { GovernanceModule } from "#/modules/governance/governance.module.ts";
+import { InsightsModule } from "#/modules/insights/insights.module.ts";
 import { LocalityModule } from "#/modules/locality/locality.module.ts";
 import { ReferenceModule } from "#/modules/reference/reference.module.ts";
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
@@ -15,6 +16,7 @@ import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
     AuthModule,
     GeographyModule,
     GovernanceModule,
+    InsightsModule,
     LocalityModule,
     ReferenceModule,
   ],

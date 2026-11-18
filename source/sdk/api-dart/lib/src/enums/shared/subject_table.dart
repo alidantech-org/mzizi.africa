@@ -2,6 +2,14 @@ import 'package:json_annotation/json_annotation.dart';
 
 /// Subject Table
 enum SharedSubjectTable {
+  @JsonValue('activities.contributions')
+  activitiesContributions,
+  @JsonValue('activities.motions')
+  activitiesMotions,
+  @JsonValue('activities.sittings')
+  activitiesSittings,
+  @JsonValue('activities.votes')
+  activitiesVotes,
   @JsonValue('civic.bids')
   civicBids,
   @JsonValue('civic.contracts')
@@ -176,4 +184,8 @@ enum SharedSubjectTable {
   sourceSources,
   @JsonValue('source.verifications')
   sourceVerifications,
+  @JsonValue('statistics.indicators')
+  statisticsIndicators,
+  @JsonValue('statistics.observations')
+  statisticsObservations,
 }

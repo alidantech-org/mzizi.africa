@@ -33,7 +33,7 @@ const PRESETS: readonly {
       source_yaml: "sources/ke-tenders/source.yml",
       module_yaml: "sources/ke-tenders/active-tenders.module.yml",
     },
-    values: { endpoint: "active-tenders", max_pages: 50, delay: 1, out_dir_name: "tenders-active" },
+    values: { endpoint: "active-tenders", max_pages: 50, delay: 1, out_dir_name: "tenders-active-full" },
   },
   {
     label: "Check one URL is allowed and reachable (fetch.url)",

@@ -1,0 +1,60 @@
+"use client";
+
+/** Route `/elections/place/<id>`: a place's elections over time — who won and how, turnout, and how registration has grown. */
+import Link from "next/link";
+import { useParams } from "next/navigation";
+
+import { AsyncView } from "#/components/site/async-view.tsx";
+import { BarList, LineChart, Stacked } from "#/components/site/ui/charts.tsx";
+import { Gaps, PageFrame, PlaceTabs, PlaceTrail, Section, Stat } from "#/components/site/ui/primitives.tsx";
+import { date, n, pct, words } from "#/lib/site/format.ts";
+import { placeElections } from "#/lib/site/insights.ts";
+import { useAsync } from "#/lib/site/use-async.ts";
+
+export default function PlaceElectionsRoute() {
+  const { id } = useParams<{ id: string }>();
+  const loaded = useAsync(() => placeElections(id), `pe-${id}`);
+  return (
+    <PageFrame>
+      <AsyncView loaded={loaded}>
+        {(d) => {
+          const latest = d.elections[0]?.contests[0];
+          return (
+            <>
+              <PlaceTrail chain={[d.place]} section={{ label: "Elections", href: "/elections" }} />
+              <PlaceTabs featureId={id} />
+              <p className="kicker">{d.place.kindLabel} · elections</p>
+              <h1 className="hero-title text-4xl sm:text-5xl">{d.place.name}</h1>
+              <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                <Stat label="Registered voters" value={n(latest?.registered ?? d.registrationTrend.at(-1)?.value)} hint={d.registrationTrend.at(-1)?.period.slice(0, 4)} />
+                <Stat label="Turnout at the last election" value={pct(latest?.turnout)} />
+                <Stat label="Elections recorded" value={d.elections.length} />
+              </div>
+              {d.registrationTrend.length > 1 ? (
+                <Section kicker="Registration" title="How the voters' register has grown">
+                  <div className="glass card"><LineChart points={d.registrationTrend} unit="voters" label="Registered voters over time" height={200} /></div>
+                </Section>
+              ) : null}
+              {d.elections.map((e) => (
+                <Section key={e.electionId} kicker={date(e.heldOn)} title={`${e.year} general election`} action={<Link className="btn btn-ghost" href={`/elections/${e.electionId}`}>Whole-country results</Link>}>
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    {e.contests.map((c) => (
+                      <div key={c.kind} className="glass card">
+                        <h3 className="font-display text-xl">{words(c.kind)}</h3>
+                        <p className="text-sm text-content-muted">{n(c.registered)} registered · turnout {pct(c.turnout)}</p>
+                        <div className="my-3"><Stacked label="Share of votes" parts={c.candidates.map((x) => ({ label: x.name, value: x.votes }))} /></div>
+                        <BarList items={c.candidates.slice(0, 5).map((x) => ({ label: `${x.won ? "★ " : ""}${x.name}${x.party ? ` (${x.party})` : ""}`, value: x.share, note: n(x.votes) }))} format={(v) => pct(v)} />
+                        {c.candidates[0]?.individualId ? <p className="mt-3 text-xs text-content-muted">Winner: {c.candidates[0].name}</p> : null}
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+              ))}
+              <Gaps items={d.gaps} topic={`elections in ${d.place.name}`} />
+            </>
+          );
+        }}
+      </AsyncView>
+    </PageFrame>
+  );
+}

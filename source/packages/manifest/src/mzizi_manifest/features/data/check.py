@@ -230,9 +230,24 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                 if not value:
                     continue
                 where = f"{row.file.relative_to(root)}:{row.line}"
-                if target.natural_key != ("code",):
-                    result.problems.append(f"{where}: {alias}: {target.qualified_name} cannot be linked by code")
+                composite = target.natural_key != ("code",)
+                if composite and (not target.natural_key or target.natural_key == ("id",)):
+                    result.problems.append(f"{where}: {alias}: {target.qualified_name} has no natural key to link by")
                     break
+                if composite:
+                    # A table without a code is linked by its natural key, the key cells joined by `|` (the loader's identity).
+                    parts = tuple(value.split("|"))
+                    if target.qualified_name not in result.rows:
+                        result.problems.append(
+                            f"{where}: {alias}: {value!r} names a {target.qualified_name} row but that table has no seed file"
+                        )
+                    elif len(parts) != len(target.natural_key) or parts not in keys.get(target.qualified_name, {}):
+                        result.problems.append(
+                            f"{where}: {alias}: unknown {target.qualified_name} key {value!r} (expected {'|'.join(target.natural_key)})"
+                        )
+                    elif target.qualified_name != name:
+                        edges[name].add(target.qualified_name)
+                    continue
                 if target.qualified_name not in result.rows:
                     result.problems.append(
                         f"{where}: {alias}: {value!r} is a {target.qualified_name} code but that table has no seed file"

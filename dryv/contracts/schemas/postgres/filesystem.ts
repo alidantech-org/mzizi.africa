@@ -158,8 +158,16 @@ export const Media = filesystem
     /** Reviewed display order among the subject's media; not unique and not a default marker. */
     position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
     /** The exact stored bytes. Acquisition before registration is a Source discovery or capture, never a URL here. */
-    fileVersionId: belongsTo(() => FileVersions),
+    fileVersionId: belongsTo(() => FileVersions).maybe(),
+    /** A remote resource instead of stored bytes: a video, social post, stock photo or generated avatar, kept as the raw URL. */
+    externalUrl: dryv.field(sharedProperties.Url).maybe(),
+    /** Scheme fil.media.platform: youtube, tiktok, facebook, instagram, x, vimeo, pexels, dicebear, website. */
+    platformId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.fil.media.platform"),
+    thumbnailUrl: dryv.field(sharedProperties.Url).maybe(),
   })
+  .rule("MediaHasBytesOrUrl", rule.atLeastOne("fileVersionId", "externalUrl"))
   .extends(baseSchemas.CodedSubjectEntity)
   .description(
     "One use of a stored media file by one subject record, which it mentions by table and id. A subject can have many media of any kind and one file can serve many subjects; subjects carry no media pointer.",

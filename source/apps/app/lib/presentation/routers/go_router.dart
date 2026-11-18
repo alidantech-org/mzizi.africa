@@ -1,4 +1,7 @@
 import 'package:go_router/go_router.dart';
+import 'package:mzizi_app/presentation/insights/civic_pages.dart';
+import 'package:mzizi_app/presentation/insights/democracy_pages.dart';
+import 'package:mzizi_app/presentation/insights/explore_pages.dart';
 import 'package:mzizi_app/presentation/pages/evidence_page.dart';
 import 'package:mzizi_app/presentation/pages/place_profile_page.dart';
 import 'package:mzizi_app/presentation/pages/places_page.dart';
@@ -40,6 +43,99 @@ final appRouter = GoRouter(
               ),
             ),
           ),
+        ),
+        GoRoute(
+          path: '/search',
+          pageBuilder: (c, s) => fadeTransition(child: const SearchScreen()),
+        ),
+        GoRoute(
+          path: '/explore',
+          pageBuilder: (c, s) => fadeTransition(child: const ExploreScreen()),
+        ),
+        GoRoute(
+          path: '/browse',
+          pageBuilder: (c, s) => fadeTransition(child: const BrowseScreen()),
+        ),
+        GoRoute(
+          path: '/browse/:id',
+          pageBuilder: (c, s) => fadeTransition(
+            child: BrowseScreen(featureId: s.pathParameters['id']),
+          ),
+        ),
+        GoRoute(
+          path: '/stats',
+          pageBuilder: (c, s) => fadeTransition(child: const StatsScreen()),
+        ),
+        GoRoute(
+          path: '/stats/:id',
+          pageBuilder: (c, s) => fadeTransition(
+            child: StatsScreen(featureId: s.pathParameters['id']),
+          ),
+        ),
+        GoRoute(
+          path: '/elections',
+          pageBuilder: (c, s) => fadeTransition(child: const ElectionsScreen()),
+        ),
+        GoRoute(
+          path: '/election/:id',
+          pageBuilder: (c, s) => fadeTransition(
+            child: ElectionScreen(id: s.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/place-elections/:id',
+          pageBuilder: (c, s) => fadeTransition(
+            child: PlaceElectionsScreen(id: s.pathParameters['id']!),
+          ),
+        ),
+        GoRoute(
+          path: '/parliament',
+          pageBuilder: (c, s) =>
+              fadeTransition(child: const ParliamentScreen()),
+        ),
+        GoRoute(
+          path: '/motion/:code',
+          pageBuilder: (c, s) => fadeTransition(
+            child: MotionScreen(code: s.pathParameters['code']!),
+          ),
+        ),
+        GoRoute(
+          path: '/parties',
+          pageBuilder: (c, s) => fadeTransition(child: const PartiesScreen()),
+        ),
+        GoRoute(
+          path: '/party/:code',
+          pageBuilder: (c, s) => fadeTransition(
+            child: PartyScreen(code: s.pathParameters['code']!),
+          ),
+        ),
+        GoRoute(
+          path: '/leader/:id',
+          pageBuilder: (c, s) =>
+              fadeTransition(child: LeaderScreen(id: s.pathParameters['id']!)),
+        ),
+        GoRoute(
+          path: '/civic',
+          pageBuilder: (c, s) => fadeTransition(child: const CivicHubScreen()),
+        ),
+        GoRoute(
+          path: '/civic/:id',
+          pageBuilder: (c, s) =>
+              fadeTransition(child: CivicScreen(id: s.pathParameters['id']!)),
+        ),
+        GoRoute(
+          path: '/project/:code',
+          pageBuilder: (c, s) => fadeTransition(
+            child: ProjectScreen(code: s.pathParameters['code']!),
+          ),
+        ),
+        GoRoute(
+          path: '/tenders',
+          pageBuilder: (c, s) => fadeTransition(child: const TendersScreen()),
+        ),
+        GoRoute(
+          path: '/rankings',
+          pageBuilder: (c, s) => fadeTransition(child: const RankingsScreen()),
         ),
         GoRoute(
           path: '/saved',

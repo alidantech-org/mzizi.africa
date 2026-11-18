@@ -49,9 +49,8 @@ class _FeatureDetailScreenState extends State<FeatureDetailScreen> {
       setState(() => _error = 'Missing address value.');
       return;
     }
-    final result = await GeographyFeature(
-      MziziApi.connection,
-    ).getFeature(featureId: featureId);
+    final result = await GeographyFeature(MziziApi.connection)
+        .getFeature(featureId: featureId);
     if (!mounted) return;
     setState(() {
       if (result.isError) {

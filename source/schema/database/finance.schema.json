@@ -696,10 +696,14 @@
           ,"counterparty_entity_code"
           ,"currency_code"
           ,"debt_code"
+          ,"expenditure_class_code"
           ,"fiscal_period_code"
           ,"flow_kind_code"
           ,"fund_code"
+          ,"institution_code"
           ,"occurred_on"
+          ,"project_code"
+          ,"scope_unit_feature_code"
           ,"source_citation_code"
         ],
         "required": [
@@ -773,6 +777,13 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"expenditure_class_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "expenditure_class_code", "scheme": "ref.sch.fin.expenditure.class" }
+        }
         ,"fiscal_period_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
@@ -801,11 +812,32 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
+        ,"institution_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
+        }
         ,"occurred_on": {
           "type": "string",
           "x-type": "date",
           "format": "date",
           "x-role": "data"
+        }
+        ,"project_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/civic.Projects", "column": "id", "alias": "project_code" }
+        }
+        ,"scope_unit_feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "scope_unit_feature_code" }
         }
         ,"source_citation_id": {
           "type": ["string", "null"],
@@ -859,6 +891,7 @@
           ,"country_code"
           ,"fund_kind_code"
           ,"managing_entity_code"
+          ,"scope_unit_feature_code"
           ,"source_citation_code"
         ],
         "required": [
@@ -916,6 +949,13 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "managing_entity_code" }
+        }
+        ,"scope_unit_feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "scope_unit_feature_code" }
         }
         ,"source_citation_id": {
           "type": ["string", "null"],

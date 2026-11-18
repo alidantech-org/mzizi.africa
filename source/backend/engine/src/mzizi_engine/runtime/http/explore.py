@@ -52,6 +52,26 @@ class RootInfo(BaseModel):
     path: str
 
 
+class RootList(BaseModel):
+    roots: list[RootInfo]
+
+
+class TermGroupList(BaseModel):
+    groups: tuple[TermGroupInfo, ...]
+
+
+class TaggedList(BaseModel):
+    items: tuple[TaggedText, ...]
+
+
+class DomainList(BaseModel):
+    domains: tuple[DomainInfo, ...]
+
+
+class DataListList(BaseModel):
+    lists: tuple[DataList, ...]
+
+
 async def _browse[R](action: Callable[[], R]) -> R:
     try:
         return await asyncio.to_thread(action)
@@ -71,8 +91,8 @@ def explore_router(config: ExploreConfig) -> APIRouter:
     browser, roots = Browser(config.read_url), FileRoots(config.roots)
 
     @router.get("/roots")
-    async def file_roots() -> list[RootInfo]:
-        return [RootInfo(name=name, path=str(path)) for name, path in config.roots.items()]
+    async def file_roots() -> RootList:
+        return RootList(roots=[RootInfo(name=name, path=str(path)) for name, path in config.roots.items()])
 
     @router.get("/files")
     async def list_files(root: str, path: str = "") -> Listing:
@@ -96,16 +116,16 @@ def explore_router(config: ExploreConfig) -> APIRouter:
         return {"path": await _files(lambda: save_text(roots, body.path, body.text, body.overwrite))}
 
     @router.get("/terms")
-    async def term_groups() -> tuple[TermGroupInfo, ...]:
-        return await asyncio.to_thread(groups, config.roots["seed"])
+    async def term_groups() -> TermGroupList:
+        return TermGroupList(groups=await asyncio.to_thread(groups, config.roots["seed"]))
 
     @router.post("/terms/tag")
-    async def tag_texts(body: TagRequest) -> tuple[TaggedText, ...]:
-        return await asyncio.to_thread(tag, config.roots["seed"], body.texts[:500], body.domain)
+    async def tag_texts(body: TagRequest) -> TaggedList:
+        return TaggedList(items=await asyncio.to_thread(tag, config.roots["seed"], body.texts[:500], body.domain))
 
     @router.get("/db/domains")
-    async def domains() -> tuple[DomainInfo, ...]:
-        return await _browse(browser.domains)
+    async def domains() -> DomainList:
+        return DomainList(domains=await _browse(browser.domains))
 
     @router.get("/db/tables/{domain}/{table}")
     async def table_rows(
@@ -120,8 +140,8 @@ def explore_router(config: ExploreConfig) -> APIRouter:
         return await _browse(lambda: browser.table(domain, table, limit, offset, order, direction, q))
 
     @router.get("/db/lists")
-    async def data_lists() -> tuple[DataList, ...]:
-        return tuple(item.model_copy(update={"sql": ""}) for item in browser.lists())
+    async def data_lists() -> DataListList:
+        return DataListList(lists=tuple(item.model_copy(update={"sql": ""}) for item in browser.lists()))
 
     @router.get("/db/lists/{domain}/{code}")
     async def data_list(domain: str, code: str, limit: Limit = 50, offset: Offset = 0) -> DataListPage:
@@ -146,5 +166,24 @@ def explore_router(config: ExploreConfig) -> APIRouter:
                 output = await _files(partial(roots.list, name, where))
                 break
         return JobDetail(job=job, events=events, output=output)
+
+    return router
+
+
+def media_router(config: ExploreConfig) -> APIRouter:
+    """Public, read-only access to the registered media bytes of the development stack (`s3_key` is `media/<name>`).
+
+    In production the same keys resolve in the object store; here the engine serves the folder the seed builder filled."""
+    router = APIRouter(tags=["Media"])
+    base = config.roots.get("media")
+
+    @router.get("/media/{name}", include_in_schema=False)
+    async def media_file(name: str) -> FileResponse:
+        if base is None or "/" in name or name.startswith("."):
+            raise HTTPException(404, "no such media")
+        target = (base / name).resolve()
+        if base not in target.parents or not target.is_file():
+            raise HTTPException(404, "no such media")
+        return FileResponse(target, headers={"Cache-Control": "public, max-age=86400"})
 
     return router

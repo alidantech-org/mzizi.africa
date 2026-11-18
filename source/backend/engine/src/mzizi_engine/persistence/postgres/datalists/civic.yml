@@ -22,3 +22,10 @@ lists:
       from civic.procurements p left join civic.bids b on b.procurement_id = p.id
       where p.deleted_at is null group by p.code order by bids desc, p.code
     columns: [procurement, bids, lowest, highest]
+  - code: fund-allocations-by-class
+    title: Development fund allocations by class
+    describe: What the constituency funds allocated money to, summed over all years recorded.
+    sql: |
+      select c.label as class, count(*) as lines, round(sum(fl.amount_minor_units) / 100.0) as total_kes
+      from finance.flows fl join reference.values c on c.id = fl.expenditure_class_id group by c.label order by 3 desc
+    columns: [class, lines, total_kes]

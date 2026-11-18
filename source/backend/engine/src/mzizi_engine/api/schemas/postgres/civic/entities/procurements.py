@@ -16,7 +16,9 @@ class ProcurementsRow(BaseModel):
 
     table: ClassVar[str] = "civic.procurements"
 
+    awarded_on: date | None = None
     buyer_entity_id: UUID
+    closes_on: date | None = None
     code: Annotated[
         str,
         Field(
@@ -32,6 +34,9 @@ class ProcurementsRow(BaseModel):
     procedure_kind_id: UUID
     project_id: UUID | None = None
     published_on: date | None = None
+    reference: Annotated[str, Field(min_length=1, max_length=300)] | None = None
     source_citation_id: UUID | None = None
+    status_id: UUID | None = None
+    title: Annotated[str, Field(min_length=1, max_length=300)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

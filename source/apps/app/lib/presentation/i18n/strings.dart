@@ -11,6 +11,8 @@ const _words = <String, Map<String, String>>{
         'Who serves you, where the money goes, and the evidence behind it.',
     'home': 'Home',
     'places': 'Places',
+    'search': 'Search',
+    'explore': 'Explore',
     'sources': 'Sources',
     'heroTitle': 'Know your place in Kenya',
     'heroBody':
@@ -63,6 +65,8 @@ const _words = <String, Map<String, String>>{
     'tagline': 'Nani anakuhudumia, pesa zinakwenda wapi, na ushahidi wake.',
     'home': 'Mwanzo',
     'places': 'Maeneo',
+    'search': 'Tafuta',
+    'explore': 'Gundua',
     'sources': 'Vyanzo',
     'heroTitle': 'Jua eneo lako nchini Kenya',
     'heroBody':

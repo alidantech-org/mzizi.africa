@@ -15,6 +15,7 @@ import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
+const point = dryv.geometry({ shape: "point", srid: 4326 });
 
 export const civic = dryv
   .group({ name: "civic" })
@@ -63,6 +64,8 @@ export const Projects = civic
     statusId: belongsTo(() => Value),
     startedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     completedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    /** Where the works are, when a single point describes it; the area is scopeUnitFeatureId. */
+    location: dryv.field(point).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
@@ -106,7 +109,16 @@ export const Procurements = civic
     buyerEntityId: belongsTo(() => Entities),
     countryId: belongsTo(() => Country).maybe(),
     procedureKindId: belongsTo(() => Value),
+    /** The notice title and the buyer's own reference, as advertised. */
+    title: dryv.field(sharedProperties.Name).maybe(),
+    reference: dryv.field(sharedProperties.Name).maybe(),
+    /** Scheme civ.procurement.status: open, closed, evaluation, awarded, cancelled, complete. */
+    statusId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.civ.procurement.status"),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    closesOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    awardedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)

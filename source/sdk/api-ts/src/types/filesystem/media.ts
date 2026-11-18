@@ -7,13 +7,16 @@ export interface FilesystemMedia {
   createdAt: string;
   deletedAt?: string | null;
   description?: string | null;
-  fileVersionId: string;
+  externalUrl?: string | null;
+  fileVersionId?: string | null;
   id: string;
   kindId: string;
+  platformId?: string | null;
   position?: number | null;
   purpose?: string | null;
   subjectId: string;
   subjectTable: SharedSubjectTable;
+  thumbnailUrl?: string | null;
   title: string;
   updatedAt: string;
   version: number;

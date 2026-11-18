@@ -30,3 +30,8 @@ export function useAsync<T>(read: () => Promise<T>, key: string): Loaded<T> {
   }, [key]);
   return result;
 }
+
+/** A failed optional section shows nothing instead of an error: its value becomes `null`. */
+export function optional<T>(loaded: Loaded<T>): Loaded<T | null> {
+  return loaded.state === "failed" ? { state: "ready", value: null } : loaded;
+}

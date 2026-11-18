@@ -2,35 +2,23 @@
 
 import Link from "next/link";
 
+import { Avatar } from "#/components/site/ui/media.tsx";
 import { LikeLeader } from "#/components/site/save-buttons.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 import { routes } from "#/lib/dryv/routes.ts";
 import type { OfficeHolder } from "#/lib/types/office-holder.ts";
 
-const initials = (name: string): string =>
-  name
-    .split(" ")
-    .filter((part) => part !== "")
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
-
-export function OfficialCard({ holder }: { holder: OfficeHolder }) {
+export function OfficialCard({ holder, portrait }: { holder: OfficeHolder; portrait?: string | null }) {
   const { t } = useLanguage();
   const evidence = holder.evidence[0];
   return (
-    <article className="flex gap-4 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)] rounded-[var(--radius)] border border-border-default bg-surface-elevated p-5 shadow-[var(--shadow)]">
-      <div
-        aria-hidden
-        className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-link font-display text-lg text-content-inverse"
-      >
-        {initials(holder.personName)}
-      </div>
+    <article className="glass card card-lift flex gap-4">
+      <Avatar name={holder.personName} size={56} src={portrait} />
       <div className="min-w-0 flex-1">
         <p className="text-xs font-semibold uppercase tracking-wide text-clay">
           {holder.officeTitle}
         </p>
-        <h3 className="mt-0.5 font-display text-xl">{holder.personName}</h3>
+        <h3 className="mt-0.5 font-display text-xl"><Link className="hover:underline" href={`/leaders/${holder.holderId}`}>{holder.personName}</Link></h3>
         <dl className="mt-2 space-y-0.5 text-sm text-content-muted">
           <div className="flex gap-2">
             <dt>{t("party")}:</dt>

@@ -49,9 +49,15 @@ export const mediaExample: ContractExample = contractExample({
       spec: { kind: "string", maxLength: 4000 },
     },
     {
+      name: "externalUrl",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "url", maxLength: 2048 },
+    },
+    {
       name: "fileVersionId",
-      optional: false,
-      nullable: false,
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -64,6 +70,12 @@ export const mediaExample: ContractExample = contractExample({
       name: "kindId",
       optional: false,
       nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "platformId",
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -91,6 +103,12 @@ export const mediaExample: ContractExample = contractExample({
       spec: { kind: "enum", values: Object.values(SubjectTable) },
     },
     {
+      name: "thumbnailUrl",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "url", maxLength: 2048 },
+    },
+    {
       name: "title",
       optional: false,
       nullable: false,
@@ -109,5 +127,21 @@ export const mediaExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "fileVersionId" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "externalUrl" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+      ],
+    },
+  ],
 });

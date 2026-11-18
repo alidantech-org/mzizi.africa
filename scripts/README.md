@@ -142,3 +142,5 @@ Use `bun run dryv:database:plan`, `bun run dryv:database:generate` or
 `bun run dryv:database:verify` for the independent database foundation app. Forward a selector as
 `bun run dryv:database:generate -- --store main` (or `operations`). These commands start the local
 Dryv API only when needed and do not assemble/apply SQL releases or change database roles.
+
+`bun run dev:stack -- db` starts the local PostGIS container (`postgis`) if it is stopped and waits until it answers; `dev:data` calls it first.

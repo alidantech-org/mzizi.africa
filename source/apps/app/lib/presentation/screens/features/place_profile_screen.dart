@@ -73,9 +73,8 @@ class _PlaceProfileScreenState extends State<PlaceProfileScreen> {
       setState(() => _error = 'Missing address value.');
       return;
     }
-    final result = await LocalityFeature(
-      MziziApi.connection,
-    ).getLocality(featureId: featureId);
+    final result = await LocalityFeature(MziziApi.connection)
+        .getLocality(featureId: featureId);
     if (!mounted) return;
     setState(() {
       if (result.isError) {

@@ -1,0 +1,22 @@
+"""Contract test: List Files Input keeps the fields, aliases and required flags its contract declares."""
+
+from __future__ import annotations
+
+from mzizi_engine.api.schemas.api.explore.models.list_files_input import ListFilesInput
+
+
+def test_fields_match_contract() -> None:
+    fields = ListFilesInput.model_fields
+    assert {name: field.alias for name, field in fields.items()} == {
+        "path": "path",
+        "root": "root",
+    }
+
+
+def test_required_fields_match_contract() -> None:
+    required = {name for name, field in ListFilesInput.model_fields.items() if field.is_required()}
+    assert required == set(
+        [
+            "root",
+        ]
+    )

@@ -36,7 +36,7 @@ from mzizi_engine.runtime.http.auth import (
     oidc_verifier,
     require,
 )
-from mzizi_engine.runtime.http.explore import explore_router
+from mzizi_engine.runtime.http.explore import explore_router, media_router
 from mzizi_engine.runtime.http.overview import SystemOverview, build_overview
 from mzizi_engine.runtime.http.research import research_router
 from mzizi_engine.runtime.http.scripts import scripts_router
@@ -151,7 +151,9 @@ def create_app(
     )
 
     app.include_router(research_router(reader))
-    app.include_router(explore_router(ExploreConfig.load()))
+    explore_config = ExploreConfig.load()
+    app.include_router(explore_router(explore_config))
+    app.include_router(media_router(explore_config))
     app.include_router(scripts_router())
 
     @app.post("/internal/v1/capabilities/execute")

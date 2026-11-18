@@ -446,13 +446,18 @@
           ,"version"
         ],
         "columns": [
-          "buyer_entity_code"
+          "awarded_on"
+          ,"buyer_entity_code"
+          ,"closes_on"
           ,"code"
           ,"country_code"
           ,"procedure_kind_code"
           ,"project_code"
           ,"published_on"
+          ,"reference"
           ,"source_citation_code"
+          ,"status_code"
+          ,"title"
         ],
         "required": [
           "buyer_entity_code"
@@ -461,12 +466,24 @@
         ]
       },
       "properties": {
-        "buyer_entity_id": {
+        "awarded_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"buyer_entity_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "buyer_entity_code" }
+        }
+        ,"closes_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
         }
         ,"code": {
           "type": "string",
@@ -524,12 +541,33 @@
           "format": "date",
           "x-role": "data"
         }
+        ,"reference": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 300,
+          "minLength": 1,
+          "x-role": "data"
+        }
         ,"source_citation_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"status_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.civ.procurement.status" }
+        }
+        ,"title": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 300,
+          "minLength": 1,
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -682,6 +720,7 @@
           ,"country_code"
           ,"description"
           ,"implementing_entity_code"
+          ,"location"
           ,"name"
           ,"responsible_institution_code"
           ,"scope_unit_feature_code"
@@ -752,6 +791,11 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "implementing_entity_code" }
+        }
+        ,"location": {
+          "type": ["object", "null"],
+          "x-type": "geometry",
+          "x-role": "data"
         }
         ,"name": {
           "type": "string",

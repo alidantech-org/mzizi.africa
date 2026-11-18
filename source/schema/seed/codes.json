@@ -17,7 +17,9 @@
     "official": "ofc",
     "politics": "pol",
     "reference": "ref",
-    "source": "src"
+    "source": "src",
+    "statistics": "sta",
+    "activities": "act"
   },
   "tables": {
     "audit.decisions": {
@@ -322,6 +324,24 @@
     },
     "source.verifications": {
       "short": "ver"
+    },
+    "statistics.indicators": {
+      "short": "ind"
+    },
+    "statistics.observations": {
+      "short": "obs"
+    },
+    "activities.sittings": {
+      "short": "sit"
+    },
+    "activities.motions": {
+      "short": "mot"
+    },
+    "activities.votes": {
+      "short": "vot"
+    },
+    "activities.contributions": {
+      "short": "ctb"
     }
   }
 }

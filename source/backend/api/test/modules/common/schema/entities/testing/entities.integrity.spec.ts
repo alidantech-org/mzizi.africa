@@ -984,13 +984,16 @@ describe("entity schema matches the contract", () => {
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["description", true, false],
-            ["file_version_id", false, false],
+            ["external_url", true, false],
+            ["file_version_id", true, false],
             ["id", false, true],
             ["kind_id", false, false],
+            ["platform_id", true, false],
             ["position", true, false],
             ["purpose", true, false],
             ["subject_id", false, false],
             ["subject_table", false, false],
+            ["thumbnail_url", true, false],
             ["title", false, false],
             ["updated_at", false, false],
             ["version", false, false],
@@ -1004,7 +1007,11 @@ describe("entity schema matches the contract", () => {
         .foreignKeys.map((key) => `${key.columnNames.join(",")}->${key.referencedTablePath}`)
         .sort();
       expect(keys).toEqual(
-        ["file_version_id->filesystem.file_versions", "kind_id->reference.values"].sort(),
+        [
+          "file_version_id->filesystem.file_versions",
+          "kind_id->reference.values",
+          "platform_id->reference.values",
+        ].sort(),
       );
     });
 

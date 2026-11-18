@@ -30,6 +30,7 @@ class FundsRow(BaseModel):
     fund_kind_id: UUID
     id: UUID
     managing_entity_id: UUID | None = None
+    scope_unit_feature_id: UUID | None = None
     source_citation_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

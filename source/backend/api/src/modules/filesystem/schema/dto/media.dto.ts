@@ -4,6 +4,7 @@ import {
   IsISO8601,
   IsOptional,
   IsString,
+  IsUrl,
   IsUUID,
   Matches,
   MaxLength,
@@ -12,6 +13,7 @@ import {
   ValidateIf,
 } from "class-validator";
 
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -20,6 +22,7 @@ import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
@@ -57,9 +60,21 @@ export class MediaDto {
   @MaxLength(4000)
   description?: Description | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.externalUrl !== null)
+  @IsString()
+  @IsUrl()
+  @MaxLength(2048)
+  externalUrl?: Url | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fileVersionId !== null)
   @IsString()
   @IsUUID()
-  fileVersionId!: Id;
+  @Satisfies<MediaDto>((object) => object.fileVersionId != null || object.externalUrl != null, {
+    message: "Media Has Bytes Or Url",
+  })
+  fileVersionId?: Id | null;
 
   @IsString()
   @IsUUID()
@@ -68,6 +83,12 @@ export class MediaDto {
   @IsString()
   @IsUUID()
   kindId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.platformId !== null)
+  @IsString()
+  @IsUUID()
+  platformId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.position !== null)
@@ -87,6 +108,13 @@ export class MediaDto {
 
   @IsEnum(SubjectTable)
   subjectTable!: SubjectTable;
+
+  @IsOptional()
+  @ValidateIf((object) => object.thumbnailUrl !== null)
+  @IsString()
+  @IsUrl()
+  @MaxLength(2048)
+  thumbnailUrl?: Url | null;
 
   @IsString()
   @MinLength(1)

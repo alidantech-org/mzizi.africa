@@ -32,11 +32,15 @@ class FlowsRow(BaseModel):
     currency_id: UUID
     debt_id: UUID | None = None
     deleted_at: datetime | None = None
+    expenditure_class_id: UUID | None = None
     fiscal_period_id: UUID | None = None
     flow_kind_id: UUID
     fund_id: UUID | None = None
     id: UUID
+    institution_id: UUID | None = None
     occurred_on: date
+    project_id: UUID | None = None
+    scope_unit_feature_id: UUID | None = None
     source_citation_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

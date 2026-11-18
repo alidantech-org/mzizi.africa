@@ -9,6 +9,7 @@ import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { Contracts, Projects } from "./civic.ts";
 import { Features } from "./geography.ts";
+import { Institutions } from "./governance.ts";
 import { Entities } from "./official.ts";
 import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
@@ -105,6 +106,8 @@ export const Funds = finance
     fundKindId: belongsTo(() => Value),
     managingEntityId: belongsTo(() => Entities).maybe(),
     countryId: belongsTo(() => Country).maybe(),
+    /** The area the fund serves, for example the constituency of a constituency development fund. */
+    scopeUnitFeatureId: belongsTo(() => Features).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
@@ -122,6 +125,16 @@ export const Flows = finance
     contractId: belongsTo(() => Contracts).maybe(),
     debtId: belongsTo(() => Debts).maybe(),
     counterpartyEntityId: belongsTo(() => Entities).maybe(),
+    /** The project this money was allocated to or spent on. */
+    projectId: belongsTo(() => Projects).maybe(),
+    /** The body that allocated or spent it, for example a constituency fund committee. */
+    institutionId: belongsTo(() => Institutions).maybe(),
+    /** The area it was spent for. */
+    scopeUnitFeatureId: belongsTo(() => Features).maybe(),
+    /** Scheme fin.expenditure.class: salaries, running costs, committee, bursary, emergency, capacity building, project. */
+    expenditureClassId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.fin.expenditure.class"),
     occurredOn: dryv.field(sharedProperties.CalendarDate),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
@@ -137,6 +150,10 @@ export const Flows = finance
       .index("appropriationId")
       .index("contractId")
       .index("debtId")
+      .index("projectId")
+      .index("institutionId")
+      .index("scopeUnitFeatureId")
+      .index("expenditureClassId")
       .index("sourceCitationId"),
   });
 

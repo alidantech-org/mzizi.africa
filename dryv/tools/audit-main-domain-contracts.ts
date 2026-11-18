@@ -4,7 +4,7 @@ import { join } from "node:path";
 const root = join(import.meta.dir, "..");
 const contracts = join(root, "contracts/schemas/postgres");
 const expected: Record<string, string[]> = {
-  official: ["entities", "individuals", "names", "identifiers", "contacts", "relationships"],
+  official: ["entities", "individuals", "names", "identifiers", "contacts", "relationships", "branding"],
   governance: ["institutions", "offices", "holders", "mandates", "relationships", "authority_scopes"],
   politics: [
     "parties",
@@ -22,6 +22,8 @@ const expected: Record<string, string[]> = {
     "option_results",
   ],
   civic: ["services", "projects", "project_features", "procurements", "bids", "contracts", "deliveries"],
+  statistics: ["indicators", "observations"],
+  activities: ["sittings", "motions", "votes", "contributions"],
   finance: ["fiscal_periods", "budgets", "budget_versions", "appropriations", "funds", "flows", "debts"],
 };
 const problems: string[] = [];

@@ -9,6 +9,12 @@ import { shared, sharedProperties } from "./_shared.ts";
  */
 export const subjectProperties = shared.properties({
   SubjectTable: dryv.property.enum({
+    ActivitiesContributions: "activities.contributions",
+    ActivitiesMotions: "activities.motions",
+    ActivitiesSittings: "activities.sittings",
+    ActivitiesVotes: "activities.votes",
+    StatisticsIndicators: "statistics.indicators",
+    StatisticsObservations: "statistics.observations",
     CivicBids: "civic.bids",
     CivicContracts: "civic.contracts",
     CivicDeliveries: "civic.deliveries",

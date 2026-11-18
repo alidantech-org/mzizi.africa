@@ -14,7 +14,7 @@ export default function HomePage() {
   const saved = useSaved();
   return (
     <div>
-      <section className="pattern-bg overflow-hidden border-b border-border-default">
+      <section className="pattern-bg overflow-hidden">
         <div
           aria-hidden
           className="drift pointer-events-none absolute -left-24 top-10 h-72 w-72 rounded-full bg-calabash/25 blur-3xl"
@@ -64,24 +64,30 @@ export default function HomePage() {
           </div>
         </section>
       ) : null}
-      <section className="mx-auto grid max-w-6xl gap-5 px-5 py-14 sm:grid-cols-3">
-        {[
-          { title: t("representatives"), body: t("tagline"), href: routes.placeSearch, mark: "①" },
-          { title: t("procurement"), body: t("totalAwarded"), href: routes.placeSearch, mark: "②" },
-          { title: t("sources"), body: t("sourcesBody"), href: routes.sourceBrowse, mark: "③" },
-        ].map((card) => (
-          <Link
-            key={card.title}
-            href={card.href}
-            className="reveal reveal-4 group rounded-[var(--radius)] border border-border-default bg-surface-elevated p-6 shadow-[var(--shadow)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-lift)]"
-          >
-            <span aria-hidden className="text-2xl text-calabash">
-              {card.mark}
-            </span>
-            <h2 className="mt-3 text-xl">{card.title}</h2>
-            <p className="mt-2 text-sm text-content-muted">{card.body}</p>
-          </Link>
-        ))}
+      <section className="mx-auto max-w-7xl px-5 py-14">
+        <p className="kicker">Explore</p>
+        <h2 className="font-display text-3xl sm:text-4xl">Everything about your country, in one place</h2>
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { href: "/browse", icon: "📍", title: t("navPlaces"), body: "Browse counties, constituencies, wards, towns and villages the way the electoral commission lists them." },
+            { href: "/statistics", icon: "📊", title: t("navStats"), body: "Population, age, communities, languages, health, schools, water and poverty — mapped and ranked." },
+            { href: "/elections", icon: "🗳", title: t("navElections"), body: "Who won, with how many votes, where. Heat maps, turnout and how the voters' register has grown." },
+            { href: "/parliament", icon: "🏛", title: t("navParliament"), body: "Bills, budgets and appointments — with the round-table of how every member voted." },
+            { href: "/civic", icon: "🏗", title: t("navCivic"), body: "Development fund allocations, what they were spent on, and the schools and roads built." },
+            { href: "/leaderboards", icon: "🏆", title: t("navBoards"), body: "Rank places and leaders on spending, delivery, attendance and statistics." },
+            { href: "/tenders", icon: "📄", title: t("navTenders"), body: "Open, awarded and completed tenders, with suppliers and what each discloses." },
+            { href: "/parties", icon: "🎗", title: t("navParties"), body: "Parties ranked by votes, members, office holders and public funding." },
+            { href: routes.sourceBrowse, icon: "📚", title: t("sources"), body: t("sourcesBody") },
+          ].map((card, i) => (
+            <li key={card.href}>
+              <Link href={card.href} style={{ animationDelay: `${i * 60}ms` }} className="glass card card-lift reveal block h-full">
+                <span aria-hidden className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-clay/20 to-calabash/25 text-2xl">{card.icon}</span>
+                <h3 className="mt-4 font-display text-2xl">{card.title}</h3>
+                <p className="mt-1 text-sm text-content-muted">{card.body}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   );

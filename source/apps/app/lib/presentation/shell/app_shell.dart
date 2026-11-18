@@ -23,16 +23,16 @@ class AppShell extends ConsumerWidget {
           selectedIcon: Icons.home,
         ),
         (
-          word: 'places',
-          path: AppRoutes.placeSearch,
-          icon: Icons.place_outlined,
-          selectedIcon: Icons.place,
+          word: 'search',
+          path: '/search',
+          icon: Icons.search,
+          selectedIcon: Icons.search,
         ),
         (
-          word: 'sources',
-          path: AppRoutes.sourceBrowse,
-          icon: Icons.menu_book_outlined,
-          selectedIcon: Icons.menu_book,
+          word: 'explore',
+          path: '/explore',
+          icon: Icons.explore_outlined,
+          selectedIcon: Icons.explore,
         ),
         (
           word: 'saved',
@@ -45,9 +45,11 @@ class AppShell extends ConsumerWidget {
   /// Profile and evidence screens belong to the Places tab.
   int _selected() {
     if (location == '/') return 0;
-    if (location.startsWith(AppRoutes.sourceBrowse)) return 2;
+    if (location.startsWith('/search') ||
+        location.startsWith(AppRoutes.placeSearch))
+      return 1;
     if (location.startsWith('/saved')) return 3;
-    return 1;
+    return 2;
   }
 
   @override

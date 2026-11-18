@@ -5,12 +5,13 @@ import 'package:material_ui/material_ui.dart';
 
 /// Every foundation token of the theme.
 abstract final class MziziTokens {
-  static const Color bark = Color(0xFF3A3027);
-  static const Color barkLine = Color(0xFF52463A);
-  static const Color calabash = Color(0xFFC68A2E);
-  static const Color clay = Color(0xFFB4542F);
-  static const Color cream = Color(0xFFFBF7EF);
-  static const Color danger = Color(0xFFA63A2B);
+  static const Color bark = Color(0xFF322821);
+  static const Color barkLine = Color(0xFF4D4139);
+  static const double blurGlass = 18.0;
+  static const Color calabash = Color(0xFFDA9C31);
+  static const Color clay = Color(0xFFC45629);
+  static const Color cream = Color(0xFFFDFAF3);
+  static const Color danger = Color(0xFFC02C26);
   static const List<String> fontBody = [
     'ui-sans-serif',
     '-apple-system',
@@ -36,20 +37,31 @@ abstract final class MziziTokens {
     'Consolas',
     'monospace',
   ];
-  static const Color indigo = Color(0xFF2F4C6E);
-  static const Color ink = Color(0xFF2B231C);
-  static const Color inkSoft = Color(0xFF7A6B5C);
-  static const Color line = Color(0xFFE0D5C2);
-  static const Color oat = Color(0xFFF2ECE0);
+  static const Color glass = Color(0x9EFEFCF7);
+  static const Color glassDark = Color(0x8C362B24);
+  static const Color glassEdge = Color(0xA6FFFFFF);
+  static const Color glassEdgeDark = Color(0x24FFFFFF);
+  static const Color glassStrong = Color(0xD1FEFCF7);
+  static const Color glassStrongDark = Color(0xD12E241D);
+  static const Color indigo = Color(0xFF27527C);
+  static const Color ink = Color(0xFF261A12);
+  static const Color inkSoft = Color(0xFF735F4F);
+  static const Color lagoon = Color(0xFF0698A4);
+  static const Color line = Color(0xFFE2D8C7);
+  static const Color oat = Color(0xFFF7F2E8);
+  static const Color plum = Color(0xFF89396B);
   static const double radius = 20.0;
   static const double radiusLg = 30.0;
   static const double radiusSm = 12.0;
   static const double radiusXl = 42.0;
-  static const Color raffia = Color(0xFF6B7A4B);
-  static const Color sand = Color(0xFFE9DEC6);
+  static const Color raffia = Color(0xFF5E7B3D);
+  static const Color rampHigh = Color(0xFF9B2014);
+  static const Color rampLow = Color(0xFFF5EBCE);
+  static const Color rampMid = Color(0xFFE38D3D);
+  static const Color sand = Color(0xFFEDE1CD);
   static const List<BoxShadow> shadow = [
     BoxShadow(
-      color: Color(0x38463422),
+      color: Color(0x383D281A),
       offset: Offset(0.0, 8.0),
       blurRadius: 24.0,
       spreadRadius: -12.0,
@@ -57,7 +69,7 @@ abstract final class MziziTokens {
   ];
   static const List<BoxShadow> shadowLift = [
     BoxShadow(
-      color: Color(0x57463422),
+      color: Color(0x573D281A),
       offset: Offset(0.0, 22.0),
       blurRadius: 44.0,
       spreadRadius: -18.0,

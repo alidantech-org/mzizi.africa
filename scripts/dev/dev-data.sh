@@ -5,6 +5,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 set -a; . ./.env; set +a
+bash scripts/dev/stack.sh db >/dev/null 2>&1 || true
 DEV_DB="${DEV_DB:-mzizi_ui}"
 swap() { echo "$1" | sed -E "s#/[^/?]+(\?.*)?\$#/$DEV_DB#"; }
 ADMIN_BASE=$(echo "$MZIZI_DB_ADMIN_URL" | sed -E 's#/[^/?]+(\?.*)?$#/postgres#')

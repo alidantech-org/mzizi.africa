@@ -20,7 +20,13 @@ class ExploreConfig(BaseModel):
 
     @classmethod
     def from_env(cls, env: Mapping[str, str], repository: Path, runs: Path) -> ExploreConfig:
-        folders = {"seed": repository / "seed", "dev": repository / ".dev", "runs": runs, "docs": repository / ".docs"}
+        folders = {
+            "seed": repository / "seed",
+            "dev": repository / ".dev",
+            "runs": runs,
+            "docs": repository / ".docs",
+            "media": repository / ".dev" / "media",
+        }
         state = env.get("ENGINE_STATE_FILE")
         return cls(
             read_url=env.get("DATABASE_URL") or None,

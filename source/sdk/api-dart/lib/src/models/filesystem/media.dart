@@ -15,13 +15,16 @@ class FilesystemMedia {
     required this.createdAt,
     this.deletedAt,
     this.description,
-    required this.fileVersionId,
+    this.externalUrl,
+    this.fileVersionId,
     required this.id,
     required this.kindId,
+    this.platformId,
     this.position,
     this.purpose,
     required this.subjectId,
     required this.subjectTable,
+    this.thumbnailUrl,
     required this.title,
     required this.updatedAt,
     required this.version,
@@ -31,13 +34,16 @@ class FilesystemMedia {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String? description;
-  final String fileVersionId;
+  final String? externalUrl;
+  final String? fileVersionId;
   final String id;
   final String kindId;
+  final String? platformId;
   final int? position;
   final String? purpose;
   final String subjectId;
   final SharedSubjectTable subjectTable;
+  final String? thumbnailUrl;
   final String title;
   final DateTime updatedAt;
   final int version;

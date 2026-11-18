@@ -68,6 +68,138 @@
       "summary": "Queue a job. Repeating an idempotency key returns the first job."
     },
     {
+      "name": "GetDataListPage",
+      "group": "explore",
+      "feature": "database",
+      "method": "GET",
+      "path": "/v1/explore/db/lists/{domain}/{code}",
+      "role": "detail",
+      "inputs": ["domain", "code", "limit", "offset"],
+      "output": "DataListPage",
+      "summary": "One page of a curated data list."
+    },
+    {
+      "name": "GetFile",
+      "group": "explore",
+      "feature": "files",
+      "method": "GET",
+      "path": "/v1/explore/file",
+      "role": "detail",
+      "inputs": ["root", "path", "offset", "limit"],
+      "output": "FileView",
+      "summary": "One file viewed by kind: text, CSV rows, parsed JSON or YAML."
+    },
+    {
+      "name": "GetJobDetail",
+      "group": "explore",
+      "feature": "run-detail",
+      "method": "GET",
+      "path": "/v1/explore/jobs/{jobId}",
+      "role": "detail",
+      "inputs": ["jobId"],
+      "output": "JobDetail",
+      "summary": "One job with its event timeline and the folder it wrote."
+    },
+    {
+      "name": "GetTablePage",
+      "group": "explore",
+      "feature": "database",
+      "method": "GET",
+      "path": "/v1/explore/db/tables/{domain}/{table}",
+      "role": "detail",
+      "inputs": ["domain", "table", "limit", "offset", "order", "direction", "q"],
+      "output": "TablePage",
+      "summary": "One page of a raw table, with search and sorting."
+    },
+    {
+      "name": "ListDataLists",
+      "group": "explore",
+      "feature": "database",
+      "method": "GET",
+      "path": "/v1/explore/db/lists",
+      "role": "list",
+      "inputs": [],
+      "output": "DataListList",
+      "summary": "The curated data lists, grouped by domain."
+    },
+    {
+      "name": "ListDatabaseDomains",
+      "group": "explore",
+      "feature": "database",
+      "method": "GET",
+      "path": "/v1/explore/db/domains",
+      "role": "list",
+      "inputs": [],
+      "output": "DomainList",
+      "summary": "Every schema with its tables and row counts."
+    },
+    {
+      "name": "ListFileRoots",
+      "group": "explore",
+      "feature": "files",
+      "method": "GET",
+      "path": "/v1/explore/roots",
+      "role": "list",
+      "inputs": [],
+      "output": "RootList",
+      "summary": "The folders the explorer may show."
+    },
+    {
+      "name": "ListFiles",
+      "group": "explore",
+      "feature": "files",
+      "method": "GET",
+      "path": "/v1/explore/files",
+      "role": "list",
+      "inputs": ["root", "path"],
+      "output": "Listing",
+      "summary": "A folder\u0027s entries; a file path lists the folder that holds it."
+    },
+    {
+      "name": "ListTermGroups",
+      "group": "explore",
+      "feature": "terms",
+      "method": "GET",
+      "path": "/v1/explore/terms",
+      "role": "list",
+      "inputs": [],
+      "output": "TermGroupList",
+      "summary": "Every term group, with its canonical terms."
+    },
+    {
+      "name": "PrepareCsv",
+      "group": "explore",
+      "feature": "csv-preparation",
+      "method": "POST",
+      "path": "/v1/explore/csv/prepare",
+      "role": "create",
+      "inputs": ["body"],
+      "output": "PrepareResult",
+      "summary": "Preview (or save, when save_as is set) a cleaned copy of a CSV."
+    },
+    {
+      "name": "SaveFile",
+      "group": "explore",
+      "feature": "files",
+      "method": "PUT",
+      "path": "/v1/explore/file",
+      "role": "update",
+      "inputs": ["body"],
+      "output": "SaveFileResult",
+      "summary": "Save a text file under the dev root (never outside it)."
+    },
+    {
+      "name": "TagTexts",
+      "group": "explore",
+      "feature": "terms",
+      "method": "POST",
+      "path": "/v1/explore/terms/tag",
+      "role": "create",
+      "inputs": ["body"],
+      "output": "TaggedList",
+      "summary": "Tag each text with the term groups it mentions."
+    },
+    {
       "name": "InspectArtifact",
       "group": "research",
       "feature": "artifacts",

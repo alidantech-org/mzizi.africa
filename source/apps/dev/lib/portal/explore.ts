@@ -78,7 +78,7 @@ export interface DataList {
   readonly columns: readonly string[];
 }
 export interface DataListPage {
-  readonly list: DataList;
+  readonly definition: DataList;
   readonly rows: readonly Record<string, JsonValue>[];
   readonly total: number;
   readonly limit: number;
@@ -179,7 +179,7 @@ export const rawUrl = (root: string, path: string): string =>
   `${BASE}/v1/explore/file/raw${query({ root, path })}`;
 
 export const explore = {
-  roots: () => call<readonly RootInfo[]>("v1/explore/roots"),
+  roots: () => call<{ roots: readonly RootInfo[] }>("v1/explore/roots").then((r) => r.roots),
   list: (root: string, path: string) =>
     call<Listing>(`v1/explore/files${query({ root, path })}`),
   file: (root: string, path: string, offset = 0, limit = 100) =>
@@ -189,13 +189,13 @@ export const explore = {
       method: "PUT",
       body: JSON.stringify({ path, text, overwrite }),
     }),
-  domains: () => call<readonly DomainInfo[]>("v1/explore/db/domains"),
+  domains: () => call<{ domains: readonly DomainInfo[] }>("v1/explore/db/domains").then((r) => r.domains),
   table: (
     domain: string,
     table: string,
     p: { limit: number; offset: number; order: string; direction: string; q: string },
   ) => call<TablePage>(`v1/explore/db/tables/${domain}/${table}${query(p)}`),
-  lists: () => call<readonly DataList[]>("v1/explore/db/lists"),
+  lists: () => call<{ lists: readonly DataList[] }>("v1/explore/db/lists").then((r) => r.lists),
   list_page: (domain: string, code: string, limit: number, offset: number) =>
     call<DataListPage>(`v1/explore/db/lists/${domain}/${code}${query({ limit, offset })}`),
   jobs: (status?: string) =>
@@ -212,10 +212,10 @@ export const explore = {
     skip_empty_rows: boolean;
     save_as: string;
   }) => call<PrepareResult>("v1/explore/csv/prepare", { method: "POST", body: JSON.stringify(body) }),
-  terms: () => call<readonly TermGroup[]>("v1/explore/terms"),
+  terms: () => call<{ groups: readonly TermGroup[] }>("v1/explore/terms").then((r) => r.groups),
   tag: (texts: readonly string[], domain: string) =>
-    call<readonly TaggedText[]>("v1/explore/terms/tag", {
+    call<{ items: readonly TaggedText[] }>("v1/explore/terms/tag", {
       method: "POST",
       body: JSON.stringify({ texts, domain }),
-    }),
+    }).then((r) => r.items),
 };

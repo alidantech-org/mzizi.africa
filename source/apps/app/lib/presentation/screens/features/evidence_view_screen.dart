@@ -50,9 +50,8 @@ class _EvidenceViewScreenState extends State<EvidenceViewScreen> {
       setState(() => _error = 'Missing address value.');
       return;
     }
-    final result = await LocalityFeature(
-      MziziApi.connection,
-    ).getEvidence(citationId: citationId);
+    final result = await LocalityFeature(MziziApi.connection)
+        .getEvidence(citationId: citationId);
     if (!mounted) return;
     setState(() {
       if (result.isError) {

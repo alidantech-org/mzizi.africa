@@ -12,6 +12,7 @@ from mzizi_engine.api.schemas.postgres.finance.entities.fiscal_periods import Fi
 from mzizi_engine.api.schemas.postgres.finance.entities.flows import FlowsRow
 from mzizi_engine.api.schemas.postgres.finance.entities.funds import FundsRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
+from mzizi_engine.api.schemas.postgres.governance.entities.institutions import InstitutionsRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.country import CountryRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
@@ -30,6 +31,7 @@ __all__ = [
     "FiscalPeriodsRow",
     "FlowsRow",
     "FundsRow",
+    "InstitutionsRow",
     "ProjectsRow",
     "ValueRow",
 ]

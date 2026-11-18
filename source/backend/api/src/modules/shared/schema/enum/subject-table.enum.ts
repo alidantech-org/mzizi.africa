@@ -1,5 +1,9 @@
 /** Subject Table */
 export enum SubjectTable {
+  ACTIVITIES_CONTRIBUTIONS = "activities.contributions",
+  ACTIVITIES_MOTIONS = "activities.motions",
+  ACTIVITIES_SITTINGS = "activities.sittings",
+  ACTIVITIES_VOTES = "activities.votes",
   CIVIC_BIDS = "civic.bids",
   CIVIC_CONTRACTS = "civic.contracts",
   CIVIC_DELIVERIES = "civic.deliveries",
@@ -87,4 +91,6 @@ export enum SubjectTable {
   SOURCE_RELATIONSHIPS = "source.relationships",
   SOURCE_SOURCES = "source.sources",
   SOURCE_VERIFICATIONS = "source.verifications",
+  STATISTICS_INDICATORS = "statistics.indicators",
+  STATISTICS_OBSERVATIONS = "statistics.observations",
 }

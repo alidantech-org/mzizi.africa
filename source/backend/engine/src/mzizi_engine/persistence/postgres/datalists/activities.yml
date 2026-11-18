@@ -1,0 +1,13 @@
+domain: activities
+lists:
+  - code: motions
+    title: Motions and their votes
+    describe: Each motion with the institution, outcome and how members voted.
+    sql: |
+      select m.title, s.held_on, regexp_replace(oc.code, '^.*\.', '') as outcome,
+        count(*) filter (where p.code like '%.yes') as yes, count(*) filter (where p.code like '%.no') as no,
+        count(*) filter (where p.code like '%.absent') as absent
+      from activities.motions m join activities.sittings s on s.id = m.sitting_id join reference.values oc on oc.id = m.outcome_id
+      left join activities.votes v on v.motion_id = m.id left join reference.values p on p.id = v.position_id
+      group by m.id, m.title, s.held_on, oc.code order by s.held_on desc
+    columns: [title, held_on, outcome, "yes", "no", absent]

@@ -20,10 +20,10 @@ export default function ListRoute() {
         {(page) => (
           <>
             <div>
-              <h2 className="font-display text-2xl">{page.list.title}</h2>
-              <p className="text-sm text-content-muted">{page.list.describe}</p>
+              <h2 className="font-display text-2xl">{page.definition.title}</h2>
+              <p className="text-sm text-content-muted">{page.definition.describe}</p>
             </div>
-            <Grid header={page.list.columns} rows={page.rows.map((row) => page.list.columns.map((c) => (row[c] as string | number | boolean | null) ?? null))} caption={page.list.title} />
+            <Grid header={page.definition.columns} rows={page.rows.map((row) => page.definition.columns.map((c) => (row[c] as string | number | boolean | null) ?? null))} caption={page.definition.title} />
             <Pager offset={page.offset} limit={page.limit} total={page.total} onChange={setOffset} />
           </>
         )}

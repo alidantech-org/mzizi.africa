@@ -32,7 +32,11 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const MEDIA_RELATION_KEYS = ["fileVersion", "kind"] as const satisfies readonly MediaKey[];
+export const MEDIA_RELATION_KEYS = [
+  "fileVersion",
+  "kind",
+  "platform",
+] as const satisfies readonly MediaKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -44,13 +48,16 @@ export const MEDIA_SORTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "description",
+  "externalUrl",
   "fileVersionId",
   "id",
   "kindId",
+  "platformId",
   "position",
   "purpose",
   "subjectId",
   "subjectTable",
+  "thumbnailUrl",
   "title",
   "updatedAt",
   "version",
@@ -68,6 +75,7 @@ export const MEDIA_FILTERABLE_FIELDS = [
   "fileVersionId",
   "id",
   "kindId",
+  "platformId",
   "subjectId",
   "subjectTable",
 ] as const satisfies readonly MediaKey[];
@@ -94,13 +102,16 @@ export const MEDIA_SELECTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "description",
+  "externalUrl",
   "fileVersionId",
   "id",
   "kindId",
+  "platformId",
   "position",
   "purpose",
   "subjectId",
   "subjectTable",
+  "thumbnailUrl",
   "title",
   "updatedAt",
   "version",
@@ -112,13 +123,16 @@ export const MEDIA_DEFAULT_SELECT_FIELDS = [
   "createdAt",
   "deletedAt",
   "description",
+  "externalUrl",
   "fileVersionId",
   "id",
   "kindId",
+  "platformId",
   "position",
   "purpose",
   "subjectId",
   "subjectTable",
+  "thumbnailUrl",
   "title",
   "updatedAt",
   "version",
@@ -132,12 +146,15 @@ export const MEDIA_EDITABLE_FIELDS = [
   "altText",
   "code",
   "description",
+  "externalUrl",
   "fileVersionId",
   "kindId",
+  "platformId",
   "position",
   "purpose",
   "subjectId",
   "subjectTable",
+  "thumbnailUrl",
   "title",
 ] as const satisfies readonly MediaKey[];
 
@@ -174,6 +191,10 @@ export const MEDIA_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<MediaRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "kind",
+  ),
+  Q.createRelationKeyMapper<MediaRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "platform",
   ),
 ] as const;
 

@@ -29,6 +29,10 @@ Map<String, dynamic> _$SharedCodedSubjectEntityToJson(SharedCodedSubjectEntity i
 };
 
 const _$SharedSubjectTableEnumMap = {
+  SharedSubjectTable.activitiesContributions: 'activities.contributions',
+  SharedSubjectTable.activitiesMotions: 'activities.motions',
+  SharedSubjectTable.activitiesSittings: 'activities.sittings',
+  SharedSubjectTable.activitiesVotes: 'activities.votes',
   SharedSubjectTable.civicBids: 'civic.bids',
   SharedSubjectTable.civicContracts: 'civic.contracts',
   SharedSubjectTable.civicDeliveries: 'civic.deliveries',
@@ -116,4 +120,6 @@ const _$SharedSubjectTableEnumMap = {
   SharedSubjectTable.sourceRelationships: 'source.relationships',
   SharedSubjectTable.sourceSources: 'source.sources',
   SharedSubjectTable.sourceVerifications: 'source.verifications',
+  SharedSubjectTable.statisticsIndicators: 'statistics.indicators',
+  SharedSubjectTable.statisticsObservations: 'statistics.observations',
 };

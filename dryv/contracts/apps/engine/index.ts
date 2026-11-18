@@ -11,6 +11,7 @@ import { runLedger } from "#/schemas/mongo/run-ledger.ts";
 import { shared } from "#/schemas/_shared.ts";
 import { catalogApi } from "./catalog.ts";
 import { engineApi } from "./engine.ts";
+import { exploreApi } from "./explore.ts";
 import { researchApi } from "./research.ts";
 import { runtimeApi } from "./runtime.ts";
 import { scriptApi } from "./scripts.ts";
@@ -41,6 +42,18 @@ export default dryv
     stagingApi.DecideCandidate,
     systemApi.GetHealth,
     systemApi.GetReadiness,
+    exploreApi.ListFileRoots,
+    exploreApi.ListFiles,
+    exploreApi.GetFile,
+    exploreApi.SaveFile,
+    exploreApi.PrepareCsv,
+    exploreApi.ListTermGroups,
+    exploreApi.TagTexts,
+    exploreApi.ListDatabaseDomains,
+    exploreApi.GetTablePage,
+    exploreApi.ListDataLists,
+    exploreApi.GetDataListPage,
+    exploreApi.GetJobDetail,
   )
   .groups(
     shared,
@@ -51,5 +64,6 @@ export default dryv
     runtimeApi.runtime,
     stagingApi.staging,
     systemApi.system,
+    exploreApi.explore,
     runLedger,
   );

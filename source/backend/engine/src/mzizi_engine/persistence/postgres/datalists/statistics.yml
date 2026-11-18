@@ -1,0 +1,22 @@
+domain: statistics
+lists:
+  - code: indicators
+    title: Statistical indicators
+    describe: Every indicator with its topic, unit and how many observations it has.
+    sql: |
+      select i.code, i.name, t.label as topic, u.symbol as unit, count(o.id) as observations
+      from statistics.indicators i join reference.topics t on t.id = i.topic_id left join reference.units u on u.id = i.unit_id
+      left join statistics.observations o on o.indicator_id = i.id group by i.code, i.name, t.label, u.symbol order by i.name
+    columns: [code, name, topic, unit, observations]
+  - code: population-by-county
+    title: Population by county
+    describe: Latest population figure of every county.
+    sql: |
+      select n.name as county, o.period_from, round(o.value) as population from statistics.observations o
+      join statistics.indicators i on i.id = o.indicator_id and i.code = 'sta.ind.sta.population.total'
+      join geography.features f on f.id = o.feature_id join reference.values k on k.id = f.feature_type_id and k.code like '%.county'
+      join geography.names n on n.feature_id = f.id and n.is_default
+      where o.sex_id is null and o.age_group_id is null and o.residence_id is null and o.ethnicity_id is null and o.language_id is null
+        and o.period_from = (select max(period_from) from statistics.observations x where x.feature_id = o.feature_id and x.indicator_id = o.indicator_id)
+      order by o.value desc
+    columns: [county, period_from, population]

@@ -1,8 +1,9 @@
 """Builds the development seed under `.dev/seed-dev/` and a merged tree the engine's seed loader can read.
 
-The dev data exists only to prove the API and the UIs against a real PostgreSQL database. It is invented and not
-verified: the people, parties' members, amounts and dates are made up, tagged `dev` in their codes, and are never
-promoted to `seed/`. Geometries are the real geoBoundaries outlines kept under `.dev/datasets`.
+The dev data exists only to prove the API and the UIs against a real PostgreSQL database. Real figures are used where
+`.dev/` holds them (geoBoundaries outlines, the county census table, NG-CDF allocation PDFs, the Political Parties Fund
+allocation, IEBC presidential totals, tenders collected from the public tenders portal); everything else is invented,
+tagged `dev` in its codes, and never promoted to `seed/`.
 
     uv run scripts/dev/build_dev_seed.py            # writes .dev/seed-dev/data/** and .dev/seed-dev/merged/
     uv run mzizi-engine seed --root .dev/seed-dev/merged --apply
@@ -15,12 +16,22 @@ from __future__ import annotations
 
 import shutil
 
+from dev_seed.activities import build_activities
+from dev_seed.civic import build_ngcdf, build_party_fund, build_tenders, finish_projects
 from dev_seed.common import DATA, MERGED, read_features
+from dev_seed.contacts import build_contacts
+from dev_seed.elections import add_real_parties, build_elections
 from dev_seed.geometry import build_geometries, write_geometries
+from dev_seed.media import build_media
 from dev_seed.merge import merge_trees
 from dev_seed.output import write_people
 from dev_seed.people import Builder, build_people
+from dev_seed.places import build_places
 from dev_seed.procurement import build_procurement
+from dev_seed.real import read_county_figures, read_party_fund
+from dev_seed.refdata import build_reference
+from dev_seed.stats import build_statistics
+from dev_seed.store import Tables
 
 
 def main() -> None:
@@ -36,14 +47,29 @@ def main() -> None:
         f"{sum(1 for c in wards if c.code in geometries)}/{len(wards)} wards"
     )
     write_geometries(geometries)
-    builder = Builder()
-    build_people(builder, counties, constituencies, wards)
-    build_procurement(builder, counties, constituencies, wards)
-    write_people(builder)
+    b, t = Builder(), Tables()
+    figures, fund = read_county_figures(), read_party_fund()
+    build_reference(t)
+    build_people(b, counties, constituencies, wards)
+    build_procurement(b, counties, constituencies, wards)
+    parties = add_real_parties(b, fund)
+    places = build_places(t, geometries, [*counties, *constituencies, *wards])
+    build_statistics(t, counties, constituencies, wards, geometries, figures, places)
+    build_elections(b, t, counties, constituencies, figures, sorted(set(parties.values()) - {"uda", "odm", "jubilee"}))
+    build_activities(b, t)
+    build_ngcdf(b, t, constituencies, geometries)
+    build_party_fund(b, t, fund, parties)
+    tenders = build_tenders(b, t, counties)
+    finish_projects(b, geometries)
+    names = {n["individual_code"]: n["name"] for n in b.names if n.get("individual_code")}
+    build_contacts(b, t, names)
+    build_media(b, t, counties, constituencies, places, [p["code"] for p in b.projects], names)
+    write_people(b)
+    t.write()
     merge_trees()
     print(
-        f"people: {builder.person_count}, offices: {len(builder.offices)}, projects: {len(builder.projects)}, "
-        f"bids: {len(builder.bids)}, contracts: {len(builder.contracts)}; merged tree: {MERGED}"
+        f"people: {b.person_count}, offices: {len(b.offices)}, projects: {len(b.projects)}, bids: {len(b.bids)}, "
+        f"contracts: {len(b.contracts)}, tenders mapped: {tenders}, places: {len(places)}; merged tree: {MERGED}"
     )
 
 
