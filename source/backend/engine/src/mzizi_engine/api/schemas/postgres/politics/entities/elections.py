@@ -10,12 +10,13 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ElectionsRow(BaseModel):
-    """One electoral event in a country, with its event date and source citation."""
+    """One electoral event in a country with its kind, status, date, running body, term and source citation. Milestones such as registration and nominations are events attached to it."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "politics.elections"
 
+    authority_entity_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -30,6 +31,9 @@ class ElectionsRow(BaseModel):
     election_kind_id: UUID
     held_on: date
     id: UUID
+    parent_election_id: UUID | None = None
     source_citation_id: UUID | None = None
+    status_id: UUID | None = None
+    term_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

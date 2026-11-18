@@ -890,6 +890,7 @@
           "code"
           ,"country_code"
           ,"fund_kind_code"
+          ,"funding_source_code"
           ,"managing_entity_code"
           ,"scope_unit_feature_code"
           ,"source_citation_code"
@@ -935,6 +936,13 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "fund_kind_code" }
+        }
+        ,"funding_source_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "funding_source_code", "scheme": "ref.sch.fin.fund.source" }
         }
         ,"id": {
           "type": "string",

@@ -19,6 +19,7 @@ import { politics } from "#/schemas/postgres/politics.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
 import { activities } from "#/schemas/postgres/activities.ts";
 import { statistics } from "#/schemas/postgres/statistics.ts";
+import { community } from "#/schemas/postgres/community.ts";
 import { source } from "#/schemas/postgres/source.ts";
 
 export default dryv
@@ -30,6 +31,7 @@ export default dryv
     shared,
     auth,
     reference,
+    community,
     geography,
     legal,
     official,

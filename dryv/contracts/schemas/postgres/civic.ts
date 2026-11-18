@@ -106,6 +106,14 @@ export const ProjectFeatures = civic
 export const Procurements = civic
   .schema("Procurements", {
     projectId: belongsTo(() => Projects).maybe(),
+    /** Scheme civ.procurement.category: works, goods, services, consultancy, non-consulting services. */
+    categoryId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.civ.procurement.category"),
+    /** Scheme civ.contract.nature: what the supplier is expected to do (build, rehabilitate, maintain, supply, deliver a service, consult, supervise, train). */
+    natureId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.civ.contract.nature"),
     buyerEntityId: belongsTo(() => Entities),
     countryId: belongsTo(() => Country).maybe(),
     procedureKindId: belongsTo(() => Value),
@@ -147,6 +155,10 @@ export const Contracts = civic
   .schema("Contracts", {
     procurementId: belongsTo(() => Procurements).maybe(),
     projectId: belongsTo(() => Projects).maybe(),
+    /** Scheme civ.contract.nature: what the contractor is expected to do. */
+    natureId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.civ.contract.nature"),
     contractorEntityId: belongsTo(() => Entities),
     amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),
     currencyId: belongsTo(() => Value),
@@ -175,4 +187,74 @@ export const Deliveries = civic
   .role("entity")
   .facets({
     storage: dryv.storage("deliveries").index("contractId", "deliveredOn").index("unitFeatureId").index("sourceCitationId"),
+  });
+
+
+/*---------------- civic.facilities ----------------*/
+export const Facilities = civic
+  .schema("Facilities", {
+    /** The geographic feature that is this facility (a point, line or area); one facility per feature. */
+    featureId: belongsTo(() => Features),
+    /** Scheme civ.facility.class: a hierarchy from the super class (government office, education, health, security and justice, water, transport, markets, electoral) down to type and level. */
+    facilityClassId: belongsTo(() => Value).tags("scheme:ref.sch.civ.facility.class"),
+    countryId: belongsTo(() => Country).maybe(),
+    /** The body that runs it day to day (a county health department, a school board). */
+    operatorEntityId: belongsTo(() => Entities).maybe(),
+    /** The body that owns the land or asset when different from the operator. */
+    ownerEntityId: belongsTo(() => Entities).maybe(),
+    /** The institution accountable for it (the ministry or county department). */
+    responsibleInstitutionId: belongsTo(() => Institutions).maybe(),
+    /** Scheme civ.facility.ownership: public, private, faith-based, community, public-private. */
+    ownershipId: belongsTo(() => Value).maybe().tags("scheme:ref.sch.civ.facility.ownership"),
+    /** Scheme civ.facility.status: planned, under construction, operational, partly operational, closed, abandoned. */
+    statusId: belongsTo(() => Value).tags("scheme:ref.sch.civ.facility.status"),
+    openedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    closedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule("FacilityDatesAreOrdered", rule.ordered("openedOn", "closedOn", { allowEqual: true }))
+  .description(
+    "The civic role of a geographic feature: a school, hospital, office, road, market or polling host. Size and capacity are observations on the feature; what it is and its levels are classifications; money reaches it through project links.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("facilities")
+      .unique("featureId")
+      .index("facilityClassId")
+      .index("operatorEntityId")
+      .index("ownerEntityId")
+      .index("responsibleInstitutionId")
+      .index("statusId")
+      .index("sourceCitationId"),
+  });
+
+/*---------------- civic.beneficiaries ----------------*/
+export const Beneficiaries = civic
+  .schema("Beneficiaries", {
+    /** Scheme civ.benefit.kind: infrastructure, works, equipment and supplies, services, empowerment, education support, environment, health, relief, capacity building. */
+    benefitKindId: belongsTo(() => Value).tags("scheme:ref.sch.civ.benefit.kind"),
+    projectId: belongsTo(() => Projects).maybe(),
+    procurementId: belongsTo(() => Procurements).maybe(),
+    contractId: belongsTo(() => Contracts).maybe(),
+    /** Optional share of the amount that benefits this subject, as a percentage. */
+    sharePercent: dryv.field(sharedProperties.Percentage).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedSubjectEntity)
+  .rule("ExactlyOneSpendingRecord", rule.exactlyOne("projectId", "procurementId", "contractId"))
+  .description(
+    "Who or what benefits from one project, procurement or contract: a facility, a place, an organisation or a population group, with the kind of benefit. The buyer and the supplier are not beneficiaries; they are separate roles.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("beneficiaries")
+      .index("subjectTable", "subjectId")
+      .index("projectId")
+      .index("procurementId")
+      .index("contractId")
+      .index("benefitKindId")
+      .index("sourceCitationId"),
   });

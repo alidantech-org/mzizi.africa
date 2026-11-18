@@ -30,7 +30,10 @@ class ContestsRow(BaseModel):
     election_id: UUID
     id: UUID
     office_id: UUID | None = None
+    previous_holder_id: UUID | None = None
+    seat_count: Annotated[int, Field(ge=1)] | None = None
     source_citation_id: UUID | None = None
     unit_feature_id: UUID
     updated_at: datetime
+    vacancy_reason_id: UUID | None = None
     version: Annotated[int, Field(ge=1)]

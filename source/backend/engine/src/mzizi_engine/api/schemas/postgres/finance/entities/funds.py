@@ -28,6 +28,7 @@ class FundsRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     fund_kind_id: UUID
+    funding_source_id: UUID | None = None
     id: UUID
     managing_entity_id: UUID | None = None
     scope_unit_feature_id: UUID | None = None

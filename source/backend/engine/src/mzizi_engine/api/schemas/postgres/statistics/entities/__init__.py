@@ -9,6 +9,7 @@ from mzizi_engine.api.schemas.postgres.reference.entities.unit import UnitRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
 from mzizi_engine.api.schemas.postgres.source.entities.citations import CitationsRow
 from mzizi_engine.api.schemas.postgres.statistics.entities.indicators import IndicatorsRow
+from mzizi_engine.api.schemas.postgres.statistics.entities.metrics import MetricsRow
 from mzizi_engine.api.schemas.postgres.statistics.entities.observations import ObservationsRow
 
 __all__ = [
@@ -16,6 +17,7 @@ __all__ = [
     "FeaturesRow",
     "IndicatorsRow",
     "LanguageRow",
+    "MetricsRow",
     "ObservationsRow",
     "TopicRow",
     "UnitRow",

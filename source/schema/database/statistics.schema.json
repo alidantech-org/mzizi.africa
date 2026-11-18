@@ -143,6 +143,154 @@
         }
       }
     },
+    "metrics": {
+      "title": "statistics.metrics",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.statistics.metrics",
+      "x-id": "#/schemas/statistics.Metrics",
+      "x-table": "statistics.metrics",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"id"
+        ,"is_rankable"
+        ,"numerator_indicator_id"
+        ,"topic_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"default_level_kind_code"
+          ,"denominator_indicator_code"
+          ,"higher_is_better"
+          ,"is_rankable"
+          ,"numerator_indicator_code"
+          ,"per_factor"
+          ,"source_citation_code"
+          ,"topic_code"
+          ,"unit_code"
+        ],
+        "required": [
+          "code"
+          ,"is_rankable"
+          ,"numerator_indicator_code"
+          ,"topic_code"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"default_level_kind_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "default_level_kind_code", "scheme": "ref.sch.geo.feature.kind" }
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"denominator_indicator_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/statistics.Indicators", "column": "id", "alias": "denominator_indicator_code" }
+        }
+        ,"higher_is_better": {
+          "type": ["boolean", "null"],
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"is_rankable": {
+          "type": "boolean",
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"numerator_indicator_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/statistics.Indicators", "column": "id", "alias": "numerator_indicator_code" }
+        }
+        ,"per_factor": {
+          "type": ["number", "null"],
+          "x-type": "number",
+          "x-role": "data"
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"topic_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Topic", "column": "id", "alias": "topic_code" }
+        }
+        ,"unit_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Unit", "column": "id", "alias": "unit_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "observations": {
       "title": "statistics.observations",
       "type": "object",

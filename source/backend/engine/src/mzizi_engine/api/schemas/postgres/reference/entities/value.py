@@ -24,8 +24,10 @@ class ValueRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    color_token: Annotated[str, Field(min_length=1, max_length=100)] | None = None
     created_at: datetime
     deleted_at: datetime | None = None
+    icon_code: Annotated[str, Field(min_length=1, max_length=100)] | None = None
     id: UUID
     label: Annotated[str, Field(min_length=1, max_length=300)]
     parent_id: UUID | None = None

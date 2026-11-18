@@ -1,0 +1,29 @@
+"""Saved Places: one row of saved_places."""
+
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Annotated, ClassVar
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class SavedPlacesRow(BaseModel):
+    """A place an actor keeps, with a free-text label. The place unit is stored, never GPS coordinates. At most one is the home place."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    table: ClassVar[str] = "community.saved_places"
+
+    actor_id: UUID
+    created_at: datetime
+    deleted_at: datetime | None = None
+    feature_id: UUID
+    id: UUID
+    is_home: bool
+    label: Annotated[str, Field(min_length=1, max_length=100)]
+    position: Annotated[int, Field(ge=0)] | None = None
+    suggestion_id: UUID | None = None
+    updated_at: datetime
+    version: Annotated[int, Field(ge=1)]

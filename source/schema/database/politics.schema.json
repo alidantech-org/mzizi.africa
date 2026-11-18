@@ -436,8 +436,11 @@
           ,"contest_kind_code"
           ,"election_code"
           ,"office_code"
+          ,"previous_holder_code"
+          ,"seat_count"
           ,"source_citation_code"
           ,"unit_feature_code"
+          ,"vacancy_reason_code"
         ],
         "required": [
           "code"
@@ -497,6 +500,18 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/governance.Offices", "column": "id", "alias": "office_code" }
         }
+        ,"previous_holder_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Holders", "column": "id", "alias": "previous_holder_code" }
+        }
+        ,"seat_count": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"source_citation_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
@@ -517,6 +532,13 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
+        }
+        ,"vacancy_reason_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "vacancy_reason_code", "scheme": "ref.sch.pol.vacancy.reason" }
         }
         ,"version": {
           "type": "integer",
@@ -553,11 +575,15 @@
           ,"version"
         ],
         "columns": [
-          "code"
+          "authority_entity_code"
+          ,"code"
           ,"country_code"
           ,"election_kind_code"
           ,"held_on"
+          ,"parent_election_code"
           ,"source_citation_code"
+          ,"status_code"
+          ,"term_code"
         ],
         "required": [
           "code"
@@ -566,7 +592,14 @@
         ]
       },
       "properties": {
-        "code": {
+        "authority_entity_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "authority_entity_code" }
+        }
+        ,"code": {
           "type": "string",
           "x-type": "text",
           "maxLength": 255,
@@ -600,10 +633,139 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "election_kind_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "election_kind_code", "scheme": "ref.sch.pol.election.kind" }
         }
         ,"held_on": {
           "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"parent_election_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/politics.Elections", "column": "id", "alias": "parent_election_code" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"status_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.pol.election.status" }
+        }
+        ,"term_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/politics.ElectoralTerms", "column": "id", "alias": "term_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "electoral_terms": {
+      "title": "politics.electoral_terms",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.politics.electoral-terms",
+      "x-id": "#/schemas/politics.ElectoralTerms",
+      "x-table": "politics.electoral_terms",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"country_id"
+        ,"id"
+        ,"starts_on"
+        ,"term_kind_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"country_code"
+          ,"ends_on"
+          ,"source_citation_code"
+          ,"starts_on"
+          ,"term_kind_code"
+          ,"unit_feature_code"
+        ],
+        "required": [
+          "code"
+          ,"country_code"
+          ,"starts_on"
+          ,"term_kind_code"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"ends_on": {
+          "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
           "x-role": "data"
@@ -621,6 +783,26 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"starts_on": {
+          "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"term_kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "term_kind_code", "scheme": "ref.sch.pol.term.kind" }
+        }
+        ,"unit_feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -644,14 +826,15 @@
       "x-code": "sys.tbl.politics.electorates",
       "x-id": "#/schemas/politics.Electorates",
       "x-table": "politics.electorates",
-      "x-primaryKey": ["id"],"x-naturalKey": ["contest_code", "unit_feature_code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["contest_code", "unit_feature_code", "status_code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["contest_id", "unit_feature_id"]
+        ["contest_id", "unit_feature_id", "status_id"]
       ],
       "required": [
         "contest_id"
         ,"id"
+        ,"status_id"
         ,"unit_feature_id"
       ],
       "x-seed": {
@@ -668,11 +851,14 @@
           ,"registered_voters"
           ,"rejected_ballots"
           ,"source_citation_code"
+          ,"spoilt_ballots"
+          ,"status_code"
           ,"unit_feature_code"
           ,"valid_ballots"
         ],
         "required": [
           "contest_code"
+          ,"status_code"
           ,"unit_feature_code"
         ]
       },
@@ -726,6 +912,18 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"spoilt_ballots": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"status_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.pol.result.status" }
         }
         ,"unit_feature_id": {
           "type": "string",
@@ -1399,6 +1597,172 @@
         }
       }
     },
+    "polling_stations": {
+      "title": "politics.polling_stations",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.politics.polling-stations",
+      "x-id": "#/schemas/politics.PollingStations",
+      "x-table": "politics.polling_stations",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["feature_id"]
+      ],
+      "required": [
+        "code"
+        ,"country_id"
+        ,"feature_id"
+        ,"id"
+        ,"station_kind_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "access_note"
+          ,"closed_on"
+          ,"code"
+          ,"commission_code"
+          ,"country_code"
+          ,"feature_code"
+          ,"opened_on"
+          ,"registration_centre_code"
+          ,"source_citation_code"
+          ,"station_kind_code"
+          ,"stream_count"
+          ,"succeeded_by_station_code"
+        ],
+        "required": [
+          "code"
+          ,"country_code"
+          ,"feature_code"
+          ,"station_kind_code"
+        ]
+      },
+      "properties": {
+        "access_note": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"closed_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"commission_code": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 100,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"feature_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"opened_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"registration_centre_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/politics.PollingStations", "column": "id", "alias": "registration_centre_code" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"station_kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "station_kind_code", "scheme": "ref.sch.pol.station.kind" }
+        }
+        ,"stream_count": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"succeeded_by_station_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/politics.PollingStations", "column": "id", "alias": "succeeded_by_station_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "referendum_options": {
       "title": "politics.referendum_options",
       "type": "object",
@@ -1516,10 +1880,10 @@
       "x-code": "sys.tbl.politics.results",
       "x-id": "#/schemas/politics.Results",
       "x-table": "politics.results",
-      "x-primaryKey": ["id"],"x-naturalKey": ["candidate_code", "unit_feature_code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["candidate_code", "unit_feature_code", "status_code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["candidate_id", "unit_feature_id"]
+        ["candidate_id", "unit_feature_id", "status_id"]
       ],
       "required": [
         "candidate_id"
@@ -1590,7 +1954,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code" }
         }
         ,"unit_feature_id": {

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from mzizi_engine.api.schemas.postgres.filesystem.entities.file_versions import FileVersionsRow
+from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.country import CountryRow
 from mzizi_engine.api.schemas.postgres.reference.entities.language import LanguageRow
@@ -12,12 +13,15 @@ from mzizi_engine.api.schemas.postgres.source.entities.artifacts import Artifact
 from mzizi_engine.api.schemas.postgres.source.entities.attributions import AttributionsRow
 from mzizi_engine.api.schemas.postgres.source.entities.captures import CapturesRow
 from mzizi_engine.api.schemas.postgres.source.entities.citations import CitationsRow
+from mzizi_engine.api.schemas.postgres.source.entities.coverage import CoverageRow
 from mzizi_engine.api.schemas.postgres.source.entities.discoveries import DiscoveriesRow
 from mzizi_engine.api.schemas.postgres.source.entities.domains import DomainsRow
 from mzizi_engine.api.schemas.postgres.source.entities.editions import SourceEditionsRow
 from mzizi_engine.api.schemas.postgres.source.entities.products import ProductsRow
 from mzizi_engine.api.schemas.postgres.source.entities.publishers import PublishersRow
 from mzizi_engine.api.schemas.postgres.source.entities.relationships import SourceRelationshipsRow
+from mzizi_engine.api.schemas.postgres.source.entities.slug_relations import SlugRelationsRow
+from mzizi_engine.api.schemas.postgres.source.entities.slugs import SlugsRow
 from mzizi_engine.api.schemas.postgres.source.entities.sources import SourcesRow
 from mzizi_engine.api.schemas.postgres.source.entities.verifications import VerificationsRow
 
@@ -28,13 +32,17 @@ __all__ = [
     "CapturesRow",
     "CitationsRow",
     "CountryRow",
+    "CoverageRow",
     "DiscoveriesRow",
     "DomainsRow",
     "EntitiesRow",
+    "FeaturesRow",
     "FileVersionsRow",
     "LanguageRow",
     "ProductsRow",
     "PublishersRow",
+    "SlugRelationsRow",
+    "SlugsRow",
     "SourceEditionsRow",
     "SourceRelationshipsRow",
     "SourcesRow",

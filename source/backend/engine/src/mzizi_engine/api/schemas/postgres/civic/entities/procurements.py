@@ -18,6 +18,7 @@ class ProcurementsRow(BaseModel):
 
     awarded_on: date | None = None
     buyer_entity_id: UUID
+    category_id: UUID | None = None
     closes_on: date | None = None
     code: Annotated[
         str,
@@ -31,6 +32,7 @@ class ProcurementsRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
+    nature_id: UUID | None = None
     procedure_kind_id: UUID
     project_id: UUID | None = None
     published_on: date | None = None

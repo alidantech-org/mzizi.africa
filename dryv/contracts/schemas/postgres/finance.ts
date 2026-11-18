@@ -105,6 +105,10 @@ export const Funds = finance
   .schema("Funds", {
     fundKindId: belongsTo(() => Value),
     managingEntityId: belongsTo(() => Entities).maybe(),
+    /** Scheme fin.fund.source: exchequer, devolved transfer, donor or grant, loan, own revenue. Who the money comes from. */
+    fundingSourceId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.fin.fund.source"),
     countryId: belongsTo(() => Country).maybe(),
     /** The area the fund serves, for example the constituency of a constituency development fund. */
     scopeUnitFeatureId: belongsTo(() => Features).maybe(),

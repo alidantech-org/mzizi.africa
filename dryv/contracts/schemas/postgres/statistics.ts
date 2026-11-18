@@ -81,3 +81,36 @@ export const Observations = statistics
       .index("languageId")
       .index("sourceCitationId"),
   });
+
+
+/*---------------- statistics.metrics ----------------*/
+export const Metrics = statistics
+  .schema("Metrics", {
+    topicId: belongsTo(() => Topic),
+    /** The measure ranked or compared: an indicator, or the numerator of a ratio. */
+    numeratorIndicatorId: belongsTo(() => Indicators),
+    /** The indicator it is divided by (population for a per-person figure); absent for a plain indicator. */
+    denominatorIndicatorId: belongsTo(() => Indicators).maybe(),
+    /** The factor applied after dividing: 1, 1000 or 100000 for "per 100,000 people". */
+    perFactor: dryv.field(sharedProperties.Number).maybe(),
+    unitId: belongsTo(() => Unit).maybe(),
+    higherIsBetter: dryv.field(sharedProperties.Flag).maybe(),
+    /** The place level shown first, a feature kind value; the country's ladder says which levels exist. */
+    defaultLevelKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.feature.kind").maybe(),
+    /** True when the metric appears in ranking lists. */
+    isRankable: dryv.field(sharedProperties.Flag),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description(
+    "A ranking or comparison measure defined as data: an indicator, or one indicator over another with a factor. Titles and descriptions per language are copy; no metric is coded in a read.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("metrics")
+      .index("topicId")
+      .index("numeratorIndicatorId")
+      .index("denominatorIndicatorId")
+      .index("sourceCitationId"),
+  });

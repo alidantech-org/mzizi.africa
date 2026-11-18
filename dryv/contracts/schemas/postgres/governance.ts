@@ -11,7 +11,8 @@ import { sharedProperties } from "#/schemas/_shared.ts";
 import { Features } from "./geography.ts";
 import { Entities, Individuals } from "./official.ts";
 import { Country, Value } from "./reference.ts";
-import { Citations } from "./source.ts";
+import { Provisions } from "./legal.ts";
+import { Artifacts, Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -149,5 +150,74 @@ export const AuthorityScopes = governance
       .index("officeId")
       .index("unitFeatureId")
       .index("countryId")
+      .index("sourceCitationId"),
+  });
+
+
+/*---------------- governance.obligations ----------------*/
+export const Obligations = governance
+  .schema("Obligations", {
+    countryId: belongsTo(() => Country),
+    /** Scheme gov.obligation.kind: publish a procurement plan, publish award notices, publish a budget, report quarterly spending, respond to an audit query, publish results, deliver a contract report. */
+    obligationKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.obligation.kind"),
+    /** The one body that owes it, when it is one body; otherwise the kind of body below. */
+    obligorInstitutionId: belongsTo(() => Institutions).maybe(),
+    /** The kind of body that owes it (every county government, every procuring entity); scheme gov.obligor.kind. */
+    obligorKindId: belongsTo(() => Value).maybe().tags("scheme:ref.sch.gov.obligor.kind"),
+    /** Whom it is owed to (a regulator, the public, a legislature). */
+    recipientEntityId: belongsTo(() => Entities).maybe(),
+    /** Scheme gov.obligation.frequency: once, per event, monthly, quarterly, annual. */
+    frequencyId: belongsTo(() => Value).tags("scheme:ref.sch.gov.obligation.frequency"),
+    /** The legal provision that creates the duty. */
+    basisProvisionId: belongsTo(() => Provisions).maybe(),
+    description: dryv.field(sharedProperties.Description),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("OneObligorForm", rule.atLeastOne("obligorInstitutionId", "obligorKindId"))
+  .description(
+    "A duty to report or publish, with who owes it, to whom, how often and the law that creates it. Each filing found is a report.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("obligations")
+      .index("countryId")
+      .index("obligationKindId")
+      .index("obligorInstitutionId")
+      .index("obligorKindId")
+      .index("basisProvisionId")
+      .index("sourceCitationId"),
+  });
+
+/*---------------- governance.reports ----------------*/
+export const Reports = governance
+  .schema("Reports", {
+    obligationId: belongsTo(() => Obligations),
+    /** The body that was expected to report or that did. */
+    reporterEntityId: belongsTo(() => Entities),
+    periodFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
+    periodUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
+    dueOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    filedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    /** Scheme gov.report.status: due, on time, late, missing, found elsewhere, not applicable. */
+    statusId: belongsTo(() => Value).tags("scheme:ref.sch.gov.report.status"),
+    /** The filed document, when found. */
+    artifactId: belongsTo(() => Artifacts).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule("ReportPeriodIsOrdered", rule.ordered("periodFrom", "periodUntil", { allowEqual: true }))
+  .description(
+    "One expected or found filing under an obligation, for one reporter and period, with its status and the document when found. Absence is a status, not a missing row.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("reports")
+      .index("obligationId", "periodFrom")
+      .index("reporterEntityId")
+      .index("statusId")
+      .index("artifactId")
       .index("sourceCitationId"),
   });

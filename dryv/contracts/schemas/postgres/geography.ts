@@ -14,7 +14,7 @@ import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { FileVersions } from "./filesystem.ts";
-import { Language, Value } from "./reference.ts";
+import { Country, Language, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -273,4 +273,27 @@ export const Assets = geography
       .index("fileVersionId")
       .index("kindId")
       .index("purposeId"),
+  });
+
+
+/*---------------- geography.levels ----------------*/
+export const Levels = geography
+  .schema("Levels", {
+    countryId: belongsTo(() => Country),
+    /** Scheme geo.hierarchy.kind: electoral, administrative, traditional. A country can have several parallel ladders. */
+    hierarchyKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.hierarchy.kind"),
+    /** 0 is the country, 1 the first level (county, province, state, region), and so on down. */
+    depth: dryv.field(sharedProperties.NonNegativeInteger),
+    /** The feature kind found at this level; its labels in each language (singular and plural) are value labels. */
+    featureKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.feature.kind"),
+    /** True for the one ladder whose chain builds public addresses and breadcrumbs. */
+    isRoutingHierarchy: dryv.field(sharedProperties.Flag),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description(
+    "One level of a country's administrative or electoral ladder: its depth and the kind of place found there. The ladder is data, so no screen or read names levels.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv.storage("levels").unique("countryId", "hierarchyKindId", "depth").index("featureKindId"),
   });

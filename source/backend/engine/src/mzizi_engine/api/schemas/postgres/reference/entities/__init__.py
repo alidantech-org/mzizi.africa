@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from mzizi_engine.api.schemas.postgres.reference.entities.copy import CopyRow
 from mzizi_engine.api.schemas.postgres.reference.entities.country import CountryRow
 from mzizi_engine.api.schemas.postgres.reference.entities.language import LanguageRow
 from mzizi_engine.api.schemas.postgres.reference.entities.language_name import LanguageNameRow
@@ -14,6 +15,7 @@ from mzizi_engine.api.schemas.postgres.reference.entities.value_label import Val
 from mzizi_engine.api.schemas.postgres.reference.entities.value_relation import ValueRelationRow
 
 __all__ = [
+    "CopyRow",
     "CountryRow",
     "LanguageNameRow",
     "LanguageRow",

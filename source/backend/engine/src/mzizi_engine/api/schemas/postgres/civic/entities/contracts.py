@@ -30,6 +30,7 @@ class ContractsRow(BaseModel):
     currency_id: UUID
     deleted_at: datetime | None = None
     id: UUID
+    nature_id: UUID | None = None
     procurement_id: UUID | None = None
     project_id: UUID | None = None
     signed_on: date | None = None

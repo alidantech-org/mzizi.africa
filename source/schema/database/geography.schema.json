@@ -792,6 +792,129 @@
         }
       }
     },
+    "levels": {
+      "title": "geography.levels",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.geography.levels",
+      "x-id": "#/schemas/geography.Levels",
+      "x-table": "geography.levels",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["country_id", "hierarchy_kind_id", "depth"]
+      ],
+      "required": [
+        "code"
+        ,"country_id"
+        ,"depth"
+        ,"feature_kind_id"
+        ,"hierarchy_kind_id"
+        ,"id"
+        ,"is_routing_hierarchy"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"country_code"
+          ,"depth"
+          ,"feature_kind_code"
+          ,"hierarchy_kind_code"
+          ,"is_routing_hierarchy"
+        ],
+        "required": [
+          "code"
+          ,"country_code"
+          ,"depth"
+          ,"feature_kind_code"
+          ,"hierarchy_kind_code"
+          ,"is_routing_hierarchy"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"depth": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"feature_kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "feature_kind_code", "scheme": "ref.sch.geo.feature.kind" }
+        }
+        ,"hierarchy_kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "hierarchy_kind_code", "scheme": "ref.sch.geo.hierarchy.kind" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"is_routing_hierarchy": {
+          "type": "boolean",
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "names": {
       "title": "geography.names",
       "type": "object",

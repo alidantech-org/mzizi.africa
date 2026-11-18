@@ -79,6 +79,12 @@ export const Country = reference
       .tags("scheme:ref.sch.ref.country.designation")
       .maybe(),
     establishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    /** The language shown first for a visitor in this country when they have chosen none. */
+    defaultLanguageId: belongsTo(() => Language).maybe(),
+    /** The host label of the country's own domain (`ke` for ke.mzizi.africa). Absent until a country domain exists. */
+    subdomain: dryv.field(sharedProperties.NonEmptyString100).maybe(),
+    /** True when the country is served publicly; false while data is being prepared. */
+    isServed: dryv.field(sharedProperties.Flag),
   })
   .extends(baseSchemas.CodedEntity)
   .description("Canonical identity for a modern country; not a geographic unit or historical polity.")
@@ -119,6 +125,10 @@ export const Value = reference
     parentId: belongsTo(dryv.self).maybe(),
     /** Display order among the values of the scheme (ascending); values without one sort after those with one, by label. */
     position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+    /** Display hint: the name of an icon from the shared brand set, so no screen keeps its own label-to-icon map. */
+    iconCode: dryv.field(sharedProperties.NonEmptyString100).maybe(),
+    /** Display hint: a theme colour token (never a raw colour), for status and category chips. */
+    colorToken: dryv.field(sharedProperties.NonEmptyString100).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .rule("ValueDoesNotSupersedeItself", (v) => v.id.ne(v.supersedesId))
@@ -335,3 +345,37 @@ export const ValueRelation = reference
       .index("sourceValueId", "relationKind")
       .index("targetValueId", "relationKind"),
   });
+
+
+/*---------------- reference.copy ----------------*/
+export const Copy = reference
+  .schema("Copy", {
+    /** The copy key authored in a contract (`web.home.title`): lowercase, dot-separated. */
+    key: dryv.field(sharedProperties.IdentityCode),
+    languageId: belongsTo(() => Language),
+    /** Set when the wording differs for one country; absent for the language's general wording. */
+    countryId: belongsTo(() => Country).maybe(),
+    text: dryv.field(sharedProperties.NonEmptyString),
+    /** True for wording written for the interface and not yet reviewed. */
+    isDevelopmentText: dryv.field(sharedProperties.Flag),
+  })
+  .extends(baseSchemas.Entity)
+  .description(
+    "One interface or explanatory wording for one copy key in one language, optionally specific to a country. Screens declare keys; the words live here.",
+  )
+  .role("entity");
+
+const generalCopy = reference.expression(
+  "GeneralCopy",
+  Copy.check((v) => v.countryId.isNull()),
+);
+
+Copy.facets({
+  storage: dryv
+    .storage("copy")
+    .unique("key", "languageId", "countryId")
+    .unique("key", "languageId")
+    .where(generalCopy)
+    .index("languageId")
+    .index("countryId"),
+});

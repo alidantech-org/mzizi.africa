@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
+from mzizi_engine.api.schemas.postgres.governance.entities.holders import HoldersRow
 from mzizi_engine.api.schemas.postgres.governance.entities.offices import OfficesRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
 from mzizi_engine.api.schemas.postgres.official.entities.individuals import IndividualsRow
@@ -11,12 +12,14 @@ from mzizi_engine.api.schemas.postgres.politics.entities.candidates import Candi
 from mzizi_engine.api.schemas.postgres.politics.entities.coalitions import CoalitionsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.contests import ContestsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.elections import ElectionsRow
+from mzizi_engine.api.schemas.postgres.politics.entities.electoral_terms import ElectoralTermsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.electorates import ElectoratesRow
 from mzizi_engine.api.schemas.postgres.politics.entities.manifesto_items import ManifestoItemsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.manifestos import ManifestosRow
 from mzizi_engine.api.schemas.postgres.politics.entities.memberships import PoliticsMembershipsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.option_results import OptionResultsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.parties import PartiesRow
+from mzizi_engine.api.schemas.postgres.politics.entities.polling_stations import PollingStationsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.referendum_options import ReferendumOptionsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.results import ResultsRow
 from mzizi_engine.api.schemas.postgres.reference.entities.country import CountryRow
@@ -34,9 +37,11 @@ __all__ = [
     "ContestsRow",
     "CountryRow",
     "ElectionsRow",
+    "ElectoralTermsRow",
     "ElectoratesRow",
     "EntitiesRow",
     "FeaturesRow",
+    "HoldersRow",
     "IndividualsRow",
     "ManifestoItemsRow",
     "ManifestosRow",
@@ -44,6 +49,7 @@ __all__ = [
     "OptionResultsRow",
     "PartiesRow",
     "PoliticsMembershipsRow",
+    "PollingStationsRow",
     "ReferendumOptionsRow",
     "ResultsRow",
     "TopicRow",

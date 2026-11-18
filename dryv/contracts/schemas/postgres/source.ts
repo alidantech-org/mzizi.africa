@@ -3,7 +3,7 @@
  * Owns publishers, acquisition channels, domains and addresses, discoveries and captures, logical products with their
  * editions and exact artifacts, classified input/output relationships, citations, verifications and attributions.
  * Design: .docs/design/data/SOURCE_FILESYSTEM_GEOGRAPHY.md, .docs/design/data/SUBJECT_REFERENCES.md
- * Thirteen tables. Removed on 2026-11-17: paths, documents, datasets, dataset_lineage, provenance, evidence,
+ * Sixteen tables (slugs, slug_relations and coverage added 2026-11-19). Removed on 2026-11-17: paths, documents, datasets, dataset_lineage, provenance, evidence,
  * manifests, manifest_releases, manifest_bindings, publication_receipts.
  */
 import * as dryv from "@dryvcode/author";
@@ -13,6 +13,7 @@ import { sharedProperties } from "#/schemas/_shared.ts";
 import { subjectProperties } from "#/schemas/_subjects.ts";
 import { FileVersions } from "./filesystem.ts";
 import { Entities } from "./official.ts";
+import { Features } from "./geography.ts";
 import { Country, Language, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -400,4 +401,45 @@ export const SlugRelations = source
       .unique("fromSlugId", "toSlugId", "relationKindId")
       .index("toSlugId")
       .index("relationKindId"),
+  });
+
+
+/*---------------- source.coverage ----------------*/
+export const Coverage = source
+  .schema("Coverage", {
+    countryId: belongsTo(() => Country),
+    /** The source or the product that was checked. At least one is named. */
+    sourceId: belongsTo(() => Sources).maybe(),
+    productId: belongsTo(() => Products).maybe(),
+    /** The place the check covers; absent for the whole country. */
+    scopeUnitFeatureId: belongsTo(() => Features).maybe(),
+    /** Scheme src.coverage.subject: what kind of records the source should hold (projects, tenders, facilities, results, budgets, reports, statistics). */
+    coverageSubjectId: belongsTo(() => Value).tags("scheme:ref.sch.src.coverage.subject"),
+    periodFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
+    periodUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
+    /** Scheme src.coverage.level: complete, partial, sample, none published, unknown. */
+    levelId: belongsTo(() => Value).tags("scheme:ref.sch.src.coverage.level"),
+    checkedOn: dryv.field(sharedProperties.CalendarDate),
+    /** Where the real data should be published, for the "no data" help to link to. */
+    expectedPublicationUrl: dryv.field(sharedProperties.Url).maybe(),
+    /** The institution responsible for publishing it; visitors can ask this office to publish. */
+    publisherEntityId: belongsTo(() => Entities).maybe(),
+    note: dryv.field(sharedProperties.Description).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule("SourceOrProductNamed", rule.atLeastOne("sourceId", "productId"))
+  .rule("CoveragePeriodIsOrdered", rule.ordered("periodFrom", "periodUntil", { allowEqual: true }))
+  .description(
+    "What a source or product covers, for which place, years and kind of record, how completely, and when that was checked. It makes every 'none recorded' honest: the page says which sources were checked, and a gap is never read as zero.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("coverage")
+      .index("countryId", "coverageSubjectId")
+      .index("sourceId")
+      .index("productId")
+      .index("scopeUnitFeatureId")
+      .index("levelId")
+      .index("publisherEntityId"),
   });
