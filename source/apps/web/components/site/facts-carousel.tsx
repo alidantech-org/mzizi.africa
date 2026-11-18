@@ -34,7 +34,7 @@ export function FactsCarousel({ facts, scopeName }: { facts: readonly Fact[]; sc
         <div aria-live="polite">
           <p className="font-semibold">{fact.statement}</p>
           {fact.detail ? <p className="mt-1 text-content-muted">{fact.detail}</p> : null}
-          <p className="mt-1 text-xs text-content-muted">{fact.place ? tr("About {}", fact.place) : tr("About {}", scopeName)}</p>
+          {fact.place || scopeName ? <p className="mt-1 text-xs text-content-muted">{tr("About {}", fact.place ?? scopeName)}</p> : null}
         </div>
         {facts.length > 1 ? (
           <div className="mt-3 flex items-center gap-2">

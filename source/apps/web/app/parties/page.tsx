@@ -2,9 +2,11 @@
 import Link from "next/link";
 import { T } from "#/lib/site/i18n.tsx";
 
+import { Avatar } from "#/components/site/ui/media.tsx";
 import { Loaded } from "#/components/site/loaded.tsx";
 import { Breadcrumbs, Gaps, PageFrame } from "#/components/site/ui/primitives.tsx";
-import { ksh, n, short } from "#/lib/site/format.ts";
+import { n, short } from "#/lib/site/format.ts";
+import { Money } from "#/lib/site/country.tsx";
 import { parties } from "#/lib/site/insights.ts";
 
 export default function PartiesRoute() {
@@ -24,9 +26,9 @@ export default function PartiesRoute() {
                   <tbody>{list.map((p, i) => (
                     <tr key={p.code}>
                       <td className="num text-content-muted">{i + 1}</td>
-                      <td><Link className="font-semibold underline-offset-2 hover:underline" href={`/parties/${p.code}`}>{p.name}</Link></td>
+                      <td><Link className="flex items-center gap-2.5 font-semibold underline-offset-2 hover:underline" href={`/parties/${p.code}`}><Avatar name={p.name.replace(/\(.*\)/, "").trim()} size={28} />{p.name}</Link></td>
                       <td className="min-w-48"><div className="bar-track h-2"><div className="bar-fill h-full" style={{ width: `${(p.votes2022 / topVotes) * 100}%` }} /></div><span className="num text-xs text-content-muted">{short(p.votes2022)}</span></td>
-                      <td className="num">{n(p.members)}</td><td className="num">{n(p.officeHolders)}</td><td className="num">{ksh(p.fundAllocationKes)}</td>
+                      <td className="num">{n(p.members)}</td><td className="num">{n(p.officeHolders)}</td><td className="num"><Money value={p.fundAllocationKes} /></td>
                     </tr>))}</tbody>
                 </table>
               </div>

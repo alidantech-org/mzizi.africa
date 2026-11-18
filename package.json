@@ -26,6 +26,7 @@
     "test": "bun scripts/mz.ts test",
     "structure": "bun scripts/mz.ts structure",
     "boundaries": "bun scripts/mz.ts boundaries",
+    "frontend": "bun scripts/mz.ts frontend",
     "check": "bun scripts/mz.ts check",
     "check:all": "bun scripts/mz.ts check:all",
     "dryv:link": "bun scripts/mz.ts dryv:link",

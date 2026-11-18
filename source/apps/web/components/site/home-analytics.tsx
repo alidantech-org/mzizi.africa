@@ -82,7 +82,7 @@ export function HomeAnalytics({ country }: { country: string }) {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{saved.places.slice(0, 3).map((p) => <Compare key={p.id} id={p.id} name={p.name} />)}</div>
           </Section>
         ) : null}
-        <Section kicker="Across Kenya" title="Where people live">
+        <Section kicker={tr("Across {}", country)} title="Where people live">
           <AsyncView loaded={map}>{(m) => <StatMap data={m} height={400} />}</AsyncView>
           <p className="mt-2 text-xs text-content-muted">{tr("People per square kilometre in each county. Darker is more crowded.")} <Link className="underline" href="/statistics">{tr("More statistics →")}</Link></p>
         </Section>

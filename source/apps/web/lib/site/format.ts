@@ -1,4 +1,4 @@
-/** Number and money formatting shared by every screen. Kenya shillings are shown as KSh; large figures are compacted. */
+/** Number and money formatting shared by every screen. Money is formatted in the country's own currency by `Money` (country.tsx); large figures are compacted. */
 const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 });
 const whole = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });
 const one = new Intl.NumberFormat("en", { maximumFractionDigits: 1 });
@@ -6,7 +6,6 @@ const one = new Intl.NumberFormat("en", { maximumFractionDigits: 1 });
 export const n = (value: number | null | undefined): string => (value === null || value === undefined ? "—" : whole.format(value));
 export const n1 = (value: number | null | undefined): string => (value === null || value === undefined ? "—" : one.format(value));
 export const short = (value: number | null | undefined): string => (value === null || value === undefined ? "—" : compact.format(value));
-export const ksh = (value: number | null | undefined): string => (value === null || value === undefined ? "—" : `KSh ${compact.format(value)}`);
 export const pct = (fraction: number | null | undefined, digits = 1): string =>
   fraction === null || fraction === undefined ? "—" : `${(fraction * 100).toFixed(digits)}%`;
 export const date = (iso: string | null | undefined): string =>

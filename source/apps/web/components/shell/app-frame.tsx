@@ -7,6 +7,7 @@ import type { ReactNode } from "react";
 import { Icon, type IconName } from "#/components/brand/icon.tsx";
 import { Logo } from "#/components/brand/logo.tsx";
 import { PlaceSwitcher } from "#/components/shell/place-switcher.tsx";
+import { Flag } from "#/components/site/ui/flag.tsx";
 import { GlobalSearchBox } from "#/components/site/global-search-box.tsx";
 import { LanguageSwitcher } from "#/components/site/language-switcher.tsx";
 import { ThemeToggle } from "#/components/site/theme-toggle.tsx";
@@ -18,6 +19,7 @@ import type { Crumb, NavGroup } from "@mzizi/ui-web/shell/types.ts";
 /** What the server knows about the visitor's place for this address. */
 export interface ShellContext {
   readonly countryName: string;
+  readonly countryIso?: string | null;
   readonly place: { readonly name: string; readonly kindLabel: string; readonly path: string } | null;
   readonly chain: readonly { readonly name: string; readonly path: string }[];
   readonly rest: readonly string[];
@@ -29,11 +31,11 @@ interface Entry { readonly href: string; readonly label: string; readonly icon: 
 const GROUPS: readonly { readonly id: string; readonly label: string; readonly more?: boolean; readonly items: readonly Entry[] }[] = [
   { id: "main", label: "Main", items: [
     { href: "/", label: "Home", icon: "home" },
+    { href: "/explore", label: "Explore", icon: "compare" },
     { href: "/browse", label: "Places", icon: "pin" },
     { href: "/elections", label: "Elections", icon: "vote" },
     { href: "/leaders", label: "Leaders", icon: "tree" },
     { href: "/calendar", label: "Calendar", icon: "calendar", scoped: true },
-    { href: "/infrastructure", label: "Infrastructure", icon: "build", scoped: true },
   ] },
   { id: "politics", label: "Politics", more: true, items: [
     { href: "/parties", label: "Parties and coalitions", icon: "flag" },
@@ -46,6 +48,7 @@ const GROUPS: readonly { readonly id: string; readonly label: string; readonly m
   { id: "money", label: "Public money", more: true, items: [
     { href: "/civic", label: "Finance and projects", icon: "build" },
     { href: "/tenders", label: "Procurement", icon: "document" },
+    { href: "/infrastructure", label: "Infrastructure", icon: "build", scoped: true },
   ] },
   { id: "data", label: "Data", more: true, items: [
     { href: "/statistics", label: "Statistics", icon: "chart" },
@@ -106,7 +109,7 @@ export function AppFrame({ context, children }: { context: ShellContext; childre
       }
       sidebarTop={
         <div className="rounded-xl border border-[var(--border-default)] bg-surface-background p-3 shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
-          <p className="text-[0.68rem] font-semibold uppercase tracking-wider text-content-muted">{context.countryName}</p>
+          <p className="flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-wider text-content-muted"><Flag iso={context.countryIso} name={context.countryName} size={16} />{context.countryName}</p>
           <p className="mt-0.5 truncate text-sm font-semibold leading-tight">{context.place ? context.place.name : tr("Whole country")}</p>
           {context.place ? <p className="text-xs text-content-muted">{context.place.kindLabel}</p> : null}
           <div className="mt-2.5"><PlaceSwitcher currentPath={context.place?.path ?? null} /></div>

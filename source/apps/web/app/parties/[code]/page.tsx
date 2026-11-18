@@ -5,7 +5,8 @@ import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList } from "#/components/site/ui/charts.tsx";
 import { Gallery } from "#/components/site/ui/media.tsx";
 import { Breadcrumbs, Gaps, PageFrame, Section, Stat } from "#/components/site/ui/primitives.tsx";
-import { ksh, n, words } from "#/lib/site/format.ts";
+import { n, words } from "#/lib/site/format.ts";
+import { Money } from "#/lib/site/country.tsx";
 import { partyOf } from "#/lib/site/insights.ts";
 
 export default async function PartyRoute({ params }: { params: Promise<{ code: string }> }) {
@@ -20,7 +21,7 @@ export default async function PartyRoute({ params }: { params: Promise<{ code: s
             <h1 className="hero-title text-4xl sm:text-5xl">{d.party.name}</h1>
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <Stat label="Members listed" value={n(d.members.length)} />
-              <Stat label="Latest fund allocation" value={ksh(d.funding.at(-1)?.amountKes)} hint={d.funding.at(-1) ? `${d.funding.at(-1)!.year}` : undefined} />
+              <Stat label="Latest fund allocation" value=<Money value={d.funding.at(-1)?.amountKes} /> hint={d.funding.at(-1) ? `${d.funding.at(-1)!.year}` : undefined} />
               <Stat label="Contests entered" value={n(d.results.reduce((a, r) => a + r.candidates, 0))} />
             </div>
             <Section kicker="At the ballot" title="Votes obtained by election">

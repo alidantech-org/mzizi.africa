@@ -6,7 +6,8 @@ import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList, Donut } from "#/components/site/ui/charts.tsx";
 import { Avatar, Gallery } from "#/components/site/ui/media.tsx";
 import { Breadcrumbs, Gaps, PageFrame, Pill, Section, Stat } from "#/components/site/ui/primitives.tsx";
-import { date, ksh, n, pct, words } from "#/lib/site/format.ts";
+import { date, n, pct, words } from "#/lib/site/format.ts";
+import { Money } from "#/lib/site/country.tsx";
 import { leaderOf } from "#/lib/site/insights.ts";
 import { LikeLeader } from "#/components/site/save-buttons.tsx";
 
@@ -79,8 +80,8 @@ export default async function LeaderRoute({ params }: { params: Promise<{ id: st
               {d.fund ? (
                 <Section kicker="Public money" title={`Constituency development fund · ${d.fund.place.name}`} action={<Link className="btn btn-primary" href={`/civic/${d.fund.place.featureId}`}>Everything funded here →</Link>}>
                   <div className="grid gap-4 lg:grid-cols-2">
-                    <div className="glass card"><p className="kicker">Latest year</p><p className="num font-display text-3xl">{ksh(d.fund.latestYear?.total)}</p><p className="text-sm text-content-muted">{d.fund.latestYear?.year} allocation · {d.fund.infrastructure.projects} projects · {pct(d.fund.infrastructure.completionRate, 0)} completed</p></div>
-                    <div className="glass card"><BarList items={d.fund.classes.slice(0, 5).map((c) => ({ label: c.label, value: c.amount }))} unit="ksh" /></div>
+                    <div className="glass card"><p className="kicker">Latest year</p><p className="num font-display text-3xl"><Money value={d.fund.latestYear?.total} /></p><p className="text-sm text-content-muted">{d.fund.latestYear?.year} allocation · {d.fund.infrastructure.projects} projects · {pct(d.fund.infrastructure.completionRate, 0)} completed</p></div>
+                    <div className="glass card"><BarList items={d.fund.classes.slice(0, 5).map((c) => ({ label: c.label, value: c.amount }))} unit="money" /></div>
                   </div>
                 </Section>
               ) : null}

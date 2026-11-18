@@ -22,7 +22,7 @@ def _fnv1a(text: str) -> str:
 
 
 def phrase_key(english: str) -> str:
-    slug = re.sub(r"[^a-z0-9]+", "-", english.lower()).strip("-")
+    slug = re.sub(r"[^a-z0-9]+", "-", english.lower().replace("{}", " n ")).strip("-")
     if len(slug) > 60:
         slug = slug[:50].strip("-") + "-" + _fnv1a(slug)
     return "web.phrase." + slug

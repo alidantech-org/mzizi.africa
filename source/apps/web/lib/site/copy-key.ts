@@ -11,7 +11,7 @@ function fnv1a(text: string): string {
 }
 
 export function phraseKey(english: string): string {
-  let slug = english.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  let slug = english.toLowerCase().replaceAll("{}", " n ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   if (slug.length > 60) slug = `${slug.slice(0, 50).replace(/-+$/g, "")}-${fnv1a(slug)}`;
   return `web.phrase.${slug}`;
 }

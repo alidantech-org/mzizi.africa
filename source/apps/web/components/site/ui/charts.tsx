@@ -1,11 +1,13 @@
 "use client";
 
 /** Small SVG charts drawn from the theme's colours: no chart library, every one readable with a text alternative. */
-import { ksh, n, n1, pct, short } from "#/lib/site/format.ts";
+import type { ReactNode } from "react";
+import { formatMoney, useCountry } from "#/lib/site/country.tsx";
+import { n, n1, pct, short } from "#/lib/site/format.ts";
 
-const FORMATS = { n, short, ksh: (v: number) => ksh(v), pct: (v: number) => pct(v) } as const;
+const FORMATS = { n, short, pct: (v: number) => pct(v) } as const;
 /** The number styles a bar list can show: named so a server page can ask for one without passing a function. */
-export type BarFormat = keyof typeof FORMATS;
+export type BarFormat = keyof typeof FORMATS | "money";
 
 export function Sparkline({ points, height = 56, width = 220, label }: { points: readonly number[]; height?: number; width?: number; label: string }) {
   if (points.length < 2) return null;
@@ -68,7 +70,8 @@ export function LineChart({ points, unit, label, height = 220 }: { points: reado
 }
 
 export function BarList({ items, unit = "n", max }: { items: readonly { label: string; value: number; note?: string }[]; unit?: BarFormat; max?: number }) {
-  const format = FORMATS[unit];
+  const { currencyCode } = useCountry();
+  const format = unit === "money" ? (v: number) => formatMoney(v, currencyCode) : FORMATS[unit];
   const top = max ?? Math.max(...items.map((i) => i.value), 1);
   return (
     <ul className="space-y-2.5">
@@ -88,7 +91,7 @@ export function BarList({ items, unit = "n", max }: { items: readonly { label: s
 const PALETTE = ["var(--clay)", "var(--calabash)", "var(--raffia)", "var(--indigo)", "var(--lagoon)", "var(--plum)", "color-mix(in oklch, var(--clay) 50%, var(--cream))", "color-mix(in oklch, var(--indigo) 50%, var(--cream))"];
 export const paletteAt = (i: number): string => PALETTE[i % PALETTE.length]!;
 
-export function Donut({ slices, label, center }: { slices: readonly { label: string; value: number }[]; label: string; center?: string }) {
+export function Donut({ slices, label, center }: { slices: readonly { label: string; value: number }[]; label: string; center?: ReactNode }) {
   const total = slices.reduce((a, s) => a + s.value, 0) || 1;
   const r = 52;
   const c = 2 * Math.PI * r;

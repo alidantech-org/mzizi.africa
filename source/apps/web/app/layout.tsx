@@ -7,6 +7,7 @@ import "#/app/globals.css";
 import { AppFrame } from "#/components/shell/app-frame.tsx";
 import { THEME_INIT } from "#/components/site/theme-toggle.tsx";
 import { LanguageProvider } from "#/lib/site/i18n.tsx";
+import { CountryProvider } from "#/lib/site/country.tsx";
 import { SavedProvider } from "#/lib/site/saved.tsx";
 import { loadContext, loadCopy, serverLanguage } from "#/lib/server/data.ts";
 
@@ -26,6 +27,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const copy = await loadCopy(language, context?.country.code);
   const shell = {
     countryName: context?.country.name ?? "Mzizi",
+    countryIso: context?.country.isoCode ?? null,
     place: context?.place ?? null,
     chain: (context?.chain ?? []).map((unit) => ({ name: unit.name, path: unit.path })),
     rest: context?.rest ?? [],
@@ -35,9 +37,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT }} /></head>
       <body className={`${display.variable} ${body.variable}`}>
         <LanguageProvider initialLanguage={language} copy={copy}>
-          <SavedProvider>
-            <AppFrame context={shell}>{children}</AppFrame>
-          </SavedProvider>
+          <CountryProvider country={{ name: shell.countryName, currencyCode: context?.country.currencyCode ?? null }}>
+            <SavedProvider>
+              <AppFrame context={shell}>{children}</AppFrame>
+            </SavedProvider>
+          </CountryProvider>
         </LanguageProvider>
       </body>
     </html>

@@ -9,12 +9,16 @@ import { StatMap } from "#/components/site/stat-map.tsx";
 import { Breadcrumbs, Gaps, PageFrame, Section, Stat } from "#/components/site/ui/primitives.tsx";
 import { LineChart } from "#/components/site/ui/charts.tsx";
 import { n, short } from "#/lib/site/format.ts";
+import { useCountry } from "#/lib/site/country.tsx";
+import { useLanguage } from "#/lib/site/i18n.tsx";
 import { mapOf, metrics, browse, seriesOf } from "#/lib/site/insights.ts";
 import { optional, useAsync } from "#/lib/site/use-async.ts";
 
 const EXTRA = [{ code: "sta.population.density", title: "Population density", unit: "per km²" }, { code: "sta.area.km2", title: "Land area", unit: "km²" }];
 
 function Explorer() {
+  const country = useCountry();
+  const { tr } = useLanguage();
   const router = useRouter();
   const params = useSearchParams();
   const indicator = params.get("indicator") ?? "sta.population.total";
@@ -31,7 +35,7 @@ function Explorer() {
   return (
     <PageFrame wide>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Statistics" }]} />
-      <p className="kicker">Kenya in numbers</p>
+      <p className="kicker">{tr("{} in numbers", country.name)}</p>
       <h1 className="hero-title text-4xl sm:text-5xl">Statistics</h1>
       <p className="mt-2 max-w-2xl text-content-muted">Population, health, education, poverty, water and openness — for the whole country, every county, constituency and ward, and for towns and villages where they are recorded.</p>
       <AsyncView loaded={optional(series)}>

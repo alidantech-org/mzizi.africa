@@ -2,6 +2,7 @@
 
 /** The hierarchy one level at a time, in the order the electoral commission lists it: country, county, constituency, ward, then towns and villages. */
 import Link from "next/link";
+import { useCountry } from "#/lib/site/country.tsx";
 import { useMemo, useState } from "react";
 
 import { Icon } from "#/components/brand/icon.tsx";
@@ -26,6 +27,7 @@ export function BrowseView({ featureId }: { featureId?: string }) {
 }
 
 function Body({ data, featureId, filter, setFilter }: { data: Awaited<ReturnType<typeof browse>>; featureId?: string; filter: string; setFilter: (v: string) => void }) {
+  const country = useCountry();
   const kind = data.place?.kindCode.replace(/^.*\./, "") ?? "country";
   const kids = useMemo(() => data.children.filter((c) => c.name.toLowerCase().includes(filter.toLowerCase())), [data, filter]);
   const groups = useMemo(() => {
@@ -38,7 +40,7 @@ function Body({ data, featureId, filter, setFilter }: { data: Awaited<ReturnType
       <PlaceTrail chain={data.chain} section={{ label: "Places", href: "/browse" }} />
       {featureId && data.place ? <PlaceTabs featureId={featureId} /> : null}
       <p className="kicker">{data.place?.kindLabel ?? "Country"}</p>
-      <h1 className="hero-title text-4xl sm:text-5xl">{data.place?.name ?? "Kenya"}</h1>
+      <h1 className="hero-title text-4xl sm:text-5xl">{data.place?.name ?? country.name}</h1>
       <p className="mt-2 max-w-2xl text-content-muted">
         {data.children.length > 0 ? `${data.children.length} ${NEXT[kind] ?? "places"} inside. Choose one to go deeper, or open its statistics, elections and money.` : "This is the smallest place recorded here. Open its profile to see who serves it."}
       </p>
@@ -69,7 +71,7 @@ function Body({ data, featureId, filter, setFilter }: { data: Awaited<ReturnType
           </ul>
         </section>
       ))}
-      {data.children.length === 0 ? <Gaps topic={`places inside ${data.place?.name ?? "Kenya"}`} items={[`No smaller places are recorded inside ${data.place?.name ?? "this place"} yet. Towns and villages are added where a source names them.`]} /> : null}
+      {data.children.length === 0 ? <Gaps topic={`places inside ${data.place?.name ?? country.name}`} items={[`No smaller places are recorded inside ${data.place?.name ?? "this place"} yet. Towns and villages are added where a source names them.`]} /> : null}
     </>
   );
 }

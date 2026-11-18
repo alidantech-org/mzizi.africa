@@ -12,6 +12,7 @@ import { group, rootStep, stages, step } from "./lib/exec.ts";
 import { root } from "./lib/paths.ts";
 import { select } from "./lib/projects.ts";
 import { checkBoundaries } from "./tasks/boundaries.ts";
+import { checkFrontend } from "./tasks/frontend.ts";
 import * as dryv from "./tasks/dryv.ts";
 import { type QualityKind, qualitySteps } from "./tasks/quality.ts";
 import { forgetEditorCache, syncSchemas } from "./tasks/schemas.ts";
@@ -107,12 +108,17 @@ export const commands: Record<string, Command> = {
     summary: "report import-boundary violations of packages and the engine (--strict fails on any)",
     run: ({ rest }) => checkBoundaries(rest.includes("--strict")),
   },
+  frontend: {
+    summary: "gate the web app: no browser fetch, no route handlers, no client route files",
+    run: () => checkFrontend(),
+  },
   check: {
-    summary: "format:check, lint, typecheck, structure, boundaries and test",
+    summary: "format:check, lint, typecheck, structure, boundaries, frontend gates and test",
     run: async ({ only }) => {
       const structure = checkStructure();
       const boundaries = checkBoundaries(true);
-      return (await stages(checkStages(only))) && structure && boundaries;
+      const frontend = checkFrontend();
+      return (await stages(checkStages(only))) && structure && boundaries && frontend;
     },
   },
   "check:all": {
