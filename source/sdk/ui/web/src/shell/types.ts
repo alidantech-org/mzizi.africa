@@ -12,6 +12,8 @@ export interface NavGroup {
   readonly id: string;
   readonly label: string;
   readonly items: readonly NavItem[];
+  /** Links that stay out of sight until the visitor asks for more. */
+  readonly more?: boolean;
 }
 
 /** One step of the breadcrumbs: a link, except the last which is the current page. */

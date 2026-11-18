@@ -127,7 +127,9 @@ h3 {
     radial-gradient(52rem 34rem at 96% 2%, color-mix(in oklch, var(--indigo) 16%, transparent), transparent 70%),
     radial-gradient(44rem 30rem at 50% 108%, color-mix(in oklch, var(--calabash) 20%, transparent), transparent 70%);
 }
-body { background-image: var(--mesh); background-attachment: fixed; background-repeat: no-repeat; min-height: 100vh; }
+body { min-height: 100vh; }
+:root[data-theme="dark"] body { background-image: var(--mesh); background-attachment: fixed; background-repeat: no-repeat; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { background-image: var(--mesh); background-attachment: fixed; background-repeat: no-repeat; } }
 ::selection { background: color-mix(in oklch, var(--clay) 35%, transparent); }
 :focus-visible { outline: 2px solid var(--focus-indicator); outline-offset: 2px; border-radius: 8px; }
 
@@ -135,24 +137,24 @@ body { background-image: var(--mesh); background-attachment: fixed; background-r
   background: var(--surface-glass);
   -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.5);
   backdrop-filter: blur(var(--blur-glass)) saturate(1.5);
-  border: 1px solid var(--border-glass);
-  box-shadow: var(--shadow), inset 0 1px 0 var(--border-glass);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 1px rgb(0 0 0 / 0.02);
 }
 .glass-strong {
   background: var(--surface-glassStrong);
   -webkit-backdrop-filter: blur(calc(var(--blur-glass) * 1.4)) saturate(1.6);
   backdrop-filter: blur(calc(var(--blur-glass) * 1.4)) saturate(1.6);
-  border: 1px solid var(--border-glass);
-  box-shadow: var(--shadow-lift);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.14), 0 1px 2px rgb(0 0 0 / 0.05);
 }
 .card { border-radius: var(--radius); padding: 1.25rem; }
 .card-lift { transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.25s; }
-.card-lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift), inset 0 1px 0 var(--border-glass); }
+.card-lift:hover { transform: translateY(-2px); box-shadow: 0 10px 28px -12px rgb(0 0 0 / 0.18); }
 .kicker { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: var(--clay); }
 .hero-title { font-family: var(--font-display); letter-spacing: -0.02em; line-height: 1.05; }
 .gradient-text { background: linear-gradient(100deg, var(--clay), var(--calabash) 60%, var(--raffia)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .chip { display: inline-flex; align-items: center; gap: 0.35rem; border-radius: 9999px; padding: 0.2rem 0.7rem; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border-default); background: var(--surface-glass); }
-.btn { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 9999px; padding: 0.5rem 1.1rem; font-size: 0.875rem; font-weight: 600; transition: transform 0.15s, background 0.2s, box-shadow 0.2s; cursor: pointer; }
+.btn { display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 0.65rem; min-height: 2.25rem; padding: 0.4rem 0.95rem; font-size: 0.875rem; font-weight: 600; transition: transform 0.15s, background 0.2s, box-shadow 0.2s; cursor: pointer; }
 .btn:active { transform: scale(0.97); }
 .btn-primary { background: linear-gradient(135deg, var(--clay), color-mix(in oklch, var(--clay) 70%, var(--calabash))); color: var(--cream); box-shadow: 0 8px 20px -10px var(--clay); }
 .btn-primary:hover { box-shadow: 0 12px 26px -10px var(--clay); }

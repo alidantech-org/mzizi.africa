@@ -26,28 +26,28 @@ export interface ShellContext {
 interface Entry { readonly href: string; readonly label: string; readonly icon: IconName; readonly scoped?: boolean }
 
 /** The sections of the product, in groups. Section words are the English text; the sidebar shows them in the visitor's language. */
-const GROUPS: readonly { readonly id: string; readonly label: string; readonly items: readonly Entry[] }[] = [
-  { id: "explore", label: "Explore", items: [
+const GROUPS: readonly { readonly id: string; readonly label: string; readonly more?: boolean; readonly items: readonly Entry[] }[] = [
+  { id: "main", label: "Main", items: [
     { href: "/", label: "Home", icon: "home" },
     { href: "/browse", label: "Places", icon: "pin" },
+    { href: "/elections", label: "Elections", icon: "vote" },
+    { href: "/leaders", label: "Leaders", icon: "tree" },
     { href: "/calendar", label: "Calendar", icon: "calendar", scoped: true },
     { href: "/infrastructure", label: "Infrastructure", icon: "build", scoped: true },
   ] },
-  { id: "people", label: "People and politics", items: [
-    { href: "/leaders", label: "Leaders", icon: "tree" },
-    { href: "/parties", label: "Politics", icon: "flag" },
-    { href: "/elections", label: "Elections", icon: "vote" },
-  ] },
-  { id: "government", label: "Government", items: [
-    { href: "/institutions", label: "Institutions", icon: "parliament" },
-    { href: "/constitution", label: "Law", icon: "book" },
+  { id: "politics", label: "Politics", more: true, items: [
+    { href: "/parties", label: "Parties and coalitions", icon: "flag" },
     { href: "/parliament", label: "Parliament", icon: "parliament" },
   ] },
-  { id: "money", label: "Public money", items: [
+  { id: "government", label: "Government", more: true, items: [
+    { href: "/institutions", label: "Institutions", icon: "parliament" },
+    { href: "/constitution", label: "Law", icon: "book" },
+  ] },
+  { id: "money", label: "Public money", more: true, items: [
     { href: "/civic", label: "Finance and projects", icon: "build" },
     { href: "/tenders", label: "Procurement", icon: "document" },
   ] },
-  { id: "data", label: "Data", items: [
+  { id: "data", label: "Data", more: true, items: [
     { href: "/statistics", label: "Statistics", icon: "chart" },
     { href: "/leaderboards", label: "Rankings", icon: "trophy" },
     { href: "/compare", label: "Compare", icon: "chart" },
@@ -68,6 +68,7 @@ export function AppFrame({ context, children }: { context: ShellContext; childre
   const base = context.place ? `/${context.place.path}` : "";
   const groups: NavGroup[] = GROUPS.map((group) => ({
     id: group.id,
+    more: group.more,
     label: tr(group.label),
     items: group.items.map((item) => ({
       href: item.scoped && base ? `${base}${item.href}` : item.href,
@@ -83,10 +84,12 @@ export function AppFrame({ context, children }: { context: ShellContext; childre
   });
   return (
     <AppShell
-      logo={<Logo compact />}
+      logo={<Logo />}
       groups={groups}
       crumbs={crumbs}
       menuLabel={tr("Menu")}
+      moreLabel={tr("More")}
+      lessLabel={tr("Less")}
       breadcrumbLabel={tr("Breadcrumb")}
       search={<GlobalSearchBox compact />}
       actions={
@@ -102,18 +105,16 @@ export function AppFrame({ context, children }: { context: ShellContext; childre
         </>
       }
       sidebarTop={
-        <div className="space-y-3">
-          <div>
-            <p className="kicker">{context.countryName}</p>
-            <p className="font-display text-lg leading-tight">{context.place ? context.place.name : tr("Whole country")}</p>
-            {context.place ? <p className="text-xs text-content-muted">{context.place.kindLabel}</p> : null}
-          </div>
-          <PlaceSwitcher currentPath={context.place?.path ?? null} />
-          {context.place ? <Link href="/" className="text-xs font-semibold text-clay hover:underline">{tr("Show the whole country")}</Link> : null}
+        <div className="rounded-xl border border-[var(--border-default)] bg-surface-background p-3 shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
+          <p className="text-[0.68rem] font-semibold uppercase tracking-wider text-content-muted">{context.countryName}</p>
+          <p className="mt-0.5 truncate text-sm font-semibold leading-tight">{context.place ? context.place.name : tr("Whole country")}</p>
+          {context.place ? <p className="text-xs text-content-muted">{context.place.kindLabel}</p> : null}
+          <div className="mt-2.5"><PlaceSwitcher currentPath={context.place?.path ?? null} /></div>
+          {context.place ? <Link href="/" className="mt-2 block text-xs font-medium text-clay hover:underline">{tr("Show the whole country")}</Link> : null}
         </div>
       }
       sidebarFoot={
-        <ul className="space-y-1.5">
+        <ul className="space-y-1">
           <li><Link href="/profile" className="hover:underline">{tr("Privacy and preferences")}</Link></li>
           <li><Link href="/source-browse" className="hover:underline">{tr("Data sources and licences")}</Link></li>
         </ul>

@@ -14,12 +14,12 @@ export const themes = brand.themes({
     {
       // Colour: an earth palette graded in OKLCH (perceptually even lightness; Dryv also writes the sRGB hex that
       // Flutter needs). Any CSS notation is accepted here: hex, rgb(), hsl(), hwb(), lab(), lch(), oklab(), oklch().
-      oat: token.color("oklch(0.962 0.014 85)"),
-      cream: token.color("oklch(0.985 0.009 85)"),
-      sand: token.color("oklch(0.915 0.03 82)"),
+      oat: token.color("oklch(1 0 0)"),
+      cream: token.color("oklch(1 0 0)"),
+      sand: token.color("oklch(0.968 0.004 85)"),
       ink: token.color("oklch(0.23 0.025 55)"),
       inkSoft: token.color("oklch(0.5 0.035 60)"),
-      line: token.color("oklch(0.885 0.025 80)"),
+      line: token.color("oklch(0.918 0.005 85)"),
       clay: token.color("oklch(0.585 0.152 41)"),
       calabash: token.color("oklch(0.735 0.138 76)"),
       raffia: token.color("oklch(0.545 0.095 130)"),
@@ -35,8 +35,8 @@ export const themes = brand.themes({
       sky: token.color("oklch(0.78 0.1 230)"),
       skyDark: token.color("oklch(0.45 0.09 240)"),
       // Glass: translucent surfaces for cards, bars and sheets, with a bright rim (use with backdrop blur).
-      glass: token.color("oklch(0.99 0.006 85 / 0.62)"),
-      glassStrong: token.color("oklch(0.99 0.006 85 / 0.82)"),
+      glass: token.color("oklch(1 0 0 / 0.8)"),
+      glassStrong: token.color("oklch(1 0 0 / 0.94)"),
       glassEdge: token.color("oklch(1 0 0 / 0.65)"),
       glassDark: token.color("oklch(0.3 0.02 55 / 0.55)"),
       glassStrongDark: token.color("oklch(0.27 0.02 55 / 0.82)"),

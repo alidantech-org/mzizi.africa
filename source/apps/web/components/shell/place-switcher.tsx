@@ -35,7 +35,7 @@ export function PlaceSwitcher({ currentPath }: { currentPath: string | null }) {
         onChange={(event) => setQuery(event.target.value)}
         placeholder={currentPath ? tr("Change place") : tr("Choose your place")}
         autoComplete="off"
-        className="glass w-full rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[var(--clay)]"
+        className="w-full rounded-lg border border-[var(--border-default)] bg-surface-sunken px-3 py-2 text-sm outline-none placeholder:text-content-muted focus:border-[var(--clay)] focus:ring-2 focus:ring-[var(--clay)]/30"
       />
       {query.trim().length >= 2 ? (
         <ul className="glass-strong absolute inset-x-0 top-full z-50 mt-1 max-h-72 overflow-auto rounded-xl p-1 text-sm" role="listbox">

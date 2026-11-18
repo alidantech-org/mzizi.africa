@@ -10,7 +10,7 @@ abstract final class MziziTokens {
   static const double blurGlass = 18.0;
   static const Color calabash = Color(0xFFDA9C31);
   static const Color clay = Color(0xFFC45629);
-  static const Color cream = Color(0xFFFDFAF3);
+  static const Color cream = Color(0xFFFFFFFF);
   static const Color danger = Color(0xFFC02C26);
   static const Color deepBark = Color(0xFF40352E);
   static const List<String> fontBody = [
@@ -38,19 +38,19 @@ abstract final class MziziTokens {
     'Consolas',
     'monospace',
   ];
-  static const Color glass = Color(0x9EFEFCF7);
+  static const Color glass = Color(0xCCFFFFFF);
   static const Color glassDark = Color(0x8C362B24);
   static const Color glassEdge = Color(0xA6FFFFFF);
   static const Color glassEdgeDark = Color(0x24FFFFFF);
-  static const Color glassStrong = Color(0xD1FEFCF7);
+  static const Color glassStrong = Color(0xF0FFFFFF);
   static const Color glassStrongDark = Color(0xD12E241D);
   static const Color indigo = Color(0xFF27527C);
   static const Color ink = Color(0xFF261A12);
   static const Color inkSoft = Color(0xFF735F4F);
   static const Color lagoon = Color(0xFF0698A4);
-  static const Color line = Color(0xFFE2D8C7);
+  static const Color line = Color(0xFFE5E4E0);
   static const Color mist = Color(0xFFC7BCAC);
-  static const Color oat = Color(0xFFF7F2E8);
+  static const Color oat = Color(0xFFFFFFFF);
   static const Color plum = Color(0xFF89396B);
   static const double radius = 20.0;
   static const double radiusLg = 30.0;
@@ -60,7 +60,7 @@ abstract final class MziziTokens {
   static const Color rampHigh = Color(0xFF9B2014);
   static const Color rampLow = Color(0xFFF5EBCE);
   static const Color rampMid = Color(0xFFE38D3D);
-  static const Color sand = Color(0xFFEDE1CD);
+  static const Color sand = Color(0xFFF6F4F1);
   static const List<BoxShadow> shadow = [
     BoxShadow(
       color: Color(0x383D281A),
