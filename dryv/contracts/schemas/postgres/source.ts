@@ -342,3 +342,62 @@ export const Attributions = source
   .facets({
     storage: dryv.storage("attributions").index("publisherId").index("artifactId").index("licenseValueId"),
   });
+
+/*---------------- source.slugs ----------------*/
+export const Slugs = source
+  .schema("Slugs", {
+    countryId: belongsTo(() => Country),
+    /** Scheme src.slug.namespace: place, leader, party, election, law, project, tender, institution, facility, event, indicator. A slug is unique only inside its namespace and parent. */
+    namespaceId: belongsTo(() => Value).tags("scheme:ref.sch.src.slug.namespace"),
+    /** The address segment: lowercase words joined by hyphens, no kind word unless a collision needs it. Never an id. */
+    slug: dryv.field(sharedProperties.NonEmptyString255),
+    /** The slug row of the place this one lives under in the country's canonical routing hierarchy; absent for a first-level or standalone slug. */
+    parentSlugId: belongsTo(() => Slugs).maybe(),
+    /** Absent for a language-neutral slug; set for a slug that exists only in one language (a translated section or law). */
+    languageId: belongsTo(() => Language).maybe(),
+    /** The canonical slug this one redirects or translates to; absent on the canonical row itself. One level only. */
+    canonicalSlugId: belongsTo(() => Slugs).maybe(),
+  })
+  .extends(baseSchemas.CodedPeriodSubjectEntity)
+  .description(
+    "One public address segment for one subject row. Identifies a thing by a clean name under its parent; closed rows keep history so a renamed or re-parented thing redirects instead of breaking. Carries no title: titles come from the name tables.",
+  )
+  .role("entity");
+
+const activeSlug = source.expression(
+  "ActiveSlug",
+  Slugs.check((v) => v.toYear.isNull()),
+);
+
+Slugs.facets({
+  storage: dryv
+    .storage("slugs")
+    .unique("countryId", "namespaceId", "parentSlugId", "slug", "languageId")
+    .where(activeSlug)
+    .index("subjectTable", "subjectId")
+    .index("parentSlugId")
+    .index("canonicalSlugId")
+    .index("namespaceId"),
+});
+
+/*---------------- source.slug_relations ----------------*/
+export const SlugRelations = source
+  .schema("SlugRelations", {
+    fromSlugId: belongsTo(() => Slugs),
+    toSlugId: belongsTo(() => Slugs),
+    /** Scheme src.slug.relation: same-as, translation-of, alias-of, supersedes, covers-same-area, contains. */
+    relationKindId: belongsTo(() => Value).tags("scheme:ref.sch.src.slug.relation"),
+  })
+  .extends(baseSchemas.PeriodEntity)
+  .rule("SlugRelationEndsDiffer", rule.differs("fromSlugId", "toSlugId"))
+  .description(
+    "A dated relation between two slugs that name the same thing or the same area: translations, aliases, a constituency and a sub-county covering the same land. Must not form cycles.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("slug_relations")
+      .unique("fromSlugId", "toSlugId", "relationKindId")
+      .index("toSlugId")
+      .index("relationKindId"),
+  });

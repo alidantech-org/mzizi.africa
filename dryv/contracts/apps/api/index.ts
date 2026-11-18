@@ -25,7 +25,7 @@ import { referenceOperations } from "./reference.ts";
 export default dryv
   .app({ name: "mzizi-api" })
   .info({ title: "Mzizi API", version: "0.1.0" })
-  .stores({ main: { description: "Verified knowledge, evidence metadata, platform access and audit records." } })
+  .stores({ main: { description: "Verified knowledge, evidence metadata, platform access." } })
   .accessStore("main", { write: true })
   .provides(
     ...Object.values(authOperations),

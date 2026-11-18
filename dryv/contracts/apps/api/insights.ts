@@ -238,7 +238,6 @@ const documents = insights.schemas({
     rows: dryv.field(dryv.dynamic()).array(),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
-  FactList: dryv.schema({ facts: dryv.field(dryv.dynamic()).array(), gaps: dryv.field(p.NonEmptyString500).array() }),
   NearbyProjects: dryv.schema({
     radiusKm: dryv.field(p.Number),
     projects: dryv.field(dryv.dynamic()).array(),
@@ -314,7 +313,6 @@ const inputs = insights.schemas({
     metrics: dryv.field(p.NonEmptyString1000).optional(),
   }),
   TreeInput: dryv.schema({ featureId: dryv.field(p.Id).optional() }),
-  FactsInput: dryv.schema({ featureId: dryv.field(p.Id).optional(), limit: dryv.field(props.Limit).optional() }),
   NearbyInput: dryv.schema({
     latitude: dryv.field(props.Latitude),
     longitude: dryv.field(props.Longitude),
@@ -541,16 +539,6 @@ export const insightOperations = reads.operations({
     .output(documents.NearbyProjects)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/projects/near").input(input, dryv.queryObject()).output(output),
-    })),
-
-  ListFacts: dryv
-    .operation()
-    .role("list")
-    .description("Did-you-know facts about the country, and those tagged to a place and the places above it.")
-    .input(inputs.FactsInput)
-    .output(documents.FactList)
-    .facets(({ input, output }) => ({
-      http: dryv.http("GET", "/v1/facts").input(input, dryv.queryObject()).output(output),
     })),
 
   GetLeaderTree: dryv

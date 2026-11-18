@@ -7,7 +7,6 @@
 import { dryv } from "@dryvcode/author";
 import { shared } from "#/schemas/_shared.ts";
 import { accountability } from "#/schemas/postgres/accountability.ts";
-import { audit } from "#/schemas/postgres/audit.ts";
 import { auth } from "#/schemas/postgres/auth.ts";
 import { civic } from "#/schemas/postgres/civic.ts";
 import { filesystem } from "#/schemas/postgres/filesystem.ts";
@@ -18,7 +17,6 @@ import { legal } from "#/schemas/postgres/legal.ts";
 import { official } from "#/schemas/postgres/official.ts";
 import { politics } from "#/schemas/postgres/politics.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
-import { facts } from "#/schemas/postgres/facts.ts";
 import { activities } from "#/schemas/postgres/activities.ts";
 import { statistics } from "#/schemas/postgres/statistics.ts";
 import { source } from "#/schemas/postgres/source.ts";
@@ -26,11 +24,10 @@ import { source } from "#/schemas/postgres/source.ts";
 export default dryv
   .app({ name: "mzizi-pgsql" })
   .info({ title: "Mzizi PostgreSQL", version: "0.1.0" })
-  .stores({ main: { description: "Verified knowledge, evidence metadata, platform access and audit records." } })
+  .stores({ main: { description: "Verified knowledge, evidence metadata, platform access." } })
   .accessStore("main", { write: true })
   .groups(
     shared,
-    audit,
     auth,
     reference,
     geography,
@@ -45,5 +42,4 @@ export default dryv
     accountability,
     statistics,
     activities,
-    facts,
   );

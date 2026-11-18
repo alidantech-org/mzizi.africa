@@ -113,7 +113,6 @@ const app_app = dryv
     insightOperations.GetProject,
     insightOperations.ListTenders,
     insightOperations.GetNearbyProjects,
-    insightOperations.ListFacts,
     insightOperations.GetLeaderTree,
     insightOperations.ListInstitutions,
     insightOperations.GetInstitution,

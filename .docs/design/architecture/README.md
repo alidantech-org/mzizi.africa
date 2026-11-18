@@ -21,3 +21,4 @@ System architecture details. These documents are supporting detail; the eight ro
 - [USER_INTERACTIONS_AND_TRUST](USER_INTERACTIONS_AND_TRUST.md) — proposal: device identity, likes and views, mobile-only posting, GPS proof, moderation, privacy
 - [CONTRACT_AUTHORING_FOR_FRONTENDS](CONTRACT_AUTHORING_FOR_FRONTENDS.md) — proposal: features, views, intents, composed reads, server rendering, gates
 - [DRYV_CAPABILITY_PLAN](DRYV_CAPABILITY_PLAN.md) — proposal: Dryv capabilities needed, order and proving slice
+- [FEATURE_REGISTER](FEATURE_REGISTER.md) — living register of every owner-mentioned feature, where it is designed and its status
