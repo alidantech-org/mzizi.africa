@@ -9,6 +9,7 @@ import * as B from "#/modules/common/schema/types/base";
 // RELATED ENTITY TYPES
 // ----------------------------------
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as LanguageTypes from "#/modules/reference/schema/types/language/language.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -35,17 +36,21 @@ export interface ICountry extends B.IBase {
   code: string;
   continentId: string | null;
   currencyId: string | null;
+  defaultLanguageId: string | null;
   designationId: string | null;
   establishedOn: Date | null;
+  isServed: boolean;
   isoAlpha2: string | null;
   isoAlpha3: string | null;
   isoNumeric: string | null;
   name: string;
   officialName: string | null;
   recognitionStatusId: string | null;
+  subdomain: string | null;
   subregionId: string | null;
   readonly continent?: ValueTypes.IValue;
   readonly currency?: ValueTypes.IValue;
+  readonly defaultLanguage?: LanguageTypes.ILanguage;
   readonly designation?: ValueTypes.IValue;
   readonly recognitionStatus?: ValueTypes.IValue;
   readonly subregion?: ValueTypes.IValue;
@@ -140,6 +145,7 @@ export type ICountryAsManyRelationQuery = Q.IAsManyRelationQuery<
 export interface ICountryRelationMap extends Record<CountryRelationKey, unknown> {
   continent: ValueTypes.IValueAsOneRelationQuery;
   currency: ValueTypes.IValueAsOneRelationQuery;
+  defaultLanguage: LanguageTypes.ILanguageAsOneRelationQuery;
   designation: ValueTypes.IValueAsOneRelationQuery;
   recognitionStatus: ValueTypes.IValueAsOneRelationQuery;
   subregion: ValueTypes.IValueAsOneRelationQuery;

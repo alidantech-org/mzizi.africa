@@ -49,9 +49,9 @@ class _FeatureDetailScreenState extends State<FeatureDetailScreen> {
       setState(() => _error = 'Missing address value.');
       return;
     }
-    final result = await GeographyFeature(
-      MziziApi.connection,
-    ).getFeature(featureId: featureId);
+    final result = await GeographyFeature(MziziApi.connection).getFeature(
+      featureId: featureId,
+    );
     if (!mounted) return;
     setState(() {
       if (result.isError) {
@@ -59,8 +59,7 @@ class _FeatureDetailScreenState extends State<FeatureDetailScreen> {
         return;
       }
       _error = null;
-      _record =
-          jsonDecode(jsonEncode(result.dataOrNull)) as Map<String, Object?>?;
+      _record = jsonDecode(jsonEncode(result.dataOrNull)) as Map<String, Object?>?;
     });
   }
 
@@ -78,9 +77,7 @@ class _FeatureDetailScreenState extends State<FeatureDetailScreen> {
                 for (final column in _scalars)
                   DetailEntry(
                     label: column.label,
-                    value: record[column.key] == null
-                        ? null
-                        : '${record[column.key]}',
+                    value: record[column.key] == null ? null : '${record[column.key]}',
                   ),
               ],
               missingText: 'Not recorded',

@@ -4,7 +4,7 @@ import { IsNull, type Repository } from "typeorm";
 import { EntityRepository, type IUpdatableRepository } from "#/database/base/entity-repository.ts";
 import { BaseQueryDto } from "#/database/base/base-query.dto.ts";
 import type { IFindAllResponse } from "#/database/base/query.types.ts";
-import { ChangesEntity } from "#/modules/geography/schema/entities/changes.entity.ts";
+import { GeographyChangesEntity } from "#/modules/geography/schema/entities/changes.entity.ts";
 import * as Changes from "#/modules/geography/schema/types/changes/index.ts";
 
 /**
@@ -15,17 +15,17 @@ import * as Changes from "#/modules/geography/schema/types/changes/index.ts";
 @Injectable()
 export class ChangesRepository
   extends EntityRepository<
-    ChangesEntity,
+    GeographyChangesEntity,
     Changes.Types.ChangesSortableField,
     Changes.Types.ChangesEditableField,
     Changes.Types.ChangesSelectableField,
     Changes.Types.IChangesCreatable
   >
-  implements IUpdatableRepository<ChangesEntity, Changes.Types.IChangesUpdatable>
+  implements IUpdatableRepository<GeographyChangesEntity, Changes.Types.IChangesUpdatable>
 {
   constructor(
-    @InjectRepository(ChangesEntity)
-    repository: Repository<ChangesEntity>,
+    @InjectRepository(GeographyChangesEntity)
+    repository: Repository<GeographyChangesEntity>,
   ) {
     super(repository, Changes.Config.CHANGES_QUERY_OPTIONS);
   }
@@ -34,32 +34,32 @@ export class ChangesRepository
   async updateEditable(
     id: string,
     data: Changes.Types.IChangesUpdatable,
-  ): Promise<ChangesEntity | null> {
+  ): Promise<GeographyChangesEntity | null> {
     const stamped = await this.stampUpdate(id, data);
     return stamped === null ? null : await this.update(id, stamped);
   }
 
   /** Find changes by change kind id, paged by the shared query. */
   async findByChangeKind(
-    query: BaseQueryDto<ChangesEntity>,
-    changeKindId: NonNullable<ChangesEntity["changeKindId"]>,
-  ): Promise<IFindAllResponse<ChangesEntity>> {
+    query: BaseQueryDto<GeographyChangesEntity>,
+    changeKindId: NonNullable<GeographyChangesEntity["changeKindId"]>,
+  ): Promise<IFindAllResponse<GeographyChangesEntity>> {
     return await this.findByQuery(query, { changeKindId, deletedAt: IsNull() });
   }
 
   /** Find changes by predecessor feature id, paged by the shared query. */
   async findByPredecessorFeature(
-    query: BaseQueryDto<ChangesEntity>,
-    predecessorFeatureId: NonNullable<ChangesEntity["predecessorFeatureId"]>,
-  ): Promise<IFindAllResponse<ChangesEntity>> {
+    query: BaseQueryDto<GeographyChangesEntity>,
+    predecessorFeatureId: NonNullable<GeographyChangesEntity["predecessorFeatureId"]>,
+  ): Promise<IFindAllResponse<GeographyChangesEntity>> {
     return await this.findByQuery(query, { predecessorFeatureId, deletedAt: IsNull() });
   }
 
   /** Find changes by successor feature id, paged by the shared query. */
   async findBySuccessorFeature(
-    query: BaseQueryDto<ChangesEntity>,
-    successorFeatureId: NonNullable<ChangesEntity["successorFeatureId"]>,
-  ): Promise<IFindAllResponse<ChangesEntity>> {
+    query: BaseQueryDto<GeographyChangesEntity>,
+    successorFeatureId: NonNullable<GeographyChangesEntity["successorFeatureId"]>,
+  ): Promise<IFindAllResponse<GeographyChangesEntity>> {
     return await this.findByQuery(query, { successorFeatureId, deletedAt: IsNull() });
   }
 }

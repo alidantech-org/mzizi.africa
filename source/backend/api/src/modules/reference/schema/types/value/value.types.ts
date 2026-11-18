@@ -32,6 +32,8 @@ import type {
 /** A controlled classification member within one scheme, with optional supersession and an optional broader parent value in the same scheme. Wider, cross-scheme or many-parent links use value relations. */
 export interface IValue extends B.IBase {
   code: string;
+  colorToken: string | null;
+  iconCode: string | null;
   label: string;
   parentId: string | null;
   position: number | null;

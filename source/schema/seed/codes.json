@@ -22,7 +22,8 @@
     "activities": "act",
     "facts": "fac",
     "community": "com",
-    "events": "eve"
+    "events": "eve",
+    "event": "ev2"
   },
   "tables": {
     "auth.accounts": {
@@ -403,39 +404,6 @@
     "community.tokens": {
       "short": "tok"
     },
-    "events.calendars": {
-      "short": "cal"
-    },
-    "events.changes": {
-      "short": "cha"
-    },
-    "events.events": {
-      "short": "eve"
-    },
-    "events.items": {
-      "short": "ite"
-    },
-    "events.names": {
-      "short": "nam"
-    },
-    "events.occurrences": {
-      "short": "occ"
-    },
-    "events.participants": {
-      "short": "par"
-    },
-    "events.rules": {
-      "short": "rul"
-    },
-    "events.schedules": {
-      "short": "sch"
-    },
-    "events.seasons": {
-      "short": "sea"
-    },
-    "events.subjects": {
-      "short": "sub"
-    },
     "governance.agenda": {
       "short": "age"
     },
@@ -466,11 +434,44 @@
     "source.links": {
       "short": "lin"
     },
-    "events.venues": {
-      "short": "ven"
-    },
     "politics.polls": {
       "short": "pol"
+    },
+    "event.calendars": {
+      "short": "cal"
+    },
+    "event.changes": {
+      "short": "cha"
+    },
+    "event.events": {
+      "short": "eve"
+    },
+    "event.items": {
+      "short": "ite"
+    },
+    "event.names": {
+      "short": "nam"
+    },
+    "event.occurrences": {
+      "short": "occ"
+    },
+    "event.participants": {
+      "short": "par"
+    },
+    "event.rules": {
+      "short": "rul"
+    },
+    "event.schedules": {
+      "short": "sch"
+    },
+    "event.seasons": {
+      "short": "sea"
+    },
+    "event.subjects": {
+      "short": "sub"
+    },
+    "event.venues": {
+      "short": "ven"
     }
   }
 }

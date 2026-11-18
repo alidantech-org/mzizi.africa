@@ -75,9 +75,6 @@ class InsightsEndpoints {
   /// GET /v1/elections
   String get listElections => '/v1/elections';
 
-  /// GET /v1/facts
-  String get listFacts => '/v1/facts';
-
   /// GET /v1/institutions
   String get listInstitutions => '/v1/institutions';
 

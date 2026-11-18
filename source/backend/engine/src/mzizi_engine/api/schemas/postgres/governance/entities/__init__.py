@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from mzizi_engine.api.schemas.postgres.events.entities.occurrences import OccurrencesRow
+from mzizi_engine.api.schemas.postgres.event.entities.occurrences import OccurrencesRow
 from mzizi_engine.api.schemas.postgres.finance.entities.budget_versions import BudgetVersionsRow
 from mzizi_engine.api.schemas.postgres.finance.entities.fiscal_periods import FiscalPeriodsRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow

@@ -43,8 +43,10 @@ export const VALUE_RELATION_KEYS = [
 
 export const VALUE_SORTABLE_FIELDS = [
   "code",
+  "colorToken",
   "createdAt",
   "deletedAt",
+  "iconCode",
   "id",
   "label",
   "parentId",
@@ -55,7 +57,12 @@ export const VALUE_SORTABLE_FIELDS = [
   "version",
 ] as const satisfies readonly ValueKey[];
 
-export const VALUE_SEARCHABLE_FIELDS = ["code", "label"] as const satisfies readonly ValueKey[];
+export const VALUE_SEARCHABLE_FIELDS = [
+  "code",
+  "colorToken",
+  "iconCode",
+  "label",
+] as const satisfies readonly ValueKey[];
 
 export const VALUE_FILTERABLE_FIELDS = [
   "id",
@@ -82,8 +89,10 @@ export const VALUE_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IValue> = {
 
 export const VALUE_SELECTABLE_FIELDS = [
   "code",
+  "colorToken",
   "createdAt",
   "deletedAt",
+  "iconCode",
   "id",
   "label",
   "parentId",
@@ -96,8 +105,10 @@ export const VALUE_SELECTABLE_FIELDS = [
 
 export const VALUE_DEFAULT_SELECT_FIELDS = [
   "code",
+  "colorToken",
   "createdAt",
   "deletedAt",
+  "iconCode",
   "id",
   "label",
   "parentId",
@@ -114,6 +125,8 @@ export const VALUE_DEFAULT_SELECT_FIELDS = [
 
 export const VALUE_EDITABLE_FIELDS = [
   "code",
+  "colorToken",
+  "iconCode",
   "label",
   "parentId",
   "position",

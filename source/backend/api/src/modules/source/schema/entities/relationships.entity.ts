@@ -11,7 +11,7 @@ import { FileVersionsEntity } from "#/modules/filesystem/schema/entities/file-ve
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
-import { EditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
+import { SourceEditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
 import { ProductsEntity } from "#/modules/source/schema/entities/products.entity.ts";
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
@@ -68,9 +68,9 @@ export class SourceRelationshipsEntity {
   @Column({ name: "input_edition_id", type: "uuid", nullable: true })
   inputEditionId?: Id | null;
 
-  @ManyToOne(() => EditionsEntity, { onDelete: "RESTRICT" })
+  @ManyToOne(() => SourceEditionsEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "input_edition_id" })
-  inputEdition?: Relation<EditionsEntity>;
+  inputEdition?: Relation<SourceEditionsEntity>;
 
   @Column({ name: "input_file_version_id", type: "uuid", nullable: true })
   inputFileVersionId?: Id | null;
@@ -113,9 +113,9 @@ export class SourceRelationshipsEntity {
   @Column({ name: "output_edition_id", type: "uuid", nullable: true })
   outputEditionId?: Id | null;
 
-  @ManyToOne(() => EditionsEntity, { onDelete: "RESTRICT" })
+  @ManyToOne(() => SourceEditionsEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "output_edition_id" })
-  outputEdition?: Relation<EditionsEntity>;
+  outputEdition?: Relation<SourceEditionsEntity>;
 
   @Column({ name: "output_file_version_id", type: "uuid", nullable: true })
   outputFileVersionId?: Id | null;

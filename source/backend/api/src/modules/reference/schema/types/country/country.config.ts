@@ -10,6 +10,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // RELATED ENTITY CONFIGS
 // ----------------------------------
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as LanguageConfig from "#/modules/reference/schema/types/language/language.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -34,6 +35,7 @@ import type {
 export const COUNTRY_RELATION_KEYS = [
   "continent",
   "currency",
+  "defaultLanguage",
   "designation",
   "recognitionStatus",
   "subregion",
@@ -49,16 +51,19 @@ export const COUNTRY_SORTABLE_FIELDS = [
   "continentId",
   "createdAt",
   "currencyId",
+  "defaultLanguageId",
   "deletedAt",
   "designationId",
   "establishedOn",
   "id",
+  "isServed",
   "isoAlpha2",
   "isoAlpha3",
   "isoNumeric",
   "name",
   "officialName",
   "recognitionStatusId",
+  "subdomain",
   "subregionId",
   "updatedAt",
   "version",
@@ -72,13 +77,16 @@ export const COUNTRY_SEARCHABLE_FIELDS = [
   "isoNumeric",
   "name",
   "officialName",
+  "subdomain",
 ] as const satisfies readonly CountryKey[];
 
 export const COUNTRY_FILTERABLE_FIELDS = [
   "continentId",
   "currencyId",
+  "defaultLanguageId",
   "designationId",
   "id",
+  "isServed",
   "recognitionStatusId",
   "subregionId",
 ] as const satisfies readonly CountryKey[];
@@ -106,16 +114,19 @@ export const COUNTRY_SELECTABLE_FIELDS = [
   "continentId",
   "createdAt",
   "currencyId",
+  "defaultLanguageId",
   "deletedAt",
   "designationId",
   "establishedOn",
   "id",
+  "isServed",
   "isoAlpha2",
   "isoAlpha3",
   "isoNumeric",
   "name",
   "officialName",
   "recognitionStatusId",
+  "subdomain",
   "subregionId",
   "updatedAt",
   "version",
@@ -127,16 +138,19 @@ export const COUNTRY_DEFAULT_SELECT_FIELDS = [
   "continentId",
   "createdAt",
   "currencyId",
+  "defaultLanguageId",
   "deletedAt",
   "designationId",
   "establishedOn",
   "id",
+  "isServed",
   "isoAlpha2",
   "isoAlpha3",
   "isoNumeric",
   "name",
   "officialName",
   "recognitionStatusId",
+  "subdomain",
   "subregionId",
   "updatedAt",
   "version",
@@ -151,14 +165,17 @@ export const COUNTRY_EDITABLE_FIELDS = [
   "code",
   "continentId",
   "currencyId",
+  "defaultLanguageId",
   "designationId",
   "establishedOn",
+  "isServed",
   "isoAlpha2",
   "isoAlpha3",
   "isoNumeric",
   "name",
   "officialName",
   "recognitionStatusId",
+  "subdomain",
   "subregionId",
 ] as const satisfies readonly CountryKey[];
 
@@ -195,6 +212,10 @@ export const COUNTRY_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<CountryRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "currency",
+  ),
+  Q.createRelationKeyMapper<CountryRelationKey>().one(
+    () => LanguageConfig.LANGUAGE_AS_ONE_RELATION_CONFIG,
+    "defaultLanguage",
   ),
   Q.createRelationKeyMapper<CountryRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,

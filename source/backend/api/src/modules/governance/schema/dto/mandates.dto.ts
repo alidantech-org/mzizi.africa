@@ -99,6 +99,12 @@ export class MandatesDto {
   startsOn?: CalendarDate | null;
 
   @IsOptional()
+  @ValidateIf((object) => object.termId !== null)
+  @IsString()
+  @IsUUID()
+  termId?: Id | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.toYear !== null)
   @IsInt()
   @Min(-10000)

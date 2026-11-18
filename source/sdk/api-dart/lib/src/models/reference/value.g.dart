@@ -8,8 +8,10 @@ part of 'value.dart';
 
 ReferenceValue _$ReferenceValueFromJson(Map<String, dynamic> json) => ReferenceValue(
   code: json['code'] as String,
+  colorToken: json['colorToken'] as String?,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
+  iconCode: json['iconCode'] as String?,
   id: json['id'] as String,
   label: json['label'] as String,
   parentId: json['parentId'] as String?,
@@ -22,8 +24,10 @@ ReferenceValue _$ReferenceValueFromJson(Map<String, dynamic> json) => ReferenceV
 
 Map<String, dynamic> _$ReferenceValueToJson(ReferenceValue instance) => <String, dynamic>{
   'code': instance.code,
+  'colorToken': ?instance.colorToken,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
+  'iconCode': ?instance.iconCode,
   'id': instance.id,
   'label': instance.label,
   'parentId': ?instance.parentId,

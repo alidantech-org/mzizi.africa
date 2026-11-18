@@ -7,14 +7,17 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import type { CallingCode } from "#/modules/reference/schema/type/calling-code.type.ts";
 import type { IsoAlpha2 } from "#/modules/reference/schema/type/iso-alpha2.type.ts";
 import type { IsoAlpha3 } from "#/modules/reference/schema/type/iso-alpha3.type.ts";
 import type { IsoNumeric } from "#/modules/reference/schema/type/iso-numeric.type.ts";
+import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
+import type { NonEmptyString100 } from "#/modules/shared/schema/type/non-empty-string100.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
@@ -56,6 +59,13 @@ export class CountryEntity {
   @JoinColumn({ name: "currency_id" })
   currency?: Relation<ValueEntity>;
 
+  @Column({ name: "default_language_id", type: "uuid", nullable: true })
+  defaultLanguageId?: Id | null;
+
+  @ManyToOne(() => LanguageEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "default_language_id" })
+  defaultLanguage?: Relation<LanguageEntity>;
+
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
 
@@ -68,6 +78,9 @@ export class CountryEntity {
 
   @Column({ name: "established_on", type: "date", nullable: true })
   establishedOn?: Date | null;
+
+  @Column({ name: "is_served", type: "boolean" })
+  isServed!: Flag;
 
   @Column({ name: "iso_alpha2", type: "char", length: 2, nullable: true })
   isoAlpha2?: IsoAlpha2 | null;
@@ -95,6 +108,9 @@ export class CountryEntity {
   @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "recognition_status_id" })
   recognitionStatus?: Relation<ValueEntity>;
+
+  @Column({ name: "subdomain", type: "varchar", length: 100, nullable: true })
+  subdomain?: NonEmptyString100 | null;
 
   @Column({ name: "subregion_id", type: "uuid", nullable: true })
   subregionId?: Id | null;

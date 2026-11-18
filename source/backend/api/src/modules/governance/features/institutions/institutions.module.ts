@@ -9,6 +9,7 @@ import { HoldersEntity } from "#/modules/governance/schema/entities/holders.enti
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
 import { MandatesEntity } from "#/modules/governance/schema/entities/mandates.entity.ts";
 import { OfficesEntity } from "#/modules/governance/schema/entities/offices.entity.ts";
+import { TermsEntity } from "#/modules/governance/schema/entities/terms.entity.ts";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
 import { IndividualsEntity } from "#/modules/official/schema/entities/individuals.entity.ts";
 import { OfficialNamesEntity } from "#/modules/official/schema/entities/names.entity.ts";
@@ -22,7 +23,7 @@ import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import { DiscoveriesEntity } from "#/modules/source/schema/entities/discoveries.entity.ts";
 import { DomainsEntity } from "#/modules/source/schema/entities/domains.entity.ts";
-import { EditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
+import { SourceEditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
 import { ProductsEntity } from "#/modules/source/schema/entities/products.entity.ts";
 import { PublishersEntity } from "#/modules/source/schema/entities/publishers.entity.ts";
 import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
@@ -49,6 +50,7 @@ import {
       InstitutionsEntity,
       MandatesEntity,
       OfficesEntity,
+      TermsEntity,
       EntitiesEntity,
       IndividualsEntity,
       OfficialNamesEntity,
@@ -62,7 +64,7 @@ import {
       CitationsEntity,
       DiscoveriesEntity,
       DomainsEntity,
-      EditionsEntity,
+      SourceEditionsEntity,
       ProductsEntity,
       PublishersEntity,
       SourcesEntity,

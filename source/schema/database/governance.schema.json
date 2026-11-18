@@ -1850,7 +1850,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/events.Occurrences", "column": "id", "alias": "occurrence_code" }
+          "x-link": { "tableId": "#/schemas/event.Occurrences", "column": "id", "alias": "occurrence_code" }
         }
         ,"sequence_number": {
           "type": ["integer", "null"],

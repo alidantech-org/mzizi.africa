@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
 import 'package:mzizi_api/src/models/governance/offices.dart';
+import 'package:mzizi_api/src/models/governance/terms.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/period_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
@@ -24,6 +25,7 @@ class GovernanceMandates {
     this.officeId,
     this.sourceCitationId,
     this.startsOn,
+    this.termId,
     this.toYear,
     required this.updatedAt,
     required this.version,
@@ -40,6 +42,7 @@ class GovernanceMandates {
   final String? officeId;
   final String? sourceCitationId;
   final DateTime? startsOn;
+  final String? termId;
   final int? toYear;
   final DateTime updatedAt;
   final int version;

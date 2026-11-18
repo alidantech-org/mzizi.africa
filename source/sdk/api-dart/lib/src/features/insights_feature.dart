@@ -14,8 +14,6 @@ import 'package:mzizi_api/src/models/insights/content_page.dart';
 import 'package:mzizi_api/src/models/insights/election_detail.dart';
 import 'package:mzizi_api/src/models/insights/election_input.dart';
 import 'package:mzizi_api/src/models/insights/election_list.dart';
-import 'package:mzizi_api/src/models/insights/fact_list.dart';
-import 'package:mzizi_api/src/models/insights/facts_input.dart';
 import 'package:mzizi_api/src/models/insights/gov_tree_input.dart';
 import 'package:mzizi_api/src/models/insights/governance_tabs.dart';
 import 'package:mzizi_api/src/models/insights/governance_tree.dart';
@@ -410,20 +408,6 @@ class InsightsFeature {
         endpoint: _routes.listElections,
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listElections'),
         fromJson: (json) => InsightsElectionList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
-      ),
-    );
-  }
-
-  /// Did-you-know facts about the country, and those tagged to a place and the places above it.
-  ///
-  /// GET /v1/facts
-  Future<ApiResult<InsightsFactList>> listFacts({InsightsFactsInput? input, ApiGetRequestOptions? options}) {
-    return _connection.execute(
-      GetRequest<InsightsFactList>(
-        endpoint: _routes.listFacts,
-        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listFacts'),
-        query: input?.toJson(),
-        fromJson: (json) => InsightsFactList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }

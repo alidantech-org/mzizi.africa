@@ -2,8 +2,6 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 
 /** The contract shape of Country, for generated tests. */
 export const countryExample: ContractExample = contractExample({
@@ -52,6 +50,12 @@ export const countryExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "defaultLanguageId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "deletedAt",
       optional: true,
       nullable: true,
@@ -74,6 +78,12 @@ export const countryExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "isServed",
+      optional: false,
+      nullable: false,
+      spec: { kind: "boolean" },
     },
     {
       name: "isoAlpha2",
@@ -110,6 +120,12 @@ export const countryExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "subdomain",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 100 },
     },
     {
       name: "subregionId",

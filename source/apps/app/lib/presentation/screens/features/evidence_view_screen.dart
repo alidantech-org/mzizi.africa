@@ -50,9 +50,9 @@ class _EvidenceViewScreenState extends State<EvidenceViewScreen> {
       setState(() => _error = 'Missing address value.');
       return;
     }
-    final result = await LocalityFeature(
-      MziziApi.connection,
-    ).getEvidence(citationId: citationId);
+    final result = await LocalityFeature(MziziApi.connection).getEvidence(
+      citationId: citationId,
+    );
     if (!mounted) return;
     setState(() {
       if (result.isError) {
@@ -60,8 +60,7 @@ class _EvidenceViewScreenState extends State<EvidenceViewScreen> {
         return;
       }
       _error = null;
-      _record =
-          jsonDecode(jsonEncode(result.dataOrNull)) as Map<String, Object?>?;
+      _record = jsonDecode(jsonEncode(result.dataOrNull)) as Map<String, Object?>?;
     });
   }
 
@@ -79,9 +78,7 @@ class _EvidenceViewScreenState extends State<EvidenceViewScreen> {
                 for (final column in _scalars)
                   DetailEntry(
                     label: column.label,
-                    value: record[column.key] == null
-                        ? null
-                        : '${record[column.key]}',
+                    value: record[column.key] == null ? null : '${record[column.key]}',
                   ),
               ],
               missingText: 'Not recorded',

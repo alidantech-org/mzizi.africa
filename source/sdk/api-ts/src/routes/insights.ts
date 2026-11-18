@@ -54,8 +54,6 @@ export const insightsRoutes = {
   listContent: "/v1/content/list",
   /** GET /v1/elections */
   listElections: "/v1/elections",
-  /** GET /v1/facts */
-  listFacts: "/v1/facts",
   /** GET /v1/institutions */
   listInstitutions: "/v1/institutions",
   /** GET /v1/leaderboards */

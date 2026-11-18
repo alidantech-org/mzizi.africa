@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -11,14 +12,15 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-
 import type { CallingCode } from "#/modules/reference/schema/type/calling-code.type.ts";
 import type { IsoAlpha2 } from "#/modules/reference/schema/type/iso-alpha2.type.ts";
 import type { IsoAlpha3 } from "#/modules/reference/schema/type/iso-alpha3.type.ts";
 import type { IsoNumeric } from "#/modules/reference/schema/type/iso-numeric.type.ts";
+import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
+import type { NonEmptyString100 } from "#/modules/shared/schema/type/non-empty-string100.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
@@ -61,6 +63,12 @@ export class CountryDto {
   currencyId?: Id | null;
 
   @IsOptional()
+  @ValidateIf((object) => object.defaultLanguageId !== null)
+  @IsString()
+  @IsUUID()
+  defaultLanguageId?: Id | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.deletedAt !== null)
   @IsISO8601({})
   deletedAt?: Instant | null;
@@ -79,6 +87,9 @@ export class CountryDto {
   @IsString()
   @IsUUID()
   id!: Id;
+
+  @IsBoolean()
+  isServed!: Flag;
 
   @IsOptional()
   @ValidateIf((object) => object.isoAlpha2 !== null)
@@ -118,6 +129,13 @@ export class CountryDto {
   @IsString()
   @IsUUID()
   recognitionStatusId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.subdomain !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  subdomain?: NonEmptyString100 | null;
 
   @IsOptional()
   @ValidateIf((object) => object.subregionId !== null)

@@ -14,6 +14,7 @@ export interface GovernanceMandates {
   officeId?: string | null;
   sourceCitationId?: string | null;
   startsOn?: string | null;
+  termId?: string | null;
   toYear?: number | null;
   updatedAt: string;
   version: number;

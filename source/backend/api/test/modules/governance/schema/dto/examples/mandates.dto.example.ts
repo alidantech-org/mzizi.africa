@@ -3,11 +3,6 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
-import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
-import { officesExample } from "@test/modules/governance/schema/dto/examples/offices.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { periodEntityExample } from "@test/modules/shared/schema/dto/examples/period-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
 /** The contract shape of Mandates, for generated tests. */
 export const mandatesExample: ContractExample = contractExample({
@@ -84,6 +79,12 @@ export const mandatesExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "termId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "toYear",

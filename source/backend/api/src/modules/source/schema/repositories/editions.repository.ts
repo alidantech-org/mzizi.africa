@@ -4,7 +4,7 @@ import { IsNull, type Repository } from "typeorm";
 import { EntityRepository, type IUpdatableRepository } from "#/database/base/entity-repository.ts";
 import { BaseQueryDto } from "#/database/base/base-query.dto.ts";
 import type { IFindAllResponse } from "#/database/base/query.types.ts";
-import { EditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
+import { SourceEditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
 import * as Editions from "#/modules/source/schema/types/editions/index.ts";
 
 /**
@@ -15,17 +15,17 @@ import * as Editions from "#/modules/source/schema/types/editions/index.ts";
 @Injectable()
 export class EditionsRepository
   extends EntityRepository<
-    EditionsEntity,
+    SourceEditionsEntity,
     Editions.Types.EditionsSortableField,
     Editions.Types.EditionsEditableField,
     Editions.Types.EditionsSelectableField,
     Editions.Types.IEditionsCreatable
   >
-  implements IUpdatableRepository<EditionsEntity, Editions.Types.IEditionsUpdatable>
+  implements IUpdatableRepository<SourceEditionsEntity, Editions.Types.IEditionsUpdatable>
 {
   constructor(
-    @InjectRepository(EditionsEntity)
-    repository: Repository<EditionsEntity>,
+    @InjectRepository(SourceEditionsEntity)
+    repository: Repository<SourceEditionsEntity>,
   ) {
     super(repository, Editions.Config.EDITIONS_QUERY_OPTIONS);
   }
@@ -34,29 +34,31 @@ export class EditionsRepository
   async updateEditable(
     id: string,
     data: Editions.Types.IEditionsUpdatable,
-  ): Promise<EditionsEntity | null> {
+  ): Promise<SourceEditionsEntity | null> {
     const stamped = await this.stampUpdate(id, data);
     return stamped === null ? null : await this.update(id, stamped);
   }
 
   /** Find editions by language id, paged by the shared query. */
   async findByLanguage(
-    query: BaseQueryDto<EditionsEntity>,
-    languageId: NonNullable<EditionsEntity["languageId"]>,
-  ): Promise<IFindAllResponse<EditionsEntity>> {
+    query: BaseQueryDto<SourceEditionsEntity>,
+    languageId: NonNullable<SourceEditionsEntity["languageId"]>,
+  ): Promise<IFindAllResponse<SourceEditionsEntity>> {
     return await this.findByQuery(query, { languageId, deletedAt: IsNull() });
   }
 
   /** Find editions by product id, paged by the shared query. */
   async findByProduct(
-    query: BaseQueryDto<EditionsEntity>,
-    productId: NonNullable<EditionsEntity["productId"]>,
-  ): Promise<IFindAllResponse<EditionsEntity>> {
+    query: BaseQueryDto<SourceEditionsEntity>,
+    productId: NonNullable<SourceEditionsEntity["productId"]>,
+  ): Promise<IFindAllResponse<SourceEditionsEntity>> {
     return await this.findByQuery(query, { productId, deletedAt: IsNull() });
   }
 
   /** Find the editions with this code (unique). */
-  async findByCode(code: NonNullable<EditionsEntity["code"]>): Promise<EditionsEntity | null> {
+  async findByCode(
+    code: NonNullable<SourceEditionsEntity["code"]>,
+  ): Promise<SourceEditionsEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });
   }
 }

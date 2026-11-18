@@ -10,8 +10,6 @@ import { ContentListDto } from "#/modules/insights/schema/dto/content-list.dto.t
 import { ContentPageDto } from "#/modules/insights/schema/dto/content-page.dto.ts";
 import { ElectionDetailDto } from "#/modules/insights/schema/dto/election-detail.dto.ts";
 import { ElectionListDto } from "#/modules/insights/schema/dto/election-list.dto.ts";
-import { FactListDto } from "#/modules/insights/schema/dto/fact-list.dto.ts";
-import { FactsInputDto } from "#/modules/insights/schema/dto/facts-input.dto.ts";
 import { GovTreeInputDto } from "#/modules/insights/schema/dto/gov-tree-input.dto.ts";
 import { GovernanceTabsDto } from "#/modules/insights/schema/dto/governance-tabs.dto.ts";
 import { GovernanceTreeDto } from "#/modules/insights/schema/dto/governance-tree.dto.ts";
@@ -119,12 +117,6 @@ export class InsightsInsightsController {
   @HttpCode(200)
   listElections(): Promise<ElectionListDto> {
     return this.service.listElections();
-  }
-
-  @Get("/v1/facts")
-  @HttpCode(200)
-  listFacts(@Query() input: FactsInputDto): Promise<FactListDto> {
-    return this.service.listFacts(input);
   }
 
   @Get("/v1/institutions")

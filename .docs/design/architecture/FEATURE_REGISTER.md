@@ -50,7 +50,7 @@ Every feature the owner mentions is recorded here the moment it is mentioned, wi
 | F36 | iCalendar rule text on recurrence and `.ics` export ("add to my calendar") | RRULE column authored; export is an API operation still to author | DATABASE_CHANGES_20261119 section 11 | rule column generated, export recorded |
 | F37 | Polling stations as feature plus civic facility plus per-election polls, votes by station, roll-up, maps | no hard-coded station table; links to entities, facilities and features | DATABASE_CHANGES_20261119 section 11 | authored and generated |
 | F38 | Committees as institutions with offices and holders | no extra tables | DATABASE_CHANGES_20261119 section 11 | designed |
-| F39 | Regenerate the API, SDKs and frontends and push after the database is approved | sequence set by the owner | this register | recorded, waiting for approval |
+| F39 | Regenerate the API, SDKs and frontends and push after the database is approved | sequence set by the owner | DATABASE_CHANGES_20261119 section 12 | done 2026-11-19 |
 
 ## A. Abbreviations (F26)
 

@@ -13,8 +13,6 @@ import type { ContentPageDto } from "#/modules/insights/schema/dto/content-page.
 import type { ElectionDetailDto } from "#/modules/insights/schema/dto/election-detail.dto.ts";
 import type { ElectionInputDto } from "#/modules/insights/schema/dto/election-input.dto.ts";
 import type { ElectionListDto } from "#/modules/insights/schema/dto/election-list.dto.ts";
-import type { FactListDto } from "#/modules/insights/schema/dto/fact-list.dto.ts";
-import type { FactsInputDto } from "#/modules/insights/schema/dto/facts-input.dto.ts";
 import type { GovTreeInputDto } from "#/modules/insights/schema/dto/gov-tree-input.dto.ts";
 import type { GovernanceTabsDto } from "#/modules/insights/schema/dto/governance-tabs.dto.ts";
 import type { GovernanceTreeDto } from "#/modules/insights/schema/dto/governance-tree.dto.ts";
@@ -74,7 +72,6 @@ import { GetProjectUseCase } from "#/modules/insights/features/insights/use-case
 import { GlobalSearchUseCase } from "#/modules/insights/features/insights/use-cases/global-search.usecase.ts";
 import { ListContentUseCase } from "#/modules/insights/features/insights/use-cases/list-content.usecase.ts";
 import { ListElectionsUseCase } from "#/modules/insights/features/insights/use-cases/list-elections.usecase.ts";
-import { ListFactsUseCase } from "#/modules/insights/features/insights/use-cases/list-facts.usecase.ts";
 import { ListInstitutionsUseCase } from "#/modules/insights/features/insights/use-cases/list-institutions.usecase.ts";
 import { ListLeaderboardMetricsUseCase } from "#/modules/insights/features/insights/use-cases/list-leaderboard-metrics.usecase.ts";
 import { ListMotionsUseCase } from "#/modules/insights/features/insights/use-cases/list-motions.usecase.ts";
@@ -110,7 +107,6 @@ export abstract class InsightsInsightsService {
   abstract globalSearch(input: SearchQueryDto): Promise<SearchResultsDto>;
   abstract listContent(input: ContentListInputDto): Promise<ContentListDto>;
   abstract listElections(): Promise<ElectionListDto>;
-  abstract listFacts(input: FactsInputDto): Promise<FactListDto>;
   abstract listInstitutions(input: InstitutionsInputDto): Promise<InstitutionListDto>;
   abstract listLeaderboardMetrics(): Promise<LeaderboardMetricListDto>;
   abstract listMotions(input: MotionsInputDto): Promise<MotionListDto>;
@@ -145,7 +141,6 @@ export class InsightsInsightsServiceImpl extends InsightsInsightsService {
     private readonly globalSearchUseCase: GlobalSearchUseCase,
     private readonly listContentUseCase: ListContentUseCase,
     private readonly listElectionsUseCase: ListElectionsUseCase,
-    private readonly listFactsUseCase: ListFactsUseCase,
     private readonly listInstitutionsUseCase: ListInstitutionsUseCase,
     private readonly listLeaderboardMetricsUseCase: ListLeaderboardMetricsUseCase,
     private readonly listMotionsUseCase: ListMotionsUseCase,
@@ -249,10 +244,6 @@ export class InsightsInsightsServiceImpl extends InsightsInsightsService {
 
   listElections(): Promise<ElectionListDto> {
     return this.listElectionsUseCase.execute();
-  }
-
-  listFacts(input: FactsInputDto): Promise<FactListDto> {
-    return this.listFactsUseCase.execute(input);
   }
 
   listInstitutions(input: InstitutionsInputDto): Promise<InstitutionListDto> {

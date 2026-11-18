@@ -13,6 +13,7 @@ import type * as InstitutionsTypes from "#/modules/governance/schema/types/insti
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as OfficesTypes from "#/modules/governance/schema/types/offices/offices.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
+import type * as TermsTypes from "#/modules/governance/schema/types/terms/terms.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -44,11 +45,13 @@ export interface IMandates extends B.IBase {
   officeId: string | null;
   sourceCitationId: string | null;
   startsOn: Date | null;
+  termId: string | null;
   toYear: number | null;
   readonly institution?: InstitutionsTypes.IInstitutions;
   readonly mandateKind?: ValueTypes.IValue;
   readonly office?: OfficesTypes.IOffices;
   readonly sourceCitation?: CitationsTypes.ICitations;
+  readonly term?: TermsTypes.ITerms;
 }
 
 // ----------------------------------
@@ -145,6 +148,7 @@ export interface IMandatesRelationMap extends Record<MandatesRelationKey, unknow
   mandateKind: ValueTypes.IValueAsOneRelationQuery;
   office: OfficesTypes.IOfficesAsOneRelationQuery;
   sourceCitation: CitationsTypes.ICitationsAsOneRelationQuery;
+  term: TermsTypes.ITermsAsOneRelationQuery;
 }
 
 // ----------------------------------

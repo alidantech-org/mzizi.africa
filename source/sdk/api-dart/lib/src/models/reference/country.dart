@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/reference/language.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 
@@ -13,16 +14,19 @@ class ReferenceCountry {
     this.continentId,
     required this.createdAt,
     this.currencyId,
+    this.defaultLanguageId,
     this.deletedAt,
     this.designationId,
     this.establishedOn,
     required this.id,
+    required this.isServed,
     this.isoAlpha2,
     this.isoAlpha3,
     this.isoNumeric,
     required this.name,
     this.officialName,
     this.recognitionStatusId,
+    this.subdomain,
     this.subregionId,
     required this.updatedAt,
     required this.version,
@@ -32,16 +36,19 @@ class ReferenceCountry {
   final String? continentId;
   final DateTime createdAt;
   final String? currencyId;
+  final String? defaultLanguageId;
   final DateTime? deletedAt;
   final String? designationId;
   final DateTime? establishedOn;
   final String id;
+  final bool isServed;
   final String? isoAlpha2;
   final String? isoAlpha3;
   final String? isoNumeric;
   final String name;
   final String? officialName;
   final String? recognitionStatusId;
+  final String? subdomain;
   final String? subregionId;
   final DateTime updatedAt;
   final int version;

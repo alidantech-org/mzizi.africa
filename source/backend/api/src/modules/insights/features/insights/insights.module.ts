@@ -24,7 +24,6 @@ import { GetProjectUseCase } from "#/modules/insights/features/insights/use-case
 import { GlobalSearchUseCase } from "#/modules/insights/features/insights/use-cases/global-search.usecase.ts";
 import { ListContentUseCase } from "#/modules/insights/features/insights/use-cases/list-content.usecase.ts";
 import { ListElectionsUseCase } from "#/modules/insights/features/insights/use-cases/list-elections.usecase.ts";
-import { ListFactsUseCase } from "#/modules/insights/features/insights/use-cases/list-facts.usecase.ts";
 import { ListInstitutionsUseCase } from "#/modules/insights/features/insights/use-cases/list-institutions.usecase.ts";
 import { ListLeaderboardMetricsUseCase } from "#/modules/insights/features/insights/use-cases/list-leaderboard-metrics.usecase.ts";
 import { ListMotionsUseCase } from "#/modules/insights/features/insights/use-cases/list-motions.usecase.ts";
@@ -65,7 +64,6 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
     GlobalSearchUseCase,
     ListContentUseCase,
     ListElectionsUseCase,
-    ListFactsUseCase,
     ListInstitutionsUseCase,
     ListLeaderboardMetricsUseCase,
     ListMotionsUseCase,

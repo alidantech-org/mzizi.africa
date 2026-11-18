@@ -55,6 +55,14 @@ export class CountryRepository
     return await this.findByQuery(query, { currencyId, deletedAt: IsNull() });
   }
 
+  /** Find country by default language id, paged by the shared query. */
+  async findByDefaultLanguage(
+    query: BaseQueryDto<CountryEntity>,
+    defaultLanguageId: NonNullable<CountryEntity["defaultLanguageId"]>,
+  ): Promise<IFindAllResponse<CountryEntity>> {
+    return await this.findByQuery(query, { defaultLanguageId, deletedAt: IsNull() });
+  }
+
   /** Find country by designation id, paged by the shared query. */
   async findByDesignation(
     query: BaseQueryDto<CountryEntity>,

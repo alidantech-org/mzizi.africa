@@ -78,4 +78,12 @@ export class MandatesRepository
   ): Promise<IFindAllResponse<MandatesEntity>> {
     return await this.findByQuery(query, { sourceCitationId, deletedAt: IsNull() });
   }
+
+  /** Find mandates by term id, paged by the shared query. */
+  async findByTerm(
+    query: BaseQueryDto<MandatesEntity>,
+    termId: NonNullable<MandatesEntity["termId"]>,
+  ): Promise<IFindAllResponse<MandatesEntity>> {
+    return await this.findByQuery(query, { termId, deletedAt: IsNull() });
+  }
 }

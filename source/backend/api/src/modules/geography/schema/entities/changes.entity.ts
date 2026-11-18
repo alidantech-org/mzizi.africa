@@ -24,7 +24,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["predecessorFeatureId"])
 @Index(["successorFeatureId"])
 @Index(["changeKindId"])
-export class ChangesEntity {
+export class GeographyChangesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

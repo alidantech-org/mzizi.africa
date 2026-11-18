@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:math';
-
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_api/api.dart';
 import 'package:mzizi_ui/mzizi_ui.dart';
@@ -51,9 +50,9 @@ class _SourceBrowseScreenState extends State<SourceBrowseScreen> {
       input[paging.limit] = min(_window.limit, paging.maxLimit);
       input[paging.offset] = _window.offset;
     }
-    final result = await LocalityFeature(
-      MziziApi.connection,
-    ).browseSources(input: LocalitySourceSearchInput.fromJson(input));
+    final result = await LocalityFeature(MziziApi.connection).browseSources(
+      input: LocalitySourceSearchInput.fromJson(input),
+    );
     if (!mounted) return;
     setState(() {
       if (result.isError) {

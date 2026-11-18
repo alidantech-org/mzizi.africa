@@ -2,8 +2,6 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { schemeExample } from "@test/modules/reference/schema/dto/examples/scheme.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 
 /** The contract shape of Value, for generated tests. */
 export const valueExample: ContractExample = contractExample({
@@ -23,6 +21,12 @@ export const valueExample: ContractExample = contractExample({
       },
     },
     {
+      name: "colorToken",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 100 },
+    },
+    {
       name: "createdAt",
       optional: false,
       nullable: false,
@@ -33,6 +37,12 @@ export const valueExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
+    },
+    {
+      name: "iconCode",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 100 },
     },
     {
       name: "id",

@@ -376,17 +376,6 @@
       "summary": "Every election the system knows, newest first."
     },
     {
-      "name": "ListFacts",
-      "group": "insights",
-      "feature": "insights",
-      "method": "GET",
-      "path": "/v1/facts",
-      "role": "list",
-      "inputs": ["input"],
-      "output": "FactList",
-      "summary": "Did-you-know facts about the country, and those tagged to a place and the places above it."
-    },
-    {
       "name": "ListInstitutions",
       "group": "insights",
       "feature": "insights",

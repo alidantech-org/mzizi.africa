@@ -10,7 +10,7 @@ import {
 
 import { ColumnNumericTransformer } from "#/modules/common/schema/entities/base/column-numeric.transformer.ts";
 import { FileVersionsEntity } from "#/modules/filesystem/schema/entities/file-versions.entity.ts";
-import { EditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
+import { SourceEditionsEntity } from "#/modules/source/schema/entities/editions.entity.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -62,9 +62,9 @@ export class ArtifactsEntity {
   @Column({ name: "edition_id", type: "uuid" })
   editionId!: Id;
 
-  @ManyToOne(() => EditionsEntity, { onDelete: "RESTRICT" })
+  @ManyToOne(() => SourceEditionsEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "edition_id" })
-  edition?: Relation<EditionsEntity>;
+  edition?: Relation<SourceEditionsEntity>;
 
   @Column({ name: "file_version_id", type: "uuid", nullable: true })
   fileVersionId?: Id | null;

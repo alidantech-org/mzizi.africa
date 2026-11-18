@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
 import { OfficesEntity } from "#/modules/governance/schema/entities/offices.entity.ts";
+import { TermsEntity } from "#/modules/governance/schema/entities/terms.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
@@ -93,6 +94,13 @@ export class MandatesEntity {
 
   @Column({ name: "starts_on", type: "date", nullable: true })
   startsOn?: Date | null;
+
+  @Column({ name: "term_id", type: "uuid", nullable: true })
+  termId?: Id | null;
+
+  @ManyToOne(() => TermsEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "term_id" })
+  term?: Relation<TermsEntity>;
 
   @Column({ name: "to_year", type: "integer", nullable: true })
   toYear?: Year | null;

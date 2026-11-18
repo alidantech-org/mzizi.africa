@@ -7,11 +7,15 @@
  * It lists only the groups it serves (and the groups those point at).
  */
 import { dryv } from "@dryvcode/author";
+import { civic } from "#/schemas/postgres/civic.ts";
 import { shared } from "#/schemas/_shared.ts";
 import { auth } from "#/schemas/postgres/auth.ts";
+import { event } from "#/schemas/postgres/event.ts";
 import { filesystem } from "#/schemas/postgres/filesystem.ts";
+import { finance } from "#/schemas/postgres/finance.ts";
 import { geography } from "#/schemas/postgres/geography.ts";
 import { governance } from "#/schemas/postgres/governance.ts";
+import { legal } from "#/schemas/postgres/legal.ts";
 import { official } from "#/schemas/postgres/official.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
 import { source } from "#/schemas/postgres/source.ts";
@@ -35,4 +39,19 @@ export default dryv
     ...Object.values(localityOperations),
     ...Object.values(insightOperations),
   )
-  .groups(shared, reference, auth, geography, official, governance, source, filesystem, locality, insights);
+  .groups(
+    shared,
+    reference,
+    auth,
+    geography,
+    official,
+    legal,
+    finance,
+    event,
+    governance,
+    civic,
+    source,
+    filesystem,
+    locality,
+    insights,
+  );

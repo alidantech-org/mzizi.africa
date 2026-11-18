@@ -17,7 +17,7 @@ import 'package:mzizi_app/presentation/pages/place_profile_page.dart';
 import 'package:mzizi_app/presentation/pages/places_page.dart';
 import 'package:mzizi_app/presentation/pages/saved_page.dart';
 import 'package:mzizi_app/presentation/pages/sources_page.dart';
-import 'package:mzizi_app/presentation/routers/_utils.dart';
+import 'package:mzizi_app/presentation/routers/framing.dart';
 import 'package:mzizi_app/presentation/routers/navigation.dart';
 import 'package:mzizi_app/presentation/screens/home/home_screen.dart';
 import 'package:mzizi_app/presentation/screens/splash_screen.dart';
@@ -91,18 +91,18 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/',
           pageBuilder: (context, state) =>
-              fadeTransition(key: state.pageKey, child: const HomeScreen()),
+              fadePage(key: state.pageKey, child: const HomeScreen()),
         ),
         GoRoute(
           path: AppRoutes.placeSearch,
-          pageBuilder: (context, state) => fadeTransition(
+          pageBuilder: (context, state) => fadePage(
             key: state.pageKey,
             child: PlacesPage(query: state.uri.queryParameters['q'] ?? ''),
           ),
         ),
         GoRoute(
           path: AppRoutes.placeProfile,
-          pageBuilder: (context, state) => fadeTransition(
+          pageBuilder: (context, state) => fadePage(
             key: state.pageKey,
             child: PlaceProfilePage(
               featureId: state.uri.queryParameters['featureId'],
@@ -116,16 +116,16 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/profile',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const SettingsScreen()),
+              fadePage(key: s.pageKey, child: const SettingsScreen()),
         ),
         GoRoute(
           path: '/facts',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const FactsScreen()),
+              fadePage(key: s.pageKey, child: const FactsScreen()),
         ),
         GoRoute(
           path: '/rankings',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: RankingsTab(metric: s.uri.queryParameters['metric']),
           ),
@@ -133,21 +133,21 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/search',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const SearchScreen()),
+              fadePage(key: s.pageKey, child: const SearchScreen()),
         ),
         GoRoute(
           path: '/explore',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const ExploreHub()),
+              fadePage(key: s.pageKey, child: const ExploreHub()),
         ),
         GoRoute(
           path: '/browse',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const BrowseScreen()),
+              fadePage(key: s.pageKey, child: const BrowseScreen()),
         ),
         GoRoute(
           path: '/browse/:id',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: BrowseScreen(featureId: s.pathParameters['id']),
           ),
@@ -155,11 +155,11 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/stats',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const StatsScreen()),
+              fadePage(key: s.pageKey, child: const StatsScreen()),
         ),
         GoRoute(
           path: '/stats/:id',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: StatsScreen(featureId: s.pathParameters['id']),
           ),
@@ -167,18 +167,18 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/elections',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const ElectionsScreen()),
+              fadePage(key: s.pageKey, child: const ElectionsScreen()),
         ),
         GoRoute(
           path: '/election/:id',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: ElectionScreen(id: s.pathParameters['id']!),
           ),
         ),
         GoRoute(
           path: '/place-elections/:id',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: PlaceElectionsScreen(id: s.pathParameters['id']!),
           ),
@@ -186,11 +186,11 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/parliament',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const ParliamentScreen()),
+              fadePage(key: s.pageKey, child: const ParliamentScreen()),
         ),
         GoRoute(
           path: '/motion/:code',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: MotionScreen(code: s.pathParameters['code']!),
           ),
@@ -198,18 +198,18 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/parties',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const PartiesScreen()),
+              fadePage(key: s.pageKey, child: const PartiesScreen()),
         ),
         GoRoute(
           path: '/party/:code',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: PartyScreen(code: s.pathParameters['code']!),
           ),
         ),
         GoRoute(
           path: '/leader/:id',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: LeaderScreen(id: s.pathParameters['id']!),
           ),
@@ -217,18 +217,18 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/civic',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const CivicHubScreen()),
+              fadePage(key: s.pageKey, child: const CivicHubScreen()),
         ),
         GoRoute(
           path: '/civic/:id',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: CivicScreen(id: s.pathParameters['id']!),
           ),
         ),
         GoRoute(
           path: '/project/:code',
-          pageBuilder: (c, s) => fadeTransition(
+          pageBuilder: (c, s) => fadePage(
             key: s.pageKey,
             child: ProjectScreen(code: s.pathParameters['code']!),
           ),
@@ -236,21 +236,21 @@ final appRouter = GoRouter(
         GoRoute(
           path: '/tenders',
           pageBuilder: (c, s) =>
-              fadeTransition(key: s.pageKey, child: const TendersScreen()),
+              fadePage(key: s.pageKey, child: const TendersScreen()),
         ),
         GoRoute(
           path: '/saved',
           pageBuilder: (context, state) =>
-              fadeTransition(key: state.pageKey, child: const SavedPage()),
+              fadePage(key: state.pageKey, child: const SavedPage()),
         ),
         GoRoute(
           path: AppRoutes.sourceBrowse,
           pageBuilder: (context, state) =>
-              fadeTransition(key: state.pageKey, child: const SourcesPage()),
+              fadePage(key: state.pageKey, child: const SourcesPage()),
         ),
         GoRoute(
           path: AppRoutes.evidenceView,
-          pageBuilder: (context, state) => fadeTransition(
+          pageBuilder: (context, state) => fadePage(
             key: state.pageKey,
             child: EvidencePage(
               citationId: state.uri.queryParameters['citationId'] ?? '',

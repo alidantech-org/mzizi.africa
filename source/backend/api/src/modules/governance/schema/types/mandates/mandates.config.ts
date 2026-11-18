@@ -13,6 +13,7 @@ import * as InstitutionsConfig from "#/modules/governance/schema/types/instituti
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as OfficesConfig from "#/modules/governance/schema/types/offices/offices.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
+import * as TermsConfig from "#/modules/governance/schema/types/terms/terms.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -39,6 +40,7 @@ export const MANDATES_RELATION_KEYS = [
   "mandateKind",
   "office",
   "sourceCitation",
+  "term",
 ] as const satisfies readonly MandatesKey[];
 
 // ----------------------------------
@@ -58,6 +60,7 @@ export const MANDATES_SORTABLE_FIELDS = [
   "officeId",
   "sourceCitationId",
   "startsOn",
+  "termId",
   "toYear",
   "updatedAt",
   "version",
@@ -72,6 +75,7 @@ export const MANDATES_FILTERABLE_FIELDS = [
   "mandateKindId",
   "officeId",
   "sourceCitationId",
+  "termId",
 ] as const satisfies readonly MandatesKey[];
 
 export const MANDATES_DATE_RANGE_FIELDS = [
@@ -105,6 +109,7 @@ export const MANDATES_SELECTABLE_FIELDS = [
   "officeId",
   "sourceCitationId",
   "startsOn",
+  "termId",
   "toYear",
   "updatedAt",
   "version",
@@ -123,6 +128,7 @@ export const MANDATES_DEFAULT_SELECT_FIELDS = [
   "officeId",
   "sourceCitationId",
   "startsOn",
+  "termId",
   "toYear",
   "updatedAt",
   "version",
@@ -142,6 +148,7 @@ export const MANDATES_EDITABLE_FIELDS = [
   "officeId",
   "sourceCitationId",
   "startsOn",
+  "termId",
   "toYear",
 ] as const satisfies readonly MandatesKey[];
 
@@ -186,6 +193,10 @@ export const MANDATES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<MandatesRelationKey>().one(
     () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,
     "sourceCitation",
+  ),
+  Q.createRelationKeyMapper<MandatesRelationKey>().one(
+    () => TermsConfig.TERMS_AS_ONE_RELATION_CONFIG,
+    "term",
   ),
 ] as const;
 

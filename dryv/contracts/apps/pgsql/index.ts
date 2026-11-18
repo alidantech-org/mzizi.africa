@@ -17,7 +17,7 @@ import { legal } from "#/schemas/postgres/legal.ts";
 import { official } from "#/schemas/postgres/official.ts";
 import { politics } from "#/schemas/postgres/politics.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
-import { events } from "#/schemas/postgres/events.ts";
+import { event } from "#/schemas/postgres/event.ts";
 import { statistics } from "#/schemas/postgres/statistics.ts";
 import { community } from "#/schemas/postgres/community.ts";
 import { source } from "#/schemas/postgres/source.ts";
@@ -43,5 +43,5 @@ export default dryv
     filesystem,
     accountability,
     statistics,
-    events,
+    event,
   );

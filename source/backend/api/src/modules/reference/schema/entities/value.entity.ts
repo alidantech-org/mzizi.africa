@@ -13,6 +13,7 @@ import { SchemeEntity } from "#/modules/reference/schema/entities/scheme.entity.
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
+import type { NonEmptyString100 } from "#/modules/shared/schema/type/non-empty-string100.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -33,11 +34,17 @@ export class ValueEntity {
   @Column({ name: "code", type: "varchar", length: 255 })
   code!: IdentityCode;
 
+  @Column({ name: "color_token", type: "varchar", length: 100, nullable: true })
+  colorToken?: NonEmptyString100 | null;
+
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
+
+  @Column({ name: "icon_code", type: "varchar", length: 100, nullable: true })
+  iconCode?: NonEmptyString100 | null;
 
   @Column({ name: "label", type: "varchar", length: 300 })
   label!: Name;

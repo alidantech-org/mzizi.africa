@@ -7,7 +7,7 @@ import 'package:mzizi_app/presentation/governance/graph_selection.dart';
 import 'package:mzizi_app/presentation/governance/node_sheet.dart';
 import 'package:mzizi_app/presentation/governance/parse/documents.dart';
 import 'package:mzizi_app/presentation/governance/tree_canvas.dart';
-import 'package:mzizi_app/presentation/routers/_utils.dart';
+import 'package:mzizi_app/presentation/routers/framing.dart';
 import 'package:mzizi_app/presentation/shell/app_shell.dart';
 
 GovernanceDocument fixture() => GovernanceDocument(
@@ -125,7 +125,7 @@ void main() {
 
               GoRoute(
                 path: '/explore',
-                pageBuilder: (context, state) => fadeTransition(
+                pageBuilder: (context, state) => fadePage(
                   key: state.pageKey,
                   child: Builder(
                     builder: (context) => Center(
@@ -139,7 +139,7 @@ void main() {
               ),
               GoRoute(
                 path: '/leader/:id',
-                pageBuilder: (context, state) => fadeTransition(
+                pageBuilder: (context, state) => fadePage(
                   key: state.pageKey,
                   child: Builder(
                     builder: (context) => Column(

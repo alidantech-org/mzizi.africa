@@ -11,7 +11,7 @@ import { sharedProperties } from "#/schemas/_shared.ts";
 import { Features } from "./geography.ts";
 import { Entities, Individuals } from "./official.ts";
 import { Country, Language, Value } from "./reference.ts";
-import { Occurrences } from "./events.ts";
+import { Occurrences } from "./event.ts";
 import { BudgetVersions, FiscalPeriods } from "./finance.ts";
 import { Instruments, Provisions } from "./legal.ts";
 import { Artifacts, Citations } from "./source.ts";

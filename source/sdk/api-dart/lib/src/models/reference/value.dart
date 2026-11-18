@@ -9,8 +9,10 @@ part 'value.g.dart';
 class ReferenceValue {
   const ReferenceValue({
     required this.code,
+    this.colorToken,
     required this.createdAt,
     this.deletedAt,
+    this.iconCode,
     required this.id,
     required this.label,
     this.parentId,
@@ -21,8 +23,10 @@ class ReferenceValue {
     required this.version,
   });
   final String code;
+  final String? colorToken;
   final DateTime createdAt;
   final DateTime? deletedAt;
+  final String? iconCode;
   final String id;
   final String label;
   final String? parentId;
