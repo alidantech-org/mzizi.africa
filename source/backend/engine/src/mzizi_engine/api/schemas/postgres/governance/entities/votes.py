@@ -1,4 +1,4 @@
-"""Event Names: one row of event_names."""
+"""Votes: one row of votes."""
 
 from __future__ import annotations
 
@@ -9,19 +9,19 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class EventNamesRow(BaseModel):
-    """The name of an event in one language; at most one preferred name per event and language."""
+class VotesRow(BaseModel):
+    """One office holder's recorded position on one motion (a division), including being absent."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "activities.event_names"
+    table: ClassVar[str] = "governance.votes"
 
     created_at: datetime
     deleted_at: datetime | None = None
-    event_id: UUID
+    holder_id: UUID
     id: UUID
-    is_preferred: bool
-    language_id: UUID
-    name: Annotated[str, Field(min_length=1, max_length=300)]
+    motion_id: UUID
+    position_id: UUID
+    source_citation_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

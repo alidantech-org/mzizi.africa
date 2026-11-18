@@ -9,7 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class ChangesRow(BaseModel):
+class GeographyChangesRow(BaseModel):
     """An edge in a geographic transformation; multiple rows sharing transformation_id represent splits, mergers, creation or dissolution without overwriting predecessor identities."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")

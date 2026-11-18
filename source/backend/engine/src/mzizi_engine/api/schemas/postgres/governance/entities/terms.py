@@ -1,4 +1,4 @@
-"""Electoral Terms: one row of electoral_terms."""
+"""Terms: one row of terms."""
 
 from __future__ import annotations
 
@@ -9,12 +9,12 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class ElectoralTermsRow(BaseModel):
-    """A fixed period for which offices are filled, so by-elections, mandates and the next general election belong to a term."""
+class TermsRow(BaseModel):
+    """A fixed period for which offices are filled: a presidential term, a parliament, a county assembly. Elections, by-elections, mandates and sittings belong to a term."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "politics.electoral_terms"
+    table: ClassVar[str] = "governance.terms"
 
     code: Annotated[
         str,
@@ -29,6 +29,8 @@ class ElectoralTermsRow(BaseModel):
     deleted_at: datetime | None = None
     ends_on: date | None = None
     id: UUID
+    institution_id: UUID | None = None
+    ordinal: Annotated[int, Field(ge=1)] | None = None
     source_citation_id: UUID | None = None
     starts_on: date
     term_kind_id: UUID

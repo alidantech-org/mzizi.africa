@@ -131,6 +131,133 @@
         }
       }
     },
+    "cases": {
+      "title": "community.cases",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.cases",
+      "x-id": "#/schemas/community.Cases",
+      "x-table": "community.cases",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "id"
+        ,"interaction_id"
+        ,"state"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "appealed_at"
+          ,"decided_at"
+          ,"decision_code"
+          ,"filter_results"
+          ,"id"
+          ,"interaction_code"
+          ,"reason"
+          ,"reviewer_account_code"
+          ,"state"
+        ],
+        "required": [
+          "id"
+          ,"interaction_code"
+          ,"state"
+        ]
+      },
+      "properties": {
+        "appealed_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"decided_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"decision_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "decision_code", "scheme": "ref.sch.com.moderation.decision" }
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"filter_results": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"interaction_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Posts", "column": "id", "alias": "interaction_code" }
+        }
+        ,"reason": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"reviewer_account_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "reviewer_account_code" }
+        }
+        ,"state": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["appealed", "filtered", "held", "pending_review", "published", "received", "rejected", "removed"],
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "consents": {
       "title": "community.consents",
       "type": "object",
@@ -247,6 +374,124 @@
           "x-type": "timestamp",
           "format": "date-time",
           "x-role": "data"
+        }
+      }
+    },
+    "deliveries": {
+      "title": "community.deliveries",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.deliveries",
+      "x-id": "#/schemas/community.Deliveries",
+      "x-table": "community.deliveries",
+      "x-primaryKey": ["id"],"x-naturalKey": ["notification_code", "device_code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["notification_id", "device_id"]
+      ],
+      "required": [
+        "device_id"
+        ,"id"
+        ,"notification_id"
+        ,"state"
+        ,"subscription_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "device_code"
+          ,"notification_code"
+          ,"opened_at"
+          ,"sent_at"
+          ,"state"
+          ,"subscription_code"
+        ],
+        "required": [
+          "device_code"
+          ,"notification_code"
+          ,"state"
+          ,"subscription_code"
+        ]
+      },
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"device_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/community.Devices", "column": "id", "alias": "device_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"notification_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/community.Notifications", "column": "id", "alias": "notification_code" }
+        }
+        ,"opened_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"sent_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"state": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["failed", "opened", "queued", "sent"],
+          "x-role": "data"
+        }
+        ,"subscription_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Subscriptions", "column": "id", "alias": "subscription_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
         }
       }
     },
@@ -380,13 +625,241 @@
         }
       }
     },
-    "interactions": {
-      "title": "community.interactions",
+    "notifications": {
+      "title": "community.notifications",
       "type": "object",
       "additionalProperties": false,
-      "x-code": "sys.tbl.community.interactions",
-      "x-id": "#/schemas/community.Interactions",
-      "x-table": "community.interactions",
+      "x-code": "sys.tbl.community.notifications",
+      "x-id": "#/schemas/community.Notifications",
+      "x-table": "community.notifications",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "copy_key"
+        ,"id"
+        ,"kind_id"
+        ,"subject_id"
+        ,"subject_table"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "copy_key"
+          ,"id"
+          ,"kind_code"
+          ,"payload"
+          ,"subject_id"
+          ,"subject_table"
+        ],
+        "required": [
+          "copy_key"
+          ,"id"
+          ,"kind_code"
+          ,"subject_id"
+          ,"subject_table"
+        ]
+      },
+      "properties": {
+        "copy_key": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "data"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.com.notification.kind" }
+        }
+        ,"payload": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "x-role": "data"
+        }
+        ,"subject_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "data"
+        }
+        ,"subject_table": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "events.calendars", "events.changes", "events.events", "events.items", "events.names", "events.occurrences", "events.participants", "events.rules", "events.schedules", "events.seasons", "events.subjects", "events.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "places": {
+      "title": "community.places",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.places",
+      "x-id": "#/schemas/community.Places",
+      "x-table": "community.places",
+      "x-primaryKey": ["id"],"x-naturalKey": ["actor_code", "feature_code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["actor_id", "feature_id"]
+        ,["actor_id"]
+      ],
+      "required": [
+        "actor_id"
+        ,"feature_id"
+        ,"id"
+        ,"is_home"
+        ,"label"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "actor_code"
+          ,"feature_code"
+          ,"is_home"
+          ,"label"
+          ,"position"
+          ,"suggestion_code"
+        ],
+        "required": [
+          "actor_code"
+          ,"feature_code"
+          ,"is_home"
+          ,"label"
+        ]
+      },
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/community.Actors", "column": "id", "alias": "actor_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"feature_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"is_home": {
+          "type": "boolean",
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"label": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 100,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"position": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"suggestion_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "suggestion_code", "scheme": "ref.sch.com.place.label" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "posts": {
+      "title": "community.posts",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.posts",
+      "x-id": "#/schemas/community.Posts",
+      "x-table": "community.posts",
       "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
@@ -508,14 +981,14 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.LocationProofs", "column": "id", "alias": "location_proof_code" }
+          "x-link": { "tableId": "#/schemas/community.Proofs", "column": "id", "alias": "location_proof_code" }
         }
         ,"parent_interaction_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Interactions", "column": "id", "alias": "parent_interaction_code" }
+          "x-link": { "tableId": "#/schemas/community.Posts", "column": "id", "alias": "parent_interaction_code" }
         }
         ,"published_at": {
           "type": ["string", "null"],
@@ -538,7 +1011,7 @@
         ,"subject_table": {
           "type": "string",
           "x-type": "text",
-          "enum": ["activities.contributions", "activities.event_names", "activities.event_participants", "activities.event_rules", "activities.event_subjects", "activities.events", "activities.motions", "activities.occurrence_changes", "activities.occurrences", "activities.sittings", "activities.votes", "civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.consents", "community.devices", "community.interactions", "community.location_proofs", "community.moderation_cases", "community.notification_deliveries", "community.notifications", "community.preferences", "community.push_tokens", "community.reactions", "community.saved_places", "community.subscriptions", "community.views", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.authority_scopes", "governance.holders", "governance.institutions", "governance.mandates", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electoral_terms", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polling_stations", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.products", "source.publishers", "source.relationships", "source.slug_relations", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "events.calendars", "events.changes", "events.events", "events.items", "events.names", "events.occurrences", "events.participants", "events.rules", "events.schedules", "events.seasons", "events.subjects", "events.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
           "x-role": "data"
         }
         ,"updated_at": {
@@ -556,13 +1029,120 @@
         }
       }
     },
-    "location_proofs": {
-      "title": "community.location_proofs",
+    "preferences": {
+      "title": "community.preferences",
       "type": "object",
       "additionalProperties": false,
-      "x-code": "sys.tbl.community.location-proofs",
-      "x-id": "#/schemas/community.LocationProofs",
-      "x-table": "community.location_proofs",
+      "x-code": "sys.tbl.community.preferences",
+      "x-id": "#/schemas/community.Preferences",
+      "x-table": "community.preferences",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+        ["actor_id"]
+      ],
+      "required": [
+        "actor_id"
+        ,"id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "actor_code"
+          ,"country_code"
+          ,"home_feature_code"
+          ,"id"
+          ,"language_code"
+          ,"theme"
+        ],
+        "required": [
+          "actor_code"
+          ,"id"
+        ]
+      },
+      "properties": {
+        "actor_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Actors", "column": "id", "alias": "actor_code" }
+        }
+        ,"country_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"home_feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "home_feature_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"language_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
+        }
+        ,"theme": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["dark", "light", "system"],
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "proofs": {
+      "title": "community.proofs",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.proofs",
+      "x-id": "#/schemas/community.Proofs",
+      "x-table": "community.proofs",
       "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
@@ -703,578 +1283,6 @@
         }
       }
     },
-    "moderation_cases": {
-      "title": "community.moderation_cases",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.community.moderation-cases",
-      "x-id": "#/schemas/community.ModerationCases",
-      "x-table": "community.moderation_cases",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
-      "x-uniqueKeys": [
-      ],
-      "required": [
-        "id"
-        ,"interaction_id"
-        ,"state"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "appealed_at"
-          ,"decided_at"
-          ,"decision_code"
-          ,"filter_results"
-          ,"id"
-          ,"interaction_code"
-          ,"reason"
-          ,"reviewer_account_code"
-          ,"state"
-        ],
-        "required": [
-          "id"
-          ,"interaction_code"
-          ,"state"
-        ]
-      },
-      "properties": {
-        "appealed_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"decided_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"decision_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "decision_code", "scheme": "ref.sch.com.moderation.decision" }
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"filter_results": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "x-role": "data"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "data"
-        }
-        ,"interaction_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Interactions", "column": "id", "alias": "interaction_code" }
-        }
-        ,"reason": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
-        }
-        ,"reviewer_account_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "reviewer_account_code" }
-        }
-        ,"state": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["appealed", "filtered", "held", "pending_review", "published", "received", "rejected", "removed"],
-          "x-role": "data"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "notification_deliveries": {
-      "title": "community.notification_deliveries",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.community.notification-deliveries",
-      "x-id": "#/schemas/community.NotificationDeliveries",
-      "x-table": "community.notification_deliveries",
-      "x-primaryKey": ["id"],"x-naturalKey": ["notification_code", "device_code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["notification_id", "device_id"]
-      ],
-      "required": [
-        "device_id"
-        ,"id"
-        ,"notification_id"
-        ,"state"
-        ,"subscription_id"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "device_code"
-          ,"notification_code"
-          ,"opened_at"
-          ,"sent_at"
-          ,"state"
-          ,"subscription_code"
-        ],
-        "required": [
-          "device_code"
-          ,"notification_code"
-          ,"state"
-          ,"subscription_code"
-        ]
-      },
-      "properties": {
-        "created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"device_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/community.Devices", "column": "id", "alias": "device_code" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"notification_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/community.Notifications", "column": "id", "alias": "notification_code" }
-        }
-        ,"opened_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"sent_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"state": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["failed", "opened", "queued", "sent"],
-          "x-role": "data"
-        }
-        ,"subscription_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Subscriptions", "column": "id", "alias": "subscription_code" }
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "notifications": {
-      "title": "community.notifications",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.community.notifications",
-      "x-id": "#/schemas/community.Notifications",
-      "x-table": "community.notifications",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
-      "x-uniqueKeys": [
-      ],
-      "required": [
-        "copy_key"
-        ,"id"
-        ,"kind_id"
-        ,"subject_id"
-        ,"subject_table"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "copy_key"
-          ,"id"
-          ,"kind_code"
-          ,"payload"
-          ,"subject_id"
-          ,"subject_table"
-        ],
-        "required": [
-          "copy_key"
-          ,"id"
-          ,"kind_code"
-          ,"subject_id"
-          ,"subject_table"
-        ]
-      },
-      "properties": {
-        "copy_key": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "data"
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "data"
-        }
-        ,"kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.com.notification.kind" }
-        }
-        ,"payload": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "x-role": "data"
-        }
-        ,"subject_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "data"
-        }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["activities.contributions", "activities.event_names", "activities.event_participants", "activities.event_rules", "activities.event_subjects", "activities.events", "activities.motions", "activities.occurrence_changes", "activities.occurrences", "activities.sittings", "activities.votes", "civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.consents", "community.devices", "community.interactions", "community.location_proofs", "community.moderation_cases", "community.notification_deliveries", "community.notifications", "community.preferences", "community.push_tokens", "community.reactions", "community.saved_places", "community.subscriptions", "community.views", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.authority_scopes", "governance.holders", "governance.institutions", "governance.mandates", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electoral_terms", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polling_stations", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.products", "source.publishers", "source.relationships", "source.slug_relations", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
-          "x-role": "data"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "preferences": {
-      "title": "community.preferences",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.community.preferences",
-      "x-id": "#/schemas/community.Preferences",
-      "x-table": "community.preferences",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
-      "x-uniqueKeys": [
-        ["actor_id"]
-      ],
-      "required": [
-        "actor_id"
-        ,"id"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "actor_code"
-          ,"country_code"
-          ,"home_feature_code"
-          ,"id"
-          ,"language_code"
-          ,"theme"
-        ],
-        "required": [
-          "actor_code"
-          ,"id"
-        ]
-      },
-      "properties": {
-        "actor_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Actors", "column": "id", "alias": "actor_code" }
-        }
-        ,"country_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"home_feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "home_feature_code" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "data"
-        }
-        ,"language_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
-        }
-        ,"theme": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "enum": ["dark", "light", "system"],
-          "x-role": "data"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "push_tokens": {
-      "title": "community.push_tokens",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.community.push-tokens",
-      "x-id": "#/schemas/community.PushTokens",
-      "x-table": "community.push_tokens",
-      "x-primaryKey": ["id"],"x-naturalKey": ["provider", "token"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["provider", "token"]
-      ],
-      "required": [
-        "device_id"
-        ,"enabled_at"
-        ,"id"
-        ,"provider"
-        ,"token"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "device_code"
-          ,"enabled_at"
-          ,"provider"
-          ,"revoked_at"
-          ,"token"
-        ],
-        "required": [
-          "device_code"
-          ,"enabled_at"
-          ,"provider"
-          ,"token"
-        ]
-      },
-      "properties": {
-        "created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"device_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Devices", "column": "id", "alias": "device_code" }
-        }
-        ,"enabled_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"provider": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["apns", "fcm", "onesignal"],
-          "x-role": "key"
-        }
-        ,"revoked_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"token": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 1000,
-          "minLength": 1,
-          "x-role": "key"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
     "reactions": {
       "title": "community.reactions",
       "type": "object",
@@ -1360,126 +1368,8 @@
         ,"subject_table": {
           "type": "string",
           "x-type": "text",
-          "enum": ["activities.contributions", "activities.event_names", "activities.event_participants", "activities.event_rules", "activities.event_subjects", "activities.events", "activities.motions", "activities.occurrence_changes", "activities.occurrences", "activities.sittings", "activities.votes", "civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.consents", "community.devices", "community.interactions", "community.location_proofs", "community.moderation_cases", "community.notification_deliveries", "community.notifications", "community.preferences", "community.push_tokens", "community.reactions", "community.saved_places", "community.subscriptions", "community.views", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.authority_scopes", "governance.holders", "governance.institutions", "governance.mandates", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electoral_terms", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polling_stations", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.products", "source.publishers", "source.relationships", "source.slug_relations", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "events.calendars", "events.changes", "events.events", "events.items", "events.names", "events.occurrences", "events.participants", "events.rules", "events.schedules", "events.seasons", "events.subjects", "events.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
           "x-role": "key"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "saved_places": {
-      "title": "community.saved_places",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.community.saved-places",
-      "x-id": "#/schemas/community.SavedPlaces",
-      "x-table": "community.saved_places",
-      "x-primaryKey": ["id"],"x-naturalKey": ["actor_code", "feature_code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["actor_id", "feature_id"]
-        ,["actor_id"]
-      ],
-      "required": [
-        "actor_id"
-        ,"feature_id"
-        ,"id"
-        ,"is_home"
-        ,"label"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "actor_code"
-          ,"feature_code"
-          ,"is_home"
-          ,"label"
-          ,"position"
-          ,"suggestion_code"
-        ],
-        "required": [
-          "actor_code"
-          ,"feature_code"
-          ,"is_home"
-          ,"label"
-        ]
-      },
-      "properties": {
-        "actor_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/community.Actors", "column": "id", "alias": "actor_code" }
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"feature_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"is_home": {
-          "type": "boolean",
-          "x-type": "boolean",
-          "x-role": "data"
-        }
-        ,"label": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 100,
-          "minLength": 1,
-          "x-role": "data"
-        }
-        ,"position": {
-          "type": ["integer", "null"],
-          "x-type": "integer",
-          "x-role": "data"
-        }
-        ,"suggestion_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "suggestion_code", "scheme": "ref.sch.com.place.label" }
         }
         ,"updated_at": {
           "type": "string",
@@ -1588,7 +1478,117 @@
         ,"subject_table": {
           "type": "string",
           "x-type": "text",
-          "enum": ["activities.contributions", "activities.event_names", "activities.event_participants", "activities.event_rules", "activities.event_subjects", "activities.events", "activities.motions", "activities.occurrence_changes", "activities.occurrences", "activities.sittings", "activities.votes", "civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.consents", "community.devices", "community.interactions", "community.location_proofs", "community.moderation_cases", "community.notification_deliveries", "community.notifications", "community.preferences", "community.push_tokens", "community.reactions", "community.saved_places", "community.subscriptions", "community.views", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.authority_scopes", "governance.holders", "governance.institutions", "governance.mandates", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electoral_terms", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polling_stations", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.products", "source.publishers", "source.relationships", "source.slug_relations", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "events.calendars", "events.changes", "events.events", "events.items", "events.names", "events.occurrences", "events.participants", "events.rules", "events.schedules", "events.seasons", "events.subjects", "events.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "x-role": "key"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "tokens": {
+      "title": "community.tokens",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.tokens",
+      "x-id": "#/schemas/community.Tokens",
+      "x-table": "community.tokens",
+      "x-primaryKey": ["id"],"x-naturalKey": ["provider", "token"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["provider", "token"]
+      ],
+      "required": [
+        "device_id"
+        ,"enabled_at"
+        ,"id"
+        ,"provider"
+        ,"token"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "device_code"
+          ,"enabled_at"
+          ,"provider"
+          ,"revoked_at"
+          ,"token"
+        ],
+        "required": [
+          "device_code"
+          ,"enabled_at"
+          ,"provider"
+          ,"token"
+        ]
+      },
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"device_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Devices", "column": "id", "alias": "device_code" }
+        }
+        ,"enabled_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"provider": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["apns", "fcm", "onesignal"],
+          "x-role": "key"
+        }
+        ,"revoked_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"token": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 1000,
+          "minLength": 1,
           "x-role": "key"
         }
         ,"updated_at": {
@@ -1691,7 +1691,7 @@
         ,"subject_table": {
           "type": "string",
           "x-type": "text",
-          "enum": ["activities.contributions", "activities.event_names", "activities.event_participants", "activities.event_rules", "activities.event_subjects", "activities.events", "activities.motions", "activities.occurrence_changes", "activities.occurrences", "activities.sittings", "activities.votes", "civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.consents", "community.devices", "community.interactions", "community.location_proofs", "community.moderation_cases", "community.notification_deliveries", "community.notifications", "community.preferences", "community.push_tokens", "community.reactions", "community.saved_places", "community.subscriptions", "community.views", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.authority_scopes", "governance.holders", "governance.institutions", "governance.mandates", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electoral_terms", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polling_stations", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.products", "source.publishers", "source.relationships", "source.slug_relations", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "events.calendars", "events.changes", "events.events", "events.items", "events.names", "events.occurrences", "events.participants", "events.rules", "events.schedules", "events.seasons", "events.subjects", "events.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
           "x-role": "key"
         }
         ,"updated_at": {

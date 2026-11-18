@@ -21,7 +21,8 @@
     "statistics": "sta",
     "activities": "act",
     "facts": "fac",
-    "community": "com"
+    "community": "com",
+    "events": "eve"
   },
   "tables": {
     "auth.accounts": {
@@ -327,44 +328,11 @@
     "statistics.observations": {
       "short": "obs"
     },
-    "activities.sittings": {
-      "short": "sit"
-    },
-    "activities.motions": {
-      "short": "mot"
-    },
-    "activities.votes": {
-      "short": "vot"
-    },
-    "activities.contributions": {
-      "short": "ctb"
-    },
     "filesystem.content_tags": {
       "short": "con"
     },
     "filesystem.contents": {
       "short": "co2"
-    },
-    "activities.event_names": {
-      "short": "eve"
-    },
-    "activities.event_participants": {
-      "short": "ev2"
-    },
-    "activities.event_rules": {
-      "short": "ev3"
-    },
-    "activities.event_subjects": {
-      "short": "ev4"
-    },
-    "activities.events": {
-      "short": "ev5"
-    },
-    "activities.occurrence_changes": {
-      "short": "occ"
-    },
-    "activities.occurrences": {
-      "short": "oc2"
     },
     "civic.beneficiaries": {
       "short": "ben"
@@ -381,32 +349,14 @@
     "community.devices": {
       "short": "dev"
     },
-    "community.interactions": {
-      "short": "int"
-    },
-    "community.location_proofs": {
-      "short": "loc"
-    },
-    "community.moderation_cases": {
-      "short": "mod"
-    },
-    "community.notification_deliveries": {
-      "short": "not"
-    },
     "community.notifications": {
       "short": "no2"
     },
     "community.preferences": {
       "short": "pre"
     },
-    "community.push_tokens": {
-      "short": "pus"
-    },
     "community.reactions": {
       "short": "rea"
-    },
-    "community.saved_places": {
-      "short": "sav"
     },
     "community.subscriptions": {
       "short": "sub"
@@ -423,26 +373,104 @@
     "governance.reports": {
       "short": "rep"
     },
-    "politics.electoral_terms": {
-      "short": "ele"
-    },
-    "politics.polling_stations": {
-      "short": "pol"
-    },
     "reference.copy": {
       "short": "cop"
     },
     "source.coverage": {
       "short": "cov"
     },
-    "source.slug_relations": {
-      "short": "slu"
-    },
     "source.slugs": {
       "short": "sl2"
     },
     "statistics.metrics": {
       "short": "met"
+    },
+    "community.cases": {
+      "short": "cas"
+    },
+    "community.deliveries": {
+      "short": "del"
+    },
+    "community.places": {
+      "short": "pla"
+    },
+    "community.posts": {
+      "short": "pos"
+    },
+    "community.proofs": {
+      "short": "pro"
+    },
+    "community.tokens": {
+      "short": "tok"
+    },
+    "events.calendars": {
+      "short": "cal"
+    },
+    "events.changes": {
+      "short": "cha"
+    },
+    "events.events": {
+      "short": "eve"
+    },
+    "events.items": {
+      "short": "ite"
+    },
+    "events.names": {
+      "short": "nam"
+    },
+    "events.occurrences": {
+      "short": "occ"
+    },
+    "events.participants": {
+      "short": "par"
+    },
+    "events.rules": {
+      "short": "rul"
+    },
+    "events.schedules": {
+      "short": "sch"
+    },
+    "events.seasons": {
+      "short": "sea"
+    },
+    "events.subjects": {
+      "short": "sub"
+    },
+    "governance.agenda": {
+      "short": "age"
+    },
+    "governance.bills": {
+      "short": "bil"
+    },
+    "governance.hansards": {
+      "short": "han"
+    },
+    "governance.motions": {
+      "short": "mot"
+    },
+    "governance.sittings": {
+      "short": "sit"
+    },
+    "governance.speeches": {
+      "short": "spe"
+    },
+    "governance.stages": {
+      "short": "sta"
+    },
+    "governance.terms": {
+      "short": "ter"
+    },
+    "governance.votes": {
+      "short": "vot"
+    },
+    "source.links": {
+      "short": "lin"
+    },
+    "events.venues": {
+      "short": "ven"
+    },
+    "politics.polls": {
+      "short": "pol"
     }
   }
 }

@@ -1,4 +1,4 @@
-"""Location Proofs: one row of location_proofs."""
+"""Proofs: one row of proofs."""
 
 from __future__ import annotations
 
@@ -11,12 +11,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from mzizi_engine.api.schemas.postgres.community.enums.location_check import LocationCheck
 
 
-class LocationProofsRow(BaseModel):
+class ProofsRow(BaseModel):
     """The evidence that a poster was in or near the place they posted about, with a trust score. A signal, never proof."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "community.location_proofs"
+    table: ClassVar[str] = "community.proofs"
 
     accuracy_meters: Annotated[int, Field(ge=0)] | None = None
     actor_id: UUID

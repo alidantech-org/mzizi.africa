@@ -346,7 +346,6 @@ export const ValueRelation = reference
       .index("targetValueId", "relationKind"),
   });
 
-
 /*---------------- reference.copy ----------------*/
 export const Copy = reference
   .schema("Copy", {

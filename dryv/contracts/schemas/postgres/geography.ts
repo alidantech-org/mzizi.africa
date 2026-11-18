@@ -275,7 +275,6 @@ export const Assets = geography
       .index("purposeId"),
   });
 
-
 /*---------------- geography.levels ----------------*/
 export const Levels = geography
   .schema("Levels", {

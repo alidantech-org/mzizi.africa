@@ -674,135 +674,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/politics.ElectoralTerms", "column": "id", "alias": "term_code" }
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "electoral_terms": {
-      "title": "politics.electoral_terms",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.politics.electoral-terms",
-      "x-id": "#/schemas/politics.ElectoralTerms",
-      "x-table": "politics.electoral_terms",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["code"]
-      ],
-      "required": [
-        "code"
-        ,"country_id"
-        ,"id"
-        ,"starts_on"
-        ,"term_kind_id"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "code"
-          ,"country_code"
-          ,"ends_on"
-          ,"source_citation_code"
-          ,"starts_on"
-          ,"term_kind_code"
-          ,"unit_feature_code"
-        ],
-        "required": [
-          "code"
-          ,"country_code"
-          ,"starts_on"
-          ,"term_kind_code"
-        ]
-      },
-      "properties": {
-        "code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"country_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"ends_on": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
-        ,"starts_on": {
-          "type": "string",
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"term_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "term_kind_code", "scheme": "ref.sch.pol.term.kind" }
-        }
-        ,"unit_feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
+          "x-link": { "tableId": "#/schemas/governance.Terms", "column": "id", "alias": "term_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -1597,25 +1469,25 @@
         }
       }
     },
-    "polling_stations": {
-      "title": "politics.polling_stations",
+    "polls": {
+      "title": "politics.polls",
       "type": "object",
       "additionalProperties": false,
-      "x-code": "sys.tbl.politics.polling-stations",
-      "x-id": "#/schemas/politics.PollingStations",
-      "x-table": "politics.polling_stations",
+      "x-code": "sys.tbl.politics.polls",
+      "x-id": "#/schemas/politics.Polls",
+      "x-table": "politics.polls",
       "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
-        ,["feature_id"]
+        ,["election_id", "station_feature_id"]
       ],
       "required": [
         "code"
-        ,"country_id"
-        ,"feature_id"
+        ,"election_id"
         ,"id"
-        ,"station_kind_id"
+        ,"station_feature_id"
+        ,"status_id"
       ],
       "x-seed": {
         "system": [
@@ -1626,37 +1498,30 @@
           ,"version"
         ],
         "columns": [
-          "access_note"
-          ,"closed_on"
+          "closes_at"
           ,"code"
-          ,"commission_code"
-          ,"country_code"
-          ,"feature_code"
-          ,"opened_on"
-          ,"registration_centre_code"
+          ,"election_code"
+          ,"host_feature_code"
+          ,"note"
+          ,"opens_at"
+          ,"registered_voters"
           ,"source_citation_code"
-          ,"station_kind_code"
+          ,"station_feature_code"
+          ,"status_code"
           ,"stream_count"
-          ,"succeeded_by_station_code"
         ],
         "required": [
           "code"
-          ,"country_code"
-          ,"feature_code"
-          ,"station_kind_code"
+          ,"election_code"
+          ,"station_feature_code"
+          ,"status_code"
         ]
       },
       "properties": {
-        "access_note": {
+        "closes_at": {
           "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
-        }
-        ,"closed_on": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
+          "x-type": "timestamp",
+          "format": "date-time",
           "x-role": "data"
         }
         ,"code": {
@@ -1666,20 +1531,6 @@
           "minLength": 1,
           "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
           "x-role": "key"
-        }
-        ,"commission_code": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 100,
-          "minLength": 1,
-          "x-role": "data"
-        }
-        ,"country_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -1695,12 +1546,19 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"feature_id": {
+        ,"election_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
+          "x-link": { "tableId": "#/schemas/politics.Elections", "column": "id", "alias": "election_code" }
+        }
+        ,"host_feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "host_feature_code" }
         }
         ,"id": {
           "type": "string",
@@ -1709,18 +1567,22 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"opened_on": {
+        ,"note": {
           "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
+          "x-type": "text",
+          "maxLength": 4000,
           "x-role": "data"
         }
-        ,"registration_centre_id": {
+        ,"opens_at": {
           "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/politics.PollingStations", "column": "id", "alias": "registration_centre_code" }
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"registered_voters": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"source_citation_id": {
           "type": ["string", "null"],
@@ -1729,24 +1591,24 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
-        ,"station_kind_id": {
+        ,"station_feature_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "station_kind_code", "scheme": "ref.sch.pol.station.kind" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "station_feature_code" }
+        }
+        ,"status_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.pol.poll.status" }
         }
         ,"stream_count": {
           "type": ["integer", "null"],
           "x-type": "integer",
           "x-role": "data"
-        }
-        ,"succeeded_by_station_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/politics.PollingStations", "column": "id", "alias": "succeeded_by_station_code" }
         }
         ,"updated_at": {
           "type": "string",

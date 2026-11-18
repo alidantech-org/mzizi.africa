@@ -17,10 +17,10 @@ from mzizi_engine.api.schemas.postgres.source.entities.coverage import CoverageR
 from mzizi_engine.api.schemas.postgres.source.entities.discoveries import DiscoveriesRow
 from mzizi_engine.api.schemas.postgres.source.entities.domains import DomainsRow
 from mzizi_engine.api.schemas.postgres.source.entities.editions import SourceEditionsRow
+from mzizi_engine.api.schemas.postgres.source.entities.links import LinksRow
 from mzizi_engine.api.schemas.postgres.source.entities.products import ProductsRow
 from mzizi_engine.api.schemas.postgres.source.entities.publishers import PublishersRow
 from mzizi_engine.api.schemas.postgres.source.entities.relationships import SourceRelationshipsRow
-from mzizi_engine.api.schemas.postgres.source.entities.slug_relations import SlugRelationsRow
 from mzizi_engine.api.schemas.postgres.source.entities.slugs import SlugsRow
 from mzizi_engine.api.schemas.postgres.source.entities.sources import SourcesRow
 from mzizi_engine.api.schemas.postgres.source.entities.verifications import VerificationsRow
@@ -39,9 +39,9 @@ __all__ = [
     "FeaturesRow",
     "FileVersionsRow",
     "LanguageRow",
+    "LinksRow",
     "ProductsRow",
     "PublishersRow",
-    "SlugRelationsRow",
     "SlugsRow",
     "SourceEditionsRow",
     "SourceRelationshipsRow",

@@ -9,7 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class DeliveriesRow(BaseModel):
+class CivicDeliveriesRow(BaseModel):
     """One dated deliverable or milestone under a contract, optionally scoped to a geographic unit."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")

@@ -1,4 +1,4 @@
-"""Slug Relations: one row of slug_relations."""
+"""Links: one row of links."""
 
 from __future__ import annotations
 
@@ -11,12 +11,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
 
 
-class SlugRelationsRow(BaseModel):
+class LinksRow(BaseModel):
     """A dated relation between two slugs that name the same thing or the same area: translations, aliases, a constituency and a sub-county covering the same land. Must not form cycles."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "source.slug_relations"
+    table: ClassVar[str] = "source.links"
 
     created_at: datetime
     deleted_at: datetime | None = None

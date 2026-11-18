@@ -42,6 +42,15 @@ Every feature the owner mentions is recorded here the moment it is mentioned, wi
 | F28 | **Explore page by topic** | a navigator or tracker per topic, topic media (party symbols for politics, banknotes for money, people for population), also helps search | this register, section C | recorded, design below |
 | F29 | **Fun facts as content** | `filesystem.contents` with a fun-fact category, media attached, auto-swiping carousel when several exist | this register, section D | recorded, design below |
 | F30 | **Remove `audit` and `facts` schemas for now** | simpler fresh design; if audit returns it belongs in `source` or `auth` | this register, section E | authored (contracts removed, not generated) |
+| F31 | Single-word table names | new tables use one word (`events.occurrences`, not `event_occurrences`) | DATABASE_CHANGES_20261119 section 10 | authored and generated |
+| F32 | `events` schema (rename of `activities`) holding only things with actual dates: occurrences, recurrence, schedules, calendars, seasons, holidays, independence-style national days | parliament sittings stay events; law-making moves to governance | DATABASE_CHANGES_20261119 section 10 | authored and generated |
+| F33 | Parliament and law-making in `governance`: sittings, motions, votes, speeches (Hansard), bills and stages, committees, order papers | linked to holders and institutions; Hansard recorded | DATABASE_CHANGES_20261119 section 10 | authored and generated |
+| F34 | Event schedules and timetables (election timetable with offsets from polling day), calendars (Gregorian, lunar, fiscal, school), natural seasons, `.ics` export | important event features | DATABASE_CHANGES_20261119 section 10 | authored and generated |
+| F35 | Venues: an occurrence can happen in many places | national election across thousands of polling places | DATABASE_CHANGES_20261119 section 11 | authored and generated |
+| F36 | iCalendar rule text on recurrence and `.ics` export ("add to my calendar") | RRULE column authored; export is an API operation still to author | DATABASE_CHANGES_20261119 section 11 | rule column generated, export recorded |
+| F37 | Polling stations as feature plus civic facility plus per-election polls, votes by station, roll-up, maps | no hard-coded station table; links to entities, facilities and features | DATABASE_CHANGES_20261119 section 11 | authored and generated |
+| F38 | Committees as institutions with offices and holders | no extra tables | DATABASE_CHANGES_20261119 section 11 | designed |
+| F39 | Regenerate the API, SDKs and frontends and push after the database is approved | sequence set by the owner | this register | recorded, waiting for approval |
 
 ## A. Abbreviations (F26)
 

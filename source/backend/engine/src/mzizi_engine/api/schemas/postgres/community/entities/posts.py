@@ -1,4 +1,4 @@
-"""Interactions: one row of interactions."""
+"""Posts: one row of posts."""
 
 from __future__ import annotations
 
@@ -12,12 +12,12 @@ from mzizi_engine.api.schemas.postgres.community.enums.moderation_state import M
 from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
 
 
-class InteractionsRow(BaseModel):
+class PostsRow(BaseModel):
     """One thing an actor posted about a subject: a comment, evidence, an opinion, a photo, a ground-truth report, a correction or a data request. Never canonical data until reviewed; media attach to it as to any subject."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "community.interactions"
+    table: ClassVar[str] = "community.posts"
 
     actor_id: UUID
     addressee_feature_id: UUID | None = None

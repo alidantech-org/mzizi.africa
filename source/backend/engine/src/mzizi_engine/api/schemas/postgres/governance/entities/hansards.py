@@ -1,23 +1,22 @@
-"""Event Subjects: one row of event_subjects."""
+"""Hansards: one row of hansards."""
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, ClassVar
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
 
-
-class EventSubjectsRow(BaseModel):
-    """What an event is about or belongs to: an election, an institution, a person, a facility, a bill. An election's registration and nomination dates are events attached to it here."""
+class HansardsRow(BaseModel):
+    """The official verbatim record (Hansard) of one sitting as a published document. Speeches and divisions are extracted from it and cite its pages."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "activities.event_subjects"
+    table: ClassVar[str] = "governance.hansards"
 
+    artifact_id: UUID
     code: Annotated[
         str,
         Field(
@@ -28,10 +27,12 @@ class EventSubjectsRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
-    event_id: UUID
     id: UUID
-    role_id: UUID
-    subject_id: UUID
-    subject_table: SubjectTable
+    is_provisional: bool
+    language_id: UUID
+    published_on: date | None = None
+    reference: Annotated[str, Field(min_length=1, max_length=255)] | None = None
+    sitting_id: UUID
+    source_citation_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

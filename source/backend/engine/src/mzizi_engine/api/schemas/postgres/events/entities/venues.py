@@ -1,4 +1,4 @@
-"""Event Participants: one row of event_participants."""
+"""Venues: one row of venues."""
 
 from __future__ import annotations
 
@@ -9,18 +9,18 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class EventParticipantsRow(BaseModel):
-    """One organisation or person taking part in one occurrence in a role."""
+class VenuesRow(BaseModel):
+    """One place an occurrence happens at. An occurrence can have many: a national election covers every county and polling place."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "activities.event_participants"
+    table: ClassVar[str] = "events.venues"
 
     created_at: datetime
     deleted_at: datetime | None = None
-    entity_id: UUID | None = None
+    feature_id: UUID
     id: UUID
-    individual_id: UUID | None = None
+    note: Annotated[str, Field(max_length=4000)] | None = None
     occurrence_id: UUID
     role_id: UUID
     updated_at: datetime

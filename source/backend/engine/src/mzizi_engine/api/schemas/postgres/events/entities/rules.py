@@ -1,4 +1,4 @@
-"""Event Rules: one row of event_rules."""
+"""Rules: one row of rules."""
 
 from __future__ import annotations
 
@@ -11,12 +11,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
 
 
-class EventRulesRow(BaseModel):
+class RulesRow(BaseModel):
     """How the dates of an event are produced, with the adjustment the law applies when a date falls on a rest day. Occurrences generated from a rule are projected until announced."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "activities.event_rules"
+    table: ClassVar[str] = "events.rules"
 
     adjustment_id: UUID | None = None
     anchor_on: date | None = None
@@ -30,6 +30,7 @@ class EventRulesRow(BaseModel):
     interval_years: Annotated[int, Field(ge=1)] | None = None
     month: Annotated[int, Field(ge=1)] | None = None
     nth_weekday: Annotated[int, Field(ge=1)] | None = None
+    rrule: Annotated[str, Field(min_length=1, max_length=500)] | None = None
     rule_kind_id: UUID
     source_citation_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None

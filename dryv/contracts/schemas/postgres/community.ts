@@ -19,7 +19,9 @@ const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
 export const community = dryv
   .group({ name: "community" })
-  .description("Visitors as device actors: consent, preferences, saved places, reactions, posts, moderation, subscriptions and push.")
+  .description(
+    "Visitors as device actors: consent, preferences, saved places, reactions, posts, moderation, subscriptions and push.",
+  )
   .facets({ storage: { namespace: "community", store: "main" } });
 
 export const communityEnums = community.properties({
@@ -29,7 +31,16 @@ export const communityEnums = community.properties({
   AttestationStatus: dryv.property.enum(["none", "passed", "failed", "unavailable"]),
   PushProvider: dryv.property.enum(["fcm", "apns", "onesignal"]),
   ThemeChoice: dryv.property.enum(["system", "light", "dark"]),
-  ModerationState: dryv.property.enum(["received", "filtered", "pending_review", "published", "held", "rejected", "removed", "appealed"]),
+  ModerationState: dryv.property.enum([
+    "received",
+    "filtered",
+    "pending_review",
+    "published",
+    "held",
+    "rejected",
+    "removed",
+    "appealed",
+  ]),
   LocationCheck: dryv.property.enum(["inside", "near", "outside", "unavailable", "suspected_mock"]),
   DeliveryState: dryv.property.enum(["queued", "sent", "failed", "opened"]),
 });
@@ -71,8 +82,8 @@ export const Devices = community
   .facets({ storage: dryv.storage("devices").unique("actorId", "fingerprintHash").index("fingerprintHash") });
 
 /*---------------- community.push_tokens ----------------*/
-export const PushTokens = community
-  .schema("PushTokens", {
+export const Tokens = community
+  .schema("Tokens", {
     deviceId: belongsTo(() => Devices),
     provider: dryv.field(communityEnums.PushProvider),
     token: dryv.field(sharedProperties.NonEmptyString1000),
@@ -82,7 +93,7 @@ export const PushTokens = community
   .extends(baseSchemas.Entity)
   .description("A push address for a mobile device, kept only while the visitor has notifications enabled.")
   .role("entity")
-  .facets({ storage: dryv.storage("push_tokens").unique("provider", "token").index("deviceId") });
+  .facets({ storage: dryv.storage("tokens").unique("provider", "token").index("deviceId") });
 
 /*---------------- community.consents ----------------*/
 export const Consents = community
@@ -117,14 +128,16 @@ export const Preferences = community
   .facets({ storage: dryv.storage("preferences").unique("actorId").index("homeFeatureId") });
 
 /*---------------- community.saved_places ----------------*/
-export const SavedPlaces = community
-  .schema("SavedPlaces", {
+export const Places = community
+  .schema("Places", {
     actorId: belongsTo(() => Actors),
     featureId: belongsTo(() => Features),
     /** The visitor's own text (Home, Work, Mama's farm), prefilled from the suggestion and editable. */
     label: dryv.field(sharedProperties.NonEmptyString100),
     /** Scheme com.place.label: the suggestion the label started from, in suggestion order. */
-    suggestionId: belongsTo(() => Value).maybe().tags("scheme:ref.sch.com.place.label"),
+    suggestionId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.com.place.label"),
     isHome: dryv.field(sharedProperties.Flag),
     position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
   })
@@ -136,11 +149,11 @@ export const SavedPlaces = community
 
 const homePlace = community.expression(
   "HomePlace",
-  SavedPlaces.check((v) => v.isHome.eq(true)),
+  Places.check((v) => v.isHome.eq(true)),
 );
 
-SavedPlaces.facets({
-  storage: dryv.storage("saved_places").unique("actorId", "featureId").unique("actorId").where(homePlace).index("featureId"),
+Places.facets({
+  storage: dryv.storage("places").unique("actorId", "featureId").unique("actorId").where(homePlace).index("featureId"),
 });
 
 /*---------------- community.reactions ----------------*/
@@ -154,7 +167,12 @@ export const Reactions = community
   .extends(baseSchemas.Entity)
   .description("One reaction (a like) by one actor to one subject; one per actor, kind and subject, reversible.")
   .role("entity")
-  .facets({ storage: dryv.storage("reactions").unique("actorId", "kindId", "subjectTable", "subjectId").index("subjectTable", "subjectId") });
+  .facets({
+    storage: dryv
+      .storage("reactions")
+      .unique("actorId", "kindId", "subjectTable", "subjectId")
+      .index("subjectTable", "subjectId"),
+  });
 
 /*---------------- community.views ----------------*/
 export const Views = community
@@ -173,8 +191,8 @@ export const Views = community
   .facets({ storage: dryv.storage("views").unique("subjectTable", "subjectId", "day", "visitorHash").index("day") });
 
 /*---------------- community.location_proofs ----------------*/
-export const LocationProofs = community
-  .schema("LocationProofs", {
+export const Proofs = community
+  .schema("Proofs", {
     actorId: belongsTo(() => Actors),
     deviceId: belongsTo(() => Devices),
     /** The place the position fell in or near; the raw position is not kept by default. */
@@ -191,13 +209,15 @@ export const LocationProofs = community
     recordedAt: dryv.field(sharedProperties.Instant),
   })
   .extends(baseSchemas.Entity)
-  .description("The evidence that a poster was in or near the place they posted about, with a trust score. A signal, never proof.")
+  .description(
+    "The evidence that a poster was in or near the place they posted about, with a trust score. A signal, never proof.",
+  )
   .role("entity")
-  .facets({ storage: dryv.storage("location_proofs").index("actorId").index("deviceId").index("matchedFeatureId") });
+  .facets({ storage: dryv.storage("proofs").index("actorId").index("deviceId").index("matchedFeatureId") });
 
 /*---------------- community.interactions ----------------*/
-export const Interactions = community
-  .schema("Interactions", {
+export const Posts = community
+  .schema("Posts", {
     actorId: belongsTo(() => Actors),
     deviceId: belongsTo(() => Devices),
     ...subjectFields,
@@ -206,8 +226,8 @@ export const Interactions = community
     body: dryv.field(sharedProperties.NonEmptyString).maybe(),
     languageId: belongsTo(() => Language).maybe(),
     countryId: belongsTo(() => Country).maybe(),
-    parentInteractionId: belongsTo(() => Interactions).maybe(),
-    locationProofId: belongsTo(() => LocationProofs).maybe(),
+    parentInteractionId: belongsTo(() => Posts).maybe(),
+    locationProofId: belongsTo(() => Proofs).maybe(),
     /** The office asked, for a data request. */
     addresseeFeatureId: belongsTo(() => Features).maybe(),
     state: dryv.field(communityEnums.ModerationState),
@@ -220,7 +240,7 @@ export const Interactions = community
   .role("entity")
   .facets({
     storage: dryv
-      .storage("interactions")
+      .storage("posts")
       .index("subjectTable", "subjectId")
       .index("actorId")
       .index("deviceId")
@@ -231,15 +251,17 @@ export const Interactions = community
   });
 
 /*---------------- community.moderation_cases ----------------*/
-export const ModerationCases = community
-  .schema("ModerationCases", {
-    interactionId: belongsTo(() => Interactions),
+export const Cases = community
+  .schema("Cases", {
+    interactionId: belongsTo(() => Posts),
     /** Results of the automatic filters (abuse, personal data, spam, image checks); a proposal, not a decision. */
     filterResults: dryv.field(sharedProperties.JsonText).maybe(),
     state: dryv.field(communityEnums.ModerationState),
     reviewerAccountId: belongsTo(() => Accounts).maybe(),
     /** Scheme com.moderation.decision: publish, hold, reject, remove, legal takedown. */
-    decisionId: belongsTo(() => Value).maybe().tags("scheme:ref.sch.com.moderation.decision"),
+    decisionId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.com.moderation.decision"),
     reason: dryv.field(sharedProperties.Description).maybe(),
     decidedAt: dryv.field(sharedProperties.Instant).maybe(),
     appealedAt: dryv.field(sharedProperties.Instant).maybe(),
@@ -247,7 +269,7 @@ export const ModerationCases = community
   .extends(baseSchemas.Entity)
   .description("The moderation record of one interaction: filter results, the reviewer, the decision and any appeal.")
   .role("entity")
-  .facets({ storage: dryv.storage("moderation_cases").index("interactionId").index("state").index("reviewerAccountId") });
+  .facets({ storage: dryv.storage("cases").index("interactionId").index("state").index("reviewerAccountId") });
 
 /*---------------- community.subscriptions ----------------*/
 export const Subscriptions = community
@@ -259,9 +281,16 @@ export const Subscriptions = community
     revokedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .description("An actor following one subject (a place, leader, project, election, tender, institution, supplier, event) for one kind of update.")
+  .description(
+    "An actor following one subject (a place, leader, project, election, tender, institution, supplier, event) for one kind of update.",
+  )
   .role("entity")
-  .facets({ storage: dryv.storage("subscriptions").unique("actorId", "subjectTable", "subjectId", "kindId").index("subjectTable", "subjectId") });
+  .facets({
+    storage: dryv
+      .storage("subscriptions")
+      .unique("actorId", "subjectTable", "subjectId", "kindId")
+      .index("subjectTable", "subjectId"),
+  });
 
 /*---------------- community.notifications ----------------*/
 export const Notifications = community
@@ -274,13 +303,15 @@ export const Notifications = community
     payload: dryv.field(sharedProperties.JsonText).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .description("Something that happened to a subject and may be sent to followers; the wording is copy, filled per recipient.")
+  .description(
+    "Something that happened to a subject and may be sent to followers; the wording is copy, filled per recipient.",
+  )
   .role("entity")
   .facets({ storage: dryv.storage("notifications").index("subjectTable", "subjectId").index("kindId") });
 
 /*---------------- community.notification_deliveries ----------------*/
-export const NotificationDeliveries = community
-  .schema("NotificationDeliveries", {
+export const Deliveries = community
+  .schema("Deliveries", {
     notificationId: belongsTo(() => Notifications),
     subscriptionId: belongsTo(() => Subscriptions),
     deviceId: belongsTo(() => Devices),
@@ -292,4 +323,6 @@ export const NotificationDeliveries = community
   .rule("DeliverySentBeforeOpened", rule.ordered("sentAt", "openedAt", { allowEqual: true }))
   .description("The delivery of one notification to one device for one subscription.")
   .role("entity")
-  .facets({ storage: dryv.storage("notification_deliveries").unique("notificationId", "deviceId").index("subscriptionId").index("state") });
+  .facets({
+    storage: dryv.storage("deliveries").unique("notificationId", "deviceId").index("subscriptionId").index("state"),
+  });

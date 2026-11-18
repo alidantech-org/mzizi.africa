@@ -1,4 +1,4 @@
-"""Events: one row of events."""
+"""Bills: one row of bills."""
 
 from __future__ import annotations
 
@@ -9,14 +9,14 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class EventsRow(BaseModel):
-    """One event or a recurring series of events: a public holiday, a national day, an election, a sitting, a government visit. Names, rules and dated occurrences are separate; content and media attach through the subject mechanism."""
+class BillsRow(BaseModel):
+    """A proposed law from introduction to enactment. Stages record each reading, committee, assent and publication; the enacted law is a legal instrument."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "activities.events"
+    table: ClassVar[str] = "governance.bills"
 
-    basis_provision_id: UUID | None = None
+    bill_kind_id: UUID
     code: Annotated[
         str,
         Field(
@@ -25,14 +25,17 @@ class EventsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    country_id: UUID | None = None
+    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    event_kind_id: UUID
     id: UUID
-    organiser_entity_id: UUID | None = None
-    scope_feature_id: UUID | None = None
-    scope_level_kind_id: UUID | None = None
+    institution_id: UUID
+    instrument_id: UUID | None = None
     source_citation_id: UUID | None = None
+    sponsor_holder_id: UUID | None = None
+    status_id: UUID
+    summary: Annotated[str, Field(max_length=4000)] | None = None
+    term_id: UUID | None = None
+    title: Annotated[str, Field(min_length=1, max_length=300)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

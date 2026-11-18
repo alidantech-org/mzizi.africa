@@ -30,6 +30,7 @@ class MandatesRow(BaseModel):
     office_id: UUID | None = None
     source_citation_id: UUID | None = None
     starts_on: date | None = None
+    term_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

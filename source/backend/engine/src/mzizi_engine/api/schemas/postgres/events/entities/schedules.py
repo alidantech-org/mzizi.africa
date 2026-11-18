@@ -1,4 +1,4 @@
-"""Occurrence Changes: one row of occurrence_changes."""
+"""Schedules: one row of schedules."""
 
 from __future__ import annotations
 
@@ -9,16 +9,16 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class OccurrenceChangesRow(BaseModel):
-    """One reschedule, postponement, adjournment, cancellation or confirmation of an occurrence, with the reason, who decided it and under which law. History is the list of changes."""
+class SchedulesRow(BaseModel):
+    """A published plan of dated items: an election timetable, a school year, a parliamentary calendar. Items are placed by offset from an anchor, so moving the anchor moves the plan."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "activities.occurrence_changes"
+    table: ClassVar[str] = "events.schedules"
 
-    authority_entity_id: UUID | None = None
+    anchor_event_id: UUID | None = None
+    anchor_on: date | None = None
     basis_provision_id: UUID | None = None
-    change_kind_id: UUID
     code: Annotated[
         str,
         Field(
@@ -27,16 +27,15 @@ class OccurrenceChangesRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    country_id: UUID | None = None
     created_at: datetime
-    decided_on: date | None = None
     deleted_at: datetime | None = None
-    explanation: Annotated[str, Field(max_length=4000)] | None = None
-    from_on: date | None = None
     id: UUID
-    occurrence_id: UUID
-    reason_id: UUID | None = None
-    replacement_occurrence_id: UUID | None = None
+    issuer_entity_id: UUID | None = None
+    published_on: date | None = None
+    schedule_kind_id: UUID
     source_citation_id: UUID | None = None
-    to_on: date | None = None
+    status_id: UUID
+    supersedes_schedule_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

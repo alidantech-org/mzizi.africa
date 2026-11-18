@@ -1,4 +1,4 @@
-"""Saved Places: one row of saved_places."""
+"""Places: one row of places."""
 
 from __future__ import annotations
 
@@ -9,12 +9,12 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class SavedPlacesRow(BaseModel):
+class PlacesRow(BaseModel):
     """A place an actor keeps, with a free-text label. The place unit is stored, never GPS coordinates. At most one is the home place."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "community.saved_places"
+    table: ClassVar[str] = "community.places"
 
     actor_id: UUID
     created_at: datetime

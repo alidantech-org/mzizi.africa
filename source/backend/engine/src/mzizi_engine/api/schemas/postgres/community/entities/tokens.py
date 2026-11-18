@@ -1,4 +1,4 @@
-"""Push Tokens: one row of push_tokens."""
+"""Tokens: one row of tokens."""
 
 from __future__ import annotations
 
@@ -11,12 +11,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from mzizi_engine.api.schemas.postgres.community.enums.push_provider import PushProvider
 
 
-class PushTokensRow(BaseModel):
+class TokensRow(BaseModel):
     """A push address for a mobile device, kept only while the visitor has notifications enabled."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "community.push_tokens"
+    table: ClassVar[str] = "community.tokens"
 
     created_at: datetime
     deleted_at: datetime | None = None

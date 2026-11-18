@@ -382,8 +382,8 @@ Slugs.facets({
 });
 
 /*---------------- source.slug_relations ----------------*/
-export const SlugRelations = source
-  .schema("SlugRelations", {
+export const Links = source
+  .schema("Links", {
     fromSlugId: belongsTo(() => Slugs),
     toSlugId: belongsTo(() => Slugs),
     /** Scheme src.slug.relation: same-as, translation-of, alias-of, supersedes, covers-same-area, contains. */
@@ -397,12 +397,11 @@ export const SlugRelations = source
   .role("entity")
   .facets({
     storage: dryv
-      .storage("slug_relations")
+      .storage("links")
       .unique("fromSlugId", "toSlugId", "relationKindId")
       .index("toSlugId")
       .index("relationKindId"),
   });
-
 
 /*---------------- source.coverage ----------------*/
 export const Coverage = source

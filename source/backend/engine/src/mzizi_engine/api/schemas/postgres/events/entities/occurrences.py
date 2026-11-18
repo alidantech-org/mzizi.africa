@@ -14,7 +14,7 @@ class OccurrencesRow(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "activities.occurrences"
+    table: ClassVar[str] = "events.occurrences"
 
     actual_ends_on: date | None = None
     actual_starts_on: date | None = None
@@ -32,6 +32,7 @@ class OccurrencesRow(BaseModel):
     event_id: UUID
     format_id: UUID | None = None
     id: UUID
+    is_all_day: bool
     knowledge_id: UUID
     organiser_entity_id: UUID | None = None
     planned_ends_on: date | None = None
@@ -39,6 +40,7 @@ class OccurrencesRow(BaseModel):
     source_citation_id: UUID | None = None
     starts_at: datetime | None = None
     status_id: UUID
+    timezone: Annotated[str, Field(min_length=1, max_length=100)] | None = None
     updated_at: datetime
     venue_feature_id: UUID | None = None
     venue_note: Annotated[str, Field(max_length=4000)] | None = None

@@ -189,7 +189,6 @@ export const Deliveries = civic
     storage: dryv.storage("deliveries").index("contractId", "deliveredOn").index("unitFeatureId").index("sourceCitationId"),
   });
 
-
 /*---------------- civic.facilities ----------------*/
 export const Facilities = civic
   .schema("Facilities", {
@@ -205,7 +204,9 @@ export const Facilities = civic
     /** The institution accountable for it (the ministry or county department). */
     responsibleInstitutionId: belongsTo(() => Institutions).maybe(),
     /** Scheme civ.facility.ownership: public, private, faith-based, community, public-private. */
-    ownershipId: belongsTo(() => Value).maybe().tags("scheme:ref.sch.civ.facility.ownership"),
+    ownershipId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.civ.facility.ownership"),
     /** Scheme civ.facility.status: planned, under construction, operational, partly operational, closed, abandoned. */
     statusId: belongsTo(() => Value).tags("scheme:ref.sch.civ.facility.status"),
     openedOn: dryv.field(sharedProperties.CalendarDate).maybe(),

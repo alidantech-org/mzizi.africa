@@ -5,7 +5,25 @@ const root = join(import.meta.dir, "..");
 const contracts = join(root, "contracts/schemas/postgres");
 const expected: Record<string, string[]> = {
   official: ["entities", "individuals", "names", "identifiers", "contacts", "relationships", "branding"],
-  governance: ["institutions", "offices", "holders", "mandates", "relationships", "authority_scopes"],
+  governance: [
+    "institutions",
+    "offices",
+    "holders",
+    "mandates",
+    "relationships",
+    "authority_scopes",
+    "obligations",
+    "reports",
+    "terms",
+    "sittings",
+    "bills",
+    "motions",
+    "stages",
+    "votes",
+    "hansards",
+    "speeches",
+    "agenda",
+  ],
   politics: [
     "parties",
     "memberships",
@@ -20,10 +38,10 @@ const expected: Record<string, string[]> = {
     "manifesto_items",
     "referendum_options",
     "option_results",
+    "polls",
   ],
-  civic: ["services", "projects", "project_features", "procurements", "bids", "contracts", "deliveries"],
-  statistics: ["indicators", "observations"],
-  activities: ["sittings", "motions", "votes", "contributions"],
+  civic: ["services", "projects", "project_features", "procurements", "bids", "contracts", "deliveries", "facilities", "beneficiaries"],
+  statistics: ["indicators", "observations", "metrics"],
   finance: ["fiscal_periods", "budgets", "budget_versions", "appropriations", "funds", "flows", "debts"],
 };
 const problems: string[] = [];

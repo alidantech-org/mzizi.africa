@@ -5,7 +5,7 @@ from __future__ import annotations
 from mzizi_engine.api.schemas.postgres.civic.entities.beneficiaries import BeneficiariesRow
 from mzizi_engine.api.schemas.postgres.civic.entities.bids import BidsRow
 from mzizi_engine.api.schemas.postgres.civic.entities.contracts import ContractsRow
-from mzizi_engine.api.schemas.postgres.civic.entities.deliveries import DeliveriesRow
+from mzizi_engine.api.schemas.postgres.civic.entities.deliveries import CivicDeliveriesRow
 from mzizi_engine.api.schemas.postgres.civic.entities.facilities import FacilitiesRow
 from mzizi_engine.api.schemas.postgres.civic.entities.procurements import ProcurementsRow
 from mzizi_engine.api.schemas.postgres.civic.entities.project_features import ProjectFeaturesRow
@@ -22,9 +22,9 @@ __all__ = [
     "BeneficiariesRow",
     "BidsRow",
     "CitationsRow",
+    "CivicDeliveriesRow",
     "ContractsRow",
     "CountryRow",
-    "DeliveriesRow",
     "EntitiesRow",
     "FacilitiesRow",
     "FeaturesRow",

@@ -82,7 +82,6 @@ export const Observations = statistics
       .index("sourceCitationId"),
   });
 
-
 /*---------------- statistics.metrics ----------------*/
 export const Metrics = statistics
   .schema("Metrics", {
@@ -96,7 +95,9 @@ export const Metrics = statistics
     unitId: belongsTo(() => Unit).maybe(),
     higherIsBetter: dryv.field(sharedProperties.Flag).maybe(),
     /** The place level shown first, a feature kind value; the country's ladder says which levels exist. */
-    defaultLevelKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.feature.kind").maybe(),
+    defaultLevelKindId: belongsTo(() => Value)
+      .tags("scheme:ref.sch.geo.feature.kind")
+      .maybe(),
     /** True when the metric appears in ranking lists. */
     isRankable: dryv.field(sharedProperties.Flag),
     sourceCitationId: belongsTo(() => Citations).maybe(),

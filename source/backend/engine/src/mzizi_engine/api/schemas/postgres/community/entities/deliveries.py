@@ -1,4 +1,4 @@
-"""Notification Deliveries: one row of notification_deliveries."""
+"""Deliveries: one row of deliveries."""
 
 from __future__ import annotations
 
@@ -11,12 +11,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from mzizi_engine.api.schemas.postgres.community.enums.delivery_state import DeliveryState
 
 
-class NotificationDeliveriesRow(BaseModel):
+class CommunityDeliveriesRow(BaseModel):
     """The delivery of one notification to one device for one subscription."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    table: ClassVar[str] = "community.notification_deliveries"
+    table: ClassVar[str] = "community.deliveries"
 
     created_at: datetime
     deleted_at: datetime | None = None

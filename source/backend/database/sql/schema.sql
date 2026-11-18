@@ -8,13 +8,13 @@ CREATE EXTENSION IF NOT EXISTS "fuzzystrmatch";
 
 CREATE EXTENSION IF NOT EXISTS "postgis";
 
-CREATE SCHEMA "activities";
-
 CREATE SCHEMA "auth";
 
 CREATE SCHEMA "civic";
 
 CREATE SCHEMA "community";
+
+CREATE SCHEMA "events";
 
 CREATE SCHEMA "filesystem";
 
@@ -35,229 +35,6 @@ CREATE SCHEMA "reference";
 CREATE SCHEMA "source";
 
 CREATE SCHEMA "statistics";
-
-CREATE TABLE "activities"."contributions" (
-    "code" varchar(255) NOT NULL,
-    "contribution_kind_id" uuid NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "holder_id" uuid NOT NULL,
-    "id" uuid NOT NULL,
-    "motion_id" uuid,
-    "sitting_id" uuid NOT NULL,
-    "source_citation_id" uuid,
-    "summary" varchar(4000),
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    "word_count" integer,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."event_names" (
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "event_id" uuid NOT NULL,
-    "id" uuid NOT NULL,
-    "is_preferred" boolean NOT NULL,
-    "language_id" uuid NOT NULL,
-    "name" varchar(300) NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."event_participants" (
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "entity_id" uuid,
-    "id" uuid NOT NULL,
-    "individual_id" uuid,
-    "occurrence_id" uuid NOT NULL,
-    "role_id" uuid NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    CONSTRAINT "chk_event_participants_exactly_one_participant" CHECK (
-        (
-            (
-                ("entity_id" IS NOT NULL)
-                AND ("individual_id" IS NULL)
-            )
-            OR (
-                ("entity_id" IS NULL)
-                AND ("individual_id" IS NOT NULL)
-            )
-        )
-    ),
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."event_rules" (
-    "adjustment_id" uuid,
-    "anchor_on" date,
-    "created_at" timestamptz NOT NULL,
-    "day_of_month" integer,
-    "deleted_at" timestamptz,
-    "event_id" uuid NOT NULL,
-    "from_to_precision" text,
-    "from_year" integer,
-    "id" uuid NOT NULL,
-    "interval_years" integer,
-    "month" integer,
-    "nth_weekday" integer,
-    "rule_kind_id" uuid NOT NULL,
-    "source_citation_id" uuid,
-    "to_year" integer,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    "weekday" integer,
-    CONSTRAINT "chk_event_rules_period_years_are_ordered" CHECK (
-        (
-            ("from_year" IS NULL)
-            OR ("to_year" IS NULL)
-            OR ("from_year" <= "to_year")
-        )
-    ),
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."event_subjects" (
-    "code" varchar(255) NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "event_id" uuid NOT NULL,
-    "id" uuid NOT NULL,
-    "role_id" uuid NOT NULL,
-    "subject_id" uuid NOT NULL,
-    "subject_table" text NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."events" (
-    "basis_provision_id" uuid,
-    "code" varchar(255) NOT NULL,
-    "country_id" uuid,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "event_kind_id" uuid NOT NULL,
-    "id" uuid NOT NULL,
-    "organiser_entity_id" uuid,
-    "scope_feature_id" uuid,
-    "scope_level_kind_id" uuid,
-    "source_citation_id" uuid,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."motions" (
-    "budget_version_id" uuid,
-    "code" varchar(255) NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "fiscal_period_id" uuid,
-    "id" uuid NOT NULL,
-    "instrument_id" uuid,
-    "motion_kind_id" uuid NOT NULL,
-    "moved_by_holder_id" uuid,
-    "outcome_id" uuid NOT NULL,
-    "provision_id" uuid,
-    "sitting_id" uuid NOT NULL,
-    "source_citation_id" uuid,
-    "summary" varchar(4000),
-    "title" varchar(300) NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."occurrence_changes" (
-    "authority_entity_id" uuid,
-    "basis_provision_id" uuid,
-    "change_kind_id" uuid NOT NULL,
-    "code" varchar(255) NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "decided_on" date,
-    "deleted_at" timestamptz,
-    "explanation" varchar(4000),
-    "from_on" date,
-    "id" uuid NOT NULL,
-    "occurrence_id" uuid NOT NULL,
-    "reason_id" uuid,
-    "replacement_occurrence_id" uuid,
-    "source_citation_id" uuid,
-    "to_on" date,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."occurrences" (
-    "actual_ends_on" date,
-    "actual_starts_on" date,
-    "code" varchar(255) NOT NULL,
-    "continues_occurrence_id" uuid,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "event_id" uuid NOT NULL,
-    "format_id" uuid,
-    "id" uuid NOT NULL,
-    "knowledge_id" uuid NOT NULL,
-    "organiser_entity_id" uuid,
-    "planned_ends_on" date,
-    "planned_starts_on" date NOT NULL,
-    "source_citation_id" uuid,
-    "starts_at" timestamptz,
-    "status_id" uuid NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "venue_feature_id" uuid,
-    "venue_note" varchar(4000),
-    "version" integer NOT NULL,
-    CONSTRAINT "chk_occurrences_planned_dates_are_ordered" CHECK (
-        (
-            ("planned_starts_on" IS NULL)
-            OR ("planned_ends_on" IS NULL)
-            OR ("planned_starts_on" <= "planned_ends_on")
-        )
-    ),
-    CONSTRAINT "chk_occurrences_actual_dates_are_ordered" CHECK (
-        (
-            ("actual_starts_on" IS NULL)
-            OR ("actual_ends_on" IS NULL)
-            OR ("actual_starts_on" <= "actual_ends_on")
-        )
-    ),
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."sittings" (
-    "code" varchar(255) NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "held_on" date NOT NULL,
-    "id" uuid NOT NULL,
-    "institution_id" uuid NOT NULL,
-    "sitting_kind_id" uuid NOT NULL,
-    "source_citation_id" uuid,
-    "title" varchar(300) NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "activities"."votes" (
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "holder_id" uuid NOT NULL,
-    "id" uuid NOT NULL,
-    "motion_id" uuid NOT NULL,
-    "position_id" uuid NOT NULL,
-    "source_citation_id" uuid,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
 
 CREATE TABLE "auth"."accounts" (
     "actor_kind" text NOT NULL,
@@ -624,6 +401,23 @@ CREATE TABLE "community"."actors" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "community"."cases" (
+    "appealed_at" timestamptz,
+    "created_at" timestamptz NOT NULL,
+    "decided_at" timestamptz,
+    "decision_id" uuid,
+    "deleted_at" timestamptz,
+    "filter_results" text,
+    "id" uuid NOT NULL,
+    "interaction_id" uuid NOT NULL,
+    "reason" varchar(4000),
+    "reviewer_account_id" uuid,
+    "state" text NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "community"."consents" (
     "actor_id" uuid NOT NULL,
     "country_id" uuid,
@@ -636,6 +430,28 @@ CREATE TABLE "community"."consents" (
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     "withdrawn_at" timestamptz,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "community"."deliveries" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "device_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "notification_id" uuid NOT NULL,
+    "opened_at" timestamptz,
+    "sent_at" timestamptz,
+    "state" text NOT NULL,
+    "subscription_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_deliveries_delivery_sent_before_opened" CHECK (
+        (
+            ("sent_at" IS NULL)
+            OR ("opened_at" IS NULL)
+            OR ("sent_at" <= "opened_at")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -655,7 +471,36 @@ CREATE TABLE "community"."devices" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "community"."interactions" (
+CREATE TABLE "community"."notifications" (
+    "copy_key" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "kind_id" uuid NOT NULL,
+    "payload" text,
+    "subject_id" uuid NOT NULL,
+    "subject_table" text NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "community"."places" (
+    "actor_id" uuid NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "feature_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "is_home" boolean NOT NULL,
+    "label" varchar(100) NOT NULL,
+    "position" integer,
+    "suggestion_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "community"."posts" (
     "actor_id" uuid NOT NULL,
     "addressee_feature_id" uuid,
     "body" text,
@@ -677,7 +522,21 @@ CREATE TABLE "community"."interactions" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "community"."location_proofs" (
+CREATE TABLE "community"."preferences" (
+    "actor_id" uuid NOT NULL,
+    "country_id" uuid,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "home_feature_id" uuid,
+    "id" uuid NOT NULL,
+    "language_id" uuid,
+    "theme" text,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "community"."proofs" (
     "accuracy_meters" integer,
     "actor_id" uuid NOT NULL,
     "check" text NOT NULL,
@@ -696,87 +555,6 @@ CREATE TABLE "community"."location_proofs" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "community"."moderation_cases" (
-    "appealed_at" timestamptz,
-    "created_at" timestamptz NOT NULL,
-    "decided_at" timestamptz,
-    "decision_id" uuid,
-    "deleted_at" timestamptz,
-    "filter_results" text,
-    "id" uuid NOT NULL,
-    "interaction_id" uuid NOT NULL,
-    "reason" varchar(4000),
-    "reviewer_account_id" uuid,
-    "state" text NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "community"."notification_deliveries" (
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "device_id" uuid NOT NULL,
-    "id" uuid NOT NULL,
-    "notification_id" uuid NOT NULL,
-    "opened_at" timestamptz,
-    "sent_at" timestamptz,
-    "state" text NOT NULL,
-    "subscription_id" uuid NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    CONSTRAINT "chk_notification_deliveries_delivery_sent_before_opened" CHECK (
-        (
-            ("sent_at" IS NULL)
-            OR ("opened_at" IS NULL)
-            OR ("sent_at" <= "opened_at")
-        )
-    ),
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "community"."notifications" (
-    "copy_key" varchar(255) NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "id" uuid NOT NULL,
-    "kind_id" uuid NOT NULL,
-    "payload" text,
-    "subject_id" uuid NOT NULL,
-    "subject_table" text NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "community"."preferences" (
-    "actor_id" uuid NOT NULL,
-    "country_id" uuid,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "home_feature_id" uuid,
-    "id" uuid NOT NULL,
-    "language_id" uuid,
-    "theme" text,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "community"."push_tokens" (
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "device_id" uuid NOT NULL,
-    "enabled_at" timestamptz NOT NULL,
-    "id" uuid NOT NULL,
-    "provider" text NOT NULL,
-    "revoked_at" timestamptz,
-    "token" varchar(1000) NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
 CREATE TABLE "community"."reactions" (
     "actor_id" uuid NOT NULL,
     "created_at" timestamptz NOT NULL,
@@ -785,21 +563,6 @@ CREATE TABLE "community"."reactions" (
     "kind_id" uuid NOT NULL,
     "subject_id" uuid NOT NULL,
     "subject_table" text NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "community"."saved_places" (
-    "actor_id" uuid NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "feature_id" uuid NOT NULL,
-    "id" uuid NOT NULL,
-    "is_home" boolean NOT NULL,
-    "label" varchar(100) NOT NULL,
-    "position" integer,
-    "suggestion_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -819,6 +582,20 @@ CREATE TABLE "community"."subscriptions" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "community"."tokens" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "device_id" uuid NOT NULL,
+    "enabled_at" timestamptz NOT NULL,
+    "id" uuid NOT NULL,
+    "provider" text NOT NULL,
+    "revoked_at" timestamptz,
+    "token" varchar(1000) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "community"."views" (
     "country_id" uuid,
     "created_at" timestamptz NOT NULL,
@@ -830,6 +607,263 @@ CREATE TABLE "community"."views" (
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     "visitor_hash" char(64) NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."calendars" (
+    "calendar_kind_id" uuid NOT NULL,
+    "code" varchar(255) NOT NULL,
+    "country_id" uuid,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "description" varchar(4000),
+    "id" uuid NOT NULL,
+    "is_observed" boolean NOT NULL,
+    "source_citation_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    "year_start_day" integer,
+    "year_start_month" integer,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."changes" (
+    "authority_entity_id" uuid,
+    "basis_provision_id" uuid,
+    "change_kind_id" uuid NOT NULL,
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "decided_on" date,
+    "deleted_at" timestamptz,
+    "explanation" varchar(4000),
+    "from_on" date,
+    "id" uuid NOT NULL,
+    "occurrence_id" uuid NOT NULL,
+    "reason_id" uuid,
+    "replacement_occurrence_id" uuid,
+    "source_citation_id" uuid,
+    "to_on" date,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."events" (
+    "basis_provision_id" uuid,
+    "calendar_id" uuid,
+    "code" varchar(255) NOT NULL,
+    "country_id" uuid,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "event_kind_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "organiser_entity_id" uuid,
+    "scope_feature_id" uuid,
+    "scope_level_kind_id" uuid,
+    "source_citation_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."items" (
+    "counts_working_days" boolean NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "event_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "note" varchar(4000),
+    "occurrence_id" uuid,
+    "offset_days" integer,
+    "position" integer NOT NULL,
+    "schedule_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."names" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "event_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "is_preferred" boolean NOT NULL,
+    "language_id" uuid NOT NULL,
+    "name" varchar(300) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."occurrences" (
+    "actual_ends_on" date,
+    "actual_starts_on" date,
+    "code" varchar(255) NOT NULL,
+    "continues_occurrence_id" uuid,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "event_id" uuid NOT NULL,
+    "format_id" uuid,
+    "id" uuid NOT NULL,
+    "is_all_day" boolean NOT NULL,
+    "knowledge_id" uuid NOT NULL,
+    "organiser_entity_id" uuid,
+    "planned_ends_on" date,
+    "planned_starts_on" date NOT NULL,
+    "source_citation_id" uuid,
+    "starts_at" timestamptz,
+    "status_id" uuid NOT NULL,
+    "timezone" varchar(100),
+    "updated_at" timestamptz NOT NULL,
+    "venue_feature_id" uuid,
+    "venue_note" varchar(4000),
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_occurrences_planned_dates_are_ordered" CHECK (
+        (
+            ("planned_starts_on" IS NULL)
+            OR ("planned_ends_on" IS NULL)
+            OR ("planned_starts_on" <= "planned_ends_on")
+        )
+    ),
+    CONSTRAINT "chk_occurrences_actual_dates_are_ordered" CHECK (
+        (
+            ("actual_starts_on" IS NULL)
+            OR ("actual_ends_on" IS NULL)
+            OR ("actual_starts_on" <= "actual_ends_on")
+        )
+    ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."participants" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "entity_id" uuid,
+    "id" uuid NOT NULL,
+    "individual_id" uuid,
+    "occurrence_id" uuid NOT NULL,
+    "role_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_participants_exactly_one_participant" CHECK (
+        (
+            (
+                ("entity_id" IS NOT NULL)
+                AND ("individual_id" IS NULL)
+            )
+            OR (
+                ("entity_id" IS NULL)
+                AND ("individual_id" IS NOT NULL)
+            )
+        )
+    ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."rules" (
+    "adjustment_id" uuid,
+    "anchor_on" date,
+    "created_at" timestamptz NOT NULL,
+    "day_of_month" integer,
+    "deleted_at" timestamptz,
+    "event_id" uuid NOT NULL,
+    "from_to_precision" text,
+    "from_year" integer,
+    "id" uuid NOT NULL,
+    "interval_years" integer,
+    "month" integer,
+    "nth_weekday" integer,
+    "rrule" varchar(500),
+    "rule_kind_id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "to_year" integer,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    "weekday" integer,
+    CONSTRAINT "chk_rules_period_years_are_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."schedules" (
+    "anchor_event_id" uuid,
+    "anchor_on" date,
+    "basis_provision_id" uuid,
+    "code" varchar(255) NOT NULL,
+    "country_id" uuid,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "issuer_entity_id" uuid,
+    "published_on" date,
+    "schedule_kind_id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "status_id" uuid NOT NULL,
+    "supersedes_schedule_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."seasons" (
+    "code" varchar(255) NOT NULL,
+    "country_id" uuid NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "description" varchar(4000),
+    "end_day" integer,
+    "end_month" integer NOT NULL,
+    "from_to_precision" text,
+    "from_year" integer,
+    "id" uuid NOT NULL,
+    "is_natural" boolean NOT NULL,
+    "scope_feature_id" uuid,
+    "season_kind_id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "start_day" integer,
+    "start_month" integer NOT NULL,
+    "to_year" integer,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_seasons_period_years_are_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."subjects" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "event_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "role_id" uuid NOT NULL,
+    "subject_id" uuid NOT NULL,
+    "subject_table" text NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "events"."venues" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "feature_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "note" varchar(4000),
+    "occurrence_id" uuid NOT NULL,
+    "role_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
     PRIMARY KEY ("id")
 );
 
@@ -1318,6 +1352,22 @@ CREATE TABLE "geography"."relationships" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "governance"."agenda" (
+    "agenda_kind_id" uuid NOT NULL,
+    "bill_id" uuid,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "motion_id" uuid,
+    "position" integer NOT NULL,
+    "sitting_id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "title" varchar(300) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "governance"."authority_scopes" (
     "authority_kind_id" uuid NOT NULL,
     "country_id" uuid,
@@ -1328,6 +1378,43 @@ CREATE TABLE "governance"."authority_scopes" (
     "office_id" uuid,
     "source_citation_id" uuid,
     "unit_feature_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "governance"."bills" (
+    "bill_kind_id" uuid NOT NULL,
+    "code" varchar(255) NOT NULL,
+    "country_id" uuid NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "institution_id" uuid NOT NULL,
+    "instrument_id" uuid,
+    "source_citation_id" uuid,
+    "sponsor_holder_id" uuid,
+    "status_id" uuid NOT NULL,
+    "summary" varchar(4000),
+    "term_id" uuid,
+    "title" varchar(300) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "governance"."hansards" (
+    "artifact_id" uuid NOT NULL,
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "is_provisional" boolean NOT NULL,
+    "language_id" uuid NOT NULL,
+    "published_on" date,
+    "reference" varchar(255),
+    "sitting_id" uuid NOT NULL,
+    "source_citation_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -1414,6 +1501,7 @@ CREATE TABLE "governance"."mandates" (
     "office_id" uuid,
     "source_citation_id" uuid,
     "starts_on" date,
+    "term_id" uuid,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -1431,6 +1519,28 @@ CREATE TABLE "governance"."mandates" (
             OR ("starts_on" <= "ends_on")
         )
     ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "governance"."motions" (
+    "bill_id" uuid,
+    "budget_version_id" uuid,
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "fiscal_period_id" uuid,
+    "id" uuid NOT NULL,
+    "instrument_id" uuid,
+    "motion_kind_id" uuid NOT NULL,
+    "moved_by_holder_id" uuid,
+    "outcome_id" uuid NOT NULL,
+    "provision_id" uuid,
+    "sitting_id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "summary" varchar(4000),
+    "title" varchar(300) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
     PRIMARY KEY ("id")
 );
 
@@ -1543,6 +1653,106 @@ CREATE TABLE "governance"."reports" (
             OR ("period_from" <= "period_until")
         )
     ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "governance"."sittings" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "institution_id" uuid NOT NULL,
+    "occurrence_id" uuid NOT NULL,
+    "sequence_number" integer,
+    "session_label" varchar(100),
+    "sitting_kind_id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "term_id" uuid,
+    "title" varchar(300) NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "governance"."speeches" (
+    "bill_id" uuid,
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "hansard_id" uuid,
+    "holder_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "motion_id" uuid,
+    "page_reference" varchar(100),
+    "position" integer NOT NULL,
+    "sitting_id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "speech_kind_id" uuid NOT NULL,
+    "summary" varchar(4000),
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    "word_count" integer,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "governance"."stages" (
+    "bill_id" uuid NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "motion_id" uuid,
+    "on_date" date,
+    "outcome_id" uuid,
+    "sequence_number" integer NOT NULL,
+    "sitting_id" uuid,
+    "source_citation_id" uuid,
+    "stage_kind_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_stages_stage_has_sitting_or_date" CHECK (
+        (
+            ("sitting_id" IS NOT NULL)
+            OR ("on_date" IS NOT NULL)
+        )
+    ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "governance"."terms" (
+    "code" varchar(255) NOT NULL,
+    "country_id" uuid NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "ends_on" date,
+    "id" uuid NOT NULL,
+    "institution_id" uuid,
+    "ordinal" integer,
+    "source_citation_id" uuid,
+    "starts_on" date NOT NULL,
+    "term_kind_id" uuid NOT NULL,
+    "unit_feature_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_terms_term_dates_are_ordered" CHECK (
+        (
+            ("starts_on" IS NULL)
+            OR ("ends_on" IS NULL)
+            OR ("starts_on" <= "ends_on")
+        )
+    ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "governance"."votes" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "holder_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "motion_id" uuid NOT NULL,
+    "position_id" uuid NOT NULL,
+    "source_citation_id" uuid,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
     PRIMARY KEY ("id")
 );
 
@@ -2113,29 +2323,6 @@ CREATE TABLE "politics"."elections" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "politics"."electoral_terms" (
-    "code" varchar(255) NOT NULL,
-    "country_id" uuid NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "ends_on" date,
-    "id" uuid NOT NULL,
-    "source_citation_id" uuid,
-    "starts_on" date NOT NULL,
-    "term_kind_id" uuid NOT NULL,
-    "unit_feature_id" uuid,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    CONSTRAINT "chk_electoral_terms_term_dates_are_ordered" CHECK (
-        (
-            ("starts_on" IS NULL)
-            OR ("ends_on" IS NULL)
-            OR ("starts_on" <= "ends_on")
-        )
-    ),
-    PRIMARY KEY ("id")
-);
-
 CREATE TABLE "politics"."electorates" (
     "ballots_cast" bigint,
     "contest_id" uuid NOT NULL,
@@ -2265,29 +2452,28 @@ CREATE TABLE "politics"."parties" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "politics"."polling_stations" (
-    "access_note" varchar(4000),
-    "closed_on" date,
+CREATE TABLE "politics"."polls" (
+    "closes_at" timestamptz,
     "code" varchar(255) NOT NULL,
-    "commission_code" varchar(100),
-    "country_id" uuid NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
-    "feature_id" uuid NOT NULL,
+    "election_id" uuid NOT NULL,
+    "host_feature_id" uuid,
     "id" uuid NOT NULL,
-    "opened_on" date,
-    "registration_centre_id" uuid,
+    "note" varchar(4000),
+    "opens_at" timestamptz,
+    "registered_voters" bigint,
     "source_citation_id" uuid,
-    "station_kind_id" uuid NOT NULL,
+    "station_feature_id" uuid NOT NULL,
+    "status_id" uuid NOT NULL,
     "stream_count" integer,
-    "succeeded_by_station_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    CONSTRAINT "chk_polling_stations_station_dates_are_ordered" CHECK (
+    CONSTRAINT "chk_polls_poll_times_are_ordered" CHECK (
         (
-            ("opened_on" IS NULL)
-            OR ("closed_on" IS NULL)
-            OR ("opened_on" <= "closed_on")
+            ("opens_at" IS NULL)
+            OR ("closes_at" IS NULL)
+            OR ("opens_at" <= "closes_at")
         )
     ),
     PRIMARY KEY ("id")
@@ -2695,6 +2881,29 @@ CREATE TABLE "source"."editions" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "source"."links" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "from_slug_id" uuid NOT NULL,
+    "from_to_precision" text,
+    "from_year" integer,
+    "id" uuid NOT NULL,
+    "relation_kind_id" uuid NOT NULL,
+    "to_slug_id" uuid NOT NULL,
+    "to_year" integer,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_links_period_years_are_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_links_slug_relation_ends_differ" CHECK (("from_slug_id" <> "to_slug_id")),
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "source"."products" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
@@ -2852,29 +3061,6 @@ CREATE TABLE "source"."relationships" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "source"."slug_relations" (
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "from_slug_id" uuid NOT NULL,
-    "from_to_precision" text,
-    "from_year" integer,
-    "id" uuid NOT NULL,
-    "relation_kind_id" uuid NOT NULL,
-    "to_slug_id" uuid NOT NULL,
-    "to_year" integer,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    CONSTRAINT "chk_slug_relations_period_years_are_ordered" CHECK (
-        (
-            ("from_year" IS NULL)
-            OR ("to_year" IS NULL)
-            OR ("from_year" <= "to_year")
-        )
-    ),
-    CONSTRAINT "chk_slug_relations_slug_relation_ends_differ" CHECK (("from_slug_id" <> "to_slug_id")),
-    PRIMARY KEY ("id")
-);
-
 CREATE TABLE "source"."slugs" (
     "canonical_slug_id" uuid,
     "code" varchar(255) NOT NULL,
@@ -2997,300 +3183,6 @@ CREATE TABLE "statistics"."observations" (
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
 );
-
-ALTER TABLE "activities"."contributions"
-ADD CONSTRAINT "fk_contributions_contribution_kind_id" FOREIGN KEY ("contribution_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."contributions"
-ADD CONSTRAINT "fk_contributions_holder_id" FOREIGN KEY ("holder_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."contributions"
-ADD CONSTRAINT "fk_contributions_motion_id" FOREIGN KEY ("motion_id") REFERENCES "activities"."motions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."contributions"
-ADD CONSTRAINT "fk_contributions_sitting_id" FOREIGN KEY ("sitting_id") REFERENCES "activities"."sittings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."contributions"
-ADD CONSTRAINT "fk_contributions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_contributions__code_partial_1" ON "activities"."contributions" USING btree ("code")
-WHERE
-    ("deleted_at" IS NULL);
-
-CREATE INDEX "ix_contributions__sitting_id" ON "activities"."contributions" USING btree ("sitting_id");
-
-CREATE INDEX "ix_contributions__holder_id" ON "activities"."contributions" USING btree ("holder_id");
-
-CREATE INDEX "ix_contributions__motion_id" ON "activities"."contributions" USING btree ("motion_id");
-
-CREATE INDEX "ix_contributions__source_citation_id" ON "activities"."contributions" USING btree ("source_citation_id");
-
-ALTER TABLE "activities"."event_names"
-ADD CONSTRAINT "fk_event_names_event_id" FOREIGN KEY ("event_id") REFERENCES "activities"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."event_names"
-ADD CONSTRAINT "fk_event_names_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_event_names__event_id_language_id_name" ON "activities"."event_names" USING btree ("event_id", "language_id", "name");
-
-CREATE UNIQUE INDEX "uq_event_names__event_id_language_id_partial_2" ON "activities"."event_names" USING btree ("event_id", "language_id")
-WHERE
-    ("is_preferred" = TRUE);
-
-CREATE INDEX "ix_event_names__language_id" ON "activities"."event_names" USING btree ("language_id");
-
-ALTER TABLE "activities"."event_participants"
-ADD CONSTRAINT "fk_event_participants_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."event_participants"
-ADD CONSTRAINT "fk_event_participants_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."event_participants"
-ADD CONSTRAINT "fk_event_participants_occurrence_id" FOREIGN KEY ("occurrence_id") REFERENCES "activities"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."event_participants"
-ADD CONSTRAINT "fk_event_participants_role_id" FOREIGN KEY ("role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE INDEX "ix_event_participants__occurrence_id" ON "activities"."event_participants" USING btree ("occurrence_id");
-
-CREATE INDEX "ix_event_participants__entity_id" ON "activities"."event_participants" USING btree ("entity_id");
-
-CREATE INDEX "ix_event_participants__individual_id" ON "activities"."event_participants" USING btree ("individual_id");
-
-CREATE INDEX "ix_event_participants__role_id" ON "activities"."event_participants" USING btree ("role_id");
-
-ALTER TABLE "activities"."event_rules"
-ADD CONSTRAINT "fk_event_rules_adjustment_id" FOREIGN KEY ("adjustment_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."event_rules"
-ADD CONSTRAINT "fk_event_rules_event_id" FOREIGN KEY ("event_id") REFERENCES "activities"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."event_rules"
-ADD CONSTRAINT "fk_event_rules_rule_kind_id" FOREIGN KEY ("rule_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."event_rules"
-ADD CONSTRAINT "fk_event_rules_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE INDEX "ix_event_rules__event_id" ON "activities"."event_rules" USING btree ("event_id");
-
-CREATE INDEX "ix_event_rules__rule_kind_id" ON "activities"."event_rules" USING btree ("rule_kind_id");
-
-CREATE INDEX "ix_event_rules__source_citation_id" ON "activities"."event_rules" USING btree ("source_citation_id");
-
-ALTER TABLE "activities"."event_subjects"
-ADD CONSTRAINT "fk_event_subjects_event_id" FOREIGN KEY ("event_id") REFERENCES "activities"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."event_subjects"
-ADD CONSTRAINT "fk_event_subjects_role_id" FOREIGN KEY ("role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_event_subjects__code_partial_1" ON "activities"."event_subjects" USING btree ("code")
-WHERE
-    ("deleted_at" IS NULL);
-
-CREATE UNIQUE INDEX "uq_event_subjects__event_id_subject_table_subject_id_role_id" ON "activities"."event_subjects" USING btree (
-    "event_id",
-    "subject_table",
-    "subject_id",
-    "role_id"
-);
-
-CREATE INDEX "ix_event_subjects__subject_table_subject_id" ON "activities"."event_subjects" USING btree ("subject_table", "subject_id");
-
-ALTER TABLE "activities"."events"
-ADD CONSTRAINT "fk_events_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."events"
-ADD CONSTRAINT "fk_events_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."events"
-ADD CONSTRAINT "fk_events_event_kind_id" FOREIGN KEY ("event_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."events"
-ADD CONSTRAINT "fk_events_organiser_entity_id" FOREIGN KEY ("organiser_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."events"
-ADD CONSTRAINT "fk_events_scope_feature_id" FOREIGN KEY ("scope_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."events"
-ADD CONSTRAINT "fk_events_scope_level_kind_id" FOREIGN KEY ("scope_level_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."events"
-ADD CONSTRAINT "fk_events_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_events__code_partial_1" ON "activities"."events" USING btree ("code")
-WHERE
-    ("deleted_at" IS NULL);
-
-CREATE INDEX "ix_events__country_id_event_kind_id" ON "activities"."events" USING btree ("country_id", "event_kind_id");
-
-CREATE INDEX "ix_events__scope_feature_id" ON "activities"."events" USING btree ("scope_feature_id");
-
-CREATE INDEX "ix_events__organiser_entity_id" ON "activities"."events" USING btree ("organiser_entity_id");
-
-CREATE INDEX "ix_events__basis_provision_id" ON "activities"."events" USING btree ("basis_provision_id");
-
-CREATE INDEX "ix_events__source_citation_id" ON "activities"."events" USING btree ("source_citation_id");
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_budget_version_id" FOREIGN KEY ("budget_version_id") REFERENCES "finance"."budget_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_fiscal_period_id" FOREIGN KEY ("fiscal_period_id") REFERENCES "finance"."fiscal_periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_motion_kind_id" FOREIGN KEY ("motion_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_moved_by_holder_id" FOREIGN KEY ("moved_by_holder_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_outcome_id" FOREIGN KEY ("outcome_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_sitting_id" FOREIGN KEY ("sitting_id") REFERENCES "activities"."sittings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."motions"
-ADD CONSTRAINT "fk_motions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_motions__code_partial_1" ON "activities"."motions" USING btree ("code")
-WHERE
-    ("deleted_at" IS NULL);
-
-CREATE INDEX "ix_motions__sitting_id" ON "activities"."motions" USING btree ("sitting_id");
-
-CREATE INDEX "ix_motions__instrument_id" ON "activities"."motions" USING btree ("instrument_id");
-
-CREATE INDEX "ix_motions__provision_id" ON "activities"."motions" USING btree ("provision_id");
-
-CREATE INDEX "ix_motions__budget_version_id" ON "activities"."motions" USING btree ("budget_version_id");
-
-CREATE INDEX "ix_motions__fiscal_period_id" ON "activities"."motions" USING btree ("fiscal_period_id");
-
-CREATE INDEX "ix_motions__source_citation_id" ON "activities"."motions" USING btree ("source_citation_id");
-
-ALTER TABLE "activities"."occurrence_changes"
-ADD CONSTRAINT "fk_occurrence_changes_authority_entity_id" FOREIGN KEY ("authority_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrence_changes"
-ADD CONSTRAINT "fk_occurrence_changes_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrence_changes"
-ADD CONSTRAINT "fk_occurrence_changes_change_kind_id" FOREIGN KEY ("change_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrence_changes"
-ADD CONSTRAINT "fk_occurrence_changes_occurrence_id" FOREIGN KEY ("occurrence_id") REFERENCES "activities"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrence_changes"
-ADD CONSTRAINT "fk_occurrence_changes_reason_id" FOREIGN KEY ("reason_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrence_changes"
-ADD CONSTRAINT "fk_occurrence_changes_replacement_occurrence_id" FOREIGN KEY ("replacement_occurrence_id") REFERENCES "activities"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrence_changes"
-ADD CONSTRAINT "fk_occurrence_changes_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_occurrence_changes__code_partial_1" ON "activities"."occurrence_changes" USING btree ("code")
-WHERE
-    ("deleted_at" IS NULL);
-
-CREATE INDEX "ix_occurrence_changes__occurrence_id_decided_on" ON "activities"."occurrence_changes" USING btree ("occurrence_id", "decided_on");
-
-CREATE INDEX "ix_occurrence_changes__change_kind_id" ON "activities"."occurrence_changes" USING btree ("change_kind_id");
-
-CREATE INDEX "ix_occurrence_changes__reason_id" ON "activities"."occurrence_changes" USING btree ("reason_id");
-
-CREATE INDEX "ix_occurrence_changes__authority_entity_id" ON "activities"."occurrence_changes" USING btree ("authority_entity_id");
-
-CREATE INDEX "ix_occurrence_changes__basis_provision_id" ON "activities"."occurrence_changes" USING btree ("basis_provision_id");
-
-CREATE INDEX "ix_occurrence_changes__replacement_occurrence_id" ON "activities"."occurrence_changes" USING btree ("replacement_occurrence_id");
-
-CREATE INDEX "ix_occurrence_changes__source_citation_id" ON "activities"."occurrence_changes" USING btree ("source_citation_id");
-
-ALTER TABLE "activities"."occurrences"
-ADD CONSTRAINT "fk_occurrences_continues_occurrence_id" FOREIGN KEY ("continues_occurrence_id") REFERENCES "activities"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrences"
-ADD CONSTRAINT "fk_occurrences_event_id" FOREIGN KEY ("event_id") REFERENCES "activities"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrences"
-ADD CONSTRAINT "fk_occurrences_format_id" FOREIGN KEY ("format_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrences"
-ADD CONSTRAINT "fk_occurrences_knowledge_id" FOREIGN KEY ("knowledge_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrences"
-ADD CONSTRAINT "fk_occurrences_organiser_entity_id" FOREIGN KEY ("organiser_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrences"
-ADD CONSTRAINT "fk_occurrences_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrences"
-ADD CONSTRAINT "fk_occurrences_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."occurrences"
-ADD CONSTRAINT "fk_occurrences_venue_feature_id" FOREIGN KEY ("venue_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_occurrences__code_partial_1" ON "activities"."occurrences" USING btree ("code")
-WHERE
-    ("deleted_at" IS NULL);
-
-CREATE INDEX "ix_occurrences__event_id_planned_starts_on" ON "activities"."occurrences" USING btree ("event_id", "planned_starts_on");
-
-CREATE INDEX "ix_occurrences__status_id" ON "activities"."occurrences" USING btree ("status_id");
-
-CREATE INDEX "ix_occurrences__knowledge_id" ON "activities"."occurrences" USING btree ("knowledge_id");
-
-CREATE INDEX "ix_occurrences__venue_feature_id" ON "activities"."occurrences" USING btree ("venue_feature_id");
-
-CREATE INDEX "ix_occurrences__organiser_entity_id" ON "activities"."occurrences" USING btree ("organiser_entity_id");
-
-CREATE INDEX "ix_occurrences__continues_occurrence_id" ON "activities"."occurrences" USING btree ("continues_occurrence_id");
-
-CREATE INDEX "ix_occurrences__source_citation_id" ON "activities"."occurrences" USING btree ("source_citation_id");
-
-ALTER TABLE "activities"."sittings"
-ADD CONSTRAINT "fk_sittings_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."sittings"
-ADD CONSTRAINT "fk_sittings_sitting_kind_id" FOREIGN KEY ("sitting_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."sittings"
-ADD CONSTRAINT "fk_sittings_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_sittings__code_partial_1" ON "activities"."sittings" USING btree ("code")
-WHERE
-    ("deleted_at" IS NULL);
-
-CREATE INDEX "ix_sittings__institution_id_held_on" ON "activities"."sittings" USING btree ("institution_id", "held_on");
-
-CREATE INDEX "ix_sittings__source_citation_id" ON "activities"."sittings" USING btree ("source_citation_id");
-
-ALTER TABLE "activities"."votes"
-ADD CONSTRAINT "fk_votes_holder_id" FOREIGN KEY ("holder_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."votes"
-ADD CONSTRAINT "fk_votes_motion_id" FOREIGN KEY ("motion_id") REFERENCES "activities"."motions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."votes"
-ADD CONSTRAINT "fk_votes_position_id" FOREIGN KEY ("position_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "activities"."votes"
-ADD CONSTRAINT "fk_votes_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_votes__motion_id_holder_id" ON "activities"."votes" USING btree ("motion_id", "holder_id");
-
-CREATE INDEX "ix_votes__holder_id" ON "activities"."votes" USING btree ("holder_id");
-
-CREATE INDEX "ix_votes__position_id" ON "activities"."votes" USING btree ("position_id");
-
-CREATE INDEX "ix_votes__source_citation_id" ON "activities"."votes" USING btree ("source_citation_id");
 
 ALTER TABLE "auth"."delegation_roles"
 ADD CONSTRAINT "fk_delegation_roles_delegation_id" FOREIGN KEY ("delegation_id") REFERENCES "auth"."delegations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3695,6 +3587,21 @@ CREATE INDEX "ix_actors__country_id" ON "community"."actors" USING btree ("count
 
 CREATE INDEX "ix_actors__last_seen_at" ON "community"."actors" USING btree ("last_seen_at");
 
+ALTER TABLE "community"."cases"
+ADD CONSTRAINT "fk_cases_decision_id" FOREIGN KEY ("decision_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."cases"
+ADD CONSTRAINT "fk_cases_interaction_id" FOREIGN KEY ("interaction_id") REFERENCES "community"."posts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."cases"
+ADD CONSTRAINT "fk_cases_reviewer_account_id" FOREIGN KEY ("reviewer_account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE INDEX "ix_cases__interaction_id" ON "community"."cases" USING btree ("interaction_id");
+
+CREATE INDEX "ix_cases__state" ON "community"."cases" USING btree ("state");
+
+CREATE INDEX "ix_cases__reviewer_account_id" ON "community"."cases" USING btree ("reviewer_account_id");
+
 ALTER TABLE "community"."consents"
 ADD CONSTRAINT "fk_consents_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -3708,6 +3615,21 @@ CREATE INDEX "ix_consents__actor_id_purpose_id" ON "community"."consents" USING 
 
 CREATE INDEX "ix_consents__country_id" ON "community"."consents" USING btree ("country_id");
 
+ALTER TABLE "community"."deliveries"
+ADD CONSTRAINT "fk_deliveries_device_id" FOREIGN KEY ("device_id") REFERENCES "community"."devices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."deliveries"
+ADD CONSTRAINT "fk_deliveries_notification_id" FOREIGN KEY ("notification_id") REFERENCES "community"."notifications" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."deliveries"
+ADD CONSTRAINT "fk_deliveries_subscription_id" FOREIGN KEY ("subscription_id") REFERENCES "community"."subscriptions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_deliveries__notification_id_device_id" ON "community"."deliveries" USING btree ("notification_id", "device_id");
+
+CREATE INDEX "ix_deliveries__subscription_id" ON "community"."deliveries" USING btree ("subscription_id");
+
+CREATE INDEX "ix_deliveries__state" ON "community"."deliveries" USING btree ("state");
+
 ALTER TABLE "community"."devices"
 ADD CONSTRAINT "fk_devices_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -3715,95 +3637,67 @@ CREATE UNIQUE INDEX "uq_devices__actor_id_fingerprint_hash" ON "community"."devi
 
 CREATE INDEX "ix_devices__fingerprint_hash" ON "community"."devices" USING btree ("fingerprint_hash");
 
-ALTER TABLE "community"."interactions"
-ADD CONSTRAINT "fk_interactions_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."interactions"
-ADD CONSTRAINT "fk_interactions_addressee_feature_id" FOREIGN KEY ("addressee_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."interactions"
-ADD CONSTRAINT "fk_interactions_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."interactions"
-ADD CONSTRAINT "fk_interactions_device_id" FOREIGN KEY ("device_id") REFERENCES "community"."devices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."interactions"
-ADD CONSTRAINT "fk_interactions_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."interactions"
-ADD CONSTRAINT "fk_interactions_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."interactions"
-ADD CONSTRAINT "fk_interactions_location_proof_id" FOREIGN KEY ("location_proof_id") REFERENCES "community"."location_proofs" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."interactions"
-ADD CONSTRAINT "fk_interactions_parent_interaction_id" FOREIGN KEY ("parent_interaction_id") REFERENCES "community"."interactions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE INDEX "ix_interactions__subject_table_subject_id" ON "community"."interactions" USING btree ("subject_table", "subject_id");
-
-CREATE INDEX "ix_interactions__actor_id" ON "community"."interactions" USING btree ("actor_id");
-
-CREATE INDEX "ix_interactions__device_id" ON "community"."interactions" USING btree ("device_id");
-
-CREATE INDEX "ix_interactions__kind_id" ON "community"."interactions" USING btree ("kind_id");
-
-CREATE INDEX "ix_interactions__state" ON "community"."interactions" USING btree ("state");
-
-CREATE INDEX "ix_interactions__parent_interaction_id" ON "community"."interactions" USING btree ("parent_interaction_id");
-
-CREATE INDEX "ix_interactions__location_proof_id" ON "community"."interactions" USING btree ("location_proof_id");
-
-ALTER TABLE "community"."location_proofs"
-ADD CONSTRAINT "fk_location_proofs_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."location_proofs"
-ADD CONSTRAINT "fk_location_proofs_device_id" FOREIGN KEY ("device_id") REFERENCES "community"."devices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."location_proofs"
-ADD CONSTRAINT "fk_location_proofs_matched_feature_id" FOREIGN KEY ("matched_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE INDEX "ix_location_proofs__actor_id" ON "community"."location_proofs" USING btree ("actor_id");
-
-CREATE INDEX "ix_location_proofs__device_id" ON "community"."location_proofs" USING btree ("device_id");
-
-CREATE INDEX "ix_location_proofs__matched_feature_id" ON "community"."location_proofs" USING btree ("matched_feature_id");
-
-ALTER TABLE "community"."moderation_cases"
-ADD CONSTRAINT "fk_moderation_cases_decision_id" FOREIGN KEY ("decision_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."moderation_cases"
-ADD CONSTRAINT "fk_moderation_cases_interaction_id" FOREIGN KEY ("interaction_id") REFERENCES "community"."interactions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."moderation_cases"
-ADD CONSTRAINT "fk_moderation_cases_reviewer_account_id" FOREIGN KEY ("reviewer_account_id") REFERENCES "auth"."accounts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE INDEX "ix_moderation_cases__interaction_id" ON "community"."moderation_cases" USING btree ("interaction_id");
-
-CREATE INDEX "ix_moderation_cases__state" ON "community"."moderation_cases" USING btree ("state");
-
-CREATE INDEX "ix_moderation_cases__reviewer_account_id" ON "community"."moderation_cases" USING btree ("reviewer_account_id");
-
-ALTER TABLE "community"."notification_deliveries"
-ADD CONSTRAINT "fk_notification_deliveries_device_id" FOREIGN KEY ("device_id") REFERENCES "community"."devices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."notification_deliveries"
-ADD CONSTRAINT "fk_notification_deliveries_notification_id" FOREIGN KEY ("notification_id") REFERENCES "community"."notifications" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."notification_deliveries"
-ADD CONSTRAINT "fk_notification_deliveries_subscription_id" FOREIGN KEY ("subscription_id") REFERENCES "community"."subscriptions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_notification_deliveries__notification_id_device_id" ON "community"."notification_deliveries" USING btree ("notification_id", "device_id");
-
-CREATE INDEX "ix_notification_deliveries__subscription_id" ON "community"."notification_deliveries" USING btree ("subscription_id");
-
-CREATE INDEX "ix_notification_deliveries__state" ON "community"."notification_deliveries" USING btree ("state");
-
 ALTER TABLE "community"."notifications"
 ADD CONSTRAINT "fk_notifications_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE INDEX "ix_notifications__subject_table_subject_id" ON "community"."notifications" USING btree ("subject_table", "subject_id");
 
 CREATE INDEX "ix_notifications__kind_id" ON "community"."notifications" USING btree ("kind_id");
+
+ALTER TABLE "community"."places"
+ADD CONSTRAINT "fk_places_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."places"
+ADD CONSTRAINT "fk_places_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."places"
+ADD CONSTRAINT "fk_places_suggestion_id" FOREIGN KEY ("suggestion_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_places__actor_id_feature_id" ON "community"."places" USING btree ("actor_id", "feature_id");
+
+CREATE UNIQUE INDEX "uq_places__actor_id_partial_2" ON "community"."places" USING btree ("actor_id")
+WHERE
+    ("is_home" = TRUE);
+
+CREATE INDEX "ix_places__feature_id" ON "community"."places" USING btree ("feature_id");
+
+ALTER TABLE "community"."posts"
+ADD CONSTRAINT "fk_posts_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."posts"
+ADD CONSTRAINT "fk_posts_addressee_feature_id" FOREIGN KEY ("addressee_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."posts"
+ADD CONSTRAINT "fk_posts_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."posts"
+ADD CONSTRAINT "fk_posts_device_id" FOREIGN KEY ("device_id") REFERENCES "community"."devices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."posts"
+ADD CONSTRAINT "fk_posts_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."posts"
+ADD CONSTRAINT "fk_posts_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."posts"
+ADD CONSTRAINT "fk_posts_location_proof_id" FOREIGN KEY ("location_proof_id") REFERENCES "community"."proofs" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "community"."posts"
+ADD CONSTRAINT "fk_posts_parent_interaction_id" FOREIGN KEY ("parent_interaction_id") REFERENCES "community"."posts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE INDEX "ix_posts__subject_table_subject_id" ON "community"."posts" USING btree ("subject_table", "subject_id");
+
+CREATE INDEX "ix_posts__actor_id" ON "community"."posts" USING btree ("actor_id");
+
+CREATE INDEX "ix_posts__device_id" ON "community"."posts" USING btree ("device_id");
+
+CREATE INDEX "ix_posts__kind_id" ON "community"."posts" USING btree ("kind_id");
+
+CREATE INDEX "ix_posts__state" ON "community"."posts" USING btree ("state");
+
+CREATE INDEX "ix_posts__parent_interaction_id" ON "community"."posts" USING btree ("parent_interaction_id");
+
+CREATE INDEX "ix_posts__location_proof_id" ON "community"."posts" USING btree ("location_proof_id");
 
 ALTER TABLE "community"."preferences"
 ADD CONSTRAINT "fk_preferences_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3821,12 +3715,20 @@ CREATE UNIQUE INDEX "uq_preferences__actor_id" ON "community"."preferences" USIN
 
 CREATE INDEX "ix_preferences__home_feature_id" ON "community"."preferences" USING btree ("home_feature_id");
 
-ALTER TABLE "community"."push_tokens"
-ADD CONSTRAINT "fk_push_tokens_device_id" FOREIGN KEY ("device_id") REFERENCES "community"."devices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE "community"."proofs"
+ADD CONSTRAINT "fk_proofs_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_push_tokens__provider_token" ON "community"."push_tokens" USING btree ("provider", "token");
+ALTER TABLE "community"."proofs"
+ADD CONSTRAINT "fk_proofs_device_id" FOREIGN KEY ("device_id") REFERENCES "community"."devices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE INDEX "ix_push_tokens__device_id" ON "community"."push_tokens" USING btree ("device_id");
+ALTER TABLE "community"."proofs"
+ADD CONSTRAINT "fk_proofs_matched_feature_id" FOREIGN KEY ("matched_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE INDEX "ix_proofs__actor_id" ON "community"."proofs" USING btree ("actor_id");
+
+CREATE INDEX "ix_proofs__device_id" ON "community"."proofs" USING btree ("device_id");
+
+CREATE INDEX "ix_proofs__matched_feature_id" ON "community"."proofs" USING btree ("matched_feature_id");
 
 ALTER TABLE "community"."reactions"
 ADD CONSTRAINT "fk_reactions_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -3843,23 +3745,6 @@ CREATE UNIQUE INDEX "uq_reactions__actor_id_kind_id_subject_table_subject_id" ON
 
 CREATE INDEX "ix_reactions__subject_table_subject_id" ON "community"."reactions" USING btree ("subject_table", "subject_id");
 
-ALTER TABLE "community"."saved_places"
-ADD CONSTRAINT "fk_saved_places_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."saved_places"
-ADD CONSTRAINT "fk_saved_places_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."saved_places"
-ADD CONSTRAINT "fk_saved_places_suggestion_id" FOREIGN KEY ("suggestion_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_saved_places__actor_id_feature_id" ON "community"."saved_places" USING btree ("actor_id", "feature_id");
-
-CREATE UNIQUE INDEX "uq_saved_places__actor_id_partial_2" ON "community"."saved_places" USING btree ("actor_id")
-WHERE
-    ("is_home" = TRUE);
-
-CREATE INDEX "ix_saved_places__feature_id" ON "community"."saved_places" USING btree ("feature_id");
-
 ALTER TABLE "community"."subscriptions"
 ADD CONSTRAINT "fk_subscriptions_actor_id" FOREIGN KEY ("actor_id") REFERENCES "community"."actors" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -3875,6 +3760,13 @@ CREATE UNIQUE INDEX "uq_subscriptions__actor_id_subject_table_subject_id_kind_id
 
 CREATE INDEX "ix_subscriptions__subject_table_subject_id" ON "community"."subscriptions" USING btree ("subject_table", "subject_id");
 
+ALTER TABLE "community"."tokens"
+ADD CONSTRAINT "fk_tokens_device_id" FOREIGN KEY ("device_id") REFERENCES "community"."devices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_tokens__provider_token" ON "community"."tokens" USING btree ("provider", "token");
+
+CREATE INDEX "ix_tokens__device_id" ON "community"."tokens" USING btree ("device_id");
+
 ALTER TABLE "community"."views"
 ADD CONSTRAINT "fk_views_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -3886,6 +3778,307 @@ CREATE UNIQUE INDEX "uq_views__subject_table_subject_id_day_visitor_hash" ON "co
 );
 
 CREATE INDEX "ix_views__day" ON "community"."views" USING btree ("day");
+
+ALTER TABLE "events"."calendars"
+ADD CONSTRAINT "fk_calendars_calendar_kind_id" FOREIGN KEY ("calendar_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."calendars"
+ADD CONSTRAINT "fk_calendars_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."calendars"
+ADD CONSTRAINT "fk_calendars_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_calendars__code_partial_1" ON "events"."calendars" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_calendars__country_id" ON "events"."calendars" USING btree ("country_id");
+
+CREATE INDEX "ix_calendars__calendar_kind_id" ON "events"."calendars" USING btree ("calendar_kind_id");
+
+CREATE INDEX "ix_calendars__source_citation_id" ON "events"."calendars" USING btree ("source_citation_id");
+
+ALTER TABLE "events"."changes"
+ADD CONSTRAINT "fk_changes_authority_entity_id" FOREIGN KEY ("authority_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."changes"
+ADD CONSTRAINT "fk_changes_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."changes"
+ADD CONSTRAINT "fk_changes_change_kind_id" FOREIGN KEY ("change_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."changes"
+ADD CONSTRAINT "fk_changes_occurrence_id" FOREIGN KEY ("occurrence_id") REFERENCES "events"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."changes"
+ADD CONSTRAINT "fk_changes_reason_id" FOREIGN KEY ("reason_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."changes"
+ADD CONSTRAINT "fk_changes_replacement_occurrence_id" FOREIGN KEY ("replacement_occurrence_id") REFERENCES "events"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."changes"
+ADD CONSTRAINT "fk_changes_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_changes__code_partial_1" ON "events"."changes" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_changes__occurrence_id_decided_on" ON "events"."changes" USING btree ("occurrence_id", "decided_on");
+
+CREATE INDEX "ix_changes__change_kind_id" ON "events"."changes" USING btree ("change_kind_id");
+
+CREATE INDEX "ix_changes__reason_id" ON "events"."changes" USING btree ("reason_id");
+
+CREATE INDEX "ix_changes__authority_entity_id" ON "events"."changes" USING btree ("authority_entity_id");
+
+CREATE INDEX "ix_changes__basis_provision_id" ON "events"."changes" USING btree ("basis_provision_id");
+
+CREATE INDEX "ix_changes__replacement_occurrence_id" ON "events"."changes" USING btree ("replacement_occurrence_id");
+
+CREATE INDEX "ix_changes__source_citation_id" ON "events"."changes" USING btree ("source_citation_id");
+
+ALTER TABLE "events"."events"
+ADD CONSTRAINT "fk_events_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."events"
+ADD CONSTRAINT "fk_events_calendar_id" FOREIGN KEY ("calendar_id") REFERENCES "events"."calendars" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."events"
+ADD CONSTRAINT "fk_events_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."events"
+ADD CONSTRAINT "fk_events_event_kind_id" FOREIGN KEY ("event_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."events"
+ADD CONSTRAINT "fk_events_organiser_entity_id" FOREIGN KEY ("organiser_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."events"
+ADD CONSTRAINT "fk_events_scope_feature_id" FOREIGN KEY ("scope_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."events"
+ADD CONSTRAINT "fk_events_scope_level_kind_id" FOREIGN KEY ("scope_level_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."events"
+ADD CONSTRAINT "fk_events_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_events__code_partial_1" ON "events"."events" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_events__country_id_event_kind_id" ON "events"."events" USING btree ("country_id", "event_kind_id");
+
+CREATE INDEX "ix_events__scope_feature_id" ON "events"."events" USING btree ("scope_feature_id");
+
+CREATE INDEX "ix_events__organiser_entity_id" ON "events"."events" USING btree ("organiser_entity_id");
+
+CREATE INDEX "ix_events__basis_provision_id" ON "events"."events" USING btree ("basis_provision_id");
+
+CREATE INDEX "ix_events__source_citation_id" ON "events"."events" USING btree ("source_citation_id");
+
+ALTER TABLE "events"."items"
+ADD CONSTRAINT "fk_items_event_id" FOREIGN KEY ("event_id") REFERENCES "events"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."items"
+ADD CONSTRAINT "fk_items_occurrence_id" FOREIGN KEY ("occurrence_id") REFERENCES "events"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."items"
+ADD CONSTRAINT "fk_items_schedule_id" FOREIGN KEY ("schedule_id") REFERENCES "events"."schedules" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_items__schedule_id_position" ON "events"."items" USING btree ("schedule_id", "position");
+
+CREATE INDEX "ix_items__event_id" ON "events"."items" USING btree ("event_id");
+
+CREATE INDEX "ix_items__occurrence_id" ON "events"."items" USING btree ("occurrence_id");
+
+ALTER TABLE "events"."names"
+ADD CONSTRAINT "fk_names_event_id" FOREIGN KEY ("event_id") REFERENCES "events"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."names"
+ADD CONSTRAINT "fk_names_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_names__event_id_language_id_name" ON "events"."names" USING btree ("event_id", "language_id", "name");
+
+CREATE UNIQUE INDEX "uq_names__event_id_language_id_partial_2" ON "events"."names" USING btree ("event_id", "language_id")
+WHERE
+    ("is_preferred" = TRUE);
+
+CREATE INDEX "ix_names__language_id" ON "events"."names" USING btree ("language_id");
+
+ALTER TABLE "events"."occurrences"
+ADD CONSTRAINT "fk_occurrences_continues_occurrence_id" FOREIGN KEY ("continues_occurrence_id") REFERENCES "events"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."occurrences"
+ADD CONSTRAINT "fk_occurrences_event_id" FOREIGN KEY ("event_id") REFERENCES "events"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."occurrences"
+ADD CONSTRAINT "fk_occurrences_format_id" FOREIGN KEY ("format_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."occurrences"
+ADD CONSTRAINT "fk_occurrences_knowledge_id" FOREIGN KEY ("knowledge_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."occurrences"
+ADD CONSTRAINT "fk_occurrences_organiser_entity_id" FOREIGN KEY ("organiser_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."occurrences"
+ADD CONSTRAINT "fk_occurrences_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."occurrences"
+ADD CONSTRAINT "fk_occurrences_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."occurrences"
+ADD CONSTRAINT "fk_occurrences_venue_feature_id" FOREIGN KEY ("venue_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_occurrences__code_partial_1" ON "events"."occurrences" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_occurrences__event_id_planned_starts_on" ON "events"."occurrences" USING btree ("event_id", "planned_starts_on");
+
+CREATE INDEX "ix_occurrences__status_id" ON "events"."occurrences" USING btree ("status_id");
+
+CREATE INDEX "ix_occurrences__knowledge_id" ON "events"."occurrences" USING btree ("knowledge_id");
+
+CREATE INDEX "ix_occurrences__venue_feature_id" ON "events"."occurrences" USING btree ("venue_feature_id");
+
+CREATE INDEX "ix_occurrences__organiser_entity_id" ON "events"."occurrences" USING btree ("organiser_entity_id");
+
+CREATE INDEX "ix_occurrences__continues_occurrence_id" ON "events"."occurrences" USING btree ("continues_occurrence_id");
+
+CREATE INDEX "ix_occurrences__source_citation_id" ON "events"."occurrences" USING btree ("source_citation_id");
+
+ALTER TABLE "events"."participants"
+ADD CONSTRAINT "fk_participants_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."participants"
+ADD CONSTRAINT "fk_participants_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."participants"
+ADD CONSTRAINT "fk_participants_occurrence_id" FOREIGN KEY ("occurrence_id") REFERENCES "events"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."participants"
+ADD CONSTRAINT "fk_participants_role_id" FOREIGN KEY ("role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE INDEX "ix_participants__occurrence_id" ON "events"."participants" USING btree ("occurrence_id");
+
+CREATE INDEX "ix_participants__entity_id" ON "events"."participants" USING btree ("entity_id");
+
+CREATE INDEX "ix_participants__individual_id" ON "events"."participants" USING btree ("individual_id");
+
+CREATE INDEX "ix_participants__role_id" ON "events"."participants" USING btree ("role_id");
+
+ALTER TABLE "events"."rules"
+ADD CONSTRAINT "fk_rules_adjustment_id" FOREIGN KEY ("adjustment_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."rules"
+ADD CONSTRAINT "fk_rules_event_id" FOREIGN KEY ("event_id") REFERENCES "events"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."rules"
+ADD CONSTRAINT "fk_rules_rule_kind_id" FOREIGN KEY ("rule_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."rules"
+ADD CONSTRAINT "fk_rules_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE INDEX "ix_rules__event_id" ON "events"."rules" USING btree ("event_id");
+
+CREATE INDEX "ix_rules__rule_kind_id" ON "events"."rules" USING btree ("rule_kind_id");
+
+CREATE INDEX "ix_rules__source_citation_id" ON "events"."rules" USING btree ("source_citation_id");
+
+ALTER TABLE "events"."schedules"
+ADD CONSTRAINT "fk_schedules_anchor_event_id" FOREIGN KEY ("anchor_event_id") REFERENCES "events"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."schedules"
+ADD CONSTRAINT "fk_schedules_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."schedules"
+ADD CONSTRAINT "fk_schedules_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."schedules"
+ADD CONSTRAINT "fk_schedules_issuer_entity_id" FOREIGN KEY ("issuer_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."schedules"
+ADD CONSTRAINT "fk_schedules_schedule_kind_id" FOREIGN KEY ("schedule_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."schedules"
+ADD CONSTRAINT "fk_schedules_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."schedules"
+ADD CONSTRAINT "fk_schedules_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."schedules"
+ADD CONSTRAINT "fk_schedules_supersedes_schedule_id" FOREIGN KEY ("supersedes_schedule_id") REFERENCES "events"."schedules" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_schedules__code_partial_1" ON "events"."schedules" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_schedules__country_id_schedule_kind_id" ON "events"."schedules" USING btree ("country_id", "schedule_kind_id");
+
+CREATE INDEX "ix_schedules__anchor_event_id" ON "events"."schedules" USING btree ("anchor_event_id");
+
+CREATE INDEX "ix_schedules__issuer_entity_id" ON "events"."schedules" USING btree ("issuer_entity_id");
+
+CREATE INDEX "ix_schedules__status_id" ON "events"."schedules" USING btree ("status_id");
+
+CREATE INDEX "ix_schedules__supersedes_schedule_id" ON "events"."schedules" USING btree ("supersedes_schedule_id");
+
+CREATE INDEX "ix_schedules__source_citation_id" ON "events"."schedules" USING btree ("source_citation_id");
+
+ALTER TABLE "events"."seasons"
+ADD CONSTRAINT "fk_seasons_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."seasons"
+ADD CONSTRAINT "fk_seasons_scope_feature_id" FOREIGN KEY ("scope_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."seasons"
+ADD CONSTRAINT "fk_seasons_season_kind_id" FOREIGN KEY ("season_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."seasons"
+ADD CONSTRAINT "fk_seasons_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_seasons__code_partial_1" ON "events"."seasons" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_seasons__country_id_season_kind_id" ON "events"."seasons" USING btree ("country_id", "season_kind_id");
+
+CREATE INDEX "ix_seasons__scope_feature_id" ON "events"."seasons" USING btree ("scope_feature_id");
+
+CREATE INDEX "ix_seasons__source_citation_id" ON "events"."seasons" USING btree ("source_citation_id");
+
+ALTER TABLE "events"."subjects"
+ADD CONSTRAINT "fk_subjects_event_id" FOREIGN KEY ("event_id") REFERENCES "events"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."subjects"
+ADD CONSTRAINT "fk_subjects_role_id" FOREIGN KEY ("role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_subjects__code_partial_1" ON "events"."subjects" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_subjects__event_id_subject_table_subject_id_role_id" ON "events"."subjects" USING btree (
+    "event_id",
+    "subject_table",
+    "subject_id",
+    "role_id"
+);
+
+CREATE INDEX "ix_subjects__subject_table_subject_id" ON "events"."subjects" USING btree ("subject_table", "subject_id");
+
+ALTER TABLE "events"."venues"
+ADD CONSTRAINT "fk_venues_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."venues"
+ADD CONSTRAINT "fk_venues_occurrence_id" FOREIGN KEY ("occurrence_id") REFERENCES "events"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "events"."venues"
+ADD CONSTRAINT "fk_venues_role_id" FOREIGN KEY ("role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_venues__occurrence_id_feature_id_role_id" ON "events"."venues" USING btree ("occurrence_id", "feature_id", "role_id");
+
+CREATE INDEX "ix_venues__feature_id" ON "events"."venues" USING btree ("feature_id");
+
+CREATE INDEX "ix_venues__role_id" ON "events"."venues" USING btree ("role_id");
 
 ALTER TABLE "filesystem"."content_tags"
 ADD CONSTRAINT "fk_content_tags_content_id" FOREIGN KEY ("content_id") REFERENCES "filesystem"."contents" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -4438,6 +4631,31 @@ CREATE INDEX "ix_relationships__object_feature_id_relationship_kind_id" ON "geog
 
 CREATE INDEX "ix_relationships__from_year_to_year" ON "geography"."relationships" USING btree ("from_year", "to_year");
 
+ALTER TABLE "governance"."agenda"
+ADD CONSTRAINT "fk_agenda_agenda_kind_id" FOREIGN KEY ("agenda_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."agenda"
+ADD CONSTRAINT "fk_agenda_bill_id" FOREIGN KEY ("bill_id") REFERENCES "governance"."bills" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."agenda"
+ADD CONSTRAINT "fk_agenda_motion_id" FOREIGN KEY ("motion_id") REFERENCES "governance"."motions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."agenda"
+ADD CONSTRAINT "fk_agenda_sitting_id" FOREIGN KEY ("sitting_id") REFERENCES "governance"."sittings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."agenda"
+ADD CONSTRAINT "fk_agenda_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_agenda__sitting_id_position" ON "governance"."agenda" USING btree ("sitting_id", "position");
+
+CREATE INDEX "ix_agenda__agenda_kind_id" ON "governance"."agenda" USING btree ("agenda_kind_id");
+
+CREATE INDEX "ix_agenda__motion_id" ON "governance"."agenda" USING btree ("motion_id");
+
+CREATE INDEX "ix_agenda__bill_id" ON "governance"."agenda" USING btree ("bill_id");
+
+CREATE INDEX "ix_agenda__source_citation_id" ON "governance"."agenda" USING btree ("source_citation_id");
+
 ALTER TABLE "governance"."authority_scopes"
 ADD CONSTRAINT "fk_authority_scopes_authority_kind_id" FOREIGN KEY ("authority_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -4472,6 +4690,74 @@ CREATE INDEX "ix_authority_scopes__unit_feature_id" ON "governance"."authority_s
 CREATE INDEX "ix_authority_scopes__country_id" ON "governance"."authority_scopes" USING btree ("country_id");
 
 CREATE INDEX "ix_authority_scopes__source_citation_id" ON "governance"."authority_scopes" USING btree ("source_citation_id");
+
+ALTER TABLE "governance"."bills"
+ADD CONSTRAINT "fk_bills_bill_kind_id" FOREIGN KEY ("bill_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."bills"
+ADD CONSTRAINT "fk_bills_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."bills"
+ADD CONSTRAINT "fk_bills_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."bills"
+ADD CONSTRAINT "fk_bills_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."bills"
+ADD CONSTRAINT "fk_bills_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."bills"
+ADD CONSTRAINT "fk_bills_sponsor_holder_id" FOREIGN KEY ("sponsor_holder_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."bills"
+ADD CONSTRAINT "fk_bills_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."bills"
+ADD CONSTRAINT "fk_bills_term_id" FOREIGN KEY ("term_id") REFERENCES "governance"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_bills__code_partial_1" ON "governance"."bills" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_bills__country_id" ON "governance"."bills" USING btree ("country_id");
+
+CREATE INDEX "ix_bills__institution_id" ON "governance"."bills" USING btree ("institution_id");
+
+CREATE INDEX "ix_bills__bill_kind_id" ON "governance"."bills" USING btree ("bill_kind_id");
+
+CREATE INDEX "ix_bills__status_id" ON "governance"."bills" USING btree ("status_id");
+
+CREATE INDEX "ix_bills__sponsor_holder_id" ON "governance"."bills" USING btree ("sponsor_holder_id");
+
+CREATE INDEX "ix_bills__term_id" ON "governance"."bills" USING btree ("term_id");
+
+CREATE INDEX "ix_bills__instrument_id" ON "governance"."bills" USING btree ("instrument_id");
+
+CREATE INDEX "ix_bills__source_citation_id" ON "governance"."bills" USING btree ("source_citation_id");
+
+ALTER TABLE "governance"."hansards"
+ADD CONSTRAINT "fk_hansards_artifact_id" FOREIGN KEY ("artifact_id") REFERENCES "source"."artifacts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."hansards"
+ADD CONSTRAINT "fk_hansards_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."hansards"
+ADD CONSTRAINT "fk_hansards_sitting_id" FOREIGN KEY ("sitting_id") REFERENCES "governance"."sittings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."hansards"
+ADD CONSTRAINT "fk_hansards_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_hansards__code_partial_1" ON "governance"."hansards" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_hansards__sitting_id" ON "governance"."hansards" USING btree ("sitting_id");
+
+CREATE INDEX "ix_hansards__artifact_id" ON "governance"."hansards" USING btree ("artifact_id");
+
+CREATE INDEX "ix_hansards__language_id" ON "governance"."hansards" USING btree ("language_id");
+
+CREATE INDEX "ix_hansards__source_citation_id" ON "governance"."hansards" USING btree ("source_citation_id");
 
 ALTER TABLE "governance"."holders"
 ADD CONSTRAINT "fk_holders_appointed_by_entity_id" FOREIGN KEY ("appointed_by_entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -4535,6 +4821,9 @@ ADD CONSTRAINT "fk_mandates_office_id" FOREIGN KEY ("office_id") REFERENCES "gov
 ALTER TABLE "governance"."mandates"
 ADD CONSTRAINT "fk_mandates_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "governance"."mandates"
+ADD CONSTRAINT "fk_mandates_term_id" FOREIGN KEY ("term_id") REFERENCES "governance"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_mandates__institution_id_office_id_mandate_kind_id_descripti" ON "governance"."mandates" USING btree (
     "institution_id",
     "office_id",
@@ -4547,6 +4836,60 @@ CREATE INDEX "ix_mandates__institution_id" ON "governance"."mandates" USING btre
 CREATE INDEX "ix_mandates__office_id" ON "governance"."mandates" USING btree ("office_id");
 
 CREATE INDEX "ix_mandates__source_citation_id" ON "governance"."mandates" USING btree ("source_citation_id");
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_bill_id" FOREIGN KEY ("bill_id") REFERENCES "governance"."bills" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_budget_version_id" FOREIGN KEY ("budget_version_id") REFERENCES "finance"."budget_versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_fiscal_period_id" FOREIGN KEY ("fiscal_period_id") REFERENCES "finance"."fiscal_periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_motion_kind_id" FOREIGN KEY ("motion_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_moved_by_holder_id" FOREIGN KEY ("moved_by_holder_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_outcome_id" FOREIGN KEY ("outcome_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_sitting_id" FOREIGN KEY ("sitting_id") REFERENCES "governance"."sittings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."motions"
+ADD CONSTRAINT "fk_motions_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_motions__code_partial_1" ON "governance"."motions" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_motions__sitting_id" ON "governance"."motions" USING btree ("sitting_id");
+
+CREATE INDEX "ix_motions__motion_kind_id" ON "governance"."motions" USING btree ("motion_kind_id");
+
+CREATE INDEX "ix_motions__outcome_id" ON "governance"."motions" USING btree ("outcome_id");
+
+CREATE INDEX "ix_motions__moved_by_holder_id" ON "governance"."motions" USING btree ("moved_by_holder_id");
+
+CREATE INDEX "ix_motions__bill_id" ON "governance"."motions" USING btree ("bill_id");
+
+CREATE INDEX "ix_motions__instrument_id" ON "governance"."motions" USING btree ("instrument_id");
+
+CREATE INDEX "ix_motions__provision_id" ON "governance"."motions" USING btree ("provision_id");
+
+CREATE INDEX "ix_motions__budget_version_id" ON "governance"."motions" USING btree ("budget_version_id");
+
+CREATE INDEX "ix_motions__fiscal_period_id" ON "governance"."motions" USING btree ("fiscal_period_id");
+
+CREATE INDEX "ix_motions__source_citation_id" ON "governance"."motions" USING btree ("source_citation_id");
 
 ALTER TABLE "governance"."obligations"
 ADD CONSTRAINT "fk_obligations_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -4660,6 +5003,149 @@ CREATE INDEX "ix_reports__status_id" ON "governance"."reports" USING btree ("sta
 CREATE INDEX "ix_reports__artifact_id" ON "governance"."reports" USING btree ("artifact_id");
 
 CREATE INDEX "ix_reports__source_citation_id" ON "governance"."reports" USING btree ("source_citation_id");
+
+ALTER TABLE "governance"."sittings"
+ADD CONSTRAINT "fk_sittings_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."sittings"
+ADD CONSTRAINT "fk_sittings_occurrence_id" FOREIGN KEY ("occurrence_id") REFERENCES "events"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."sittings"
+ADD CONSTRAINT "fk_sittings_sitting_kind_id" FOREIGN KEY ("sitting_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."sittings"
+ADD CONSTRAINT "fk_sittings_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."sittings"
+ADD CONSTRAINT "fk_sittings_term_id" FOREIGN KEY ("term_id") REFERENCES "governance"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_sittings__code_partial_1" ON "governance"."sittings" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_sittings__occurrence_id" ON "governance"."sittings" USING btree ("occurrence_id");
+
+CREATE INDEX "ix_sittings__institution_id" ON "governance"."sittings" USING btree ("institution_id");
+
+CREATE INDEX "ix_sittings__sitting_kind_id" ON "governance"."sittings" USING btree ("sitting_kind_id");
+
+CREATE INDEX "ix_sittings__term_id" ON "governance"."sittings" USING btree ("term_id");
+
+CREATE INDEX "ix_sittings__source_citation_id" ON "governance"."sittings" USING btree ("source_citation_id");
+
+ALTER TABLE "governance"."speeches"
+ADD CONSTRAINT "fk_speeches_bill_id" FOREIGN KEY ("bill_id") REFERENCES "governance"."bills" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."speeches"
+ADD CONSTRAINT "fk_speeches_hansard_id" FOREIGN KEY ("hansard_id") REFERENCES "governance"."hansards" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."speeches"
+ADD CONSTRAINT "fk_speeches_holder_id" FOREIGN KEY ("holder_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."speeches"
+ADD CONSTRAINT "fk_speeches_motion_id" FOREIGN KEY ("motion_id") REFERENCES "governance"."motions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."speeches"
+ADD CONSTRAINT "fk_speeches_sitting_id" FOREIGN KEY ("sitting_id") REFERENCES "governance"."sittings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."speeches"
+ADD CONSTRAINT "fk_speeches_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."speeches"
+ADD CONSTRAINT "fk_speeches_speech_kind_id" FOREIGN KEY ("speech_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_speeches__code_partial_1" ON "governance"."speeches" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE UNIQUE INDEX "uq_speeches__sitting_id_position" ON "governance"."speeches" USING btree ("sitting_id", "position");
+
+CREATE INDEX "ix_speeches__holder_id" ON "governance"."speeches" USING btree ("holder_id");
+
+CREATE INDEX "ix_speeches__motion_id" ON "governance"."speeches" USING btree ("motion_id");
+
+CREATE INDEX "ix_speeches__bill_id" ON "governance"."speeches" USING btree ("bill_id");
+
+CREATE INDEX "ix_speeches__hansard_id" ON "governance"."speeches" USING btree ("hansard_id");
+
+CREATE INDEX "ix_speeches__source_citation_id" ON "governance"."speeches" USING btree ("source_citation_id");
+
+ALTER TABLE "governance"."stages"
+ADD CONSTRAINT "fk_stages_bill_id" FOREIGN KEY ("bill_id") REFERENCES "governance"."bills" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."stages"
+ADD CONSTRAINT "fk_stages_motion_id" FOREIGN KEY ("motion_id") REFERENCES "governance"."motions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."stages"
+ADD CONSTRAINT "fk_stages_outcome_id" FOREIGN KEY ("outcome_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."stages"
+ADD CONSTRAINT "fk_stages_sitting_id" FOREIGN KEY ("sitting_id") REFERENCES "governance"."sittings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."stages"
+ADD CONSTRAINT "fk_stages_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."stages"
+ADD CONSTRAINT "fk_stages_stage_kind_id" FOREIGN KEY ("stage_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_stages__bill_id_sequence_number" ON "governance"."stages" USING btree ("bill_id", "sequence_number");
+
+CREATE INDEX "ix_stages__stage_kind_id" ON "governance"."stages" USING btree ("stage_kind_id");
+
+CREATE INDEX "ix_stages__sitting_id" ON "governance"."stages" USING btree ("sitting_id");
+
+CREATE INDEX "ix_stages__motion_id" ON "governance"."stages" USING btree ("motion_id");
+
+CREATE INDEX "ix_stages__source_citation_id" ON "governance"."stages" USING btree ("source_citation_id");
+
+ALTER TABLE "governance"."terms"
+ADD CONSTRAINT "fk_terms_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."terms"
+ADD CONSTRAINT "fk_terms_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."terms"
+ADD CONSTRAINT "fk_terms_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."terms"
+ADD CONSTRAINT "fk_terms_term_kind_id" FOREIGN KEY ("term_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."terms"
+ADD CONSTRAINT "fk_terms_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_terms__code_partial_1" ON "governance"."terms" USING btree ("code")
+WHERE
+    ("deleted_at" IS NULL);
+
+CREATE INDEX "ix_terms__country_id_starts_on" ON "governance"."terms" USING btree ("country_id", "starts_on");
+
+CREATE INDEX "ix_terms__term_kind_id" ON "governance"."terms" USING btree ("term_kind_id");
+
+CREATE INDEX "ix_terms__institution_id" ON "governance"."terms" USING btree ("institution_id");
+
+CREATE INDEX "ix_terms__unit_feature_id" ON "governance"."terms" USING btree ("unit_feature_id");
+
+CREATE INDEX "ix_terms__source_citation_id" ON "governance"."terms" USING btree ("source_citation_id");
+
+ALTER TABLE "governance"."votes"
+ADD CONSTRAINT "fk_votes_holder_id" FOREIGN KEY ("holder_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."votes"
+ADD CONSTRAINT "fk_votes_motion_id" FOREIGN KEY ("motion_id") REFERENCES "governance"."motions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."votes"
+ADD CONSTRAINT "fk_votes_position_id" FOREIGN KEY ("position_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."votes"
+ADD CONSTRAINT "fk_votes_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_votes__motion_id_holder_id" ON "governance"."votes" USING btree ("motion_id", "holder_id");
+
+CREATE INDEX "ix_votes__holder_id" ON "governance"."votes" USING btree ("holder_id");
+
+CREATE INDEX "ix_votes__position_id" ON "governance"."votes" USING btree ("position_id");
+
+CREATE INDEX "ix_votes__source_citation_id" ON "governance"."votes" USING btree ("source_citation_id");
 
 ALTER TABLE "legal"."editions"
 ADD CONSTRAINT "fk_editions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -5252,7 +5738,7 @@ ALTER TABLE "politics"."elections"
 ADD CONSTRAINT "fk_elections_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "politics"."elections"
-ADD CONSTRAINT "fk_elections_term_id" FOREIGN KEY ("term_id") REFERENCES "politics"."electoral_terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_elections_term_id" FOREIGN KEY ("term_id") REFERENCES "governance"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_elections__code_partial_1" ON "politics"."elections" USING btree ("code")
 WHERE
@@ -5271,30 +5757,6 @@ CREATE INDEX "ix_elections__term_id" ON "politics"."elections" USING btree ("ter
 CREATE INDEX "ix_elections__authority_entity_id" ON "politics"."elections" USING btree ("authority_entity_id");
 
 CREATE INDEX "ix_elections__source_citation_id" ON "politics"."elections" USING btree ("source_citation_id");
-
-ALTER TABLE "politics"."electoral_terms"
-ADD CONSTRAINT "fk_electoral_terms_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "politics"."electoral_terms"
-ADD CONSTRAINT "fk_electoral_terms_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "politics"."electoral_terms"
-ADD CONSTRAINT "fk_electoral_terms_term_kind_id" FOREIGN KEY ("term_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "politics"."electoral_terms"
-ADD CONSTRAINT "fk_electoral_terms_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_electoral_terms__code_partial_1" ON "politics"."electoral_terms" USING btree ("code")
-WHERE
-    ("deleted_at" IS NULL);
-
-CREATE INDEX "ix_electoral_terms__country_id_starts_on" ON "politics"."electoral_terms" USING btree ("country_id", "starts_on");
-
-CREATE INDEX "ix_electoral_terms__term_kind_id" ON "politics"."electoral_terms" USING btree ("term_kind_id");
-
-CREATE INDEX "ix_electoral_terms__unit_feature_id" ON "politics"."electoral_terms" USING btree ("unit_feature_id");
-
-CREATE INDEX "ix_electoral_terms__source_citation_id" ON "politics"."electoral_terms" USING btree ("source_citation_id");
 
 ALTER TABLE "politics"."electorates"
 ADD CONSTRAINT "fk_electorates_contest_id" FOREIGN KEY ("contest_id") REFERENCES "politics"."contests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -5415,41 +5877,34 @@ CREATE INDEX "ix_parties__entity_id" ON "politics"."parties" USING btree ("entit
 
 CREATE INDEX "ix_parties__source_citation_id" ON "politics"."parties" USING btree ("source_citation_id");
 
-ALTER TABLE "politics"."polling_stations"
-ADD CONSTRAINT "fk_polling_stations_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE "politics"."polls"
+ADD CONSTRAINT "fk_polls_election_id" FOREIGN KEY ("election_id") REFERENCES "politics"."elections" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "politics"."polling_stations"
-ADD CONSTRAINT "fk_polling_stations_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE "politics"."polls"
+ADD CONSTRAINT "fk_polls_host_feature_id" FOREIGN KEY ("host_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "politics"."polling_stations"
-ADD CONSTRAINT "fk_polling_stations_registration_centre_id" FOREIGN KEY ("registration_centre_id") REFERENCES "politics"."polling_stations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE "politics"."polls"
+ADD CONSTRAINT "fk_polls_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "politics"."polling_stations"
-ADD CONSTRAINT "fk_polling_stations_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE "politics"."polls"
+ADD CONSTRAINT "fk_polls_station_feature_id" FOREIGN KEY ("station_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "politics"."polling_stations"
-ADD CONSTRAINT "fk_polling_stations_station_kind_id" FOREIGN KEY ("station_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE "politics"."polls"
+ADD CONSTRAINT "fk_polls_status_id" FOREIGN KEY ("status_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "politics"."polling_stations"
-ADD CONSTRAINT "fk_polling_stations_succeeded_by_station_id" FOREIGN KEY ("succeeded_by_station_id") REFERENCES "politics"."polling_stations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_polling_stations__code_partial_1" ON "politics"."polling_stations" USING btree ("code")
+CREATE UNIQUE INDEX "uq_polls__code_partial_1" ON "politics"."polls" USING btree ("code")
 WHERE
     ("deleted_at" IS NULL);
 
-CREATE UNIQUE INDEX "uq_polling_stations__feature_id" ON "politics"."polling_stations" USING btree ("feature_id");
+CREATE UNIQUE INDEX "uq_polls__election_id_station_feature_id" ON "politics"."polls" USING btree ("election_id", "station_feature_id");
 
-CREATE INDEX "ix_polling_stations__country_id" ON "politics"."polling_stations" USING btree ("country_id");
+CREATE INDEX "ix_polls__station_feature_id" ON "politics"."polls" USING btree ("station_feature_id");
 
-CREATE INDEX "ix_polling_stations__station_kind_id" ON "politics"."polling_stations" USING btree ("station_kind_id");
+CREATE INDEX "ix_polls__host_feature_id" ON "politics"."polls" USING btree ("host_feature_id");
 
-CREATE INDEX "ix_polling_stations__commission_code" ON "politics"."polling_stations" USING btree ("commission_code");
+CREATE INDEX "ix_polls__status_id" ON "politics"."polls" USING btree ("status_id");
 
-CREATE INDEX "ix_polling_stations__registration_centre_id" ON "politics"."polling_stations" USING btree ("registration_centre_id");
-
-CREATE INDEX "ix_polling_stations__succeeded_by_station_id" ON "politics"."polling_stations" USING btree ("succeeded_by_station_id");
-
-CREATE INDEX "ix_polling_stations__source_citation_id" ON "politics"."polling_stations" USING btree ("source_citation_id");
+CREATE INDEX "ix_polls__source_citation_id" ON "politics"."polls" USING btree ("source_citation_id");
 
 ALTER TABLE "politics"."referendum_options"
 ADD CONSTRAINT "fk_referendum_options_contest_id" FOREIGN KEY ("contest_id") REFERENCES "politics"."contests" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -5954,6 +6409,21 @@ CREATE UNIQUE INDEX "uq_editions__product_id_designation" ON "source"."editions"
 
 CREATE INDEX "ix_editions__language_id" ON "source"."editions" USING btree ("language_id");
 
+ALTER TABLE "source"."links"
+ADD CONSTRAINT "fk_links_from_slug_id" FOREIGN KEY ("from_slug_id") REFERENCES "source"."slugs" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."links"
+ADD CONSTRAINT "fk_links_relation_kind_id" FOREIGN KEY ("relation_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "source"."links"
+ADD CONSTRAINT "fk_links_to_slug_id" FOREIGN KEY ("to_slug_id") REFERENCES "source"."slugs" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_links__from_slug_id_to_slug_id_relation_kind_id" ON "source"."links" USING btree ("from_slug_id", "to_slug_id", "relation_kind_id");
+
+CREATE INDEX "ix_links__to_slug_id" ON "source"."links" USING btree ("to_slug_id");
+
+CREATE INDEX "ix_links__relation_kind_id" ON "source"."links" USING btree ("relation_kind_id");
+
 ALTER TABLE "source"."products"
 ADD CONSTRAINT "fk_products_kind_id" FOREIGN KEY ("kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -6030,21 +6500,6 @@ WHERE
 CREATE INDEX "ix_relationships__kind_id" ON "source"."relationships" USING btree ("kind_id");
 
 CREATE INDEX "ix_relationships__subject_table_subject_id" ON "source"."relationships" USING btree ("subject_table", "subject_id");
-
-ALTER TABLE "source"."slug_relations"
-ADD CONSTRAINT "fk_slug_relations_from_slug_id" FOREIGN KEY ("from_slug_id") REFERENCES "source"."slugs" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "source"."slug_relations"
-ADD CONSTRAINT "fk_slug_relations_relation_kind_id" FOREIGN KEY ("relation_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "source"."slug_relations"
-ADD CONSTRAINT "fk_slug_relations_to_slug_id" FOREIGN KEY ("to_slug_id") REFERENCES "source"."slugs" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_slug_relations__from_slug_id_to_slug_id_relation_kind_id" ON "source"."slug_relations" USING btree ("from_slug_id", "to_slug_id", "relation_kind_id");
-
-CREATE INDEX "ix_slug_relations__to_slug_id" ON "source"."slug_relations" USING btree ("to_slug_id");
-
-CREATE INDEX "ix_slug_relations__relation_kind_id" ON "source"."slug_relations" USING btree ("relation_kind_id");
 
 ALTER TABLE "source"."slugs"
 ADD CONSTRAINT "fk_slugs_canonical_slug_id" FOREIGN KEY ("canonical_slug_id") REFERENCES "source"."slugs" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -6216,567 +6671,6 @@ CREATE INDEX "ix_observations__ethnicity_id" ON "statistics"."observations" USIN
 CREATE INDEX "ix_observations__language_id" ON "statistics"."observations" USING btree ("language_id");
 
 CREATE INDEX "ix_observations__source_citation_id" ON "statistics"."observations" USING btree ("source_citation_id");
-
-CREATE FUNCTION "activities"."scheme_event_participants_role_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."role_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."role_id" AND s."code" = 'ref.sch.act.participant.role'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_event_participants_role_id"
-BEFORE INSERT OR UPDATE OF "role_id" ON "activities"."event_participants" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_participants_role_id" ();
-
-CREATE FUNCTION "activities"."scheme_event_participants_role_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."event_participants" t WHERE t."role_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_event_participants_role_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_participants_role_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_event_participants_role_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.participant.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."event_participants" t
-    JOIN "reference"."values" v ON v."id" = t."role_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_event_participants_role_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_participants_role_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_event_rules_adjustment_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."adjustment_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."adjustment_id" AND s."code" = 'ref.sch.act.rule.adjustment'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_event_rules_adjustment_id"
-BEFORE INSERT OR UPDATE OF "adjustment_id" ON "activities"."event_rules" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_rules_adjustment_id" ();
-
-CREATE FUNCTION "activities"."scheme_event_rules_adjustment_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."event_rules" t WHERE t."adjustment_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_event_rules_adjustment_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_rules_adjustment_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_event_rules_adjustment_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.rule.adjustment' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."event_rules" t
-    JOIN "reference"."values" v ON v."id" = t."adjustment_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_event_rules_adjustment_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_rules_adjustment_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_event_rules_rule_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."rule_kind_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."rule_kind_id" AND s."code" = 'ref.sch.act.rule.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_event_rules_rule_kind_id"
-BEFORE INSERT OR UPDATE OF "rule_kind_id" ON "activities"."event_rules" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_rules_rule_kind_id" ();
-
-CREATE FUNCTION "activities"."scheme_event_rules_rule_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."event_rules" t WHERE t."rule_kind_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_event_rules_rule_kind_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_rules_rule_kind_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_event_rules_rule_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.rule.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."event_rules" t
-    JOIN "reference"."values" v ON v."id" = t."rule_kind_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_event_rules_rule_kind_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_rules_rule_kind_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_event_subjects_role_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."role_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."role_id" AND s."code" = 'ref.sch.act.subject.role'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_event_subjects_role_id"
-BEFORE INSERT OR UPDATE OF "role_id" ON "activities"."event_subjects" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_subjects_role_id" ();
-
-CREATE FUNCTION "activities"."scheme_event_subjects_role_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."event_subjects" t WHERE t."role_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_event_subjects_role_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_subjects_role_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_event_subjects_role_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.subject.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."event_subjects" t
-    JOIN "reference"."values" v ON v."id" = t."role_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_event_subjects_role_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_event_subjects_role_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_events_event_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."event_kind_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."event_kind_id" AND s."code" = 'ref.sch.act.event.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_events_event_kind_id"
-BEFORE INSERT OR UPDATE OF "event_kind_id" ON "activities"."events" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_events_event_kind_id" ();
-
-CREATE FUNCTION "activities"."scheme_events_event_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."events" t WHERE t."event_kind_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_events_event_kind_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_events_event_kind_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_events_event_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.event.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."events" t
-    JOIN "reference"."values" v ON v."id" = t."event_kind_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_events_event_kind_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_events_event_kind_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_events_scope_level_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scope_level_kind_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."scope_level_kind_id" AND s."code" = 'ref.sch.geo.feature.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_events_scope_level_kind_id"
-BEFORE INSERT OR UPDATE OF "scope_level_kind_id" ON "activities"."events" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_events_scope_level_kind_id" ();
-
-CREATE FUNCTION "activities"."scheme_events_scope_level_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."events" t WHERE t."scope_level_kind_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_events_scope_level_kind_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_events_scope_level_kind_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_events_scope_level_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.geo.feature.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."events" t
-    JOIN "reference"."values" v ON v."id" = t."scope_level_kind_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_events_scope_level_kind_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_events_scope_level_kind_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_occurrence_changes_change_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."change_kind_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."change_kind_id" AND s."code" = 'ref.sch.act.change.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_occurrence_changes_change_kind_id"
-BEFORE INSERT OR UPDATE OF "change_kind_id" ON "activities"."occurrence_changes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrence_changes_change_kind_id" ();
-
-CREATE FUNCTION "activities"."scheme_occurrence_changes_change_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrence_changes" t WHERE t."change_kind_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrence_changes_change_kind_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrence_changes_change_kind_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_occurrence_changes_change_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.change.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrence_changes" t
-    JOIN "reference"."values" v ON v."id" = t."change_kind_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrence_changes_change_kind_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrence_changes_change_kind_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_occurrence_changes_reason_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."reason_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."reason_id" AND s."code" = 'ref.sch.act.change.reason'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_occurrence_changes_reason_id"
-BEFORE INSERT OR UPDATE OF "reason_id" ON "activities"."occurrence_changes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrence_changes_reason_id" ();
-
-CREATE FUNCTION "activities"."scheme_occurrence_changes_reason_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrence_changes" t WHERE t."reason_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrence_changes_reason_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrence_changes_reason_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_occurrence_changes_reason_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.change.reason' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrence_changes" t
-    JOIN "reference"."values" v ON v."id" = t."reason_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrence_changes_reason_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrence_changes_reason_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_format_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."format_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."format_id" AND s."code" = 'ref.sch.act.occurrence.format'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_occurrences_format_id"
-BEFORE INSERT OR UPDATE OF "format_id" ON "activities"."occurrences" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_format_id" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_format_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrences" t WHERE t."format_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrences_format_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_format_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_format_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.occurrence.format' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrences" t
-    JOIN "reference"."values" v ON v."id" = t."format_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrences_format_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_format_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_knowledge_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."knowledge_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."knowledge_id" AND s."code" = 'ref.sch.act.occurrence.knowledge'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_occurrences_knowledge_id"
-BEFORE INSERT OR UPDATE OF "knowledge_id" ON "activities"."occurrences" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_knowledge_id" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_knowledge_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrences" t WHERE t."knowledge_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrences_knowledge_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_knowledge_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_knowledge_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.occurrence.knowledge' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrences" t
-    JOIN "reference"."values" v ON v."id" = t."knowledge_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrences_knowledge_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_knowledge_id_code" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_status_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_id" AND s."code" = 'ref.sch.act.occurrence.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_occurrences_status_id"
-BEFORE INSERT OR UPDATE OF "status_id" ON "activities"."occurrences" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_status_id" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_status_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrences" t WHERE t."status_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrences_status_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_status_id_membership" ();
-
-CREATE FUNCTION "activities"."scheme_occurrences_status_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.act.occurrence.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "activities"."occurrences" t
-    JOIN "reference"."values" v ON v."id" = t."status_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "activities_scheme_occurrences_status_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "activities"."scheme_occurrences_status_id_code" ();
 
 CREATE FUNCTION "civic"."scheme_beneficiaries_benefit_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -7186,6 +7080,57 @@ CREATE TRIGGER "civic_scheme_procurements_status_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "civic"."scheme_procurements_status_id_code" ();
 
+CREATE FUNCTION "community"."scheme_cases_decision_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."decision_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."decision_id" AND s."code" = 'ref.sch.com.moderation.decision'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_cases_decision_id"
+BEFORE INSERT OR UPDATE OF "decision_id" ON "community"."cases" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_cases_decision_id" ();
+
+CREATE FUNCTION "community"."scheme_cases_decision_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "community"."cases" t WHERE t."decision_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "community_scheme_cases_decision_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_cases_decision_id_membership" ();
+
+CREATE FUNCTION "community"."scheme_cases_decision_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.com.moderation.decision' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "community"."cases" t
+    JOIN "reference"."values" v ON v."id" = t."decision_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "community_scheme_cases_decision_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_cases_decision_id_code" ();
+
 CREATE FUNCTION "community"."scheme_consents_purpose_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."purpose_id" IS NOT NULL AND NOT EXISTS (
@@ -7236,108 +7181,6 @@ $scheme$;
 CREATE TRIGGER "community_scheme_consents_purpose_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "community"."scheme_consents_purpose_id_code" ();
-
-CREATE FUNCTION "community"."scheme_interactions_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_id" AND s."code" = 'ref.sch.com.interaction.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_interactions_kind_id"
-BEFORE INSERT OR UPDATE OF "kind_id" ON "community"."interactions" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_interactions_kind_id" ();
-
-CREATE FUNCTION "community"."scheme_interactions_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "community"."interactions" t WHERE t."kind_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_interactions_kind_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_interactions_kind_id_membership" ();
-
-CREATE FUNCTION "community"."scheme_interactions_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.com.interaction.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "community"."interactions" t
-    JOIN "reference"."values" v ON v."id" = t."kind_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_interactions_kind_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_interactions_kind_id_code" ();
-
-CREATE FUNCTION "community"."scheme_moderation_cases_decision_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."decision_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."decision_id" AND s."code" = 'ref.sch.com.moderation.decision'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_moderation_cases_decision_id"
-BEFORE INSERT OR UPDATE OF "decision_id" ON "community"."moderation_cases" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_moderation_cases_decision_id" ();
-
-CREATE FUNCTION "community"."scheme_moderation_cases_decision_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "community"."moderation_cases" t WHERE t."decision_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_moderation_cases_decision_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_moderation_cases_decision_id_membership" ();
-
-CREATE FUNCTION "community"."scheme_moderation_cases_decision_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.com.moderation.decision' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "community"."moderation_cases" t
-    JOIN "reference"."values" v ON v."id" = t."decision_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_moderation_cases_decision_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_moderation_cases_decision_id_code" ();
 
 CREATE FUNCTION "community"."scheme_notifications_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -7390,6 +7233,108 @@ CREATE TRIGGER "community_scheme_notifications_kind_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "community"."scheme_notifications_kind_id_code" ();
 
+CREATE FUNCTION "community"."scheme_places_suggestion_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."suggestion_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."suggestion_id" AND s."code" = 'ref.sch.com.place.label'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_places_suggestion_id"
+BEFORE INSERT OR UPDATE OF "suggestion_id" ON "community"."places" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_places_suggestion_id" ();
+
+CREATE FUNCTION "community"."scheme_places_suggestion_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "community"."places" t WHERE t."suggestion_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "community_scheme_places_suggestion_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_places_suggestion_id_membership" ();
+
+CREATE FUNCTION "community"."scheme_places_suggestion_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.com.place.label' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "community"."places" t
+    JOIN "reference"."values" v ON v."id" = t."suggestion_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "community_scheme_places_suggestion_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_places_suggestion_id_code" ();
+
+CREATE FUNCTION "community"."scheme_posts_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."kind_id" AND s."code" = 'ref.sch.com.interaction.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_posts_kind_id"
+BEFORE INSERT OR UPDATE OF "kind_id" ON "community"."posts" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_posts_kind_id" ();
+
+CREATE FUNCTION "community"."scheme_posts_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "community"."posts" t WHERE t."kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "community_scheme_posts_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_posts_kind_id_membership" ();
+
+CREATE FUNCTION "community"."scheme_posts_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.com.interaction.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "community"."posts" t
+    JOIN "reference"."values" v ON v."id" = t."kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "community_scheme_posts_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "community"."scheme_posts_kind_id_code" ();
+
 CREATE FUNCTION "community"."scheme_reactions_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_id" IS NOT NULL AND NOT EXISTS (
@@ -7441,57 +7386,6 @@ CREATE TRIGGER "community_scheme_reactions_kind_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "community"."scheme_reactions_kind_id_code" ();
 
-CREATE FUNCTION "community"."scheme_saved_places_suggestion_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."suggestion_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."suggestion_id" AND s."code" = 'ref.sch.com.place.label'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_saved_places_suggestion_id"
-BEFORE INSERT OR UPDATE OF "suggestion_id" ON "community"."saved_places" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_saved_places_suggestion_id" ();
-
-CREATE FUNCTION "community"."scheme_saved_places_suggestion_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "community"."saved_places" t WHERE t."suggestion_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_saved_places_suggestion_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_saved_places_suggestion_id_membership" ();
-
-CREATE FUNCTION "community"."scheme_saved_places_suggestion_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.com.place.label' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "community"."saved_places" t
-    JOIN "reference"."values" v ON v."id" = t."suggestion_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_saved_places_suggestion_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_saved_places_suggestion_id_code" ();
-
 CREATE FUNCTION "community"."scheme_subscriptions_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_id" IS NOT NULL AND NOT EXISTS (
@@ -7542,6 +7436,822 @@ $scheme$;
 CREATE TRIGGER "community_scheme_subscriptions_kind_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "community"."scheme_subscriptions_kind_id_code" ();
+
+CREATE FUNCTION "events"."scheme_calendars_calendar_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."calendar_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."calendar_kind_id" AND s."code" = 'ref.sch.evt.calendar.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_calendars_calendar_kind_id"
+BEFORE INSERT OR UPDATE OF "calendar_kind_id" ON "events"."calendars" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_calendars_calendar_kind_id" ();
+
+CREATE FUNCTION "events"."scheme_calendars_calendar_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."calendars" t WHERE t."calendar_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_calendars_calendar_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_calendars_calendar_kind_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_calendars_calendar_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.calendar.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."calendars" t
+    JOIN "reference"."values" v ON v."id" = t."calendar_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_calendars_calendar_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_calendars_calendar_kind_id_code" ();
+
+CREATE FUNCTION "events"."scheme_changes_change_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."change_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."change_kind_id" AND s."code" = 'ref.sch.evt.change.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_changes_change_kind_id"
+BEFORE INSERT OR UPDATE OF "change_kind_id" ON "events"."changes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_changes_change_kind_id" ();
+
+CREATE FUNCTION "events"."scheme_changes_change_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."changes" t WHERE t."change_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_changes_change_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_changes_change_kind_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_changes_change_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.change.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."changes" t
+    JOIN "reference"."values" v ON v."id" = t."change_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_changes_change_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_changes_change_kind_id_code" ();
+
+CREATE FUNCTION "events"."scheme_changes_reason_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."reason_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."reason_id" AND s."code" = 'ref.sch.evt.change.reason'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_changes_reason_id"
+BEFORE INSERT OR UPDATE OF "reason_id" ON "events"."changes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_changes_reason_id" ();
+
+CREATE FUNCTION "events"."scheme_changes_reason_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."changes" t WHERE t."reason_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_changes_reason_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_changes_reason_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_changes_reason_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.change.reason' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."changes" t
+    JOIN "reference"."values" v ON v."id" = t."reason_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_changes_reason_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_changes_reason_id_code" ();
+
+CREATE FUNCTION "events"."scheme_events_event_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."event_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."event_kind_id" AND s."code" = 'ref.sch.evt.event.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_events_event_kind_id"
+BEFORE INSERT OR UPDATE OF "event_kind_id" ON "events"."events" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_events_event_kind_id" ();
+
+CREATE FUNCTION "events"."scheme_events_event_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."events" t WHERE t."event_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_events_event_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_events_event_kind_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_events_event_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.event.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."events" t
+    JOIN "reference"."values" v ON v."id" = t."event_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_events_event_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_events_event_kind_id_code" ();
+
+CREATE FUNCTION "events"."scheme_events_scope_level_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scope_level_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."scope_level_kind_id" AND s."code" = 'ref.sch.geo.feature.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_events_scope_level_kind_id"
+BEFORE INSERT OR UPDATE OF "scope_level_kind_id" ON "events"."events" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_events_scope_level_kind_id" ();
+
+CREATE FUNCTION "events"."scheme_events_scope_level_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."events" t WHERE t."scope_level_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_events_scope_level_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_events_scope_level_kind_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_events_scope_level_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.geo.feature.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."events" t
+    JOIN "reference"."values" v ON v."id" = t."scope_level_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_events_scope_level_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_events_scope_level_kind_id_code" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_format_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."format_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."format_id" AND s."code" = 'ref.sch.evt.occurrence.format'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_occurrences_format_id"
+BEFORE INSERT OR UPDATE OF "format_id" ON "events"."occurrences" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_format_id" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_format_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."occurrences" t WHERE t."format_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_occurrences_format_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_format_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_format_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.occurrence.format' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."occurrences" t
+    JOIN "reference"."values" v ON v."id" = t."format_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_occurrences_format_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_format_id_code" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_knowledge_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."knowledge_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."knowledge_id" AND s."code" = 'ref.sch.evt.occurrence.knowledge'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_occurrences_knowledge_id"
+BEFORE INSERT OR UPDATE OF "knowledge_id" ON "events"."occurrences" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_knowledge_id" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_knowledge_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."occurrences" t WHERE t."knowledge_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_occurrences_knowledge_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_knowledge_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_knowledge_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.occurrence.knowledge' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."occurrences" t
+    JOIN "reference"."values" v ON v."id" = t."knowledge_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_occurrences_knowledge_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_knowledge_id_code" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_status_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."status_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."status_id" AND s."code" = 'ref.sch.evt.occurrence.status'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_occurrences_status_id"
+BEFORE INSERT OR UPDATE OF "status_id" ON "events"."occurrences" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_status_id" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_status_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."occurrences" t WHERE t."status_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_occurrences_status_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_status_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_occurrences_status_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.occurrence.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."occurrences" t
+    JOIN "reference"."values" v ON v."id" = t."status_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_occurrences_status_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_occurrences_status_id_code" ();
+
+CREATE FUNCTION "events"."scheme_participants_role_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."role_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."role_id" AND s."code" = 'ref.sch.evt.participant.role'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_participants_role_id"
+BEFORE INSERT OR UPDATE OF "role_id" ON "events"."participants" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_participants_role_id" ();
+
+CREATE FUNCTION "events"."scheme_participants_role_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."participants" t WHERE t."role_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_participants_role_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_participants_role_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_participants_role_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.participant.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."participants" t
+    JOIN "reference"."values" v ON v."id" = t."role_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_participants_role_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_participants_role_id_code" ();
+
+CREATE FUNCTION "events"."scheme_rules_adjustment_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."adjustment_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."adjustment_id" AND s."code" = 'ref.sch.evt.rule.adjustment'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_rules_adjustment_id"
+BEFORE INSERT OR UPDATE OF "adjustment_id" ON "events"."rules" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_rules_adjustment_id" ();
+
+CREATE FUNCTION "events"."scheme_rules_adjustment_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."rules" t WHERE t."adjustment_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_rules_adjustment_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_rules_adjustment_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_rules_adjustment_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.rule.adjustment' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."rules" t
+    JOIN "reference"."values" v ON v."id" = t."adjustment_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_rules_adjustment_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_rules_adjustment_id_code" ();
+
+CREATE FUNCTION "events"."scheme_rules_rule_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."rule_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."rule_kind_id" AND s."code" = 'ref.sch.evt.rule.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_rules_rule_kind_id"
+BEFORE INSERT OR UPDATE OF "rule_kind_id" ON "events"."rules" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_rules_rule_kind_id" ();
+
+CREATE FUNCTION "events"."scheme_rules_rule_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."rules" t WHERE t."rule_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_rules_rule_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_rules_rule_kind_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_rules_rule_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.rule.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."rules" t
+    JOIN "reference"."values" v ON v."id" = t."rule_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_rules_rule_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_rules_rule_kind_id_code" ();
+
+CREATE FUNCTION "events"."scheme_schedules_schedule_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."schedule_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."schedule_kind_id" AND s."code" = 'ref.sch.evt.schedule.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_schedules_schedule_kind_id"
+BEFORE INSERT OR UPDATE OF "schedule_kind_id" ON "events"."schedules" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_schedules_schedule_kind_id" ();
+
+CREATE FUNCTION "events"."scheme_schedules_schedule_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."schedules" t WHERE t."schedule_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_schedules_schedule_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_schedules_schedule_kind_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_schedules_schedule_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.schedule.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."schedules" t
+    JOIN "reference"."values" v ON v."id" = t."schedule_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_schedules_schedule_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_schedules_schedule_kind_id_code" ();
+
+CREATE FUNCTION "events"."scheme_schedules_status_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."status_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."status_id" AND s."code" = 'ref.sch.evt.schedule.status'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_schedules_status_id"
+BEFORE INSERT OR UPDATE OF "status_id" ON "events"."schedules" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_schedules_status_id" ();
+
+CREATE FUNCTION "events"."scheme_schedules_status_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."schedules" t WHERE t."status_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_schedules_status_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_schedules_status_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_schedules_status_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.schedule.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."schedules" t
+    JOIN "reference"."values" v ON v."id" = t."status_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_schedules_status_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_schedules_status_id_code" ();
+
+CREATE FUNCTION "events"."scheme_seasons_season_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."season_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."season_kind_id" AND s."code" = 'ref.sch.evt.season.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_seasons_season_kind_id"
+BEFORE INSERT OR UPDATE OF "season_kind_id" ON "events"."seasons" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_seasons_season_kind_id" ();
+
+CREATE FUNCTION "events"."scheme_seasons_season_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."seasons" t WHERE t."season_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_seasons_season_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_seasons_season_kind_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_seasons_season_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.season.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."seasons" t
+    JOIN "reference"."values" v ON v."id" = t."season_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_seasons_season_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_seasons_season_kind_id_code" ();
+
+CREATE FUNCTION "events"."scheme_subjects_role_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."role_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."role_id" AND s."code" = 'ref.sch.evt.subject.role'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_subjects_role_id"
+BEFORE INSERT OR UPDATE OF "role_id" ON "events"."subjects" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_subjects_role_id" ();
+
+CREATE FUNCTION "events"."scheme_subjects_role_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."subjects" t WHERE t."role_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_subjects_role_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_subjects_role_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_subjects_role_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.subject.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."subjects" t
+    JOIN "reference"."values" v ON v."id" = t."role_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_subjects_role_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_subjects_role_id_code" ();
+
+CREATE FUNCTION "events"."scheme_venues_role_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."role_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."role_id" AND s."code" = 'ref.sch.evt.venue.role'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_venues_role_id"
+BEFORE INSERT OR UPDATE OF "role_id" ON "events"."venues" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_venues_role_id" ();
+
+CREATE FUNCTION "events"."scheme_venues_role_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "events"."venues" t WHERE t."role_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_venues_role_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_venues_role_id_membership" ();
+
+CREATE FUNCTION "events"."scheme_venues_role_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.evt.venue.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "events"."venues" t
+    JOIN "reference"."values" v ON v."id" = t."role_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "events_scheme_venues_role_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "events"."scheme_venues_role_id_code" ();
 
 CREATE FUNCTION "filesystem"."scheme_contents_category_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -8371,6 +9081,159 @@ CREATE TRIGGER "geography_scheme_relationships_system_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "geography"."scheme_relationships_system_id_code" ();
 
+CREATE FUNCTION "governance"."scheme_agenda_agenda_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."agenda_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."agenda_kind_id" AND s."code" = 'ref.sch.gov.agenda.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_agenda_agenda_kind_id"
+BEFORE INSERT OR UPDATE OF "agenda_kind_id" ON "governance"."agenda" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_agenda_agenda_kind_id" ();
+
+CREATE FUNCTION "governance"."scheme_agenda_agenda_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."agenda" t WHERE t."agenda_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_agenda_agenda_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_agenda_agenda_kind_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_agenda_agenda_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.agenda.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."agenda" t
+    JOIN "reference"."values" v ON v."id" = t."agenda_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_agenda_agenda_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_agenda_agenda_kind_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_bills_bill_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."bill_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."bill_kind_id" AND s."code" = 'ref.sch.gov.bill.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_bills_bill_kind_id"
+BEFORE INSERT OR UPDATE OF "bill_kind_id" ON "governance"."bills" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_bills_bill_kind_id" ();
+
+CREATE FUNCTION "governance"."scheme_bills_bill_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."bills" t WHERE t."bill_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_bills_bill_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_bills_bill_kind_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_bills_bill_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.bill.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."bills" t
+    JOIN "reference"."values" v ON v."id" = t."bill_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_bills_bill_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_bills_bill_kind_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_bills_status_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."status_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."status_id" AND s."code" = 'ref.sch.gov.bill.status'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_bills_status_id"
+BEFORE INSERT OR UPDATE OF "status_id" ON "governance"."bills" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_bills_status_id" ();
+
+CREATE FUNCTION "governance"."scheme_bills_status_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."bills" t WHERE t."status_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_bills_status_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_bills_status_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_bills_status_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.bill.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."bills" t
+    JOIN "reference"."values" v ON v."id" = t."status_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_bills_status_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_bills_status_id_code" ();
+
 CREATE FUNCTION "governance"."scheme_institutions_arm_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."arm_id" IS NOT NULL AND NOT EXISTS (
@@ -8472,6 +9335,108 @@ $scheme$;
 CREATE TRIGGER "governance_scheme_institutions_establishment_basis_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "governance"."scheme_institutions_establishment_basis_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_motions_motion_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."motion_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."motion_kind_id" AND s."code" = 'ref.sch.gov.motion.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_motions_motion_kind_id"
+BEFORE INSERT OR UPDATE OF "motion_kind_id" ON "governance"."motions" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_motions_motion_kind_id" ();
+
+CREATE FUNCTION "governance"."scheme_motions_motion_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."motions" t WHERE t."motion_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_motions_motion_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_motions_motion_kind_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_motions_motion_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.motion.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."motions" t
+    JOIN "reference"."values" v ON v."id" = t."motion_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_motions_motion_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_motions_motion_kind_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_motions_outcome_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."outcome_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."outcome_id" AND s."code" = 'ref.sch.gov.motion.outcome'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_motions_outcome_id"
+BEFORE INSERT OR UPDATE OF "outcome_id" ON "governance"."motions" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_motions_outcome_id" ();
+
+CREATE FUNCTION "governance"."scheme_motions_outcome_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."motions" t WHERE t."outcome_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_motions_outcome_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_motions_outcome_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_motions_outcome_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.motion.outcome' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."motions" t
+    JOIN "reference"."values" v ON v."id" = t."outcome_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_motions_outcome_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_motions_outcome_id_code" ();
 
 CREATE FUNCTION "governance"."scheme_obligations_frequency_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -8677,6 +9642,312 @@ CREATE TRIGGER "governance_scheme_reports_status_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "governance"."scheme_reports_status_id_code" ();
 
+CREATE FUNCTION "governance"."scheme_sittings_sitting_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."sitting_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."sitting_kind_id" AND s."code" = 'ref.sch.gov.sitting.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_sittings_sitting_kind_id"
+BEFORE INSERT OR UPDATE OF "sitting_kind_id" ON "governance"."sittings" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_sittings_sitting_kind_id" ();
+
+CREATE FUNCTION "governance"."scheme_sittings_sitting_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."sittings" t WHERE t."sitting_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_sittings_sitting_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_sittings_sitting_kind_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_sittings_sitting_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.sitting.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."sittings" t
+    JOIN "reference"."values" v ON v."id" = t."sitting_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_sittings_sitting_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_sittings_sitting_kind_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_speeches_speech_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."speech_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."speech_kind_id" AND s."code" = 'ref.sch.gov.speech.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_speeches_speech_kind_id"
+BEFORE INSERT OR UPDATE OF "speech_kind_id" ON "governance"."speeches" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_speeches_speech_kind_id" ();
+
+CREATE FUNCTION "governance"."scheme_speeches_speech_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."speeches" t WHERE t."speech_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_speeches_speech_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_speeches_speech_kind_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_speeches_speech_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.speech.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."speeches" t
+    JOIN "reference"."values" v ON v."id" = t."speech_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_speeches_speech_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_speeches_speech_kind_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_stages_outcome_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."outcome_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."outcome_id" AND s."code" = 'ref.sch.gov.motion.outcome'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_stages_outcome_id"
+BEFORE INSERT OR UPDATE OF "outcome_id" ON "governance"."stages" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_stages_outcome_id" ();
+
+CREATE FUNCTION "governance"."scheme_stages_outcome_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."stages" t WHERE t."outcome_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_stages_outcome_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_stages_outcome_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_stages_outcome_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.motion.outcome' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."stages" t
+    JOIN "reference"."values" v ON v."id" = t."outcome_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_stages_outcome_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_stages_outcome_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_stages_stage_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."stage_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."stage_kind_id" AND s."code" = 'ref.sch.gov.stage.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_stages_stage_kind_id"
+BEFORE INSERT OR UPDATE OF "stage_kind_id" ON "governance"."stages" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_stages_stage_kind_id" ();
+
+CREATE FUNCTION "governance"."scheme_stages_stage_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."stages" t WHERE t."stage_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_stages_stage_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_stages_stage_kind_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_stages_stage_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.stage.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."stages" t
+    JOIN "reference"."values" v ON v."id" = t."stage_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_stages_stage_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_stages_stage_kind_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_terms_term_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."term_kind_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."term_kind_id" AND s."code" = 'ref.sch.gov.term.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_terms_term_kind_id"
+BEFORE INSERT OR UPDATE OF "term_kind_id" ON "governance"."terms" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_terms_term_kind_id" ();
+
+CREATE FUNCTION "governance"."scheme_terms_term_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."terms" t WHERE t."term_kind_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_terms_term_kind_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_terms_term_kind_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_terms_term_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.term.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."terms" t
+    JOIN "reference"."values" v ON v."id" = t."term_kind_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_terms_term_kind_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_terms_term_kind_id_code" ();
+
+CREATE FUNCTION "governance"."scheme_votes_position_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."position_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "reference"."values" v
+    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."position_id" AND s."code" = 'ref.sch.gov.vote.position'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_votes_position_id"
+BEFORE INSERT OR UPDATE OF "position_id" ON "governance"."votes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_votes_position_id" ();
+
+CREATE FUNCTION "governance"."scheme_votes_position_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "governance"."votes" t WHERE t."position_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_votes_position_id_membership"
+BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_votes_position_id_membership" ();
+
+CREATE FUNCTION "governance"."scheme_votes_position_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'ref.sch.gov.vote.position' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "governance"."votes" t
+    JOIN "reference"."values" v ON v."id" = t."position_id"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "governance_scheme_votes_position_id_code"
+BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_votes_position_id_code" ();
+
 CREATE FUNCTION "politics"."scheme_contests_vacancy_reason_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."vacancy_reason_id" IS NOT NULL AND NOT EXISTS (
@@ -8830,57 +10101,6 @@ CREATE TRIGGER "politics_scheme_elections_status_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "politics"."scheme_elections_status_id_code" ();
 
-CREATE FUNCTION "politics"."scheme_electoral_terms_term_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."term_kind_id" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "reference"."values" v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."term_kind_id" AND s."code" = 'ref.sch.pol.term.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_electoral_terms_term_kind_id"
-BEFORE INSERT OR UPDATE OF "term_kind_id" ON "politics"."electoral_terms" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_electoral_terms_term_kind_id" ();
-
-CREATE FUNCTION "politics"."scheme_electoral_terms_term_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "politics"."electoral_terms" t WHERE t."term_kind_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_electoral_terms_term_kind_id_membership"
-BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_electoral_terms_term_kind_id_membership" ();
-
-CREATE FUNCTION "politics"."scheme_electoral_terms_term_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'ref.sch.pol.term.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "politics"."electoral_terms" t
-    JOIN "reference"."values" v ON v."id" = t."term_kind_id"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_electoral_terms_term_kind_id_code"
-BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_electoral_terms_term_kind_id_code" ();
-
 CREATE FUNCTION "politics"."scheme_electorates_status_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."status_id" IS NOT NULL AND NOT EXISTS (
@@ -8932,13 +10152,13 @@ CREATE TRIGGER "politics_scheme_electorates_status_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "politics"."scheme_electorates_status_id_code" ();
 
-CREATE FUNCTION "politics"."scheme_polling_stations_station_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "politics"."scheme_polls_status_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF NEW."station_kind_id" IS NOT NULL AND NOT EXISTS (
+  IF NEW."status_id" IS NOT NULL AND NOT EXISTS (
     SELECT 1
     FROM "reference"."values" v
     JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."station_kind_id" AND s."code" = 'ref.sch.pol.station.kind'
+    WHERE v."id" = NEW."status_id" AND s."code" = 'ref.sch.pol.poll.status'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -8947,14 +10167,14 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "scheme_polling_stations_station_kind_id"
-BEFORE INSERT OR UPDATE OF "station_kind_id" ON "politics"."polling_stations" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_polling_stations_station_kind_id" ();
+CREATE TRIGGER "scheme_polls_status_id"
+BEFORE INSERT OR UPDATE OF "status_id" ON "politics"."polls" FOR EACH ROW
+EXECUTE FUNCTION "politics"."scheme_polls_status_id" ();
 
-CREATE FUNCTION "politics"."scheme_polling_stations_station_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "politics"."scheme_polls_status_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "politics"."polling_stations" t WHERE t."station_kind_id" = OLD."id"
+    SELECT 1 FROM "politics"."polls" t WHERE t."status_id" = OLD."id"
   ) THEN
     RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
   END IF;
@@ -8962,15 +10182,15 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "politics_scheme_polling_stations_station_kind_id_membership"
+CREATE TRIGGER "politics_scheme_polls_status_id_membership"
 BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_polling_stations_station_kind_id_membership" ();
+EXECUTE FUNCTION "politics"."scheme_polls_status_id_membership" ();
 
-CREATE FUNCTION "politics"."scheme_polling_stations_station_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "politics"."scheme_polls_status_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'ref.sch.pol.station.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "politics"."polling_stations" t
-    JOIN "reference"."values" v ON v."id" = t."station_kind_id"
+  IF OLD."code" = 'ref.sch.pol.poll.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "politics"."polls" t
+    JOIN "reference"."values" v ON v."id" = t."status_id"
     WHERE v."scheme_id" = OLD."id"
   ) THEN
     RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
@@ -8979,9 +10199,9 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "politics_scheme_polling_stations_station_kind_id_code"
+CREATE TRIGGER "politics_scheme_polls_status_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_polling_stations_station_kind_id_code" ();
+EXECUTE FUNCTION "politics"."scheme_polls_status_id_code" ();
 
 CREATE FUNCTION "reference"."scheme_countries_continent_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -9595,7 +10815,7 @@ CREATE TRIGGER "source_scheme_coverage_level_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "source"."scheme_coverage_level_id_code" ();
 
-CREATE FUNCTION "source"."scheme_slug_relations_relation_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "source"."scheme_links_relation_kind_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."relation_kind_id" IS NOT NULL AND NOT EXISTS (
     SELECT 1
@@ -9610,14 +10830,14 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "scheme_slug_relations_relation_kind_id"
-BEFORE INSERT OR UPDATE OF "relation_kind_id" ON "source"."slug_relations" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_slug_relations_relation_kind_id" ();
+CREATE TRIGGER "scheme_links_relation_kind_id"
+BEFORE INSERT OR UPDATE OF "relation_kind_id" ON "source"."links" FOR EACH ROW
+EXECUTE FUNCTION "source"."scheme_links_relation_kind_id" ();
 
-CREATE FUNCTION "source"."scheme_slug_relations_relation_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "source"."scheme_links_relation_kind_id_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "source"."slug_relations" t WHERE t."relation_kind_id" = OLD."id"
+    SELECT 1 FROM "source"."links" t WHERE t."relation_kind_id" = OLD."id"
   ) THEN
     RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
   END IF;
@@ -9625,14 +10845,14 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "source_scheme_slug_relations_relation_kind_id_membership"
+CREATE TRIGGER "source_scheme_links_relation_kind_id_membership"
 BEFORE UPDATE OF "scheme_id" ON "reference"."values" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_slug_relations_relation_kind_id_membership" ();
+EXECUTE FUNCTION "source"."scheme_links_relation_kind_id_membership" ();
 
-CREATE FUNCTION "source"."scheme_slug_relations_relation_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "source"."scheme_links_relation_kind_id_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF OLD."code" = 'ref.sch.src.slug.relation' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "source"."slug_relations" t
+    SELECT 1 FROM "source"."links" t
     JOIN "reference"."values" v ON v."id" = t."relation_kind_id"
     WHERE v."scheme_id" = OLD."id"
   ) THEN
@@ -9642,9 +10862,9 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "source_scheme_slug_relations_relation_kind_id_code"
+CREATE TRIGGER "source_scheme_links_relation_kind_id_code"
 BEFORE UPDATE OF "code" ON "reference"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_slug_relations_relation_kind_id_code" ();
+EXECUTE FUNCTION "source"."scheme_links_relation_kind_id_code" ();
 
 CREATE FUNCTION "source"."scheme_slugs_namespace_id" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN

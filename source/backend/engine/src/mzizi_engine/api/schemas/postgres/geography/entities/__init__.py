@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from mzizi_engine.api.schemas.postgres.filesystem.entities.file_versions import FileVersionsRow
 from mzizi_engine.api.schemas.postgres.geography.entities.assets import AssetsRow
-from mzizi_engine.api.schemas.postgres.geography.entities.changes import ChangesRow
+from mzizi_engine.api.schemas.postgres.geography.entities.changes import GeographyChangesRow
 from mzizi_engine.api.schemas.postgres.geography.entities.classifications import ClassificationsRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
 from mzizi_engine.api.schemas.postgres.geography.entities.geometries import GeometriesRow
@@ -18,11 +18,11 @@ from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
 
 __all__ = [
     "AssetsRow",
-    "ChangesRow",
     "ClassificationsRow",
     "CountryRow",
     "FeaturesRow",
     "FileVersionsRow",
+    "GeographyChangesRow",
     "GeographyIdentifiersRow",
     "GeographyNamesRow",
     "GeographyRelationshipsRow",
