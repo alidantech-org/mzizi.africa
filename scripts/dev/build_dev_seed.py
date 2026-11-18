@@ -32,7 +32,9 @@ from dev_seed.people import Builder, build_people
 from dev_seed.places import build_places
 from dev_seed.procurement import build_procurement
 from dev_seed.real import read_county_figures, read_party_fund
+from dev_seed.extra import build_bills, build_extra
 from dev_seed.reshape import reshape
+from dev_seed.slugs import build_slugs
 from dev_seed.refdata import build_reference
 from dev_seed.stats import build_statistics
 from dev_seed.store import Tables
@@ -71,13 +73,16 @@ def main() -> None:
     build_content(t)
     build_contacts(b, t, names)
     build_media(b, t, counties, constituencies, places, [p["code"] for p in b.projects], names)
+    build_extra(b, t, counties, constituencies, wards, geometries)
     write_people(b)
     reshape(t)
+    build_bills(t)
     t.write()
+    slugs = build_slugs()
     merge_trees()
     print(
         f"people: {b.person_count}, offices: {len(b.offices)}, projects: {len(b.projects)}, bids: {len(b.bids)}, "
-        f"contracts: {len(b.contracts)}, tenders mapped: {tenders}, places: {len(places)}; merged tree: {MERGED}"
+        f"slugs: {slugs}, contracts: {len(b.contracts)}, tenders mapped: {tenders}, places: {len(places)}; merged tree: {MERGED}"
     )
 
 

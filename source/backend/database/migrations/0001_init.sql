@@ -889,7 +889,6 @@ CREATE TABLE "filesystem"."contents" (
     "id" uuid NOT NULL,
     "is_development_text" boolean NOT NULL,
     "language_id" uuid NOT NULL,
-    "slug" varchar(255) NOT NULL,
     "subject_id" uuid NOT NULL,
     "subject_table" text NOT NULL,
     "summary" varchar(4000),
@@ -3978,6 +3977,8 @@ ADD CONSTRAINT "fk_rules_rule_kind_id" FOREIGN KEY ("rule_kind_id") REFERENCES "
 ALTER TABLE "event"."rules"
 ADD CONSTRAINT "fk_rules_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+CREATE UNIQUE INDEX "uq_rules__event_id_rule_kind_id" ON "event"."rules" USING btree ("event_id", "rule_kind_id");
+
 CREATE INDEX "ix_rules__event_id" ON "event"."rules" USING btree ("event_id");
 
 CREATE INDEX "ix_rules__rule_kind_id" ON "event"."rules" USING btree ("rule_kind_id");
@@ -4106,7 +4107,7 @@ CREATE UNIQUE INDEX "uq_contents__code_partial_1" ON "filesystem"."contents" USI
 WHERE
     ("deleted_at" IS NULL);
 
-CREATE UNIQUE INDEX "uq_contents__slug_language_id" ON "filesystem"."contents" USING btree ("slug", "language_id");
+CREATE INDEX "ix_contents__language_id" ON "filesystem"."contents" USING btree ("language_id");
 
 CREATE INDEX "ix_contents__subject_table_subject_id" ON "filesystem"."contents" USING btree ("subject_table", "subject_id");
 

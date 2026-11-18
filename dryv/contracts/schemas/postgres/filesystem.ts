@@ -180,8 +180,6 @@ export const Media = filesystem
 /*---------------- contents ----------------*/
 export const Contents = filesystem
   .schema("Contents", {
-    /** The page address, unique per language: `institution/iebc`, `explainer/devolution`. */
-    slug: dryv.field(sharedProperties.NonEmptyString255),
     languageId: belongsTo(() => Language),
     title: dryv.field(sharedProperties.Name),
     /** One or two sentences for lists and previews. */
@@ -207,7 +205,7 @@ export const Contents = filesystem
   .facets({
     storage: dryv
       .storage("contents")
-      .unique("slug", "languageId")
+      .index("languageId")
       .index("subjectTable", "subjectId")
       .index("categoryId")
       .index("classificationId"),

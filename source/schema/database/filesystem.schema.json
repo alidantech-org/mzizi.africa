@@ -102,7 +102,6 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
-        ,["slug", "language_id"]
       ],
       "required": [
         "body"
@@ -111,7 +110,6 @@
         ,"id"
         ,"is_development_text"
         ,"language_id"
-        ,"slug"
         ,"subject_id"
         ,"subject_table"
         ,"title"
@@ -132,7 +130,6 @@
           ,"file_version_code"
           ,"is_development_text"
           ,"language_code"
-          ,"slug"
           ,"subject_id"
           ,"subject_table"
           ,"summary"
@@ -144,7 +141,6 @@
           ,"code"
           ,"is_development_text"
           ,"language_code"
-          ,"slug"
           ,"subject_id"
           ,"subject_table"
           ,"title"
@@ -218,13 +214,6 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
-        }
-        ,"slug": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "x-role": "data"
         }
         ,"subject_id": {
           "type": "string",

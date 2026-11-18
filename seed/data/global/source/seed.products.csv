@@ -34,6 +34,7 @@ seed.ke.geo.counties.names,src.product.kind.dataset,Seed data: ke / geo / counti
 seed.ke.geo.counties.relationships,src.product.kind.dataset,Seed data: ke / geo / counties / relationships,
 seed.ke.geo.features,src.product.kind.dataset,Seed data: ke / geo / features,
 seed.ke.geo.identifiers,src.product.kind.dataset,Seed data: ke / geo / identifiers,
+seed.ke.geo.levels,src.product.kind.dataset,Seed data: ke / geo / levels,
 seed.ke.geo.names,src.product.kind.dataset,Seed data: ke / geo / names,
 seed.ke.geo.provinces.features,src.product.kind.dataset,Seed data: ke / geo / provinces / features,
 seed.ke.geo.provinces.names,src.product.kind.dataset,Seed data: ke / geo / provinces / names,

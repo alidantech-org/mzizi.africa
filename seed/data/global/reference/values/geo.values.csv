@@ -123,3 +123,4 @@ geo.asset.kind.tile,geo.asset.kind,Tile,
 geo.asset.kind.thumbnail,geo.asset.kind,Thumbnail,
 geo.asset.purpose.display,geo.asset.purpose,Display,
 geo.asset.purpose.analysis,geo.asset.purpose,Analysis,
+geo.feature.kind.polling-station,geo.feature.kind,Polling station,geo.feature.kind.built

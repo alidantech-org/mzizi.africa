@@ -1,0 +1,8 @@
+code,country_code,hierarchy_kind_code,depth,feature_kind_code,is_routing_hierarchy
+ke.level.electoral.0,ke,geo.hierarchy.kind.electoral,0,geo.feature.kind.country,true
+ke.level.electoral.1,ke,geo.hierarchy.kind.electoral,1,geo.feature.kind.county,true
+ke.level.electoral.2,ke,geo.hierarchy.kind.electoral,2,geo.feature.kind.constituency,true
+ke.level.electoral.3,ke,geo.hierarchy.kind.electoral,3,geo.feature.kind.ward,true
+ke.level.administrative.0,ke,geo.hierarchy.kind.administrative,0,geo.feature.kind.country,false
+ke.level.administrative.1,ke,geo.hierarchy.kind.administrative,1,geo.feature.kind.county,false
+ke.level.administrative.2,ke,geo.hierarchy.kind.administrative,2,geo.feature.kind.sub-county,false

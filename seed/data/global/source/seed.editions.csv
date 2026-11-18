@@ -9,13 +9,13 @@ seed.global.reference.values.com-values~ff67771c4615,seed.global.reference.value
 seed.global.reference.values.evt-values~554e4fd15cbf,seed.global.reference.values.evt-values,554e4fd15cbf,authored CSV
 seed.global.reference.values.fil-values~413e26e7345c,seed.global.reference.values.fil-values,413e26e7345c,authored CSV
 seed.global.reference.values.fin-values~7474e0b58efb,seed.global.reference.values.fin-values,7474e0b58efb,authored CSV
-seed.global.reference.values.geo-values~f279f0e59452,seed.global.reference.values.geo-values,f279f0e59452,authored CSV
+seed.global.reference.values.geo-values~a251268f1c8a,seed.global.reference.values.geo-values,a251268f1c8a,authored CSV
 seed.global.reference.values.gov-values~ce599db5ba8a,seed.global.reference.values.gov-values,ce599db5ba8a,authored CSV
 seed.global.reference.values.leg-values~19fb06430311,seed.global.reference.values.leg-values,19fb06430311,authored CSV
 seed.global.reference.values.ofc-values~15032c147c3a,seed.global.reference.values.ofc-values,15032c147c3a,authored CSV
 seed.global.reference.values.pol-values~94b88c469e73,seed.global.reference.values.pol-values,94b88c469e73,authored CSV
 seed.global.reference.values.ref-values~50b270a96e6b,seed.global.reference.values.ref-values,50b270a96e6b,authored CSV
-seed.global.reference.values.src-values~a3e799365bc0,seed.global.reference.values.src-values,a3e799365bc0,authored CSV
+seed.global.reference.values.src-values~7150a1180781,seed.global.reference.values.src-values,7150a1180781,authored CSV
 seed.global.reference.values.sta-values~dd090201d2dc,seed.global.reference.values.sta-values,dd090201d2dc,authored CSV
 seed.global.source.addresses~4d6e5cc1d921,seed.global.source.addresses,4d6e5cc1d921,authored CSV
 seed.global.source.artifacts~fc02c9e9deeb,seed.global.source.artifacts,fc02c9e9deeb,authored CSV
@@ -34,6 +34,7 @@ seed.ke.geo.counties.names~cd83d557483d,seed.ke.geo.counties.names,cd83d557483d,
 seed.ke.geo.counties.relationships~5367289ba4c0,seed.ke.geo.counties.relationships,5367289ba4c0,assembled CSV
 seed.ke.geo.features~1e2600f4e630,seed.ke.geo.features,1e2600f4e630,authored CSV
 seed.ke.geo.identifiers~785e6dc3c3e4,seed.ke.geo.identifiers,785e6dc3c3e4,authored CSV
+seed.ke.geo.levels~8d50823083f3,seed.ke.geo.levels,8d50823083f3,authored CSV
 seed.ke.geo.names~768f85bae6e4,seed.ke.geo.names,768f85bae6e4,authored CSV
 seed.ke.geo.provinces.features~cc47f4b78566,seed.ke.geo.provinces.features,cc47f4b78566,authored CSV
 seed.ke.geo.provinces.names~ccdb95639da0,seed.ke.geo.provinces.names,ccdb95639da0,authored CSV

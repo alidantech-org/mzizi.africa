@@ -980,9 +980,10 @@
       "x-code": "sys.tbl.event.rules",
       "x-id": "#/schemas/event.Rules",
       "x-table": "event.rules",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["event_code", "rule_kind_code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["event_id", "rule_kind_id"]
       ],
       "required": [
         "event_id"
@@ -993,6 +994,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -1003,7 +1005,6 @@
           ,"event_code"
           ,"from_to_precision"
           ,"from_year"
-          ,"id"
           ,"interval_years"
           ,"month"
           ,"nth_weekday"
@@ -1015,7 +1016,6 @@
         ],
         "required": [
           "event_code"
-          ,"id"
           ,"rule_kind_code"
         ]
       },
@@ -1056,7 +1056,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/event.Events", "column": "id", "alias": "event_code" }
         }
         ,"from_to_precision": {
@@ -1075,7 +1075,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"interval_years": {
           "type": ["integer", "null"],
@@ -1103,7 +1103,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "rule_kind_code", "scheme": "ref.sch.evt.rule.kind" }
         }
         ,"source_citation_id": {

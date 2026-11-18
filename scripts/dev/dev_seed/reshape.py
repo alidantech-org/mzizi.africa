@@ -116,7 +116,6 @@ def _facts(t: Tables) -> None:
             "ke/filesystem/contents.csv",
             {
                 "code": f"ke.content.fun-fact.{number:03d}",
-                "slug": f"fun-fact/{number:03d}",
                 "language_code": "en",
                 "title": f["statement"],
                 "summary": f.get("detail", ""),
@@ -131,6 +130,8 @@ def _facts(t: Tables) -> None:
 
 
 def reshape(t: Tables) -> None:
+    for row in t.rows("ke/filesystem/contents.csv"):
+        row.pop("slug", None)
     _drop_duplicate_reference(t)
     _activities(t)
     _facts(t)

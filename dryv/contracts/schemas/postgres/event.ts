@@ -132,7 +132,14 @@ export const Rules = event
     "How the dates of an event are produced, with the adjustment the law applies when a date falls on a rest day. Occurrences generated from a rule are projected until announced.",
   )
   .role("entity")
-  .facets({ storage: dryv.storage("rules").index("eventId").index("ruleKindId").index("sourceCitationId") });
+  .facets({
+    storage: dryv
+      .storage("rules")
+      .unique("eventId", "ruleKindId")
+      .index("eventId")
+      .index("ruleKindId")
+      .index("sourceCitationId"),
+  });
 
 /*---------------- event.occurrences ----------------*/
 export const Occurrences = event

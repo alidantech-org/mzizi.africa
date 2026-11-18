@@ -35,7 +35,6 @@ class ContentsRow(BaseModel):
     id: UUID
     is_development_text: bool
     language_id: UUID
-    slug: Annotated[str, Field(min_length=1, max_length=255)]
     subject_id: UUID
     subject_table: SubjectTable
     summary: Annotated[str, Field(max_length=4000)] | None = None
