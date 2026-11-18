@@ -1,10 +1,44 @@
-code,scheme_code,label
-pol.party.kind.fully-registered,pol.party.kind,Fully registered party
-pol.party.kind.provisionally-registered,pol.party.kind,Provisionally registered party
-pol.party.kind.coalition-party,pol.party.kind,Coalition party
-pol.party.kind.deregistered,pol.party.kind,Deregistered party
-pol.membership.kind.member,pol.membership.kind,Member
-pol.membership.kind.founder,pol.membership.kind,Founder
-pol.membership.kind.official,pol.membership.kind,Party official
-pol.membership.kind.nominee,pol.membership.kind,Nominee
-pol.membership.kind.leader,pol.membership.kind,Party leader
+code,scheme_code,label,parent_code
+pol.party.kind.fully-registered,pol.party.kind,Fully registered party,
+pol.party.kind.provisionally-registered,pol.party.kind,Provisionally registered party,
+pol.party.kind.coalition-party,pol.party.kind,Coalition party,
+pol.party.kind.deregistered,pol.party.kind,Deregistered party,
+pol.membership.kind.member,pol.membership.kind,Member,
+pol.membership.kind.founder,pol.membership.kind,Founder,
+pol.membership.kind.official,pol.membership.kind,Party official,
+pol.membership.kind.nominee,pol.membership.kind,Nominee,
+pol.membership.kind.leader,pol.membership.kind,Party leader,
+pol.election.kind.general,pol.election.kind,General election,
+pol.election.kind.by-election,pol.election.kind,By-election,
+pol.election.kind.referendum,pol.election.kind,Referendum,
+pol.election.kind.runoff,pol.election.kind,Runoff,
+pol.election.kind.repeat,pol.election.kind,Repeat election,
+pol.election.kind.primary,pol.election.kind,Party primary,
+pol.election.status.planned,pol.election.status,Planned,
+pol.election.status.announced,pol.election.status,Announced,
+pol.election.status.nominations-open,pol.election.status,Nominations open,
+pol.election.status.voting,pol.election.status,Voting,
+pol.election.status.counting,pol.election.status,Counting,
+pol.election.status.declared,pol.election.status,Declared,
+pol.election.status.certified,pol.election.status,Certified,
+pol.election.status.disputed,pol.election.status,Disputed,
+pol.election.status.annulled,pol.election.status,Annulled,
+pol.election.status.repeated,pol.election.status,Repeated,
+pol.election.status.cancelled,pol.election.status,Cancelled,
+pol.election.status.postponed,pol.election.status,Postponed,
+pol.poll.status.operated,pol.poll.status,Operated,
+pol.poll.status.relocated,pol.poll.status,Relocated,
+pol.poll.status.merged,pol.poll.status,Merged,
+pol.poll.status.split,pol.poll.status,Split,
+pol.poll.status.cancelled,pol.poll.status,Cancelled,
+pol.poll.status.failed,pol.poll.status,Failed,
+pol.result.status.provisional,pol.result.status,Provisional,
+pol.result.status.tallied,pol.result.status,Tallied,
+pol.result.status.declared,pol.result.status,Declared,
+pol.result.status.final,pol.result.status,Final,
+pol.vacancy.reason.death,pol.vacancy.reason,Death,
+pol.vacancy.reason.resignation,pol.vacancy.reason,Resignation,
+pol.vacancy.reason.nullification,pol.vacancy.reason,Nullification,
+pol.vacancy.reason.recall,pol.vacancy.reason,Recall,
+pol.vacancy.reason.removal,pol.vacancy.reason,Removal,
+pol.vacancy.reason.disqualification,pol.vacancy.reason,Disqualification,

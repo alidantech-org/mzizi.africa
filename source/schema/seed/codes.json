@@ -6,7 +6,6 @@
     "mg": "MongoDB: reserved, not used yet"
   },
   "schemas": {
-    "audit": "aud",
     "auth": "aut",
     "civic": "civ",
     "filesystem": "fil",
@@ -19,11 +18,8 @@
     "reference": "ref",
     "source": "src",
     "statistics": "sta",
-    "activities": "act",
-    "facts": "fac",
     "community": "com",
-    "events": "eve",
-    "event": "ev2"
+    "event": "evt"
   },
   "tables": {
     "auth.accounts": {

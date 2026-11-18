@@ -22,3 +22,4 @@ System architecture details. These documents are supporting detail; the eight ro
 - [CONTRACT_AUTHORING_FOR_FRONTENDS](CONTRACT_AUTHORING_FOR_FRONTENDS.md) — proposal: features, views, intents, composed reads, server rendering, gates
 - [DRYV_CAPABILITY_PLAN](DRYV_CAPABILITY_PLAN.md) — proposal: Dryv capabilities needed, order and proving slice
 - [FEATURE_REGISTER](FEATURE_REGISTER.md) — living register of every owner-mentioned feature, where it is designed and its status
+- [DRYV_FRONTEND_GENERATION_PLAN](DRYV_FRONTEND_GENERATION_PLAN.md) — proposal: components, parts, features, navigation and the Dryv repository changes behind generated apps

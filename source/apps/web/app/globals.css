@@ -1,7 +1,7 @@
 /* Scaffolded by Dryv once; this file belongs to the app. The theme is generated into theme.css. */
 @import "tailwindcss";
 @import "./theme.css";
-@source "../../../ui/web/src";
+@source "../../../sdk/ui/web/src";
 
 /* Typefaces: Fraunces for headings and the wordmark, Inter for text; the theme's system stacks remain the fallback. */
 :root {

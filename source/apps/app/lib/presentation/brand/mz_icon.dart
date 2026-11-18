@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_app/presentation/brand/icons_generated.dart';
 
 /// The Mzizi icon set (the same 24-pixel stroke icons as the website), tinted with the current text colour so it follows
-/// light and dark mode. Generated paths live in `icons_generated.dart`; the source is `source/ui/brand/icons.json`.
+/// light and dark mode. Generated paths live in `icons_generated.dart`; the source is `source/sdk/ui/brand/icons.json`.
 class MzIcon extends StatelessWidget {
   const MzIcon(
     this.name, {

@@ -6,6 +6,6 @@
     "sdk/api-ts",
     "apps/web",
     "apps/dev",
-    "ui/web"
+    "sdk/ui/web"
   ]
 }

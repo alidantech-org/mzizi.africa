@@ -27,7 +27,7 @@ inputs:
     description: Name of the Dart API SDK package the app imports (the `package:` root).
   ui_path:
     type: string
-    default: ../../ui/flutter
+    default: ../../sdk/ui/flutter
     description: Path from the app to the Flutter component package, used as a pubspec path dependency.
   ui_package:
     type: string

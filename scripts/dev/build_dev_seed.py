@@ -32,6 +32,7 @@ from dev_seed.people import Builder, build_people
 from dev_seed.places import build_places
 from dev_seed.procurement import build_procurement
 from dev_seed.real import read_county_figures, read_party_fund
+from dev_seed.reshape import reshape
 from dev_seed.refdata import build_reference
 from dev_seed.stats import build_statistics
 from dev_seed.store import Tables
@@ -71,6 +72,7 @@ def main() -> None:
     build_contacts(b, t, names)
     build_media(b, t, counties, constituencies, places, [p["code"] for p in b.projects], names)
     write_people(b)
+    reshape(t)
     t.write()
     merge_trees()
     print(

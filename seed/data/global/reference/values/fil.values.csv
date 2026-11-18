@@ -1,9 +1,31 @@
-code,scheme_code,label
-fil.media.kind.logo,fil.media.kind,Logo
-fil.media.kind.symbol,fil.media.kind,Symbol
-fil.media.kind.flag,fil.media.kind,Flag
-fil.media.kind.portrait,fil.media.kind,Portrait
-fil.media.kind.photograph,fil.media.kind,Photograph
-fil.media.kind.audio,fil.media.kind,Audio recording
-fil.media.kind.video,fil.media.kind,Video recording
-fil.media.kind.document-scan,fil.media.kind,Scanned document
+code,scheme_code,label,parent_code
+fil.media.kind.logo,fil.media.kind,Logo,
+fil.media.kind.symbol,fil.media.kind,Symbol,
+fil.media.kind.flag,fil.media.kind,Flag,
+fil.media.kind.portrait,fil.media.kind,Portrait,
+fil.media.kind.photograph,fil.media.kind,Photograph,
+fil.media.kind.audio,fil.media.kind,Audio recording,
+fil.media.kind.video,fil.media.kind,Video recording,
+fil.media.kind.document-scan,fil.media.kind,Scanned document,
+fil.content.category.institution,fil.content.category,Institution,
+fil.content.category.arm,fil.content.category,Arm of government,
+fil.content.category.constitution,fil.content.category,Constitution,
+fil.content.category.place,fil.content.category,Place,
+fil.content.category.person,fil.content.category,Person,
+fil.content.category.explainer,fil.content.category,Explainer,
+fil.content.category.blog,fil.content.category,Blog,
+fil.content.category.fun-fact,fil.content.category,Fun fact,
+fil.content.classification.overview,fil.content.classification,Overview,
+fil.content.classification.history,fil.content.classification,History,
+fil.content.classification.how-it-works,fil.content.classification,How it works,
+fil.content.classification.biography,fil.content.classification,Biography,
+fil.content.classification.tip,fil.content.classification,Tip,
+fil.media.platform.youtube,fil.media.platform,YouTube,
+fil.media.platform.tiktok,fil.media.platform,TikTok,
+fil.media.platform.facebook,fil.media.platform,Facebook,
+fil.media.platform.instagram,fil.media.platform,Instagram,
+fil.media.platform.x,fil.media.platform,X,
+fil.media.platform.vimeo,fil.media.platform,Vimeo,
+fil.media.platform.pexels,fil.media.platform,Pexels,
+fil.media.platform.dicebear,fil.media.platform,DiceBear,
+fil.media.platform.website,fil.media.platform,Website,

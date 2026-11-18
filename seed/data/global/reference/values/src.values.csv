@@ -1,16 +1,46 @@
-code,scheme_code,label
-src.publisher.kind.government-agency,src.publisher.kind,Government agency
-src.publisher.kind.constitutional-commission,src.publisher.kind,Constitutional commission
-src.publisher.kind.international-organisation,src.publisher.kind,International organisation
-src.publisher.kind.research-institution,src.publisher.kind,Research institution
-src.publisher.kind.non-profit,src.publisher.kind,Non profit
-src.product.kind.dataset-file,src.product.kind,Dataset file
-src.product.kind.dataset,src.product.kind,Dataset
-src.product.kind.legal-text,src.product.kind,Legal text
-src.relationship.kind.prepared-from,src.relationship.kind,Prepared from
-src.relationship.kind.built-from,src.relationship.kind,Built from
-src.relationship.kind.supports,src.relationship.kind,Supports
-src.relationship.kind.translated-from,src.relationship.kind,Translated from
-src.locator.kind.csv-line,src.locator.kind,CSV line
-src.locator.kind.page,src.locator.kind,Page
-src.locator.kind.url,src.locator.kind,Web address
+code,scheme_code,label,parent_code
+src.publisher.kind.government-agency,src.publisher.kind,Government agency,
+src.publisher.kind.constitutional-commission,src.publisher.kind,Constitutional commission,
+src.publisher.kind.international-organisation,src.publisher.kind,International organisation,
+src.publisher.kind.research-institution,src.publisher.kind,Research institution,
+src.publisher.kind.non-profit,src.publisher.kind,Non profit,
+src.product.kind.dataset-file,src.product.kind,Dataset file,
+src.product.kind.dataset,src.product.kind,Dataset,
+src.product.kind.legal-text,src.product.kind,Legal text,
+src.relationship.kind.prepared-from,src.relationship.kind,Prepared from,
+src.relationship.kind.built-from,src.relationship.kind,Built from,
+src.relationship.kind.supports,src.relationship.kind,Supports,
+src.relationship.kind.translated-from,src.relationship.kind,Translated from,
+src.locator.kind.csv-line,src.locator.kind,CSV line,
+src.locator.kind.page,src.locator.kind,Page,
+src.locator.kind.url,src.locator.kind,Web address,
+src.coverage.level.complete,src.coverage.level,Complete,
+src.coverage.level.partial,src.coverage.level,Partial,
+src.coverage.level.sample,src.coverage.level,Sample,
+src.coverage.level.none-published,src.coverage.level,None published,
+src.coverage.level.unknown,src.coverage.level,Unknown,
+src.coverage.subject.projects,src.coverage.subject,Projects,
+src.coverage.subject.tenders,src.coverage.subject,Tenders,
+src.coverage.subject.facilities,src.coverage.subject,Facilities,
+src.coverage.subject.results,src.coverage.subject,Results,
+src.coverage.subject.budgets,src.coverage.subject,Budgets,
+src.coverage.subject.reports,src.coverage.subject,Reports,
+src.coverage.subject.statistics,src.coverage.subject,Statistics,
+src.coverage.subject.legislation,src.coverage.subject,Legislation,
+src.slug.namespace.place,src.slug.namespace,Place,
+src.slug.namespace.leader,src.slug.namespace,Leader,
+src.slug.namespace.party,src.slug.namespace,Party,
+src.slug.namespace.election,src.slug.namespace,Election,
+src.slug.namespace.law,src.slug.namespace,Law,
+src.slug.namespace.project,src.slug.namespace,Project,
+src.slug.namespace.tender,src.slug.namespace,Tender,
+src.slug.namespace.institution,src.slug.namespace,Institution,
+src.slug.namespace.facility,src.slug.namespace,Facility,
+src.slug.namespace.event,src.slug.namespace,Event,
+src.slug.namespace.indicator,src.slug.namespace,Indicator,
+src.slug.relation.same-as,src.slug.relation,Same as,
+src.slug.relation.translation-of,src.slug.relation,Translation of,
+src.slug.relation.alias-of,src.slug.relation,Alias of,
+src.slug.relation.supersedes,src.slug.relation,Supersedes,
+src.slug.relation.covers-same-area,src.slug.relation,Covers the same area,
+src.slug.relation.contains,src.slug.relation,Contains,

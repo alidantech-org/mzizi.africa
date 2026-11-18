@@ -19,7 +19,7 @@ extra: {status: proposal_for_owner_agreement, date: 2026-11-18, code_changes: no
 | App contracts (`contracts/apps/<app>`) | features, views, parts, intents, destinations and navigation, copy keys, state and preference declarations, render mode | operations of their own; hand code |
 | Packs | the implementation patterns: server pages, SDK server and browser forms, routers, providers, repositories, header and tab bars, theme, copy delivery, trace headers | project knowledge (countries, indicators) |
 | Generated code | everything packs emit, regenerated and never hand-edited | decisions |
-| Hand-written source | visual components only, in `source/ui/web` and `source/ui/flutter`, taking typed props and the generated theme | `fetch`, route handlers, country or indicator literals, colours, copy |
+| Hand-written source | visual components only, in `source/sdk/ui/web` and `source/sdk/ui/flutter`, taking typed props and the generated theme | `fetch`, route handlers, country or indicator literals, colours, copy |
 
 ## 2. Structure of an app contract
 

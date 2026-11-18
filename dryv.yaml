@@ -412,7 +412,7 @@ packs:
     operations: consumed
     inputs:
       api_path: ../../sdk/api-dart
-      ui_path: ../../ui/flutter
+      ui_path: ../../sdk/ui/flutter
     bind:
       operation.client: { $ref: "#/packs/sdk-dart" }
       schema.types: { $ref: "#/packs/sdk-dart" }

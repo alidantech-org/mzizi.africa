@@ -24,7 +24,7 @@ dependencies:
     path: ../../sdk/api-dart
   # The hand-written components the pattern screens import.
   mzizi_ui:
-    path: ../../ui/flutter
+    path: ../../sdk/ui/flutter
   flutter_svg: ^2.4.0
   google_fonts: ^9.0.0
   flutter_markdown_plus: ^1.0.12

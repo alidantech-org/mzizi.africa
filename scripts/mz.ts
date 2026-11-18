@@ -212,7 +212,7 @@ export const commands: Record<string, Command> = {
   },
   "db:ts": { summary: "alias for the database CLI", run: databaseCli },
   "dev:data": {
-    summary: "create and fill the dev database (mzizi_ui): migrations, roles, invented dev seed and geoBoundaries outlines",
+    summary: "create and fill the dev database (mzizi_ux): migrations, roles, invented dev seed and geoBoundaries outlines",
     run: () => group("dev:data", [rootStep("dev data", ["bash", "scripts/dev/dev-data.sh"])]),
   },
   "dev:stack": {

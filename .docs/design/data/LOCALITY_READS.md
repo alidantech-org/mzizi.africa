@@ -33,7 +33,7 @@ Rules the use cases follow:
 
 ## Development data
 
-The dev database `mzizi_ui` proves the API and the three frontends against real PostgreSQL. `bun run dev:data` builds it from:
+The dev database `mzizi_ux` proves the API and the three frontends against real PostgreSQL. `bun run dev:data` builds it from:
 
 - the real seed (`seed/`): countries, languages, Kenya's 47 counties, 290 constituencies and 1,450 wards, the Constitution;
 - **real outlines** from `.dev/datasets/geoboundaries` (ADM2 constituencies, ADM3 wards) and the ADM1 counties in `.dev/archives`, matched to seeded features by name inside the parent that contains them: 46 of 47 counties, 289 of 290 constituencies and 1,353 of 1,450 wards have a geometry;

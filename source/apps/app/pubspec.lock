@@ -622,7 +622,7 @@ packages:
   mzizi_ui:
     dependency: "direct main"
     description:
-      path: "../../ui/flutter"
+      path: "../../sdk/ui/flutter"
       relative: true
     source: path
     version: "0.1.0"

@@ -36,7 +36,7 @@ source/
 | `source/apps/admin` | Deferred and removed (2026-11-18); `source/apps/dev` is the administrative interface until an admin app is funded. |
 | `source/apps/{app,web,dev}` | Generated frontends from `dryv/contracts/apps/{app,web,dev}`: the public Flutter app, the public Next.js site and the developer portal. See DEC-FRONTEND-ASSEMBLY-20261117. |
 | `source/sdk/{api-ts,api-dart}` | Client SDKs generated from the API contract; apps import them. |
-| `source/ui/{web,flutter}` | Hand-written component libraries the generated screens assemble. |
+| `source/sdk/ui/{web,flutter}` | Hand-written component libraries the generated screens assemble. |
 | `source/apps/mobile` | Deferred and removed (2026-11-18); the Flutter `source/apps/app` is the mobile app. |
 | `source/backend/api` | NestJS product API. Most contract-facing API types and modules are generated from root `dryv/`; selected use cases, auth and adapters are hand-written. |
 | `source/backend/database` | Bun TypeScript migration and administration CLI, SQL and named database operations. |

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs one part of the development stack against the dev database ($DEV_DB, default mzizi_ui), in the background:
+# Runs one part of the development stack against the dev database ($DEV_DB, default mzizi_ux), in the background:
 #   stack.sh api       NestJS API on :8700
 #   stack.sh engine    Python engine on :8800
 #   stack.sh web       public site on :3300
@@ -14,7 +14,7 @@ cd "$(dirname "$0")/../.."
 ROOT=$(pwd)
 mkdir -p .dev/logs
 set -a; . ./.env; set +a
-DEV_DB="${DEV_DB:-mzizi_ui}"
+DEV_DB="${DEV_DB:-mzizi_ux}"
 swap() { echo "$1" | sed -E "s#/[^/?]+(\?.*)?\$#/$DEV_DB#"; }
 export DATABASE_URL=$(swap "$DATABASE_URL") DATABASE_WRITE_URL=$(swap "$DATABASE_WRITE_URL")
 free() { for pid in $(ss -ltnp 2>/dev/null | grep ":$1 " | grep -o 'pid=[0-9]*' | cut -d= -f2); do kill "$pid" || true; done; sleep 1; }
