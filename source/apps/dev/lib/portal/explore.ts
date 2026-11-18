@@ -1,6 +1,21 @@
-/** Typed reads and writes over the engine's `/v1/explore` endpoints (files, database, term knowledge) and jobs. */
-
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
+/** Typed reads and writes over the engine through the generated engine SDK: server actions, so the service key never reaches a browser. */
+import { cancelJob } from "@mzizi/engine-client/actions/engine/cancel-job.actions.ts";
+import { listCapabilities } from "@mzizi/engine-client/actions/engine/list-capabilities.actions.ts";
+import { listJobs } from "@mzizi/engine-client/actions/engine/list-jobs.actions.ts";
+import { submitJob } from "@mzizi/engine-client/actions/engine/submit-job.actions.ts";
+import { getDataListPage } from "@mzizi/engine-client/actions/explore/get-data-list-page.actions.ts";
+import { getFile } from "@mzizi/engine-client/actions/explore/get-file.actions.ts";
+import { getJobDetail } from "@mzizi/engine-client/actions/explore/get-job-detail.actions.ts";
+import { getRawFile } from "@mzizi/engine-client/actions/explore/get-raw-file.actions.ts";
+import { getTablePage } from "@mzizi/engine-client/actions/explore/get-table-page.actions.ts";
+import { listDatabaseDomains } from "@mzizi/engine-client/actions/explore/list-database-domains.actions.ts";
+import { listDataLists } from "@mzizi/engine-client/actions/explore/list-data-lists.actions.ts";
+import { listFileRoots } from "@mzizi/engine-client/actions/explore/list-file-roots.actions.ts";
+import { listFiles } from "@mzizi/engine-client/actions/explore/list-files.actions.ts";
+import { listTermGroups } from "@mzizi/engine-client/actions/explore/list-term-groups.actions.ts";
+import { prepareCsv } from "@mzizi/engine-client/actions/explore/prepare-csv.actions.ts";
+import { saveFile } from "@mzizi/engine-client/actions/explore/save-file.actions.ts";
+import { tagTexts } from "@mzizi/engine-client/actions/explore/tag-texts.actions.ts";
 
 export type JsonValue =
   | string
@@ -146,76 +161,45 @@ export interface TaggedText {
   readonly hits: readonly { domain: string; group: string; term: string; surface: string }[];
 }
 
-async function call<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${BASE}/${path}`, {
-    cache: "no-store",
-    ...init,
-    headers: init?.body ? { "content-type": "application/json" } : undefined,
-  });
-  const text = await response.text();
-  if (!response.ok) {
-    let message = text;
-    try {
-      const parsed = JSON.parse(text) as { detail?: unknown; message?: string };
-      message = typeof parsed.detail === "string" ? parsed.detail : (parsed.message ?? text);
-    } catch {
-      /* keep the raw text */
-    }
-    throw new Error(message || `The engine answered ${response.status}.`);
+/** The body of an engine response, or the engine's own message as an error. The open JSON sections are typed by the shapes above. */
+async function read<T>(pending: Promise<{ success: boolean; message: string; body: unknown }>): Promise<T> {
+  const response = await pending;
+  if (!response.success || response.body === null || response.body === undefined) {
+    const body = response.body as { detail?: unknown; message?: string } | null;
+    throw new Error((typeof body?.detail === "string" ? body.detail : body?.message) || response.message || "The engine did not answer.");
   }
-  return JSON.parse(text) as T;
+  return response.body as T;
 }
 
-const query = (params: Record<string, string | number | undefined>): string => {
-  const search = new URLSearchParams();
-  for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== "") search.set(key, String(value));
-  }
-  const text = search.toString();
-  return text ? `?${text}` : "";
-};
-
-export const rawUrl = (root: string, path: string): string =>
-  `${BASE}/v1/explore/file/raw${query({ root, path })}`;
+/** A file's bytes as a data address a browser can show or download; the engine sends them as base64 through the SDK. */
+export async function rawFile(root: string, path: string): Promise<{ readonly name: string; readonly contentType: string; readonly url: string }> {
+  const file = await read<{ name: string; content_type: string; base64: string }>(getRawFile({ query: { root, path } }));
+  return { name: file.name, contentType: file.content_type, url: `data:${file.content_type};base64,${file.base64}` };
+}
 
 export const explore = {
-  roots: () => call<{ roots: readonly RootInfo[] }>("v1/explore/roots").then((r) => r.roots),
-  list: (root: string, path: string) =>
-    call<Listing>(`v1/explore/files${query({ root, path })}`),
-  file: (root: string, path: string, offset = 0, limit = 100) =>
-    call<FileView>(`v1/explore/file${query({ root, path, offset, limit })}`),
-  save: (path: string, text: string, overwrite: boolean) =>
-    call<{ path: string }>("v1/explore/file", {
-      method: "PUT",
-      body: JSON.stringify({ path, text, overwrite }),
-    }),
-  domains: () => call<{ domains: readonly DomainInfo[] }>("v1/explore/db/domains").then((r) => r.domains),
-  table: (
-    domain: string,
-    table: string,
-    p: { limit: number; offset: number; order: string; direction: string; q: string },
-  ) => call<TablePage>(`v1/explore/db/tables/${domain}/${table}${query(p)}`),
-  lists: () => call<{ lists: readonly DataList[] }>("v1/explore/db/lists").then((r) => r.lists),
+  roots: () => read<{ roots: readonly RootInfo[] }>(listFileRoots()).then((r) => r.roots),
+  list: (root: string, path: string) => read<Listing>(listFiles({ query: { root, path } })),
+  file: (root: string, path: string, offset = 0, limit = 100) => read<FileView>(getFile({ query: { root, path, offset, limit } })),
+  save: (path: string, text: string, overwrite: boolean) => read<{ path: string }>(saveFile({ body: { path, text, overwrite } })),
+  domains: () => read<{ domains: readonly DomainInfo[] }>(listDatabaseDomains()).then((r) => r.domains),
+  table: (domain: string, table: string, p: { limit: number; offset: number; order: string; direction: string; q: string }) =>
+    read<TablePage>(getTablePage({ params: { domain, table }, query: { ...p, q: p.q || undefined } })),
+  lists: () => read<{ lists: readonly DataList[] }>(listDataLists()).then((r) => r.lists),
   list_page: (domain: string, code: string, limit: number, offset: number) =>
-    call<DataListPage>(`v1/explore/db/lists/${domain}/${code}${query({ limit, offset })}`),
-  jobs: (status?: string) =>
-    call<{ jobs: readonly Job[] }>(`v1/jobs${query({ status, limit: 200 })}`),
-  job: (id: string) => call<JobDetail>(`v1/explore/jobs/${id}`),
-  submit: (kind: string, input: Record<string, JsonValue>) =>
-    call<Job>("v1/jobs", { method: "POST", body: JSON.stringify({ kind, input }) }),
-  cancel: (id: string) => call<Job>(`v1/jobs/${id}/cancel`, { method: "POST", body: "{}" }),
-  capabilities: () => call<{ capabilities: readonly CapabilityInfo[] }>("capabilities"),
+    read<DataListPage>(getDataListPage({ params: { domain, code }, query: { limit, offset } })),
+  jobs: (status?: string) => read<{ jobs: readonly Job[] }>(listJobs({ query: { status, limit: 200 } })),
+  job: (id: string) => read<JobDetail>(getJobDetail({ params: { jobId: id } })),
+  submit: (kind: string, input: Record<string, JsonValue>) => read<Job>(submitJob({ body: { kind, input } })),
+  cancel: (id: string) => read<Job>(cancelJob({ params: { jobId: id } })),
+  capabilities: () => read<{ capabilities: readonly CapabilityInfo[] }>(listCapabilities()),
   prepare: (body: {
     root: string;
     path: string;
     columns: readonly { source: string; name: string; clean: readonly string[]; keep: boolean }[];
     skip_empty_rows: boolean;
     save_as: string;
-  }) => call<PrepareResult>("v1/explore/csv/prepare", { method: "POST", body: JSON.stringify(body) }),
-  terms: () => call<{ groups: readonly TermGroup[] }>("v1/explore/terms").then((r) => r.groups),
-  tag: (texts: readonly string[], domain: string) =>
-    call<{ items: readonly TaggedText[] }>("v1/explore/terms/tag", {
-      method: "POST",
-      body: JSON.stringify({ texts, domain }),
-    }).then((r) => r.items),
+  }) => read<PrepareResult>(prepareCsv({ body: { ...body, columns: body.columns.map((column) => ({ ...column, clean: [...column.clean] })) } })),
+  terms: () => read<{ groups: readonly TermGroup[] }>(listTermGroups()).then((r) => r.groups),
+  tag: (texts: readonly string[], domain: string) => read<{ items: readonly TaggedText[] }>(tagTexts({ body: { texts: [...texts], domain } })).then((r) => r.items),
 };

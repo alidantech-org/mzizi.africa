@@ -34,9 +34,10 @@ const exploreHttp = failureProfile().http(
   mapFailure(f.InternalError, 500),
 );
 
-const { Name, LongText, Flag, Whole, Total, RootName, RelPath, Domain } = explore.properties({
+const { Name, LongText, Base64, Flag, Whole, Total, RootName, RelPath, Domain } = explore.properties({
   Name: property.string().length({ min: 1, max: 500 }),
   LongText: property.string().length({ max: 4_000_000 }),
+  Base64: property.string().length({ max: 24_000_000 }),
   Flag: property.boolean(),
   Whole: property.number.integer({ bits: 64 }),
   Total: property.number.integer({ bits: 64 }).range({ min: 0, max: 1_000_000_000 }),
@@ -87,7 +88,8 @@ const { RootList, Listing, FileView } = files.schemas({
     actions: field(Name).array(),
   }),
 });
-const { ListFilesInput, GetFileInput } = files.schemas({
+const { ListFilesInput, GetFileInput, RawFile } = files.schemas({
+  RawFile: schema({ name: field(Name), content_type: field(Name), size: field(Total), base64: field(Base64) }),
   ListFilesInput: schema({ root: field(RootName), path: field(RelPath).optional() }),
   GetFileInput: schema({
     root: field(RootName),
@@ -138,6 +140,22 @@ const GetFile = files.operation(
         .input(inputField("path"), query("path"))
         .input(inputField("offset"), query("offset"))
         .input(inputField("limit"), query("limit"))
+        .output(output),
+    })),
+);
+const GetRawFile = files.operation(
+  "GetRawFile",
+  operation()
+    .role("detail")
+    .description("The bytes of one file (up to 16 MB) for preview and download, as base64 with its content type.")
+    .input(ListFilesInput)
+    .output(RawFile)
+    .authenticated()
+    .requires(ServiceKey)
+    .facets(({ inputField, output }) => ({
+      http: http("GET", "/v1/explore/file/data")
+        .input(inputField("root"), query("root"))
+        .input(inputField("path"), query("path"))
         .output(output),
     })),
 );
@@ -379,6 +397,7 @@ export const exploreApi = {
   ListFileRoots,
   ListFiles,
   GetFile,
+  GetRawFile,
   SaveFile,
   PrepareCsv,
   ListTermGroups,

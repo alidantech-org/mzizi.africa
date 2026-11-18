@@ -1,13 +1,14 @@
-/** Typed reads the portal makes over the generated engine clients, plus the health document (not yet in the contract). */
-import { getSeedCatalog, getSeedCatalogRequest } from "#/lib/api/catalog/get-seed-catalog.ts";
-import { listCapabilities } from "#/lib/api/engine/list-capabilities.ts";
-import { listJobs, listJobsRequest } from "#/lib/api/engine/list-jobs.ts";
-import type { ClientResponse } from "#/lib/dryv/transport.ts";
-import type { CapabilityList } from "#/lib/types/capability-list.ts";
-import type { JobList } from "#/lib/types/job-list.ts";
-import type { SeedCatalog } from "#/lib/types/seed-catalog.ts";
+/** Typed reads the portal makes through the generated engine SDK (server actions; the service key stays on the server). */
+import { listCapabilities } from "@mzizi/engine-client/actions/engine/list-capabilities.actions.ts";
+import { listJobs } from "@mzizi/engine-client/actions/engine/list-jobs.actions.ts";
+import { getSeedCatalog } from "@mzizi/engine-client/actions/catalog/get-seed-catalog.actions.ts";
+import { getHealth } from "@mzizi/engine-client/actions/system/get-health.actions.ts";
+import type { EngineCapabilityList } from "@mzizi/engine-client/types/engine/capability-list.ts";
+import type { EngineJobList } from "@mzizi/engine-client/types/engine/job-list.ts";
+import type { CatalogSeedCatalog } from "@mzizi/engine-client/types/catalog/seed-catalog.ts";
+import type { SystemHealth } from "@mzizi/engine-client/types/system/health.ts";
 
-async function body<T>(pending: Promise<ClientResponse<T>>): Promise<T> {
+async function body<T>(pending: Promise<{ success: boolean; message: string; status: number; body: T | null }>): Promise<T> {
   const response = await pending;
   if (!response.success || response.body === null) {
     const detail = response.body as { message?: string; detail?: string } | null;
@@ -16,35 +17,9 @@ async function body<T>(pending: Promise<ClientResponse<T>>): Promise<T> {
   return response.body;
 }
 
-export const capabilities = (): Promise<CapabilityList> => body(listCapabilities());
-export const jobs = (): Promise<JobList> => body(listJobs(listJobsRequest()));
-export const seedTables = (): Promise<SeedCatalog> => body(getSeedCatalog(getSeedCatalogRequest()));
+export const capabilities = (): Promise<EngineCapabilityList> => body(listCapabilities());
+export const jobs = (): Promise<EngineJobList> => body(listJobs());
+export const seedTables = (): Promise<CatalogSeedCatalog> => body(getSeedCatalog());
 
-/** One package the engine hosts, as `/health` reports it. */
-export interface PackageHealth {
-  readonly name: string;
-  readonly exposure: string;
-  readonly in_flight: number;
-  readonly max_concurrency: number;
-}
-
-/** The engine's `/health` document. */
-export interface EngineHealth {
-  readonly status: string;
-  readonly service: string;
-  readonly version: string;
-  readonly store: string;
-  readonly auth: string;
-  readonly runtime: string;
-  readonly capabilities: number;
-  readonly active_jobs: number;
-  readonly packages: readonly PackageHealth[];
-}
-
-export async function health(): Promise<EngineHealth> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/health`, {
-    cache: "no-store",
-  });
-  if (!response.ok) throw new Error(`The engine answered ${response.status}.`);
-  return (await response.json()) as EngineHealth;
-}
+/** The engine's `/health` document, typed by the contract. */
+export const health = (): Promise<SystemHealth> => body(getHealth());

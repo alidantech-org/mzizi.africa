@@ -1,0 +1,20 @@
+{#- "yes" when the operation's path has parameters. -#}
+{%- macro has_params(http) -%}
+{%- for binding in http.inputs -%}{%- if binding.is.path -%}yes{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+/**
+ * {{ group.name.title }} API routes: one entry per HTTP operation. Routes with path parameters
+ * are typed functions; static routes are strings.
+ */
+export const {{ file.symbol }} = {
+{%- for operation in operations %}
+{%- set http = operation.facets.http %}
+  /** {{ http.method }} {{ http.path.local }} */
+{%- if has_params(http) %}
+  {{ operation.name.camel }}: (params: { {% for binding in http.inputs %}{% if binding.is.path %}{{ binding.name }}: string; {% endif %}{% endfor %}}) =>
+    `{{ http.path.local | replace('{', '${params.') }}`,
+{%- else %}
+  {{ operation.name.camel }}: '{{ http.path.local }}',
+{%- endif %}
+{%- endfor %}
+} as const;

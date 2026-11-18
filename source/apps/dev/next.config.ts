@@ -8,7 +8,7 @@ const config: NextConfig = {
   // The repository has its own AGENTS.md; do not let `next dev` write another one inside the app.
   agentRules: false,
   // The API SDK is a TypeScript package in this repository; Next compiles it with the app.
-  transpilePackages: ["@mzizi/api-client", "@mzizi/ui-web"],
+  transpilePackages: ["@mzizi/api-client", "@mzizi/engine-client", "@mzizi/ui-web"],
   // The bundler may read the SDK outside the app folder.
   turbopack: { root: resolve(import.meta.dirname, "../..") },
 };

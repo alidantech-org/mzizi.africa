@@ -8,7 +8,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { bytes, button, buttonPrimary, field, Grid, JsonTree, Pager } from "#/components/portal/ui.tsx";
-import { explore, rawUrl, type FileView } from "#/lib/portal/explore.ts";
+import { explore, rawFile, type FileView } from "#/lib/portal/explore.ts";
 import { Icon } from "#/components/brand/icon.tsx";
 
 const EDITABLE = new Set(["markdown", "yaml", "json", "text", "csv"]);
@@ -59,14 +59,23 @@ function Editor({ file, onDone }: { file: FileView; onDone: () => void }) {
 }
 
 async function extract(file: FileView, kind: string, router: ReturnType<typeof useRouter>): Promise<void> {
-  const response = await fetch(rawUrl(file.root, file.path));
-  const data = new Uint8Array(await response.arrayBuffer());
-  let binary = "";
-  for (let index = 0; index < data.length; index += 0x8000) {
-    binary += String.fromCharCode(...data.subarray(index, index + 0x8000));
-  }
-  const job = await explore.submit(kind, { content_base64: btoa(binary) });
+  const bytes = await rawFile(file.root, file.path);
+  const job = await explore.submit(kind, { content_base64: bytes.url.slice(bytes.url.indexOf(",") + 1) });
   router.push(`/runs/${job.id}`);
+}
+
+/** The data address of a file's bytes, fetched through the engine SDK when a preview or a download needs it. */
+function useRaw(file: FileView, wanted: boolean): string | null {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!wanted) return;
+    let current = true;
+    rawFile(file.root, file.path).then((raw) => current && setUrl(raw.url), () => current && setUrl(null));
+    return () => {
+      current = false;
+    };
+  }, [file.root, file.path, wanted]);
+  return url;
 }
 
 export function FileViewer({ file, reload }: { file: FileView; reload: () => void }) {
@@ -74,6 +83,7 @@ export function FileViewer({ file, reload }: { file: FileView; reload: () => voi
   const [editing, setEditing] = useState(false);
   const [message, setMessage] = useState("");
   const [source, setSource] = useState(false);
+  const raw = useRaw(file, file.kind === "pdf" || file.kind === "image" || true);
   const body = (() => {
     if (editing) return <Editor file={file} onDone={() => { setEditing(false); reload(); }} />;
     switch (file.kind) {
@@ -93,10 +103,10 @@ export function FileViewer({ file, reload }: { file: FileView; reload: () => voi
           <JsonTree value={file.parsed} />
         );
       case "pdf":
-        return <iframe title={file.name} src={rawUrl(file.root, file.path)} className="h-[40rem] w-full rounded-lg border border-border-default" />;
+        return <iframe title={file.name} src={raw ?? undefined} className="h-[40rem] w-full rounded-lg border border-border-default" />;
       case "image":
         // eslint-disable-next-line @next/next/no-img-element
-        return <img alt={file.name} src={rawUrl(file.root, file.path)} className="max-h-[36rem] rounded-lg border border-border-default" />;
+        return <img alt={file.name} src={raw ?? undefined} className="max-h-[36rem] rounded-lg border border-border-default" />;
       case "binary":
         return <p className="text-sm text-content-muted">This file is binary; download it to open it elsewhere.</p>;
       default:
@@ -121,7 +131,7 @@ export function FileViewer({ file, reload }: { file: FileView; reload: () => voi
             <button className={button} onClick={() => extract(file, "extraction.markdown", router).catch((e: Error) => setMessage(e.message))}>Extract as Markdown</button>
           </>
         ) : null}
-        <a className={button} href={rawUrl(file.root, file.path)} target="_blank" rel="noreferrer">Open raw</a>
+        <a className={button} href={raw ?? undefined} download={file.name} aria-disabled={raw === null}>Download</a>
       </div>
       {message ? <p className="text-sm text-danger">{message}</p> : null}
       {body}

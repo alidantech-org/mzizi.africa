@@ -229,6 +229,12 @@ destinations:
     actions:
       - { $ref: "#/actions/imports" }
       - { $ref: "#/actions/format-ts" }
+  sdk-engine-ts:
+    path: source/sdk/engine-ts
+    imports: { path: source/sdk/engine-ts/src, prefix: "#sdk/" }
+    actions:
+      - { $ref: "#/actions/imports" }
+      - { $ref: "#/actions/format-ts" }
   sdk-dart:
     path: source/sdk/api-dart
     imports: { path: source/sdk/api-dart/lib, prefix: "package:mzizi_api/" }
@@ -363,6 +369,12 @@ packs:
     inputs:
       package_name: "@mzizi/api-client"
 
+  sdk-engine-ts:
+    source: { $ref: "#/sources/packs/project", path: sdk-engine-ts }
+    destination: { $ref: "#/destinations/sdk-engine-ts" }
+    inputs:
+      package_name: "@mzizi/engine-client"
+
   sdk-dart:
     source: { $ref: "#/sources/packs/project", path: sdk-dart }
     destination: { $ref: "#/destinations/sdk-dart" }
@@ -432,6 +444,7 @@ applications:
       - { $ref: "#/packs/python-mongo" }
       - { $ref: "#/packs/python-api" }
       - { $ref: "#/packs/catalog-engine" }
+      - { $ref: "#/packs/sdk-engine-ts" }
   api:
     authoring: { $ref: "#/sources/authoring/api" }
     application: { $ref: "#/applications/mzizi-api" }

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import base64
+import mimetypes
 from collections.abc import Callable
 from functools import partial
 from pathlib import Path
@@ -28,6 +30,18 @@ from mzizi_engine.runtime.http.auth import require
 
 Limit = Annotated[int, Query(ge=1, le=500)]
 Offset = Annotated[int, Query(ge=0)]
+
+
+MAX_RAW_BYTES = 16 * 1024 * 1024
+
+
+class RawFile(BaseModel):
+    """The bytes of one file as base64 with its content type, for a preview or a download."""
+
+    name: str
+    content_type: str
+    size: int
+    base64: str
 
 
 class JobDetail(BaseModel):
@@ -101,6 +115,16 @@ def explore_router(config: ExploreConfig) -> APIRouter:
     @router.get("/file")
     async def view_file(root: str, path: str, offset: Offset = 0, limit: Limit = 100) -> FileView:
         return await _files(lambda: roots.view(root, path, offset, limit))
+
+    @router.get("/file/data")
+    async def raw_file_data(root: str, path: str) -> RawFile:
+        target: Path = await _files(lambda: roots.raw(root, path))
+        size = target.stat().st_size
+        if size > MAX_RAW_BYTES:
+            raise HTTPException(413, f"the file is {size} bytes; previews are limited to {MAX_RAW_BYTES}")
+        data = await asyncio.to_thread(target.read_bytes)
+        content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
+        return RawFile(name=target.name, content_type=content_type, size=size, base64=base64.b64encode(data).decode("ascii"))
 
     @router.get("/file/raw")
     async def raw_file(root: str, path: str) -> FileResponse:

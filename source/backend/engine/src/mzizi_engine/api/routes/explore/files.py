@@ -10,6 +10,7 @@ from fastapi import APIRouter, Body, Depends, Query, Request
 
 from mzizi_engine.api.schemas.api.explore.models.file_view import FileView
 from mzizi_engine.api.schemas.api.explore.models.listing import Listing
+from mzizi_engine.api.schemas.api.explore.models.raw_file import RawFile
 from mzizi_engine.api.schemas.api.explore.models.root_list import RootList
 from mzizi_engine.api.schemas.api.explore.models.save_file_body import SaveFileBody
 from mzizi_engine.api.schemas.api.explore.models.save_file_result import SaveFileResult
@@ -26,6 +27,10 @@ class ExploreFilesService(ABC):
     @abstractmethod
     async def get_file(self, *, root: str, path: str, offset: int | None, limit: int | None) -> FileView:
         """One file viewed by kind: text, CSV rows, parsed JSON or YAML."""
+
+    @abstractmethod
+    async def get_raw_file(self, *, root: str, path: str | None) -> RawFile:
+        """The bytes of one file (up to 16 MB) for preview and download, as base64 with its content type."""
 
     @abstractmethod
     async def list_file_roots(self) -> RootList:
@@ -58,6 +63,18 @@ def build_explore_files_router(service: ExploreFilesService, guard: Guard | None
         limit: Annotated[int | None, Query(alias="limit")] = None,
     ) -> FileView:
         return await service.get_file(root=root, path=path, offset=offset, limit=limit)
+
+    @router.get(
+        "/v1/explore/file/data",
+        response_model=RawFile,
+        status_code=200,
+        summary="The bytes of one file (up to 16 MB) for preview and download, as base64 with its content type.",
+    )
+    async def get_raw_file(
+        root: Annotated[str, Query(alias="root")],
+        path: Annotated[str | None, Query(alias="path")] = None,
+    ) -> RawFile:
+        return await service.get_raw_file(root=root, path=path)
 
     @router.get(
         "/v1/explore/roots",

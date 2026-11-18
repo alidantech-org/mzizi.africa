@@ -15,14 +15,14 @@ const { SeedColumn } = seed.schemas({
     name: field(Blurb),
     kind: field(Blurb),
     required: field(IsRequired),
-    target_table: field(TableName).nullable().optional(),
-    target_column: field(Blurb).nullable().optional(),
+    targetTable: field(TableName).nullable().optional(),
+    targetColumn: field(Blurb).nullable().optional(),
   }),
 });
 const { SeedTable } = seed.schemas({
   SeedTable: schema({
     name: field(TableName),
-    natural_key: field(Blurb).array(),
+    naturalKey: field(Blurb).array(),
     columns: field(SeedColumn).array(),
   }),
 });

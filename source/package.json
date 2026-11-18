@@ -4,6 +4,7 @@
   "description": "Bun workspace for the generated TypeScript packages: the API SDK and the apps that import it. The other projects install on their own.",
   "workspaces": [
     "sdk/api-ts",
+    "sdk/engine-ts",
     "apps/web",
     "apps/dev",
     "sdk/ui/web"

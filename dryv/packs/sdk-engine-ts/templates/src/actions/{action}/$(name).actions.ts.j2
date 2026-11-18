@@ -1,0 +1,122 @@
+{#- The generated symbol of another planned file, found by the subject it represents. -#}
+{%- macro symbol_for(link) -%}
+{%- for dependency in file.dependencies -%}
+{%- if dependency.target.id == link.id -%}{{ dependency.symbol }}{%- endif -%}
+{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro ts_type(value) -%}
+{%- if value.is.schema -%}{{ symbol_for(value.schema) or 'unknown' }}
+{%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) or 'string' }}
+{%- elif value.is.property and value.is.primitive -%}{{ value.property.primitive.type }}
+{%- elif value.is.property and value.is.temporal -%}string
+{%- else -%}unknown
+{%- endif -%}
+{%- endmacro -%}
+
+{#- "yes" when the operation has at least one HTTP input of the kind. -#}
+{%- macro has(http, kind) -%}
+{%- for binding in http.inputs -%}{%- if binding.kind == kind -%}yes{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro params_type(http) -%}
+{%- if has(http, 'path') -%}{ {% for binding in http.inputs %}{% if binding.is.path %}{{ binding.name }}: string; {% endif %}{% endfor %}}{%- else -%}never{%- endif -%}
+{%- endmacro -%}
+
+{%- macro query_type(http) -%}
+{%- if has(http, 'query-object') -%}{% for binding in http.inputs %}{% if binding.is.query_object %}{{ ts_type(binding.port.value) }}{% endif %}{% endfor %}
+{%- elif has(http, 'query') -%}{ {% for binding in http.inputs %}{% if binding.is.query %}{{ binding.name }}?: {{ ts_type(binding.port.value) }}; {% endif %}{% endfor %}}
+{%- else -%}never
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro multipart(http) -%}{{ has(http, 'multipart') }}{{ has(http, 'form') }}{%- endmacro -%}
+
+{%- macro body_type(http) -%}
+{%- if multipart(http) -%}FormData
+{%- elif has(http, 'body') -%}{% for binding in http.inputs %}{% if binding.is.body %}{{ ts_type(binding.port.value) }}{% endif %}{% endfor %}
+{%- else -%}never
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro response_type(operation) -%}
+{%- if operation.output -%}{{ ts_type(operation.output.value) }}{%- else -%}void{%- endif -%}
+{%- endmacro -%}
+
+{%- set http = operation.facets.http -%}
+{%- set name = operation.name.camel -%}
+{%- set input_type = operation.name.pascal ~ "Input" -%}
+{%- set form_action = operation.role in ['create', 'update'] and body_type(http) != 'never' -%}
+'use server';
+
+/**
+ * {{ operation.description or operation.name.title }}
+ *
+ * {{ http.method }} {{ http.path.local }}
+ */
+{%- if form_action %}
+import type { ApiBridgeResponse } from 'next-api-bridge';
+import { redirect } from 'next/navigation';
+{%- endif %}
+
+import {
+  api,
+  type ActionInput,
+{%- if form_action and has(http, 'path') %}
+  actionFormDataValue,
+{%- endif %}
+{%- if form_action and not multipart(http) %}
+  cleanActionFormData,
+{%- endif %}
+{%- if form_action %}
+  formActionRedirectPath,
+  type FormActionResult,
+{%- endif %}
+  requestOptions,
+} from '#sdk/helpers/index.ts';
+{%- for dependency in file.dependencies %}{% if dependency.symbol %}
+import {% if dependency.template != 'enum' %}type {% endif %}{ {{ dependency.symbol }} } from '{{ dependency.path.prefixed }}';
+{%- endif %}{% endfor %}
+
+export type {{ input_type }} = ActionInput<{{ params_type(http) }}, {{ query_type(http) }}, {{ body_type(http) }}>;
+
+export async function {{ name }}(input: {{ input_type }}{% if not has(http, 'path') and body_type(http) == 'never' %} = {}{% endif %}) {
+  const options = requestOptions(
+    input.options,
+    {% if query_type(http) != 'never' %}input.query{% else %}undefined{% endif %},
+    {{ 'true' if multipart(http) else 'false' }},
+  );
+  const path = {% if has(http, 'path') %}`{{ http.path.local | replace('{', '${input.params.') }}`{% else %}'{{ http.path.local }}'{% endif %};
+{%- if http.method == 'GET' %}
+  return api.get<{{ response_type(operation) }}>(path, options);
+{%- else %}
+  return api.{{ http.method | lower }}<{{ response_type(operation) }}>(path, {% if body_type(http) != 'never' %}input.body{% else %}undefined{% endif %}, options);
+{%- endif %}
+}
+{%- if form_action %}
+
+/**
+ * useActionState-compatible wrapper for {{ name }}. Cleans FormData controls, calls the
+ * operation, and redirects on success when the form posts __redirect_path.
+ */
+export async function {{ name }}Action(
+  _previous: FormActionResult<{{ body_type(http) }}, ApiBridgeResponse<{{ response_type(operation) }}>> | null,
+  data: FormData,
+): Promise<FormActionResult<{{ body_type(http) }}, ApiBridgeResponse<{{ response_type(operation) }}>>> {
+  const redirectPath = formActionRedirectPath(data);
+  const body = {% if multipart(http) %}data{% else %}cleanActionFormData<{{ body_type(http) }}>(data){% endif %};
+  const response = await {{ name }}({
+{%- if has(http, 'path') %}
+    params: {
+{%- for binding in http.inputs %}{% if binding.is.path %}
+      {{ binding.name }}: actionFormDataValue(data, '__path:{{ binding.name }}'),
+{%- endif %}{% endfor %}
+    },
+{%- endif %}
+    body,
+    options: {},
+  });
+  if (response.success && redirectPath) redirect(redirectPath);
+  return { response, formdata: body };
+}
+{%- endif %}

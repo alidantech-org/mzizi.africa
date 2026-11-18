@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@mzizi/api-client": "file:../../sdk/api-ts",
+    "@mzizi/engine-client": "workspace:*",
     "@mzizi/ui-web": "workspace:*",
     "next": "^16.4.6",
     "react": "^19.3.1",

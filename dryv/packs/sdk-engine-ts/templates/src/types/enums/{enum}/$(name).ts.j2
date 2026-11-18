@@ -1,0 +1,6 @@
+/** {{ property.enum.description or property.enum.name.title }} */
+export enum {{ file.symbol }} {
+{%- for item in property.enum.values %}
+  {{ item.name.constant }} = {{ item.value_json }},
+{%- endfor %}
+}

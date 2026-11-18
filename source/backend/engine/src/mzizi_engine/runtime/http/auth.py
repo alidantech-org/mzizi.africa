@@ -104,8 +104,12 @@ async def authenticated(request: Request) -> Principal:
         return Principal(None)
     header = request.headers.get("authorization", "")
     scheme, _, token = header.partition(" ")
+    service_key = request.headers.get("x-service-key", "")
+    if service_key and state.settings.auth == "service":
+        # a server-side client (the developer portal's generated SDK) cannot set `authorization`, so it sends the same key here
+        scheme, token = "bearer", service_key
     if scheme.lower() != "bearer" or not token:
-        raise HTTPException(401, "a bearer token is required")
+        raise HTTPException(401, "a bearer token or a service key is required")
     if state.settings.auth == "service":
         expected = state.settings.service_token
         if not expected or not compare_digest(token.encode(), expected.encode()):

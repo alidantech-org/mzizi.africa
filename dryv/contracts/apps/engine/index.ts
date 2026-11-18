@@ -45,6 +45,7 @@ export default dryv
     exploreApi.ListFileRoots,
     exploreApi.ListFiles,
     exploreApi.GetFile,
+    exploreApi.GetRawFile,
     exploreApi.SaveFile,
     exploreApi.PrepareCsv,
     exploreApi.ListTermGroups,

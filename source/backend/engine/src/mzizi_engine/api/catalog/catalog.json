@@ -101,6 +101,17 @@
       "summary": "One job with its event timeline and the folder it wrote."
     },
     {
+      "name": "GetRawFile",
+      "group": "explore",
+      "feature": "files",
+      "method": "GET",
+      "path": "/v1/explore/file/data",
+      "role": "detail",
+      "inputs": ["root", "path"],
+      "output": "RawFile",
+      "summary": "The bytes of one file (up to 16 MB) for preview and download, as base64 with its content type."
+    },
+    {
       "name": "GetTablePage",
       "group": "explore",
       "feature": "database",

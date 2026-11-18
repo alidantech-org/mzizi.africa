@@ -7,7 +7,7 @@
 
 {%- macro ts_type(value) -%}
 {%- if value.is.schema -%}{{ symbol_for(value.schema) or 'unknown' }}
-{%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) }}
+{%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) or 'string' }}
 {%- elif value.is.property and value.is.primitive -%}{{ value.property.primitive.type }}
 {%- elif value.is.property and value.is.temporal -%}string
 {%- else -%}unknown
