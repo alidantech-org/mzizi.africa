@@ -1,0 +1,118 @@
+/** Route `/elections`: every election on record, newest first, with the national result and how many people were registered. */
+import Link from "next/link";
+import { T } from "#/_archives/lib/site/i18n";
+
+import { ElectionTimeline } from "#/_archives/components/site/election-timeline";
+import { Loaded } from "#/_archives/components/site/loaded";
+import { Stacked } from "#/_archives/components/site/ui/charts";
+import {
+  Breadcrumbs,
+  Gaps,
+  PageFrame,
+} from "#/_archives/components/site/ui/primitives";
+import { date, n, pct } from "#/_archives/lib/site/format";
+import { electionAt } from "#/_archives/lib/site/links";
+import { elections } from "#/_archives/lib/site/insights";
+
+export default function ElectionsRoute() {
+  return (
+    <PageFrame wide>
+      <Breadcrumbs
+        items={[{ label: "Home", href: "/" }, { label: "Elections" }]}
+      />
+      <p className="kicker">Votes and voters</p>
+      <h1 className="hero-title text-4xl sm:text-5xl">
+        <T>{"Elections"}</T>
+      </h1>
+      <p className="mt-2 max-w-2xl text-content-muted">
+        <T>
+          {
+            "Who won, with how many votes, where — and how the voters' register has grown. Open an election for the heat map, or a place for its own history."
+          }
+        </T>
+      </p>
+      <Loaded read={() => elections()}>
+        {({ elections: list }) => (
+          <>
+            <div className="mt-8">
+              <ElectionTimeline elections={list} />
+            </div>
+            <ol className="mt-8 grid gap-5 lg:grid-cols-3">
+              {list.map((e, index) => (
+                <li key={e.electionId}>
+                  <Link
+                    href={electionAt(e)}
+                    className="glass card card-lift block h-full"
+                    style={{ animationDelay: `${index * 80}ms` }}
+                  >
+                    <p className="kicker">{date(e.heldOn)}</p>
+                    <h2 className="font-display text-3xl">
+                      {e.year} general election
+                    </h2>
+                    <p className="mt-3 text-sm text-content-muted">
+                      Registered voters
+                    </p>
+                    <p className="num font-display text-2xl">
+                      {n(e.registeredVoters)}
+                    </p>
+                    {e.winner ? (
+                      <div className="mt-4">
+                        <p className="text-sm text-content-muted">
+                          President elected
+                        </p>
+                        <p className="font-semibold">
+                          {e.winner.name}{" "}
+                          <span className="font-normal text-content-muted">
+                            · {e.winner.party}
+                          </span>
+                        </p>
+                        <p className="num text-sm">
+                          {n(e.winner.votes)} votes
+                          {e.validVotes
+                            ? ` (${pct(e.winner.votes / e.validVotes)})`
+                            : ""}
+                        </p>
+                        {e.runnerUp && e.validVotes ? (
+                          <div className="mt-3">
+                            <Stacked
+                              label="Share of the vote"
+                              parts={[
+                                { label: e.winner.name, value: e.winner.votes },
+                                {
+                                  label: e.runnerUp.name,
+                                  value: e.runnerUp.votes,
+                                },
+                                {
+                                  label: "Others",
+                                  value: Math.max(
+                                    0,
+                                    e.validVotes -
+                                      e.winner.votes -
+                                      e.runnerUp.votes,
+                                  ),
+                                },
+                              ]}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    <p className="mt-4 text-xs text-content-muted">
+                      {e.contests} contests recorded
+                    </p>
+                  </Link>
+                </li>
+              ))}
+            </ol>
+            <Gaps
+              topic="election results"
+              items={[
+                "Presidential totals are the published figures; the split by county and the governor and member-of-parliament results are sample data for development. Ward-level results are not recorded.",
+              ]}
+            />
+          </>
+        )}
+      </Loaded>
+    </PageFrame>
+  );
+}
