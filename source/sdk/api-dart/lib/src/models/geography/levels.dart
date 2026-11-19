@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/geography/features.dart';
 import 'package:mzizi_api/src/models/reference/country.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
@@ -18,6 +19,7 @@ class GeographyLevels {
     required this.hierarchyKindId,
     required this.id,
     required this.isRoutingHierarchy,
+    this.rootFeatureId,
     required this.updatedAt,
     required this.version,
   });
@@ -30,6 +32,7 @@ class GeographyLevels {
   final String hierarchyKindId;
   final String id;
   final bool isRoutingHierarchy;
+  final String? rootFeatureId;
   final DateTime updatedAt;
   final int version;
 

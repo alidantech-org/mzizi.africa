@@ -9,6 +9,7 @@ export interface GeographyLevels {
   hierarchyKindId: string;
   id: string;
   isRoutingHierarchy: boolean;
+  rootFeatureId?: string | null;
   updatedAt: string;
   version: number;
 }

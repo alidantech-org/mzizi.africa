@@ -19,6 +19,7 @@ class InstitutionsRow(BaseModel):
     table: ClassVar[str] = "governance.institutions"
 
     arm_id: UUID | None = None
+    class_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -27,6 +28,7 @@ class InstitutionsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
     dissolved_on: date | None = None

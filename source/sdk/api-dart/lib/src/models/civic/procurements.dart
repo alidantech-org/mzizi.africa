@@ -13,13 +13,17 @@ part 'procurements.g.dart';
 class CivicProcurements {
   const CivicProcurements({
     this.awardedOn,
+    this.bidderCount,
     required this.buyerEntityId,
     this.categoryId,
     this.closesOn,
     required this.code,
     this.countryId,
     required this.createdAt,
+    this.currencyId,
     this.deletedAt,
+    this.estimatedAmountMinorUnits,
+    this.evaluationBasisId,
     required this.id,
     this.natureId,
     required this.procedureKindId,
@@ -33,13 +37,17 @@ class CivicProcurements {
     required this.version,
   });
   final DateTime? awardedOn;
+  final int? bidderCount;
   final String buyerEntityId;
   final String? categoryId;
   final DateTime? closesOn;
   final String code;
   final String? countryId;
   final DateTime createdAt;
+  final String? currencyId;
   final DateTime? deletedAt;
+  final int? estimatedAmountMinorUnits;
+  final String? evaluationBasisId;
   final String id;
   final String? natureId;
   final String procedureKindId;

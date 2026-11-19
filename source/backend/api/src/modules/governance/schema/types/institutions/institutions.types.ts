@@ -10,6 +10,7 @@ import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.
 // RELATED ENTITY TYPES
 // ----------------------------------
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as CountryTypes from "#/modules/reference/schema/types/country/country.types";
 import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
@@ -35,7 +36,9 @@ import type {
 /** One government institution specialization of an Official entity. */
 export interface IInstitutions extends B.IBase {
   armId: string | null;
+  classId: string | null;
   code: string;
+  countryId: string;
   dissolvedOn: Date | null;
   entityId: string;
   establishedOn: Date | null;
@@ -46,6 +49,8 @@ export interface IInstitutions extends B.IBase {
   sourceCitationId: string | null;
   toYear: number | null;
   readonly arm?: ValueTypes.IValue;
+  readonly class?: ValueTypes.IValue;
+  readonly country?: CountryTypes.ICountry;
   readonly entity?: EntitiesTypes.IEntities;
   readonly establishmentBasis?: ValueTypes.IValue;
   readonly institutionKind?: ValueTypes.IValue;
@@ -152,6 +157,8 @@ export type IInstitutionsAsManyRelationQuery = Q.IAsManyRelationQuery<
 
 export interface IInstitutionsRelationMap extends Record<InstitutionsRelationKey, unknown> {
   arm: ValueTypes.IValueAsOneRelationQuery;
+  class: ValueTypes.IValueAsOneRelationQuery;
+  country: CountryTypes.ICountryAsOneRelationQuery;
   entity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   establishmentBasis: ValueTypes.IValueAsOneRelationQuery;
   institutionKind: ValueTypes.IValueAsOneRelationQuery;

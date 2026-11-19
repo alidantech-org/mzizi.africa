@@ -9,9 +9,9 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
+import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
 import * as IndividualsConfig from "#/modules/official/schema/types/individuals/individuals.config";
-import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
 
 // ----------------------------------
@@ -35,6 +35,8 @@ import type {
 // ----------------------------------
 
 export const RELATIONSHIPS_RELATION_KEYS = [
+  "evidenceBasis",
+  "evidenceStatus",
   "fromEntity",
   "fromIndividual",
   "kind",
@@ -49,9 +51,12 @@ export const RELATIONSHIPS_RELATION_KEYS = [
 
 export const RELATIONSHIPS_SORTABLE_FIELDS = [
   "code",
+  "confidence",
   "createdAt",
   "deletedAt",
   "endsOn",
+  "evidenceBasisId",
+  "evidenceStatusId",
   "fromEntityId",
   "fromIndividualId",
   "fromToPrecision",
@@ -73,6 +78,8 @@ export const RELATIONSHIPS_SEARCHABLE_FIELDS = [
 ] as const satisfies readonly RelationshipsKey[];
 
 export const RELATIONSHIPS_FILTERABLE_FIELDS = [
+  "evidenceBasisId",
+  "evidenceStatusId",
   "fromEntityId",
   "fromIndividualId",
   "fromToPrecision",
@@ -103,9 +110,12 @@ export const RELATIONSHIPS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IRe
 
 export const RELATIONSHIPS_SELECTABLE_FIELDS = [
   "code",
+  "confidence",
   "createdAt",
   "deletedAt",
   "endsOn",
+  "evidenceBasisId",
+  "evidenceStatusId",
   "fromEntityId",
   "fromIndividualId",
   "fromToPrecision",
@@ -124,9 +134,12 @@ export const RELATIONSHIPS_SELECTABLE_FIELDS = [
 
 export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
   "code",
+  "confidence",
   "createdAt",
   "deletedAt",
   "endsOn",
+  "evidenceBasisId",
+  "evidenceStatusId",
   "fromEntityId",
   "fromIndividualId",
   "fromToPrecision",
@@ -149,7 +162,10 @@ export const RELATIONSHIPS_DEFAULT_SELECT_FIELDS = [
 
 export const RELATIONSHIPS_EDITABLE_FIELDS = [
   "code",
+  "confidence",
   "endsOn",
+  "evidenceBasisId",
+  "evidenceStatusId",
   "fromEntityId",
   "fromIndividualId",
   "fromToPrecision",
@@ -189,6 +205,14 @@ export const RELATIONSHIPS_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const RELATIONSHIPS_ONE_RELATION_QUERY_OPTIONS = [
+  Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "evidenceBasis",
+  ),
+  Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "evidenceStatus",
+  ),
   Q.createRelationKeyMapper<RelationshipsRelationKey>().one(
     () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "fromEntity",

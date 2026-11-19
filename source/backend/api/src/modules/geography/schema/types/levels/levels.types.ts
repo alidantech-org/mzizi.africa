@@ -10,6 +10,7 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 import type * as CountryTypes from "#/modules/reference/schema/types/country/country.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -38,9 +39,11 @@ export interface ILevels extends B.IBase {
   featureKindId: string;
   hierarchyKindId: string;
   isRoutingHierarchy: boolean;
+  rootFeatureId: string | null;
   readonly country?: CountryTypes.ICountry;
   readonly featureKind?: ValueTypes.IValue;
   readonly hierarchyKind?: ValueTypes.IValue;
+  readonly rootFeature?: FeaturesTypes.IFeatures;
 }
 
 // ----------------------------------
@@ -131,6 +134,7 @@ export interface ILevelsRelationMap extends Record<LevelsRelationKey, unknown> {
   country: CountryTypes.ICountryAsOneRelationQuery;
   featureKind: ValueTypes.IValueAsOneRelationQuery;
   hierarchyKind: ValueTypes.IValueAsOneRelationQuery;
+  rootFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
 }
 
 // ----------------------------------

@@ -10,6 +10,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // RELATED ENTITY CONFIGS
 // ----------------------------------
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as CountryConfig from "#/modules/reference/schema/types/country/country.config";
 import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
 
@@ -35,6 +36,8 @@ import type {
 
 export const INSTITUTIONS_RELATION_KEYS = [
   "arm",
+  "class",
+  "country",
   "entity",
   "establishmentBasis",
   "institutionKind",
@@ -47,7 +50,9 @@ export const INSTITUTIONS_RELATION_KEYS = [
 
 export const INSTITUTIONS_SORTABLE_FIELDS = [
   "armId",
+  "classId",
   "code",
+  "countryId",
   "createdAt",
   "deletedAt",
   "dissolvedOn",
@@ -70,6 +75,8 @@ export const INSTITUTIONS_SEARCHABLE_FIELDS = [
 
 export const INSTITUTIONS_FILTERABLE_FIELDS = [
   "armId",
+  "classId",
+  "countryId",
   "entityId",
   "establishmentBasisId",
   "fromToPrecision",
@@ -98,7 +105,9 @@ export const INSTITUTIONS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IIns
 
 export const INSTITUTIONS_SELECTABLE_FIELDS = [
   "armId",
+  "classId",
   "code",
+  "countryId",
   "createdAt",
   "deletedAt",
   "dissolvedOn",
@@ -117,7 +126,9 @@ export const INSTITUTIONS_SELECTABLE_FIELDS = [
 
 export const INSTITUTIONS_DEFAULT_SELECT_FIELDS = [
   "armId",
+  "classId",
   "code",
+  "countryId",
   "createdAt",
   "deletedAt",
   "dissolvedOn",
@@ -140,7 +151,9 @@ export const INSTITUTIONS_DEFAULT_SELECT_FIELDS = [
 
 export const INSTITUTIONS_EDITABLE_FIELDS = [
   "armId",
+  "classId",
   "code",
+  "countryId",
   "dissolvedOn",
   "entityId",
   "establishedOn",
@@ -181,6 +194,14 @@ export const INSTITUTIONS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "arm",
+  ),
+  Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "class",
+  ),
+  Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
+    () => CountryConfig.COUNTRY_AS_ONE_RELATION_CONFIG,
+    "country",
   ),
   Q.createRelationKeyMapper<InstitutionsRelationKey>().one(
     () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,

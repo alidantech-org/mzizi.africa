@@ -9,8 +9,8 @@ import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { Features } from "./geography.ts";
-import { Institutions } from "./governance.ts";
-import { Entities } from "./official.ts";
+import { Institutions, Offices } from "./governance.ts";
+import { Entities, Individuals } from "./official.ts";
 import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
@@ -127,6 +127,15 @@ export const Procurements = civic
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     closesOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     awardedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    /** The buyer's estimate or budget for the work, so an award can be compared with it. */
+    estimatedAmountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits).maybe(),
+    currencyId: belongsTo(() => Value).maybe(),
+    /** How many bids were received as published; may be known when the bids themselves are not listed. */
+    bidderCount: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+    /** Scheme civ.evaluation.basis: lowest price, quality and cost, quality only, fixed budget. */
+    evaluationBasisId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.civ.evaluation.basis"),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
@@ -160,6 +169,8 @@ export const Contracts = civic
       .maybe()
       .tags("scheme:ref.sch.civ.contract.nature"),
     contractorEntityId: belongsTo(() => Entities),
+    /** The body that signed as buyer; needed when a contract has no procurement (a direct award). */
+    buyerEntityId: belongsTo(() => Entities).maybe(),
     amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),
     currencyId: belongsTo(() => Value),
     statusId: belongsTo(() => Value),
@@ -167,9 +178,17 @@ export const Contracts = civic
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
+  .rule("HasProcurementOrBuyer", rule.atLeastOne("procurementId", "buyerEntityId"))
   .description("One executed contract with a contractor, optional procurement/project links and contracted amount.")
   .role("entity")
-  .facets({ storage: dryv.storage("contracts").index("procurementId").index("projectId").index("sourceCitationId") });
+  .facets({
+    storage: dryv
+      .storage("contracts")
+      .index("procurementId")
+      .index("projectId")
+      .index("buyerEntityId")
+      .index("sourceCitationId"),
+  });
 
 /*---------------- civic.deliveries ----------------*/
 export const Deliveries = civic
@@ -257,5 +276,84 @@ export const Beneficiaries = civic
       .index("procurementId")
       .index("contractId")
       .index("benefitKindId")
+      .index("sourceCitationId"),
+  });
+
+/*---------------- civic.partners ----------------*/
+export const Partners = civic
+  .schema("Partners", {
+    contractId: belongsTo(() => Contracts).maybe(),
+    bidId: belongsTo(() => Bids).maybe(),
+    partnerEntityId: belongsTo(() => Entities),
+    /** Scheme civ.partner.role: lead, member, subcontractor, guarantor, supervisor. */
+    roleId: belongsTo(() => Value).tags("scheme:ref.sch.civ.partner.role"),
+    sharePercentage: dryv.field(sharedProperties.Percentage).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("HasExactlyOneDeal", rule.exactlyOne("contractId", "bidId"))
+  .description(
+    "A party that shares one contract or one bid with the main bidder or contractor: a joint-venture member, a subcontractor or a guarantor.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("partners")
+      .index("contractId")
+      .index("bidId")
+      .index("partnerEntityId")
+      .index("roleId")
+      .index("sourceCitationId"),
+  });
+
+/*---------------- civic.variations ----------------*/
+export const Variations = civic
+  .schema("Variations", {
+    contractId: belongsTo(() => Contracts),
+    /** Scheme civ.variation.kind: variation, extension, termination, renewal. */
+    kindId: belongsTo(() => Value).tags("scheme:ref.sch.civ.variation.kind"),
+    amountDeltaMinorUnits: dryv.field(sharedProperties.Integer).maybe(),
+    currencyId: belongsTo(() => Value).maybe(),
+    newEndOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    signedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    reason: dryv.field(sharedProperties.Description).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description(
+    "One change to an executed contract: a variation of price or scope, an extension, a renewal or a termination.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv.storage("variations").index("contractId").index("kindId").index("sourceCitationId"),
+  });
+
+/*---------------- civic.officials ----------------*/
+export const Officials = civic
+  .schema("Officials", {
+    procurementId: belongsTo(() => Procurements).maybe(),
+    contractId: belongsTo(() => Contracts).maybe(),
+    individualId: belongsTo(() => Individuals),
+    /** Scheme civ.official.role: accounting officer, committee chair, evaluator, approver, signatory. */
+    roleId: belongsTo(() => Value).tags("scheme:ref.sch.civ.official.role"),
+    /** The office the person held when they acted, when known. */
+    officeId: belongsTo(() => Offices).maybe(),
+    actedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("HasProcurementOrContract", rule.atLeastOne("procurementId", "contractId"))
+  .description(
+    "A person who acted in a buying process (evaluated, approved, signed), with the role and the office held then; this is what lets a conflict be checked on a real signature.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("officials")
+      .index("procurementId")
+      .index("contractId")
+      .index("individualId")
+      .index("roleId")
+      .index("officeId")
       .index("sourceCitationId"),
   });

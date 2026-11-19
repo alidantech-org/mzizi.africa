@@ -3,6 +3,10 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { contactsExample } from "@test/modules/official/schema/dto/examples/contacts.dto.example.ts";
+import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
+import { templateExample } from "@test/modules/reference/schema/dto/examples/template.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
 import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
@@ -42,6 +46,12 @@ export const domainsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
+      name: "entityId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "fromToPrecision",
       optional: true,
       nullable: true,
@@ -66,9 +76,21 @@ export const domainsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "lastCheckedAt",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "instant" },
+    },
+    {
+      name: "officialContactId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "sourceId",
-      optional: false,
-      nullable: false,
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -76,6 +98,18 @@ export const domainsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "statusId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "templateId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "toYear",

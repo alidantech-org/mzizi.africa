@@ -2,6 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
@@ -70,6 +71,12 @@ export const levelsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "boolean" },
+    },
+    {
+      name: "rootFeatureId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "updatedAt",

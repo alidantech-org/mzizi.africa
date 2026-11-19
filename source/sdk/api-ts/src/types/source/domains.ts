@@ -6,12 +6,17 @@ export interface SourceDomains {
   createdAt: string;
   deletedAt?: string | null;
   endsOn?: string | null;
+  entityId?: string | null;
   fromToPrecision?: SharedDatePrecision | null;
   fromYear?: number | null;
   host: string;
   id: string;
-  sourceId: string;
+  lastCheckedAt?: string | null;
+  officialContactId?: string | null;
+  sourceId?: string | null;
   startsOn?: string | null;
+  statusId?: string | null;
+  templateId?: string | null;
   toYear?: number | null;
   updatedAt: string;
   version: number;

@@ -24,7 +24,7 @@ import { getProject } from "@mzizi/api-client/actions/insights/get-project.actio
 import { listTenders } from "@mzizi/api-client/actions/insights/list-tenders.actions.ts";
 import { getNearbyProjects } from "@mzizi/api-client/actions/insights/get-nearby-projects.actions.ts";
 import { getLeaderTree } from "@mzizi/api-client/actions/insights/get-leader-tree.actions.ts";
-import { listFacts } from "@mzizi/api-client/actions/insights/list-facts.actions.ts";
+import { listFacts } from "@mzizi/api-client/actions/experience/list-facts.actions.ts";
 
 interface Outcome { readonly success: boolean; readonly body: unknown; readonly message?: string }
 

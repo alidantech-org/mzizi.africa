@@ -9,9 +9,9 @@ import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
 import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
-import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 
 // ----------------------------------
@@ -36,7 +36,10 @@ import type {
 /** One directed typed relationship between exactly two Official identities, optionally with an ownership share. */
 export interface IRelationships extends B.IBase {
   code: string;
+  confidence: number | null;
   endsOn: Date | null;
+  evidenceBasisId: string | null;
+  evidenceStatusId: string | null;
   fromEntityId: string | null;
   fromIndividualId: string | null;
   fromToPrecision: DatePrecision | null;
@@ -48,6 +51,8 @@ export interface IRelationships extends B.IBase {
   toEntityId: string | null;
   toIndividualId: string | null;
   toYear: number | null;
+  readonly evidenceBasis?: ValueTypes.IValue;
+  readonly evidenceStatus?: ValueTypes.IValue;
   readonly fromEntity?: EntitiesTypes.IEntities;
   readonly fromIndividual?: IndividualsTypes.IIndividuals;
   readonly kind?: ValueTypes.IValue;
@@ -155,6 +160,8 @@ export type IRelationshipsAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IRelationshipsRelationMap extends Record<RelationshipsRelationKey, unknown> {
+  evidenceBasis: ValueTypes.IValueAsOneRelationQuery;
+  evidenceStatus: ValueTypes.IValueAsOneRelationQuery;
   fromEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   fromIndividual: IndividualsTypes.IIndividualsAsOneRelationQuery;
   kind: ValueTypes.IValueAsOneRelationQuery;

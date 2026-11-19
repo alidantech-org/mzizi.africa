@@ -32,5 +32,6 @@ class LevelsRow(BaseModel):
     hierarchy_kind_id: UUID
     id: UUID
     is_routing_hierarchy: bool
+    root_feature_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

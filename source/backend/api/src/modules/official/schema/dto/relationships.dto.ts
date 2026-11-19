@@ -16,6 +16,7 @@ import {
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Percentage } from "#/modules/shared/schema/type/percentage.type.ts";
@@ -42,6 +43,13 @@ export class RelationshipsDto {
   )
   code!: IdentityCode;
 
+  @IsOptional()
+  @ValidateIf((object) => object.confidence !== null)
+  @IsNumber({})
+  @Min(0)
+  @Max(1)
+  confidence?: Confidence | null;
+
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -54,6 +62,18 @@ export class RelationshipsDto {
   @ValidateIf((object) => object.endsOn !== null)
   @IsISO8601({ strict: true })
   endsOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.evidenceBasisId !== null)
+  @IsString()
+  @IsUUID()
+  evidenceBasisId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.evidenceStatusId !== null)
+  @IsString()
+  @IsUUID()
+  evidenceStatusId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fromEntityId !== null)

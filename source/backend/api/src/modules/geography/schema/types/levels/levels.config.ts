@@ -11,6 +11,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 import * as CountryConfig from "#/modules/reference/schema/types/country/country.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -36,6 +37,7 @@ export const LEVELS_RELATION_KEYS = [
   "country",
   "featureKind",
   "hierarchyKind",
+  "rootFeature",
 ] as const satisfies readonly LevelsKey[];
 
 // ----------------------------------
@@ -52,6 +54,7 @@ export const LEVELS_SORTABLE_FIELDS = [
   "hierarchyKindId",
   "id",
   "isRoutingHierarchy",
+  "rootFeatureId",
   "updatedAt",
   "version",
 ] as const satisfies readonly LevelsKey[];
@@ -64,6 +67,7 @@ export const LEVELS_FILTERABLE_FIELDS = [
   "hierarchyKindId",
   "id",
   "isRoutingHierarchy",
+  "rootFeatureId",
 ] as const satisfies readonly LevelsKey[];
 
 export const LEVELS_DATE_RANGE_FIELDS = [
@@ -92,6 +96,7 @@ export const LEVELS_SELECTABLE_FIELDS = [
   "hierarchyKindId",
   "id",
   "isRoutingHierarchy",
+  "rootFeatureId",
   "updatedAt",
   "version",
 ] as const satisfies readonly LevelsKey[];
@@ -106,6 +111,7 @@ export const LEVELS_DEFAULT_SELECT_FIELDS = [
   "hierarchyKindId",
   "id",
   "isRoutingHierarchy",
+  "rootFeatureId",
   "updatedAt",
   "version",
 ] as const satisfies readonly LevelsSelectableField[];
@@ -121,6 +127,7 @@ export const LEVELS_EDITABLE_FIELDS = [
   "featureKindId",
   "hierarchyKindId",
   "isRoutingHierarchy",
+  "rootFeatureId",
 ] as const satisfies readonly LevelsKey[];
 
 // ----------------------------------
@@ -160,6 +167,10 @@ export const LEVELS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<LevelsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "hierarchyKind",
+  ),
+  Q.createRelationKeyMapper<LevelsRelationKey>().one(
+    () => FeaturesConfig.FEATURES_AS_ONE_RELATION_CONFIG,
+    "rootFeature",
   ),
 ] as const;
 

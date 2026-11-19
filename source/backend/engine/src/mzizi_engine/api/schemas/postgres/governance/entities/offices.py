@@ -34,7 +34,8 @@ class OfficesRow(BaseModel):
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     institution_id: UUID
-    office_kind_id: UUID
+    position_id: UUID
+    seat_ordinal: Annotated[int, Field(ge=1)] | None = None
     source_citation_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     unit_feature_id: UUID | None = None

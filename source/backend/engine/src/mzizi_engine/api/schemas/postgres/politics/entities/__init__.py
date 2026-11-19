@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from mzizi_engine.api.schemas.postgres.filesystem.entities.file_versions import FileVersionsRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
 from mzizi_engine.api.schemas.postgres.governance.entities.holders import HoldersRow
 from mzizi_engine.api.schemas.postgres.governance.entities.offices import OfficesRow
@@ -12,6 +13,7 @@ from mzizi_engine.api.schemas.postgres.politics.entities.alignments import Align
 from mzizi_engine.api.schemas.postgres.politics.entities.candidates import CandidatesRow
 from mzizi_engine.api.schemas.postgres.politics.entities.coalitions import CoalitionsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.contests import ContestsRow
+from mzizi_engine.api.schemas.postgres.politics.entities.contributions import ContributionsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.elections import ElectionsRow
 from mzizi_engine.api.schemas.postgres.politics.entities.electorates import ElectoratesRow
 from mzizi_engine.api.schemas.postgres.politics.entities.manifesto_items import ManifestoItemsRow
@@ -35,11 +37,13 @@ __all__ = [
     "CitationsRow",
     "CoalitionsRow",
     "ContestsRow",
+    "ContributionsRow",
     "CountryRow",
     "ElectionsRow",
     "ElectoratesRow",
     "EntitiesRow",
     "FeaturesRow",
+    "FileVersionsRow",
     "HoldersRow",
     "IndividualsRow",
     "ManifestoItemsRow",

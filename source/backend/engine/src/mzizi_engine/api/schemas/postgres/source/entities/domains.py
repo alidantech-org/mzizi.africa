@@ -29,12 +29,17 @@ class DomainsRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     ends_on: date | None = None
+    entity_id: UUID | None = None
     from_to_precision: DatePrecision | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     host: Annotated[str, Field(min_length=1, max_length=255)]
     id: UUID
-    source_id: UUID
+    last_checked_at: datetime | None = None
+    official_contact_id: UUID | None = None
+    source_id: UUID | None = None
     starts_on: date | None = None
+    status_id: UUID | None = None
+    template_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

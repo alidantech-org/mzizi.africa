@@ -61,6 +61,12 @@ export class MediaDto {
   description?: Description | null;
 
   @IsOptional()
+  @ValidateIf((object) => object.endSecond !== null)
+  @IsInt()
+  @Min(0)
+  endSecond?: NonNegativeInteger | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.externalUrl !== null)
   @IsString()
   @IsUrl()
@@ -101,6 +107,21 @@ export class MediaDto {
   @IsString()
   @MaxLength(4000)
   purpose?: Description | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.startSecond !== null)
+  @IsInt()
+  @Min(0)
+  @Satisfies<MediaDto>(
+    (object) =>
+      object.startSecond == null ||
+      object.endSecond == null ||
+      object.startSecond < object.endSecond,
+    {
+      message: "Media Seconds Are Ordered",
+    },
+  )
+  startSecond?: NonNegativeInteger | null;
 
   @IsString()
   @IsUUID()

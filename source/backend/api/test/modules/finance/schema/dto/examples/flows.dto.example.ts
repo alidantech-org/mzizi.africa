@@ -12,6 +12,7 @@ import { moneyEntityExample } from "@test/modules/finance/schema/dto/examples/mo
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
 import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
+import { individualsExample } from "@test/modules/official/schema/dto/examples/individuals.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
@@ -52,6 +53,12 @@ export const flowsExample: ContractExample = contractExample({
     },
     {
       name: "counterpartyEntityId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "counterpartyIndividualId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },

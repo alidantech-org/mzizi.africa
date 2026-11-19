@@ -700,7 +700,115 @@
         ,"subject_table": {
           "type": ["string", "null"],
           "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "contenders": {
+      "title": "source.contenders",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.source.contenders",
+      "x-id": "#/schemas/source.Contenders",
+      "x-table": "source.contenders",
+      "x-primaryKey": ["id"],"x-naturalKey": ["dispute_code", "citation_code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["dispute_id", "citation_id"]
+      ],
+      "required": [
+        "citation_id"
+        ,"claim"
+        ,"dispute_id"
+        ,"id"
+        ,"is_preferred"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "citation_code"
+          ,"claim"
+          ,"dispute_code"
+          ,"is_preferred"
+          ,"position"
+        ],
+        "required": [
+          "citation_code"
+          ,"claim"
+          ,"dispute_code"
+          ,"is_preferred"
+        ]
+      },
+      "properties": {
+        "citation_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "citation_code" }
+        }
+        ,"claim": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"dispute_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/source.Disputes", "column": "id", "alias": "dispute_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"is_preferred": {
+          "type": "boolean",
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"position": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
           "x-role": "data"
         }
         ,"updated_at": {
@@ -1014,6 +1122,144 @@
         }
       }
     },
+    "disputes": {
+      "title": "source.disputes",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.source.disputes",
+      "x-id": "#/schemas/source.Disputes",
+      "x-table": "source.disputes",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"id"
+        ,"kind_id"
+        ,"status_id"
+        ,"subject_id"
+        ,"subject_table"
+        ,"summary"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"kind_code"
+          ,"resolution_citation_code"
+          ,"resolved_on"
+          ,"status_code"
+          ,"subject_id"
+          ,"subject_table"
+          ,"summary"
+        ],
+        "required": [
+          "code"
+          ,"kind_code"
+          ,"status_code"
+          ,"subject_id"
+          ,"subject_table"
+          ,"summary"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.src.dispute.kind" }
+        }
+        ,"resolution_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "resolution_citation_code" }
+        }
+        ,"resolved_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"status_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.src.dispute.status" }
+        }
+        ,"subject_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "data"
+        }
+        ,"subject_table": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "x-role": "data"
+        }
+        ,"summary": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "domains": {
       "title": "source.domains",
       "type": "object",
@@ -1031,7 +1277,6 @@
         "code"
         ,"host"
         ,"id"
-        ,"source_id"
       ],
       "x-seed": {
         "system": [
@@ -1044,17 +1289,21 @@
         "columns": [
           "code"
           ,"ends_on"
+          ,"entity_code"
           ,"from_to_precision"
           ,"from_year"
           ,"host"
+          ,"last_checked_at"
+          ,"official_contact_code"
           ,"source_code"
           ,"starts_on"
+          ,"status_code"
+          ,"template_code"
           ,"to_year"
         ],
         "required": [
           "code"
           ,"host"
-          ,"source_code"
         ]
       },
       "properties": {
@@ -1086,6 +1335,13 @@
           "format": "date",
           "x-role": "data"
         }
+        ,"entity_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "entity_code" }
+        }
         ,"from_to_precision": {
           "type": ["string", "null"],
           "x-type": "text",
@@ -1111,8 +1367,21 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
+        ,"last_checked_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"official_contact_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Contacts", "column": "id", "alias": "official_contact_code" }
+        }
         ,"source_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
@@ -1123,6 +1392,20 @@
           "x-type": "date",
           "format": "date",
           "x-role": "data"
+        }
+        ,"status_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.src.domain.status" }
+        }
+        ,"template_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Template", "column": "id", "alias": "template_code" }
         }
         ,"to_year": {
           "type": ["integer", "null"],
@@ -1785,7 +2068,7 @@
         ,"subject_table": {
           "type": ["string", "null"],
           "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
           "x-role": "data"
         }
         ,"updated_at": {
@@ -1947,7 +2230,7 @@
         ,"subject_table": {
           "type": "string",
           "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
           "x-role": "data"
         }
         ,"to_year": {
@@ -2004,8 +2287,10 @@
           ,"credibility_code"
           ,"description"
           ,"kind"
+          ,"licence_code"
           ,"official_entity_code"
           ,"publisher_code"
+          ,"terms_url"
           ,"title"
         ],
         "required": [
@@ -2078,6 +2363,13 @@
           "enum": ["api", "website"],
           "x-role": "data"
         }
+        ,"licence_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "licence_code", "scheme": "ref.sch.src.licence" }
+        }
         ,"official_entity_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
@@ -2091,6 +2383,12 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/source.Publishers", "column": "id", "alias": "publisher_code" }
+        }
+        ,"terms_url": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 2048,
+          "x-role": "data"
         }
         ,"title": {
           "type": "string",
@@ -2242,7 +2540,7 @@
         ,"subject_table": {
           "type": "string",
           "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.authority_scopes", "governance.bills", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.coverage", "source.discoveries", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
           "x-role": "data"
         }
         ,"supersedes_id": {

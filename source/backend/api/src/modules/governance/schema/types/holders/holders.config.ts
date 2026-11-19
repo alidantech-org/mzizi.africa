@@ -11,6 +11,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as MotionsConfig from "#/modules/governance/schema/types/motions/motions.config";
 import * as IndividualsConfig from "#/modules/official/schema/types/individuals/individuals.config";
 import * as OfficesConfig from "#/modules/governance/schema/types/offices/offices.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
@@ -38,7 +39,9 @@ import type {
 export const HOLDERS_RELATION_KEYS = [
   "appointedByEntity",
   "appointmentKind",
+  "appointmentMotion",
   "individual",
+  "nominatedByEntity",
   "office",
   "sourceCitation",
 ] as const satisfies readonly HoldersKey[];
@@ -50,6 +53,7 @@ export const HOLDERS_RELATION_KEYS = [
 export const HOLDERS_SORTABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "appointmentMotionId",
   "code",
   "createdAt",
   "deletedAt",
@@ -58,6 +62,7 @@ export const HOLDERS_SORTABLE_FIELDS = [
   "id",
   "individualId",
   "leftOfficeOn",
+  "nominatedByEntityId",
   "officeId",
   "sourceCitationId",
   "toYear",
@@ -71,9 +76,11 @@ export const HOLDERS_SEARCHABLE_FIELDS = ["code"] as const satisfies readonly Ho
 export const HOLDERS_FILTERABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "appointmentMotionId",
   "fromToPrecision",
   "id",
   "individualId",
+  "nominatedByEntityId",
   "officeId",
   "sourceCitationId",
 ] as const satisfies readonly HoldersKey[];
@@ -99,6 +106,7 @@ export const HOLDERS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IHolders>
 export const HOLDERS_SELECTABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "appointmentMotionId",
   "code",
   "createdAt",
   "deletedAt",
@@ -107,6 +115,7 @@ export const HOLDERS_SELECTABLE_FIELDS = [
   "id",
   "individualId",
   "leftOfficeOn",
+  "nominatedByEntityId",
   "officeId",
   "sourceCitationId",
   "toYear",
@@ -118,6 +127,7 @@ export const HOLDERS_SELECTABLE_FIELDS = [
 export const HOLDERS_DEFAULT_SELECT_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "appointmentMotionId",
   "code",
   "createdAt",
   "deletedAt",
@@ -126,6 +136,7 @@ export const HOLDERS_DEFAULT_SELECT_FIELDS = [
   "id",
   "individualId",
   "leftOfficeOn",
+  "nominatedByEntityId",
   "officeId",
   "sourceCitationId",
   "toYear",
@@ -141,11 +152,13 @@ export const HOLDERS_DEFAULT_SELECT_FIELDS = [
 export const HOLDERS_EDITABLE_FIELDS = [
   "appointedByEntityId",
   "appointmentKindId",
+  "appointmentMotionId",
   "code",
   "fromToPrecision",
   "fromYear",
   "individualId",
   "leftOfficeOn",
+  "nominatedByEntityId",
   "officeId",
   "sourceCitationId",
   "toYear",
@@ -187,8 +200,16 @@ export const HOLDERS_ONE_RELATION_QUERY_OPTIONS = [
     "appointmentKind",
   ),
   Q.createRelationKeyMapper<HoldersRelationKey>().one(
+    () => MotionsConfig.MOTIONS_AS_ONE_RELATION_CONFIG,
+    "appointmentMotion",
+  ),
+  Q.createRelationKeyMapper<HoldersRelationKey>().one(
     () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
     "individual",
+  ),
+  Q.createRelationKeyMapper<HoldersRelationKey>().one(
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    "nominatedByEntity",
   ),
   Q.createRelationKeyMapper<HoldersRelationKey>().one(
     () => OfficesConfig.OFFICES_AS_ONE_RELATION_CONFIG,

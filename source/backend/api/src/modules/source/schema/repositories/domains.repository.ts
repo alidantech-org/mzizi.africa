@@ -39,6 +39,14 @@ export class DomainsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find domains by entity id, paged by the shared query. */
+  async findByEntity(
+    query: BaseQueryDto<DomainsEntity>,
+    entityId: NonNullable<DomainsEntity["entityId"]>,
+  ): Promise<IFindAllResponse<DomainsEntity>> {
+    return await this.findByQuery(query, { entityId, deletedAt: IsNull() });
+  }
+
   /** Find domains by from to precision, paged by the shared query. */
   async findByFromToPrecision(
     query: BaseQueryDto<DomainsEntity>,
@@ -47,12 +55,36 @@ export class DomainsRepository
     return await this.findByQuery(query, { fromToPrecision, deletedAt: IsNull() });
   }
 
+  /** Find domains by official contact id, paged by the shared query. */
+  async findByOfficialContact(
+    query: BaseQueryDto<DomainsEntity>,
+    officialContactId: NonNullable<DomainsEntity["officialContactId"]>,
+  ): Promise<IFindAllResponse<DomainsEntity>> {
+    return await this.findByQuery(query, { officialContactId, deletedAt: IsNull() });
+  }
+
   /** Find domains by source id, paged by the shared query. */
   async findBySource(
     query: BaseQueryDto<DomainsEntity>,
     sourceId: NonNullable<DomainsEntity["sourceId"]>,
   ): Promise<IFindAllResponse<DomainsEntity>> {
     return await this.findByQuery(query, { sourceId, deletedAt: IsNull() });
+  }
+
+  /** Find domains by status id, paged by the shared query. */
+  async findByStatus(
+    query: BaseQueryDto<DomainsEntity>,
+    statusId: NonNullable<DomainsEntity["statusId"]>,
+  ): Promise<IFindAllResponse<DomainsEntity>> {
+    return await this.findByQuery(query, { statusId, deletedAt: IsNull() });
+  }
+
+  /** Find domains by template id, paged by the shared query. */
+  async findByTemplate(
+    query: BaseQueryDto<DomainsEntity>,
+    templateId: NonNullable<DomainsEntity["templateId"]>,
+  ): Promise<IFindAllResponse<DomainsEntity>> {
+    return await this.findByQuery(query, { templateId, deletedAt: IsNull() });
   }
 
   /** Find the domains with this code (unique). */

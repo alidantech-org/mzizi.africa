@@ -4,6 +4,7 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
 import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
 import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
@@ -14,6 +15,12 @@ export const institutionsExample: ContractExample = contractExample({
   fields: [
     {
       name: "armId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "classId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -30,6 +37,12 @@ export const institutionsExample: ContractExample = contractExample({
           "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ],
       },
+    },
+    {
+      name: "countryId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "createdAt",

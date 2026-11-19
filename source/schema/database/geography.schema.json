@@ -829,6 +829,7 @@
           ,"feature_kind_code"
           ,"hierarchy_kind_code"
           ,"is_routing_hierarchy"
+          ,"root_feature_code"
         ],
         "required": [
           "code"
@@ -899,6 +900,13 @@
           "type": "boolean",
           "x-type": "boolean",
           "x-role": "data"
+        }
+        ,"root_feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "root_feature_code" }
         }
         ,"updated_at": {
           "type": "string",

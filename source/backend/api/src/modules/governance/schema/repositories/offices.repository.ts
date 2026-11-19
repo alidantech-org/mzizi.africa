@@ -55,12 +55,12 @@ export class OfficesRepository
     return await this.findByQuery(query, { institutionId, deletedAt: IsNull() });
   }
 
-  /** Find offices by office kind id, paged by the shared query. */
-  async findByOfficeKind(
+  /** Find offices by position id, paged by the shared query. */
+  async findByPosition(
     query: BaseQueryDto<OfficesEntity>,
-    officeKindId: NonNullable<OfficesEntity["officeKindId"]>,
+    positionId: NonNullable<OfficesEntity["positionId"]>,
   ): Promise<IFindAllResponse<OfficesEntity>> {
-    return await this.findByQuery(query, { officeKindId, deletedAt: IsNull() });
+    return await this.findByQuery(query, { positionId, deletedAt: IsNull() });
   }
 
   /** Find offices by source citation id, paged by the shared query. */

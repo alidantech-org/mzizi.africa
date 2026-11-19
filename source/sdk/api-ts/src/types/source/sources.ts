@@ -11,8 +11,10 @@ export interface SourceSources {
   description?: string | null;
   id: string;
   kind: SourceSourceKind;
+  licenceId?: string | null;
   officialEntityId?: string | null;
   publisherId: string;
+  termsUrl?: string | null;
   title: string;
   updatedAt: string;
   version: number;

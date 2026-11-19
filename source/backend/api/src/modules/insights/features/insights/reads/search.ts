@@ -51,7 +51,7 @@ export async function globalSearch(
       where n.name ilike $1 order by f.id, n.is_default desc) x order by length(title), title limit $2`);
   await run("leader", "Leader", `
     select * from (select distinct on (i.id) h.id, i.code, n.name as title,
-        (select k.label from reference.values k where k.id = o.office_kind_id) || ', ' ||
+        (select k.label from reference.values k where k.id = (select p.title_id from governance.positions p where p.id = o.position_id)) || ', ' ||
         coalesce((select n2.name from geography.names n2 where n2.feature_id = o.unit_feature_id and n2.is_default limit 1), '') as subtitle,
         o.unit_feature_id as feature_id, count(*) over () as total
       from official.names n join official.individuals i on i.id = n.individual_id

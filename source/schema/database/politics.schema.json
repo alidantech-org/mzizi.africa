@@ -548,6 +548,183 @@
         }
       }
     },
+    "contributions": {
+      "title": "politics.contributions",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.politics.contributions",
+      "x-id": "#/schemas/politics.Contributions",
+      "x-table": "politics.contributions",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "amount_minor_units"
+        ,"code"
+        ,"currency_id"
+        ,"evidence_status_id"
+        ,"given_on"
+        ,"id"
+        ,"is_in_kind"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "amount_minor_units"
+          ,"code"
+          ,"currency_code"
+          ,"disclosure_file_version_code"
+          ,"donor_entity_code"
+          ,"donor_individual_code"
+          ,"election_code"
+          ,"evidence_status_code"
+          ,"given_on"
+          ,"is_in_kind"
+          ,"recipient_candidate_code"
+          ,"recipient_party_code"
+          ,"source_citation_code"
+        ],
+        "required": [
+          "amount_minor_units"
+          ,"code"
+          ,"currency_code"
+          ,"evidence_status_code"
+          ,"given_on"
+          ,"is_in_kind"
+        ]
+      },
+      "properties": {
+        "amount_minor_units": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"currency_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "currency_code" }
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"disclosure_file_version_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/filesystem.FileVersions", "column": "id", "alias": "disclosure_file_version_code" }
+        }
+        ,"donor_entity_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "donor_entity_code" }
+        }
+        ,"donor_individual_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "donor_individual_code" }
+        }
+        ,"election_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/politics.Elections", "column": "id", "alias": "election_code" }
+        }
+        ,"evidence_status_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "evidence_status_code", "scheme": "ref.sch.ref.evidence.status" }
+        }
+        ,"given_on": {
+          "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"is_in_kind": {
+          "type": "boolean",
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"recipient_candidate_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/politics.Candidates", "column": "id", "alias": "recipient_candidate_code" }
+        }
+        ,"recipient_party_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/politics.Parties", "column": "id", "alias": "recipient_party_code" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "elections": {
       "title": "politics.elections",
       "type": "object",

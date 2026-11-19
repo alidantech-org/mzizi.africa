@@ -40,6 +40,22 @@ export class RelationshipsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find relationships by evidence basis id, paged by the shared query. */
+  async findByEvidenceBasis(
+    query: BaseQueryDto<OfficialRelationshipsEntity>,
+    evidenceBasisId: NonNullable<OfficialRelationshipsEntity["evidenceBasisId"]>,
+  ): Promise<IFindAllResponse<OfficialRelationshipsEntity>> {
+    return await this.findByQuery(query, { evidenceBasisId, deletedAt: IsNull() });
+  }
+
+  /** Find relationships by evidence status id, paged by the shared query. */
+  async findByEvidenceStatus(
+    query: BaseQueryDto<OfficialRelationshipsEntity>,
+    evidenceStatusId: NonNullable<OfficialRelationshipsEntity["evidenceStatusId"]>,
+  ): Promise<IFindAllResponse<OfficialRelationshipsEntity>> {
+    return await this.findByQuery(query, { evidenceStatusId, deletedAt: IsNull() });
+  }
+
   /** Find relationships by from entity id, paged by the shared query. */
   async findByFromEntity(
     query: BaseQueryDto<OfficialRelationshipsEntity>,

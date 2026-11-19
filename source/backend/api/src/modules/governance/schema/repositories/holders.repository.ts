@@ -55,6 +55,14 @@ export class HoldersRepository
     return await this.findByQuery(query, { appointmentKindId, deletedAt: IsNull() });
   }
 
+  /** Find holders by appointment motion id, paged by the shared query. */
+  async findByAppointmentMotion(
+    query: BaseQueryDto<HoldersEntity>,
+    appointmentMotionId: NonNullable<HoldersEntity["appointmentMotionId"]>,
+  ): Promise<IFindAllResponse<HoldersEntity>> {
+    return await this.findByQuery(query, { appointmentMotionId, deletedAt: IsNull() });
+  }
+
   /** Find holders by from to precision, paged by the shared query. */
   async findByFromToPrecision(
     query: BaseQueryDto<HoldersEntity>,
@@ -69,6 +77,14 @@ export class HoldersRepository
     individualId: NonNullable<HoldersEntity["individualId"]>,
   ): Promise<IFindAllResponse<HoldersEntity>> {
     return await this.findByQuery(query, { individualId, deletedAt: IsNull() });
+  }
+
+  /** Find holders by nominated by entity id, paged by the shared query. */
+  async findByNominatedByEntity(
+    query: BaseQueryDto<HoldersEntity>,
+    nominatedByEntityId: NonNullable<HoldersEntity["nominatedByEntityId"]>,
+  ): Promise<IFindAllResponse<HoldersEntity>> {
+    return await this.findByQuery(query, { nominatedByEntityId, deletedAt: IsNull() });
   }
 
   /** Find holders by office id, paged by the shared query. */

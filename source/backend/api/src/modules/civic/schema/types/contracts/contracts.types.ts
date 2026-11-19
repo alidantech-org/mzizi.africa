@@ -36,6 +36,7 @@ import type {
 /** One executed contract with a contractor, optional procurement/project links and contracted amount. */
 export interface IContracts extends B.IBase {
   amountMinorUnits: number;
+  buyerEntityId: string | null;
   code: string;
   contractorEntityId: string;
   currencyId: string;
@@ -45,6 +46,7 @@ export interface IContracts extends B.IBase {
   signedOn: Date | null;
   sourceCitationId: string | null;
   statusId: string;
+  readonly buyerEntity?: EntitiesTypes.IEntities;
   readonly contractorEntity?: EntitiesTypes.IEntities;
   readonly currency?: ValueTypes.IValue;
   readonly nature?: ValueTypes.IValue;
@@ -153,6 +155,7 @@ export type IContractsAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IContractsRelationMap extends Record<ContractsRelationKey, unknown> {
+  buyerEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   contractorEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   currency: ValueTypes.IValueAsOneRelationQuery;
   nature: ValueTypes.IValueAsOneRelationQuery;

@@ -17,6 +17,7 @@ import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.ty
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 
 /**
  * A publication channel: a real website or a real API, with its classification and credibility.
@@ -27,6 +28,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["kind"])
 @Index(["classificationId"])
 @Index(["credibilityId"])
+@Index(["licenceId"])
 export class SourcesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -73,6 +75,13 @@ export class SourcesEntity {
   @Column({ name: "kind", type: "enum", enum: SourceKind })
   kind!: SourceKind;
 
+  @Column({ name: "licence_id", type: "uuid", nullable: true })
+  licenceId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "licence_id" })
+  licence?: Relation<ValueEntity>;
+
   @Column({ name: "official_entity_id", type: "uuid", nullable: true })
   officialEntityId?: Id | null;
 
@@ -86,6 +95,9 @@ export class SourcesEntity {
   @ManyToOne(() => PublishersEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "publisher_id" })
   publisher?: Relation<PublishersEntity>;
+
+  @Column({ name: "terms_url", type: "varchar", length: 2048, nullable: true })
+  termsUrl?: Url | null;
 
   @Column({ name: "title", type: "varchar", length: 300 })
   title!: Name;

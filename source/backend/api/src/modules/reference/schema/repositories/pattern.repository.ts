@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { IsNull, type Repository } from "typeorm";
 import { EntityRepository, type IUpdatableRepository } from "#/database/base/entity-repository.ts";
+import { BaseQueryDto } from "#/database/base/base-query.dto.ts";
+import type { IFindAllResponse } from "#/database/base/query.types.ts";
 import { PatternEntity } from "#/modules/reference/schema/entities/pattern.entity.ts";
 import * as Pattern from "#/modules/reference/schema/types/pattern/index.ts";
 
@@ -35,6 +37,22 @@ export class PatternRepository
   ): Promise<PatternEntity | null> {
     const stamped = await this.stampUpdate(id, data);
     return stamped === null ? null : await this.update(id, stamped);
+  }
+
+  /** Find pattern by country id, paged by the shared query. */
+  async findByCountry(
+    query: BaseQueryDto<PatternEntity>,
+    countryId: NonNullable<PatternEntity["countryId"]>,
+  ): Promise<IFindAllResponse<PatternEntity>> {
+    return await this.findByQuery(query, { countryId, deletedAt: IsNull() });
+  }
+
+  /** Find pattern by kind id, paged by the shared query. */
+  async findByKind(
+    query: BaseQueryDto<PatternEntity>,
+    kindId: NonNullable<PatternEntity["kindId"]>,
+  ): Promise<IFindAllResponse<PatternEntity>> {
+    return await this.findByQuery(query, { kindId, deletedAt: IsNull() });
   }
 
   /** Find the pattern with this code (unique). */

@@ -17,6 +17,7 @@ class ProcurementsRow(BaseModel):
     table: ClassVar[str] = "civic.procurements"
 
     awarded_on: date | None = None
+    bidder_count: Annotated[int, Field(ge=0)] | None = None
     buyer_entity_id: UUID
     category_id: UUID | None = None
     closes_on: date | None = None
@@ -30,7 +31,10 @@ class ProcurementsRow(BaseModel):
     ]
     country_id: UUID | None = None
     created_at: datetime
+    currency_id: UUID | None = None
     deleted_at: datetime | None = None
+    estimated_amount_minor_units: Annotated[int, Field(ge=0)] | None = None
+    evaluation_basis_id: UUID | None = None
     id: UUID
     nature_id: UUID | None = None
     procedure_kind_id: UUID

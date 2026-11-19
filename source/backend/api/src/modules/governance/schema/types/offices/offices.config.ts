@@ -10,7 +10,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // RELATED ENTITY CONFIGS
 // ----------------------------------
 import * as InstitutionsConfig from "#/modules/governance/schema/types/institutions/institutions.config";
-import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as PositionsConfig from "#/modules/governance/schema/types/positions/positions.config";
 import * as CitationsConfig from "#/modules/source/schema/types/citations/citations.config";
 import * as FeaturesConfig from "#/modules/geography/schema/types/features/features.config";
 
@@ -36,7 +36,7 @@ import type {
 
 export const OFFICES_RELATION_KEYS = [
   "institution",
-  "officeKind",
+  "position",
   "sourceCitation",
   "unitFeature",
 ] as const satisfies readonly OfficesKey[];
@@ -55,7 +55,8 @@ export const OFFICES_SORTABLE_FIELDS = [
   "fromYear",
   "id",
   "institutionId",
-  "officeKindId",
+  "positionId",
+  "seatOrdinal",
   "sourceCitationId",
   "toYear",
   "unitFeatureId",
@@ -69,7 +70,7 @@ export const OFFICES_FILTERABLE_FIELDS = [
   "fromToPrecision",
   "id",
   "institutionId",
-  "officeKindId",
+  "positionId",
   "sourceCitationId",
   "unitFeatureId",
 ] as const satisfies readonly OfficesKey[];
@@ -102,7 +103,8 @@ export const OFFICES_SELECTABLE_FIELDS = [
   "fromYear",
   "id",
   "institutionId",
-  "officeKindId",
+  "positionId",
+  "seatOrdinal",
   "sourceCitationId",
   "toYear",
   "unitFeatureId",
@@ -120,7 +122,8 @@ export const OFFICES_DEFAULT_SELECT_FIELDS = [
   "fromYear",
   "id",
   "institutionId",
-  "officeKindId",
+  "positionId",
+  "seatOrdinal",
   "sourceCitationId",
   "toYear",
   "unitFeatureId",
@@ -139,7 +142,8 @@ export const OFFICES_EDITABLE_FIELDS = [
   "fromToPrecision",
   "fromYear",
   "institutionId",
-  "officeKindId",
+  "positionId",
+  "seatOrdinal",
   "sourceCitationId",
   "toYear",
   "unitFeatureId",
@@ -176,8 +180,8 @@ export const OFFICES_ONE_RELATION_QUERY_OPTIONS = [
     "institution",
   ),
   Q.createRelationKeyMapper<OfficesRelationKey>().one(
-    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
-    "officeKind",
+    () => PositionsConfig.POSITIONS_AS_ONE_RELATION_CONFIG,
+    "position",
   ),
   Q.createRelationKeyMapper<OfficesRelationKey>().one(
     () => CitationsConfig.CITATIONS_AS_ONE_RELATION_CONFIG,

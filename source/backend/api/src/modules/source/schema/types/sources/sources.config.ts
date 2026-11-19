@@ -36,6 +36,7 @@ import type {
 export const SOURCES_RELATION_KEYS = [
   "classification",
   "credibility",
+  "licence",
   "officialEntity",
   "publisher",
 ] as const satisfies readonly SourcesKey[];
@@ -54,8 +55,10 @@ export const SOURCES_SORTABLE_FIELDS = [
   "description",
   "id",
   "kind",
+  "licenceId",
   "officialEntityId",
   "publisherId",
+  "termsUrl",
   "title",
   "updatedAt",
   "version",
@@ -73,6 +76,7 @@ export const SOURCES_FILTERABLE_FIELDS = [
   "credibilityId",
   "id",
   "kind",
+  "licenceId",
   "officialEntityId",
   "publisherId",
 ] as const satisfies readonly SourcesKey[];
@@ -103,8 +107,10 @@ export const SOURCES_SELECTABLE_FIELDS = [
   "description",
   "id",
   "kind",
+  "licenceId",
   "officialEntityId",
   "publisherId",
+  "termsUrl",
   "title",
   "updatedAt",
   "version",
@@ -120,8 +126,10 @@ export const SOURCES_DEFAULT_SELECT_FIELDS = [
   "description",
   "id",
   "kind",
+  "licenceId",
   "officialEntityId",
   "publisherId",
+  "termsUrl",
   "title",
   "updatedAt",
   "version",
@@ -138,8 +146,10 @@ export const SOURCES_EDITABLE_FIELDS = [
   "credibilityId",
   "description",
   "kind",
+  "licenceId",
   "officialEntityId",
   "publisherId",
+  "termsUrl",
   "title",
 ] as const satisfies readonly SourcesKey[];
 
@@ -176,6 +186,10 @@ export const SOURCES_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<SourcesRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
     "credibility",
+  ),
+  Q.createRelationKeyMapper<SourcesRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "licence",
   ),
   Q.createRelationKeyMapper<SourcesRelationKey>().one(
     () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,

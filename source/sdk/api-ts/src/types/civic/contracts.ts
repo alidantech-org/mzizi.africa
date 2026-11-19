@@ -1,6 +1,7 @@
 /** One executed contract with a contractor, optional procurement/project links and contracted amount. */
 export interface CivicContracts {
   amountMinorUnits: number;
+  buyerEntityId?: string | null;
   code: string;
   contractorEntityId: string;
   createdAt: string;

@@ -92,7 +92,13 @@ export class OfficesDto {
 
   @IsString()
   @IsUUID()
-  officeKindId!: Id;
+  positionId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.seatOrdinal !== null)
+  @IsInt()
+  @Min(1)
+  seatOrdinal?: PositiveInteger | null;
 
   @IsOptional()
   @ValidateIf((object) => object.sourceCitationId !== null)

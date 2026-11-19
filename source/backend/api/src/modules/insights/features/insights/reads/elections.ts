@@ -152,7 +152,7 @@ export async function partyDetail(db: DataSource, code: string) {
   if (!party) throw new NotFoundException("No such party.");
   const members: { holder_id: string | null; individual_id: string; name: string; office: string | null; unit: string | null; unit_id: string | null }[] = await db.query(
     `select h.id as holder_id, m.individual_id, ${personName("m.individual_id")} as name,
-       (select k.label from governance.offices o join reference.values k on k.id = o.office_kind_id where o.id = h.office_id) as office,
+       (select k.label from governance.offices o join reference.values k on k.id = (select p.title_id from governance.positions p where p.id = o.position_id) where o.id = h.office_id) as office,
        (select ${featureName("o.unit_feature_id", "'en'")} from governance.offices o where o.id = h.office_id) as unit,
        (select o.unit_feature_id from governance.offices o where o.id = h.office_id) as unit_id
      from politics.memberships m left join governance.holders h on h.individual_id = m.individual_id and h.left_office_on is null

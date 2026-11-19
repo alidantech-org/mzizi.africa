@@ -10,7 +10,7 @@ import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.
 // RELATED ENTITY TYPES
 // ----------------------------------
 import type * as InstitutionsTypes from "#/modules/governance/schema/types/institutions/institutions.types";
-import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as PositionsTypes from "#/modules/governance/schema/types/positions/positions.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
 import type * as FeaturesTypes from "#/modules/geography/schema/types/features/features.types";
 
@@ -41,12 +41,13 @@ export interface IOffices extends B.IBase {
   fromToPrecision: DatePrecision | null;
   fromYear: number | null;
   institutionId: string;
-  officeKindId: string;
+  positionId: string;
+  seatOrdinal: number | null;
   sourceCitationId: string | null;
   toYear: number | null;
   unitFeatureId: string | null;
   readonly institution?: InstitutionsTypes.IInstitutions;
-  readonly officeKind?: ValueTypes.IValue;
+  readonly position?: PositionsTypes.IPositions;
   readonly sourceCitation?: CitationsTypes.ICitations;
   readonly unitFeature?: FeaturesTypes.IFeatures;
 }
@@ -139,7 +140,7 @@ export type IOfficesAsManyRelationQuery = Q.IAsManyRelationQuery<
 
 export interface IOfficesRelationMap extends Record<OfficesRelationKey, unknown> {
   institution: InstitutionsTypes.IInstitutionsAsOneRelationQuery;
-  officeKind: ValueTypes.IValueAsOneRelationQuery;
+  position: PositionsTypes.IPositionsAsOneRelationQuery;
   sourceCitation: CitationsTypes.ICitationsAsOneRelationQuery;
   unitFeature: FeaturesTypes.IFeaturesAsOneRelationQuery;
 }

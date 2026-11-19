@@ -10,9 +10,14 @@
  * Not yet enforced: cycles through an edge table such as value_relations.
  */
 import * as dryv from "@dryvcode/author";
+import { rule } from "@dryvcode/author";
 
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { Features, Levels } from "./geography.ts";
+import { Institutions, Offices, Positions } from "./governance.ts";
+import { Contacts } from "./official.ts";
+import { Citations, Domains } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -313,12 +318,122 @@ export const Topic = reference
 export const Pattern = reference
   .schema("Pattern", {
     title: dryv.field(sharedProperties.Name),
+    /** Scheme gov.pattern.kind: institution set, position set, site set, calendar set. */
+    kindId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.gov.pattern.kind"),
+    /** Set when the pattern belongs to one country; empty means it can be applied to any country. */
+    countryId: belongsTo(() => Country).maybe(),
+    description: dryv.field(sharedProperties.Description).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("Stable identity for a reusable, reviewed pattern definition.")
+  .description(
+    "A reviewed rule for generating expected records (institutions, positions, offices, site candidates) before real ones are found. It holds no versions, bindings or dependencies; see DEC-PATTERNS-GENERATE-EXPECTED-DATA-20261119.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("patterns"),
+    storage: dryv.storage("patterns").index("kindId").index("countryId"),
+  });
+
+const patternProperties = reference.properties({
+  /** What a template produces: one closed set, because each product is a different table. */
+  TemplateProduct: dryv.property.enum({
+    Institution: "institution",
+    Position: "position",
+    Office: "office",
+    Domain: "domain",
+    Contact: "contact",
+    EventRule: "event-rule",
+  }),
+});
+
+/*---------------- reference.templates ----------------*/
+export const Template = reference
+  .schema("Template", {
+    patternId: belongsTo(() => Pattern),
+    produces: dryv.field(patternProperties.TemplateProduct),
+    /** The geography level the template fans out over (one product per unit of that level); empty means exactly one. */
+    fanOutLevelId: belongsTo(() => Levels).maybe(),
+    /** The template this one sits under (an assembly under a county government). */
+    parentTemplateId: belongsTo(dryv.self).maybe(),
+    /** Name with named tokens, for example a place name token; the tokens are normalisers defined in the seed term lists. */
+    nameTemplate: dryv.field(sharedProperties.NonEmptyString500),
+    /** Code with named tokens, built the same way as the name. */
+    codeTemplate: dryv.field(sharedProperties.NonEmptyString500),
+    /** Attributes carried by the product; only those that fit `produces` are set. */
+    institutionKindId: belongsTo(() => Value).maybe(),
+    armId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.gov.arm"),
+    classId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.gov.institution.class"),
+    roleId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.gov.position.role"),
+    selectionMethodId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.gov.selection.method"),
+    seatBasisId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.gov.seat.basis"),
+    seatCount: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    termYears: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    termLimit: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description(
+    "One thing a pattern produces, how many (one per unit of a level), how it is named and coded, and the attributes it carries. Templates generate structure only, never people.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("templates")
+      .unique("patternId", "code")
+      .index("patternId")
+      .index("fanOutLevelId")
+      .index("parentTemplateId")
+      .index("sourceCitationId"),
+  });
+
+/*---------------- reference.instances ----------------*/
+export const Instance = reference
+  .schema("Instance", {
+    templateId: belongsTo(() => Template),
+    /** The unit the product was generated for; empty when the template does not fan out. */
+    unitFeatureId: belongsTo(() => Features).maybe(),
+    /** Exactly one of these names the generated record. */
+    institutionId: belongsTo(() => Institutions).maybe(),
+    positionId: belongsTo(() => Positions).maybe(),
+    officeId: belongsTo(() => Offices).maybe(),
+    domainId: belongsTo(() => Domains).maybe(),
+    contactId: belongsTo(() => Contacts).maybe(),
+    /** Scheme ref.evidence.status: expected, sourced, verified, not found, disputed. */
+    statusId: belongsTo(() => Value).tags("scheme:ref.sch.ref.evidence.status"),
+    generatedAt: dryv.field(sharedProperties.Instant),
+    /** The evidence that moved the record out of "expected". */
+    verifiedCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("HasExactlyOneProduct", rule.exactlyOne("institutionId", "positionId", "officeId", "domainId", "contactId"))
+  .description(
+    "The ledger of generated records: which template produced which institution, position, office, site or contact, for which unit, and whether it is still only expected or has been sourced or verified.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("instances")
+      .unique("templateId", "unitFeatureId")
+      .index("templateId")
+      .index("unitFeatureId")
+      .index("institutionId")
+      .index("positionId")
+      .index("officeId")
+      .index("domainId")
+      .index("contactId")
+      .index("statusId")
+      .index("verifiedCitationId"),
   });
 
 export const referenceProposalEnums = reference.properties({

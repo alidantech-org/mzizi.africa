@@ -42,7 +42,7 @@ export async function officialsFor(
 ): Promise<OfficeHolder[]> {
   if (unitIds.length === 0) return [];
   const rows: HolderRow[] = await db.query(
-    `select h.id as holder_id, o.code as office_code, ${valueLabel("o.office_kind_id", "$2")} as office_kind_label,
+    `select h.id as holder_id, o.code as office_code, ${valueLabel("(select p.title_id from governance.positions p where p.id = o.position_id)", "$2")} as office_kind_label,
        o.unit_feature_id, ${featureName("o.unit_feature_id", "$2")} as unit_name, ${personName} as person_name,
        (select ${entityName("pt.entity_id")}
           from politics.memberships m join politics.parties pt on pt.id = m.party_id

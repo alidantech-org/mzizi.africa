@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   Entity,
   Index,
@@ -26,7 +27,12 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["procurementId"])
 @Index(["projectId"])
+@Index(["buyerEntityId"])
 @Index(["sourceCitationId"])
+@Check(
+  "chk_contracts_has_procurement_or_buyer",
+  `procurement_id <> null OR buyer_entity_id <> null`,
+)
 export class ContractsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -37,6 +43,13 @@ export class ContractsEntity {
     transformer: new ColumnNumericTransformer(),
   })
   amountMinorUnits!: AmountMinorUnits;
+
+  @Column({ name: "buyer_entity_id", type: "uuid", nullable: true })
+  buyerEntityId?: Id | null;
+
+  @ManyToOne(() => EntitiesEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "buyer_entity_id" })
+  buyerEntity?: Relation<EntitiesEntity>;
 
   @Column({ name: "code", type: "varchar", length: 255 })
   code!: IdentityCode;

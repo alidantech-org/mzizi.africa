@@ -34,8 +34,10 @@ class SourcesRow(BaseModel):
     description: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
     kind: SourceKind
+    licence_id: UUID | None = None
     official_entity_id: UUID | None = None
     publisher_id: UUID
+    terms_url: Annotated[str, Field(max_length=2048)] | None = None
     title: Annotated[str, Field(min_length=1, max_length=300)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

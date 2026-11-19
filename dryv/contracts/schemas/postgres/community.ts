@@ -12,7 +12,9 @@ import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { subjectFields } from "#/schemas/_subjects.ts";
 import { Accounts } from "./auth.ts";
+import { Contents } from "./filesystem.ts";
 import { Features } from "./geography.ts";
+import { Entities, Individuals } from "./official.ts";
 import { Country, Language, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -325,4 +327,34 @@ export const Deliveries = community
   .role("entity")
   .facets({
     storage: dryv.storage("deliveries").unique("notificationId", "deviceId").index("subscriptionId").index("state"),
+  });
+
+/*---------------- community.replies ----------------*/
+export const Replies = community
+  .schema("Replies", {
+    /** The record the reply or correction concerns: any table, so the subject reference is the right link. */
+    ...subjectFields,
+    respondentEntityId: belongsTo(() => Entities).maybe(),
+    respondentIndividualId: belongsTo(() => Individuals).maybe(),
+    /** The text of the reply, kept as filesystem content so long text and media stay out of this table. */
+    contentId: belongsTo(() => Contents),
+    /** Scheme com.reply.status: received, identity verified, published, declined. */
+    statusId: belongsTo(() => Value).tags("scheme:ref.sch.com.reply.status"),
+    receivedAt: dryv.field(sharedProperties.Instant),
+    publishedAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("HasExactlyOneRespondent", rule.exactlyOne("respondentEntityId", "respondentIndividualId"))
+  .description(
+    "A right of reply or correction request from a named person or body about a record, with the identity check and publication state; shown beside any signal about that record.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("replies")
+      .index("subjectTable", "subjectId")
+      .index("respondentEntityId")
+      .index("respondentIndividualId")
+      .index("contentId")
+      .index("statusId"),
   });

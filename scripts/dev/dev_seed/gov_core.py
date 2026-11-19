@@ -90,7 +90,7 @@ class Ctx:
             {
                 "code": office,
                 "institution_code": institution,
-                "office_kind_code": f"gov.office.kind.{seat.tier}",
+                "office_kind_code": f"gov.position.title.{seat.tier}",
                 "unit_feature_code": unit,
                 "from_year": "2022",
                 "from_to_precision": "exact",
@@ -102,7 +102,7 @@ class Ctx:
                 "code": f"{office}.2022",
                 "office_code": office,
                 "individual_code": person,
-                "appointment_kind_code": f"gov.appointment.kind.{seat.how}",
+                "appointment_kind_code": f"gov.selection.method.{seat.how}",
                 "took_office_on": "2022-09-27",
                 "from_year": "2022",
                 "from_to_precision": "exact",

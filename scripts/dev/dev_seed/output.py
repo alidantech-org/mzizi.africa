@@ -6,16 +6,49 @@ from dev_seed.common import Row, write_csv
 from dev_seed.people import Builder
 
 
+HEAD_TITLES = {
+    "gov.position.title.governor",
+    "gov.position.title.head-of-state-and-government",
+    "gov.position.title.chief-justice",
+    "gov.position.title.central-bank-governor",
+    "gov.position.title.chairperson",
+}
+
+
+def _positions(b: Builder) -> tuple[list[Row], list[Row]]:
+    """Derives a position for every institution and title the dev builders gave offices, and points each office at it.
+
+    Dev only: the real positions come from the Constitution through owner-approved seed files."""
+    method: dict[str, str] = {}
+    for holder in b.holders:
+        method.setdefault(holder["office_code"], holder["appointment_kind_code"])
+    positions: dict[str, Row] = {}
+    offices: list[Row] = []
+    for office in b.offices:
+        title = office["office_kind_code"]
+        code = f"{office['institution_code']}.{title.rsplit('.', 1)[1]}"
+        position = positions.setdefault(
+            code,
+            {
+                "code": code,
+                "institution_code": office["institution_code"],
+                "title_code": title,
+                "role_code": "gov.position.role.head" if title in HEAD_TITLES else "gov.position.role.member",
+                "selection_method_code": method.get(office["code"], "gov.selection.method.appointed"),
+                "seat_basis_code": "gov.seat.basis.fixed",
+            },
+        )
+        if office.get("unit_feature_code"):
+            position["seat_basis_code"] = "gov.seat.basis.per-unit"
+        offices.append({**office, "position_code": code})
+    return list(positions.values()), offices
+
+
 def write_people(b: Builder) -> None:
     write_csv(
         "global/reference/dev.schemes.csv",
         ["code", "title", "owner_snapshot"],
         [
-            {
-                "code": "gov.appointment.kind",
-                "title": "How an office holder came to hold the office",
-                "owner_snapshot": "dev sample",
-            },
             {"code": "civ.project.status", "title": "Where a public project stands", "owner_snapshot": "dev sample"},
         ],
     )
@@ -23,7 +56,7 @@ def write_people(b: Builder) -> None:
     labels_sw: list[Row] = []
     kinds = (
         (
-            "gov.office.kind",
+            "gov.position.title",
             [
                 ("governor", "Governor", "Gavana"),
                 ("member-of-parliament", "Member of Parliament", "Mbunge"),
@@ -31,12 +64,20 @@ def write_people(b: Builder) -> None:
             ],
         ),
         (
-            "gov.appointment.kind",
+            "gov.selection.method",
             [
                 ("elected", "Elected", "Amechaguliwa"),
                 ("nominated", "Nominated", "Ameteuliwa na chama"),
                 ("appointed", "Appointed", "Ameteuliwa"),
             ],
+        ),
+        (
+            "gov.position.role",
+            [("head", "Head of the body", "Mkuu"), ("member", "Member", "Mwanachama")],
+        ),
+        (
+            "gov.seat.basis",
+            [("per-unit", "One per unit", "Mmoja kwa kila eneo"), ("fixed", "Fixed number", "Idadi maalum")],
         ),
         (
             "civ.project.status",
@@ -67,13 +108,26 @@ def write_people(b: Builder) -> None:
     )
     write_csv(
         "ke/governance/institutions.csv",
-        ["code", "entity_code", "institution_kind_code", "arm_code", "establishment_basis_code"],
-        b.institutions,
+        ["code", "entity_code", "country_code", "institution_kind_code", "arm_code", "establishment_basis_code"],
+        [{**row, "country_code": "ke"} for row in b.institutions],
+    )
+    positions, offices = _positions(b)
+    write_csv(
+        "ke/governance/positions.csv",
+        [
+            "code",
+            "institution_code",
+            "title_code",
+            "role_code",
+            "selection_method_code",
+            "seat_basis_code",
+        ],
+        positions,
     )
     write_csv(
         "ke/governance/offices.csv",
-        ["code", "institution_code", "office_kind_code", "unit_feature_code", "from_year", "from_to_precision"],
-        b.offices,
+        ["code", "institution_code", "position_code", "unit_feature_code", "from_year", "from_to_precision"],
+        offices,
     )
     write_csv(
         "ke/governance/holders.csv",

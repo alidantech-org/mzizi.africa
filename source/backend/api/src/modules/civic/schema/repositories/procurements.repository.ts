@@ -63,6 +63,22 @@ export class ProcurementsRepository
     return await this.findByQuery(query, { countryId, deletedAt: IsNull() });
   }
 
+  /** Find procurements by currency id, paged by the shared query. */
+  async findByCurrency(
+    query: BaseQueryDto<ProcurementsEntity>,
+    currencyId: NonNullable<ProcurementsEntity["currencyId"]>,
+  ): Promise<IFindAllResponse<ProcurementsEntity>> {
+    return await this.findByQuery(query, { currencyId, deletedAt: IsNull() });
+  }
+
+  /** Find procurements by evaluation basis id, paged by the shared query. */
+  async findByEvaluationBasis(
+    query: BaseQueryDto<ProcurementsEntity>,
+    evaluationBasisId: NonNullable<ProcurementsEntity["evaluationBasisId"]>,
+  ): Promise<IFindAllResponse<ProcurementsEntity>> {
+    return await this.findByQuery(query, { evaluationBasisId, deletedAt: IsNull() });
+  }
+
   /** Find procurements by nature id, paged by the shared query. */
   async findByNature(
     query: BaseQueryDto<ProcurementsEntity>,

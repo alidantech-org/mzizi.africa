@@ -54,8 +54,8 @@ def build_reference(t: Tables) -> None:
     _values(t, "gov.establishment.basis", "What created a public body", BASES)
     _values(t, "gov.relationship.kind", "How two public bodies relate", RELATIONS)
     _values(t, "gov.mandate.kind", "Kind of statement about a body's mandate", MANDATES)
-    _values(t, "gov.office.kind", "", TIERS, new_scheme=False)
-    _values(t, "gov.appointment.kind", "", APPOINTMENTS, new_scheme=False)
+    _values(t, "gov.position.title", "", TIERS, new_scheme=False)
+    _values(t, "gov.selection.method", "", APPOINTMENTS, new_scheme=False)
     _values(t, "fil.content.category", "What a text is about", CONTENT_CATEGORIES)
     _values(t, "fil.content.classification", "How a text is placed on a screen", CONTENT_CLASSES)
     _values(t, "gov.level", "Level of government", [(w, e, s, "") for w, e, s, _, _ in LEVELS])
@@ -66,7 +66,7 @@ def build_reference(t: Tables) -> None:
                 "global/reference/dev3.value_relations.csv",
                 {
                     "source_value_code": f"gov.leader.tab.{tab}",
-                    "target_value_code": f"gov.appointment.kind.{kind}",
+                    "target_value_code": f"gov.selection.method.{kind}",
                     "relation_kind": "broader_than",
                 },
             )

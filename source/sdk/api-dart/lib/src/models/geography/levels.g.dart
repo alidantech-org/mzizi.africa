@@ -16,6 +16,7 @@ GeographyLevels _$GeographyLevelsFromJson(Map<String, dynamic> json) => Geograph
   hierarchyKindId: json['hierarchyKindId'] as String,
   id: json['id'] as String,
   isRoutingHierarchy: json['isRoutingHierarchy'] as bool,
+  rootFeatureId: json['rootFeatureId'] as String?,
   updatedAt: DateTime.parse(json['updatedAt'] as String),
   version: (json['version'] as num).toInt(),
 );
@@ -30,6 +31,7 @@ Map<String, dynamic> _$GeographyLevelsToJson(GeographyLevels instance) => <Strin
   'hierarchyKindId': instance.hierarchyKindId,
   'id': instance.id,
   'isRoutingHierarchy': instance.isRoutingHierarchy,
+  'rootFeatureId': ?instance.rootFeatureId,
   'updatedAt': instance.updatedAt.toIso8601String(),
   'version': instance.version,
 };

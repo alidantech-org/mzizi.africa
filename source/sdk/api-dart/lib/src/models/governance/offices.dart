@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/governance/positions.dart';
 import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
@@ -21,7 +21,8 @@ class GovernanceOffices {
     this.fromYear,
     required this.id,
     required this.institutionId,
-    required this.officeKindId,
+    required this.positionId,
+    this.seatOrdinal,
     this.sourceCitationId,
     this.toYear,
     this.unitFeatureId,
@@ -37,7 +38,8 @@ class GovernanceOffices {
   final int? fromYear;
   final String id;
   final String institutionId;
-  final String officeKindId;
+  final String positionId;
+  final int? seatOrdinal;
   final String? sourceCitationId;
   final int? toYear;
   final String? unitFeatureId;

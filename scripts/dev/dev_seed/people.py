@@ -62,7 +62,7 @@ class Builder:
                 "code": f"{office}.2022",
                 "office_code": office,
                 "individual_code": person,
-                "appointment_kind_code": "gov.appointment.kind.elected",
+                "appointment_kind_code": "gov.selection.method.elected",
                 "took_office_on": "2022-08-25",
                 "from_year": "2022",
                 "from_to_precision": "exact",
@@ -129,7 +129,7 @@ def build_people(b: Builder, counties: list[Feature], constituencies: list[Featu
             {
                 "code": office,
                 "institution_code": f"ke.institution.{key}.government",
-                "office_kind_code": "gov.office.kind.governor",
+                "office_kind_code": "gov.position.title.governor",
                 "unit_feature_code": county.code,
                 "from_year": "2013",
                 "from_to_precision": "exact",
@@ -146,7 +146,7 @@ def build_people(b: Builder, counties: list[Feature], constituencies: list[Featu
             {
                 "code": office,
                 "institution_code": "ke.institution.national-assembly",
-                "office_kind_code": "gov.office.kind.member-of-parliament",
+                "office_kind_code": "gov.position.title.member-of-parliament",
                 "unit_feature_code": item.code,
                 "from_year": "2013",
                 "from_to_precision": "exact",
@@ -163,7 +163,7 @@ def build_people(b: Builder, counties: list[Feature], constituencies: list[Featu
             {
                 "code": office,
                 "institution_code": f"ke.institution.{county_key}.assembly",
-                "office_kind_code": "gov.office.kind.member-of-county-assembly",
+                "office_kind_code": "gov.position.title.member-of-county-assembly",
                 "unit_feature_code": item.code,
                 "from_year": "2013",
                 "from_to_precision": "exact",

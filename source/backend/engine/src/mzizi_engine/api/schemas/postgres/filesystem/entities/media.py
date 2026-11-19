@@ -30,6 +30,7 @@ class MediaRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     description: Annotated[str, Field(max_length=4000)] | None = None
+    end_second: Annotated[int, Field(ge=0)] | None = None
     external_url: Annotated[str, Field(max_length=2048)] | None = None
     file_version_id: UUID | None = None
     id: UUID
@@ -37,6 +38,7 @@ class MediaRow(BaseModel):
     platform_id: UUID | None = None
     position: Annotated[int, Field(ge=0)] | None = None
     purpose: Annotated[str, Field(max_length=4000)] | None = None
+    start_second: Annotated[int, Field(ge=0)] | None = None
     subject_id: UUID
     subject_table: SubjectTable
     thumbnail_url: Annotated[str, Field(max_length=2048)] | None = None

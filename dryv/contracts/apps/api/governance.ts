@@ -4,7 +4,7 @@
  */
 import * as dryv from "@dryvcode/author";
 import { sharedFailures as f, sharedProperties as p } from "#/schemas/_shared.ts";
-import { governance, Holders, Institutions, Mandates, Offices } from "#/schemas/postgres/governance.ts";
+import { governance, Holders, Institutions, Mandates, Offices, Positions } from "#/schemas/postgres/governance.ts";
 import { Entities, Individuals, Names as OfficialNames } from "#/schemas/postgres/official.ts";
 import { Value } from "#/schemas/postgres/reference.ts";
 import { apiHttp, MAX_PAGE, PageWindow } from "./_shared.ts";
@@ -12,6 +12,7 @@ import { apiHttp, MAX_PAGE, PageWindow } from "./_shared.ts";
 const bodies = governance.feature("Institutions").failureDefaults(apiHttp);
 const institution = Institutions.asRef();
 const office = Offices.asRef();
+const position = Positions.asRef();
 const holder = Holders.asRef();
 const mandate = Mandates.asRef();
 const entity = Entities.asRef();
@@ -78,7 +79,7 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
         (o) => ({
           id: o.fields.id,
           code: o.fields.code,
-          kind: o.follow(office.fields.officeKindId, value).fields.code,
+          kind: o.follow(office.fields.positionId, position).follow(position.fields.titleId, value).fields.code,
         }),
         (o) => [o.fields.code.order("asc"), o.fields.id.order("asc")],
       ),
@@ -93,7 +94,7 @@ const { ScanInstitutions, FindInstitution, FindOffice } = bodies.queries({
     .select((row) => ({
       id: row.fields.id,
       code: row.fields.code,
-      kind: row.follow(office.fields.officeKindId, value).fields.code,
+      kind: row.follow(office.fields.positionId, position).follow(position.fields.titleId, value).fields.code,
       institutionId: row.fields.institutionId,
       unitFeatureId: row.fields.unitFeatureId,
       holders: row.reverse(holder.fields.officeId, holder).select(

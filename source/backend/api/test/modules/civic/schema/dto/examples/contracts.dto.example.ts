@@ -20,6 +20,12 @@ export const contractsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 0 },
     },
     {
+      name: "buyerEntityId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "code",
       optional: false,
       nullable: false,
@@ -111,5 +117,21 @@ export const contractsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "procurementId" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "buyerEntityId" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+      ],
+    },
+  ],
 });

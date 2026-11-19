@@ -29,6 +29,7 @@ class IndicatorsRow(BaseModel):
     description: Annotated[str, Field(max_length=4000)]
     higher_is_better: bool | None = None
     id: UUID
+    is_derived: bool
     measure_kind_id: UUID
     name: Annotated[str, Field(min_length=1, max_length=300)]
     role_id: UUID | None = None

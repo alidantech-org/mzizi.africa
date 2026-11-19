@@ -9,6 +9,7 @@ import 'package:mzizi_api/src/models/finance/money_entity.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
+import 'package:mzizi_api/src/models/official/individuals.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
 
@@ -23,6 +24,7 @@ class FinanceFlows {
     required this.code,
     this.contractId,
     this.counterpartyEntityId,
+    this.counterpartyIndividualId,
     required this.createdAt,
     required this.currencyId,
     this.debtId,
@@ -45,6 +47,7 @@ class FinanceFlows {
   final String code;
   final String? contractId;
   final String? counterpartyEntityId;
+  final String? counterpartyIndividualId;
   final DateTime createdAt;
   final String currencyId;
   final String? debtId;

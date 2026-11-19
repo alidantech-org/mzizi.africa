@@ -18,6 +18,7 @@ import { FundsEntity } from "#/modules/finance/schema/entities/funds.entity.ts";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
+import { IndividualsEntity } from "#/modules/official/schema/entities/individuals.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import type { AmountMinorUnits } from "#/modules/shared/schema/type/amount-minor-units.type.ts";
@@ -35,12 +36,15 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["fundId"])
 @Index(["appropriationId"])
 @Index(["contractId"])
+@Index(["counterpartyEntityId"])
+@Index(["counterpartyIndividualId"])
 @Index(["debtId"])
 @Index(["projectId"])
 @Index(["institutionId"])
 @Index(["scopeUnitFeatureId"])
 @Index(["expenditureClassId"])
 @Index(["sourceCitationId"])
+// Invariant "AtMostOneCounterparty" has no simple form, so it isn't enforced as a database check.
 export class FlowsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -75,6 +79,13 @@ export class FlowsEntity {
   @ManyToOne(() => EntitiesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "counterparty_entity_id" })
   counterpartyEntity?: Relation<EntitiesEntity>;
+
+  @Column({ name: "counterparty_individual_id", type: "uuid", nullable: true })
+  counterpartyIndividualId?: Id | null;
+
+  @ManyToOne(() => IndividualsEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "counterparty_individual_id" })
+  counterpartyIndividual?: Relation<IndividualsEntity>;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;

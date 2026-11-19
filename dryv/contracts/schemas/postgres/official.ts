@@ -143,8 +143,19 @@ export const Relationships = official
     fromIndividualId: belongsTo(() => Individuals).maybe(),
     toEntityId: belongsTo(() => Entities).maybe(),
     toIndividualId: belongsTo(() => Individuals).maybe(),
-    kindId: belongsTo(() => Value),
+    /** Scheme ofc.relationship.kind: kinship, business and political ties; class values say which count as family or associate. */
+    kindId: belongsTo(() => Value).tags("scheme:ref.sch.ofc.relationship.kind"),
     sharePercentage: dryv.field(sharedProperties.Percentage).maybe(),
+    /** Scheme ref.evidence.basis: registry record, official declaration, court record, news report, inferred by matching. */
+    evidenceBasisId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.ref.evidence.basis"),
+    /** Scheme ref.evidence.status. An inferred tie stays a proposal until reviewed and is never shown as fact. */
+    evidenceStatusId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.ref.evidence.status"),
+    /** How sure the match is, 0 to 1, when the tie was found by matching. */
+    confidence: dryv.field(sharedProperties.Confidence).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
     startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),

@@ -60,6 +60,14 @@ export class FlowsRepository
     return await this.findByQuery(query, { counterpartyEntityId, deletedAt: IsNull() });
   }
 
+  /** Find flows by counterparty individual id, paged by the shared query. */
+  async findByCounterpartyIndividual(
+    query: BaseQueryDto<FlowsEntity>,
+    counterpartyIndividualId: NonNullable<FlowsEntity["counterpartyIndividualId"]>,
+  ): Promise<IFindAllResponse<FlowsEntity>> {
+    return await this.findByQuery(query, { counterpartyIndividualId, deletedAt: IsNull() });
+  }
+
   /** Find flows by currency id, paged by the shared query. */
   async findByCurrency(
     query: BaseQueryDto<FlowsEntity>,

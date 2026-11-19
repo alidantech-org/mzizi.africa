@@ -33,7 +33,7 @@ export async function motionDetail(db: DataSource, code: string) {
     `select h.id as holder_id, h.individual_id, ${personName("h.individual_id")} as name, ${partyOf("h.individual_id")} as party,
        (select pt.code from politics.memberships mm join politics.parties pt on pt.id = mm.party_id where mm.individual_id = h.individual_id and mm.left_on is null order by mm.joined_on desc nulls last limit 1) as party_code,
        regexp_replace(vp.code, '^.*\\.', '') as position, (select ${featureName("o.unit_feature_id", "'en'")} from governance.offices o where o.id = h.office_id) as unit,
-       (select k.label from governance.offices o join reference.values k on k.id = o.office_kind_id where o.id = h.office_id) as office
+       (select k.label from governance.offices o join reference.values k on k.id = (select p.title_id from governance.positions p where p.id = o.position_id) where o.id = h.office_id) as office
      from governance.votes v join governance.holders h on h.id = v.holder_id join reference.values vp on vp.id = v.position_id where v.motion_id = $1 order by 5, name`, [motion.id]);
   const tally = { yes: 0, no: 0, abstain: 0, absent: 0 } as Record<string, number>;
   const byParty = new Map<string, Record<string, number>>();

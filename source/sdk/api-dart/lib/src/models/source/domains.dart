@@ -1,5 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/shared/date_precision.dart';
+import 'package:mzizi_api/src/models/official/contacts.dart';
+import 'package:mzizi_api/src/models/official/entities.dart';
+import 'package:mzizi_api/src/models/reference/template.dart';
+import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
 import 'package:mzizi_api/src/models/source/sources.dart';
 
@@ -13,12 +17,17 @@ class SourceDomains {
     required this.createdAt,
     this.deletedAt,
     this.endsOn,
+    this.entityId,
     this.fromToPrecision,
     this.fromYear,
     required this.host,
     required this.id,
-    required this.sourceId,
+    this.lastCheckedAt,
+    this.officialContactId,
+    this.sourceId,
     this.startsOn,
+    this.statusId,
+    this.templateId,
     this.toYear,
     required this.updatedAt,
     required this.version,
@@ -27,12 +36,17 @@ class SourceDomains {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? endsOn;
+  final String? entityId;
   final SharedDatePrecision? fromToPrecision;
   final int? fromYear;
   final String host;
   final String id;
-  final String sourceId;
+  final DateTime? lastCheckedAt;
+  final String? officialContactId;
+  final String? sourceId;
   final DateTime? startsOn;
+  final String? statusId;
+  final String? templateId;
   final int? toYear;
   final DateTime updatedAt;
   final int version;

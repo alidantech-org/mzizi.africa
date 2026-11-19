@@ -20,8 +20,10 @@ class SourceSources {
     this.description,
     required this.id,
     required this.kind,
+    this.licenceId,
     this.officialEntityId,
     required this.publisherId,
+    this.termsUrl,
     required this.title,
     required this.updatedAt,
     required this.version,
@@ -35,8 +37,10 @@ class SourceSources {
   final String? description;
   final String id;
   final SourceSourceKind kind;
+  final String? licenceId;
   final String? officialEntityId;
   final String publisherId;
+  final String? termsUrl;
   final String title;
   final DateTime updatedAt;
   final int version;

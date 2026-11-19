@@ -30,6 +30,10 @@ import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 @Index(["kindId"])
 @Index(["fileVersionId"])
 @Check("chk_media_media_has_bytes_or_url", `file_version_id <> null OR external_url <> null`)
+@Check(
+  "chk_media_media_seconds_are_ordered",
+  `start_second = null OR end_second = null OR start_second < end_second`,
+)
 export class MediaEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -53,6 +57,9 @@ export class MediaEntity {
     nullable: true,
   })
   description?: Description | null;
+
+  @Column({ name: "end_second", type: "integer", nullable: true })
+  endSecond?: NonNegativeInteger | null;
 
   @Column({
     name: "external_url",
@@ -88,6 +95,9 @@ export class MediaEntity {
 
   @Column({ name: "purpose", type: "varchar", length: 4000, nullable: true })
   purpose?: Description | null;
+
+  @Column({ name: "start_second", type: "integer", nullable: true })
+  startSecond?: NonNegativeInteger | null;
 
   @Column({ name: "subject_id", type: "uuid" })
   subjectId!: Id;

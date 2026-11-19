@@ -8,6 +8,8 @@ import * as B from "#/modules/common/schema/types/base";
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as CountryTypes from "#/modules/reference/schema/types/country/country.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -28,10 +30,15 @@ import type {
 // CORE ENTITY CONTRACT
 // ----------------------------------
 
-/** Stable identity for a reusable, reviewed pattern definition. */
+/** A reviewed rule for generating expected records (institutions, positions, offices, site candidates) before real ones are found. It holds no versions, bindings or dependencies; see DEC-PATTERNS-GENERATE-EXPECTED-DATA-20261119. */
 export interface IPattern extends B.IBase {
   code: string;
+  countryId: string | null;
+  description: string | null;
+  kindId: string | null;
   title: string;
+  readonly country?: CountryTypes.ICountry;
+  readonly kind?: ValueTypes.IValue;
 }
 
 // ----------------------------------
@@ -120,7 +127,10 @@ export type IPatternAsManyRelationQuery = Q.IAsManyRelationQuery<
 // RELATION MAP
 // ----------------------------------
 
-export interface IPatternRelationMap extends Record<PatternRelationKey, unknown> {}
+export interface IPatternRelationMap extends Record<PatternRelationKey, unknown> {
+  country: CountryTypes.ICountryAsOneRelationQuery;
+  kind: ValueTypes.IValueAsOneRelationQuery;
+}
 
 // ----------------------------------
 // QUERY CONTRACTS

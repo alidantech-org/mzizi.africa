@@ -5,6 +5,7 @@ export interface FinanceFlows {
   code: string;
   contractId?: string | null;
   counterpartyEntityId?: string | null;
+  counterpartyIndividualId?: string | null;
   createdAt: string;
   currencyId: string;
   debtId?: string | null;

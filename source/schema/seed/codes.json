@@ -468,6 +468,57 @@
     },
     "event.venues": {
       "short": "ven"
+    },
+    "civic.officials": {
+      "short": "off"
+    },
+    "civic.partners": {
+      "short": "par"
+    },
+    "civic.variations": {
+      "short": "var"
+    },
+    "community.replies": {
+      "short": "rep"
+    },
+    "governance.assignments": {
+      "short": "ass"
+    },
+    "governance.fulfilments": {
+      "short": "ful"
+    },
+    "governance.functions": {
+      "short": "fun"
+    },
+    "governance.positions": {
+      "short": "pos"
+    },
+    "governance.powers": {
+      "short": "pow"
+    },
+    "governance.procedures": {
+      "short": "pro"
+    },
+    "governance.promises": {
+      "short": "pr2"
+    },
+    "politics.contributions": {
+      "short": "con"
+    },
+    "reference.instances": {
+      "short": "ins"
+    },
+    "reference.templates": {
+      "short": "tem"
+    },
+    "source.contenders": {
+      "short": "con"
+    },
+    "source.disputes": {
+      "short": "dis"
+    },
+    "statistics.components": {
+      "short": "com"
     }
   }
 }

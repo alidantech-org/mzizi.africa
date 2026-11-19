@@ -694,6 +694,7 @@
           ,"code"
           ,"contract_code"
           ,"counterparty_entity_code"
+          ,"counterparty_individual_code"
           ,"currency_code"
           ,"debt_code"
           ,"expenditure_class_code"
@@ -748,6 +749,13 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "counterparty_entity_code" }
+        }
+        ,"counterparty_individual_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "counterparty_individual_code" }
         }
         ,"created_at": {
           "type": "string",

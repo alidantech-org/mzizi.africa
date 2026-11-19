@@ -7,14 +7,18 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+
+import { ColumnNumericTransformer } from "#/modules/common/schema/entities/base/column-numeric.transformer.ts";
 import { ProjectsEntity } from "#/modules/civic/schema/entities/projects.entity.ts";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
 import { CountryEntity } from "#/modules/reference/schema/entities/country.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
+import type { AmountMinorUnits } from "#/modules/shared/schema/type/amount-minor-units.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
+import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
 /**
@@ -30,6 +34,9 @@ export class ProcurementsEntity {
 
   @Column({ name: "awarded_on", type: "date", nullable: true })
   awardedOn?: Date | null;
+
+  @Column({ name: "bidder_count", type: "integer", nullable: true })
+  bidderCount?: NonNegativeInteger | null;
 
   @Column({ name: "buyer_entity_id", type: "uuid" })
   buyerEntityId!: Id;
@@ -61,8 +68,30 @@ export class ProcurementsEntity {
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 
+  @Column({ name: "currency_id", type: "uuid", nullable: true })
+  currencyId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "currency_id" })
+  currency?: Relation<ValueEntity>;
+
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
+
+  @Column({
+    name: "estimated_amount_minor_units",
+    type: "bigint",
+    transformer: new ColumnNumericTransformer(),
+    nullable: true,
+  })
+  estimatedAmountMinorUnits?: AmountMinorUnits | null;
+
+  @Column({ name: "evaluation_basis_id", type: "uuid", nullable: true })
+  evaluationBasisId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "evaluation_basis_id" })
+  evaluationBasis?: Relation<ValueEntity>;
 
   @Column({ name: "nature_id", type: "uuid", nullable: true })
   natureId?: Id | null;

@@ -17,6 +17,7 @@ class ContractsRow(BaseModel):
     table: ClassVar[str] = "civic.contracts"
 
     amount_minor_units: Annotated[int, Field(ge=0)]
+    buyer_entity_id: UUID | None = None
     code: Annotated[
         str,
         Field(

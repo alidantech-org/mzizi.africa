@@ -74,6 +74,12 @@ export const sourcesExample: ContractExample = contractExample({
       spec: { kind: "enum", values: Object.values(SourceKind) },
     },
     {
+      name: "licenceId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "officialEntityId",
       optional: true,
       nullable: true,
@@ -84,6 +90,12 @@ export const sourcesExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "termsUrl",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "url", maxLength: 2048 },
     },
     {
       name: "title",

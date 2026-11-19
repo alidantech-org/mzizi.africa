@@ -39,6 +39,14 @@ export class ContractsRepository
     return stamped === null ? null : await this.update(id, stamped);
   }
 
+  /** Find contracts by buyer entity id, paged by the shared query. */
+  async findByBuyerEntity(
+    query: BaseQueryDto<ContractsEntity>,
+    buyerEntityId: NonNullable<ContractsEntity["buyerEntityId"]>,
+  ): Promise<IFindAllResponse<ContractsEntity>> {
+    return await this.findByQuery(query, { buyerEntityId, deletedAt: IsNull() });
+  }
+
   /** Find contracts by contractor entity id, paged by the shared query. */
   async findByContractorEntity(
     query: BaseQueryDto<ContractsEntity>,

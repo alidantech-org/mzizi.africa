@@ -13,9 +13,12 @@ part 'relationships.g.dart';
 class OfficialRelationships {
   const OfficialRelationships({
     required this.code,
+    this.confidence,
     required this.createdAt,
     this.deletedAt,
     this.endsOn,
+    this.evidenceBasisId,
+    this.evidenceStatusId,
     this.fromEntityId,
     this.fromIndividualId,
     this.fromToPrecision,
@@ -32,9 +35,12 @@ class OfficialRelationships {
     required this.version,
   });
   final String code;
+  final double? confidence;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? endsOn;
+  final String? evidenceBasisId;
+  final String? evidenceStatusId;
   final String? fromEntityId;
   final String? fromIndividualId;
   final SharedDatePrecision? fromToPrecision;

@@ -14,10 +14,14 @@ from mzizi_engine.api.schemas.postgres.community.entities.posts import PostsRow
 from mzizi_engine.api.schemas.postgres.community.entities.preferences import PreferencesRow
 from mzizi_engine.api.schemas.postgres.community.entities.proofs import ProofsRow
 from mzizi_engine.api.schemas.postgres.community.entities.reactions import ReactionsRow
+from mzizi_engine.api.schemas.postgres.community.entities.replies import RepliesRow
 from mzizi_engine.api.schemas.postgres.community.entities.subscriptions import SubscriptionsRow
 from mzizi_engine.api.schemas.postgres.community.entities.tokens import TokensRow
 from mzizi_engine.api.schemas.postgres.community.entities.views import ViewsRow
+from mzizi_engine.api.schemas.postgres.filesystem.entities.contents import ContentsRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
+from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
+from mzizi_engine.api.schemas.postgres.official.entities.individuals import IndividualsRow
 from mzizi_engine.api.schemas.postgres.reference.entities.country import CountryRow
 from mzizi_engine.api.schemas.postgres.reference.entities.language import LanguageRow
 from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
@@ -28,9 +32,12 @@ __all__ = [
     "CasesRow",
     "CommunityDeliveriesRow",
     "ConsentsRow",
+    "ContentsRow",
     "CountryRow",
     "DevicesRow",
+    "EntitiesRow",
     "FeaturesRow",
+    "IndividualsRow",
     "LanguageRow",
     "NotificationsRow",
     "PlacesRow",
@@ -38,6 +45,7 @@ __all__ = [
     "PreferencesRow",
     "ProofsRow",
     "ReactionsRow",
+    "RepliesRow",
     "SubscriptionsRow",
     "TokensRow",
     "ValueRow",

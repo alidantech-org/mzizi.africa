@@ -20,6 +20,8 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
  * One reported financial flow at its source transaction grain, not a rolled-up aggregate. (entity)
+ *
+ * Invariant "AtMostOneCounterparty" has no simple form, so it isn't validated here.
  */
 export class FlowsDto {
   @IsInt()
@@ -53,6 +55,12 @@ export class FlowsDto {
   @IsString()
   @IsUUID()
   counterpartyEntityId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.counterpartyIndividualId !== null)
+  @IsString()
+  @IsUUID()
+  counterpartyIndividualId?: Id | null;
 
   @IsISO8601({})
   createdAt!: Instant;

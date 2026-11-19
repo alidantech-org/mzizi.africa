@@ -13,7 +13,7 @@ export async function leaderTree(db: DataSource, featureId: string | undefined) 
   const unitIds = chain.map((c) => c.featureId);
   const rows: Row[] = await db.query(
     `select h.id as holder_id, h.individual_id, ${personName("h.individual_id")} as name, ${partyOf("h.individual_id")} as party,
-       (select k.label from reference.values k where k.id = o.office_kind_id) as office, o.code as office_code, o.unit_feature_id as unit_id,
+       (select k.label from reference.values k where k.id = (select p.title_id from governance.positions p where p.id = o.position_id)) as office, o.code as office_code, o.unit_feature_id as unit_id,
        ${featureName("o.unit_feature_id", "'en'")} as unit, regexp_replace(ak.code, '^.*\\.', '') as how, h.took_office_on::text,
        (select n.name from official.names n join governance.institutions i on i.entity_id = n.entity_id where i.id = o.institution_id limit 1) as institution
      from governance.holders h join governance.offices o on o.id = h.office_id left join reference.values ak on ak.id = h.appointment_kind_id

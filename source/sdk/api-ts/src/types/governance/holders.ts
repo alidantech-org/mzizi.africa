@@ -4,6 +4,7 @@ import { SharedDatePrecision } from "#sdk/types/enums/shared/date-precision.ts";
 export interface GovernanceHolders {
   appointedByEntityId?: string | null;
   appointmentKindId: string;
+  appointmentMotionId?: string | null;
   code: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -12,6 +13,7 @@ export interface GovernanceHolders {
   id: string;
   individualId: string;
   leftOfficeOn?: string | null;
+  nominatedByEntityId?: string | null;
   officeId: string;
   sourceCitationId?: string | null;
   toYear?: number | null;

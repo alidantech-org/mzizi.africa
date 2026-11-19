@@ -9,7 +9,11 @@ import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.
 // ----------------------------------
 // RELATED ENTITY TYPES
 // ----------------------------------
+import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
+import type * as ContactsTypes from "#/modules/official/schema/types/contacts/contacts.types";
 import type * as SourcesTypes from "#/modules/source/schema/types/sources/sources.types";
+import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as TemplateTypes from "#/modules/reference/schema/types/template/template.types";
 
 // ----------------------------------
 // LOCAL CONFIG CONSTANTS
@@ -34,13 +38,22 @@ import type {
 export interface IDomains extends B.IBase {
   code: string;
   endsOn: Date | null;
+  entityId: string | null;
   fromToPrecision: DatePrecision | null;
   fromYear: number | null;
   host: string;
-  sourceId: string;
+  lastCheckedAt: Date | null;
+  officialContactId: string | null;
+  sourceId: string | null;
   startsOn: Date | null;
+  statusId: string | null;
+  templateId: string | null;
   toYear: number | null;
+  readonly entity?: EntitiesTypes.IEntities;
+  readonly officialContact?: ContactsTypes.IContacts;
   readonly source?: SourcesTypes.ISources;
+  readonly status?: ValueTypes.IValue;
+  readonly template?: TemplateTypes.ITemplate;
 }
 
 // ----------------------------------
@@ -130,7 +143,11 @@ export type IDomainsAsManyRelationQuery = Q.IAsManyRelationQuery<
 // ----------------------------------
 
 export interface IDomainsRelationMap extends Record<DomainsRelationKey, unknown> {
+  entity: EntitiesTypes.IEntitiesAsOneRelationQuery;
+  officialContact: ContactsTypes.IContactsAsOneRelationQuery;
   source: SourcesTypes.ISourcesAsOneRelationQuery;
+  status: ValueTypes.IValueAsOneRelationQuery;
+  template: TemplateTypes.ITemplateAsOneRelationQuery;
 }
 
 // ----------------------------------

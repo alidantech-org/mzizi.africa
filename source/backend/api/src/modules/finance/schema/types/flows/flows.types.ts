@@ -11,6 +11,7 @@ import * as B from "#/modules/common/schema/types/base";
 import type * as AppropriationsTypes from "#/modules/finance/schema/types/appropriations/appropriations.types";
 import type * as ContractsTypes from "#/modules/civic/schema/types/contracts/contracts.types";
 import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
+import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
 import type * as DebtsTypes from "#/modules/finance/schema/types/debts/debts.types";
 import type * as FiscalPeriodsTypes from "#/modules/finance/schema/types/fiscal-periods/fiscal-periods.types";
@@ -46,6 +47,7 @@ export interface IFlows extends B.IBase {
   code: string;
   contractId: string | null;
   counterpartyEntityId: string | null;
+  counterpartyIndividualId: string | null;
   currencyId: string;
   debtId: string | null;
   expenditureClassId: string | null;
@@ -60,6 +62,7 @@ export interface IFlows extends B.IBase {
   readonly appropriation?: AppropriationsTypes.IAppropriations;
   readonly contract?: ContractsTypes.IContracts;
   readonly counterpartyEntity?: EntitiesTypes.IEntities;
+  readonly counterpartyIndividual?: IndividualsTypes.IIndividuals;
   readonly currency?: ValueTypes.IValue;
   readonly debt?: DebtsTypes.IDebts;
   readonly expenditureClass?: ValueTypes.IValue;
@@ -157,6 +160,7 @@ export interface IFlowsRelationMap extends Record<FlowsRelationKey, unknown> {
   appropriation: AppropriationsTypes.IAppropriationsAsOneRelationQuery;
   contract: ContractsTypes.IContractsAsOneRelationQuery;
   counterpartyEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
+  counterpartyIndividual: IndividualsTypes.IIndividualsAsOneRelationQuery;
   currency: ValueTypes.IValueAsOneRelationQuery;
   debt: DebtsTypes.IDebtsAsOneRelationQuery;
   expenditureClass: ValueTypes.IValueAsOneRelationQuery;

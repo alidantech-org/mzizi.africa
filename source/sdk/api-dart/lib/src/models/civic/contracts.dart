@@ -13,6 +13,7 @@ part 'contracts.g.dart';
 class CivicContracts {
   const CivicContracts({
     required this.amountMinorUnits,
+    this.buyerEntityId,
     required this.code,
     required this.contractorEntityId,
     required this.createdAt,
@@ -29,6 +30,7 @@ class CivicContracts {
     required this.version,
   });
   final int amountMinorUnits;
+  final String? buyerEntityId;
   final String code;
   final String contractorEntityId;
   final DateTime createdAt;

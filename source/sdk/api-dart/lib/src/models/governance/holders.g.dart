@@ -9,6 +9,7 @@ part of 'holders.dart';
 GovernanceHolders _$GovernanceHoldersFromJson(Map<String, dynamic> json) => GovernanceHolders(
   appointedByEntityId: json['appointedByEntityId'] as String?,
   appointmentKindId: json['appointmentKindId'] as String,
+  appointmentMotionId: json['appointmentMotionId'] as String?,
   code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
@@ -17,6 +18,7 @@ GovernanceHolders _$GovernanceHoldersFromJson(Map<String, dynamic> json) => Gove
   id: json['id'] as String,
   individualId: json['individualId'] as String,
   leftOfficeOn: json['leftOfficeOn'] == null ? null : DateTime.parse(json['leftOfficeOn'] as String),
+  nominatedByEntityId: json['nominatedByEntityId'] as String?,
   officeId: json['officeId'] as String,
   sourceCitationId: json['sourceCitationId'] as String?,
   toYear: (json['toYear'] as num?)?.toInt(),
@@ -28,6 +30,7 @@ GovernanceHolders _$GovernanceHoldersFromJson(Map<String, dynamic> json) => Gove
 Map<String, dynamic> _$GovernanceHoldersToJson(GovernanceHolders instance) => <String, dynamic>{
   'appointedByEntityId': ?instance.appointedByEntityId,
   'appointmentKindId': instance.appointmentKindId,
+  'appointmentMotionId': ?instance.appointmentMotionId,
   'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
@@ -36,6 +39,7 @@ Map<String, dynamic> _$GovernanceHoldersToJson(GovernanceHolders instance) => <S
   'id': instance.id,
   'individualId': instance.individualId,
   'leftOfficeOn': ?instance.leftOfficeOn?.toIso8601String(),
+  'nominatedByEntityId': ?instance.nominatedByEntityId,
   'officeId': instance.officeId,
   'sourceCitationId': ?instance.sourceCitationId,
   'toYear': ?instance.toYear,

@@ -9,7 +9,11 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 // ----------------------------------
 // RELATED ENTITY CONFIGS
 // ----------------------------------
+import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
+import * as ContactsConfig from "#/modules/official/schema/types/contacts/contacts.config";
 import * as SourcesConfig from "#/modules/source/schema/types/sources/sources.config";
+import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
+import * as TemplateConfig from "#/modules/reference/schema/types/template/template.config";
 
 // ----------------------------------
 // LOCAL TYPES
@@ -31,7 +35,13 @@ import type {
 // RELATION KEYS
 // ----------------------------------
 
-export const DOMAINS_RELATION_KEYS = ["source"] as const satisfies readonly DomainsKey[];
+export const DOMAINS_RELATION_KEYS = [
+  "entity",
+  "officialContact",
+  "source",
+  "status",
+  "template",
+] as const satisfies readonly DomainsKey[];
 
 // ----------------------------------
 // QUERY FIELD CONFIG
@@ -42,12 +52,17 @@ export const DOMAINS_SORTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "endsOn",
+  "entityId",
   "fromToPrecision",
   "fromYear",
   "host",
   "id",
+  "lastCheckedAt",
+  "officialContactId",
   "sourceId",
   "startsOn",
+  "statusId",
+  "templateId",
   "toYear",
   "updatedAt",
   "version",
@@ -56,15 +71,20 @@ export const DOMAINS_SORTABLE_FIELDS = [
 export const DOMAINS_SEARCHABLE_FIELDS = ["code", "host"] as const satisfies readonly DomainsKey[];
 
 export const DOMAINS_FILTERABLE_FIELDS = [
+  "entityId",
   "fromToPrecision",
   "id",
+  "officialContactId",
   "sourceId",
+  "statusId",
+  "templateId",
 ] as const satisfies readonly DomainsKey[];
 
 export const DOMAINS_DATE_RANGE_FIELDS = [
   "createdAt",
   "deletedAt",
   "endsOn",
+  "lastCheckedAt",
   "startsOn",
   "updatedAt",
 ] as const satisfies readonly DomainsKey[];
@@ -84,12 +104,17 @@ export const DOMAINS_SELECTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "endsOn",
+  "entityId",
   "fromToPrecision",
   "fromYear",
   "host",
   "id",
+  "lastCheckedAt",
+  "officialContactId",
   "sourceId",
   "startsOn",
+  "statusId",
+  "templateId",
   "toYear",
   "updatedAt",
   "version",
@@ -100,12 +125,17 @@ export const DOMAINS_DEFAULT_SELECT_FIELDS = [
   "createdAt",
   "deletedAt",
   "endsOn",
+  "entityId",
   "fromToPrecision",
   "fromYear",
   "host",
   "id",
+  "lastCheckedAt",
+  "officialContactId",
   "sourceId",
   "startsOn",
+  "statusId",
+  "templateId",
   "toYear",
   "updatedAt",
   "version",
@@ -118,11 +148,16 @@ export const DOMAINS_DEFAULT_SELECT_FIELDS = [
 export const DOMAINS_EDITABLE_FIELDS = [
   "code",
   "endsOn",
+  "entityId",
   "fromToPrecision",
   "fromYear",
   "host",
+  "lastCheckedAt",
+  "officialContactId",
   "sourceId",
   "startsOn",
+  "statusId",
+  "templateId",
   "toYear",
 ] as const satisfies readonly DomainsKey[];
 
@@ -153,8 +188,24 @@ export const DOMAINS_AS_MANY_RELATION_CONFIG = {
 
 export const DOMAINS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<DomainsRelationKey>().one(
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    "entity",
+  ),
+  Q.createRelationKeyMapper<DomainsRelationKey>().one(
+    () => ContactsConfig.CONTACTS_AS_ONE_RELATION_CONFIG,
+    "officialContact",
+  ),
+  Q.createRelationKeyMapper<DomainsRelationKey>().one(
     () => SourcesConfig.SOURCES_AS_ONE_RELATION_CONFIG,
     "source",
+  ),
+  Q.createRelationKeyMapper<DomainsRelationKey>().one(
+    () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,
+    "status",
+  ),
+  Q.createRelationKeyMapper<DomainsRelationKey>().one(
+    () => TemplateConfig.TEMPLATE_AS_ONE_RELATION_CONFIG,
+    "template",
   ),
 ] as const;
 

@@ -12,6 +12,7 @@ import { Features } from "./geography.ts";
 import { Holders, Offices, Terms } from "./governance.ts";
 import { Entities, Individuals } from "./official.ts";
 import { Country, Topic, Value } from "./reference.ts";
+import { FileVersions } from "./filesystem.ts";
 import { Artifacts, Citations } from "./source.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
@@ -309,5 +310,45 @@ export const Polls = politics
       .index("stationFeatureId")
       .index("hostFeatureId")
       .index("statusId")
+      .index("sourceCitationId"),
+  });
+
+/*---------------- politics.contributions ----------------*/
+export const Contributions = politics
+  .schema("Contributions", {
+    donorEntityId: belongsTo(() => Entities).maybe(),
+    donorIndividualId: belongsTo(() => Individuals).maybe(),
+    recipientPartyId: belongsTo(() => Parties).maybe(),
+    recipientCandidateId: belongsTo(() => Candidates).maybe(),
+    electionId: belongsTo(() => Elections).maybe(),
+    amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),
+    currencyId: belongsTo(() => Value),
+    /** True for goods or services given instead of money. */
+    isInKind: dryv.field(sharedProperties.Flag),
+    givenOn: dryv.field(sharedProperties.CalendarDate),
+    /** Scheme ref.evidence.status. */
+    evidenceStatusId: belongsTo(() => Value).tags("scheme:ref.sch.ref.evidence.status"),
+    /** The filed disclosure the gift was found in. */
+    disclosureFileVersionId: belongsTo(() => FileVersions).maybe(),
+    sourceCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule("HasExactlyOneDonor", rule.exactlyOne("donorEntityId", "donorIndividualId"))
+  .rule("HasExactlyOneRecipient", rule.exactlyOne("recipientPartyId", "recipientCandidateId"))
+  .description(
+    "Money or goods given to a party or candidate, by whom, when, for which election and where it was disclosed. A recorded gift is a fact about a gift, never a claim about intent.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("contributions")
+      .index("donorEntityId")
+      .index("donorIndividualId")
+      .index("recipientPartyId")
+      .index("recipientCandidateId")
+      .index("electionId")
+      .index("givenOn")
+      .index("evidenceStatusId")
+      .index("disclosureFileVersionId")
       .index("sourceCitationId"),
   });

@@ -20,6 +20,12 @@ export const procurementsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
+      name: "bidderCount",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
       name: "buyerEntityId",
       optional: false,
       nullable: false,
@@ -63,10 +69,28 @@ export const procurementsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "currencyId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "deletedAt",
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
+    },
+    {
+      name: "estimatedAmountMinorUnits",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
+      name: "evaluationBasisId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "id",

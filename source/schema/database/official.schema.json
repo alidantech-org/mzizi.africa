@@ -757,7 +757,10 @@
         ],
         "columns": [
           "code"
+          ,"confidence"
           ,"ends_on"
+          ,"evidence_basis_code"
+          ,"evidence_status_code"
           ,"from_entity_code"
           ,"from_individual_code"
           ,"from_to_precision"
@@ -784,6 +787,11 @@
           "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
           "x-role": "key"
         }
+        ,"confidence": {
+          "type": ["number", "null"],
+          "x-type": "number",
+          "x-role": "data"
+        }
         ,"created_at": {
           "type": "string",
           "x-type": "timestamp",
@@ -803,6 +811,20 @@
           "x-type": "date",
           "format": "date",
           "x-role": "data"
+        }
+        ,"evidence_basis_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "evidence_basis_code", "scheme": "ref.sch.ref.evidence.basis" }
+        }
+        ,"evidence_status_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "evidence_status_code", "scheme": "ref.sch.ref.evidence.status" }
         }
         ,"from_entity_id": {
           "type": ["string", "null"],
@@ -841,7 +863,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.ofc.relationship.kind" }
         }
         ,"share_percentage": {
           "type": ["number", "null"],

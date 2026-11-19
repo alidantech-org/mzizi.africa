@@ -63,6 +63,14 @@ export class LevelsRepository
     return await this.findByQuery(query, { hierarchyKindId, deletedAt: IsNull() });
   }
 
+  /** Find levels by root feature id, paged by the shared query. */
+  async findByRootFeature(
+    query: BaseQueryDto<LevelsEntity>,
+    rootFeatureId: NonNullable<LevelsEntity["rootFeatureId"]>,
+  ): Promise<IFindAllResponse<LevelsEntity>> {
+    return await this.findByQuery(query, { rootFeatureId, deletedAt: IsNull() });
+  }
+
   /** Find the levels with this code (unique). */
   async findByCode(code: NonNullable<LevelsEntity["code"]>): Promise<LevelsEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });

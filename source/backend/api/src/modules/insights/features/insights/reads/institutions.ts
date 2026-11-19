@@ -105,7 +105,7 @@ export const holderSelect = (lang: string) => `select h.id as holder_id, h.indiv
   from governance.holders h
   join governance.offices o on o.id = h.office_id
   join governance.institutions i on i.id = o.institution_id
-  join reference.values tk on tk.id = o.office_kind_id
+  join reference.values tk on tk.id = (select p.title_id from governance.positions p where p.id = o.position_id)
   left join reference.values tp on tp.id = tk.parent_id
   join reference.values ak on ak.id = h.appointment_kind_id
   where ${activeGovernance()}`;

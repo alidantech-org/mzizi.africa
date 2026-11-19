@@ -1,13 +1,17 @@
 /** One public procurement process run by a buyer, optionally linked to a project. */
 export interface CivicProcurements {
   awardedOn?: string | null;
+  bidderCount?: number | null;
   buyerEntityId: string;
   categoryId?: string | null;
   closesOn?: string | null;
   code: string;
   countryId?: string | null;
   createdAt: string;
+  currencyId?: string | null;
   deletedAt?: string | null;
+  estimatedAmountMinorUnits?: number | null;
+  evaluationBasisId?: string | null;
   id: string;
   natureId?: string | null;
   procedureKindId: string;

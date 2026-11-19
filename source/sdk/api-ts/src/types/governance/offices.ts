@@ -11,7 +11,8 @@ export interface GovernanceOffices {
   fromYear?: number | null;
   id: string;
   institutionId: string;
-  officeKindId: string;
+  positionId: string;
+  seatOrdinal?: number | null;
   sourceCitationId?: string | null;
   toYear?: number | null;
   unitFeatureId?: string | null;

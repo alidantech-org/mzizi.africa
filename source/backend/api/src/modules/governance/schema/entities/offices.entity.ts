@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
-import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
+import { PositionsEntity } from "#/modules/governance/schema/entities/positions.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -23,6 +23,8 @@ import type { Year } from "#/modules/shared/schema/type/year.type.ts";
  */
 @Entity({ schema: "governance", name: "offices" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
+@Index(["positionId"])
+@Index(["institutionId"])
 @Index(["unitFeatureId"])
 @Index(["sourceCitationId"])
 @Check(
@@ -70,12 +72,15 @@ export class OfficesEntity {
   @JoinColumn({ name: "institution_id" })
   institution?: Relation<InstitutionsEntity>;
 
-  @Column({ name: "office_kind_id", type: "uuid" })
-  officeKindId!: Id;
+  @Column({ name: "position_id", type: "uuid" })
+  positionId!: Id;
 
-  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
-  @JoinColumn({ name: "office_kind_id" })
-  officeKind?: Relation<ValueEntity>;
+  @ManyToOne(() => PositionsEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "position_id" })
+  position?: Relation<PositionsEntity>;
+
+  @Column({ name: "seat_ordinal", type: "integer", nullable: true })
+  seatOrdinal?: PositiveInteger | null;
 
   @Column({ name: "source_citation_id", type: "uuid", nullable: true })
   sourceCitationId?: Id | null;

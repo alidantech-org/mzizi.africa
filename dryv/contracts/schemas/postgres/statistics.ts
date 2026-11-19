@@ -32,12 +32,16 @@ export const Indicators = statistics
     higherIsBetter: dryv.field(sharedProperties.Flag).maybe(),
     /** Scheme sta.indicator.role: the part an indicator plays on the screens (population, density, area); empty for the rest. */
     roleId: belongsTo(() => Value).maybe(),
+    /** True when the indicator is computed from others (statistics.components) and not published as a count. */
+    isDerived: dryv.field(sharedProperties.Flag),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .description("One measured quantity, for example total population, registered voters or audit opinion score.")
   .role("entity")
-  .facets({ storage: dryv.storage("indicators").index("topicId").index("measureKindId").index("roleId").index("sourceCitationId") });
+  .facets({
+    storage: dryv.storage("indicators").index("topicId").index("measureKindId").index("roleId").index("sourceCitationId"),
+  });
 
 /*---------------- statistics.observations ----------------*/
 export const Observations = statistics
@@ -116,4 +120,32 @@ export const Metrics = statistics
       .index("numeratorIndicatorId")
       .index("denominatorIndicatorId")
       .index("sourceCitationId"),
+  });
+
+/*---------------- statistics.components ----------------*/
+export const Components = statistics
+  .schema("Components", {
+    /** The derived indicator (an index or ranking measure). */
+    indicatorId: belongsTo(() => Indicators),
+    /** One indicator it is made from. */
+    componentIndicatorId: belongsTo(() => Indicators),
+    /** The positive weight of this component in the derived figure. */
+    weight: dryv.field(sharedProperties.Number),
+    /** Scheme sta.component.transform: as is, normalised, inverted. */
+    transformId: belongsTo(() => Value).tags("scheme:ref.sch.sta.component.transform"),
+    position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+  })
+  .extends(baseSchemas.Association)
+  .rule("ComponentIsNotItself", (v) => v.indicatorId.ne(v.componentIndicatorId))
+  .rule("WeightIsPositive", (v) => v.weight.gt(0))
+  .description(
+    "One input to a derived indicator with its weight and transform. The method citation sits on the derived indicator; its observations are computed and stored as estimated.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("components")
+      .unique("indicatorId", "componentIndicatorId")
+      .index("indicatorId")
+      .index("componentIndicatorId"),
   });

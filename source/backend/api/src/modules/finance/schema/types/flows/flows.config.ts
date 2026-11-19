@@ -12,6 +12,7 @@ import { ERelationType } from "#/modules/common/schema/types/enums";
 import * as AppropriationsConfig from "#/modules/finance/schema/types/appropriations/appropriations.config";
 import * as ContractsConfig from "#/modules/civic/schema/types/contracts/contracts.config";
 import * as EntitiesConfig from "#/modules/official/schema/types/entities/entities.config";
+import * as IndividualsConfig from "#/modules/official/schema/types/individuals/individuals.config";
 import * as ValueConfig from "#/modules/reference/schema/types/value/value.config";
 import * as DebtsConfig from "#/modules/finance/schema/types/debts/debts.config";
 import * as FiscalPeriodsConfig from "#/modules/finance/schema/types/fiscal-periods/fiscal-periods.config";
@@ -45,6 +46,7 @@ export const FLOWS_RELATION_KEYS = [
   "appropriation",
   "contract",
   "counterpartyEntity",
+  "counterpartyIndividual",
   "currency",
   "debt",
   "expenditureClass",
@@ -67,6 +69,7 @@ export const FLOWS_SORTABLE_FIELDS = [
   "code",
   "contractId",
   "counterpartyEntityId",
+  "counterpartyIndividualId",
   "createdAt",
   "currencyId",
   "debtId",
@@ -91,6 +94,7 @@ export const FLOWS_FILTERABLE_FIELDS = [
   "appropriationId",
   "contractId",
   "counterpartyEntityId",
+  "counterpartyIndividualId",
   "currencyId",
   "debtId",
   "expenditureClassId",
@@ -127,6 +131,7 @@ export const FLOWS_SELECTABLE_FIELDS = [
   "code",
   "contractId",
   "counterpartyEntityId",
+  "counterpartyIndividualId",
   "createdAt",
   "currencyId",
   "debtId",
@@ -151,6 +156,7 @@ export const FLOWS_DEFAULT_SELECT_FIELDS = [
   "code",
   "contractId",
   "counterpartyEntityId",
+  "counterpartyIndividualId",
   "createdAt",
   "currencyId",
   "debtId",
@@ -179,6 +185,7 @@ export const FLOWS_EDITABLE_FIELDS = [
   "code",
   "contractId",
   "counterpartyEntityId",
+  "counterpartyIndividualId",
   "currencyId",
   "debtId",
   "expenditureClassId",
@@ -229,6 +236,10 @@ export const FLOWS_ONE_RELATION_QUERY_OPTIONS = [
   Q.createRelationKeyMapper<FlowsRelationKey>().one(
     () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "counterpartyEntity",
+  ),
+  Q.createRelationKeyMapper<FlowsRelationKey>().one(
+    () => IndividualsConfig.INDIVIDUALS_AS_ONE_RELATION_CONFIG,
+    "counterpartyIndividual",
   ),
   Q.createRelationKeyMapper<FlowsRelationKey>().one(
     () => ValueConfig.VALUE_AS_ONE_RELATION_CONFIG,

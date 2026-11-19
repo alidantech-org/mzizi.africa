@@ -64,6 +64,12 @@ export class LevelsDto {
   @IsBoolean()
   isRoutingHierarchy!: Flag;
 
+  @IsOptional()
+  @ValidateIf((object) => object.rootFeatureId !== null)
+  @IsString()
+  @IsUUID()
+  rootFeatureId?: Id | null;
+
   @IsISO8601({})
   updatedAt!: Instant;
 

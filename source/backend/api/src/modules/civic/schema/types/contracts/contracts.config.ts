@@ -36,6 +36,7 @@ import type {
 // ----------------------------------
 
 export const CONTRACTS_RELATION_KEYS = [
+  "buyerEntity",
   "contractorEntity",
   "currency",
   "nature",
@@ -51,6 +52,7 @@ export const CONTRACTS_RELATION_KEYS = [
 
 export const CONTRACTS_SORTABLE_FIELDS = [
   "amountMinorUnits",
+  "buyerEntityId",
   "code",
   "contractorEntityId",
   "createdAt",
@@ -70,6 +72,7 @@ export const CONTRACTS_SORTABLE_FIELDS = [
 export const CONTRACTS_SEARCHABLE_FIELDS = ["code"] as const satisfies readonly ContractsKey[];
 
 export const CONTRACTS_FILTERABLE_FIELDS = [
+  "buyerEntityId",
   "contractorEntityId",
   "currencyId",
   "id",
@@ -99,6 +102,7 @@ export const CONTRACTS_BUILD_WHERE_OPTIONS: IBuildWhereConditionsOptions<IContra
 
 export const CONTRACTS_SELECTABLE_FIELDS = [
   "amountMinorUnits",
+  "buyerEntityId",
   "code",
   "contractorEntityId",
   "createdAt",
@@ -117,6 +121,7 @@ export const CONTRACTS_SELECTABLE_FIELDS = [
 
 export const CONTRACTS_DEFAULT_SELECT_FIELDS = [
   "amountMinorUnits",
+  "buyerEntityId",
   "code",
   "contractorEntityId",
   "createdAt",
@@ -139,6 +144,7 @@ export const CONTRACTS_DEFAULT_SELECT_FIELDS = [
 
 export const CONTRACTS_EDITABLE_FIELDS = [
   "amountMinorUnits",
+  "buyerEntityId",
   "code",
   "contractorEntityId",
   "currencyId",
@@ -176,6 +182,10 @@ export const CONTRACTS_AS_MANY_RELATION_CONFIG = {
 // ----------------------------------
 
 export const CONTRACTS_ONE_RELATION_QUERY_OPTIONS = [
+  Q.createRelationKeyMapper<ContractsRelationKey>().one(
+    () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
+    "buyerEntity",
+  ),
   Q.createRelationKeyMapper<ContractsRelationKey>().one(
     () => EntitiesConfig.ENTITIES_AS_ONE_RELATION_CONFIG,
     "contractorEntity",

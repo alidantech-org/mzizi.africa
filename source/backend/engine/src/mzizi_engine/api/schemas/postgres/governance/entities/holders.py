@@ -20,6 +20,7 @@ class HoldersRow(BaseModel):
 
     appointed_by_entity_id: UUID | None = None
     appointment_kind_id: UUID
+    appointment_motion_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -35,6 +36,7 @@ class HoldersRow(BaseModel):
     id: UUID
     individual_id: UUID
     left_office_on: date | None = None
+    nominated_by_entity_id: UUID | None = None
     office_id: UUID
     source_citation_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None

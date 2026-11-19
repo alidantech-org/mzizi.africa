@@ -7,6 +7,7 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { CountryEntity } from "#/modules/reference/schema/entities/country.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
@@ -22,6 +23,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["countryId", "hierarchyKindId", "depth"], { unique: true })
 @Index(["featureKindId"])
+@Index(["rootFeatureId"])
 export class LevelsEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
@@ -61,6 +63,13 @@ export class LevelsEntity {
 
   @Column({ name: "is_routing_hierarchy", type: "boolean" })
   isRoutingHierarchy!: Flag;
+
+  @Column({ name: "root_feature_id", type: "uuid", nullable: true })
+  rootFeatureId?: Id | null;
+
+  @ManyToOne(() => FeaturesEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "root_feature_id" })
+  rootFeature?: Relation<FeaturesEntity>;
 
   @Column({ name: "updated_at", type: "timestamptz" })
   updatedAt!: Date;

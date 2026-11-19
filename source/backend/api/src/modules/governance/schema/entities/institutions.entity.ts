@@ -9,6 +9,7 @@ import {
   type Relation,
 } from "typeorm";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
+import { CountryEntity } from "#/modules/reference/schema/entities/country.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
@@ -23,6 +24,8 @@ import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 @Entity({ schema: "governance", name: "institutions" })
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["entityId"])
+@Index(["countryId"])
+@Index(["classId"])
 @Index(["armId"])
 @Index(["sourceCitationId"])
 @Check(
@@ -44,8 +47,22 @@ export class InstitutionsEntity {
   @JoinColumn({ name: "arm_id" })
   arm?: Relation<ValueEntity>;
 
+  @Column({ name: "class_id", type: "uuid", nullable: true })
+  classId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "class_id" })
+  class?: Relation<ValueEntity>;
+
   @Column({ name: "code", type: "varchar", length: 255 })
   code!: IdentityCode;
+
+  @Column({ name: "country_id", type: "uuid" })
+  countryId!: Id;
+
+  @ManyToOne(() => CountryEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "country_id" })
+  country?: Relation<CountryEntity>;
 
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;

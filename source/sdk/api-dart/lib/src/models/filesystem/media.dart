@@ -15,6 +15,7 @@ class FilesystemMedia {
     required this.createdAt,
     this.deletedAt,
     this.description,
+    this.endSecond,
     this.externalUrl,
     this.fileVersionId,
     required this.id,
@@ -22,6 +23,7 @@ class FilesystemMedia {
     this.platformId,
     this.position,
     this.purpose,
+    this.startSecond,
     required this.subjectId,
     required this.subjectTable,
     this.thumbnailUrl,
@@ -34,6 +36,7 @@ class FilesystemMedia {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String? description;
+  final int? endSecond;
   final String? externalUrl;
   final String? fileVersionId;
   final String id;
@@ -41,6 +44,7 @@ class FilesystemMedia {
   final String? platformId;
   final int? position;
   final String? purpose;
+  final int? startSecond;
   final String subjectId;
   final SharedSubjectTable subjectTable;
   final String? thumbnailUrl;

@@ -2,7 +2,7 @@ code,product_code,designation,description
 seed.global.reference.countries~1834e703b30e,seed.global.reference.countries,1834e703b30e,authored CSV
 seed.global.reference.language-names~680c97962388,seed.global.reference.language-names,680c97962388,authored CSV
 seed.global.reference.languages~e2ba41f928ee,seed.global.reference.languages,e2ba41f928ee,authored CSV
-seed.global.reference.schemes~c04b0dba57dc,seed.global.reference.schemes,c04b0dba57dc,authored CSV
+seed.global.reference.schemes~24b495f5b208,seed.global.reference.schemes,24b495f5b208,authored CSV
 seed.global.reference.value-labels~66b40f4ffa28,seed.global.reference.value-labels,66b40f4ffa28,authored CSV
 seed.global.reference.values.civ-values~3bb6cb279776,seed.global.reference.values.civ-values,3bb6cb279776,authored CSV
 seed.global.reference.values.com-values~ff67771c4615,seed.global.reference.values.com-values,ff67771c4615,authored CSV

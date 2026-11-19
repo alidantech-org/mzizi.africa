@@ -28,6 +28,7 @@ class FlowsRow(BaseModel):
     ]
     contract_id: UUID | None = None
     counterparty_entity_id: UUID | None = None
+    counterparty_individual_id: UUID | None = None
     created_at: datetime
     currency_id: UUID
     debt_id: UUID | None = None

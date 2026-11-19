@@ -27,6 +27,12 @@ export const relationshipsExample: ContractExample = contractExample({
       },
     },
     {
+      name: "confidence",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", min: 0, max: 1 },
+    },
+    {
       name: "createdAt",
       optional: false,
       nullable: false,
@@ -43,6 +49,18 @@ export const relationshipsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "evidenceBasisId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "evidenceStatusId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "fromEntityId",

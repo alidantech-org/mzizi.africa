@@ -32,6 +32,12 @@ export class InstitutionsDto {
   @IsUUID()
   armId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.classId !== null)
+  @IsString()
+  @IsUUID()
+  classId?: Id | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -41,6 +47,10 @@ export class InstitutionsDto {
     ),
   )
   code!: IdentityCode;
+
+  @IsString()
+  @IsUUID()
+  countryId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;

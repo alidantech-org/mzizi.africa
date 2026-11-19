@@ -3,6 +3,7 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { motionsExample } from "@test/modules/governance/schema/dto/examples/motions.dto.example.ts";
 import { officesExample } from "@test/modules/governance/schema/dto/examples/offices.dto.example.ts";
 import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
 import { individualsExample } from "@test/modules/official/schema/dto/examples/individuals.dto.example.ts";
@@ -24,6 +25,12 @@ export const holdersExample: ContractExample = contractExample({
       name: "appointmentKindId",
       optional: false,
       nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "appointmentMotionId",
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -80,6 +87,12 @@ export const holdersExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "nominatedByEntityId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "officeId",

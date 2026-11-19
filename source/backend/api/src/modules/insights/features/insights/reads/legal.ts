@@ -80,9 +80,9 @@ export async function legalBasisFor(db: DataSource, table: string, code: string,
   if (table === "governance.holders" || table === "governance.offices") {
     const rows: { tier: string; inst: string }[] = await db.query(
       table === "governance.holders"
-        ? `select tk.code as tier, i.code as inst from governance.holders h join governance.offices o on o.id = h.office_id join reference.values tk on tk.id = o.office_kind_id
+        ? `select tk.code as tier, i.code as inst from governance.holders h join governance.offices o on o.id = h.office_id join reference.values tk on tk.id = (select p.title_id from governance.positions p where p.id = o.position_id)
            join governance.institutions i on i.id = o.institution_id where (h.code = $1 or h.id::text = $2) and h.deleted_at is null`
-        : `select tk.code as tier, i.code as inst from governance.offices o join reference.values tk on tk.id = o.office_kind_id join governance.institutions i on i.id = o.institution_id where (o.code = $1 or o.id::text = $2) and o.deleted_at is null`,
+        : `select tk.code as tier, i.code as inst from governance.offices o join reference.values tk on tk.id = (select p.title_id from governance.positions p where p.id = o.position_id) join governance.institutions i on i.id = o.institution_id where (o.code = $1 or o.id::text = $2) and o.deleted_at is null`,
       [storedCode(SUBJECT_PREFIX[table]!, code), code],
     );
     const r = rows[0];

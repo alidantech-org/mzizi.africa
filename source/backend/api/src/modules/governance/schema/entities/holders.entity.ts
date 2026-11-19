@@ -8,6 +8,7 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
+import { MotionsEntity } from "#/modules/governance/schema/entities/motions.entity.ts";
 import { OfficesEntity } from "#/modules/governance/schema/entities/offices.entity.ts";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
 import { IndividualsEntity } from "#/modules/official/schema/entities/individuals.entity.ts";
@@ -26,6 +27,8 @@ import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 @Index(["code"], { unique: true, where: '"deleted_at" IS NULL' })
 @Index(["officeId", "fromYear", "toYear"])
 @Index(["individualId"])
+@Index(["nominatedByEntityId"])
+@Index(["appointmentMotionId"])
 @Index(["sourceCitationId"])
 @Check(
   "chk_holders_period_years_are_ordered",
@@ -52,6 +55,13 @@ export class HoldersEntity {
   @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "appointment_kind_id" })
   appointmentKind?: Relation<ValueEntity>;
+
+  @Column({ name: "appointment_motion_id", type: "uuid", nullable: true })
+  appointmentMotionId?: Id | null;
+
+  @ManyToOne(() => MotionsEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "appointment_motion_id" })
+  appointmentMotion?: Relation<MotionsEntity>;
 
   @Column({ name: "code", type: "varchar", length: 255 })
   code!: IdentityCode;
@@ -82,6 +92,13 @@ export class HoldersEntity {
 
   @Column({ name: "left_office_on", type: "date", nullable: true })
   leftOfficeOn?: Date | null;
+
+  @Column({ name: "nominated_by_entity_id", type: "uuid", nullable: true })
+  nominatedByEntityId?: Id | null;
+
+  @ManyToOne(() => EntitiesEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "nominated_by_entity_id" })
+  nominatedByEntity?: Relation<EntitiesEntity>;
 
   @Column({ name: "office_id", type: "uuid" })
   officeId!: Id;

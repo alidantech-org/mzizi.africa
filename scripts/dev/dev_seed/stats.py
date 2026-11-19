@@ -211,6 +211,7 @@ def build_statistics(
             "measure_kind_code": measure,
             "higher_is_better": "" if better is None else str(better).lower(),
             "role_code": INDICATOR_ROLES.get(code, ""),
+            "is_derived": "false",
         }
         t.add("ke/statistics/indicators.csv", row)
     demography = Demography({}, {}, {})

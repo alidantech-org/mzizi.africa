@@ -26,9 +26,12 @@ class OfficialRelationshipsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    confidence: Annotated[float, Field(ge=0, le=1)] | None = None
     created_at: datetime
     deleted_at: datetime | None = None
     ends_on: date | None = None
+    evidence_basis_id: UUID | None = None
+    evidence_status_id: UUID | None = None
     from_entity_id: UUID | None = None
     from_individual_id: UUID | None = None
     from_to_precision: DatePrecision | None = None

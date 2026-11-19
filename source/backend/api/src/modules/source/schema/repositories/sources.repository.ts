@@ -63,6 +63,14 @@ export class SourcesRepository
     return await this.findByQuery(query, { kind, deletedAt: IsNull() });
   }
 
+  /** Find sources by licence id, paged by the shared query. */
+  async findByLicence(
+    query: BaseQueryDto<SourcesEntity>,
+    licenceId: NonNullable<SourcesEntity["licenceId"]>,
+  ): Promise<IFindAllResponse<SourcesEntity>> {
+    return await this.findByQuery(query, { licenceId, deletedAt: IsNull() });
+  }
+
   /** Find sources by official entity id, paged by the shared query. */
   async findByOfficialEntity(
     query: BaseQueryDto<SourcesEntity>,

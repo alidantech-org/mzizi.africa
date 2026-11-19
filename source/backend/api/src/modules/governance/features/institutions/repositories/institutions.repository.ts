@@ -25,6 +25,7 @@ import { HoldersEntity } from "#/modules/governance/schema/entities/holders.enti
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
 import { MandatesEntity } from "#/modules/governance/schema/entities/mandates.entity.ts";
 import { OfficesEntity } from "#/modules/governance/schema/entities/offices.entity.ts";
+import { PositionsEntity } from "#/modules/governance/schema/entities/positions.entity.ts";
 import { EntitiesEntity } from "#/modules/official/schema/entities/entities.entity.ts";
 import { IndividualsEntity } from "#/modules/official/schema/entities/individuals.entity.ts";
 import { OfficialNamesEntity } from "#/modules/official/schema/entities/names.entity.ts";
@@ -298,8 +299,13 @@ export class GovernanceInstitutionsRepository {
     query.addSelect("r1.institutionId", "__hit");
     query.addSelect("r1.code", "code");
     query.addSelect("r1.id", "id");
-    query.leftJoin(ValueEntity, "r1_officeKindId", "r1_officeKindId.id = r1.officeKindId");
-    query.addSelect("r1_officeKindId.code", "kind");
+    query.leftJoin(PositionsEntity, "r1_positionId", "r1_positionId.id = r1.positionId");
+    query.leftJoin(
+      ValueEntity,
+      "r1_positionId_titleId",
+      "r1_positionId_titleId.id = r1_positionId.titleId",
+    );
+    query.addSelect("r1_positionId_titleId.code", "kind");
     query.orderBy("r1.code", "ASC");
     query.addOrderBy("r1.id", "ASC");
     const raws = await query.getRawMany<Row>();
@@ -330,8 +336,13 @@ export class GovernanceInstitutionsRepository {
     query.addSelect("r.code", "code");
     query.addSelect("r.id", "id");
     query.addSelect("r.institutionId", "institutionId");
-    query.leftJoin(ValueEntity, "r_officeKindId", "r_officeKindId.id = r.officeKindId");
-    query.addSelect("r_officeKindId.code", "kind");
+    query.leftJoin(PositionsEntity, "r_positionId", "r_positionId.id = r.positionId");
+    query.leftJoin(
+      ValueEntity,
+      "r_positionId_titleId",
+      "r_positionId_titleId.id = r_positionId.titleId",
+    );
+    query.addSelect("r_positionId_titleId.code", "kind");
     query.addSelect("r.unitFeatureId", "unitFeatureId");
     query.addSelect("r.id", "__key_id");
     query.orderBy("r.id", "ASC");

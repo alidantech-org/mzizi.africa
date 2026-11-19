@@ -287,6 +287,8 @@ export const Levels = geography
     featureKindId: belongsTo(() => Value).tags("scheme:ref.sch.geo.feature.kind"),
     /** True for the one ladder whose chain builds public addresses and breadcrumbs. */
     isRoutingHierarchy: dryv.field(sharedProperties.Flag),
+    /** The feature at depth 0 of this ladder (the country's own feature), so a national figure can be found for any country. */
+    rootFeatureId: belongsTo(() => Features).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .description(
@@ -294,5 +296,9 @@ export const Levels = geography
   )
   .role("entity")
   .facets({
-    storage: dryv.storage("levels").unique("countryId", "hierarchyKindId", "depth").index("featureKindId"),
+    storage: dryv
+      .storage("levels")
+      .unique("countryId", "hierarchyKindId", "depth")
+      .index("featureKindId")
+      .index("rootFeatureId"),
   });

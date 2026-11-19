@@ -3,7 +3,9 @@ import { SharedDatePrecision } from "#sdk/types/enums/shared/date-precision.ts";
 /** One government institution specialization of an Official entity. */
 export interface GovernanceInstitutions {
   armId?: string | null;
+  classId?: string | null;
   code: string;
+  countryId: string;
   createdAt: string;
   deletedAt?: string | null;
   dissolvedOn?: string | null;

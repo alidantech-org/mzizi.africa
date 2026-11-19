@@ -49,6 +49,12 @@ export const mediaExample: ContractExample = contractExample({
       spec: { kind: "string", maxLength: 4000 },
     },
     {
+      name: "endSecond",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: 0 },
+    },
+    {
       name: "externalUrl",
       optional: true,
       nullable: true,
@@ -89,6 +95,12 @@ export const mediaExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", maxLength: 4000 },
+    },
+    {
+      name: "startSecond",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: 0 },
     },
     {
       name: "subjectId",
@@ -140,6 +152,26 @@ export const mediaExample: ContractExample = contractExample({
           left: { field: "externalUrl" },
           operator: "not-equal",
           right: { literal: null },
+        },
+      ],
+    },
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "startSecond" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "endSecond" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "startSecond" },
+          operator: "less-than",
+          right: { field: "endSecond" },
         },
       ],
     },

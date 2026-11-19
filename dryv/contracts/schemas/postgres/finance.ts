@@ -5,12 +5,13 @@
  * SQL generation remains gated on code-shape/CHECK enforcement and currency-scale policy.
  */
 import * as dryv from "@dryvcode/author";
+import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { Contracts, Projects } from "./civic.ts";
 import { Features } from "./geography.ts";
 import { Institutions } from "./governance.ts";
-import { Entities } from "./official.ts";
+import { Entities, Individuals } from "./official.ts";
 import { Country, Value } from "./reference.ts";
 import { Citations } from "./source.ts";
 
@@ -129,6 +130,8 @@ export const Flows = finance
     contractId: belongsTo(() => Contracts).maybe(),
     debtId: belongsTo(() => Debts).maybe(),
     counterpartyEntityId: belongsTo(() => Entities).maybe(),
+    /** The counterparty when it is a person (a payee who is not an organisation). At most one counterparty is set. */
+    counterpartyIndividualId: belongsTo(() => Individuals).maybe(),
     /** The project this money was allocated to or spent on. */
     projectId: belongsTo(() => Projects).maybe(),
     /** The body that allocated or spent it, for example a constituency fund committee. */
@@ -143,6 +146,7 @@ export const Flows = finance
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(MoneyEntity)
+  .rule("AtMostOneCounterparty", rule.atMostOne("counterpartyEntityId", "counterpartyIndividualId"))
   .description("One reported financial flow at its source transaction grain, not a rolled-up aggregate.")
   .role("entity")
   .facets({
@@ -153,6 +157,8 @@ export const Flows = finance
       .index("fundId")
       .index("appropriationId")
       .index("contractId")
+      .index("counterpartyEntityId")
+      .index("counterpartyIndividualId")
       .index("debtId")
       .index("projectId")
       .index("institutionId")

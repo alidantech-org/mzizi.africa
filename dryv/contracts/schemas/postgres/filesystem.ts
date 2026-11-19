@@ -161,6 +161,9 @@ export const Media = filesystem
     fileVersionId: belongsTo(() => FileVersions).maybe(),
     /** A remote resource instead of stored bytes: a video, social post, stock photo or generated avatar, kept as the raw URL. */
     externalUrl: dryv.field(sharedProperties.Url).maybe(),
+    /** The moment in a recording where the matter starts and ends, in seconds, so one video can serve many promises or speeches. */
+    startSecond: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+    endSecond: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
     /** Scheme fil.media.platform: youtube, tiktok, facebook, instagram, x, vimeo, pexels, dicebear, website. */
     platformId: belongsTo(() => Value)
       .maybe()
@@ -168,6 +171,7 @@ export const Media = filesystem
     thumbnailUrl: dryv.field(sharedProperties.Url).maybe(),
   })
   .rule("MediaHasBytesOrUrl", rule.atLeastOne("fileVersionId", "externalUrl"))
+  .rule("MediaSecondsAreOrdered", rule.ordered("startSecond", "endSecond", { allowEqual: false }))
   .extends(baseSchemas.CodedSubjectEntity)
   .description(
     "One use of a stored media file by one subject record, which it mentions by table and id. A subject can have many media of any kind and one file can serve many subjects; subjects carry no media pointer.",

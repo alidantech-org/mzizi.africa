@@ -13,6 +13,7 @@ import { IndividualsEntity } from "#/modules/official/schema/entities/individual
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Percentage } from "#/modules/shared/schema/type/percentage.type.ts";
@@ -50,6 +51,9 @@ export class OfficialRelationshipsEntity {
   @Column({ name: "code", type: "varchar", length: 255 })
   code!: IdentityCode;
 
+  @Column({ name: "confidence", type: "double precision", nullable: true })
+  confidence?: Confidence | null;
+
   @Column({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 
@@ -58,6 +62,20 @@ export class OfficialRelationshipsEntity {
 
   @Column({ name: "ends_on", type: "date", nullable: true })
   endsOn?: Date | null;
+
+  @Column({ name: "evidence_basis_id", type: "uuid", nullable: true })
+  evidenceBasisId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "evidence_basis_id" })
+  evidenceBasis?: Relation<ValueEntity>;
+
+  @Column({ name: "evidence_status_id", type: "uuid", nullable: true })
+  evidenceStatusId?: Id | null;
+
+  @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
+  @JoinColumn({ name: "evidence_status_id" })
+  evidenceStatus?: Relation<ValueEntity>;
 
   @Column({ name: "from_entity_id", type: "uuid", nullable: true })
   fromEntityId?: Id | null;

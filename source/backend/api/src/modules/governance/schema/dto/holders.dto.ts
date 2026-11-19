@@ -36,6 +36,12 @@ export class HoldersDto {
   @IsUUID()
   appointmentKindId!: Id;
 
+  @IsOptional()
+  @ValidateIf((object) => object.appointmentMotionId !== null)
+  @IsString()
+  @IsUUID()
+  appointmentMotionId?: Id | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -85,6 +91,12 @@ export class HoldersDto {
   @ValidateIf((object) => object.leftOfficeOn !== null)
   @IsISO8601({ strict: true })
   leftOfficeOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.nominatedByEntityId !== null)
+  @IsString()
+  @IsUUID()
+  nominatedByEntityId?: Id | null;
 
   @IsString()
   @IsUUID()

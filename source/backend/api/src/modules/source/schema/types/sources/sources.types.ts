@@ -40,11 +40,14 @@ export interface ISources extends B.IBase {
   credibilityId: string | null;
   description: string | null;
   kind: SourceKind;
+  licenceId: string | null;
   officialEntityId: string | null;
   publisherId: string;
+  termsUrl: string | null;
   title: string;
   readonly classification?: ValueTypes.IValue;
   readonly credibility?: ValueTypes.IValue;
+  readonly licence?: ValueTypes.IValue;
   readonly officialEntity?: EntitiesTypes.IEntities;
   readonly publisher?: PublishersTypes.IPublishers;
 }
@@ -138,6 +141,7 @@ export type ISourcesAsManyRelationQuery = Q.IAsManyRelationQuery<
 export interface ISourcesRelationMap extends Record<SourcesRelationKey, unknown> {
   classification: ValueTypes.IValueAsOneRelationQuery;
   credibility: ValueTypes.IValueAsOneRelationQuery;
+  licence: ValueTypes.IValueAsOneRelationQuery;
   officialEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   publisher: PublishersTypes.IPublishersAsOneRelationQuery;
 }

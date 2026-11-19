@@ -5,7 +5,7 @@ import {
 import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { positionsExample } from "@test/modules/governance/schema/dto/examples/positions.dto.example.ts";
 import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
 import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 
@@ -75,10 +75,16 @@ export const officesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "officeKindId",
+      name: "positionId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "seatOrdinal",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: 1 },
     },
     {
       name: "sourceCitationId",

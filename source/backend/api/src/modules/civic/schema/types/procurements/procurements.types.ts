@@ -36,11 +36,15 @@ import type {
 /** One public procurement process run by a buyer, optionally linked to a project. */
 export interface IProcurements extends B.IBase {
   awardedOn: Date | null;
+  bidderCount: number | null;
   buyerEntityId: string;
   categoryId: string | null;
   closesOn: Date | null;
   code: string;
   countryId: string | null;
+  currencyId: string | null;
+  estimatedAmountMinorUnits: number | null;
+  evaluationBasisId: string | null;
   natureId: string | null;
   procedureKindId: string;
   projectId: string | null;
@@ -52,6 +56,8 @@ export interface IProcurements extends B.IBase {
   readonly buyerEntity?: EntitiesTypes.IEntities;
   readonly category?: ValueTypes.IValue;
   readonly country?: CountryTypes.ICountry;
+  readonly currency?: ValueTypes.IValue;
+  readonly evaluationBasis?: ValueTypes.IValue;
   readonly nature?: ValueTypes.IValue;
   readonly procedureKind?: ValueTypes.IValue;
   readonly project?: ProjectsTypes.IProjects;
@@ -161,6 +167,8 @@ export interface IProcurementsRelationMap extends Record<ProcurementsRelationKey
   buyerEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   category: ValueTypes.IValueAsOneRelationQuery;
   country: CountryTypes.ICountryAsOneRelationQuery;
+  currency: ValueTypes.IValueAsOneRelationQuery;
+  evaluationBasis: ValueTypes.IValueAsOneRelationQuery;
   nature: ValueTypes.IValueAsOneRelationQuery;
   procedureKind: ValueTypes.IValueAsOneRelationQuery;
   project: ProjectsTypes.IProjectsAsOneRelationQuery;

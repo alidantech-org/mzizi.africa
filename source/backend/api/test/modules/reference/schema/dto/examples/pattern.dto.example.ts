@@ -2,6 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
+import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 
 /** The contract shape of Pattern, for generated tests. */
@@ -22,6 +24,12 @@ export const patternExample: ContractExample = contractExample({
       },
     },
     {
+      name: "countryId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "createdAt",
       optional: false,
       nullable: false,
@@ -34,9 +42,21 @@ export const patternExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "description",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", maxLength: 4000 },
+    },
+    {
       name: "id",
       optional: false,
       nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "kindId",
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {

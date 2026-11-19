@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
+import 'package:mzizi_api/src/models/reference/country.dart';
 import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
 import 'package:mzizi_api/src/models/source/citations.dart';
@@ -12,7 +13,9 @@ part 'institutions.g.dart';
 class GovernanceInstitutions {
   const GovernanceInstitutions({
     this.armId,
+    this.classId,
     required this.code,
+    required this.countryId,
     required this.createdAt,
     this.deletedAt,
     this.dissolvedOn,
@@ -29,7 +32,9 @@ class GovernanceInstitutions {
     required this.version,
   });
   final String? armId;
+  final String? classId;
   final String code;
+  final String countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? dissolvedOn;

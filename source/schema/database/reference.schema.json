@@ -319,6 +319,156 @@
         }
       }
     },
+    "instances": {
+      "title": "reference.instances",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.reference.instances",
+      "x-id": "#/schemas/reference.Instance",
+      "x-table": "reference.instances",
+      "x-primaryKey": ["id"],"x-naturalKey": ["template_code", "unit_feature_code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["template_id", "unit_feature_id"]
+      ],
+      "required": [
+        "generated_at"
+        ,"id"
+        ,"status_id"
+        ,"template_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "contact_code"
+          ,"domain_code"
+          ,"generated_at"
+          ,"institution_code"
+          ,"office_code"
+          ,"position_code"
+          ,"status_code"
+          ,"template_code"
+          ,"unit_feature_code"
+          ,"verified_citation_code"
+        ],
+        "required": [
+          "generated_at"
+          ,"status_code"
+          ,"template_code"
+        ]
+      },
+      "properties": {
+        "contact_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Contacts", "column": "id", "alias": "contact_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"domain_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Domains", "column": "id", "alias": "domain_code" }
+        }
+        ,"generated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"institution_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
+        }
+        ,"office_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Offices", "column": "id", "alias": "office_code" }
+        }
+        ,"position_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Positions", "column": "id", "alias": "position_code" }
+        }
+        ,"status_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.ref.evidence.status" }
+        }
+        ,"template_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Template", "column": "id", "alias": "template_code" }
+        }
+        ,"unit_feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"verified_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "verified_citation_code" }
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "languages": {
       "title": "reference.languages",
       "type": "object",
@@ -625,6 +775,9 @@
         ],
         "columns": [
           "code"
+          ,"country_code"
+          ,"description"
+          ,"kind_code"
           ,"title"
         ],
         "required": [
@@ -641,6 +794,13 @@
           "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
           "x-role": "key"
         }
+        ,"country_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+        }
         ,"created_at": {
           "type": "string",
           "x-type": "timestamp",
@@ -655,12 +815,25 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"description": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
           "x-role": "system"
+        }
+        ,"kind_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.gov.pattern.kind" }
         }
         ,"title": {
           "type": "string",
@@ -763,6 +936,212 @@
           "x-type": "text",
           "maxLength": 300,
           "minLength": 1,
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "templates": {
+      "title": "reference.templates",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.reference.templates",
+      "x-id": "#/schemas/reference.Template",
+      "x-table": "reference.templates",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["pattern_id", "code"]
+      ],
+      "required": [
+        "code"
+        ,"code_template"
+        ,"id"
+        ,"name_template"
+        ,"pattern_id"
+        ,"produces"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "arm_code"
+          ,"class_code"
+          ,"code"
+          ,"code_template"
+          ,"fan_out_level_code"
+          ,"institution_kind_code"
+          ,"name_template"
+          ,"parent_template_code"
+          ,"pattern_code"
+          ,"produces"
+          ,"role_code"
+          ,"seat_basis_code"
+          ,"seat_count"
+          ,"selection_method_code"
+          ,"source_citation_code"
+          ,"term_limit"
+          ,"term_years"
+        ],
+        "required": [
+          "code"
+          ,"code_template"
+          ,"name_template"
+          ,"pattern_code"
+          ,"produces"
+        ]
+      },
+      "properties": {
+        "arm_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "arm_code", "scheme": "ref.sch.gov.arm" }
+        }
+        ,"class_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "class_code", "scheme": "ref.sch.gov.institution.class" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"code_template": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 500,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"fan_out_level_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Levels", "column": "id", "alias": "fan_out_level_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"institution_kind_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "institution_kind_code" }
+        }
+        ,"name_template": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 500,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"parent_template_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Template", "column": "id", "alias": "parent_template_code" }
+        }
+        ,"pattern_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Pattern", "column": "id", "alias": "pattern_code" }
+        }
+        ,"produces": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["contact", "domain", "event-rule", "institution", "office", "position"],
+          "x-role": "data"
+        }
+        ,"role_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "role_code", "scheme": "ref.sch.gov.position.role" }
+        }
+        ,"seat_basis_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "seat_basis_code", "scheme": "ref.sch.gov.seat.basis" }
+        }
+        ,"seat_count": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"selection_method_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "selection_method_code", "scheme": "ref.sch.gov.selection.method" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"term_limit": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"term_years": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
           "x-role": "data"
         }
         ,"updated_at": {

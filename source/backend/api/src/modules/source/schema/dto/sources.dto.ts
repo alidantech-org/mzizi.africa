@@ -4,6 +4,7 @@ import {
   IsISO8601,
   IsOptional,
   IsString,
+  IsUrl,
   IsUUID,
   Matches,
   MaxLength,
@@ -11,7 +12,6 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-
 import { SourceKind } from "#/modules/source/schema/enum/source-kind.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -19,6 +19,7 @@ import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.ty
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Url } from "#/modules/shared/schema/type/url.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
@@ -76,6 +77,12 @@ export class SourcesDto {
   kind!: SourceKind;
 
   @IsOptional()
+  @ValidateIf((object) => object.licenceId !== null)
+  @IsString()
+  @IsUUID()
+  licenceId?: Id | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.officialEntityId !== null)
   @IsString()
   @IsUUID()
@@ -84,6 +91,13 @@ export class SourcesDto {
   @IsString()
   @IsUUID()
   publisherId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.termsUrl !== null)
+  @IsString()
+  @IsUrl()
+  @MaxLength(2048)
+  termsUrl?: Url | null;
 
   @IsString()
   @MinLength(1)

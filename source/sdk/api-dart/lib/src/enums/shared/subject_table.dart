@@ -12,6 +12,10 @@ enum SharedSubjectTable {
   civicDeliveries,
   @JsonValue('civic.facilities')
   civicFacilities,
+  @JsonValue('civic.officials')
+  civicOfficials,
+  @JsonValue('civic.partners')
+  civicPartners,
   @JsonValue('civic.procurements')
   civicProcurements,
   @JsonValue('civic.project_features')
@@ -20,6 +24,8 @@ enum SharedSubjectTable {
   civicProjects,
   @JsonValue('civic.services')
   civicServices,
+  @JsonValue('civic.variations')
+  civicVariations,
   @JsonValue('community.actors')
   communityActors,
   @JsonValue('community.cases')
@@ -42,6 +48,8 @@ enum SharedSubjectTable {
   communityProofs,
   @JsonValue('community.reactions')
   communityReactions,
+  @JsonValue('community.replies')
+  communityReplies,
   @JsonValue('community.subscriptions')
   communitySubscriptions,
   @JsonValue('community.tokens')
@@ -124,10 +132,16 @@ enum SharedSubjectTable {
   geographyRelationships,
   @JsonValue('governance.agenda')
   governanceAgenda,
+  @JsonValue('governance.assignments')
+  governanceAssignments,
   @JsonValue('governance.authority_scopes')
   governanceAuthorityScopes,
   @JsonValue('governance.bills')
   governanceBills,
+  @JsonValue('governance.fulfilments')
+  governanceFulfilments,
+  @JsonValue('governance.functions')
+  governanceFunctions,
   @JsonValue('governance.hansards')
   governanceHansards,
   @JsonValue('governance.holders')
@@ -142,6 +156,14 @@ enum SharedSubjectTable {
   governanceObligations,
   @JsonValue('governance.offices')
   governanceOffices,
+  @JsonValue('governance.positions')
+  governancePositions,
+  @JsonValue('governance.powers')
+  governancePowers,
+  @JsonValue('governance.procedures')
+  governanceProcedures,
+  @JsonValue('governance.promises')
+  governancePromises,
   @JsonValue('governance.relationships')
   governanceRelationships,
   @JsonValue('governance.reports')
@@ -196,6 +218,8 @@ enum SharedSubjectTable {
   politicsCoalitions,
   @JsonValue('politics.contests')
   politicsContests,
+  @JsonValue('politics.contributions')
+  politicsContributions,
   @JsonValue('politics.elections')
   politicsElections,
   @JsonValue('politics.electorates')
@@ -220,6 +244,8 @@ enum SharedSubjectTable {
   referenceCopy,
   @JsonValue('reference.countries')
   referenceCountries,
+  @JsonValue('reference.instances')
+  referenceInstances,
   @JsonValue('reference.language_names')
   referenceLanguageNames,
   @JsonValue('reference.languages')
@@ -228,6 +254,8 @@ enum SharedSubjectTable {
   referencePatterns,
   @JsonValue('reference.schemes')
   referenceSchemes,
+  @JsonValue('reference.templates')
+  referenceTemplates,
   @JsonValue('reference.topics')
   referenceTopics,
   @JsonValue('reference.units')
@@ -248,10 +276,14 @@ enum SharedSubjectTable {
   sourceCaptures,
   @JsonValue('source.citations')
   sourceCitations,
+  @JsonValue('source.contenders')
+  sourceContenders,
   @JsonValue('source.coverage')
   sourceCoverage,
   @JsonValue('source.discoveries')
   sourceDiscoveries,
+  @JsonValue('source.disputes')
+  sourceDisputes,
   @JsonValue('source.domains')
   sourceDomains,
   @JsonValue('source.editions')
@@ -270,6 +302,8 @@ enum SharedSubjectTable {
   sourceSources,
   @JsonValue('source.verifications')
   sourceVerifications,
+  @JsonValue('statistics.components')
+  statisticsComponents,
   @JsonValue('statistics.indicators')
   statisticsIndicators,
   @JsonValue('statistics.metrics')

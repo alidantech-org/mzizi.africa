@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class PatternRow(BaseModel):
-    """Stable identity for a reusable, reviewed pattern definition."""
+    """A reviewed rule for generating expected records (institutions, positions, offices, site candidates) before real ones are found. It holds no versions, bindings or dependencies; see DEC-PATTERNS-GENERATE-EXPECTED-DATA-20261119."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -24,9 +24,12 @@ class PatternRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    country_id: UUID | None = None
     created_at: datetime
     deleted_at: datetime | None = None
+    description: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
+    kind_id: UUID | None = None
     title: Annotated[str, Field(min_length=1, max_length=300)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

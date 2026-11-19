@@ -11,6 +11,7 @@ import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.
 // ----------------------------------
 import type * as EntitiesTypes from "#/modules/official/schema/types/entities/entities.types";
 import type * as ValueTypes from "#/modules/reference/schema/types/value/value.types";
+import type * as MotionsTypes from "#/modules/governance/schema/types/motions/motions.types";
 import type * as IndividualsTypes from "#/modules/official/schema/types/individuals/individuals.types";
 import type * as OfficesTypes from "#/modules/governance/schema/types/offices/offices.types";
 import type * as CitationsTypes from "#/modules/source/schema/types/citations/citations.types";
@@ -38,18 +39,22 @@ import type {
 export interface IHolders extends B.IBase {
   appointedByEntityId: string | null;
   appointmentKindId: string;
+  appointmentMotionId: string | null;
   code: string;
   fromToPrecision: DatePrecision | null;
   fromYear: number | null;
   individualId: string;
   leftOfficeOn: Date | null;
+  nominatedByEntityId: string | null;
   officeId: string;
   sourceCitationId: string | null;
   toYear: number | null;
   tookOfficeOn: Date | null;
   readonly appointedByEntity?: EntitiesTypes.IEntities;
   readonly appointmentKind?: ValueTypes.IValue;
+  readonly appointmentMotion?: MotionsTypes.IMotions;
   readonly individual?: IndividualsTypes.IIndividuals;
+  readonly nominatedByEntity?: EntitiesTypes.IEntities;
   readonly office?: OfficesTypes.IOffices;
   readonly sourceCitation?: CitationsTypes.ICitations;
 }
@@ -143,7 +148,9 @@ export type IHoldersAsManyRelationQuery = Q.IAsManyRelationQuery<
 export interface IHoldersRelationMap extends Record<HoldersRelationKey, unknown> {
   appointedByEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   appointmentKind: ValueTypes.IValueAsOneRelationQuery;
+  appointmentMotion: MotionsTypes.IMotionsAsOneRelationQuery;
   individual: IndividualsTypes.IIndividualsAsOneRelationQuery;
+  nominatedByEntity: EntitiesTypes.IEntitiesAsOneRelationQuery;
   office: OfficesTypes.IOfficesAsOneRelationQuery;
   sourceCitation: CitationsTypes.ICitationsAsOneRelationQuery;
 }

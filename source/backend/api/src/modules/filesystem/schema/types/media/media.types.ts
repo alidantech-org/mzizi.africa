@@ -36,12 +36,14 @@ export interface IMedia extends B.IBase {
   altText: string | null;
   code: string;
   description: string | null;
+  endSecond: number | null;
   externalUrl: string | null;
   fileVersionId: string | null;
   kindId: string;
   platformId: string | null;
   position: number | null;
   purpose: string | null;
+  startSecond: number | null;
   subjectId: string;
   subjectTable: SubjectTable;
   thumbnailUrl: string | null;

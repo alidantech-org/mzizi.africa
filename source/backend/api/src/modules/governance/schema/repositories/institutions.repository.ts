@@ -47,6 +47,22 @@ export class InstitutionsRepository
     return await this.findByQuery(query, { armId, deletedAt: IsNull() });
   }
 
+  /** Find institutions by class id, paged by the shared query. */
+  async findByClass(
+    query: BaseQueryDto<InstitutionsEntity>,
+    classId: NonNullable<InstitutionsEntity["classId"]>,
+  ): Promise<IFindAllResponse<InstitutionsEntity>> {
+    return await this.findByQuery(query, { classId, deletedAt: IsNull() });
+  }
+
+  /** Find institutions by country id, paged by the shared query. */
+  async findByCountry(
+    query: BaseQueryDto<InstitutionsEntity>,
+    countryId: NonNullable<InstitutionsEntity["countryId"]>,
+  ): Promise<IFindAllResponse<InstitutionsEntity>> {
+    return await this.findByQuery(query, { countryId, deletedAt: IsNull() });
+  }
+
   /** Find institutions by entity id, paged by the shared query. */
   async findByEntity(
     query: BaseQueryDto<InstitutionsEntity>,

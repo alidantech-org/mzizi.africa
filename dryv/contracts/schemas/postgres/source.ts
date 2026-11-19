@@ -10,11 +10,11 @@ import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { subjectProperties } from "#/schemas/_subjects.ts";
+import { subjectFields, subjectProperties } from "#/schemas/_subjects.ts";
 import { FileVersions } from "./filesystem.ts";
-import { Entities } from "./official.ts";
+import { Contacts, Entities } from "./official.ts";
 import { Features } from "./geography.ts";
-import { Country, Language, Value } from "./reference.ts";
+import { Country, Language, Template, Value } from "./reference.ts";
 
 const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
 
@@ -62,18 +62,41 @@ export const Sources = source
     description: dryv.field(sharedProperties.Description).maybe(),
     /** For an API: the named credential binding only. */
     credentialBinding: dryv.field(sharedProperties.NonEmptyString255).maybe(),
+    /** Scheme src.licence: the terms under which the source's content may be reused. Absent while unassessed. */
+    licenceId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.src.licence"),
+    termsUrl: dryv.field(sharedProperties.Url).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .description("A publication channel: a real website or a real API, with its classification and credibility.")
   .role("entity")
   .facets({
-    storage: dryv.storage("sources").index("publisherId").index("kind").index("classificationId").index("credibilityId"),
+    storage: dryv
+      .storage("sources")
+      .index("publisherId")
+      .index("kind")
+      .index("classificationId")
+      .index("credibilityId")
+      .index("licenceId"),
   });
 
 export const Domains = source
   .schema("Domains", {
-    sourceId: belongsTo(() => Sources),
+    /** The source served from this host. Empty while the host is only a candidate generated from a pattern. */
+    sourceId: belongsTo(() => Sources).maybe(),
     host: dryv.field(sharedProperties.NonEmptyString255),
+    /** Scheme src.domain.status: candidate, resolves, verified official, redirects, dead, rejected. Absent while unassessed (domains seeded before this status existed). */
+    statusId: belongsTo(() => Value)
+      .maybe()
+      .tags("scheme:ref.sch.src.domain.status"),
+    /** The entity this host is the site of, once matched. */
+    entityId: belongsTo(() => Entities).maybe(),
+    /** The website contact of that entity that records this host. */
+    officialContactId: belongsTo(() => Contacts).maybe(),
+    /** The pattern template that produced this candidate host. */
+    templateId: belongsTo(() => Template).maybe(),
+    lastCheckedAt: dryv.field(sharedProperties.Instant).maybe(),
     startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
@@ -84,7 +107,14 @@ export const Domains = source
   )
   .role("entity")
   .facets({
-    storage: dryv.storage("domains").unique("host").index("sourceId"),
+    storage: dryv
+      .storage("domains")
+      .unique("host")
+      .index("sourceId")
+      .index("statusId")
+      .index("entityId")
+      .index("officialContactId")
+      .index("templateId"),
   });
 
 export const Addresses = source
@@ -441,4 +471,49 @@ export const Coverage = source
       .index("scopeUnitFeatureId")
       .index("levelId")
       .index("publisherEntityId"),
+  });
+
+/*---------------- source.disputes ----------------*/
+export const Disputes = source
+  .schema("Disputes", {
+    /** The contested record: any table, so the subject reference is the right link. */
+    ...subjectFields,
+    /** Scheme src.dispute.kind: value, date, identity, existence, interpretation. */
+    kindId: belongsTo(() => Value).tags("scheme:ref.sch.src.dispute.kind"),
+    /** Scheme src.dispute.status: open, resolved, both kept. */
+    statusId: belongsTo(() => Value).tags("scheme:ref.sch.src.dispute.status"),
+    summary: dryv.field(sharedProperties.Description),
+    resolvedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    resolutionCitationId: belongsTo(() => Citations).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description(
+    "A recorded disagreement between sources about one record. Both claims are kept with their citations and shown side by side; nothing is overwritten.",
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("disputes")
+      .index("subjectTable", "subjectId")
+      .index("kindId")
+      .index("statusId")
+      .index("resolutionCitationId"),
+  });
+
+/*---------------- source.contenders ----------------*/
+export const Contenders = source
+  .schema("Contenders", {
+    disputeId: belongsTo(() => Disputes),
+    citationId: belongsTo(() => Citations),
+    /** What this source says, in words. */
+    claim: dryv.field(sharedProperties.Description),
+    position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+    /** True for the claim the project currently shows first, with the others beside it. */
+    isPreferred: dryv.field(sharedProperties.Flag),
+  })
+  .extends(baseSchemas.Entity)
+  .description("One side of a dispute: a citation and the claim it supports.")
+  .role("entity")
+  .facets({
+    storage: dryv.storage("contenders").unique("disputeId", "citationId").index("disputeId").index("citationId"),
   });

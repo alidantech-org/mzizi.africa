@@ -10,6 +10,8 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
+
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { AmountMinorUnits } from "#/modules/shared/schema/type/amount-minor-units.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -24,6 +26,12 @@ export class ContractsDto {
   @IsInt()
   @Min(0)
   amountMinorUnits!: AmountMinorUnits;
+
+  @IsOptional()
+  @ValidateIf((object) => object.buyerEntityId !== null)
+  @IsString()
+  @IsUUID()
+  buyerEntityId?: Id | null;
 
   @IsString()
   @MinLength(1)
@@ -65,6 +73,12 @@ export class ContractsDto {
   @ValidateIf((object) => object.procurementId !== null)
   @IsString()
   @IsUUID()
+  @Satisfies<ContractsDto>(
+    (object) => object.procurementId != null || object.buyerEntityId != null,
+    {
+      message: "Has Procurement Or Buyer",
+    },
+  )
   procurementId?: Id | null;
 
   @IsOptional()

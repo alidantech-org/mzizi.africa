@@ -27,14 +27,14 @@ export async function leaderProfile(db: DataSource, idOrSlug: string) {
   const holderId = await holderOf(db, idOrSlug);
   const rows: HolderRow[] = await db.query(
     `select h.id, h.individual_id, h.office_id, ${personName("h.individual_id")} as name, ${partyOf("h.individual_id")} as party,
-       (select k.label from reference.values k where k.id = o.office_kind_id) as office, o.unit_feature_id as unit_id, ${featureName("o.unit_feature_id", "'en'")} as unit,
+       (select k.label from reference.values k where k.id = (select p.title_id from governance.positions p where p.id = o.position_id)) as office, o.unit_feature_id as unit_id, ${featureName("o.unit_feature_id", "'en'")} as unit,
        ${entityName("i.entity_id")} as institution, h.took_office_on::text, ind.birth_date::text, i.entity_id
      from governance.holders h join governance.offices o on o.id = h.office_id join official.individuals ind on ind.id = h.individual_id
      left join governance.institutions i on i.id = o.institution_id where h.id = $1`, [holderId]);
   const holder = rows[0];
   if (!holder) throw new NotFoundException("No such leader.");
   const offices: Record<string, unknown>[] = await db.query(
-    `select h.id as "holderId", (select k.label from reference.values k where k.id = o.office_kind_id) as office, ${featureName("o.unit_feature_id", "'en'")} as unit,
+    `select h.id as "holderId", (select k.label from reference.values k where k.id = (select p.title_id from governance.positions p where p.id = o.position_id)) as office, ${featureName("o.unit_feature_id", "'en'")} as unit,
        h.took_office_on::text as "tookOfficeOn", h.left_office_on::text as "leftOfficeOn"
      from governance.holders h join governance.offices o on o.id = h.office_id where h.individual_id = $1 order by h.took_office_on desc nulls last`, [holder.individual_id]);
   const contacts: { kind: string; value: string; visibility: string; scope: string }[] = await db.query(

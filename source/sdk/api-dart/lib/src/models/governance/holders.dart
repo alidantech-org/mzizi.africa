@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/shared/date_precision.dart';
+import 'package:mzizi_api/src/models/governance/motions.dart';
 import 'package:mzizi_api/src/models/governance/offices.dart';
 import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
@@ -15,6 +16,7 @@ class GovernanceHolders {
   const GovernanceHolders({
     this.appointedByEntityId,
     required this.appointmentKindId,
+    this.appointmentMotionId,
     required this.code,
     required this.createdAt,
     this.deletedAt,
@@ -23,6 +25,7 @@ class GovernanceHolders {
     required this.id,
     required this.individualId,
     this.leftOfficeOn,
+    this.nominatedByEntityId,
     required this.officeId,
     this.sourceCitationId,
     this.toYear,
@@ -32,6 +35,7 @@ class GovernanceHolders {
   });
   final String? appointedByEntityId;
   final String appointmentKindId;
+  final String? appointmentMotionId;
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
@@ -40,6 +44,7 @@ class GovernanceHolders {
   final String id;
   final String individualId;
   final DateTime? leftOfficeOn;
+  final String? nominatedByEntityId;
   final String officeId;
   final String? sourceCitationId;
   final int? toYear;

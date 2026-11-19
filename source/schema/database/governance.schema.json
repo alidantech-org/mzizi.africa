@@ -133,6 +133,169 @@
         }
       }
     },
+    "assignments": {
+      "title": "governance.assignments",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.governance.assignments",
+      "x-id": "#/schemas/governance.Assignments",
+      "x-table": "governance.assignments",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"function_id"
+        ,"id"
+        ,"share_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "basis_provision_code"
+          ,"code"
+          ,"from_to_precision"
+          ,"from_year"
+          ,"function_code"
+          ,"institution_code"
+          ,"obligor_kind_code"
+          ,"share_code"
+          ,"source_citation_code"
+          ,"start_institution_code"
+          ,"start_position_code"
+          ,"to_year"
+        ],
+        "required": [
+          "code"
+          ,"function_code"
+          ,"share_code"
+        ]
+      },
+      "properties": {
+        "basis_provision_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "basis_provision_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"function_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Functions", "column": "id", "alias": "function_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"institution_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
+        }
+        ,"obligor_kind_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "obligor_kind_code", "scheme": "ref.sch.gov.obligor.kind" }
+        }
+        ,"share_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "share_code", "scheme": "ref.sch.gov.responsibility.share" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"start_institution_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "start_institution_code" }
+        }
+        ,"start_position_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Positions", "column": "id", "alias": "start_position_code" }
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "authority_scopes": {
       "title": "governance.authority_scopes",
       "type": "object",
@@ -177,7 +340,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "authority_kind_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "authority_kind_code", "scheme": "ref.sch.gov.authority.kind" }
         }
         ,"country_id": {
           "type": ["string", "null"],
@@ -415,6 +578,295 @@
         }
       }
     },
+    "fulfilments": {
+      "title": "governance.fulfilments",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.governance.fulfilments",
+      "x-id": "#/schemas/governance.Fulfilments",
+      "x-table": "governance.fulfilments",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "evidence_status_id"
+        ,"id"
+        ,"kind_id"
+        ,"promise_id"
+        ,"recorded_on"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "appropriation_code"
+          ,"bill_code"
+          ,"contract_code"
+          ,"evidence_status_code"
+          ,"id"
+          ,"instrument_code"
+          ,"kind_code"
+          ,"project_code"
+          ,"promise_code"
+          ,"recorded_on"
+          ,"source_citation_code"
+        ],
+        "required": [
+          "evidence_status_code"
+          ,"id"
+          ,"kind_code"
+          ,"promise_code"
+          ,"recorded_on"
+        ]
+      },
+      "properties": {
+        "appropriation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/finance.Appropriations", "column": "id", "alias": "appropriation_code" }
+        }
+        ,"bill_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Bills", "column": "id", "alias": "bill_code" }
+        }
+        ,"contract_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/civic.Contracts", "column": "id", "alias": "contract_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"evidence_status_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "evidence_status_code", "scheme": "ref.sch.ref.evidence.status" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"instrument_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
+        }
+        ,"kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.gov.fulfilment.kind" }
+        }
+        ,"project_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/civic.Projects", "column": "id", "alias": "project_code" }
+        }
+        ,"promise_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Promises", "column": "id", "alias": "promise_code" }
+        }
+        ,"recorded_on": {
+          "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "functions": {
+      "title": "governance.functions",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.governance.functions",
+      "x-id": "#/schemas/governance.Functions",
+      "x-table": "governance.functions",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"country_id"
+        ,"id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "basis_provision_code"
+          ,"code"
+          ,"country_code"
+          ,"from_to_precision"
+          ,"from_year"
+          ,"parent_function_code"
+          ,"source_citation_code"
+          ,"to_year"
+          ,"topic_code"
+        ],
+        "required": [
+          "code"
+          ,"country_code"
+        ]
+      },
+      "properties": {
+        "basis_provision_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "basis_provision_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"parent_function_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Functions", "column": "id", "alias": "parent_function_code" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"topic_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Topic", "column": "id", "alias": "topic_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
     "hansards": {
       "title": "governance.hansards",
       "type": "object",
@@ -582,11 +1034,13 @@
         "columns": [
           "appointed_by_entity_code"
           ,"appointment_kind_code"
+          ,"appointment_motion_code"
           ,"code"
           ,"from_to_precision"
           ,"from_year"
           ,"individual_code"
           ,"left_office_on"
+          ,"nominated_by_entity_code"
           ,"office_code"
           ,"source_citation_code"
           ,"to_year"
@@ -612,7 +1066,14 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "appointment_kind_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "appointment_kind_code", "scheme": "ref.sch.gov.selection.method" }
+        }
+        ,"appointment_motion_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Motions", "column": "id", "alias": "appointment_motion_code" }
         }
         ,"code": {
           "type": "string",
@@ -666,6 +1127,13 @@
           "x-type": "date",
           "format": "date",
           "x-role": "data"
+        }
+        ,"nominated_by_entity_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "nominated_by_entity_code" }
         }
         ,"office_id": {
           "type": "string",
@@ -721,6 +1189,7 @@
       ],
       "required": [
         "code"
+        ,"country_id"
         ,"entity_id"
         ,"id"
         ,"institution_kind_id"
@@ -735,7 +1204,9 @@
         ],
         "columns": [
           "arm_code"
+          ,"class_code"
           ,"code"
+          ,"country_code"
           ,"dissolved_on"
           ,"entity_code"
           ,"established_on"
@@ -748,6 +1219,7 @@
         ],
         "required": [
           "code"
+          ,"country_code"
           ,"entity_code"
           ,"institution_kind_code"
         ]
@@ -760,6 +1232,13 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "arm_code", "scheme": "ref.sch.gov.arm" }
         }
+        ,"class_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "class_code", "scheme": "ref.sch.gov.institution.class" }
+        }
         ,"code": {
           "type": "string",
           "x-type": "text",
@@ -767,6 +1246,13 @@
           "minLength": 1,
           "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
           "x-role": "key"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -960,7 +1446,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "mandate_kind_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "mandate_kind_code", "scheme": "ref.sch.gov.mandate.kind" }
         }
         ,"office_id": {
           "type": ["string", "null"],
@@ -1378,7 +1864,7 @@
         "code"
         ,"id"
         ,"institution_id"
-        ,"office_kind_id"
+        ,"position_id"
       ],
       "x-seed": {
         "system": [
@@ -1395,7 +1881,8 @@
           ,"from_to_precision"
           ,"from_year"
           ,"institution_code"
-          ,"office_kind_code"
+          ,"position_code"
+          ,"seat_ordinal"
           ,"source_citation_code"
           ,"to_year"
           ,"unit_feature_code"
@@ -1403,7 +1890,7 @@
         "required": [
           "code"
           ,"institution_code"
-          ,"office_kind_code"
+          ,"position_code"
         ]
       },
       "properties": {
@@ -1466,12 +1953,17 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
         }
-        ,"office_kind_id": {
+        ,"position_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "office_kind_code" }
+          "x-link": { "tableId": "#/schemas/governance.Positions", "column": "id", "alias": "position_code" }
+        }
+        ,"seat_ordinal": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
         }
         ,"source_citation_id": {
           "type": ["string", "null"],
@@ -1491,6 +1983,745 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "positions": {
+      "title": "governance.positions",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.governance.positions",
+      "x-id": "#/schemas/governance.Positions",
+      "x-table": "governance.positions",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"id"
+        ,"institution_id"
+        ,"role_id"
+        ,"seat_basis_id"
+        ,"selection_method_id"
+        ,"title_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "basis_provision_code"
+          ,"code"
+          ,"display_order"
+          ,"exposure_code"
+          ,"from_to_precision"
+          ,"from_year"
+          ,"institution_code"
+          ,"jurisdiction_level_code"
+          ,"role_code"
+          ,"seat_basis_code"
+          ,"seat_count"
+          ,"seat_unit_level_code"
+          ,"selection_method_code"
+          ,"source_citation_code"
+          ,"term_limit"
+          ,"term_years"
+          ,"title_code"
+          ,"to_year"
+        ],
+        "required": [
+          "code"
+          ,"institution_code"
+          ,"role_code"
+          ,"seat_basis_code"
+          ,"selection_method_code"
+          ,"title_code"
+        ]
+      },
+      "properties": {
+        "basis_provision_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "basis_provision_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"display_order": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"exposure_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "exposure_code", "scheme": "ref.sch.gov.exposure.level" }
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"institution_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
+        }
+        ,"jurisdiction_level_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Levels", "column": "id", "alias": "jurisdiction_level_code" }
+        }
+        ,"role_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "role_code", "scheme": "ref.sch.gov.position.role" }
+        }
+        ,"seat_basis_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "seat_basis_code", "scheme": "ref.sch.gov.seat.basis" }
+        }
+        ,"seat_count": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"seat_unit_level_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Levels", "column": "id", "alias": "seat_unit_level_code" }
+        }
+        ,"selection_method_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "selection_method_code", "scheme": "ref.sch.gov.selection.method" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"term_limit": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"term_years": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"title_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "title_code", "scheme": "ref.sch.gov.position.title" }
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "powers": {
+      "title": "governance.powers",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.governance.powers",
+      "x-id": "#/schemas/governance.Powers",
+      "x-table": "governance.powers",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["holder_position_id", "holder_institution_id", "target_position_id", "target_institution_id", "kind_id", "procedure_id", "step_order"]
+      ],
+      "required": [
+        "code"
+        ,"id"
+        ,"is_binding"
+        ,"kind_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "basis_provision_code"
+          ,"code"
+          ,"from_to_precision"
+          ,"from_year"
+          ,"holder_institution_code"
+          ,"holder_position_code"
+          ,"is_binding"
+          ,"kind_code"
+          ,"procedure_code"
+          ,"source_citation_code"
+          ,"step_order"
+          ,"target_institution_code"
+          ,"target_position_code"
+          ,"threshold_code"
+          ,"to_year"
+        ],
+        "required": [
+          "code"
+          ,"is_binding"
+          ,"kind_code"
+        ]
+      },
+      "properties": {
+        "basis_provision_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "basis_provision_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"holder_institution_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "holder_institution_code" }
+        }
+        ,"holder_position_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Positions", "column": "id", "alias": "holder_position_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"is_binding": {
+          "type": "boolean",
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.gov.power.kind" }
+        }
+        ,"procedure_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Procedures", "column": "id", "alias": "procedure_code" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"step_order": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"target_institution_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "target_institution_code" }
+        }
+        ,"target_position_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Positions", "column": "id", "alias": "target_position_code" }
+        }
+        ,"threshold_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "threshold_code", "scheme": "ref.sch.gov.power.threshold" }
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "procedures": {
+      "title": "governance.procedures",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.governance.procedures",
+      "x-id": "#/schemas/governance.Procedures",
+      "x-table": "governance.procedures",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"country_id"
+        ,"description"
+        ,"id"
+        ,"kind_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "basis_provision_code"
+          ,"code"
+          ,"country_code"
+          ,"description"
+          ,"from_to_precision"
+          ,"from_year"
+          ,"kind_code"
+          ,"source_citation_code"
+          ,"to_year"
+        ],
+        "required": [
+          "code"
+          ,"country_code"
+          ,"description"
+          ,"kind_code"
+        ]
+      },
+      "properties": {
+        "basis_provision_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "basis_provision_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"description": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"from_to_precision": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"kind_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.gov.procedure.kind" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "promises": {
+      "title": "governance.promises",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.governance.promises",
+      "x-id": "#/schemas/governance.Promises",
+      "x-table": "governance.promises",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"id"
+        ,"made_on"
+        ,"statement"
+        ,"status_as_of"
+        ,"status_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"due_on"
+          ,"made_on"
+          ,"maker_holder_code"
+          ,"maker_individual_code"
+          ,"occurrence_code"
+          ,"office_code"
+          ,"place_feature_code"
+          ,"quantity"
+          ,"sitting_code"
+          ,"source_citation_code"
+          ,"speech_code"
+          ,"statement"
+          ,"status_as_of"
+          ,"status_code"
+          ,"topic_code"
+          ,"unit_code"
+        ],
+        "required": [
+          "code"
+          ,"made_on"
+          ,"statement"
+          ,"status_as_of"
+          ,"status_code"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"due_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"made_on": {
+          "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"maker_holder_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Holders", "column": "id", "alias": "maker_holder_code" }
+        }
+        ,"maker_individual_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "maker_individual_code" }
+        }
+        ,"occurrence_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/event.Occurrences", "column": "id", "alias": "occurrence_code" }
+        }
+        ,"office_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Offices", "column": "id", "alias": "office_code" }
+        }
+        ,"place_feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "place_feature_code" }
+        }
+        ,"quantity": {
+          "type": ["number", "null"],
+          "x-type": "number",
+          "x-role": "data"
+        }
+        ,"sitting_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Sittings", "column": "id", "alias": "sitting_code" }
+        }
+        ,"source_citation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+        }
+        ,"speech_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Speeches", "column": "id", "alias": "speech_code" }
+        }
+        ,"statement": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"status_as_of": {
+          "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"status_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.gov.promise.status" }
+        }
+        ,"topic_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Topic", "column": "id", "alias": "topic_code" }
+        }
+        ,"unit_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Unit", "column": "id", "alias": "unit_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -1579,7 +2810,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code" }
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "relationship_kind_code", "scheme": "ref.sch.gov.relationship.kind" }
         }
         ,"source_citation_id": {
           "type": ["string", "null"],

@@ -51,6 +51,12 @@ export class DomainsDto {
   endsOn?: CalendarDate | null;
 
   @IsOptional()
+  @ValidateIf((object) => object.entityId !== null)
+  @IsString()
+  @IsUUID()
+  entityId?: Id | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.fromToPrecision !== null)
   @IsEnum(DatePrecision)
   fromToPrecision?: DatePrecision | null;
@@ -78,9 +84,22 @@ export class DomainsDto {
   @IsUUID()
   id!: Id;
 
+  @IsOptional()
+  @ValidateIf((object) => object.lastCheckedAt !== null)
+  @IsISO8601({})
+  lastCheckedAt?: Instant | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.officialContactId !== null)
   @IsString()
   @IsUUID()
-  sourceId!: Id;
+  officialContactId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.sourceId !== null)
+  @IsString()
+  @IsUUID()
+  sourceId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.startsOn !== null)
@@ -93,6 +112,18 @@ export class DomainsDto {
     },
   )
   startsOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.statusId !== null)
+  @IsString()
+  @IsUUID()
+  statusId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.templateId !== null)
+  @IsString()
+  @IsUUID()
+  templateId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.toYear !== null)
