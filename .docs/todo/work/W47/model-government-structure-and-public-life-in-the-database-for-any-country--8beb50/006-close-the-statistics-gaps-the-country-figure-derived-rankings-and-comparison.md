@@ -20,7 +20,7 @@ Supported today (`dryv/contracts/schemas/postgres/statistics.ts`): `Indicators` 
 
 For the root: (a) add an optional `rootFeatureId` to `geography.levels` for the depth-0 row; (b) add `rootFeatureId` to `reference.countries` (reverse dependency, rejected: Geography already imports reference); (c) keep convention. Recommended: (a), unique per country and hierarchy.
 
-For composites: (a) `statistics.indicator_components` (`indicatorId`, `componentIndicatorId`, `weight`, `transformId`, direction) so a composite is an ordinary indicator whose observations are computed and stored with `derived` true; (b) a separate `rankings` table. Recommended: (a), the screens then read composites like any indicator and the method is a citation on the indicator. Add `derivation` description and method citation, and a `derivedFromMethodCitationId` or reuse `sourceCitationId` for the method document.
+For composites: (a) `statistics.components` (`indicatorId`, `componentIndicatorId`, `weight`, `transformId`, direction) so a composite is an ordinary indicator whose observations are computed and stored with `derived` true; (b) a separate `rankings` table. Recommended: (a), the screens then read composites like any indicator and the method is a citation on the indicator. Add `derivation` description and method citation, and a `derivedFromMethodCitationId` or reuse `sourceCitationId` for the method document.
 
 Alternatives for vintages (revised figures for one census): keep new observations with their own citation and period; do not add version fields (`.docs/rules/versioning.md`).
 

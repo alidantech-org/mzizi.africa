@@ -23,3 +23,9 @@ Read the two handoffs of 2026-11-18, the approved plan, DEC-FRONTEND-ASSEMBLY-20
 - [x] Decision records written, and the superseded decision marked as superseded.
 - [x] Review workbench behaviour recorded, admin and old mobile removed, and every reference rewritten as deferred and removed.
 - [x] task validate passes.
+
+## Comments
+
+### 2026-11-19T11:24:27.538Z · PETER IRUNGU
+
+Follow-up routing assessment requested by owner, 2026-11-19: inspected active web catch-all, shell, place switcher and backend context/legal/statistics reads. Recommendation for discussion, not an approved implementation decision: explicit country-prefixed place-only paths with a typed view query parameter; fragments only for within-page anchors. Current shell scopes only Calendar and Infrastructure; other sidebar entries leave the place. Catch-all supports selected section suffixes, not all domains. Country resolution currently precedes path parsing and depends on preference/edge/default; explicit path country must win. Introduce a shared resolved place context and domain-specific backend applicability rules, keeping local statistics distinct from ancestor benchmarks and preserving evidence, review state and effective time. Routing ancestry is one canonical navigation hierarchy and cannot substitute for jurisdiction or electoral relationships. No application changes made.

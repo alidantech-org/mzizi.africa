@@ -15,7 +15,7 @@ The "Who handles what for you" table says local roads, dispensaries, early child
 ## Proposed contract
 
 - `governance.functions`: `code`, `countryId`, `parentFunctionId` (self, so a schedule can nest), `topicId` (reference Topic), `basisProvisionId`, `sourceCitationId`, period fields. The name and the plain "if you need" phrasing are copy keyed by code.
-- `governance.function_assignments`: `functionId`, `responsibleInstitutionId` or `responsibleKindId` (a body class from task 002, as obligations do), `shareId` (scheme gov.responsibility.share: exclusive, shared, concurrent), `startPositionId` or `startInstitutionId` (the "start with" office), `basisProvisionId`, `sourceCitationId`, period fields, and a rule that at least one responsible form is set.
+- `governance.assignments`: `functionId`, `responsibleInstitutionId` or `responsibleKindId` (a body class from task 002, as obligations do), `shareId` (scheme gov.responsibility.share: exclusive, shared, concurrent), `startPositionId` or `startInstitutionId` (the "start with" office), `basisProvisionId`, `sourceCitationId`, period fields, and a rule that at least one responsible form is set.
 
 ## Method options
 
@@ -31,7 +31,7 @@ Express with rows only: a federal country with exclusive federal, exclusive stat
 
 ## Acceptance checklist
 
-- [ ] Author `Functions` and `FunctionAssignments` in `governance.ts` with descriptions, indexes (`countryId`, `parentFunctionId`, `functionId`, responsible institution and kind), the "at least one responsible form" rule and the self-parent acyclic rule.
+- [ ] Author `Functions` and `Assignments` in `governance.ts` with descriptions, indexes (`countryId`, `parentFunctionId`, `functionId`, responsible institution and kind), the "at least one responsible form" rule and the self-parent acyclic rule.
 - [ ] Decide how a class of body is named (reuse `gov.obligor.kind` or add `gov.responsible.kind`) and record why.
 - [ ] Define how a screen finds the responsible body for a place: function assignment to body class to the authority scope covering that place (`AuthorityScopes`, governance.ts:137-158).
 - [ ] State where plain-language need phrases live (copy rows) and confirm no phrase is stored in a column.

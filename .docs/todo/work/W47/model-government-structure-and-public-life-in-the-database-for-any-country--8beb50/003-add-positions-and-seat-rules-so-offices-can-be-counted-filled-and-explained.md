@@ -25,6 +25,10 @@ D. Counts as statistics observations. Rejected: counts of seats are structure, n
 
 Decide in review whether `offices.officeKindId` is removed or kept as a derived duplicate; the role moves to `positions.roleId`.
 
+## Link to patterns
+
+Task 010 generates positions and offices from pattern parts (for example one assembly-member position fanned out over the ward level). A position's seat rule must therefore be expressible as data a pattern part can carry, and every generated office must be recorded in the pattern ledger with status expected. Positions never create holder rows.
+
 ## Neutrality checks
 
 The same table must express, with rows only: a presidential ticket, a directly elected single seat per district, a party-list chamber (seat basis formula, selection method party list, seats awarded to parties not units), an indirectly elected upper house, a nominated block, an ex officio presiding officer and a customary council.

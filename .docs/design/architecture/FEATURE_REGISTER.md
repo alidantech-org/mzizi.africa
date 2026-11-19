@@ -51,6 +51,14 @@ Every feature the owner mentions is recorded here the moment it is mentioned, wi
 | F37 | Polling stations as feature plus civic facility plus per-election polls, votes by station, roll-up, maps | no hard-coded station table; links to entities, facilities and features | DATABASE_CHANGES_20261119 section 11 | authored and generated |
 | F38 | Committees as institutions with offices and holders | no extra tables | DATABASE_CHANGES_20261119 section 11 | designed |
 | F39 | Regenerate the API, SDKs and frontends and push after the database is approved | sequence set by the owner | DATABASE_CHANGES_20261119 section 12 | done 2026-11-19 |
+| F40 | Patterns generate expected institutions, offices and seats; completeness shown as expected versus verified | owner direction 2026-11-19; placeholders are structure only, never people | POWER_MONEY_PATTERNS_AND_SITES 1, DEC-PATTERNS-GENERATE-EXPECTED-DATA-20261119 | designed, awaiting owner review |
+| F41 | Domain and site patterns, candidate hosts verified before they become sources, sites linked to entities | county, constituency-fund and ministry hosts from normalised names | POWER_MONEY_PATTERNS_AND_SITES 2 | designed, awaiting owner review |
+| F42 | Rights to nominate, approve, appoint, remove and elect, with procedure, threshold and exercised cases | influence as read models, not stored scores | POWER_MONEY_PATTERNS_AND_SITES 3 | designed, awaiting owner review |
+| F43 | Suppliers, contracts, parties, amendments, participants and procurement analytics | transaction grain, OCDS mapping | POWER_MONEY_PATTERNS_AND_SITES 4 | designed, awaiting owner review |
+| F44 | Supplier to real person links, political contributions, conflict signals with evidence grades | connections recorded, never accusations; right of reply | POWER_MONEY_PATTERNS_AND_SITES 5 | designed, legal review needed |
+| F45 | Promises from speeches, rallies and recordings, linked to projects, with "no record found" and subscriptions | notify when a promise materialises | POWER_MONEY_PATTERNS_AND_SITES 6 | designed, awaiting owner review |
+| F46 | Gazette notices as evidence that creates appointments and other changes | effects name the affected record | POWER_MONEY_PATTERNS_AND_SITES 7 | designed, awaiting owner review |
+| F47 | Completeness meter, one evidence-status vocabulary, as-of reading, disputes between sources, right of reply, standards mappings, reuse terms, defined meaning of person with power and relative | owner adopted 2026-11-19 | SCHEMA_CHANGE_INVENTORY_20261119 D | designed, awaiting owner review |
 
 ## A. Abbreviations (F26)
 

@@ -23,3 +23,11 @@ Treat the design PDF as a requirements document and the Dryv contracts as the on
 - Over-modelling: adding a table for every sentence in the design. Each task gives the smallest model that carries the facts, with alternatives recorded.
 - Mixed axes: the current office kind mixes "what the office does" with "how it is filled"; separating them touches generated models and any reads using them.
 - Owner approval is required for every new vocabulary and seed file; tasks wait on it rather than assuming it.
+
+## Added 19 November 2026: power, money, patterns, sites and promises
+
+Tasks 010 to 015 extend the plan and are designed in `.docs/design/data/POWER_MONEY_PATTERNS_AND_SITES.md`. Order: 010 patterns (it feeds 003, 011 and the seed plan), 012 powers (replaces the overlapping link table in 004), 013 supplier and contract completion, 014 people behind suppliers and political money, 011 site patterns, 015 promises and Gazette evidence. All still precede any screen or API work and all need owner approval of each table and vocabulary. Pattern work depends on the owner direction in `.docs/decisions/DEC-PATTERNS-GENERATE-EXPECTED-DATA-20261119.md`, which keeps the removed pattern version, binding and dependency tables removed.
+
+## Revised 19 November 2026 (second message)
+
+Task 001 is now the implementation of the approved inventory `.docs/design/data/SCHEMA_CHANGE_INVENTORY_20261119.md` across all Dryv contracts and generated models, with a working proof. Tasks 002 to 008 and 010 to 015 remain the design specifications it cites. Nothing is authored until the owner approves the inventory. Table names are one word; unstructured material lives in `filesystem.contents` and `filesystem.media`.

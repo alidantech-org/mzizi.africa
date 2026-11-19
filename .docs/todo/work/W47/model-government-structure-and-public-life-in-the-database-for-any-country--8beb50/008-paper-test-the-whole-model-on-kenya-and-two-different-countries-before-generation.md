@@ -21,6 +21,7 @@ Options: (a) written examples in a design document, recommended now; (b) executa
 ## Acceptance checklist
 
 - [ ] Choose with the owner the two comparison countries and record the choice.
+- [ ] Add worked examples for patterns (county governments, ward seats, cabinet, site candidates), for powers (a judge, a removal), for a joint-venture contract with an amendment, for a supplier-owner-officeholder chain with graded evidence, and for a promise with and without a record (tasks 010 to 015).
 - [ ] Write the Kenya example in full for the leadership tree (all four selection classes), the ward ladder, the two-government view and one institution page.
 - [ ] Write the two comparison examples to the same depth and list every difficulty found.
 - [ ] Fix each difficulty by changing the contract design or by recording a deliberate exclusion with a reason; update tasks 002 to 007 accordingly.

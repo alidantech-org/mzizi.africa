@@ -24,7 +24,8 @@ What exists (citations in `dryv/contracts/schemas/postgres/`):
 3. `gov.institution.class`: a hierarchy (constitutional commission, service commission, independent office, regulator or state corporation, security service, court, house of legislature, subnational government, ministry) so the Institutions sidebar groups come from data. This extends `.docs/design/data/PUBLIC_BODIES_CLASSIFICATION.md`.
 4. `gov.link.kind`: appoints, approves, nominates, oversees, funds, audits, reports-to, runs-with (a joint ticket), removable-by, checks, part-of, answers-to. Each has a short definition value-label (the "Words used on the connections" panel).
 5. `gov.responsibility.share`: exclusive, shared, concurrent (used by task 005).
-6. Scheme tags: add the missing `scheme:` tags and schemes for `appointmentKindId`, `mandateKindId`, `authorityKindId`, institution `relationshipKindId`.
+6. Schemes added by the later tasks and reviewed here for naming and codes: `gov.evidence.status` (expected, sourced, verified, not-found, disputed), `gov.pattern.kind` (task 010), `src.domain.status` (011), `gov.power.kind` and threshold kinds (012), `civ.contract.role` (013), `ofc.relationship.kind` with evidence basis (014), promise status and promise link kind (015). `official.relationships.kindId` currently has no scheme at all. Keep one evidence-status vocabulary for every table instead of per-table flags.
+7. Scheme tags: add the missing `scheme:` tags and schemes for `appointmentKindId`, `mandateKindId`, `authorityKindId`, institution `relationshipKindId`.
 
 ## Method options for the Kenya-shaped values
 
