@@ -26,7 +26,7 @@ export async function motionDetail(db: DataSource, code: string) {
        regexp_replace(mk.code, '^.*\\.', '') as kind, regexp_replace(oc.code, '^.*\\.', '') as outcome, m.instrument_id, m.provision_id, m.budget_version_id, m.fiscal_period_id,
        (select ${personName("h.individual_id")} from governance.holders h where h.id = m.moved_by_holder_id) as moved_by
      from governance.motions m join governance.sittings s on s.id = m.sitting_id join event.occurrences so on so.id = s.occurrence_id join governance.institutions i on i.id = s.institution_id
-     join reference.values mk on mk.id = m.motion_kind_id join reference.values oc on oc.id = m.outcome_id where m.code = $1`, [storedCode("act.mot", code)]);
+     join reference.values mk on mk.id = m.motion_kind_id join reference.values oc on oc.id = m.outcome_id where m.code = $1`, [storedCode("gov.mot", code)]);
   const motion = motions[0];
   if (!motion) throw new NotFoundException("No such motion.");
   const members: { holder_id: string; individual_id: string; name: string; party: string | null; party_code: string | null; position: string; unit: string | null; office: string | null }[] = await db.query(
