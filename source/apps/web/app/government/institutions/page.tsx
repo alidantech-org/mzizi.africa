@@ -1,12 +1,21 @@
-import { Suspense } from "react";
+/** Route `/government/institutions`: a searchable directory of public bodies by arm and kind. A server page; the search is a small client leaf. */
+import { DirectoryList } from "#/components/site/directory-list.tsx";
+import { DevelopmentNote } from "#/components/site/governance/shared.tsx";
+import { Loaded } from "#/components/site/loaded.tsx";
+import { Breadcrumbs, PageFrame } from "#/components/site/ui/primitives.tsx";
+import { institutions } from "#/lib/site/governance/reads.ts";
 
-import View from "./view.tsx";
+export const dynamic = "force-dynamic";
 
-/** The route is a server page; the interactive view below it is the only client code. */
-export default function Page() {
+export default function InstitutionsRoute() {
   return (
-    <Suspense fallback={<div className="p-8" aria-busy="true" />}>
-      <View />
-    </Suspense>
+    <PageFrame>
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Institutions" }]} />
+      <p className="kicker">Public institutions</p>
+      <h1 className="hero-title text-4xl sm:text-5xl">Who does what?</h1>
+      <p className="mt-3 max-w-2xl text-content-muted">Explore public bodies, their responsibilities, leadership and the legal foundations recorded for them.</p>
+      <DevelopmentNote />
+      <Loaded read={() => institutions()}>{(d) => <DirectoryList d={d} />}</Loaded>
+    </PageFrame>
   );
 }

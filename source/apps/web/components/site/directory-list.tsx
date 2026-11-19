@@ -3,39 +3,19 @@
 /** A searchable directory whose arms, categories and institution labels are supplied by reference data. */
 import Link from "next/link";
 import { useState } from "react";
-import { AsyncView } from "#/components/site/async-view.tsx";
+import type { InsightsInstitutionList } from "@mzizi/api-client/types/insights/institution-list.ts";
 import {
   Empty,
-  DevelopmentNote,
 } from "#/components/site/governance/shared.tsx";
 import { Avatar } from "#/components/site/ui/media.tsx";
 import {
-  Breadcrumbs,
   Gaps,
-  PageFrame,
   Pill,
 } from "#/components/site/ui/primitives.tsx";
-import { institutions } from "#/lib/site/governance/reads.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
 
-export default function InstitutionsRoute() {
+export function DirectoryList({ d }: { d: InsightsInstitutionList }) {
   const [query, setQuery] = useState("");
   const [arm, setArm] = useState("");
-  const loaded = useAsync(() => institutions(), "institutions");
-  return (
-    <PageFrame>
-      <Breadcrumbs
-        items={[{ label: "Home", href: "/" }, { label: "Institutions" }]}
-      />
-      <p className="kicker">Public institutions</p>
-      <h1 className="hero-title text-4xl sm:text-5xl">Who does what?</h1>
-      <p className="mt-3 max-w-2xl text-content-muted">
-        Explore public bodies, their responsibilities, leadership and the legal
-        foundations recorded for them.
-      </p>
-      <DevelopmentNote />
-      <AsyncView loaded={loaded}>
-        {(d) => {
           const q = query.trim().toLocaleLowerCase();
           const shown = d.arms
             .filter((a) => !arm || a.code === arm)
@@ -157,8 +137,4 @@ export default function InstitutionsRoute() {
               <Gaps items={d.gaps} />
             </>
           );
-        }}
-      </AsyncView>
-    </PageFrame>
-  );
 }

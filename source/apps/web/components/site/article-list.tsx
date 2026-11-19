@@ -1,43 +1,14 @@
 "use client";
 
-/** Explanatory articles are discovered by the categories and tags in the content catalogue. */
-import { Suspense, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { AsyncView } from "#/components/site/async-view.tsx";
+/** The article list with its search and category filters; the only client part of the library page. */
+import { useState } from "react";
+import type { InsightsContentList } from "@mzizi/api-client/types/insights/content-list.ts";
 import { ContentLinks, Empty } from "#/components/site/governance/shared.tsx";
-import {
-  Breadcrumbs,
-  Gaps,
-  Loading,
-  PageFrame,
-} from "#/components/site/ui/primitives.tsx";
-import { library } from "#/lib/site/governance/reads.ts";
-import { useLanguage } from "#/lib/site/i18n.tsx";
-import { useAsync } from "#/lib/site/use-async.ts";
-function Body() {
-  const tag = useSearchParams().get("tag") ?? undefined;
-  const { language } = useLanguage();
+import { Gaps } from "#/components/site/ui/primitives.tsx";
+
+export function ArticleList({ d }: { d: InsightsContentList }) {
   const [category, setCategory] = useState("");
   const [query, setQuery] = useState("");
-  const loaded = useAsync(
-    () => library({ languageCode: language, tag, limit: 200 }),
-    `content:${language}:${tag}`,
-  );
-  return (
-    <PageFrame>
-      <Breadcrumbs
-        items={[{ label: "Home", href: "/" }, { label: "Knowledge library" }]}
-      />
-      <p className="kicker">Knowledge library</p>
-      <h1 className="hero-title text-4xl sm:text-5xl">
-        Understand the connections
-      </h1>
-      <p className="mt-3 text-content-muted">
-        Explanations, biographies and background from the content catalogue.
-        {tag ? ` Tag: ${tag}.` : ""}
-      </p>
-      <AsyncView loaded={loaded}>
-        {(d) => {
           const q = query.toLocaleLowerCase();
           const items = d.items.filter(
             (i) =>
@@ -89,21 +60,4 @@ function Body() {
               <Gaps items={d.gaps} />
             </>
           );
-        }}
-      </AsyncView>
-    </PageFrame>
-  );
-}
-export default function ContentRoute() {
-  return (
-    <Suspense
-      fallback={
-        <PageFrame>
-          <Loading />
-        </PageFrame>
-      }
-    >
-      <Body />
-    </Suspense>
-  );
 }
