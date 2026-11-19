@@ -1,6 +1,7 @@
 /** Route `/politics/parties/<code>`: a party's members, its votes by election and the fund money it received. */
 import Link from "next/link";
 
+import { ReactionButton, ViewBeacon } from "#/components/site/reaction.tsx";
 import { leaderAt } from "#/lib/site/links.ts";
 import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList } from "#/components/site/ui/charts.tsx";
@@ -20,6 +21,7 @@ export default async function PartyRoute({ params }: { params: Promise<{ code: s
             <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Parties", href: "/politics/parties" }, { label: d.party.name }]} />
             <p className="kicker">Political party</p>
             <h1 className="hero-title text-4xl sm:text-5xl">{d.party.name}</h1>
+            <div className="mt-3 flex items-center gap-3"><ReactionButton table="politics.parties" subject={d.party.code} /><ViewBeacon table="politics.parties" subject={d.party.code} /></div>
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <Stat label="Members listed" value={n(d.members.length)} />
               <Stat label="Latest fund allocation" value=<Money value={d.funding.at(-1)?.amountKes} /> hint={d.funding.at(-1) ? `${d.funding.at(-1)!.year}` : undefined} />

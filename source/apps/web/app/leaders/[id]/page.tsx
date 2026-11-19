@@ -1,6 +1,7 @@
 /** Route `/leaders/<holder>`: a leader — who they are, how to reach them, how they got the seat, how they vote and the fund they oversee. */
 import Link from "next/link";
 
+import { ReactionButton, ViewBeacon } from "#/components/site/reaction.tsx";
 import { placeAt } from "#/lib/site/links.ts";
 import { LegalBasisSection, SubjectContentSection } from "#/components/site/governance/shared.tsx";
 import { Loaded } from "#/components/site/loaded.tsx";
@@ -93,7 +94,7 @@ export default async function LeaderRoute({ params }: { params: Promise<{ id: st
               {d.evidence.length > 0 ? (
                 <Section kicker="Sources" title="Evidence"><ul className="space-y-2 text-sm">{d.evidence.map((e) => <li key={e.citationId}><Link className="underline" href={`/data/sources?citationId=${e.citationId}`}>{e.sourceName}</Link> <span className="text-content-muted">· {e.locator}</span></li>)}</ul></Section>
               ) : null}
-              <p className="mt-8 flex items-center gap-3 text-sm text-content-muted"><LikeLeader leader={{ id: l.holderId, name: l.name, office: l.office, unitId: l.unitId }} /> Follow this leader</p>
+              <p className="mt-8 flex items-center gap-3 text-sm text-content-muted"><ReactionButton table="official.individuals" subject={l.individualId} /><LikeLeader leader={{ id: l.holderId, name: l.name, office: l.office, unitId: l.unitId }} /> Follow this leader<ViewBeacon table="official.individuals" subject={l.individualId} /></p>
               <SubjectContentSection table="official.individuals" code={l.individualId} title="About this person" />
               <LegalBasisSection table="governance.holders" code={l.holderId} />
               <Gaps items={d.gaps} topic={l.name} />

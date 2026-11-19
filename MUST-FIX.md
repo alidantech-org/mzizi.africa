@@ -32,7 +32,7 @@ Audit written 2026-11-19 against `UI_INFORMATION_ARCHITECTURE.md`, `DEC-CONTRACT
 ## 4. Layout
 
 - ✅ Sidebar and app bar layout, no footer, legal links in the sidebar foot.
-- ⏳ **Place switcher.** The sidebar place card was removed on request; the design wants the switcher always visible. Needs a decision on where it lives.
+- ✅ **Place switcher.** A slim chip at the top of the sidebar (flag, place or country name, Change) opens the place search; changing place keeps the current section for every place-scoped section.
 
 ## 5. Context
 
@@ -40,7 +40,8 @@ Audit written 2026-11-19 against `UI_INFORMATION_ARCHITECTURE.md`, `DEC-CONTRACT
 
 ## 6. Interactions
 
-- ⏳ Likes and views on the web are not built.
+- ✅ **Likes and views on the web.** `GetEngagement`, `Like`, `Unlike` and `RecordView` are authored in `dryv/contracts/apps/api/interactions.ts` and generated; the web keeps a random device id in an httpOnly cookie and the API stores only salted hashes (devices, actors, one view per visitor per day by a daily-rotating hash). Likes are shown with a count on projects, leaders, parties and places; views are counted and not shown (owner decision). The API refuses any table outside a short whitelist, and the web has no other write.
+- ⏳ **Still to decide for interactions:** retention periods, the consent wording per country, and the account-linking option, all in `USER_INTERACTIONS_AND_TRUST.md` (open questions).
 
 ## Ground rules from the audit
 

@@ -140,6 +140,10 @@ const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/motions"],
   ["GET", "/v1/parties"],
   ["GET", "/v1/tenders"],
+  ["GET", "/v1/engagement"],
+  ["POST", "/v1/likes"],
+  ["POST", "/v1/views"],
+  ["POST", "/v1/likes/remove"],
   ["GET", "/v1/sources"],
   [
     "GET",

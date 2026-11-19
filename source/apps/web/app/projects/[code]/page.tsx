@@ -7,6 +7,7 @@ import { ProjectsMapLazy } from "#/components/site/map/projects-map-lazy.tsx";
 import { Gallery } from "#/components/site/ui/media.tsx";
 import { Breadcrumbs, Gaps, PageFrame, Pill, Section, Stat } from "#/components/site/ui/primitives.tsx";
 import { statusTone } from "#/components/site/ui/status.ts";
+import { ReactionButton, ViewBeacon } from "#/components/site/reaction.tsx";
 import { LikeProject } from "#/components/site/save-buttons.tsx";
 import { date, words } from "#/lib/site/format.ts";
 import { Money } from "#/lib/site/country.tsx";
@@ -26,7 +27,7 @@ export default async function ProjectRoute({ params }: { params: Promise<{ code:
               <div className="flex flex-wrap items-center gap-2"><Pill tone={statusTone(p.status)}>{words(p.status)}</Pill>{p.started_on ? <span className="text-sm text-content-muted">Started {date(p.started_on)}</span> : null}</div>
               <h1 className="hero-title mt-3 text-3xl sm:text-5xl">{p.name}</h1>
               <p className="mt-3 max-w-3xl text-content-muted">{p.description}</p>
-              <p className="mt-3 flex items-center gap-3 text-sm text-content-muted"><LikeProject project={{ id: p.code, title: p.name }} /> Like this project</p>
+              <p className="mt-3 flex items-center gap-3 text-sm text-content-muted"><ReactionButton table="civic.projects" subject={p.code} /><LikeProject project={{ id: p.code, title: p.name }} /> Save this project<ViewBeacon table="civic.projects" subject={p.code} /></p>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
                 <Stat label="Money recorded" value={total ? <Money value={total} /> : "—"} hint={`${d.money.length} flow${d.money.length === 1 ? "" : "s"}`} />
                 <Stat label="Responsible body" value={<span className="text-xl">{p.responsible ?? "Not recorded"}</span>} />

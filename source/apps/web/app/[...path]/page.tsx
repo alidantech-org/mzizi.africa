@@ -3,6 +3,7 @@
  * The address is resolved on the server through the slug registry; anything that is not a known place is a 404.
  */
 import Link from "next/link";
+import { ReactionButton, ViewBeacon } from "#/components/site/reaction.tsx";
 import { notFound } from "next/navigation";
 
 import { getCalendar } from "@mzizi/api-client/actions/experience/get-calendar.actions.ts";
@@ -68,6 +69,7 @@ export default async function PlacePage({ params, searchParams }: { params: Prom
     <PageFrame>
       <p className="kicker">{place.kindLabel}</p>
       <h1 className="hero-title text-4xl sm:text-6xl">{place.name}</h1>
+      <div className="mt-3 flex items-center gap-3"><ReactionButton table="geography.features" subject={place.featureId} /><ViewBeacon table="geography.features" subject={place.featureId} /></div>
       <p className="mt-2 text-content-muted">{context.chain.slice(0, -1).map((unit) => unit.name).join(" · ") || context.country.name}</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {tiles.map((tile) => (
