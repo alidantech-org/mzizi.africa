@@ -16,7 +16,7 @@ function collectHolders(value: unknown, into: Record<string, unknown>[], depth =
     return;
   }
   const record = value as Record<string, unknown>;
-  if ((typeof record.holderId === "string" && UUID.test(record.holderId) && record.leaderSlug === undefined) || (typeof record.subjectId === "string" && UUID.test(record.subjectId) && record.leaderSlug === undefined)) into.push(record);
+  if ((typeof record.holder_id === "string" && UUID.test(record.holder_id) && record.leaderSlug === undefined) || (typeof record.holderId === "string" && UUID.test(record.holderId) && record.leaderSlug === undefined) || (typeof record.subjectId === "string" && UUID.test(record.subjectId) && record.leaderSlug === undefined)) into.push(record);
   for (const child of Object.values(record)) collectHolders(child, into, depth + 1);
 }
 
@@ -45,7 +45,7 @@ export class PlacePathsInterceptor implements NestInterceptor {
     const records: Record<string, unknown>[] = [];
     collectHolders(body, records);
     if (records.length === 0) return;
-    const idOf = (r: Record<string, unknown>): string => (typeof r.holderId === "string" ? r.holderId : (r.subjectId as string));
+    const idOf = (r: Record<string, unknown>): string => (typeof r.holderId === "string" ? r.holderId : typeof r.holder_id === "string" ? r.holder_id : (r.subjectId as string));
     const ids = [...new Set(records.map(idOf))];
     const rows: { id: string; slug: string }[] = await this.db.query(
       `select h.id, s.slug from governance.holders h join source.slugs s on s.subject_table = 'official.individuals' and s.subject_id = h.individual_id and s.to_year is null

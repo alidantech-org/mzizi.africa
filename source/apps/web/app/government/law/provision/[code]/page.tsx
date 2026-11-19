@@ -1,9 +1,9 @@
-import { Suspense } from "react";
+import { LawPage } from "#/components/site/views/law-page.tsx";
 
-import View from "../../view.tsx";
+export const dynamic = "force-dynamic";
 
 /** `/government/law/provision/<code>`: one provision of an instrument. */
 export default async function Page({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
-  return <Suspense fallback={<div className="p-8" aria-busy="true" />}><View provision={decodeURIComponent(code)} /></Suspense>;
+  return <LawPage provision={decodeURIComponent(code)} />;
 }

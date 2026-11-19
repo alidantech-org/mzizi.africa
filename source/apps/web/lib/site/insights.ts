@@ -360,6 +360,7 @@ export interface MotionDetail {
     moved_by: string | null;
     contributions?: {
       holder_id: string;
+      leaderSlug?: string | null;
       name: string;
       party: string | null;
       kind: string;
