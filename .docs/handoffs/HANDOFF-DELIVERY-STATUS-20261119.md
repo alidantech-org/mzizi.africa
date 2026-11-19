@@ -51,3 +51,22 @@ Done and verified in the browser against `mzizi_ux`:
 | Hard-coded country removed from the home page (hero and headings take the country from context) | partly | other earlier pages still name Kenya |
 
 Still to do for the web app, in order: type the remaining `dynamic` sections and replace the hand-written client reads and pages (`lib/site/*`, the client pages) with generated server pages; lead media (flags first), topic Explore, per-place finance, procurement and projects sections, politics, government, data and Me sections on the new address map; copy keys from the database instead of the in-code string tables; delete the old header, footer and mobile nav files; lint gates; verify every page. The dev app and Flutter app are untouched; the Flutter task stays blocked until the web app is verified.
+
+## Update: shell redesign, server pages, copy from the database, Flutter alignment (2026-11-19, last)
+
+Done and checked (HTTP 200 on every route; the pages named below also looked at in the browser):
+
+- **Shell:** full-height sidebar on the left (logo, place card with flag, six main links, "More" for the rest, preferences and licences at the foot); the app bar and page sit on the right; no footer. Drawer on small screens. The old header, footer and mobile-nav files are deleted.
+- **Theme:** the light theme is pure white (`oat`/`cream` are white in `dryv/contracts/schemas/theme.ts`, regenerated for web, dev and app); panels use thin borders instead of tinted glass; the mesh background is dark-theme only.
+- **Reads:** `lib/site/insights.ts`, `lib/site/api.ts` and `lib/site/governance/reads.ts` call generated server actions; no hand code in the web app calls the API from the browser, and the `/v1` rewrite is removed. Seven pages (`/parties`, `/parties/[code]`, `/elections`, `/elections/place/[id]`, `/leaders/[id]`, `/projects/[code]`, `/parliament`) and `/explore` are server components that read on the server; every other route file is a server `page.tsx` that renders an interactive `view.tsx` leaf.
+- **Copy:** `GetCopy` (contract, API read `reads/copy.ts`, SDKs) delivers `reference.copy` rows per language; the web layout loads them and `T`/`tr` use them; the in-code Swahili tables are gone. Keys: `web.word.*`, `web.phrase.<slug>`, `app.word.*`, `app.phrase.<slug>`; the dev rows come from `scripts/dev/dev_seed/data/copy.json` (development text). Stale rows from the first load stay as `web.retired.*`.
+- **Context:** country name and currency come from the API context (`CountryProvider`, `Money`, `AppCountry`); flags come from the ISO code.
+- **Gates:** `bun run frontend` fails on a browser `fetch`, a route handler or `"use client"` in a route file, and reports country, currency and colour literals (3, 1 and 3 left).
+- **Dev app:** reads the engine through the generated `@mzizi/engine-client`; typechecks; all pages 200.
+- **Flutter app:** analyzes clean, 26 tests pass, builds for web, and its home screen fetches copy, context and facts from the API (checked in the browser with Flutter web; the headless renderer is too slow to check every screen).
+
+Not done (carried forward):
+
+- The 82 `dynamic()` sections are still hand-parsed (`lib/site/governance/parse/documents.ts`, the insight shapes in `insights.ts`).
+- About 20 pages remain interactive client views reading through server actions; they are not yet server-rendered end to end. Indicator codes and some section copy are still literals in `statistics` and `home-analytics`.
+- Lead media beyond flags and initials, finance/procurement/projects/politics/Me redesign on the new address map, the Dryv component/navigation/address-grammar capabilities, and screen-by-screen visual checks of the Flutter app are not done.
