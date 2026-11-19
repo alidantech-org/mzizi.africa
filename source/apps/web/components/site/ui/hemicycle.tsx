@@ -40,7 +40,7 @@ export function Hemicycle({ members, selectedParty }: { members: readonly Motion
           const dim = selectedParty && m.party !== selectedParty;
           return (
             <circle key={m.holderId} className="dot" cx={seat.x} cy={seat.y} r={size} fill={COLOUR[m.position]} opacity={dim ? 0.18 : 1} tabIndex={0}
-              onMouseEnter={() => setActive(m)} onFocus={() => setActive(m)} onMouseLeave={() => setActive(null)}>
+              onMouseEnter={() => setActive(m)} onFocus={() => setActive(m)}>
               <title>{`${m.name} (${m.party ?? "no party"}): ${LABEL[m.position]}`}</title>
             </circle>
           );
@@ -52,7 +52,7 @@ export function Hemicycle({ members, selectedParty }: { members: readonly Motion
           <li key={key} className="flex items-center gap-1.5"><i className="inline-block h-3 w-3 rounded-full" style={{ background: COLOUR[key] }} />{label}</li>
         ))}
       </ul>
-      {active ? <p className="mt-2 text-center text-sm"><Link className="underline" href={`/leaders/${active.holderId}`}>Open {active.name}</Link></p> : null}
+      <p className="mt-2 min-h-6 text-center text-sm">{active ? <Link className="underline" href={`/leaders/${active.holderId}`}>Open {active.name}</Link> : null}</p>
     </div>
   );
 }
