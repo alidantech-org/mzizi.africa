@@ -36,7 +36,8 @@ Audit written 2026-11-19 against `UI_INFORMATION_ARCHITECTURE.md`, `DEC-CONTRACT
 
 ## 5. Context
 
-- ⏳ Cloudflare header trust (accepted only from the edge, development override) and cache keys varying by country and language are not verified.
+- ✅ **Cloudflare header rule checked** against the running API (2026-11-19): with `TRUST_EDGE_COUNTRY` unset, a `cf-ipcountry` header (TZ, XX or none) changes nothing and the source is `default`; with it set to `true` a known country is used and an unknown one is ignored with a gap message; the development override is switched off when `NODE_ENV=production`. Every country-dependent page is dynamic (`force-dynamic`), so no shared cache crosses countries or languages.
+- ⏳ **Deployment, not code:** the origin must accept traffic only from Cloudflare (authenticated origin pulls, a tunnel or an allow-list), otherwise anyone can forge the header; `TRUST_EDGE_COUNTRY=true` must be set only behind that.
 
 ## 6. Interactions
 
