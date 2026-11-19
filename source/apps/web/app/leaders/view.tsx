@@ -1,6 +1,6 @@
 "use client";
 
-/** Route `/leaders`: who leads Kenya, top to bottom. Pick a place to see the leaders above it. */
+/** Route `/leaders`: who leads the country, top to bottom. Pick a place to see the leaders above it. */
 import { Suspense } from "react";
 import { T } from "#/lib/site/i18n.tsx";
 import { useSearchParams } from "next/navigation";

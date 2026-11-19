@@ -24,6 +24,11 @@ const ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
 /** An interactive map of a place: its outline and the units above it, tiles that follow the colour scheme, and a pulsing marker where the visitor is. */
+/** A colour from the theme, read where the map draws (Leaflet needs a value, not a variable). */
+function token(name: string): string {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "currentColor";
+}
+
 export default function PlaceMap({ units, position = null, height = 340 }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const map = useRef<LeafletMap | null>(null);
@@ -53,8 +58,8 @@ export default function PlaceMap({ units, position = null, height = 340 }: Props
         const last = index === units.length - 1;
         const layer = L.geoJSON(outline.geometry, {
           style: last
-            ? { color: "#b4542f", weight: 3, fillColor: "#b4542f", fillOpacity: 0.28 }
-            : { color: "#c68a2e", weight: 1.5, dashArray: "5 6", fill: false, opacity: 0.8 },
+            ? { color: token("--clay"), weight: 3, fillColor: token("--clay"), fillOpacity: 0.28 }
+            : { color: token("--calabash"), weight: 1.5, dashArray: "5 6", fill: false, opacity: 0.8 },
         }).bindTooltip(units[index]?.name ?? "", { sticky: true });
         layer.addTo(instance);
         if (last || index >= units.length - 2) group.addLayer(layer);

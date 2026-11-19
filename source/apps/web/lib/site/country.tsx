@@ -13,7 +13,7 @@ export function CountryProvider({ country, children }: { country: CountryInfo; c
 
 export const useCountry = (): CountryInfo => useContext(CountryContext);
 
-/** Formats an amount in a currency compactly: `KSh 1.2M` for the Kenya shilling, whatever the country's currency is. */
+/** Formats an amount in a currency compactly: a compact amount in whichever currency the country uses. */
 export function formatMoney(value: number | null | undefined, currencyCode: string | null): string {
   if (value === null || value === undefined) return "—";
   const compact = new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value);

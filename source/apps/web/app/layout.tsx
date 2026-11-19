@@ -7,6 +7,7 @@ import "#/app/globals.css";
 import { AppFrame } from "#/components/shell/app-frame.tsx";
 import { THEME_INIT } from "#/components/site/theme-toggle.tsx";
 import { LanguageProvider } from "#/lib/site/i18n.tsx";
+import { headers } from "next/headers";
 import { CountryProvider } from "#/lib/site/country.tsx";
 import { SavedProvider } from "#/lib/site/saved.tsx";
 import { loadContext, loadCopy, serverLanguage } from "#/lib/server/data.ts";
@@ -14,10 +15,16 @@ import { loadContext, loadCopy, serverLanguage } from "#/lib/server/data.ts";
 const display = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", display: "swap", axes: ["opsz"] });
 const body = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
-export const metadata: Metadata = {
-  title: "Mzizi",
-  description: "Who serves you, where the money goes, and the evidence behind it.",
-};
+/** Every page names its canonical address and its language alternates, so search engines index one address per page. */
+export async function generateMetadata(): Promise<Metadata> {
+  const path = (await headers()).get("x-path") ?? "/";
+  return {
+    title: "Mzizi",
+    description: "Who serves you, where the money goes, and the evidence behind it.",
+    metadataBase: new URL(process.env.SITE_URL ?? "http://localhost:3300"),
+    alternates: { canonical: path, languages: { en: `${path}?lang=en`, sw: `${path}?lang=sw` } },
+  };
+}
 
 const context_language = (value: string): "en" | "sw" => (value === "sw" ? "sw" : "en");
 

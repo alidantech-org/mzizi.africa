@@ -43,7 +43,7 @@ function Explorer() {
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <Stat label="Population (latest)" value={short(s.points.at(-1)?.value)} hint={`${s.points.at(-1)?.period.slice(0, 4)} · ${n(s.points.at(-1)?.value)} people`} />
             <Stat label="Counties" value="47" hint="Each with its own statistics page" />
-            <div className="glass card md:col-span-1"><p className="text-xs font-semibold uppercase tracking-wide text-content-muted">Population over time</p><LineChart points={s.points} label="Kenya's population over time" height={120} /></div>
+            <div className="glass card md:col-span-1"><p className="text-xs font-semibold uppercase tracking-wide text-content-muted">Population over time</p><LineChart points={s.points} label={`${country.name}'s population over time`} height={120} /></div>
           </div>
         ) : null}
       </AsyncView>

@@ -1,6 +1,6 @@
 "use client";
 
-/** Home: starts from Kenya in numbers, then your places compared with the country, then ways to explore. */
+/** Home: starts from the country in numbers, then your places compared with the country, then ways to explore. */
 import Link from "next/link";
 
 import { placeAt } from "#/lib/site/links.ts";
