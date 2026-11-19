@@ -1,17 +1,13 @@
-"use client";
-
 /** A place's statistics (`/<place>/data/statistics`): a place's statistics by topic, with history, breakdowns, comparison and a map of what lies inside it. */
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import { AsyncView } from "#/components/site/async-view.tsx";
+import { Loaded } from "#/components/site/loaded.tsx";
 import { StatMap } from "#/components/site/stat-map.tsx";
 import { AgeBars, BarList, Donut, LineChart, Sparkline } from "#/components/site/ui/charts.tsx";
 import { Gaps, PageFrame, PlaceTabs, PlaceTrail, Section, Stat } from "#/components/site/ui/primitives.tsx";
 import { n, n1, pct, short } from "#/lib/site/format.ts";
 import { placeAt } from "#/lib/site/links.ts";
 import { mapOf, statisticsOf, type IndicatorView } from "#/lib/site/insights.ts";
-import { optional, useAsync } from "#/lib/site/use-async.ts";
 
 function IndicatorCard({ i }: { i: IndicatorView }) {
   const good = i.change === null || i.higherIsBetter === null ? undefined : (i.change > 0) === i.higherIsBetter;
@@ -26,13 +22,11 @@ function IndicatorCard({ i }: { i: IndicatorView }) {
   );
 }
 
-export default function PlaceStatistics({ id }: { id: string }) {
-  const router = useRouter();
-  const loaded = useAsync(() => statisticsOf(id), `stats-${id}`);
-  const inside = useAsync(() => mapOf("sta.population.total", id), `inside-${id}`);
+export default async function PlaceStatistics({ id }: { id: string }) {
+  const inside = await mapOf("sta.population.total", id).catch(() => null);
   return (
     <PageFrame>
-      <AsyncView loaded={loaded}>
+      <Loaded read={() => statisticsOf(id)}>
         {(s) => {
           const pop = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.total");
           const density = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.density");
@@ -79,18 +73,16 @@ export default function PlaceStatistics({ id }: { id: string }) {
                   </table>
                 </div>
               </Section>
-              <AsyncView loaded={optional(inside)}>
-                {(m) => m && m.units.length > 1 ? (
-                  <Section kicker="Inside" title={`Population of places inside ${s.place.name}`}>
-                    <StatMap data={m} height={380} onSelect={(path) => router.push(placeAt(path, "data/statistics"))} />
-                  </Section>
-                ) : null}
-              </AsyncView>
+              {inside && inside.units.length > 1 ? (
+                <Section kicker="Inside" title={`Population of places inside ${s.place.name}`}>
+                  <StatMap data={inside} height={380} section="data/statistics" />
+                </Section>
+              ) : null}
               <Gaps items={s.gaps} topic={`statistics for ${s.place.name}`} />
             </>
           );
         }}
-      </AsyncView>
+      </Loaded>
     </PageFrame>
   );
 }

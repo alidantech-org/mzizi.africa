@@ -2,7 +2,6 @@
 
 /** Route `/data/statistics`: the country's statistics. Pick an indicator and a level; the map and the ranking follow. */
 import { useRouter, useSearchParams } from "next/navigation";
-import { placeAt } from "#/lib/site/links.ts";
 import { Suspense } from "react";
 
 import { AsyncView } from "#/components/site/async-view.tsx";
@@ -63,7 +62,7 @@ function Explorer() {
           {(data) => (
             <>
               <p className="mb-3 text-sm text-content-muted">{data.indicator.name ?? indicator}{data.indicator.unit ? ` (${data.indicator.unit})` : ""}. Click a place to open its page.</p>
-              <StatMap data={data} onSelect={(path) => router.push(placeAt(path, "data/statistics"))} />
+              <StatMap data={data} section="data/statistics" />
               <Gaps items={data.gaps} topic={data.indicator.name ?? indicator} />
             </>
           )}

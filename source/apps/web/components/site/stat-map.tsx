@@ -2,6 +2,7 @@
 
 /** An indicator mapped across the units under a place, with a ranked list beside it. Used by statistics and the rankings pages. */
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 import { ChoroplethLazy } from "#/components/site/map/choropleth-lazy.tsx";
@@ -10,7 +11,9 @@ import type { IndicatorMap } from "#/lib/site/insights.ts";
 import { placeAt } from "#/lib/site/links.ts";
 import { rampFill } from "#/lib/site/ramp.ts";
 
-export function StatMap({ data, onSelect, height = 440, drill }: { data: IndicatorMap; onSelect?: (path: string | null) => void; height?: number; drill?: (path: string | null) => string }) {
+export function StatMap({ data, onSelect, height = 440, drill, section }: { data: IndicatorMap; onSelect?: (path: string | null) => void; height?: number; drill?: (path: string | null) => string; section?: string }) {
+  const router = useRouter();
+  const open = onSelect ?? (section ? (path: string | null) => router.push(placeAt(path, section)) : undefined);
   const unit = data.indicator.unit ?? "";
   const values = data.units.map((u) => u.value).filter((v): v is number => v !== null);
   const regions = useMemo(() => {
@@ -27,7 +30,7 @@ export function StatMap({ data, onSelect, height = 440, drill }: { data: Indicat
   return (
     <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
       <div>
-        <ChoroplethLazy regions={regions} onSelect={onSelect ? (id) => onSelect(data.units.find((u) => u.featureId === id)?.path ?? null) : undefined} height={height} />
+        <ChoroplethLazy regions={regions} onSelect={open ? (id) => open(data.units.find((u) => u.featureId === id)?.path ?? null) : undefined} height={height} />
         <div className="mt-3 flex items-center gap-3 text-xs text-content-muted" aria-label="Colour scale">
           <span className="num">{short(lo)}</span>
           <div className="h-2.5 flex-1 rounded-full" style={{ background: `linear-gradient(90deg, ${rampFill(0)}, ${rampFill(0.5)}, ${rampFill(1)})` }} />
