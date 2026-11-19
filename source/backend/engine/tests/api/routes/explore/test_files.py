@@ -19,6 +19,7 @@ def test_routes_match_contract() -> None:
     }
     assert served == {
         ("GET", "/v1/explore/file", 200),
+        ("GET", "/v1/explore/file/data", 200),
         ("GET", "/v1/explore/roots", 200),
         ("GET", "/v1/explore/files", 200),
         ("PUT", "/v1/explore/file", 200),
