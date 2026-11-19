@@ -271,4 +271,4 @@ Filters use `?year=`, `?page=`, `?q=`; year-bound things carry the year in the p
 | none | `/splash`, `/welcome` | app only: splash and onboarding (country, language, place, consent) |
 | new | new | `/calendar`, `/infrastructure/*`, `/finance/*`, `/procurement/*` (besides tenders), `/data/coverage`, `/data/exports`, `{place}/report` |
 
-Status: sections 14 and 15 are proposals recorded for agreement; sections 3 and 6 above are superseded where they differ.
+Status: sections 14 and 15 are the agreed direction. The web app implements the sections that exist (2026-11-19; see `MUST-FIX.md` for what is built and what is not). Sections 3 and 6 above are superseded where they differ.

@@ -70,3 +70,14 @@ Not done (carried forward):
 - The 82 `dynamic()` sections are still hand-parsed (`lib/site/governance/parse/documents.ts`, the insight shapes in `insights.ts`).
 - About 20 pages remain interactive client views reading through server actions; they are not yet server-rendered end to end. Indicator codes and some section copy are still literals in `statistics` and `home-analytics`.
 - Lead media beyond flags and initials, finance/procurement/projects/politics/Me redesign on the new address map, the Dryv component/navigation/address-grammar capabilities, and screen-by-screen visual checks of the Flutter app are not done.
+
+## Update: agreed addresses, typed sections and server pages (2026-11-19, MUST-FIX pass)
+
+Tracked in `MUST-FIX.md` at the repository root, with each item marked resolved, partly resolved or not done.
+
+- **Addresses.** The web routes follow `UI_INFORMATION_ARCHITECTURE` sections 14 and 15 for the sections that exist; old paths redirect permanently. Places, leaders and elections are addressed by slug or kind and year; the API adds `path` and `leaderSlug` to responses (DRYV_GAPS 71).
+- **Contract.** 80 `dynamic()` sections are typed from real responses; the hand parser is deleted. `unknown` remains for geometry, one keyed map and fields empty in every sample (DRYV_GAPS 72). The web contract declares no views; the scaffold pages are gone.
+- **Server rendering.** Client views fell from 24 to 8. Law, content, motions, institutions, tenders, search, places, rankings, sources, place statistics and the place sections render on the server with client leaves only where state is needed.
+- **Also done.** Sitemap, robots, canonical and language alternates; `?lang=`; no country, currency or colour literal in hand-written web code.
+- **Not done** (see `MUST-FIX.md`): the missing sections, indicator roles in the data (owner approval), composed reads, the Dryv frontend capabilities, sidebar and navigation as contract, place switcher placement, Cloudflare trust verification, likes and views, and the Flutter app.
+
