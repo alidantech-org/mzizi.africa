@@ -10,7 +10,6 @@ import { StatMap } from "#/components/site/stat-map.tsx";
 import { AsyncView } from "#/components/site/async-view.tsx";
 import { Section, Stat } from "#/components/site/ui/primitives.tsx";
 import { LineChart } from "#/components/site/ui/charts.tsx";
-import { FactStrip } from "#/components/site/fact-strip.tsx";
 import { n, n1, short } from "#/lib/site/format.ts";
 import { boardOf, browse, elections, mapOf, seriesOf, statisticsOf, tenders } from "#/lib/site/insights.ts";
 import { useLanguage } from "#/lib/site/i18n.tsx";
@@ -76,7 +75,6 @@ export function HomeAnalytics({ country }: { country: string }) {
             <AsyncView loaded={board}>{(b) => <Stat label="Most projects per 100,000" value={b.rows[0]?.name ?? "—"} hint={`${n1(b.rows[0]?.value)} projects`} />}</AsyncView>
           </div>
         </Section>
-        <div className="mt-6"><FactStrip /></div>
         {saved.places.length > 0 ? (
           <Section kicker="Close to you" title="Your places against the country">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{saved.places.slice(0, 3).map((p) => <Compare key={p.id} id={p.id} name={p.name} />)}</div>

@@ -47,9 +47,6 @@ export default function ExploreRoute() {
       <p className="kicker"><T>Explore</T></p>
       <h1 className="hero-title text-3xl sm:text-4xl"><T>Follow the connections</T></h1>
       <p className="mt-2 max-w-2xl text-content-muted"><T>Start with a question. Each topic leads to the sections that answer it.</T></p>
-      <Loaded read={() => facts()}>
-        {(d) => (d.facts.length > 0 ? <div className="mt-6 max-w-2xl"><FactsCarousel facts={d.facts} scopeName="" /></div> : null)}
-      </Loaded>
       <div className="mt-8 space-y-10">
         {TOPICS.map((topic) => (
           <section key={topic.id} aria-labelledby={`topic-${topic.id}`}>
@@ -71,6 +68,9 @@ export default function ExploreRoute() {
           </section>
         ))}
       </div>
+      <Loaded read={() => facts()}>
+        {(d) => (d.facts.length > 0 ? <div className="mt-10 max-w-2xl"><FactsCarousel facts={d.facts} scopeName="" /></div> : null)}
+      </Loaded>
     </PageFrame>
   );
 }

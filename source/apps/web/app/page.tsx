@@ -21,18 +21,20 @@ export default async function HomePage() {
   const country = context?.country.name ?? "";
   return (
     <div>
-      <div className="mx-auto grid max-w-7xl gap-5 px-5 pt-6 lg:grid-cols-[1.4fr_1fr]">
-        {calendar?.next ? <CountdownCard next={calendar.next} href={context?.place ? `/${context.place.path}/calendar` : "/calendar"} /> : null}
-        <div className="space-y-5">
-          <FactsCarousel facts={facts?.facts ?? []} scopeName={context?.place?.name ?? country} />
+      {calendar?.next ? (
+        <div className="mx-auto max-w-7xl px-5 pt-6">
+          <CountdownCard next={calendar.next} href={context?.place ? `/${context.place.path}/calendar` : "/calendar"} />
         </div>
-      </div>
+      ) : null}
       <HomeAnalytics country={country} />
       {calendar && calendar.events.length > 0 ? (
         <section className="mx-auto max-w-7xl px-5 pb-10" aria-label="Coming up">
           <CalendarList events={calendar.events.slice(0, 6)} />
         </section>
       ) : null}
+      <section className="mx-auto max-w-2xl px-5 pb-12" aria-label="Did you know?">
+        <FactsCarousel facts={facts?.facts ?? []} scopeName={context?.place?.name ?? country} />
+      </section>
     </div>
   );
 }

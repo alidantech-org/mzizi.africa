@@ -76,7 +76,6 @@ export function ProfileView({
         <section aria-label="Pictures and videos" className="reveal reveal-2"><h2 className="mb-4 text-2xl">Pictures and videos</h2><Gallery items={gallery.value.media} /></section>
       ) : null}
       <section aria-labelledby="tree" className="reveal reveal-2"><h2 id="tree" className="mb-1 text-2xl">Leaders from the country down to here</h2><p className="mb-4 text-sm text-content-muted">National leaders affect you too. This tree starts at the top and follows the places you are in.</p><LeaderTree featureId={profile.place.featureId} /></section>
-      <FactStrip featureId={profile.place.featureId} />
       <section aria-labelledby="proc" className="reveal reveal-3">
         <h2 id="proc" className="mb-4 text-2xl">
           {t("procurement")}
@@ -100,6 +99,7 @@ export function ProfileView({
       ) : null}
       <SubjectContentSection table="geography.features" code={profile.place.featureId} title="About this place" />
       <LegalBasisSection table="geography.features" code={profile.place.featureId} />
+      <FactStrip featureId={profile.place.featureId} />
     </div>
   );
 }
