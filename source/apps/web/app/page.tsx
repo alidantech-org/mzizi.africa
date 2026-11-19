@@ -1,4 +1,4 @@
-/** Home: the visitor's context first (countdown, a tip), then the analytics, then what is coming. A server page; the analytics below are the earlier client sections, kept whole. */
+/** Home: the visitor's context first the analytics, then what is coming (countdown and calendar), then a tip. A server page; the analytics below are the earlier client sections, kept whole. */
 import { getCalendar } from "@mzizi/api-client/actions/experience/get-calendar.actions.ts";
 import { listFacts } from "@mzizi/api-client/actions/experience/list-facts.actions.ts";
 
@@ -21,15 +21,11 @@ export default async function HomePage() {
   const country = context?.country.name ?? "";
   return (
     <div>
-      {calendar?.next ? (
-        <div className="mx-auto max-w-7xl px-5 pt-6">
-          <CountdownCard next={calendar.next} href={context?.place ? `/${context.place.path}/calendar` : "/calendar"} />
-        </div>
-      ) : null}
       <HomeAnalytics country={country} />
-      {calendar && calendar.events.length > 0 ? (
-        <section className="mx-auto max-w-7xl px-5 pb-10" aria-label="Coming up">
-          <CalendarList events={calendar.events.slice(0, 6)} />
+      {calendar?.next || (calendar && calendar.events.length > 0) ? (
+        <section className="mx-auto max-w-7xl space-y-5 px-5 pb-10" aria-label="Coming up">
+          {calendar?.next ? <CountdownCard next={calendar.next} href={context?.place ? `/${context.place.path}/calendar` : "/calendar"} /> : null}
+          {calendar && calendar.events.length > 0 ? <CalendarList events={calendar.events.slice(0, 6)} /> : null}
         </section>
       ) : null}
       <section className="mx-auto max-w-2xl px-5 pb-12" aria-label="Did you know?">
