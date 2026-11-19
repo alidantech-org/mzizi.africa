@@ -18,7 +18,7 @@ Audit written 2026-11-19 against `UI_INFORMATION_ARCHITECTURE.md`, `DEC-CONTRACT
 - ✅ **No browser `fetch`, no route handlers.** The frontend gate passes.
 - ✅ **80 `dynamic()` sections are typed** from real responses as named section schemas; the governance hand parser (`parse/documents.ts`, 382 lines) and its test are deleted. 11 fields stay `unknown` because Dryv cannot express them: GeoJSON geometry, one keyed map (`counts`), and a few fields that were empty in every sample (`fund`, `money`, `portrait`).
 - ◐ **Hand-written duplicates remain:** `lib/site/insights.ts` (about 650 lines) and `lib/site/governance/contracts.ts` still declare shapes the SDK now generates. Replacing them with the generated types is mechanical and not done.
-- ◐ **Server rendering.** Client views fell from 24 to 8: `data/compare`, `data/statistics`, `elections/[kind]/[year]`, `finance`, `leaders` (tree), `me`, `me/saved`, plus the tree, the home analytics and the place finance view as client components. They read through generated server actions from the browser; none uses `fetch`.
+- ◐ **Server rendering.** Client views fell from 24 to 6: `data/compare`, `elections/<kind>/<year>`, `finance`, `leaders` (tree), and `me` and `me/saved`, which hold the visitor's own choices in the browser by nature. The statistics explorer, rankings, sources, place statistics and the place sections are server pages with small client leaves. The remaining views read through generated server actions from the browser; none uses `fetch`.
 - ⏳ **No composed reads.** One authored read per screen is not built.
 - ⏳ **Dryv frontend capabilities** (component catalog, address grammar, navigation as data, page states, gallery) are not started. This is the root cause of the hand-written pages.
 
