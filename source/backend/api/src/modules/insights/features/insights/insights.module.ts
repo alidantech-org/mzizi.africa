@@ -25,6 +25,7 @@ import { GlobalSearchUseCase } from "#/modules/insights/features/insights/use-ca
 import { ListContentUseCase } from "#/modules/insights/features/insights/use-cases/list-content.usecase.ts";
 import { ListElectionsUseCase } from "#/modules/insights/features/insights/use-cases/list-elections.usecase.ts";
 import { ListInstitutionsUseCase } from "#/modules/insights/features/insights/use-cases/list-institutions.usecase.ts";
+import { ListLawUseCase } from "#/modules/insights/features/insights/use-cases/list-law.usecase.ts";
 import { ListLeaderboardMetricsUseCase } from "#/modules/insights/features/insights/use-cases/list-leaderboard-metrics.usecase.ts";
 import { ListMotionsUseCase } from "#/modules/insights/features/insights/use-cases/list-motions.usecase.ts";
 import { ListPartiesUseCase } from "#/modules/insights/features/insights/use-cases/list-parties.usecase.ts";
@@ -65,6 +66,7 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
     ListContentUseCase,
     ListElectionsUseCase,
     ListInstitutionsUseCase,
+    ListLawUseCase,
     ListLeaderboardMetricsUseCase,
     ListMotionsUseCase,
     ListPartiesUseCase,

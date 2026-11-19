@@ -23,6 +23,8 @@ import 'package:mzizi_api/src/models/insights/indicator_series.dart';
 import 'package:mzizi_api/src/models/insights/institution_detail.dart';
 import 'package:mzizi_api/src/models/insights/institution_list.dart';
 import 'package:mzizi_api/src/models/insights/institutions_input.dart';
+import 'package:mzizi_api/src/models/insights/law_input.dart';
+import 'package:mzizi_api/src/models/insights/law_list.dart';
 import 'package:mzizi_api/src/models/insights/leader_profile.dart';
 import 'package:mzizi_api/src/models/insights/leader_tree.dart';
 import 'package:mzizi_api/src/models/insights/leaderboard.dart';
@@ -422,6 +424,20 @@ class InsightsFeature {
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listInstitutions'),
         query: input?.toJson(),
         fromJson: (json) => InsightsInstitutionList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Legal instruments held, highest authority first (constitution, then acts, then regulations), with their size.
+  ///
+  /// GET /v1/law
+  Future<ApiResult<InsightsLawList>> listLaw({InsightsLawInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsLawList>(
+        endpoint: _routes.listLaw,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listLaw'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsLawList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }

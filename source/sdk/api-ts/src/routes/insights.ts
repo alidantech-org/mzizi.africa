@@ -56,6 +56,8 @@ export const insightsRoutes = {
   listElections: "/v1/elections",
   /** GET /v1/institutions */
   listInstitutions: "/v1/institutions",
+  /** GET /v1/law */
+  listLaw: "/v1/law",
   /** GET /v1/leaderboards */
   listLeaderboardMetrics: "/v1/leaderboards",
   /** GET /v1/motions */

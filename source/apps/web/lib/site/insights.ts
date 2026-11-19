@@ -15,6 +15,7 @@ import { getElection } from "@mzizi/api-client/actions/insights/get-election.act
 import { getPlaceElections } from "@mzizi/api-client/actions/insights/get-place-elections.actions.ts";
 import { listParties } from "@mzizi/api-client/actions/insights/list-parties.actions.ts";
 import { getParty } from "@mzizi/api-client/actions/insights/get-party.actions.ts";
+import { listLaw } from "@mzizi/api-client/actions/insights/list-law.actions.ts";
 import { listMotions } from "@mzizi/api-client/actions/insights/list-motions.actions.ts";
 import { getMotion } from "@mzizi/api-client/actions/insights/get-motion.actions.ts";
 import { getLeaderProfile } from "@mzizi/api-client/actions/insights/get-leader-profile.actions.ts";
@@ -590,6 +591,8 @@ export const placeElections = (featureId: string) => body<PlaceElections>(getPla
 export const parties = () => body<{ parties: PartyRow[]; gaps: string[] }>(listParties({}));
 export const partyOf = (code: string) => body<PartyDetail>(getParty({ params: { code } }));
 export const motions = (institutionId?: string) => body<{ motions: MotionRow[] }>(listMotions({ query: opt({ institutionId }) }));
+export interface LawInstrument { code: string; name: string; kindCode: string; kindLabel: string; enactedOn: string | null; provisions: number }
+export const law = (kindCode?: string) => body<{ instruments: LawInstrument[]; gaps: string[] }>(listLaw({ query: opt({ kindCode }) }));
 export const motionOf = (code: string) => body<MotionDetail>(getMotion({ params: { code } }));
 export const leaderOf = (id: string) => body<Leader>(getLeaderProfile({ params: { id } }));
 export const civicOf = (featureId: string) => body<PlaceCivic>(getPlaceCivic({ params: { featureId } }));

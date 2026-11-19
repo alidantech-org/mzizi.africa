@@ -141,6 +141,7 @@ const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/content/list"],
   ["GET", "/v1/elections"],
   ["GET", "/v1/institutions"],
+  ["GET", "/v1/law"],
   ["GET", "/v1/leaderboards"],
   ["GET", "/v1/motions"],
   ["GET", "/v1/parties"],

@@ -78,6 +78,9 @@ class InsightsEndpoints {
   /// GET /v1/institutions
   String get listInstitutions => '/v1/institutions';
 
+  /// GET /v1/law
+  String get listLaw => '/v1/law';
+
   /// GET /v1/leaderboards
   String get listLeaderboardMetrics => '/v1/leaderboards';
 

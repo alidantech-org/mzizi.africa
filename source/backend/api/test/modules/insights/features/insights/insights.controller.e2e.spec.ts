@@ -27,6 +27,8 @@ import { indicatorSeriesExample } from "@test/modules/insights/schema/dto/exampl
 import { institutionDetailExample } from "@test/modules/insights/schema/dto/examples/institution-detail.dto.example.ts";
 import { institutionListExample } from "@test/modules/insights/schema/dto/examples/institution-list.dto.example.ts";
 import { institutionsInputExample } from "@test/modules/insights/schema/dto/examples/institutions-input.dto.example.ts";
+import { lawInputExample } from "@test/modules/insights/schema/dto/examples/law-input.dto.example.ts";
+import { lawListExample } from "@test/modules/insights/schema/dto/examples/law-list.dto.example.ts";
 import { leaderProfileExample } from "@test/modules/insights/schema/dto/examples/leader-profile.dto.example.ts";
 import { leaderTreeExample } from "@test/modules/insights/schema/dto/examples/leader-tree.dto.example.ts";
 import { leaderboardMetricListExample } from "@test/modules/insights/schema/dto/examples/leaderboard-metric-list.dto.example.ts";
@@ -107,6 +109,7 @@ const service = {
   listContent: vi.fn(),
   listElections: vi.fn(),
   listInstitutions: vi.fn(),
+  listLaw: vi.fn(),
   listLeaderboardMetrics: vi.fn(),
   listMotions: vi.fn(),
   listParties: vi.fn(),
@@ -698,6 +701,25 @@ describe("GET /v1/institutions (listInstitutions)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.listInstitutions).toHaveBeenCalledTimes(1);
     expect(service.listInstitutions).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/law (listLaw)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(lawInputExample.valid()) },
+      headers: {},
+    };
+    const result = lawListExample.valid();
+    service.listLaw.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/law", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.listLaw).toHaveBeenCalledTimes(1);
+    expect(service.listLaw).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

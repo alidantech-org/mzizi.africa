@@ -43,7 +43,7 @@ const GROUPS: readonly { readonly id: string; readonly label: string; readonly m
   ] },
   { id: "government", label: "Government", more: true, items: [
     { href: "/institutions", label: "Institutions", icon: "parliament" },
-    { href: "/constitution", label: "Law", icon: "book" },
+    { href: "/law", label: "Law", icon: "book" },
   ] },
   { id: "money", label: "Public money", more: true, items: [
     { href: "/civic", label: "Finance and projects", icon: "build" },

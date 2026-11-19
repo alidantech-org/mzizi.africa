@@ -19,11 +19,21 @@ const props = insights.properties({
   Text: dryv.property.string().length({ min: 1, max: 100 }),
   Code: dryv.property.string().length({ min: 1, max: 200 }),
   Limit: dryv.property.number.integer({ range: { min: 1, max: 500 } }),
+  Count: dryv.property.number.integer({ range: { min: 0, max: 100000000 } }),
   Latitude: dryv.property.number.double({ range: { min: -90, max: 90 } }),
   Longitude: dryv.property.number.double({ range: { min: -180, max: 180 } }),
 });
 
 const shapes = insights.schemas({
+  /** One legal instrument (constitution, act, regulation) with its kind and size, highest authority first in the list. */
+  LawInstrument: dryv.schema({
+    code: dryv.field(props.Code),
+    name: dryv.field(p.NonEmptyString500),
+    kindCode: dryv.field(props.Code),
+    kindLabel: dryv.field(p.NonEmptyString500),
+    enactedOn: dryv.field(p.CalendarDate).maybe(),
+    provisions: dryv.field(props.Count),
+  }),
   SearchHit: dryv.schema({
     kind: dryv.field(p.NonEmptyString100),
     kindLabel: dryv.field(p.NonEmptyString100),
@@ -133,6 +143,10 @@ const documents = insights.schemas({
     members: dryv.field(dryv.dynamic()).array(),
     results: dryv.field(dryv.dynamic()).array(),
     funding: dryv.field(dryv.dynamic()).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  LawList: dryv.schema({
+    instruments: dryv.field(shapes.LawInstrument).array(),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
   MotionList: dryv.schema({ motions: dryv.field(dryv.dynamic()).array() }),
@@ -278,6 +292,7 @@ const inputs = insights.schemas({
   }),
   CodeInput: dryv.schema({ code: dryv.field(props.Code) }),
   IdInput: dryv.schema({ id: dryv.field(p.Id) }),
+  LawInput: dryv.schema({ kindCode: dryv.field(props.Code).optional() }),
   MotionsInput: dryv.schema({ institutionId: dryv.field(p.Id).optional(), limit: dryv.field(props.Limit).optional() }),
   InstitutionsInput: dryv.schema({
     armCode: dryv.field(props.Code).optional(),
@@ -461,6 +476,16 @@ export const insightOperations = reads.operations({
     .output(documents.PartyDetail)
     .facets(({ inputField, output }) => ({
       http: dryv.http("GET", "/v1/parties/{code}").input(inputField("code"), dryv.path()).output(output),
+    })),
+
+  ListLaw: dryv
+    .operation()
+    .role("list")
+    .description("Legal instruments held, highest authority first (constitution, then acts, then regulations), with their size.")
+    .input(inputs.LawInput)
+    .output(documents.LawList)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/law").input(input, dryv.queryObject()).output(output),
     })),
 
   ListMotions: dryv

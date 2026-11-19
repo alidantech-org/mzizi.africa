@@ -185,7 +185,7 @@ export function LegalItems({ items }: { items: LegalItem[] }) {
           {item.provisionCode ? (
             <Link
               className="mt-2 inline-block text-sm text-clay underline underline-offset-4"
-              href={`/constitution?provision=${encodeURIComponent(item.provisionCode)}`}
+              href={`/law/provision/${encodeURIComponent(item.provisionCode)}`}
             >
               Read provision →
             </Link>

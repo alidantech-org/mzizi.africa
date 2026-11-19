@@ -19,7 +19,7 @@ import { useAsync } from "#/lib/site/use-async.ts";
 
 const MORE: readonly { href: string; icon: IconName; title: string }[] = [
   { href: "/explore", icon: "compass", title: "Explore everything" }, { href: "/profile", icon: "user", title: "Profile and preferences" },
-  { href: "/institutions", icon: "parliament", title: "Institutions" }, { href: "/constitution", icon: "book", title: "The Constitution" }, { href: "/compare", icon: "chart", title: "Compare places" }, { href: "/content", icon: "book", title: "Knowledge library" },
+  { href: "/institutions", icon: "parliament", title: "Institutions" }, { href: "/law", icon: "book", title: "Law" }, { href: "/compare", icon: "chart", title: "Compare places" }, { href: "/content", icon: "book", title: "Knowledge library" },
   { href: "/browse", icon: "pin", title: "Browse places" }, { href: "/leaders", icon: "tree", title: "Leaders tree" }, { href: "/statistics", icon: "chart", title: "Statistics" },
   { href: "/elections", icon: "vote", title: "Elections" }, { href: "/parliament", icon: "parliament", title: "Parliament" }, { href: "/civic", icon: "build", title: "Money & projects" },
   { href: "/tenders", icon: "document", title: "Tenders" }, { href: "/parties", icon: "flag", title: "Parties" },

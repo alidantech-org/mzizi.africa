@@ -20,7 +20,7 @@ const TOPICS: readonly Topic[] = [
   ] },
   { id: "law", title: "Law and government", question: "Who decides, and on what authority?", items: [
     { href: "/institutions", title: "Institutions", description: "Responsibilities, leadership and legal foundations.", icon: "parliament" },
-    { href: "/constitution", title: "The Constitution", description: "Chapters, articles and their connected legal context.", icon: "book" },
+    { href: "/law", title: "Law", description: "The constitution, acts and regulations, highest authority first.", icon: "book" },
     { href: "/parliament", title: "Parliament", description: "Motions, recorded votes and contributions.", icon: "parliament" },
   ] },
   { id: "money", title: "Public money", question: "Where does the money go, and what was built with it?", items: [

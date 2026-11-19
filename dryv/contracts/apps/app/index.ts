@@ -107,6 +107,7 @@ const app_app = dryv
     insightOperations.GetElection,
     insightOperations.ListParties,
     insightOperations.GetParty,
+    insightOperations.ListLaw,
     insightOperations.ListMotions,
     insightOperations.GetMotion,
     insightOperations.GetLeaderProfile,

@@ -18,6 +18,8 @@ import { IndicatorSeriesDto } from "#/modules/insights/schema/dto/indicator-seri
 import { InstitutionDetailDto } from "#/modules/insights/schema/dto/institution-detail.dto.ts";
 import { InstitutionListDto } from "#/modules/insights/schema/dto/institution-list.dto.ts";
 import { InstitutionsInputDto } from "#/modules/insights/schema/dto/institutions-input.dto.ts";
+import { LawInputDto } from "#/modules/insights/schema/dto/law-input.dto.ts";
+import { LawListDto } from "#/modules/insights/schema/dto/law-list.dto.ts";
 import { LeaderProfileDto } from "#/modules/insights/schema/dto/leader-profile.dto.ts";
 import { LeaderTreeDto } from "#/modules/insights/schema/dto/leader-tree.dto.ts";
 import { LeaderboardMetricListDto } from "#/modules/insights/schema/dto/leaderboard-metric-list.dto.ts";
@@ -123,6 +125,12 @@ export class InsightsInsightsController {
   @HttpCode(200)
   listInstitutions(@Query() input: InstitutionsInputDto): Promise<InstitutionListDto> {
     return this.service.listInstitutions(input);
+  }
+
+  @Get("/v1/law")
+  @HttpCode(200)
+  listLaw(@Query() input: LawInputDto): Promise<LawListDto> {
+    return this.service.listLaw(input);
   }
 
   @Get("/v1/leaderboards")

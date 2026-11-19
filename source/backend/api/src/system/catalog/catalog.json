@@ -453,6 +453,17 @@
       "summary": "Every public body grouped by arm of government and kind, with what created it and how many leaders it has. The groups and labels come from the reference schemes."
     },
     {
+      "name": "ListLaw",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/law",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "LawList",
+      "summary": "Legal instruments held, highest authority first (constitution, then acts, then regulations), with their size."
+    },
+    {
       "name": "ListLeaderboardMetrics",
       "group": "insights",
       "feature": "insights",

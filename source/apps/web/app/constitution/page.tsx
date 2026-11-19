@@ -1,12 +1,6 @@
-import { Suspense } from "react";
+import { redirect } from "next/navigation";
 
-import View from "./view.tsx";
-
-/** The route is a server page; the interactive view below it is the only client code. */
-export default function Page() {
-  return (
-    <Suspense fallback={<div className="p-8" aria-busy="true" />}>
-      <View />
-    </Suspense>
-  );
+/** The old address; every legal instrument now lives under `/law`. */
+export default function Page(): never {
+  redirect("/law");
 }
