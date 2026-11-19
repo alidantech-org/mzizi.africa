@@ -2,6 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { governanceTabsArmsExample } from "@test/modules/insights/schema/dto/examples/governance-tabs-arms.dto.example.ts";
+import { governanceTabsTabsExample } from "@test/modules/insights/schema/dto/examples/governance-tabs-tabs.dto.example.ts";
 
 /** The contract shape of GovernanceTabs, for generated tests. */
 export const governanceTabsExample: ContractExample = contractExample({
@@ -12,7 +14,7 @@ export const governanceTabsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => governanceTabsArmsExample },
     },
     {
       name: "gaps",
@@ -26,7 +28,7 @@ export const governanceTabsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => governanceTabsTabsExample },
     },
   ],
   invariants: [],

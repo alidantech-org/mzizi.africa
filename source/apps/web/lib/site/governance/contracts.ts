@@ -14,13 +14,13 @@ export interface InstitutionCard {
   code: string;
   name: string;
   kind: Label;
-  arm: Label | null;
-  basis: Label | null;
+  arm?: Label | null;
+  basis?: Label | null;
   parent: { code: string; name: string } | null;
   leaders: number;
   children: number;
-  purpose: string | null;
-  image: string | null;
+  purpose?: string | null;
+  image?: string | null;
 }
 export interface InstitutionGroup {
   kind: Label;
@@ -29,7 +29,7 @@ export interface InstitutionGroup {
 export interface InstitutionArm {
   code: string;
   label: string;
-  about: string | null;
+  about?: string | null;
   count: number;
   groups: InstitutionGroup[];
 }
@@ -41,32 +41,32 @@ export interface Directory {
 export interface LegalItem {
   effect: string;
   designation: string;
-  heading: string | null;
+  heading?: string | null;
   instrument: string;
-  instrumentCode: string | null;
-  provisionCode: string | null;
+  instrumentCode?: string | null;
+  provisionCode?: string | null;
   excerpt: string;
-  explanation: string | null;
+  explanation?: string | null;
   reviewStatus: string;
-  via: string | null;
+  via?: string | null;
 }
 export interface ContentItem {
   code: string;
   slug: string;
   language: string;
   title: string;
-  summary: string | null;
+  summary?: string | null;
   category: Label;
-  classification: Label | null;
+  classification?: { code: string; label: string } | null;
   body: string;
-  image: string | null;
+  image?: string | null;
   tags: string[];
   isDevelopmentText: boolean;
-  subject: { table: string; code: string | null };
+  subject: { table: string; code?: string | null };
   unresolvedMedia: string[];
 }
 export interface ContentPage {
-  content: ContentItem | null;
+  content?: ContentItem | null;
   related: ContentItem[];
   gaps: string[];
 }
@@ -79,12 +79,12 @@ export interface InstitutionLeader {
   holderId: string;
   leaderSlug?: string | null;
   name: string;
-  party: string | null;
+  party?: string | null;
   tier: Label;
   how: Label;
   unit: { featureId: string; name: string } | null;
-  since: string | null;
-  photo: string | null;
+  since?: string | null;
+  photo?: string | null;
 }
 export interface InstitutionRelation {
   code: string;
@@ -94,7 +94,7 @@ export interface InstitutionRelation {
 }
 export interface InstitutionProfile {
   institution: InstitutionCard & {
-    established: string | null;
+    established?: string | null;
     functions: string[];
   };
   leaders: InstitutionLeader[];
@@ -108,7 +108,7 @@ export interface InstitutionProfile {
 export interface TreeTab {
   code: string;
   label: string;
-  about: string | null;
+  about?: string | null;
   count: number;
   includes: string[];
 }
@@ -122,13 +122,13 @@ export interface TreeOptions {
   gaps: string[];
 }
 export interface TreeRefs {
-  table: string | null;
-  code: string | null;
-  office: string | null;
-  tier: string | null;
-  appointment: string | null;
-  institution: string | null;
-  scheme: string | null;
+  table?: string | null;
+  code?: string | null;
+  office?: string | null;
+  tier?: string | null;
+  appointment?: string | null;
+  institution?: string | null;
+  scheme?: string | null;
 }
 export interface NodeBase {
   id: string;
@@ -142,19 +142,19 @@ export interface GroupNode extends NodeBase {
 export interface BodyNode extends NodeBase {
   type: "body";
   code: string;
-  purpose: string | null;
-  kind: string | null;
-  arm: string | null;
-  basis: string | null;
+  purpose?: string | null;
+  kind?: string | null;
+  arm?: string | null;
+  basis?: string | null;
   leaders: number;
 }
 export interface LeaderNode extends NodeBase {
   type: "leader";
   holderId: string;
   leaderSlug?: string | null;
-  party: string | null;
-  photo: string | null;
-  since: string | null;
+  party?: string | null;
+  photo?: string | null;
+  since?: string | null;
   tier: Label;
   how: Label;
   unit: { featureId: string; name: string } | null;
@@ -175,13 +175,13 @@ export interface TreeEdge {
   kind: string;
 }
 export interface TreeRail extends Label {
-  about: string | null;
+  about?: string | null;
   count: number;
-  unit: Place | null;
+  unit?: Place | null;
 }
 export interface GovernanceTree {
-  tab: (Label & { about: string | null }) | null;
-  place: Place | null;
+  tab?: (Label & { about: string | null }) | null;
+  place?: Place | null;
   nodes: TreeNode[];
   edges: TreeEdge[];
   rail: TreeRail[];
@@ -191,26 +191,26 @@ export interface GovernanceTree {
 export interface CompareMetric {
   code: string;
   title: string;
-  unit: string | null;
+  unit?: string | null;
   describe: string;
   higherIsBetter: boolean;
 }
 export interface CompareSuggestion {
-  featureId: string | null;
+  featureId?: string | null;
   name: string;
-  distanceKm: number | null;
-  rank: number | null;
-  value: number | null;
+  distanceKm?: number | null;
+  rank?: number | null;
+  value?: number | null;
 }
 export interface CompareRung {
   rung: string;
   label: string;
   available: boolean;
-  unit: Place | null;
-  message: string | null;
+  unit?: Place | null;
+  message?: string | null;
 }
 export interface CompareOptions {
-  place: Place | null;
+  place?: Place | null;
   nearby: CompareSuggestion[];
   top: CompareSuggestion[];
   hierarchy: CompareRung[];
@@ -220,15 +220,15 @@ export interface CompareOptions {
 export interface ComparisonRow {
   code: string;
   title: string;
-  unit: string | null;
+  unit?: string | null;
   higherIsBetter: boolean;
-  a: number | null;
-  b: number | null;
-  diffPercent: number | null;
+  a?: number | null;
+  b?: number | null;
+  diffPercent?: number | null;
 }
 export interface Comparison {
-  a: Place | null;
-  b: Place | null;
+  a?: Place | null;
+  b?: Place | null;
   rows: ComparisonRow[];
   gaps: string[];
 }

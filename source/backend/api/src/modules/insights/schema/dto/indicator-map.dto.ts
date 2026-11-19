@@ -1,15 +1,17 @@
 import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
   IsISO8601,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
+  IsDefined,
   ValidateIf,
   ValidateNested,
 } from "class-validator";
+import { IndicatorMapIndicatorDto } from "#/modules/insights/schema/dto/indicator-map-indicator.dto.ts";
+import { IndicatorMapUnitsDto } from "#/modules/insights/schema/dto/indicator-map-units.dto.ts";
 import { PlaceCrumbDto } from "#/modules/insights/schema/dto/place-crumb.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
@@ -24,8 +26,10 @@ export class IndicatorMapDto {
   @MaxLength(500, { each: true })
   gaps!: NonEmptyString500[];
 
-  @Allow()
-  indicator!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => IndicatorMapIndicatorDto)
+  indicator!: IndicatorMapIndicatorDto;
 
   @IsOptional()
   @ValidateIf((object) => object.parent !== null)
@@ -39,6 +43,8 @@ export class IndicatorMapDto {
   periodFrom?: CalendarDate | null;
 
   @IsArray()
-  @Allow()
-  units!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => IndicatorMapUnitsDto)
+  units!: IndicatorMapUnitsDto[];
 }

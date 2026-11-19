@@ -1,5 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/insights/place_crumb.dart';
+import 'package:mzizi_api/src/models/insights/place_elections_elections.dart';
+import 'package:mzizi_api/src/models/insights/place_elections_registration_trend.dart';
+import 'package:mzizi_api/src/models/insights/place_elections_turnout_trend.dart';
 
 part 'place_elections.g.dart';
 
@@ -13,11 +16,11 @@ class InsightsPlaceElections {
     required this.registrationTrend,
     required this.turnoutTrend,
   });
-  final List<Object?> elections;
+  final List<InsightsPlaceElectionsElections> elections;
   final List<String> gaps;
   final InsightsPlaceCrumb place;
-  final List<Object?> registrationTrend;
-  final List<Object?> turnoutTrend;
+  final List<InsightsPlaceElectionsRegistrationTrend> registrationTrend;
+  final List<InsightsPlaceElectionsTurnoutTrend> turnoutTrend;
 
   factory InsightsPlaceElections.fromJson(Map<String, dynamic> json) => _$InsightsPlaceElectionsFromJson(json);
 

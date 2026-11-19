@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/tender_list_summary.dart';
+import 'package:mzizi_api/src/models/insights/tender_list_tenders.dart';
 
 part 'tender_list.g.dart';
 
@@ -7,8 +9,8 @@ part 'tender_list.g.dart';
 class InsightsTenderList {
   const InsightsTenderList({required this.gaps, required this.summary, required this.tenders});
   final List<String> gaps;
-  final Object? summary;
-  final List<Object?> tenders;
+  final InsightsTenderListSummary summary;
+  final List<InsightsTenderListTenders> tenders;
 
   factory InsightsTenderList.fromJson(Map<String, dynamic> json) => _$InsightsTenderListFromJson(json);
 

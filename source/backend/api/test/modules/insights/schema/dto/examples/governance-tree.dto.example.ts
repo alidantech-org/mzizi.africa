@@ -2,6 +2,11 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { governanceTreeEdgesExample } from "@test/modules/insights/schema/dto/examples/governance-tree-edges.dto.example.ts";
+import { governanceTreeLegendExample } from "@test/modules/insights/schema/dto/examples/governance-tree-legend.dto.example.ts";
+import { governanceTreeNodesExample } from "@test/modules/insights/schema/dto/examples/governance-tree-nodes.dto.example.ts";
+import { governanceTreeRailExample } from "@test/modules/insights/schema/dto/examples/governance-tree-rail.dto.example.ts";
+import { governanceTreeTabExample } from "@test/modules/insights/schema/dto/examples/governance-tree-tab.dto.example.ts";
 import { placeCrumbExample } from "@test/modules/insights/schema/dto/examples/place-crumb.dto.example.ts";
 
 /** The contract shape of GovernanceTree, for generated tests. */
@@ -13,7 +18,7 @@ export const governanceTreeExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => governanceTreeEdgesExample },
     },
     {
       name: "gaps",
@@ -27,14 +32,14 @@ export const governanceTreeExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => governanceTreeLegendExample },
     },
     {
       name: "nodes",
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => governanceTreeNodesExample },
     },
     {
       name: "place",
@@ -47,13 +52,13 @@ export const governanceTreeExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => governanceTreeRailExample },
     },
     {
       name: "tab",
-      optional: false,
-      nullable: false,
-      spec: { kind: "unknown" },
+      optional: true,
+      nullable: true,
+      spec: { kind: "schema", example: () => governanceTreeTabExample },
     },
   ],
   invariants: [],

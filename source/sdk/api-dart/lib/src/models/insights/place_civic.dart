@@ -1,4 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/place_civic_classes.dart';
+import 'package:mzizi_api/src/models/insights/place_civic_fund.dart';
+import 'package:mzizi_api/src/models/insights/place_civic_infrastructure.dart';
+import 'package:mzizi_api/src/models/insights/place_civic_leadership.dart';
+import 'package:mzizi_api/src/models/insights/place_civic_projects.dart';
+import 'package:mzizi_api/src/models/insights/place_civic_years.dart';
 import 'package:mzizi_api/src/models/insights/place_crumb.dart';
 
 part 'place_civic.g.dart';
@@ -9,7 +15,7 @@ class InsightsPlaceCivic {
   const InsightsPlaceCivic({
     required this.chain,
     required this.classes,
-    this.fund,
+    required this.fund,
     required this.gaps,
     required this.infrastructure,
     required this.leadership,
@@ -18,14 +24,14 @@ class InsightsPlaceCivic {
     required this.years,
   });
   final List<InsightsPlaceCrumb> chain;
-  final List<Object?> classes;
-  final Object? fund;
+  final List<InsightsPlaceCivicClasses> classes;
+  final InsightsPlaceCivicFund fund;
   final List<String> gaps;
-  final Object? infrastructure;
-  final List<Object?> leadership;
+  final InsightsPlaceCivicInfrastructure infrastructure;
+  final List<InsightsPlaceCivicLeadership> leadership;
   final InsightsPlaceCrumb place;
-  final List<Object?> projects;
-  final List<Object?> years;
+  final List<InsightsPlaceCivicProjects> projects;
+  final List<InsightsPlaceCivicYears> years;
 
   factory InsightsPlaceCivic.fromJson(Map<String, dynamic> json) => _$InsightsPlaceCivicFromJson(json);
 

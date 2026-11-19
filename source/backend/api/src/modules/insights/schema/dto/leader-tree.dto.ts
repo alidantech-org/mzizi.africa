@@ -1,14 +1,15 @@
 import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
+  IsDefined,
   ValidateIf,
   ValidateNested,
 } from "class-validator";
+import { LeaderTreeLevelsDto } from "#/modules/insights/schema/dto/leader-tree-levels.dto.ts";
 import { PlaceCrumbDto } from "#/modules/insights/schema/dto/place-crumb.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
@@ -23,8 +24,10 @@ export class LeaderTreeDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  levels!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => LeaderTreeLevelsDto)
+  levels!: LeaderTreeLevelsDto[];
 
   @IsOptional()
   @ValidateIf((object) => object.place !== null)

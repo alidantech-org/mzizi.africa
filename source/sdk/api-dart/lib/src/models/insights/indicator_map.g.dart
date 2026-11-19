@@ -8,15 +8,15 @@ part of 'indicator_map.dart';
 
 InsightsIndicatorMap _$InsightsIndicatorMapFromJson(Map<String, dynamic> json) => InsightsIndicatorMap(
   gaps: (json['gaps'] as List<dynamic>).map((e) => e as String).toList(),
-  indicator: json['indicator'],
+  indicator: InsightsIndicatorMapIndicator.fromJson(json['indicator'] as Map<String, dynamic>),
   parent: json['parent'] == null ? null : InsightsPlaceCrumb.fromJson(json['parent'] as Map<String, dynamic>),
   periodFrom: json['periodFrom'] == null ? null : DateTime.parse(json['periodFrom'] as String),
-  units: json['units'] as List<dynamic>,
+  units: (json['units'] as List<dynamic>).map((e) => InsightsIndicatorMapUnits.fromJson(e as Map<String, dynamic>)).toList(),
 );
 
 Map<String, dynamic> _$InsightsIndicatorMapToJson(InsightsIndicatorMap instance) => <String, dynamic>{
   'gaps': instance.gaps,
-  'indicator': ?instance.indicator,
+  'indicator': instance.indicator,
   'parent': ?instance.parent,
   'periodFrom': ?instance.periodFrom?.toIso8601String(),
   'units': instance.units,

@@ -2,6 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { indicatorMapIndicatorExample } from "@test/modules/insights/schema/dto/examples/indicator-map-indicator.dto.example.ts";
+import { indicatorMapUnitsExample } from "@test/modules/insights/schema/dto/examples/indicator-map-units.dto.example.ts";
 import { placeCrumbExample } from "@test/modules/insights/schema/dto/examples/place-crumb.dto.example.ts";
 
 /** The contract shape of IndicatorMap, for generated tests. */
@@ -19,7 +21,7 @@ export const indicatorMapExample: ContractExample = contractExample({
       name: "indicator",
       optional: false,
       nullable: false,
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => indicatorMapIndicatorExample },
     },
     {
       name: "parent",
@@ -38,7 +40,7 @@ export const indicatorMapExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => indicatorMapUnitsExample },
     },
   ],
   invariants: [],

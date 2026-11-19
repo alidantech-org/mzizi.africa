@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/institution_list_arms.dart';
 
 part 'institution_list.g.dart';
 
@@ -6,7 +7,7 @@ part 'institution_list.g.dart';
 @JsonSerializable(includeIfNull: false)
 class InsightsInstitutionList {
   const InsightsInstitutionList({required this.arms, required this.gaps, required this.total});
-  final List<Object?> arms;
+  final List<InsightsInstitutionListArms> arms;
   final List<String> gaps;
   final int total;
 

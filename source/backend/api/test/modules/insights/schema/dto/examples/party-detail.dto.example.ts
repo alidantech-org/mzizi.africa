@@ -2,6 +2,10 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { partyDetailFundingExample } from "@test/modules/insights/schema/dto/examples/party-detail-funding.dto.example.ts";
+import { partyDetailMembersExample } from "@test/modules/insights/schema/dto/examples/party-detail-members.dto.example.ts";
+import { partyDetailPartyExample } from "@test/modules/insights/schema/dto/examples/party-detail-party.dto.example.ts";
+import { partyDetailResultsExample } from "@test/modules/insights/schema/dto/examples/party-detail-results.dto.example.ts";
 
 /** The contract shape of PartyDetail, for generated tests. */
 export const partyDetailExample: ContractExample = contractExample({
@@ -12,7 +16,7 @@ export const partyDetailExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => partyDetailFundingExample },
     },
     {
       name: "gaps",
@@ -26,20 +30,20 @@ export const partyDetailExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => partyDetailMembersExample },
     },
     {
       name: "party",
       optional: false,
       nullable: false,
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => partyDetailPartyExample },
     },
     {
       name: "results",
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => partyDetailResultsExample },
     },
   ],
   invariants: [],

@@ -1,4 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/project_detail_evidence.dart';
+import 'package:mzizi_api/src/models/insights/project_detail_media.dart';
+import 'package:mzizi_api/src/models/insights/project_detail_procurement.dart';
+import 'package:mzizi_api/src/models/insights/project_detail_project.dart';
 
 part 'project_detail.g.dart';
 
@@ -10,15 +14,15 @@ class InsightsProjectDetail {
     required this.gaps,
     required this.media,
     required this.money,
-    this.procurement,
+    required this.procurement,
     required this.project,
   });
-  final List<Object?> evidence;
+  final List<InsightsProjectDetailEvidence> evidence;
   final List<String> gaps;
-  final List<Object?> media;
+  final List<InsightsProjectDetailMedia> media;
   final List<Object?> money;
-  final Object? procurement;
-  final Object? project;
+  final InsightsProjectDetailProcurement procurement;
+  final InsightsProjectDetailProject project;
 
   factory InsightsProjectDetail.fromJson(Map<String, dynamic> json) => _$InsightsProjectDetailFromJson(json);
 

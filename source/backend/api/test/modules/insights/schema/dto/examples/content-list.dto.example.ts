@@ -2,6 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { contentListCategoriesExample } from "@test/modules/insights/schema/dto/examples/content-list-categories.dto.example.ts";
+import { contentListItemsExample } from "@test/modules/insights/schema/dto/examples/content-list-items.dto.example.ts";
 
 /** The contract shape of ContentList, for generated tests. */
 export const contentListExample: ContractExample = contractExample({
@@ -12,7 +14,7 @@ export const contentListExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => contentListCategoriesExample },
     },
     {
       name: "gaps",
@@ -26,7 +28,7 @@ export const contentListExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => contentListItemsExample },
     },
   ],
   invariants: [],

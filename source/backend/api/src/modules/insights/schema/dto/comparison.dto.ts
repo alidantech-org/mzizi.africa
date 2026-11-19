@@ -1,15 +1,30 @@
-import { Allow, IsArray, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
+import { ComparisonADto } from "#/modules/insights/schema/dto/comparison-a.dto.ts";
+import { ComparisonBDto } from "#/modules/insights/schema/dto/comparison-b.dto.ts";
+import { ComparisonRowsDto } from "#/modules/insights/schema/dto/comparison-rows.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
  * Comparison
  */
 export class ComparisonDto {
-  @Allow()
-  a!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => ComparisonADto)
+  a!: ComparisonADto;
 
-  @Allow()
-  b!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => ComparisonBDto)
+  b!: ComparisonBDto;
 
   @IsArray()
   @IsString({ each: true })
@@ -18,6 +33,8 @@ export class ComparisonDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  rows!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => ComparisonRowsDto)
+  rows!: ComparisonRowsDto[];
 }

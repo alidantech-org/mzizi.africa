@@ -1,4 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/compare_options_hierarchy.dart';
+import 'package:mzizi_api/src/models/insights/compare_options_metrics.dart';
+import 'package:mzizi_api/src/models/insights/compare_options_nearby.dart';
+import 'package:mzizi_api/src/models/insights/compare_options_place.dart';
+import 'package:mzizi_api/src/models/insights/compare_options_top.dart';
 
 part 'compare_options.g.dart';
 
@@ -14,11 +19,11 @@ class InsightsCompareOptions {
     required this.top,
   });
   final List<String> gaps;
-  final List<Object?> hierarchy;
-  final List<Object?> metrics;
-  final List<Object?> nearby;
-  final Object? place;
-  final List<Object?> top;
+  final List<InsightsCompareOptionsHierarchy> hierarchy;
+  final List<InsightsCompareOptionsMetrics> metrics;
+  final List<InsightsCompareOptionsNearby> nearby;
+  final InsightsCompareOptionsPlace place;
+  final List<InsightsCompareOptionsTop> top;
 
   factory InsightsCompareOptions.fromJson(Map<String, dynamic> json) => _$InsightsCompareOptionsFromJson(json);
 

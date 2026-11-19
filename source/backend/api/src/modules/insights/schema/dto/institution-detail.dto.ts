@@ -1,4 +1,19 @@
-import { Allow, IsArray, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
+import { InstitutionDetailChildrenDto } from "#/modules/insights/schema/dto/institution-detail-children.dto.ts";
+import { InstitutionDetailContentDto } from "#/modules/insights/schema/dto/institution-detail-content.dto.ts";
+import { InstitutionDetailInstitutionDto } from "#/modules/insights/schema/dto/institution-detail-institution.dto.ts";
+import { InstitutionDetailLeadersDto } from "#/modules/insights/schema/dto/institution-detail-leaders.dto.ts";
+import { InstitutionDetailLegalBasisDto } from "#/modules/insights/schema/dto/institution-detail-legal-basis.dto.ts";
+import { InstitutionDetailMetricsDto } from "#/modules/insights/schema/dto/institution-detail-metrics.dto.ts";
+import { InstitutionDetailParentsDto } from "#/modules/insights/schema/dto/institution-detail-parents.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -6,12 +21,16 @@ import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-s
  */
 export class InstitutionDetailDto {
   @IsArray()
-  @Allow()
-  children!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => InstitutionDetailChildrenDto)
+  children!: InstitutionDetailChildrenDto[];
 
   @IsArray()
-  @Allow()
-  content!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => InstitutionDetailContentDto)
+  content!: InstitutionDetailContentDto[];
 
   @IsArray()
   @IsString({ each: true })
@@ -19,22 +38,32 @@ export class InstitutionDetailDto {
   @MaxLength(500, { each: true })
   gaps!: NonEmptyString500[];
 
-  @Allow()
-  institution!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => InstitutionDetailInstitutionDto)
+  institution!: InstitutionDetailInstitutionDto;
 
   @IsArray()
-  @Allow()
-  leaders!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => InstitutionDetailLeadersDto)
+  leaders!: InstitutionDetailLeadersDto[];
 
   @IsArray()
-  @Allow()
-  legalBasis!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => InstitutionDetailLegalBasisDto)
+  legalBasis!: InstitutionDetailLegalBasisDto[];
 
   @IsArray()
-  @Allow()
-  metrics!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => InstitutionDetailMetricsDto)
+  metrics!: InstitutionDetailMetricsDto[];
 
   @IsArray()
-  @Allow()
-  parents!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => InstitutionDetailParentsDto)
+  parents!: InstitutionDetailParentsDto[];
 }

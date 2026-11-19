@@ -16,7 +16,7 @@ import {
   Section,
 } from "#/components/site/ui/primitives.tsx";
 import { content } from "#/lib/site/governance/reads.ts";
-import { contentSlug } from "#/lib/site/governance/parse/documents.ts";
+import { contentSlug } from "#/lib/site/governance/content-slug.ts";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 import { useAsync } from "#/lib/site/use-async.ts";
 export default function ContentRoute() {

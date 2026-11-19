@@ -1,6 +1,5 @@
 import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
   IsString,
   MaxLength,
@@ -9,14 +8,20 @@ import {
   ValidateNested,
 } from "class-validator";
 import { PlaceCrumbDto } from "#/modules/insights/schema/dto/place-crumb.dto.ts";
+import { PlaceStatisticsBreakdownsDto } from "#/modules/insights/schema/dto/place-statistics-breakdowns.dto.ts";
+import { PlaceStatisticsComparisonsDto } from "#/modules/insights/schema/dto/place-statistics-comparisons.dto.ts";
+import { PlaceStatisticsSiblingsDto } from "#/modules/insights/schema/dto/place-statistics-siblings.dto.ts";
+import { PlaceStatisticsTopicsDto } from "#/modules/insights/schema/dto/place-statistics-topics.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
  * Place Statistics
  */
 export class PlaceStatisticsDto {
-  @Allow()
-  breakdowns!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => PlaceStatisticsBreakdownsDto)
+  breakdowns!: PlaceStatisticsBreakdownsDto;
 
   @IsArray()
   @IsDefined()
@@ -25,8 +30,10 @@ export class PlaceStatisticsDto {
   chain!: PlaceCrumbDto[];
 
   @IsArray()
-  @Allow()
-  comparisons!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceStatisticsComparisonsDto)
+  comparisons!: PlaceStatisticsComparisonsDto[];
 
   @IsArray()
   @IsString({ each: true })
@@ -39,10 +46,14 @@ export class PlaceStatisticsDto {
   @Type(() => PlaceCrumbDto)
   place!: PlaceCrumbDto;
 
-  @Allow()
-  siblings!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => PlaceStatisticsSiblingsDto)
+  siblings!: PlaceStatisticsSiblingsDto;
 
   @IsArray()
-  @Allow()
-  topics!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceStatisticsTopicsDto)
+  topics!: PlaceStatisticsTopicsDto[];
 }

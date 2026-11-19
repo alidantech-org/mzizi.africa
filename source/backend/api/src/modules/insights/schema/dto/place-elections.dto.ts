@@ -1,6 +1,5 @@
 import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
   IsString,
   MaxLength,
@@ -9,6 +8,9 @@ import {
   ValidateNested,
 } from "class-validator";
 import { PlaceCrumbDto } from "#/modules/insights/schema/dto/place-crumb.dto.ts";
+import { PlaceElectionsElectionsDto } from "#/modules/insights/schema/dto/place-elections-elections.dto.ts";
+import { PlaceElectionsRegistrationTrendDto } from "#/modules/insights/schema/dto/place-elections-registration-trend.dto.ts";
+import { PlaceElectionsTurnoutTrendDto } from "#/modules/insights/schema/dto/place-elections-turnout-trend.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -16,8 +18,10 @@ import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-s
  */
 export class PlaceElectionsDto {
   @IsArray()
-  @Allow()
-  elections!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceElectionsElectionsDto)
+  elections!: PlaceElectionsElectionsDto[];
 
   @IsArray()
   @IsString({ each: true })
@@ -31,10 +35,14 @@ export class PlaceElectionsDto {
   place!: PlaceCrumbDto;
 
   @IsArray()
-  @Allow()
-  registrationTrend!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceElectionsRegistrationTrendDto)
+  registrationTrend!: PlaceElectionsRegistrationTrendDto[];
 
   @IsArray()
-  @Allow()
-  turnoutTrend!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceElectionsTurnoutTrendDto)
+  turnoutTrend!: PlaceElectionsTurnoutTrendDto[];
 }

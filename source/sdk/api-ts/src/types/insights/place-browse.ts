@@ -1,3 +1,4 @@
+import type { InsightsPlaceBrowseMedia } from "#sdk/types/insights/place-browse-media.ts";
 import type { InsightsPlaceChild } from "#sdk/types/insights/place-child.ts";
 import type { InsightsPlaceCrumb } from "#sdk/types/insights/place-crumb.ts";
 
@@ -5,6 +6,6 @@ import type { InsightsPlaceCrumb } from "#sdk/types/insights/place-crumb.ts";
 export interface InsightsPlaceBrowse {
   chain: InsightsPlaceCrumb[];
   children: InsightsPlaceChild[];
-  media: unknown[];
+  media: InsightsPlaceBrowseMedia[];
   place?: InsightsPlaceCrumb | null;
 }

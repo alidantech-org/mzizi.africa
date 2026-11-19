@@ -1,4 +1,13 @@
-import { Allow, IsArray, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
+import { PartyListPartiesDto } from "#/modules/insights/schema/dto/party-list-parties.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -12,6 +21,8 @@ export class PartyListDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  parties!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PartyListPartiesDto)
+  parties!: PartyListPartiesDto[];
 }

@@ -1,4 +1,17 @@
-import { Allow, IsArray, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
+import { CompareOptionsHierarchyDto } from "#/modules/insights/schema/dto/compare-options-hierarchy.dto.ts";
+import { CompareOptionsMetricsDto } from "#/modules/insights/schema/dto/compare-options-metrics.dto.ts";
+import { CompareOptionsNearbyDto } from "#/modules/insights/schema/dto/compare-options-nearby.dto.ts";
+import { CompareOptionsPlaceDto } from "#/modules/insights/schema/dto/compare-options-place.dto.ts";
+import { CompareOptionsTopDto } from "#/modules/insights/schema/dto/compare-options-top.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -12,21 +25,31 @@ export class CompareOptionsDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  hierarchy!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => CompareOptionsHierarchyDto)
+  hierarchy!: CompareOptionsHierarchyDto[];
 
   @IsArray()
-  @Allow()
-  metrics!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => CompareOptionsMetricsDto)
+  metrics!: CompareOptionsMetricsDto[];
 
   @IsArray()
-  @Allow()
-  nearby!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => CompareOptionsNearbyDto)
+  nearby!: CompareOptionsNearbyDto[];
 
-  @Allow()
-  place!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => CompareOptionsPlaceDto)
+  place!: CompareOptionsPlaceDto;
 
   @IsArray()
-  @Allow()
-  top!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => CompareOptionsTopDto)
+  top!: CompareOptionsTopDto[];
 }

@@ -2,6 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { institutionListArmsExample } from "@test/modules/insights/schema/dto/examples/institution-list-arms.dto.example.ts";
 
 /** The contract shape of InstitutionList, for generated tests. */
 export const institutionListExample: ContractExample = contractExample({
@@ -12,7 +13,7 @@ export const institutionListExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => institutionListArmsExample },
     },
     {
       name: "gaps",

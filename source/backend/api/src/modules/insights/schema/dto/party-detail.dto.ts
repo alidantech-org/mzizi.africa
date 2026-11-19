@@ -1,4 +1,16 @@
-import { Allow, IsArray, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
+import { PartyDetailFundingDto } from "#/modules/insights/schema/dto/party-detail-funding.dto.ts";
+import { PartyDetailMembersDto } from "#/modules/insights/schema/dto/party-detail-members.dto.ts";
+import { PartyDetailPartyDto } from "#/modules/insights/schema/dto/party-detail-party.dto.ts";
+import { PartyDetailResultsDto } from "#/modules/insights/schema/dto/party-detail-results.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -6,8 +18,10 @@ import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-s
  */
 export class PartyDetailDto {
   @IsArray()
-  @Allow()
-  funding!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PartyDetailFundingDto)
+  funding!: PartyDetailFundingDto[];
 
   @IsArray()
   @IsString({ each: true })
@@ -16,13 +30,19 @@ export class PartyDetailDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  members!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PartyDetailMembersDto)
+  members!: PartyDetailMembersDto[];
 
-  @Allow()
-  party!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => PartyDetailPartyDto)
+  party!: PartyDetailPartyDto;
 
   @IsArray()
-  @Allow()
-  results!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PartyDetailResultsDto)
+  results!: PartyDetailResultsDto[];
 }

@@ -1,12 +1,17 @@
+import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
-  IsOptional,
   IsString,
   MaxLength,
   MinLength,
-  ValidateIf,
+  IsDefined,
+  ValidateNested,
 } from "class-validator";
+import { MotionDetailLegalDto } from "#/modules/insights/schema/dto/motion-detail-legal.dto.ts";
+import { MotionDetailMembersDto } from "#/modules/insights/schema/dto/motion-detail-members.dto.ts";
+import { MotionDetailMotionDto } from "#/modules/insights/schema/dto/motion-detail-motion.dto.ts";
+import { MotionDetailPartiesDto } from "#/modules/insights/schema/dto/motion-detail-parties.dto.ts";
+import { MotionDetailTallyDto } from "#/modules/insights/schema/dto/motion-detail-tally.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -19,22 +24,30 @@ export class MotionDetailDto {
   @MaxLength(500, { each: true })
   gaps!: NonEmptyString500[];
 
-  @IsOptional()
-  @ValidateIf((object) => object.legal !== null)
-  @Allow()
-  legal?: Record<string, unknown> | null;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => MotionDetailLegalDto)
+  legal!: MotionDetailLegalDto;
 
   @IsArray()
-  @Allow()
-  members!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => MotionDetailMembersDto)
+  members!: MotionDetailMembersDto[];
 
-  @Allow()
-  motion!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => MotionDetailMotionDto)
+  motion!: MotionDetailMotionDto;
 
   @IsArray()
-  @Allow()
-  parties!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => MotionDetailPartiesDto)
+  parties!: MotionDetailPartiesDto[];
 
-  @Allow()
-  tally!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => MotionDetailTallyDto)
+  tally!: MotionDetailTallyDto;
 }

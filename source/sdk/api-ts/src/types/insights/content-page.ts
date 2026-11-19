@@ -1,6 +1,9 @@
+import type { InsightsContentPageContent } from "#sdk/types/insights/content-page-content.ts";
+import type { InsightsContentPageRelated } from "#sdk/types/insights/content-page-related.ts";
+
 /** Content Page */
 export interface InsightsContentPage {
-  content?: unknown | null;
+  content: InsightsContentPageContent;
   gaps: string[];
-  related: unknown[];
+  related: InsightsContentPageRelated[];
 }

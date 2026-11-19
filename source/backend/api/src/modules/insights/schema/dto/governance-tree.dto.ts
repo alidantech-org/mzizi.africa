@@ -1,14 +1,19 @@
 import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
+  IsDefined,
   ValidateIf,
   ValidateNested,
 } from "class-validator";
+import { GovernanceTreeEdgesDto } from "#/modules/insights/schema/dto/governance-tree-edges.dto.ts";
+import { GovernanceTreeLegendDto } from "#/modules/insights/schema/dto/governance-tree-legend.dto.ts";
+import { GovernanceTreeNodesDto } from "#/modules/insights/schema/dto/governance-tree-nodes.dto.ts";
+import { GovernanceTreeRailDto } from "#/modules/insights/schema/dto/governance-tree-rail.dto.ts";
+import { GovernanceTreeTabDto } from "#/modules/insights/schema/dto/governance-tree-tab.dto.ts";
 import { PlaceCrumbDto } from "#/modules/insights/schema/dto/place-crumb.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
@@ -17,8 +22,10 @@ import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-s
  */
 export class GovernanceTreeDto {
   @IsArray()
-  @Allow()
-  edges!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => GovernanceTreeEdgesDto)
+  edges!: GovernanceTreeEdgesDto[];
 
   @IsArray()
   @IsString({ each: true })
@@ -27,12 +34,16 @@ export class GovernanceTreeDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  legend!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => GovernanceTreeLegendDto)
+  legend!: GovernanceTreeLegendDto[];
 
   @IsArray()
-  @Allow()
-  nodes!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => GovernanceTreeNodesDto)
+  nodes!: GovernanceTreeNodesDto[];
 
   @IsOptional()
   @ValidateIf((object) => object.place !== null)
@@ -41,9 +52,14 @@ export class GovernanceTreeDto {
   place?: PlaceCrumbDto | null;
 
   @IsArray()
-  @Allow()
-  rail!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => GovernanceTreeRailDto)
+  rail!: GovernanceTreeRailDto[];
 
-  @Allow()
-  tab!: Record<string, unknown>;
+  @IsOptional()
+  @ValidateIf((object) => object.tab !== null)
+  @ValidateNested()
+  @Type(() => GovernanceTreeTabDto)
+  tab?: GovernanceTreeTabDto | null;
 }

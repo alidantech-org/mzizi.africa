@@ -9,7 +9,7 @@ part of 'place_browse.dart';
 InsightsPlaceBrowse _$InsightsPlaceBrowseFromJson(Map<String, dynamic> json) => InsightsPlaceBrowse(
   chain: (json['chain'] as List<dynamic>).map((e) => InsightsPlaceCrumb.fromJson(e as Map<String, dynamic>)).toList(),
   children: (json['children'] as List<dynamic>).map((e) => InsightsPlaceChild.fromJson(e as Map<String, dynamic>)).toList(),
-  media: json['media'] as List<dynamic>,
+  media: (json['media'] as List<dynamic>).map((e) => InsightsPlaceBrowseMedia.fromJson(e as Map<String, dynamic>)).toList(),
   place: json['place'] == null ? null : InsightsPlaceCrumb.fromJson(json['place'] as Map<String, dynamic>),
 );
 

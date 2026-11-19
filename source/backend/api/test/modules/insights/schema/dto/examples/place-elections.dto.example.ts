@@ -3,6 +3,9 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { placeCrumbExample } from "@test/modules/insights/schema/dto/examples/place-crumb.dto.example.ts";
+import { placeElectionsElectionsExample } from "@test/modules/insights/schema/dto/examples/place-elections-elections.dto.example.ts";
+import { placeElectionsRegistrationTrendExample } from "@test/modules/insights/schema/dto/examples/place-elections-registration-trend.dto.example.ts";
+import { placeElectionsTurnoutTrendExample } from "@test/modules/insights/schema/dto/examples/place-elections-turnout-trend.dto.example.ts";
 
 /** The contract shape of PlaceElections, for generated tests. */
 export const placeElectionsExample: ContractExample = contractExample({
@@ -13,7 +16,7 @@ export const placeElectionsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => placeElectionsElectionsExample },
     },
     {
       name: "gaps",
@@ -33,14 +36,20 @@ export const placeElectionsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: {
+        kind: "schema",
+        example: () => placeElectionsRegistrationTrendExample,
+      },
     },
     {
       name: "turnoutTrend",
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: {
+        kind: "schema",
+        example: () => placeElectionsTurnoutTrendExample,
+      },
     },
   ],
   invariants: [],

@@ -1,4 +1,14 @@
-import { Allow, IsArray, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
+import { ContentListCategoriesDto } from "#/modules/insights/schema/dto/content-list-categories.dto.ts";
+import { ContentListItemsDto } from "#/modules/insights/schema/dto/content-list-items.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -6,8 +16,10 @@ import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-s
  */
 export class ContentListDto {
   @IsArray()
-  @Allow()
-  categories!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => ContentListCategoriesDto)
+  categories!: ContentListCategoriesDto[];
 
   @IsArray()
   @IsString({ each: true })
@@ -16,6 +28,8 @@ export class ContentListDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  items!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => ContentListItemsDto)
+  items!: ContentListItemsDto[];
 }

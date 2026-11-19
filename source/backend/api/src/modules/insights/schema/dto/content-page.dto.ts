@@ -1,22 +1,24 @@
+import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
-  IsOptional,
   IsString,
   MaxLength,
   MinLength,
-  ValidateIf,
+  IsDefined,
+  ValidateNested,
 } from "class-validator";
+import { ContentPageContentDto } from "#/modules/insights/schema/dto/content-page-content.dto.ts";
+import { ContentPageRelatedDto } from "#/modules/insights/schema/dto/content-page-related.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
  * Content Page
  */
 export class ContentPageDto {
-  @IsOptional()
-  @ValidateIf((object) => object.content !== null)
-  @Allow()
-  content?: Record<string, unknown> | null;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => ContentPageContentDto)
+  content!: ContentPageContentDto;
 
   @IsArray()
   @IsString({ each: true })
@@ -25,6 +27,8 @@ export class ContentPageDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  related!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => ContentPageRelatedDto)
+  related!: ContentPageRelatedDto[];
 }

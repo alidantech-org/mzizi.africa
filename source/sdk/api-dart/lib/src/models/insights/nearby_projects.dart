@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/nearby_projects_projects.dart';
 
 part 'nearby_projects.g.dart';
 
@@ -7,7 +8,7 @@ part 'nearby_projects.g.dart';
 class InsightsNearbyProjects {
   const InsightsNearbyProjects({required this.gaps, required this.projects, required this.radiusKm});
   final List<String> gaps;
-  final List<Object?> projects;
+  final List<InsightsNearbyProjectsProjects> projects;
   final double radiusKm;
 
   factory InsightsNearbyProjects.fromJson(Map<String, dynamic> json) => _$InsightsNearbyProjectsFromJson(json);

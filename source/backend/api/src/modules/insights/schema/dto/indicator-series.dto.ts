@@ -1,6 +1,5 @@
 import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
   IsString,
   MaxLength,
@@ -8,6 +7,8 @@ import {
   IsDefined,
   ValidateNested,
 } from "class-validator";
+import { IndicatorSeriesIndicatorDto } from "#/modules/insights/schema/dto/indicator-series-indicator.dto.ts";
+import { IndicatorSeriesPointsDto } from "#/modules/insights/schema/dto/indicator-series-points.dto.ts";
 import { PlaceCrumbDto } from "#/modules/insights/schema/dto/place-crumb.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
@@ -21,8 +22,10 @@ export class IndicatorSeriesDto {
   @MaxLength(500, { each: true })
   gaps!: NonEmptyString500[];
 
-  @Allow()
-  indicator!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => IndicatorSeriesIndicatorDto)
+  indicator!: IndicatorSeriesIndicatorDto;
 
   @IsDefined()
   @ValidateNested()
@@ -30,6 +33,8 @@ export class IndicatorSeriesDto {
   place!: PlaceCrumbDto;
 
   @IsArray()
-  @Allow()
-  points!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => IndicatorSeriesPointsDto)
+  points!: IndicatorSeriesPointsDto[];
 }

@@ -7,7 +7,7 @@ part of 'institution_list.dart';
 // **************************************************************************
 
 InsightsInstitutionList _$InsightsInstitutionListFromJson(Map<String, dynamic> json) => InsightsInstitutionList(
-  arms: json['arms'] as List<dynamic>,
+  arms: (json['arms'] as List<dynamic>).map((e) => InsightsInstitutionListArms.fromJson(e as Map<String, dynamic>)).toList(),
   gaps: (json['gaps'] as List<dynamic>).map((e) => e as String).toList(),
   total: (json['total'] as num).toInt(),
 );

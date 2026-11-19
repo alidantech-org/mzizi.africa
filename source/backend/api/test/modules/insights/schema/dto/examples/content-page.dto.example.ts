@@ -2,6 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { contentPageContentExample } from "@test/modules/insights/schema/dto/examples/content-page-content.dto.example.ts";
+import { contentPageRelatedExample } from "@test/modules/insights/schema/dto/examples/content-page-related.dto.example.ts";
 
 /** The contract shape of ContentPage, for generated tests. */
 export const contentPageExample: ContractExample = contractExample({
@@ -9,9 +11,9 @@ export const contentPageExample: ContractExample = contractExample({
   fields: [
     {
       name: "content",
-      optional: true,
-      nullable: true,
-      spec: { kind: "unknown" },
+      optional: false,
+      nullable: false,
+      spec: { kind: "schema", example: () => contentPageContentExample },
     },
     {
       name: "gaps",
@@ -25,7 +27,7 @@ export const contentPageExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => contentPageRelatedExample },
     },
   ],
   invariants: [],

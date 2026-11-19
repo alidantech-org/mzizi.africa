@@ -2,6 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { nearbyProjectsProjectsExample } from "@test/modules/insights/schema/dto/examples/nearby-projects-projects.dto.example.ts";
 
 /** The contract shape of NearbyProjects, for generated tests. */
 export const nearbyProjectsExample: ContractExample = contractExample({
@@ -19,7 +20,7 @@ export const nearbyProjectsExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => nearbyProjectsProjectsExample },
     },
     {
       name: "radiusKm",

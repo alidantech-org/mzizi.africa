@@ -1,4 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/leader_profile_activity.dart';
+import 'package:mzizi_api/src/models/insights/leader_profile_contacts.dart';
+import 'package:mzizi_api/src/models/insights/leader_profile_election.dart';
+import 'package:mzizi_api/src/models/insights/leader_profile_evidence.dart';
+import 'package:mzizi_api/src/models/insights/leader_profile_leader.dart';
+import 'package:mzizi_api/src/models/insights/leader_profile_media.dart';
+import 'package:mzizi_api/src/models/insights/leader_profile_offices.dart';
 
 part 'leader_profile.g.dart';
 
@@ -10,21 +17,21 @@ class InsightsLeaderProfile {
     required this.contacts,
     required this.election,
     required this.evidence,
-    this.fund,
+    required this.fund,
     required this.gaps,
     required this.leader,
     required this.media,
     required this.offices,
   });
-  final Object? activity;
-  final List<Object?> contacts;
-  final List<Object?> election;
-  final List<Object?> evidence;
+  final InsightsLeaderProfileActivity activity;
+  final List<InsightsLeaderProfileContacts> contacts;
+  final List<InsightsLeaderProfileElection> election;
+  final List<InsightsLeaderProfileEvidence> evidence;
   final Object? fund;
   final List<String> gaps;
-  final Object? leader;
-  final List<Object?> media;
-  final List<Object?> offices;
+  final InsightsLeaderProfileLeader leader;
+  final List<InsightsLeaderProfileMedia> media;
+  final List<InsightsLeaderProfileOffices> offices;
 
   factory InsightsLeaderProfile.fromJson(Map<String, dynamic> json) => _$InsightsLeaderProfileFromJson(json);
 

@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
-import { Allow, IsArray, IsOptional, IsDefined, ValidateIf, ValidateNested } from "class-validator";
+import { IsArray, IsOptional, IsDefined, ValidateIf, ValidateNested } from "class-validator";
+import { PlaceBrowseMediaDto } from "#/modules/insights/schema/dto/place-browse-media.dto.ts";
 import { PlaceChildDto } from "#/modules/insights/schema/dto/place-child.dto.ts";
 import { PlaceCrumbDto } from "#/modules/insights/schema/dto/place-crumb.dto.ts";
 
@@ -20,8 +21,10 @@ export class PlaceBrowseDto {
   children!: PlaceChildDto[];
 
   @IsArray()
-  @Allow()
-  media!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceBrowseMediaDto)
+  media!: PlaceBrowseMediaDto[];
 
   @IsOptional()
   @ValidateIf((object) => object.place !== null)

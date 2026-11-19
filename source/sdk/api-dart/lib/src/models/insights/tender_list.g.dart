@@ -8,12 +8,12 @@ part of 'tender_list.dart';
 
 InsightsTenderList _$InsightsTenderListFromJson(Map<String, dynamic> json) => InsightsTenderList(
   gaps: (json['gaps'] as List<dynamic>).map((e) => e as String).toList(),
-  summary: json['summary'],
-  tenders: json['tenders'] as List<dynamic>,
+  summary: InsightsTenderListSummary.fromJson(json['summary'] as Map<String, dynamic>),
+  tenders: (json['tenders'] as List<dynamic>).map((e) => InsightsTenderListTenders.fromJson(e as Map<String, dynamic>)).toList(),
 );
 
 Map<String, dynamic> _$InsightsTenderListToJson(InsightsTenderList instance) => <String, dynamic>{
   'gaps': instance.gaps,
-  'summary': ?instance.summary,
+  'summary': instance.summary,
   'tenders': instance.tenders,
 };

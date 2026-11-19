@@ -19,7 +19,7 @@ export function comparisonDifference(
       note: "Relative percent is undefined when the baseline is zero",
     };
   }
-  if (row.diffPercent === null) {
+  if (row.diffPercent == null) {
     return { value: "Not available", note: "Relative difference not recorded" };
   }
   return {

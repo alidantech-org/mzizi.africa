@@ -1,37 +1,51 @@
+import { Type } from "class-transformer";
 import {
   Allow,
   IsArray,
-  IsOptional,
   IsString,
   MaxLength,
   MinLength,
-  ValidateIf,
+  IsDefined,
+  ValidateNested,
 } from "class-validator";
+import { LeaderProfileActivityDto } from "#/modules/insights/schema/dto/leader-profile-activity.dto.ts";
+import { LeaderProfileContactsDto } from "#/modules/insights/schema/dto/leader-profile-contacts.dto.ts";
+import { LeaderProfileElectionDto } from "#/modules/insights/schema/dto/leader-profile-election.dto.ts";
+import { LeaderProfileEvidenceDto } from "#/modules/insights/schema/dto/leader-profile-evidence.dto.ts";
+import { LeaderProfileLeaderDto } from "#/modules/insights/schema/dto/leader-profile-leader.dto.ts";
+import { LeaderProfileMediaDto } from "#/modules/insights/schema/dto/leader-profile-media.dto.ts";
+import { LeaderProfileOfficesDto } from "#/modules/insights/schema/dto/leader-profile-offices.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
  * Leader Profile
  */
 export class LeaderProfileDto {
-  @Allow()
-  activity!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => LeaderProfileActivityDto)
+  activity!: LeaderProfileActivityDto;
 
   @IsArray()
-  @Allow()
-  contacts!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => LeaderProfileContactsDto)
+  contacts!: LeaderProfileContactsDto[];
 
   @IsArray()
-  @Allow()
-  election!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => LeaderProfileElectionDto)
+  election!: LeaderProfileElectionDto[];
 
   @IsArray()
-  @Allow()
-  evidence!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => LeaderProfileEvidenceDto)
+  evidence!: LeaderProfileEvidenceDto[];
 
-  @IsOptional()
-  @ValidateIf((object) => object.fund !== null)
   @Allow()
-  fund?: Record<string, unknown> | null;
+  fund!: unknown;
 
   @IsArray()
   @IsString({ each: true })
@@ -39,14 +53,20 @@ export class LeaderProfileDto {
   @MaxLength(500, { each: true })
   gaps!: NonEmptyString500[];
 
-  @Allow()
-  leader!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => LeaderProfileLeaderDto)
+  leader!: LeaderProfileLeaderDto;
 
   @IsArray()
-  @Allow()
-  media!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => LeaderProfileMediaDto)
+  media!: LeaderProfileMediaDto[];
 
   @IsArray()
-  @Allow()
-  offices!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => LeaderProfileOfficesDto)
+  offices!: LeaderProfileOfficesDto[];
 }

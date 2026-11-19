@@ -7,8 +7,8 @@ import {
   initialTreeLevel,
   treeAtLevel,
 } from "#/lib/site/governance/tree-view.ts";
-import { tree } from "#/lib/site/governance/parse/documents.ts";
-const document = tree({
+import type { GovernanceTree } from "#/lib/site/governance/contracts.ts";
+const document: GovernanceTree = ({
   tab: null,
   place: null,
   gaps: [],
@@ -31,7 +31,7 @@ const document = tree({
     { from: "root", to: "local", kind: "part-of" },
     { from: "local", to: "child", kind: "part-of" },
   ],
-});
+} as GovernanceTree);
 test("level filtering removes unrelated nodes and does not bridge hidden levels", () => {
   const filtered = treeAtLevel(document, "national");
   expect(filtered.nodes.map((node) => node.id)).toEqual(["root", "child"]);
@@ -52,7 +52,7 @@ test("graph renders accessible zoom, fit/reset and bottom level controls", () =>
 
 test("initial scope prefers populated API levels and leaves unknown empty scopes available", () => {
   expect(initialTreeLevel(document)).toBe("");
-  const populated = tree({
+  const populated = ({
     tab: null,
     place: null,
     gaps: [],
@@ -85,6 +85,6 @@ test("initial scope prefers populated API levels and leaves unknown empty scopes
         performance: null,
       },
     ],
-  });
+  } as GovernanceTree);
   expect(initialTreeLevel(populated)).toBe("national");
 });

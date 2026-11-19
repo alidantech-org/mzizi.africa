@@ -2,6 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { indicatorSeriesIndicatorExample } from "@test/modules/insights/schema/dto/examples/indicator-series-indicator.dto.example.ts";
+import { indicatorSeriesPointsExample } from "@test/modules/insights/schema/dto/examples/indicator-series-points.dto.example.ts";
 import { placeCrumbExample } from "@test/modules/insights/schema/dto/examples/place-crumb.dto.example.ts";
 
 /** The contract shape of IndicatorSeries, for generated tests. */
@@ -19,7 +21,7 @@ export const indicatorSeriesExample: ContractExample = contractExample({
       name: "indicator",
       optional: false,
       nullable: false,
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => indicatorSeriesIndicatorExample },
     },
     {
       name: "place",
@@ -32,7 +34,7 @@ export const indicatorSeriesExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => indicatorSeriesPointsExample },
     },
   ],
   invariants: [],

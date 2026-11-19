@@ -1,12 +1,17 @@
+import { Type } from "class-transformer";
 import {
   Allow,
   IsArray,
-  IsOptional,
   IsString,
   MaxLength,
   MinLength,
-  ValidateIf,
+  IsDefined,
+  ValidateNested,
 } from "class-validator";
+import { ProjectDetailEvidenceDto } from "#/modules/insights/schema/dto/project-detail-evidence.dto.ts";
+import { ProjectDetailMediaDto } from "#/modules/insights/schema/dto/project-detail-media.dto.ts";
+import { ProjectDetailProcurementDto } from "#/modules/insights/schema/dto/project-detail-procurement.dto.ts";
+import { ProjectDetailProjectDto } from "#/modules/insights/schema/dto/project-detail-project.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -14,8 +19,10 @@ import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-s
  */
 export class ProjectDetailDto {
   @IsArray()
-  @Allow()
-  evidence!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => ProjectDetailEvidenceDto)
+  evidence!: ProjectDetailEvidenceDto[];
 
   @IsArray()
   @IsString({ each: true })
@@ -24,18 +31,22 @@ export class ProjectDetailDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  media!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => ProjectDetailMediaDto)
+  media!: ProjectDetailMediaDto[];
 
   @IsArray()
   @Allow()
-  money!: Record<string, unknown>[];
+  money!: unknown[];
 
-  @IsOptional()
-  @ValidateIf((object) => object.procurement !== null)
-  @Allow()
-  procurement?: Record<string, unknown> | null;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => ProjectDetailProcurementDto)
+  procurement!: ProjectDetailProcurementDto;
 
-  @Allow()
-  project!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => ProjectDetailProjectDto)
+  project!: ProjectDetailProjectDto;
 }

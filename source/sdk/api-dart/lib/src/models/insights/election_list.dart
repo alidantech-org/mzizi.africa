@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/election_list_elections.dart';
 
 part 'election_list.g.dart';
 
@@ -6,7 +7,7 @@ part 'election_list.g.dart';
 @JsonSerializable(includeIfNull: false)
 class InsightsElectionList {
   const InsightsElectionList({required this.elections});
-  final List<Object?> elections;
+  final List<InsightsElectionListElections> elections;
 
   factory InsightsElectionList.fromJson(Map<String, dynamic> json) => _$InsightsElectionListFromJson(json);
 

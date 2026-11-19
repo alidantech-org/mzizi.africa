@@ -8,7 +8,7 @@ part of 'leader_tree.dart';
 
 InsightsLeaderTree _$InsightsLeaderTreeFromJson(Map<String, dynamic> json) => InsightsLeaderTree(
   gaps: (json['gaps'] as List<dynamic>).map((e) => e as String).toList(),
-  levels: json['levels'] as List<dynamic>,
+  levels: (json['levels'] as List<dynamic>).map((e) => InsightsLeaderTreeLevels.fromJson(e as Map<String, dynamic>)).toList(),
   place: json['place'] == null ? null : InsightsPlaceCrumb.fromJson(json['place'] as Map<String, dynamic>),
 );
 

@@ -2,6 +2,9 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { comparisonAExample } from "@test/modules/insights/schema/dto/examples/comparison-a.dto.example.ts";
+import { comparisonBExample } from "@test/modules/insights/schema/dto/examples/comparison-b.dto.example.ts";
+import { comparisonRowsExample } from "@test/modules/insights/schema/dto/examples/comparison-rows.dto.example.ts";
 
 /** The contract shape of Comparison, for generated tests. */
 export const comparisonExample: ContractExample = contractExample({
@@ -11,13 +14,13 @@ export const comparisonExample: ContractExample = contractExample({
       name: "a",
       optional: false,
       nullable: false,
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => comparisonAExample },
     },
     {
       name: "b",
       optional: false,
       nullable: false,
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => comparisonBExample },
     },
     {
       name: "gaps",
@@ -31,7 +34,7 @@ export const comparisonExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => comparisonRowsExample },
     },
   ],
   invariants: [],

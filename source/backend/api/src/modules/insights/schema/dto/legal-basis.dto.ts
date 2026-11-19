@@ -1,4 +1,14 @@
-import { Allow, IsArray, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
+import { LegalBasisItemsDto } from "#/modules/insights/schema/dto/legal-basis-items.dto.ts";
+import { LegalBasisSubjectDto } from "#/modules/insights/schema/dto/legal-basis-subject.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -12,9 +22,13 @@ export class LegalBasisDto {
   gaps!: NonEmptyString500[];
 
   @IsArray()
-  @Allow()
-  items!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => LegalBasisItemsDto)
+  items!: LegalBasisItemsDto[];
 
-  @Allow()
-  subject!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => LegalBasisSubjectDto)
+  subject!: LegalBasisSubjectDto;
 }

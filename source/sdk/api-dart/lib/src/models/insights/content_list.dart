@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/content_list_categories.dart';
+import 'package:mzizi_api/src/models/insights/content_list_items.dart';
 
 part 'content_list.g.dart';
 
@@ -6,9 +8,9 @@ part 'content_list.g.dart';
 @JsonSerializable(includeIfNull: false)
 class InsightsContentList {
   const InsightsContentList({required this.categories, required this.gaps, required this.items});
-  final List<Object?> categories;
+  final List<InsightsContentListCategories> categories;
   final List<String> gaps;
-  final List<Object?> items;
+  final List<InsightsContentListItems> items;
 
   factory InsightsContentList.fromJson(Map<String, dynamic> json) => _$InsightsContentListFromJson(json);
 

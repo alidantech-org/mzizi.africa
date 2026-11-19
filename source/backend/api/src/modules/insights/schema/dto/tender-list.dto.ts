@@ -1,4 +1,14 @@
-import { Allow, IsArray, IsString, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import {
+  IsArray,
+  IsString,
+  MaxLength,
+  MinLength,
+  IsDefined,
+  ValidateNested,
+} from "class-validator";
+import { TenderListSummaryDto } from "#/modules/insights/schema/dto/tender-list-summary.dto.ts";
+import { TenderListTendersDto } from "#/modules/insights/schema/dto/tender-list-tenders.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
 /**
@@ -11,10 +21,14 @@ export class TenderListDto {
   @MaxLength(500, { each: true })
   gaps!: NonEmptyString500[];
 
-  @Allow()
-  summary!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => TenderListSummaryDto)
+  summary!: TenderListSummaryDto;
 
   @IsArray()
-  @Allow()
-  tenders!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => TenderListTendersDto)
+  tenders!: TenderListTendersDto[];
 }

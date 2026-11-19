@@ -2,6 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { placeBrowseMediaExample } from "@test/modules/insights/schema/dto/examples/place-browse-media.dto.example.ts";
 import { placeChildExample } from "@test/modules/insights/schema/dto/examples/place-child.dto.example.ts";
 import { placeCrumbExample } from "@test/modules/insights/schema/dto/examples/place-crumb.dto.example.ts";
 
@@ -28,7 +29,7 @@ export const placeBrowseExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       array: {},
-      spec: { kind: "unknown" },
+      spec: { kind: "schema", example: () => placeBrowseMediaExample },
     },
     {
       name: "place",

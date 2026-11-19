@@ -1,15 +1,18 @@
 import { Type } from "class-transformer";
 import {
-  Allow,
   IsArray,
-  IsOptional,
   IsString,
   MaxLength,
   MinLength,
   IsDefined,
-  ValidateIf,
   ValidateNested,
 } from "class-validator";
+import { PlaceCivicClassesDto } from "#/modules/insights/schema/dto/place-civic-classes.dto.ts";
+import { PlaceCivicFundDto } from "#/modules/insights/schema/dto/place-civic-fund.dto.ts";
+import { PlaceCivicInfrastructureDto } from "#/modules/insights/schema/dto/place-civic-infrastructure.dto.ts";
+import { PlaceCivicLeadershipDto } from "#/modules/insights/schema/dto/place-civic-leadership.dto.ts";
+import { PlaceCivicProjectsDto } from "#/modules/insights/schema/dto/place-civic-projects.dto.ts";
+import { PlaceCivicYearsDto } from "#/modules/insights/schema/dto/place-civic-years.dto.ts";
 import { PlaceCrumbDto } from "#/modules/insights/schema/dto/place-crumb.dto.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 
@@ -24,13 +27,15 @@ export class PlaceCivicDto {
   chain!: PlaceCrumbDto[];
 
   @IsArray()
-  @Allow()
-  classes!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceCivicClassesDto)
+  classes!: PlaceCivicClassesDto[];
 
-  @IsOptional()
-  @ValidateIf((object) => object.fund !== null)
-  @Allow()
-  fund?: Record<string, unknown> | null;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => PlaceCivicFundDto)
+  fund!: PlaceCivicFundDto;
 
   @IsArray()
   @IsString({ each: true })
@@ -38,12 +43,16 @@ export class PlaceCivicDto {
   @MaxLength(500, { each: true })
   gaps!: NonEmptyString500[];
 
-  @Allow()
-  infrastructure!: Record<string, unknown>;
+  @IsDefined()
+  @ValidateNested()
+  @Type(() => PlaceCivicInfrastructureDto)
+  infrastructure!: PlaceCivicInfrastructureDto;
 
   @IsArray()
-  @Allow()
-  leadership!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceCivicLeadershipDto)
+  leadership!: PlaceCivicLeadershipDto[];
 
   @IsDefined()
   @ValidateNested()
@@ -51,10 +60,14 @@ export class PlaceCivicDto {
   place!: PlaceCrumbDto;
 
   @IsArray()
-  @Allow()
-  projects!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceCivicProjectsDto)
+  projects!: PlaceCivicProjectsDto[];
 
   @IsArray()
-  @Allow()
-  years!: Record<string, unknown>[];
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => PlaceCivicYearsDto)
+  years!: PlaceCivicYearsDto[];
 }

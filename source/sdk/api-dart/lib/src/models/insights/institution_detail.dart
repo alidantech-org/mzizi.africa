@@ -1,4 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/insights/institution_detail_children.dart';
+import 'package:mzizi_api/src/models/insights/institution_detail_content.dart';
+import 'package:mzizi_api/src/models/insights/institution_detail_institution.dart';
+import 'package:mzizi_api/src/models/insights/institution_detail_leaders.dart';
+import 'package:mzizi_api/src/models/insights/institution_detail_legal_basis.dart';
+import 'package:mzizi_api/src/models/insights/institution_detail_metrics.dart';
+import 'package:mzizi_api/src/models/insights/institution_detail_parents.dart';
 
 part 'institution_detail.g.dart';
 
@@ -15,14 +22,14 @@ class InsightsInstitutionDetail {
     required this.metrics,
     required this.parents,
   });
-  final List<Object?> children;
-  final List<Object?> content;
+  final List<InsightsInstitutionDetailChildren> children;
+  final List<InsightsInstitutionDetailContent> content;
   final List<String> gaps;
-  final Object? institution;
-  final List<Object?> leaders;
-  final List<Object?> legalBasis;
-  final List<Object?> metrics;
-  final List<Object?> parents;
+  final InsightsInstitutionDetailInstitution institution;
+  final List<InsightsInstitutionDetailLeaders> leaders;
+  final List<InsightsInstitutionDetailLegalBasis> legalBasis;
+  final List<InsightsInstitutionDetailMetrics> metrics;
+  final List<InsightsInstitutionDetailParents> parents;
 
   factory InsightsInstitutionDetail.fromJson(Map<String, dynamic> json) => _$InsightsInstitutionDetailFromJson(json);
 
