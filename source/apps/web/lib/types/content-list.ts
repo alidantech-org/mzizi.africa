@@ -1,10 +1,12 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type ContentListCategories } from "#/lib/types/content-list-categories.ts";
+import { type ContentListItems } from "#/lib/types/content-list-items.ts";
 
 /** Content List */
 export interface ContentList {
-  categories: unknown[];
+  categories: ContentListCategories[];
   gaps: string[];
-  items: unknown[];
+  items: ContentListItems[];
 }
 
 /** Field metadata for forms and results. */

@@ -27,6 +27,8 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 @Index(["fanOutLevelId"])
 @Index(["parentTemplateId"])
 @Index(["sourceCitationId"])
+// Invariant "PositionAttributesRequirePositionProduct" has no simple form, so it isn't enforced as a database check.
+// Invariant "InstitutionAttributesRequireInstitutionProduct" has no simple form, so it isn't enforced as a database check.
 export class TemplateEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;

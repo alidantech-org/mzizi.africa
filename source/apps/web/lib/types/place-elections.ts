@@ -1,13 +1,16 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
 import { type PlaceCrumb } from "#/lib/types/place-crumb.ts";
+import { type PlaceElectionsElections } from "#/lib/types/place-elections-elections.ts";
+import { type PlaceElectionsRegistrationTrend } from "#/lib/types/place-elections-registration-trend.ts";
+import { type PlaceElectionsTurnoutTrend } from "#/lib/types/place-elections-turnout-trend.ts";
 
 /** Place Elections */
 export interface PlaceElections {
-  elections: unknown[];
+  elections: PlaceElectionsElections[];
   gaps: string[];
   place: PlaceCrumb;
-  registrationTrend: unknown[];
-  turnoutTrend: unknown[];
+  registrationTrend: PlaceElectionsRegistrationTrend[];
+  turnoutTrend: PlaceElectionsTurnoutTrend[];
 }
 
 /** Field metadata for forms and results. */

@@ -1,9 +1,10 @@
 /** Route `/leaders/<holder>`: a leader — who they are, how to reach them, how they got the seat, how they vote and the fund they oversee. */
 import Link from "next/link";
 
-import { ReactionButton, ViewBeacon } from "#/components/site/reaction.tsx";
+import { ViewBeacon } from "#/components/site/reaction.tsx";
+import { ReactionButton } from "#/components/site/engagement.tsx";
 import { placeAt } from "#/lib/site/links.ts";
-import { LegalBasisSection, SubjectContentSection } from "#/components/site/governance/shared.tsx";
+import { LegalBasisSection, SubjectContentSection } from "#/components/site/governance/server-sections.tsx";
 import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList, Donut } from "#/components/site/ui/charts.tsx";
 import { Avatar, Gallery } from "#/components/site/ui/media.tsx";

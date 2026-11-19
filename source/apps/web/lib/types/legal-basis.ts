@@ -1,10 +1,12 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type LegalBasisItems } from "#/lib/types/legal-basis-items.ts";
+import { type LegalBasisSubject } from "#/lib/types/legal-basis-subject.ts";
 
 /** Legal Basis */
 export interface LegalBasis {
   gaps: string[];
-  items: unknown[];
-  subject: unknown;
+  items: LegalBasisItems[];
+  subject: LegalBasisSubject;
 }
 
 /** Field metadata for forms and results. */

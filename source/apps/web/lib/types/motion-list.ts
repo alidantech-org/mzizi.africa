@@ -1,8 +1,9 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type MotionListMotions } from "#/lib/types/motion-list-motions.ts";
 
 /** Motion List */
 export interface MotionList {
-  motions: unknown[];
+  motions: MotionListMotions[];
 }
 
 /** Field metadata for forms and results. */

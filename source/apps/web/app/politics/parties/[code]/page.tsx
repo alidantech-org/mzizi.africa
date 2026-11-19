@@ -1,7 +1,8 @@
 /** Route `/politics/parties/<code>`: a party's members, its votes by election and the fund money it received. */
 import Link from "next/link";
 
-import { ReactionButton, ViewBeacon } from "#/components/site/reaction.tsx";
+import { ViewBeacon } from "#/components/site/reaction.tsx";
+import { ReactionButton } from "#/components/site/engagement.tsx";
 import { leaderAt } from "#/lib/site/links.ts";
 import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList } from "#/components/site/ui/charts.tsx";

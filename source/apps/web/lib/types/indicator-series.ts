@@ -1,12 +1,14 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type IndicatorSeriesIndicator } from "#/lib/types/indicator-series-indicator.ts";
+import { type IndicatorSeriesPoints } from "#/lib/types/indicator-series-points.ts";
 import { type PlaceCrumb } from "#/lib/types/place-crumb.ts";
 
 /** Indicator Series */
 export interface IndicatorSeries {
   gaps: string[];
-  indicator: unknown;
+  indicator: IndicatorSeriesIndicator;
   place: PlaceCrumb;
-  points: unknown[];
+  points: IndicatorSeriesPoints[];
 }
 
 /** Field metadata for forms and results. */

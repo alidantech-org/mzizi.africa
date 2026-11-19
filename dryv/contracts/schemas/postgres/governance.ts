@@ -5,6 +5,7 @@
  * SQL generation remains gated on pack support for CHECK semantics and composite/partial uniqueness.
  */
 import * as dryv from "@dryvcode/author";
+import { applyOfficeIdentity } from "./governance-office-integrity.ts";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
@@ -789,3 +790,5 @@ export const Fulfilments = governance
       .index("evidenceStatusId")
       .index("sourceCitationId"),
   });
+
+applyOfficeIdentity();

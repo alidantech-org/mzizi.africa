@@ -4,11 +4,8 @@
 import Link from "next/link";
 import { leaderAt } from "#/lib/site/links.ts";
 import { useEffect, useRef, useState } from "react";
-import { AsyncView } from "#/components/site/async-view.tsx";
 import {
-  DevelopmentNote,
   Empty,
-  LegalBasisSection,
 } from "#/components/site/governance/shared.tsx";
 import { Avatar } from "#/components/site/ui/media.tsx";
 import { Gaps } from "#/components/site/ui/primitives.tsx";
@@ -16,13 +13,10 @@ import type {
   GovernanceTree,
   TreeNode,
 } from "#/lib/site/governance/contracts.ts";
-import { governanceTree, treeOptions } from "#/lib/site/governance/reads.ts";
-import { useLanguage } from "#/lib/site/i18n.tsx";
 import {
   initialTreeLevel,
   treeAtLevel,
 } from "#/lib/site/governance/tree-view.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
 
 function Branch({
   node,
@@ -435,10 +429,7 @@ export function GovernanceGraph({ document }: { document: GovernanceTree }) {
                   {selected.body.name} →
                 </Link>
               </div>
-              <LegalBasisSection
-                table="governance.offices"
-                code={selected.refs.office ?? ""}
-              />
+              <p className="mt-4 text-sm text-content-muted">Open the record to inspect its recorded legal basis and evidence.</p>
             </>
           ) : selected.type === "body" ? (
             <>
@@ -475,129 +466,6 @@ export function GovernanceGraph({ document }: { document: GovernanceTree }) {
         </section>
       ) : null}
       <Gaps items={document.gaps} topic="Leadership tree" />
-    </>
-  );
-}
-function TreeRead({
-  featureId,
-  institution,
-  tab,
-}: {
-  featureId?: string;
-  institution?: string;
-  tab?: string;
-}) {
-  const { language } = useLanguage();
-  const loaded = useAsync(
-    () => governanceTree({ featureId, institution, tab }, language),
-    `govtree:${featureId}:${institution}:${tab}:${language}`,
-  );
-  return (
-    <AsyncView loaded={loaded}>
-      {(document) => (
-        <>
-          <p className="mt-4 max-w-3xl text-sm text-content-muted">
-            {institution && !tab
-              ? "All recorded holders in this institution and its connected bodies. Choose a category to filter how they obtained their seats."
-              : document.tab?.about}
-          </p>
-          <GovernanceGraph
-            key={`${featureId}:${institution}:${tab}`}
-            document={document}
-          />
-        </>
-      )}
-    </AsyncView>
-  );
-}
-export function LeaderTree({
-  featureId,
-  initialInstitution,
-}: {
-  featureId?: string;
-  initialInstitution?: string;
-}) {
-  const { language } = useLanguage();
-  const [tab, setTab] = useState("");
-  const [institution, setInstitution] = useState(initialInstitution ?? "");
-  const loaded = useAsync(
-    () => treeOptions(language),
-    `gov-options:${language}`,
-  );
-  return (
-    <>
-      <DevelopmentNote />
-      <AsyncView loaded={loaded}>
-        {(options) => (
-          <>
-            <div className="grid items-end gap-4 md:grid-cols-[1fr_20rem]">
-              <div
-                role="tablist"
-                aria-label="How leaders obtained their seats"
-                className="flex flex-wrap gap-2"
-              >
-                {institution ? (
-                  <button
-                    role="tab"
-                    aria-selected={!tab}
-                    className="tab"
-                    data-active={!tab}
-                    onClick={() => setTab("")}
-                  >
-                    All holders
-                  </button>
-                ) : null}
-                {options.tabs.map((t, index) => (
-                  <button
-                    key={t.code}
-                    role="tab"
-                    aria-selected={
-                      tab === t.code || (!tab && !institution && index === 0)
-                    }
-                    className="tab"
-                    data-active={
-                      tab === t.code || (!tab && !institution && index === 0)
-                    }
-                    title={t.about ?? undefined}
-                    onClick={() => setTab(t.code)}
-                  >
-                    {t.label}{" "}
-                    <span className="text-xs opacity-60">{t.count}</span>
-                  </button>
-                ))}
-              </div>
-              <label className="text-sm">
-                <span className="mb-1 block font-semibold">Institution</span>
-                <select
-                  className="input w-full"
-                  value={institution}
-                  onChange={(e) => {
-                    setInstitution(e.target.value);
-                    setTab("");
-                  }}
-                >
-                  <option value="">Leaders serving your place</option>
-                  {options.arms.map((a) => (
-                    <optgroup key={a.code} label={a.label}>
-                      {a.institutions.map((i) => (
-                        <option value={i.code} key={i.code}>
-                          {i.name}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <TreeRead
-              featureId={featureId}
-              institution={institution || undefined}
-              tab={tab || (institution ? undefined : options.tabs[0]?.code)}
-            />
-            <Gaps items={options.gaps} />
-          </>
-        )}
-      </AsyncView>
     </>
   );
 }

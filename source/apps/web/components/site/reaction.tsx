@@ -3,19 +3,14 @@
 /** A like with its count, kept by the server for this device, and the beacon that counts a view once a day. Views are never shown. */
 import { useEffect, useState, useTransition } from "react";
 
-import { noteView, readEngagement, setLike, type Engagement } from "#/app/interactions.ts";
+import { noteView, setLike, type Engagement } from "#/app/interactions.ts";
 import { Icon } from "#/components/brand/icon.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 
-export function ReactionButton({ table, subject }: { table: string; subject: string }) {
+export function ReactionControl({ table, subject, initial }: { table: string; subject: string; initial: Engagement }) {
   const { tr } = useLanguage();
-  const [state, setState] = useState<Engagement | null>(null);
+  const [state, setState] = useState<Engagement>(initial);
   const [pending, start] = useTransition();
-  useEffect(() => {
-    let live = true;
-    void readEngagement(table, subject).then((value) => live && setState(value), () => undefined);
-    return () => { live = false; };
-  }, [table, subject]);
   const liked = state?.liked ?? false;
   const toggle = () => start(async () => setState(await setLike(table, subject, !liked)));
   const label = liked ? tr("Remove your like") : tr("Like this");
@@ -23,7 +18,7 @@ export function ReactionButton({ table, subject }: { table: string; subject: str
     <button
       type="button"
       onClick={toggle}
-      disabled={pending || state === null}
+      disabled={pending}
       aria-pressed={liked}
       aria-label={label}
       title={label}

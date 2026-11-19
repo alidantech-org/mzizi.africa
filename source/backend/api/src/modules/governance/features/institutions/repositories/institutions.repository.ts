@@ -17,10 +17,6 @@ import {
   type Row,
 } from "#/database/base/read-helpers.ts";
 import type { BaseRepository } from "#/database/base/base.repository.ts";
-import { HOLDERS_AS_MANY_RELATION_CONFIG } from "#/modules/governance/schema/types/holders/holders.config.ts";
-import { MANDATES_AS_MANY_RELATION_CONFIG } from "#/modules/governance/schema/types/mandates/mandates.config.ts";
-import { OFFICES_AS_MANY_RELATION_CONFIG } from "#/modules/governance/schema/types/offices/offices.config.ts";
-import { NAMES_AS_MANY_RELATION_CONFIG } from "#/modules/official/schema/types/names/names.config.ts";
 import { HoldersEntity } from "#/modules/governance/schema/entities/holders.entity.ts";
 import { InstitutionsEntity } from "#/modules/governance/schema/entities/institutions.entity.ts";
 import { MandatesEntity } from "#/modules/governance/schema/entities/mandates.entity.ts";
@@ -133,7 +129,6 @@ export class GovernanceInstitutionsRepository {
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      if (list.length >= NAMES_AS_MANY_RELATION_CONFIG.maxLimit) return;
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });
@@ -242,7 +237,6 @@ export class GovernanceInstitutionsRepository {
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      if (list.length >= MANDATES_AS_MANY_RELATION_CONFIG.maxLimit) return;
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });
@@ -279,7 +273,6 @@ export class GovernanceInstitutionsRepository {
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      if (list.length >= NAMES_AS_MANY_RELATION_CONFIG.maxLimit) return;
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });
@@ -314,7 +307,6 @@ export class GovernanceInstitutionsRepository {
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      if (list.length >= OFFICES_AS_MANY_RELATION_CONFIG.maxLimit) return;
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });
@@ -412,7 +404,6 @@ export class GovernanceInstitutionsRepository {
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      if (list.length >= HOLDERS_AS_MANY_RELATION_CONFIG.maxLimit) return;
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });
@@ -444,7 +435,6 @@ export class GovernanceInstitutionsRepository {
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      if (list.length >= NAMES_AS_MANY_RELATION_CONFIG.maxLimit) return;
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });

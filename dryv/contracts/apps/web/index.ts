@@ -4,10 +4,12 @@
  * The public Next.js website. It talks only to the main product API.
  * The views of the site are hand-written server pages (see `source/apps/web/app`); this contract owns the operations it consumes and the theme.
  */
+import { addresses } from "./address.ts";
 import { dryv, surface } from "@dryvcode/author";
 import { shared } from "#/schemas/_shared.ts";
 import { geography } from "#/schemas/postgres/geography.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
+import { structure, structureOperations } from "#/apps/api/structure.ts";
 import api from "#/apps/api/index.ts";
 import { brand, themes } from "#/schemas/theme.ts";
 import { geographyOperations } from "#/apps/api/geography.ts";
@@ -24,11 +26,26 @@ const features = web.feature("Features");
 const web_app = dryv
   .app({ name: "mzizi-web" })
   .info({ title: "Mzizi public website", version: "0.1.0" })
-  .groups(shared, reference, geography, locality, insights, experience, interactions, ledger, brand, web)
+  .groups(
+    addresses,
+    structure,
+    shared,
+    reference,
+    geography,
+    locality,
+    insights,
+    experience,
+    interactions,
+    ledger,
+    brand,
+    web,
+  )
   .surfaces(surfaces.Main)
   .theme(themes.Mzizi)
   .consumes(
     api,
+    structureOperations.GetStructureScreen,
+    structureOperations.GetCountryContext,
     localityOperations.GetLocality,
     localityOperations.SearchLocalities,
     localityOperations.BrowseSources,

@@ -8,6 +8,7 @@ import 'package:mzizi_api/src/features/interactions_feature.dart';
 import 'package:mzizi_api/src/features/ledger_feature.dart';
 import 'package:mzizi_api/src/features/locality_feature.dart';
 import 'package:mzizi_api/src/features/reference_feature.dart';
+import 'package:mzizi_api/src/features/structure_feature.dart';
 
 /// The generated API client: one typed feature client per group, sharing one connection.
 class MziziApiClient {
@@ -41,4 +42,7 @@ class MziziApiClient {
 
   /// Reference operations.
   late final reference = ReferenceFeature(_connection);
+
+  /// Structure operations.
+  late final structure = StructureFeature(_connection);
 }

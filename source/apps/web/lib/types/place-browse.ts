@@ -1,4 +1,5 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type PlaceBrowseMedia } from "#/lib/types/place-browse-media.ts";
 import { type PlaceChild } from "#/lib/types/place-child.ts";
 import { type PlaceCrumb } from "#/lib/types/place-crumb.ts";
 
@@ -6,7 +7,7 @@ import { type PlaceCrumb } from "#/lib/types/place-crumb.ts";
 export interface PlaceBrowse {
   chain: PlaceCrumb[];
   children: PlaceChild[];
-  media: unknown[];
+  media: PlaceBrowseMedia[];
   place?: PlaceCrumb | null;
 }
 

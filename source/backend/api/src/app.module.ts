@@ -11,6 +11,7 @@ import { InteractionsModule } from "#/modules/interactions/interactions.module.t
 import { LedgerModule } from "#/modules/ledger/ledger.module.ts";
 import { LocalityModule } from "#/modules/locality/locality.module.ts";
 import { ReferenceModule } from "#/modules/reference/reference.module.ts";
+import { StructureModule } from "#/modules/structure/structure.module.ts";
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
 
 @Module({
@@ -25,6 +26,7 @@ import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
     LedgerModule,
     LocalityModule,
     ReferenceModule,
+    StructureModule,
   ],
   providers: [{ provide: APP_PIPE, useValue: new HttpValidationPipe(httpOptions) }],
 })

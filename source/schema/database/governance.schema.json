@@ -1859,6 +1859,7 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
+        ,["position_id"]
       ],
       "required": [
         "code"

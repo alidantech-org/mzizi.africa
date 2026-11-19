@@ -17,12 +17,21 @@ const body = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swa
 
 /** Every page names its canonical address and its language alternates, so search engines index one address per page. */
 export async function generateMetadata(): Promise<Metadata> {
-  const path = (await headers()).get("x-path") ?? "/";
+  const requestHeaders = await headers();
+  const path = requestHeaders.get("x-path") ?? "/";
+  const query = new URLSearchParams(requestHeaders.get("x-query") ?? "");
+  // A record, provision, filter or page is a distinct destination. Language is optional.
+  query.sort();
+  const address = (language?: string) => {
+    const params = new URLSearchParams(query);
+    if (language) params.set("lang", language);
+    return `${path}${params.size ? `?${params}` : ""}`;
+  };
   return {
     title: "Mzizi",
     description: "Who serves you, where the money goes, and the evidence behind it.",
     metadataBase: new URL(process.env.SITE_URL ?? "http://localhost:3300"),
-    alternates: { canonical: path, languages: { en: `${path}?lang=en`, sw: `${path}?lang=sw` } },
+    alternates: { canonical: address(), languages: { en: address("en"), sw: address("sw") } },
   };
 }
 
@@ -40,7 +49,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     rest: context?.rest ?? [],
   };
   return (
-    <html lang={context?.languageCode ?? "en"} suppressHydrationWarning>
+    <html lang={language} suppressHydrationWarning>
       <head><script dangerouslySetInnerHTML={{ __html: THEME_INIT }} /></head>
       <body className={`${display.variable} ${body.variable}`}>
         <LanguageProvider initialLanguage={language} copy={copy}>

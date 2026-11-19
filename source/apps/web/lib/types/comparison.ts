@@ -1,11 +1,14 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type ComparisonA } from "#/lib/types/comparison-a.ts";
+import { type ComparisonB } from "#/lib/types/comparison-b.ts";
+import { type ComparisonRows } from "#/lib/types/comparison-rows.ts";
 
 /** Comparison */
 export interface Comparison {
-  a: unknown;
-  b: unknown;
+  a: ComparisonA;
+  b: ComparisonB;
   gaps: string[];
-  rows: unknown[];
+  rows: ComparisonRows[];
 }
 
 /** Field metadata for forms and results. */

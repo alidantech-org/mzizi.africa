@@ -1,5 +1,6 @@
 /** `/content/<slug>`: one explanatory article. A server page; Markdown renders as safe React elements, linked media resolved by the API. */
-import { ContentArticle, ContentLinks, Empty, LegalBasisSection } from "#/components/site/governance/shared.tsx";
+import { LegalBasisSection } from "#/components/site/governance/server-sections.tsx";
+import { ContentArticle, ContentLinks, Empty } from "#/components/site/governance/shared.tsx";
 import { Loaded } from "#/components/site/loaded.tsx";
 import { Breadcrumbs, Gaps, PageFrame, Section } from "#/components/site/ui/primitives.tsx";
 import { serverLanguage } from "#/lib/server/data.ts";

@@ -7,6 +7,7 @@ export interface PlaceChild {
   kindCode: string;
   kindLabel: string;
   name: string;
+  path?: string | null;
   population?: number | null;
 }
 
@@ -17,5 +18,6 @@ export const PlaceChildFields: readonly FieldMeta[] = [
   { name: "kindCode", label: "Kind Code", kind: "string", required: true },
   { name: "kindLabel", label: "Kind Label", kind: "string", required: true },
   { name: "name", label: "Name", kind: "string", required: true },
+  { name: "path", label: "Path", kind: "string", required: false },
   { name: "population", label: "Population", kind: "number", required: false },
 ];

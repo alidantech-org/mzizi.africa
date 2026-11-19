@@ -11,6 +11,7 @@ export interface Levels {
   hierarchyKindId: string;
   id: string;
   isRoutingHierarchy: boolean;
+  rootFeatureId?: string | null;
   updatedAt: string;
   version: number;
 }
@@ -26,6 +27,7 @@ export const LevelsFields: readonly FieldMeta[] = [
   { name: "hierarchyKindId", label: "Hierarchy Kind Id", kind: "string", required: true },
   { name: "id", label: "Id", kind: "string", required: true },
   { name: "isRoutingHierarchy", label: "Is Routing Hierarchy", kind: "boolean", required: true },
+  { name: "rootFeatureId", label: "Root Feature Id", kind: "string", required: false },
   { name: "updatedAt", label: "Updated At", kind: "date", required: true },
   { name: "version", label: "Version", kind: "number", required: true },
 ];

@@ -1,9 +1,10 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type NearbyProjectsProjects } from "#/lib/types/nearby-projects-projects.ts";
 
 /** Nearby Projects */
 export interface NearbyProjects {
   gaps: string[];
-  projects: unknown[];
+  projects: NearbyProjectsProjects[];
   radiusKm: number;
 }
 

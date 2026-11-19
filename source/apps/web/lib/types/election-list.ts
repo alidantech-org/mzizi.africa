@@ -1,8 +1,9 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type ElectionListElections } from "#/lib/types/election-list-elections.ts";
 
 /** Election List */
 export interface ElectionList {
-  elections: unknown[];
+  elections: ElectionListElections[];
 }
 
 /** Field metadata for forms and results. */

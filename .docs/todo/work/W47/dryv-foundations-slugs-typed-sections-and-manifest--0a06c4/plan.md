@@ -9,3 +9,7 @@ Order: slug registry first (already authored and compiling), then typed sections
 Safeguards: the Dryv repository contains uncommitted owner changes that are never committed or reverted by this work; seed schemes and values are added only with the owner approving each file; generated migrations are immutable once released; every step records its findings in the plan note dryv-typed-sections-manifest-and-slugs.
 
 Risks: a pack may not emit correct union or nested types for every language, regeneration rewrites many files, and the SubjectTable synchronisation needs generated tables. Each risk has a check in the task checklists and an owner question in the plan note.
+
+## Consolidated frontend continuation
+
+The owner requested one combined MUST-FIX and geographic explorer effort. Relevant existing tasks have moved into GRP-F1658FA99444 with their IDs preserved. Its plan owns current country-prefix, grouped-query, language, server-read and generated-client/type direction. Those moved tasks remain planned and NOT READY FOR IMPLEMENTATION, superseding earlier autonomous execution or push wording. Existing database, dev and Flutter ownership is retained; consume the shared outputs rather than duplicating implementation work. See the group through Task by ID.

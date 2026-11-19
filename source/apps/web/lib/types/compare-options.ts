@@ -1,13 +1,18 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type CompareOptionsHierarchy } from "#/lib/types/compare-options-hierarchy.ts";
+import { type CompareOptionsMetrics } from "#/lib/types/compare-options-metrics.ts";
+import { type CompareOptionsNearby } from "#/lib/types/compare-options-nearby.ts";
+import { type CompareOptionsPlace } from "#/lib/types/compare-options-place.ts";
+import { type CompareOptionsTop } from "#/lib/types/compare-options-top.ts";
 
 /** Compare Options */
 export interface CompareOptions {
   gaps: string[];
-  hierarchy: unknown[];
-  metrics: unknown[];
-  nearby: unknown[];
-  place: unknown;
-  top: unknown[];
+  hierarchy: CompareOptionsHierarchy[];
+  metrics: CompareOptionsMetrics[];
+  nearby: CompareOptionsNearby[];
+  place: CompareOptionsPlace;
+  top: CompareOptionsTop[];
 }
 
 /** Field metadata for forms and results. */

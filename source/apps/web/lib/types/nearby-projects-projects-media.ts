@@ -1,0 +1,25 @@
+import type { FieldMeta } from "#/lib/dryv/transport.ts";
+
+/** Nearby Projects Projects Media */
+export interface NearbyProjectsProjectsMedia {
+  embedUrl?: string | null;
+  kind: string;
+  mimeType?: string | null;
+  platform?: string | null;
+  stored: boolean;
+  thumbnailUrl?: string | null;
+  title: string;
+  url: string;
+}
+
+/** Field metadata for forms and results. */
+export const NearbyProjectsProjectsMediaFields: readonly FieldMeta[] = [
+  { name: "embedUrl", label: "Embed Url", kind: "string", required: false },
+  { name: "kind", label: "Kind", kind: "string", required: true },
+  { name: "mimeType", label: "Mime Type", kind: "string", required: false },
+  { name: "platform", label: "Platform", kind: "string", required: false },
+  { name: "stored", label: "Stored", kind: "boolean", required: true },
+  { name: "thumbnailUrl", label: "Thumbnail Url", kind: "string", required: false },
+  { name: "title", label: "Title", kind: "string", required: true },
+  { name: "url", label: "Url", kind: "string", required: true },
+];

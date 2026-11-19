@@ -26,3 +26,5 @@ Use one `scheme:<code>` tag on a foreign key to `reference.Value`. The SQL snaps
 value's scheme on insert or update of the link. It also protects a used value from changing
 scheme and a used scheme from changing code. The seed schema publishes the expected scheme in
 `x-link.scheme`. Generated columns appear as system-managed fields in the seed schema.
+
+Closed enum properties emit CHECK constraints using PostgreSQL literal escaping. Offices can use authored partial unique indexes to distinguish numbered seats, and composite references preserve a position’s institution on each office. Template product/attribute rules are authored invariants, not table-specific branches in this generator.

@@ -2,6 +2,14 @@
 
 Audit written 2026-11-19 against `UI_INFORMATION_ARCHITECTURE.md`, `DEC-CONTRACT-FIRST-FRONTENDS-20261118.md` and `CONTEXT_AND_LOCALISATION.md`. Status after the work of the same day. ✅ resolved and checked in the running app, ◐ partly resolved, ⏳ not done. Nothing here is marked resolved without a check.
 
+## Consolidated planning ownership
+
+**Current planning home:** [Geographic explorer and frontend repair plan](.docs/todo/work/W47/geographic-explorer-addressing-and-navigation-not-ready-for-implementation--a99444/plan.md), group GRP-F1658FA99444. **NOT READY FOR IMPLEMENTATION.** This file preserves the earlier audit and its reported checks; green marks below are historical evidence, not proof of the new target. Task is the single executable backlog. Update this audit with evidence as the merged tasks deliver, rather than maintaining duplicate checklists here.
+
+The owner-approved target supersedes conflicting older address rules: one site with /ke/... and /ug/... place paths, grouped view/filter/page state, optional explicit lang retained in the URL and saved in cookies, and a share-language toggle. No country subdomains or language path prefixes initially. Product screen reads belong in server rendering through generated clients and generated named types. No raw browser fetch is insufficient: effect-driven reads through server actions must also be removed. Personal local state and approved likes/view writes remain distinct.
+
+Existing tasks for slug/typed-section foundations (TSK-E4D1683BC425), composed API reads/metrics (TSK-0A9E5ED02AFE), API generation/proof (TSK-76DD5D22DDB8), Dryv frontend capabilities (TSK-522F24223BB1), and web delivery (TSK-0CE2BE62D0CC) have moved into that group with their IDs retained. Its four planning tasks own country addresses, query/navigation, migration acceptance and language/sharing. The plan maps every audit concern to its owner, including missing data and external deployment/policy dependencies. Completed fixes remain regression requirements; no item was newly declared resolved by consolidation.
+
 ## 1. Addresses and hierarchy
 
 - ✅ **Agreed addresses exist.** `/politics/parties`, `/government/{institutions,law,parliament}`, `/procurement/tenders`, `/data/{statistics,rankings,compare,sources}`, `/finance`, `/places`, `/me`, `/me/saved`, `/elections/<kind>/<year>`, `/leaders/<slug>`. Old addresses redirect permanently (`next.config.ts`). 40 routes were requested and all answer 200.
@@ -46,5 +54,5 @@ Audit written 2026-11-19 against `UI_INFORMATION_ARCHITECTURE.md`, `DEC-CONTRACT
 
 ## Ground rules from the audit
 
-- The Hierarchy and slug design stays as written in `UI_INFORMATION_ARCHITECTURE.md` sections 13 to 15.
+- Historical hierarchy/slug guidance remains evidence; where it conflicts with the owner-approved country-prefixed place/query design, use the consolidated planning group. Update owning design documents during the approved implementation.
 - The remaining work is recorded here and in `.docs/handoffs/HANDOFF-DELIVERY-STATUS-20261119.md`; it is not reported as done anywhere.

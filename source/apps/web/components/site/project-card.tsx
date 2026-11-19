@@ -7,9 +7,10 @@ import { Pill } from "#/components/site/ui/primitives.tsx";
 import { statusTone } from "#/components/site/ui/status.ts";
 import { words } from "#/lib/site/format.ts";
 import { Money } from "#/lib/site/country.tsx";
-import type { CivicProject } from "#/lib/site/insights.ts";
+import type { InsightsPlaceCivicProjects } from "@mzizi/api-client/types/insights/place-civic-projects.ts";
+type ProjectCardData = Pick<InsightsPlaceCivicProjects, "code" | "name" | "status" | "unit" | "media" | "contractor" | "amount">;
 
-export function ProjectCard({ p }: { p: CivicProject }) {
+export function ProjectCard({ p }: { p: ProjectCardData }) {
   return (
     <Link href={`/projects/${p.code}`} className="glass card-lift group block overflow-hidden rounded-[var(--radius)]">
       <div className="relative aspect-[16/9] bg-surface-sunken">
@@ -18,7 +19,7 @@ export function ProjectCard({ p }: { p: CivicProject }) {
       </div>
       <div className="p-4">
         <h3 className="line-clamp-2 font-display text-lg leading-snug">{p.name}</h3>
-        <p className="mt-1 text-xs text-content-muted">{p.unit}{p.started_on ? ` · ${p.started_on.slice(0, 4)}` : ""}{p.contractor ? ` · ${p.contractor}` : ""}</p>
+        <p className="mt-1 text-xs text-content-muted">{p.unit}{p.contractor ? ` · ${p.contractor}` : ""}</p>
         {p.amount !== null ? <p className="num mt-2 text-sm font-semibold"><Money value={p.amount} /></p> : null}
       </div>
     </Link>

@@ -17,6 +17,12 @@ plugins:
     extensions: [.j2]
 
 selections:
+  explorer_addresses:
+    subject: schema
+    scope: each
+    filter:
+      all: { tags: ["explorer:address"] }
+
   enums:
     subject: property.enum
     scope: each
@@ -61,6 +67,15 @@ selections:
     scope: each
 
 templates:
+  explorer-page:
+    $ref: '#/selections/explorer_addresses'
+
+  explorer-address:
+    $ref: '#/selections/explorer_addresses'
+    imports:
+      - $ref: '#/templates/model'
+      - $ref: '#/templates/enum'
+
   # Managed route and navigation data, one file per application.
   routes:
     $ref: '#/selections/app_views'

@@ -1,4 +1,3 @@
-"use client";
 
 import LeadersRoute from "#/app/leaders/view.tsx";
 

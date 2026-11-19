@@ -5,13 +5,13 @@ import {
   type PageNames,
   send,
 } from "#/lib/dryv/transport.ts";
-import { IdInputFields } from "#/lib/types/id-input.ts";
+import { CodeInputFields } from "#/lib/types/code-input.ts";
 import { type LeaderProfile, LeaderProfileFields } from "#/lib/types/leader-profile.ts";
 
 /** Field metadata of the input fields whose value is a schema, by field name. A schema
  * input is listed whole under "input". */
 export const getLeaderProfileInputFields: Readonly<Record<string, readonly FieldMeta[]>> = {
-  input: IdInputFields,
+  input: CodeInputFields,
 };
 /** Field metadata of the output, when it is a schema. */
 export const getLeaderProfileOutputFields: readonly FieldMeta[] | undefined = LeaderProfileFields;
@@ -22,14 +22,14 @@ export const getLeaderProfilePage: PageNames | undefined = undefined;
 export type GetLeaderProfilePorts = {
   /** Query values by field name, for callers (such as the generated list pages) that build them generically. */
   input?: Record<string, unknown>;
-  id?: string;
+  code?: string;
 };
 
 /** Maps port values to the HTTP request parts of the operation.client convention. */
 export function getLeaderProfileRequest(ports: GetLeaderProfilePorts = {}): ClientInput {
   return {
     params: {
-      id: String(ports.id),
+      code: String(ports.code),
     },
     query: {
       ...ports.input,
@@ -38,13 +38,16 @@ export function getLeaderProfileRequest(ports: GetLeaderProfilePorts = {}): Clie
 }
 
 /**
- * A leader: offices, contacts, media, voting and attendance record, the fund they oversee and evidence.
+ * A leader, by the person's slug: offices, contacts, media, voting and attendance record, the fund they oversee and evidence.
  *
- * GET /v1/leaders/{id}. Used when no operation.client pack is bound.
+ * GET /v1/leaders/{code}. Used when no operation.client pack is bound.
  */
 export async function getLeaderProfile(
   input: ClientInput = {},
 ): Promise<ClientResponse<LeaderProfile>> {
-  const path = "/v1/leaders/{id}".replace("{id}", encodeURIComponent(input.params?.["id"] ?? ""));
+  const path = "/v1/leaders/{code}".replace(
+    "{code}",
+    encodeURIComponent(input.params?.["code"] ?? ""),
+  );
   return send("GET", path, input);
 }

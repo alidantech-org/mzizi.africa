@@ -17,7 +17,6 @@ import {
   type Row,
 } from "#/database/base/read-helpers.ts";
 import type { BaseRepository } from "#/database/base/base.repository.ts";
-import { NAMES_AS_MANY_RELATION_CONFIG } from "#/modules/geography/schema/types/names/names.config.ts";
 import { FeaturesEntity } from "#/modules/geography/schema/entities/features.entity.ts";
 import { GeographyNamesEntity } from "#/modules/geography/schema/entities/names.entity.ts";
 import { FeaturesRepository } from "#/modules/geography/schema/repositories/features.repository.ts";
@@ -120,7 +119,6 @@ export class GeographyPlacesRepository {
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      if (list.length >= NAMES_AS_MANY_RELATION_CONFIG.maxLimit) return;
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });
@@ -193,7 +191,6 @@ export class GeographyPlacesRepository {
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      if (list.length >= NAMES_AS_MANY_RELATION_CONFIG.maxLimit) return;
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });

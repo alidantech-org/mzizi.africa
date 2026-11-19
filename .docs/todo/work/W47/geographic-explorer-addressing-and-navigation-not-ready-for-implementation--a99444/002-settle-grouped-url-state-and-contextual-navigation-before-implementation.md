@@ -1,5 +1,5 @@
 ---
-{id: TSK-2063A0FD67FD,name: Settle grouped URL state and contextual navigation before implementation,type: task,status: planned,priority: medium,created_at: 2026-11-19T11:46:49.874Z,updated_at: 2026-11-19T11:46:49.874Z,order: 2048,extra: {readiness: not_ready,implementation_authorized: false}}
+{id: TSK-2063A0FD67FD,name: Settle grouped URL state and contextual navigation before implementation,type: task,status: in-progress,priority: medium,created_at: 2026-11-19T11:46:49.874Z,updated_at: 2026-11-19T13:16:02.311Z,order: 2048,extra: {readiness: ready,implementation_authorized: true,status_history: [{from: planned,to: in-progress,at: 2026-11-19T13:16:02.311Z}],tracking: {segments: [{base_ref: refs/tracking/TSK-2063A0FD67FD/1795094162313-start,started_at: 2026-11-19T13:16:03.729Z}]}}}
 ---
 
 # Settle grouped URL state and contextual navigation before implementation
@@ -10,7 +10,7 @@ Specify predictable grouped URL state and desktop/mobile navigation. Distinguish
 
 ## Context
 
-This is planning work in the geographic explorer task group, which remains NOT READY FOR IMPLEMENTATION. The owner chose a single site with explicit country prefixes such as /ke and /ug. Country subdomains are excluded from the initial scope. The owner also approved optional lang selection, cookie persistence and a language-in-sharing toggle, without language path prefixes or translated place slugs. These are agreed product behaviours; technical implementation has not yet been documented or approved. Preserve unrelated work and update these same task records as discussion continues. No application changes, generation or deployment follow from completing this documentation update.
+This is planning work in the geographic explorer task group, which remains IMPLEMENTATION AUTHORIZED. The owner chose a single site with explicit country prefixes such as /ke and /ug. Country subdomains are excluded from the initial scope. The owner also approved optional lang selection, cookie persistence and a language-in-sharing toggle, without language path prefixes or translated place slugs. These are agreed product behaviours; technical implementation has not yet been documented or approved. Preserve unrelated work and update these same task records as discussion continues. No application changes, generation or deployment follow from completing this documentation update.
 
 ## Acceptance checklist
 
@@ -21,4 +21,18 @@ This is planning work in the geographic explorer task group, which remains NOT R
 
 ## Readiness
 
-Product direction is agreed, but this task remains planned and not ready for implementation. Further discussion will refine its acceptance criteria. Technical implementation details are intentionally deferred.
+Product direction is agreed, but this task remains planned and authorized for implementation. Further discussion will refine its acceptance criteria. Technical implementation details are intentionally deferred.
+
+## MUST-FIX consolidation
+
+Include MUST-FIX sidebar/place-switcher layout, richer place overview, hard-coded levels/topics, copy gaps and client-only selection behaviour. Navigation is contract-owned; do not maintain a second handwritten sidebar plan.
+
+## Implementation authorization
+
+The owner explicitly requested implementation of the integrated database, API and web redesign on 19 November 2026. That request supersedes earlier planning-only gates in this record. Implement web only, with realistic labelled synthetic development fixtures, contract-generated screen reads and clients/types. Engine operations, the dev frontend, Flutter and real-data acquisition are excluded. The accepted plan in this conversation is authoritative where older task prose conflicts. Seed-file approval rules remain in force.
+
+## Comments
+
+### 2026-11-19T13:16:09.912Z · PETER IRUNGU
+
+Implemented contract-generated grouped address parsing, serialization, per-view accepted fields and entity kinds, navigation order/grouping, place and subject transitions, and list transitions that reset page number. Thirteen web tests pass. Browser verified ex-officio position navigation, retained country prefix, canonical identity parameters, and exactly one active sidebar item. Nested subsection value validation and the full legacy destination migration remain unfinished.

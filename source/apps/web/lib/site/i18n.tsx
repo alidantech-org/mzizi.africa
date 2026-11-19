@@ -5,7 +5,7 @@
  * offices and kinds come from the API in the language chosen here, so the system's own translations are used
  * wherever it holds them. The choice is remembered in the browser.
  */
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   createContext,
   type ReactNode,
@@ -47,15 +47,20 @@ export function LanguageProvider({
   copy: Readonly<Record<string, string>>;
 }) {
   const router = useRouter();
+  const query = useSearchParams();
   const [language, setLanguageState] = useState<Language>(initialLanguage);
   useEffect(() => setLanguageState(initialLanguage), [initialLanguage]);
   const setLanguage = useCallback(
     (next: Language) => {
       setLanguageState(next);
       document.cookie = `mz_lang=${next}; path=/; max-age=31536000; samesite=lax`;
-      router.refresh();
+      if (query.has("lang")) {
+        const nextQuery = new URLSearchParams(query.toString());
+        nextQuery.set("lang", next);
+        router.replace(`${window.location.pathname}?${nextQuery}`);
+      } else router.refresh();
     },
-    [router],
+    [router, query],
   );
   const value = useMemo<LanguageState>(
     () => ({

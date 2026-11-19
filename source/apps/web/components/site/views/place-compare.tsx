@@ -1,4 +1,3 @@
-"use client";
 
 import CompareRoute from "#/app/data/compare/view.tsx";
 

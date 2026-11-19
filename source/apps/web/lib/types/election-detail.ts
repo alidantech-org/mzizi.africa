@@ -1,12 +1,16 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type ElectionDetailContests } from "#/lib/types/election-detail-contests.ts";
+import { type ElectionDetailElection } from "#/lib/types/election-detail-election.ts";
+import { type ElectionDetailTotals } from "#/lib/types/election-detail-totals.ts";
+import { type ElectionDetailUnits } from "#/lib/types/election-detail-units.ts";
 
 /** Election Detail */
 export interface ElectionDetail {
-  contests: unknown[];
-  election: unknown;
+  contests: ElectionDetailContests[];
+  election: ElectionDetailElection;
   gaps: string[];
-  totals: unknown[];
-  units: unknown[];
+  totals: ElectionDetailTotals[];
+  units: ElectionDetailUnits[];
 }
 
 /** Field metadata for forms and results. */

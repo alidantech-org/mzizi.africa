@@ -1,15 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
 import type { NavGroup, NavItem } from "./types.ts";
 
 /** Whether a link is the current page or an ancestor of it. The home link matches only the home page. */
 export function isActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const currentAddress = new URL(pathname, "http://navigation.invalid");
+  const targetAddress = new URL(href, "http://navigation.invalid");
+  if (currentAddress.searchParams.has("view") || targetAddress.searchParams.has("view")) {
+    const current = currentAddress;
+    const target = targetAddress;
+    return current.pathname === target.pathname && (current.searchParams.get("view") ?? "overview") === (target.searchParams.get("view") ?? "overview");
+  }
+  const current = pathname.split("?")[0];
+  if (href === "/") return current === "/";
+  return current === href || current.startsWith(`${href}/`);
 }
 
 function Item({ item, pathname, onNavigate }: { item: NavItem; pathname: string; onNavigate: () => void }) {
@@ -55,8 +63,10 @@ export function Sidebar({
   moreLabel?: string;
   lessLabel?: string;
 }) {
-  const pathname = usePathname();
-  const primary = groups.filter((group) => !group.more).flatMap((group) => group.items);
+  const currentPath = usePathname();
+  const query = useSearchParams();
+  const pathname = `${currentPath}?${query}`;
+  const primary = groups.filter((group) => !group.more);
   const more = groups.filter((group) => group.more);
   const inMore = more.some((group) => group.items.some((item) => isActive(pathname, item.href)));
   const [expanded, setExpanded] = useState(false);
@@ -70,9 +80,12 @@ export function Sidebar({
       <div className="flex h-14 shrink-0 items-center px-4">{logo}</div>
       {top ? <div className="px-3 pb-3">{top}</div> : null}
       <nav className="min-h-0 flex-1 overflow-y-auto px-3 pb-3 [scrollbar-width:thin]">
-        <ul className="space-y-0.5">
-          {primary.map((item) => <Item key={item.href} item={item} pathname={pathname} onNavigate={onNavigate} />)}
-        </ul>
+        <div className="space-y-4">
+          {primary.map((group) => <section key={group.id} aria-label={group.label}>
+            <h2 className="px-2.5 pb-1 text-[0.68rem] font-semibold uppercase tracking-wider text-content-muted">{group.label}</h2>
+            <ul className="space-y-0.5">{group.items.map((item) => <Item key={item.href} item={item} pathname={pathname} onNavigate={onNavigate} />)}</ul>
+          </section>)}
+        </div>
         {more.length > 0 ? (
           <div className="mt-2">
             {showMore ? (

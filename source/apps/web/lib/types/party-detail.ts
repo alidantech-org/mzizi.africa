@@ -1,12 +1,16 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type PartyDetailFunding } from "#/lib/types/party-detail-funding.ts";
+import { type PartyDetailMembers } from "#/lib/types/party-detail-members.ts";
+import { type PartyDetailParty } from "#/lib/types/party-detail-party.ts";
+import { type PartyDetailResults } from "#/lib/types/party-detail-results.ts";
 
 /** Party Detail */
 export interface PartyDetail {
-  funding: unknown[];
+  funding: PartyDetailFunding[];
   gaps: string[];
-  members: unknown[];
-  party: unknown;
-  results: unknown[];
+  members: PartyDetailMembers[];
+  party: PartyDetailParty;
+  results: PartyDetailResults[];
 }
 
 /** Field metadata for forms and results. */

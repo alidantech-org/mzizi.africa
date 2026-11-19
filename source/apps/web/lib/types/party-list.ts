@@ -1,9 +1,10 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type PartyListParties } from "#/lib/types/party-list-parties.ts";
 
 /** Party List */
 export interface PartyList {
   gaps: string[];
-  parties: unknown[];
+  parties: PartyListParties[];
 }
 
 /** Field metadata for forms and results. */

@@ -55,14 +55,6 @@ export class OfficesRepository
     return await this.findByQuery(query, { institutionId, deletedAt: IsNull() });
   }
 
-  /** Find offices by position id, paged by the shared query. */
-  async findByPosition(
-    query: BaseQueryDto<OfficesEntity>,
-    positionId: NonNullable<OfficesEntity["positionId"]>,
-  ): Promise<IFindAllResponse<OfficesEntity>> {
-    return await this.findByQuery(query, { positionId, deletedAt: IsNull() });
-  }
-
   /** Find offices by source citation id, paged by the shared query. */
   async findBySourceCitation(
     query: BaseQueryDto<OfficesEntity>,
@@ -82,5 +74,12 @@ export class OfficesRepository
   /** Find the offices with this code (unique). */
   async findByCode(code: NonNullable<OfficesEntity["code"]>): Promise<OfficesEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });
+  }
+
+  /** Find the offices with this position id (unique). */
+  async findByPosition(
+    positionId: NonNullable<OfficesEntity["positionId"]>,
+  ): Promise<OfficesEntity | null> {
+    return await this.findOne({ positionId, deletedAt: IsNull() });
   }
 }

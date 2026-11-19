@@ -704,6 +704,28 @@
       "inputs": ["input"],
       "output": "FoundMember",
       "summary": "Find one classification member from its code (codes are unique across every scheme)."
+    },
+    {
+      "name": "GetCountryContext",
+      "group": "structure",
+      "feature": "structure",
+      "method": "GET",
+      "path": "/v1/structure/context",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "CountryContextDocument",
+      "summary": "Explicit country identity and recorded routing roots; no default-country inference."
+    },
+    {
+      "name": "GetStructureScreen",
+      "group": "structure",
+      "feature": "structure",
+      "method": "GET",
+      "path": "/v1/structure",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "StructureDocument",
+      "summary": "Country governance structure with typed positions, offices, powers, procedures and responsibilities. Scope is explicitly national; missing records do not establish absence."
     }
   ]
 }

@@ -1,10 +1,12 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type GovernanceTabsArms } from "#/lib/types/governance-tabs-arms.ts";
+import { type GovernanceTabsTabs } from "#/lib/types/governance-tabs-tabs.ts";
 
 /** Governance Tabs */
 export interface GovernanceTabs {
-  arms: unknown[];
+  arms: GovernanceTabsArms[];
   gaps: string[];
-  tabs: unknown[];
+  tabs: GovernanceTabsTabs[];
 }
 
 /** Field metadata for forms and results. */

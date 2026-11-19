@@ -1,126 +1,56 @@
 "use client";
 
+/** The shell consumes server-resolved context and contract-generated navigation. */
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
-
-import { PlaceChip } from "#/components/shell/place-chip.tsx";
-import { Icon, type IconName } from "#/components/brand/icon.tsx";
-import { Logo } from "#/components/brand/logo.tsx";
-import { GlobalSearchBox } from "#/components/site/global-search-box.tsx";
-import { LanguageSwitcher } from "#/components/site/language-switcher.tsx";
-import { ThemeToggle } from "#/components/site/theme-toggle.tsx";
-import { useLanguage } from "#/lib/site/i18n.tsx";
-import { useSaved } from "#/lib/site/saved.tsx";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import { AppShell } from "@mzizi/ui-web/shell/app-shell.tsx";
 import type { Crumb, NavGroup } from "@mzizi/ui-web/shell/types.ts";
+import type { ExperienceContext } from "@mzizi/api-client/types/experience/context.ts";
+import { explorerAt, explorerNavigation, parseExplorerAddress } from "#/lib/dryv/explorer-address.ts";
+import { ExplorerView } from "#/lib/types/explorer-view.enum.ts";
+import { Logo } from "#/components/brand/logo.tsx";
+import { Icon } from "#/components/brand/icon.tsx";
+import { ThemeToggle } from "#/components/site/theme-toggle.tsx";
+import { LanguageSwitcher } from "#/components/site/language-switcher.tsx";
+import { useLanguage } from "#/lib/site/i18n.tsx";
+import { PlaceChip } from "#/components/shell/place-chip.tsx";
 
-/** What the server knows about the visitor's place for this address. */
 export interface ShellContext {
   readonly countryName: string;
   readonly countryIso?: string | null;
-  readonly place: { readonly name: string; readonly kindLabel: string; readonly path: string } | null;
+  readonly place: ExperienceContext["place"];
   readonly chain: readonly { readonly name: string; readonly path: string }[];
   readonly rest: readonly string[];
 }
+const UpdateShell = createContext<((context: ShellContext) => void) | null>(null);
 
-interface Entry { readonly href: string; readonly label: string; readonly icon: IconName; readonly scoped?: boolean }
-
-/** The sections of the product, in groups. Section words are the English text; the sidebar shows them in the visitor's language. */
-const GROUPS: readonly { readonly id: string; readonly label: string; readonly more?: boolean; readonly items: readonly Entry[] }[] = [
-  { id: "main", label: "Main", items: [
-    { href: "/", label: "Home", icon: "home" },
-    { href: "/explore", label: "Explore", icon: "compare" },
-    { href: "/places", label: "Places", icon: "pin" },
-    { href: "/elections", label: "Elections", icon: "vote" },
-    { href: "/leaders", label: "Leaders", icon: "tree" },
-    { href: "/calendar", label: "Calendar", icon: "calendar", scoped: true },
-  ] },
-  { id: "politics", label: "Politics", more: true, items: [
-    { href: "/politics/parties", label: "Parties", icon: "flag" },
-    { href: "/politics/coalitions", label: "Coalitions", icon: "flag" },
-    { href: "/politics/manifestos", label: "Manifestos", icon: "document" },
-    { href: "/government/parliament", label: "Parliament", icon: "parliament" },
-  ] },
-  { id: "government", label: "Government", more: true, items: [
-    { href: "/government/institutions", label: "Institutions", icon: "parliament" },
-    { href: "/government/law", label: "Law", icon: "book" },
-  ] },
-  { id: "money", label: "Public money", more: true, items: [
-    { href: "/finance", label: "Finance and projects", icon: "build" },
-    { href: "/finance/budgets", label: "Budgets", icon: "document" },
-    { href: "/finance/funds", label: "Funds", icon: "build" },
-    { href: "/procurement/tenders", label: "Procurement", icon: "document" },
-    { href: "/infrastructure", label: "Infrastructure", icon: "build", scoped: true },
-  ] },
-  { id: "data", label: "Data", more: true, items: [
-    { href: "/data/statistics", label: "Statistics", icon: "chart" },
-    { href: "/data/rankings", label: "Rankings", icon: "trophy" },
-    { href: "/data/compare", label: "Compare", icon: "chart" },
-    { href: "/data/sources", label: "Sources", icon: "book" },
-    { href: "/data/coverage", label: "Coverage", icon: "chart" },
-  ] },
-];
-
-function labelFor(segment: string, tr: (text: string) => string): string {
-  for (const group of GROUPS) for (const item of group.items) if (item.href === `/${segment}`) return tr(item.label);
-  return tr(segment.replace(/-/g, " ").replace(/^./, (c) => c.toUpperCase()));
+/** A newly rendered server page updates the persistent layout without a browser API read. */
+export function ExplorerShellUpdate({ context }: { context: ShellContext }) {
+  const update = useContext(UpdateShell);
+  useEffect(() => { update?.(context); }, [update, context]);
+  return null;
 }
 
-/** The application frame for every page: sidebar of sections, app bar with breadcrumbs, search and tools, no footer. */
 export function AppFrame({ context, children }: { context: ShellContext; children: ReactNode }) {
+  const [resolved, setResolved] = useState(context);
   const { tr } = useLanguage();
-  const { count } = useSaved();
-  const pathname = usePathname();
-  const base = context.place ? `/${context.place.path}` : "";
-  const groups: NavGroup[] = GROUPS.map((group) => ({
-    id: group.id,
-    more: group.more,
-    label: tr(group.label),
-    items: group.items.map((item) => ({
-      href: item.scoped && base ? `${base}${item.href}` : item.href,
-      label: tr(item.label),
-      icon: <Icon name={item.icon} size={18} />,
-    })),
-  }));
-  const crumbs: Crumb[] = [{ label: context.countryName, href: "/" }];
-  for (const unit of context.chain) crumbs.push({ label: unit.name, href: `/${unit.path}` });
-  const rest = context.place ? context.rest : pathname.split("/").filter(Boolean);
-  rest.forEach((segment, index) => {
-    if (index === 0 || index < 2) crumbs.push({ label: labelFor(segment, tr), href: index === rest.length - 1 ? undefined : `${base}/${rest.slice(0, index + 1).join("/")}` });
-  });
-  return (
-    <AppShell
-      logo={<Logo />}
-      groups={groups}
-      crumbs={crumbs}
-      menuLabel={tr("Menu")}
-      moreLabel={tr("More")}
-      lessLabel={tr("Less")}
-      breadcrumbLabel={tr("Breadcrumb")}
-      search={<GlobalSearchBox compact />}
-      actions={
-        <>
-          <div className="xl:hidden"><Link href="/search" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0" aria-label={tr("Search")}><Icon name="search" /></Link></div>
-          <ThemeToggle />
-          <div className="hidden sm:block"><LanguageSwitcher /></div>
-          <Link href="/me/saved" className="btn btn-ghost relative !h-10 !w-10 !justify-center !p-0" aria-label={tr("Saved")}>
-            <Icon name="heart" />
-            {count > 0 ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-calabash px-1 text-[10px] font-bold text-ink">{count}</span> : null}
-          </Link>
-          <Link href="/me" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0" aria-label={tr("Profile and preferences")}><Icon name="user" /></Link>
-        </>
-      }
-      sidebarTop={<PlaceChip countryName={context.countryName} countryIso={context.countryIso ?? null} placeName={context.place?.name ?? null} placePath={context.place?.path ?? null} />}
-      sidebarFoot={
-        <ul className="space-y-1">
-          <li><Link href="/me/privacy" className="hover:underline">{tr("Privacy and preferences")}</Link></li>
-          <li><Link href="/data/sources" className="hover:underline">{tr("Data sources and licences")}</Link></li>
-          <li><Link href="/help" className="hover:underline">{tr("Help")}</Link></li>
-        </ul>
-      }
-    >
-      {children}
-    </AppShell>
-  );
+  const query = useSearchParams();
+  let state;
+  try { state = parseExplorerAddress(new URLSearchParams(query.toString())); }
+  catch { state = { view: ExplorerView.OVERVIEW }; }
+  const countryPath = resolved.countryIso?.toLowerCase() ?? "";
+  const path = [countryPath, resolved.place?.path].filter(Boolean).join("/");
+  const groupNames = [...new Set(explorerNavigation.map((entry) => entry.group))];
+  const groups: NavGroup[] = groupNames.map((group) => ({ id: group, label: tr(group), items: explorerNavigation.filter((entry) => entry.group === group).map((entry) => ({ href: explorerAt(path, { view: entry.view, lang: state.lang }), label: tr(entry.label) })) }));
+  const crumbs: Crumb[] = [{ label: resolved.countryName, href: explorerAt(countryPath, { view: state.view, lang: state.lang }) }];
+  for (const unit of resolved.chain) crumbs.push({ label: unit.name, href: explorerAt([countryPath, unit.path].join("/"), { view: state.view, lang: state.lang }) });
+  const search = <form action={`/${path}`} className="flex items-center gap-2"><input type="hidden" name="view" value="search" />{state.lang ? <input type="hidden" name="lang" value={state.lang} /> : null}<label className="sr-only" htmlFor="shell-search">Search this place</label><input id="shell-search" className="input w-full" name="filters.q" placeholder={tr("Search this place")} /></form>;
+  return <UpdateShell.Provider value={setResolved}><AppShell
+    logo={<Logo />} groups={groups} crumbs={crumbs} search={search}
+    menuLabel={tr("Menu")} breadcrumbLabel={tr("Breadcrumb")}
+    actions={<><ThemeToggle /><LanguageSwitcher /><Link href="/me/saved" className="btn btn-ghost" aria-label={tr("Saved")}><Icon name="heart" /></Link><Link href="/me" className="btn btn-ghost" aria-label={tr("Profile")}><Icon name="user" /></Link></>}
+    sidebarTop={<PlaceChip countryName={resolved.countryName} countryIso={resolved.countryIso ?? null} placeName={resolved.place?.name ?? null} placePath={path} />}
+    sidebarFoot={<div className="space-y-2"><Link className="block" href="/me/privacy">{tr("Privacy and preferences")}</Link><Link className="block" href="/help">{tr("Help")}</Link><Link className="block" href="/">{tr("Personal overview")}</Link></div>}
+  >{children}</AppShell></UpdateShell.Provider>;
 }

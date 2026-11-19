@@ -1,13 +1,15 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type IndicatorMapIndicator } from "#/lib/types/indicator-map-indicator.ts";
+import { type IndicatorMapUnits } from "#/lib/types/indicator-map-units.ts";
 import { type PlaceCrumb } from "#/lib/types/place-crumb.ts";
 
 /** Indicator Map */
 export interface IndicatorMap {
   gaps: string[];
-  indicator: unknown;
+  indicator: IndicatorMapIndicator;
   parent?: PlaceCrumb | null;
   periodFrom?: string | null;
-  units: unknown[];
+  units: IndicatorMapUnits[];
 }
 
 /** Field metadata for forms and results. */

@@ -21,6 +21,10 @@ import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
  * One thing a pattern produces, how many (one per unit of a level), how it is named and coded, and the attributes it carries. Templates generate structure only, never people. (entity)
+ *
+ * Invariant "PositionAttributesRequirePositionProduct" has no simple form, so it isn't validated here.
+ *
+ * Invariant "InstitutionAttributesRequireInstitutionProduct" has no simple form, so it isn't validated here.
  */
 export class TemplateDto {
   @IsOptional()

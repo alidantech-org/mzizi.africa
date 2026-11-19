@@ -109,9 +109,6 @@
     raws.forEach((raw, index) => {
       if (raw.__hit === null || raw.__hit === undefined) return;
       const list = grouped.get(raw.__owner) ?? [];
-      {%- if has_many(selection.path) != '' %}
-      if (list.length >= {{ many_config(last.target) }}.maxLimit) return;
-      {%- endif %}
       list.push(rows[index] as Row);
       grouped.set(raw.__owner, list);
     });

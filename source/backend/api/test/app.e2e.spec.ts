@@ -170,6 +170,8 @@ const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/reference/values"],
   ["GET", "/v1/reference/schemes"],
   ["GET", "/v1/reference/lookup"],
+  ["GET", "/v1/structure/context"],
+  ["GET", "/v1/structure"],
 ];
 
 let app: INestApplication;

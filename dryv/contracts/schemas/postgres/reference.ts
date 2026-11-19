@@ -28,7 +28,7 @@ export const reference = dryv
 
 /*---------------- Reference schema contracts ----------------*/
 
-const countryProperties = reference.properties({
+export const countryProperties = reference.properties({
   /** ISO 3166-1 alpha-2, upper case: KE. */
   IsoAlpha2: dryv.property
     .string()
@@ -383,6 +383,25 @@ export const Template = reference
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
+  .rule("PositionAttributesRequirePositionProduct", (v) =>
+    v.produces
+      .eq("position")
+      .or(
+        v.produces.eq("office"),
+        v.roleId
+          .isNull()
+          .and(
+            v.selectionMethodId.isNull(),
+            v.seatBasisId.isNull(),
+            v.seatCount.isNull(),
+            v.termYears.isNull(),
+            v.termLimit.isNull(),
+          ),
+      ),
+  )
+  .rule("InstitutionAttributesRequireInstitutionProduct", (v) =>
+    v.produces.eq("institution").or(v.institutionKindId.isNull().and(v.armId.isNull(), v.classId.isNull())),
+  )
   .description(
     "One thing a pattern produces, how many (one per unit of a level), how it is named and coded, and the attributes it carries. Templates generate structure only, never people.",
   )

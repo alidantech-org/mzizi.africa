@@ -1,8 +1,9 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type InstitutionListArms } from "#/lib/types/institution-list-arms.ts";
 
 /** Institution List */
 export interface InstitutionList {
-  arms: unknown[];
+  arms: InstitutionListArms[];
   gaps: string[];
   total: number;
 }

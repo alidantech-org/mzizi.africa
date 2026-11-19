@@ -1,10 +1,11 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type LeaderTreeLevels } from "#/lib/types/leader-tree-levels.ts";
 import { type PlaceCrumb } from "#/lib/types/place-crumb.ts";
 
 /** Leader Tree */
 export interface LeaderTree {
   gaps: string[];
-  levels: unknown[];
+  levels: LeaderTreeLevels[];
   place?: PlaceCrumb | null;
 }
 

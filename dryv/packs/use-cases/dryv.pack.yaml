@@ -81,6 +81,7 @@ templates:
       - $ref: '#/needs/schema.types'
         transitive: true
 
+  # Authored related selections are complete; generic expansion caps do not silently truncate screen documents.
   # <feature>/<feature>.repository.ts: one method per declared read query of the feature.
   repository:
     $ref: '#/selections/features'

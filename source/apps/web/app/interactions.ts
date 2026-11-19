@@ -15,10 +15,7 @@ import { unlike } from "@mzizi/api-client/actions/interactions/unlike.actions.ts
 const COOKIE = "mz_device";
 const YEAR = 60 * 60 * 24 * 365;
 
-export interface Engagement {
-  readonly likes: number;
-  readonly liked: boolean;
-}
+export type Engagement = import("@mzizi/api-client/types/interactions/engagement.ts").InteractionsEngagement;
 const NONE: Engagement = { likes: 0, liked: false };
 
 async function device(create: boolean): Promise<string | undefined> {

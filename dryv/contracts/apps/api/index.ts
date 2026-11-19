@@ -19,6 +19,7 @@ import { legal } from "#/schemas/postgres/legal.ts";
 import { official } from "#/schemas/postgres/official.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
 import { source } from "#/schemas/postgres/source.ts";
+import { structure, structureOperations } from "./structure.ts";
 import { authOperations } from "./auth.ts";
 import { experience, experienceOperations } from "./experience.ts";
 import { geographyOperations } from "./geography.ts";
@@ -36,6 +37,7 @@ export default dryv
   .accessStore("main", { write: true })
   .provides(
     ...Object.values(authOperations),
+    ...Object.values(structureOperations),
     ...Object.values(referenceOperations),
     ...Object.values(geographyOperations),
     ...Object.values(governanceOperations),
@@ -47,6 +49,7 @@ export default dryv
   )
   .groups(
     shared,
+    structure,
     reference,
     auth,
     geography,

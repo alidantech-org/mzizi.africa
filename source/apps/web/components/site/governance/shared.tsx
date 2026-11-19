@@ -10,10 +10,6 @@ import type {
   ContentItem,
   LegalItem,
 } from "#/lib/site/governance/contracts.ts";
-import { content, legalBasis } from "#/lib/site/governance/reads.ts";
-import { useAsync } from "#/lib/site/use-async.ts";
-import { AsyncView } from "#/components/site/async-view.tsx";
-import { Gaps, Section } from "#/components/site/ui/primitives.tsx";
 
 export function Empty({
   title,
@@ -193,66 +189,5 @@ export function LegalItems({ items }: { items: LegalItem[] }) {
         </li>
       ))}
     </ul>
-  );
-}
-export function LegalBasisSection({
-  table,
-  code,
-}: {
-  table: string;
-  code: string;
-}) {
-  const loaded = useAsync(
-    () => legalBasis(table, code),
-    `legal:${table}:${code}`,
-  );
-  return (
-    <Section title="Legal basis" kicker="Why this exists">
-      <AsyncView loaded={loaded}>
-        {(d) => (
-          <>
-            <LegalItems items={d.items} />
-            <Gaps items={d.gaps} />
-          </>
-        )}
-      </AsyncView>
-    </Section>
-  );
-}
-
-/** Explanatory content attached to an existing person or place record, resolved by the server. */
-export function SubjectContentSection({
-  table,
-  code,
-  title,
-}: {
-  table: string;
-  code: string;
-  title: string;
-}) {
-  const { language } = useLanguage();
-  const loaded = useAsync(
-    () =>
-      content({
-        subjectTable: table,
-        subjectCode: code,
-        languageCode: language,
-      }),
-    `about:${table}:${code}:${language}`,
-  );
-  return (
-    <Section title={title}>
-      <AsyncView loaded={loaded}>
-        {(document) =>
-          document.content ? (
-            <ContentArticle item={document.content} />
-          ) : (
-            <Empty title="No explanatory text recorded">
-              A sourced description has not been added for this record yet.
-            </Empty>
-          )
-        }
-      </AsyncView>
-    </Section>
   );
 }

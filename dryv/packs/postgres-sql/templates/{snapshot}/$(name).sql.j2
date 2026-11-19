@@ -240,6 +240,9 @@ CREATE TABLE "{{ ns }}"."{{ table_of(schema) }}" (
 {%- for invariant in schema.invariants %}
     CONSTRAINT "chk_{{ table_of(schema) }}_{{ invariant.name.snake }}" CHECK ({{ x5(invariant.rule.node, schema.id ~ '.' ~ invariant.name.raw) }}),
 {%- endfor %}
+{%- for field in schema.fields %}{% if field.related is none and field.value is not none and field.value.is.enum %}
+    CONSTRAINT "chk_{{ table_of(schema) }}_{{ field.name.snake }}_enum" CHECK ("{{ field.name.snake }}" IN ({% for item in field.value.property.enum.values %}{{ sql_literal(item.value) }}{% if not loop.last %}, {% endif %}{% endfor %})),
+{%- endif %}{% endfor %}
     PRIMARY KEY ({% for key in storage.primary_key %}"{{ key.snake }}"{% if not loop.last %}, {% endif %}{% endfor %})
 );
 {%- endif %}{% endfor %}

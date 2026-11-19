@@ -14,3 +14,7 @@ for f in 00_helpers 10_structure 20_queries_structure 30_money 40_queries_money;
 
 `00_helpers.sql` creates a `t` schema with row-making helpers (system columns filled, scheme and value created by code). The data is invented test data
 tagged `test`; it never goes into `seed/`. Query 5 of `20_queries_structure.sql` shows constraint violations on purpose.
+
+## Generated integrity regression
+
+After applying the latest generated snapshot to an isolated proof database, run `psql -v ON_ERROR_STOP=1 -f scripts/dev/model_proof/50_integrity.sql`. It rolls back every fixture and checks declared enum rejection, incompatible template attributes, distinct numbered seats, duplicate seat rejection and office/position institution consistency. It does not apply or reset any schema.

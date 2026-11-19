@@ -1,15 +1,19 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
 import { type PlaceCrumb } from "#/lib/types/place-crumb.ts";
+import { type PlaceStatisticsBreakdowns } from "#/lib/types/place-statistics-breakdowns.ts";
+import { type PlaceStatisticsComparisons } from "#/lib/types/place-statistics-comparisons.ts";
+import { type PlaceStatisticsSiblings } from "#/lib/types/place-statistics-siblings.ts";
+import { type PlaceStatisticsTopics } from "#/lib/types/place-statistics-topics.ts";
 
 /** Place Statistics */
 export interface PlaceStatistics {
-  breakdowns: unknown;
+  breakdowns: PlaceStatisticsBreakdowns;
   chain: PlaceCrumb[];
-  comparisons: unknown[];
+  comparisons: PlaceStatisticsComparisons[];
   gaps: string[];
   place: PlaceCrumb;
-  siblings: unknown;
-  topics: unknown[];
+  siblings: PlaceStatisticsSiblings;
+  topics: PlaceStatisticsTopics[];
 }
 
 /** Field metadata for forms and results. */

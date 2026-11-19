@@ -1,10 +1,12 @@
 import type { FieldMeta } from "#/lib/dryv/transport.ts";
+import { type TenderListSummary } from "#/lib/types/tender-list-summary.ts";
+import { type TenderListTenders } from "#/lib/types/tender-list-tenders.ts";
 
 /** Tender List */
 export interface TenderList {
   gaps: string[];
-  summary: unknown;
-  tenders: unknown[];
+  summary: TenderListSummary;
+  tenders: TenderListTenders[];
 }
 
 /** Field metadata for forms and results. */

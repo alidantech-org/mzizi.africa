@@ -21,12 +21,14 @@ export async function loadContext(path?: string, featureId?: string): Promise<Ex
   const [jar, h] = await Promise.all([cookies(), headers()]);
   const address = path ?? h.get("x-path") ?? "/";
   const edge = h.get("cf-ipcountry") ?? undefined;
+  const parts = address.split("/").filter(Boolean);
+  const explicitCountry = parts.length > 0 && parts[0]!.length === 2 && parts[0] !== "me" ? parts.shift() : undefined;
   return unwrap(
     getContext({
       query: {
-        countryCode: jar.get("mz_country")?.value,
-        languageCode: jar.get("mz_lang")?.value,
-        path: address.replace(/^\/+|\/+$/g, "") || undefined,
+        countryCode: explicitCountry ?? jar.get("mz_country")?.value,
+        languageCode: h.get("x-language") ?? jar.get("mz_lang")?.value,
+        path: parts.join("/") || undefined,
         featureId,
       },
       options: edge ? { headers: { "cf-ipcountry": edge } } : undefined,
@@ -37,7 +39,8 @@ export async function loadContext(path?: string, featureId?: string): Promise<Ex
 /** The language the server renders in: the visitor's cookie, else the country's default, else English. */
 export async function serverLanguage(): Promise<string> {
   const jar = await cookies();
-  return jar.get("mz_lang")?.value ?? "en";
+  const requestHeaders = await headers();
+  return requestHeaders.get("x-language") ?? jar.get("mz_lang")?.value ?? "en";
 }
 
 /** The interface wording for a language, as one key-to-text map; empty when the API is unreachable (screens then show English). */

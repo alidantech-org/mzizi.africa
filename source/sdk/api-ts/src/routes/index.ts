@@ -7,3 +7,4 @@ export * from "./interactions";
 export * from "./ledger";
 export * from "./locality";
 export * from "./reference";
+export * from "./structure";
