@@ -12,7 +12,8 @@ import { CalendarList } from "#/components/site/calendar-list.tsx";
 import { CountdownCard } from "#/components/site/countdown-card.tsx";
 import { FacilitiesPage } from "#/components/site/facilities-page.tsx";
 import { ClassChips } from "#/components/site/facility-views.tsx";
-import { PlaceBrowse, PlaceCompare, PlaceElections, PlaceFinance, PlaceLeaders, PlaceStatistics } from "#/components/site/views/index.ts";
+import { PlaceCompare, PlaceElections, PlaceFinance, PlaceLeaders, PlaceStatistics } from "#/components/site/views/index.ts";
+import { BrowsePage } from "#/components/site/views/browse-page.tsx";
 import { PageFrame } from "#/components/site/ui/primitives.tsx";
 import { loadContext, serverLanguage, unwrap } from "#/lib/server/data.ts";
 
@@ -30,7 +31,7 @@ export default async function PlacePage({ params, searchParams }: { params: Prom
   if (section === "data/statistics") return <PlaceStatistics id={id} />;
   if (section === "finance") return <PlaceFinance id={id} />;
   if (section === "elections") return <PlaceElections id={id} />;
-  if (section === "places") return <PlaceBrowse id={id} />;
+  if (section === "places") return <BrowsePage featureId={id} />;
   if (section === "leaders") return <PlaceLeaders id={id} />;
   if (section === "data/compare") return <PlaceCompare id={id} />;
   if (section === "infrastructure") {

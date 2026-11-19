@@ -1,12 +1,8 @@
-import { Suspense } from "react";
+import { BrowsePage } from "#/components/site/views/browse-page.tsx";
 
-import View from "./view.tsx";
+export const dynamic = "force-dynamic";
 
-/** The route is a server page; the interactive view below it is the only client code. */
+/** `/places`: the country's first level of places. */
 export default function Page() {
-  return (
-    <Suspense fallback={<div className="p-8" aria-busy="true" />}>
-      <View />
-    </Suspense>
-  );
+  return <BrowsePage />;
 }
