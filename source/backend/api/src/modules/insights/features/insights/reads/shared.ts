@@ -148,12 +148,27 @@ export async function descendantIds(db: DataSource, featureId: string): Promise<
 /** A latest-value sub-query for a baseline (no breakdown) observation of an indicator at a feature. */
 export const latestBaseline = (indicatorCode: string, featureExpr: string): string => `(
   select o.value from statistics.observations o join statistics.indicators i on i.id = o.indicator_id
-  where i.code = '${indicatorCode}' and o.feature_id = ${featureExpr}
+  where ${indicatorCode.startsWith("ref.val.") ? hasRole("i", indicatorCode) : `i.code = '${indicatorCode}'`} and o.feature_id = ${featureExpr}
     and o.sex_id is null and o.age_group_id is null and o.residence_id is null and o.ethnicity_id is null and o.language_id is null
   order by o.period_from desc limit 1)`;
 
-export const POPULATION = "sta.ind.sta.population.total";
-export const AREA = "sta.ind.sta.area.km2";
+/**
+ * Roles an indicator plays (reference scheme `sta.indicator.role`). The reads ask for a role and never name an indicator,
+ * so the figures a screen needs are found through the data, whatever the indicator is called in a country.
+ */
+const role = (name: string): string => `ref.val.sta.indicator.role.${name}`;
+export const POPULATION = role("population");
+export const AREA = role("area");
+export const REGISTERED_VOTERS = role("registered-voters");
+export const FACILITY_CAPACITY = role("facility-capacity");
+/** The derived density has no row of its own; clients pass this code back to read it. */
+export const DENSITY = "derived.density";
+/** SQL: the indicator aliased `alias` plays the role bound as parameter `$n`. */
+export const hasRoleParam = (alias: string, n: number): string =>
+  `${alias}.role_id = (select r.id from reference.values r where r.code = $${n})`;
+/** SQL: the indicator aliased `alias` plays the role (the role is a bound literal of this module, never user input). */
+export const hasRole = (alias: string, roleCode: string): string =>
+  `${alias}.role_id = (select r.id from reference.values r where r.code = '${roleCode}')`;
 
 export const money = (minorUnits: string | number | null): number | null =>
   minorUnits === null ? null : Number(minorUnits) / 100;

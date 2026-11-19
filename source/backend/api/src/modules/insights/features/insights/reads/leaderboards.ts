@@ -7,7 +7,10 @@ import type { DataSource } from "typeorm";
 
 import {
   AREA,
+  DENSITY,
   POPULATION,
+  REGISTERED_VOTERS,
+  hasRole,
   crumbs,
   featureName,
   indicatorShort,
@@ -43,12 +46,12 @@ const allocated = (classes: string | null) => `(select coalesce(sum(fl.amount_mi
 const projectCount = (extra = "") => `(select count(*) from civic.projects p where p.scope_unit_feature_id = f.id ${extra})::float8`;
 
 const METRICS: Metric[] = [
-  { code: "sta.population.density", title: "Population density", domain: "statistics", unit: "per km²", higherIsBetter: true, subject: "place", describe: "People per square kilometre.",
-    sql: `select f.id, ${latestBaseline(POPULATION, "f.id")}::float8 / nullif((select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = '${AREA}' and o.feature_id = f.id order by o.period_from desc limit 1), 0) as value, null as detail from geography.features f where f.id = any($1::uuid[])` },
+  { code: DENSITY, title: "Population density", domain: "statistics", unit: "per km²", higherIsBetter: true, subject: "place", describe: "People per square kilometre.",
+    sql: `select f.id, ${latestBaseline(POPULATION, "f.id")}::float8 / nullif((select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRole("i", AREA)} and o.feature_id = f.id order by o.period_from desc limit 1), 0) as value, null as detail from geography.features f where f.id = any($1::uuid[])` },
   { code: "civ.projects.per-100k", title: "Public projects per 100,000 people", domain: "civic", unit: "per 100,000", higherIsBetter: true, subject: "place", describe: "Recorded public projects scoped to the unit, for every 100,000 residents.",
     sql: `select f.id, ${projectCount()} * 100000 / nullif(${latestBaseline(POPULATION, "f.id")}, 0) as value, null as detail from geography.features f where f.id = any($1::uuid[])` },
   { code: "civ.projects.per-1000km2", title: "Public projects per 1,000 km²", domain: "civic", unit: "per 1,000 km²", higherIsBetter: true, subject: "place", describe: "Recorded public projects for every 1,000 square kilometres: how thickly infrastructure covers the land.",
-    sql: `select f.id, ${projectCount()} * 1000 / nullif((select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = '${AREA}' and o.feature_id = f.id order by o.period_from desc limit 1), 0) as value, null as detail from geography.features f where f.id = any($1::uuid[])` },
+    sql: `select f.id, ${projectCount()} * 1000 / nullif((select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRole("i", AREA)} and o.feature_id = f.id order by o.period_from desc limit 1), 0) as value, null as detail from geography.features f where f.id = any($1::uuid[])` },
   { code: "civ.projects.completion-rate", title: "Project completion rate", domain: "civic", unit: "%", higherIsBetter: true, subject: "place", describe: "Share of the unit's projects that are completed.",
     sql: `select f.id, 100 * ${projectCount("and exists (select 1 from reference.values s where s.id = p.status_id and s.code like '%.completed')")} / nullif(${projectCount()}, 0) as value, ${projectCount()}::int::text || ' projects' as detail from geography.features f where f.id = any($1::uuid[])` },
   { code: "fin.ngcdf.per-capita", title: "Development fund allocation per person", domain: "finance", unit: "KSh", higherIsBetter: true, subject: "place", describe: "Constituency development fund allocated for each resident (all years recorded).",
@@ -63,8 +66,8 @@ const METRICS: Metric[] = [
           where f.id = any($1::uuid[]) and (c.code like '%.2022.governor.%' or c.code like '%.2022.mp.%')` },
   { code: "ele.registration-growth", title: "Growth in registered voters, 2013 to 2022", domain: "elections", unit: "%", higherIsBetter: true, subject: "place", describe: "How much the voters' register grew between the 2013 and 2022 general elections.",
     sql: `select f.id, 100 * (b.value / nullif(a.value, 0) - 1) as value, null as detail from geography.features f
-          join lateral (select o.value::float8 as value from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = 'sta.ind.sta.elections.registered-voters' and o.feature_id = f.id and o.period_from = '2013-08-01') a on true
-          join lateral (select o.value::float8 as value from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = 'sta.ind.sta.elections.registered-voters' and o.feature_id = f.id and o.period_from = '2022-08-01') b on true
+          join lateral (select o.value::float8 as value from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRole("i", REGISTERED_VOTERS)} and o.feature_id = f.id and o.period_from = '2013-08-01') a on true
+          join lateral (select o.value::float8 as value from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRole("i", REGISTERED_VOTERS)} and o.feature_id = f.id and o.period_from = '2022-08-01') b on true
           where f.id = any($1::uuid[])` },
   { code: "civ.tenders.open", title: "Open tenders", domain: "civic", unit: "tenders", higherIsBetter: true, subject: "place", describe: "Tenders currently open for projects in the unit.",
     sql: `select f.id, (select count(*) from civic.procurements pr join civic.projects p on p.id = pr.project_id join reference.values s on s.id = pr.status_id and s.code like '%.open' where p.scope_unit_feature_id = f.id)::float8 as value, null as detail from geography.features f where f.id = any($1::uuid[])` },
@@ -78,19 +81,22 @@ const METRICS: Metric[] = [
           from governance.holders h join governance.votes v on v.holder_id = h.id join reference.values p on p.id = v.position_id group by h.id, h.individual_id having count(*) >= 3` },
 ];
 
-export function listMetrics(statisticMetrics: { code: string; name: string; unit: string | null; higher_is_better: boolean | null; description: string }[]) {
+export function listMetrics(statisticMetrics: { code: string; name: string; unit: string | null; higher_is_better: boolean | null; description: string; role: string | null }[]) {
   const built = METRICS.map(({ sql: _sql, subject: _subject, ...rest }) => rest);
   const stats = statisticMetrics.map((m) => ({
-    code: indicatorShort(m.code), title: m.name, domain: "statistics", unit: m.unit, higherIsBetter: m.higher_is_better ?? true, describe: m.description,
+    code: indicatorShort(m.code), title: m.name, domain: "statistics", unit: m.unit, higherIsBetter: m.higher_is_better ?? true, describe: m.description, role: m.role,
   }));
   return [...stats, ...built];
 }
 
 export async function leaderboardMetrics(db: DataSource) {
   const rows = await db.query(
-    `select i.code, i.name, u.symbol as unit, i.higher_is_better, i.description from statistics.indicators i left join reference.units u on u.id = i.unit_id
-     where i.code <> $1 and i.code <> $2 order by i.name`,
-    [AREA, "sta.ind.sta.population.language-speakers"],
+    `select i.code, i.name, u.symbol as unit, i.higher_is_better, i.description, regexp_replace(rl.code, '^.*\\.', '') as role
+       from statistics.indicators i left join reference.units u on u.id = i.unit_id left join reference.values rl on rl.id = i.role_id
+      where not ${hasRole("i", AREA)}
+        and not exists (select 1 from statistics.observations o where o.indicator_id = i.id and o.language_id is not null)
+      order by i.name`,
+    [],
   );
   return { metrics: listMetrics(rows) };
 }

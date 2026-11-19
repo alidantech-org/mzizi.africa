@@ -69,6 +69,7 @@ INDICATOR_ROLES = {
     "sta.population.total": "sta.indicator.role.population",
     "sta.population.density": "sta.indicator.role.density",
     "sta.area.km2": "sta.indicator.role.area",
+    "sta.elections.registered-voters": "sta.indicator.role.registered-voters",
 }
 
 INDICATORS: list[tuple[str, str, str, str, str, str, bool | None]] = [

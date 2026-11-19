@@ -25,7 +25,7 @@ Audit written 2026-11-19 against `UI_INFORMATION_ARCHITECTURE.md`, `DEC-CONTRACT
 ## 3. No hard-coding
 
 - ✅ **Country, currency and colour literals: zero** (the gate reports 0, 0, 0). Map colours come from the theme.
-- ✅ **Indicator and metric codes** are gone from the web code (the gate fails if one returns). Indicators carry a role (`population`, `density`, `area`: scheme `sta.indicator.role`, approved by the owner 2026-11-19) and the screens ask for a role; the default and highlighted rankings are the first of the domain the API lists. The API reads still name the three indicator codes in their SQL (`reads/shared.ts`); deriving them from the role is open.
+- ✅ **Indicator and metric codes** are gone from the web code (the gate fails if one returns). Indicators carry a role (`population`, `density`, `area`: scheme `sta.indicator.role`, approved by the owner 2026-11-19) and the screens ask for a role; the default and highlighted rankings are the first of the domain the API lists. The API reads derive them from the role too (`hasRole` in `reads/shared.ts`; roles: population, area, registered-voters, facility-capacity; the derived density is `derived.density`). The metric catalogue itself (17 definitions with their SQL, some with year literals) is still code, not rows.
 - ⏳ **Level lists** (`county`, `constituency`, `ward`) in rankings and finance; the Explore topics and the sidebar groups are lists in code.
 - ⏳ **About 40 English strings** in view files bypass the copy system.
 

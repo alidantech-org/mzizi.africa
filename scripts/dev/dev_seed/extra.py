@@ -218,7 +218,8 @@ def _facilities(b: Builder, t: Tables, counties, constituencies, wards, geometri
                                          ("sta.facility.enrolment", "School enrolment", "Learners enrolled in one school.", "topic.education"),
                                          ("sta.facility.classrooms", "Classrooms", "Classrooms in one school.", "topic.education")]:
         t.add("ke/statistics/indicators.csv", {"code": indicator, "name": name, "description": desc + " " + DEV, "topic_code": topic,
-                                               "unit_code": "unit.person" if indicator != "sta.facility.classrooms" else "", "measure_kind_code": "sta.measure.kind.count"})
+                                               "unit_code": "unit.person" if indicator != "sta.facility.classrooms" else "", "measure_kind_code": "sta.measure.kind.count",
+                                               "role_code": "sta.indicator.role.facility-capacity"})
     for county in counties:
         gov = f"ke.institution.{county.code.removeprefix('ke.')}.government"
         assembly = f"ke.institution.{county.code.removeprefix('ke.')}.assembly"

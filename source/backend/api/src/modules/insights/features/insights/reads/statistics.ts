@@ -7,7 +7,10 @@ import type { DataSource } from "typeorm";
 
 import {
   AREA,
+  DENSITY,
   POPULATION,
+  hasRole,
+  hasRoleParam,
   crumbs,
   featureName,
   indicatorShort,
@@ -17,7 +20,6 @@ import {
   valueLabel,
 } from "./shared.ts";
 
-const DENSITY = "sta.population.density";
 
 interface ObsRow {
   code: string;
@@ -54,8 +56,10 @@ export async function placeStatistics(db: DataSource, featureId: string) {
   const byIndicator = new Map<string, ObsRow[]>();
   for (const row of rows) byIndicator.set(row.code, [...(byIndicator.get(row.code) ?? []), row]);
   const topics = new Map<string, { code: string; label: string; indicators: unknown[] }>();
-  const area = byIndicator.get(AREA)?.at(-1)?.value ?? null;
-  const population = byIndicator.get(POPULATION) ?? [];
+  const ofRole = (roleCode: string): ObsRow[] => rows.filter((r) => r.role === roleCode.replace(/^.*\./, ""));
+  const areaRows = ofRole(AREA);
+  const area = areaRows.at(-1)?.value ?? null;
+  const population = ofRole(POPULATION);
   const addIndicator = (row: ObsRow, series: { period: string; value: number; estimated: boolean | null }[]) => {
     const latest = series[series.length - 1]!;
     const previous = series.length > 1 ? series[series.length - 2]! : null;
@@ -68,24 +72,24 @@ export async function placeStatistics(db: DataSource, featureId: string) {
   };
   for (const [code, list] of byIndicator) {
     const sample = list[0]!;
-    if (code === AREA) continue;
+    if (sample.role === areaRows[0]?.role) continue;
     addIndicator(sample, list.map((r) => ({ period: r.period, value: r.value, estimated: r.estimated })));
   }
   if (area !== null && population.length > 0) {
     addIndicator(
-      { ...population[0]!, code: DENSITY, name: "Population density", unit: "per km²", measure: "density", role: "density", topic_code: "ref.top.topic.population", topic_label: "Population", higher_is_better: null },
+      { ...population[0]!, code: DENSITY, name: "Population density", unit: `per ${areaRows[0]?.unit ?? "area"}`, measure: "density", role: "density", topic_code: population[0]!.topic_code, topic_label: population[0]!.topic_label, higher_is_better: null },
       population.map((r) => ({ period: r.period, value: r.value / area, estimated: true })),
     );
   }
   if (area !== null) {
-    addIndicator({ ...byIndicator.get(AREA)![0]! }, byIndicator.get(AREA)!.map((r) => ({ period: r.period, value: r.value, estimated: r.estimated })));
+    addIndicator({ ...areaRows[0]! }, areaRows.map((r) => ({ period: r.period, value: r.value, estimated: r.estimated })));
   }
   const breakdowns = await breakdownsOf(db, featureId);
   const comparisons: unknown[] = [];
   for (const unit of chain) {
     const figures: { pop: number | null; area: number | null }[] = await db.query(
-      `select (select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = $2 and o.feature_id = $1 and ${BASELINE} order by o.period_from desc limit 1) as pop,
-              (select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = $3 and o.feature_id = $1 and ${BASELINE} order by o.period_from desc limit 1) as area`,
+      `select (select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRoleParam('i', 2)} and o.feature_id = $1 and ${BASELINE} order by o.period_from desc limit 1) as pop,
+              (select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRoleParam('i', 3)} and o.feature_id = $1 and ${BASELINE} order by o.period_from desc limit 1) as area`,
       [unit.featureId, POPULATION, AREA],
     );
     const f = figures[0]!;
@@ -108,8 +112,8 @@ async function rankAmongSiblings(db: DataSource, featureId: string) {
   const rows: { id: string; name: string; pop: number | null; area: number | null }[] = await db.query(
     `with parent as (select r.object_feature_id as pid from geography.relationships r where r.subject_feature_id = $1 and r.to_year is null limit 1)
      select s.subject_feature_id as id, ${featureName("s.subject_feature_id", "'en'")} as name,
-       (select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = $2 and o.feature_id = s.subject_feature_id and ${BASELINE} order by o.period_from desc limit 1) as pop,
-       (select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = $3 and o.feature_id = s.subject_feature_id and ${BASELINE} order by o.period_from desc limit 1) as area
+       (select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRoleParam('i', 2)} and o.feature_id = s.subject_feature_id and ${BASELINE} order by o.period_from desc limit 1) as pop,
+       (select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRoleParam('i', 3)} and o.feature_id = s.subject_feature_id and ${BASELINE} order by o.period_from desc limit 1) as area
      from geography.relationships s join parent on s.object_feature_id = parent.pid where s.to_year is null`,
     [featureId, POPULATION, AREA],
   );
@@ -155,11 +159,11 @@ export async function indicatorSeries(db: DataSource, code: string, featureId: s
   const place = chain[chain.length - 1]!;
   if (code === DENSITY) {
     const pop: { period: string; value: number; estimated: boolean | null }[] = await db.query(
-      `select o.period_from::text as period, o.value::float8 as value, o.estimated from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = $2 and o.feature_id = $1 and ${BASELINE} order by o.period_from`,
+      `select o.period_from::text as period, o.value::float8 as value, o.estimated from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRoleParam('i', 2)} and o.feature_id = $1 and ${BASELINE} order by o.period_from`,
       [featureId, POPULATION],
     );
     const area: { v: number }[] = await db.query(
-      `select o.value::float8 as v from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = $2 and o.feature_id = $1 order by o.period_from desc limit 1`,
+      `select o.value::float8 as v from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRoleParam('i', 2)} and o.feature_id = $1 order by o.period_from desc limit 1`,
       [featureId, AREA],
     );
     const a = area[0]?.v;
@@ -199,10 +203,10 @@ export async function indicatorMap(db: DataSource, code: string, parentId: strin
   const rows: MapRow[] = await db.query(
     `select f.id, ${featureName("f.id", "'en'")} as name, regexp_replace(k.code, '^.*\\.', '') as kind,
        ${derived
-         ? `(select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = '${POPULATION}' and o.feature_id = f.id and ${BASELINE} order by o.period_from desc limit 1)
-            / nullif((select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = '${AREA}' and o.feature_id = f.id order by o.period_from desc limit 1), 0)`
-         : `(select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = $2 and o.feature_id = f.id and ${BASELINE} order by o.period_from desc limit 1)`} as value,
-       (select o.estimated from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where i.code = '${POPULATION}' and o.feature_id = f.id order by o.period_from desc limit 1) as estimated,
+         ? `(select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRole('i', POPULATION)} and o.feature_id = f.id and ${BASELINE} order by o.period_from desc limit 1)
+            / nullif((select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRole('i', AREA)} and o.feature_id = f.id order by o.period_from desc limit 1), 0)`
+         : `(select o.value::float8 from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRoleParam('i', 2)} and o.feature_id = f.id and ${BASELINE} order by o.period_from desc limit 1)`} as value,
+       (select o.estimated from statistics.observations o join statistics.indicators i on i.id = o.indicator_id where ${hasRole('i', POPULATION)} and o.feature_id = f.id order by o.period_from desc limit 1) as estimated,
        (select st_asgeojson(st_simplifypreservetopology(g.geometry, ${toleranceParam}), 4)::json from geography.geometries g
           join reference.values gr on gr.id = g.geometry_role_id and gr.code in ('ref.val.geo.geometry.role.outline', 'ref.val.geo.geometry.role.label-point')
           where g.feature_id = f.id and g.to_year is null order by gr.code limit 1) as geometry

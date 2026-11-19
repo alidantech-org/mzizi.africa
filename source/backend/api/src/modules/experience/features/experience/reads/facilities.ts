@@ -1,4 +1,5 @@
 /** Civic infrastructure: facilities by class and place with capacity and coordinates, and one facility with the stations it hosts. */
+import { FACILITY_CAPACITY, hasRole } from "#/modules/insights/features/insights/reads/shared.ts";
 import type { DataSource } from "typeorm";
 import { entityName } from "#/modules/locality/features/places/reads/language.ts";
 
@@ -34,7 +35,7 @@ async function capacity(db: DataSource, featureIds: string[]) {
   if (featureIds.length === 0) return new Map<string, { indicatorCode: string; label: string; value: number }[]>();
   const rows: { feature_id: string; code: string; name: string; value: string }[] = await db.query(
     `select distinct on (o.feature_id, i.code) o.feature_id, i.code, i.name, o.value::text from statistics.observations o
-       join statistics.indicators i on i.id = o.indicator_id where o.feature_id = any($1) and i.code like 'sta.ind.sta.facility.%'
+       join statistics.indicators i on i.id = o.indicator_id where o.feature_id = any($1) and ${hasRole("i", FACILITY_CAPACITY)}
       order by o.feature_id, i.code, o.period_from desc`,
     [featureIds],
   );

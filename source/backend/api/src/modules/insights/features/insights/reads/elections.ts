@@ -5,7 +5,7 @@
 import { NotFoundException } from "@nestjs/common";
 import type { DataSource } from "typeorm";
 
-import { crumbs, featureName, mediaFor, partyOf, personName, shortCode, storedCode, toleranceFor, unitsUnder, entityName } from "./shared.ts";
+import { crumbs, featureName, mediaFor, partyOf, personName, shortCode, storedCode, toleranceFor, unitsUnder, entityName, REGISTERED_VOTERS, hasRole } from "./shared.ts";
 
 interface ContestRow { contest_id: string; code: string; kind: string }
 interface ResultRow {
@@ -124,7 +124,7 @@ export async function placeElections(db: DataSource, featureId: string) {
   });
   const trend: { period: string; value: number; estimated: boolean | null }[] = await db.query(
     `select o.period_from::text as period, o.value::float8 as value, o.estimated from statistics.observations o join statistics.indicators i on i.id = o.indicator_id
-     where i.code = 'sta.ind.sta.elections.registered-voters' and o.feature_id = $1 order by o.period_from`, [featureId]);
+     where ${hasRole("i", REGISTERED_VOTERS)} and o.feature_id = $1 order by o.period_from`, [featureId]);
   const turnout = elections.flatMap((e) => e.contests.filter((c) => c.turnout !== null).slice(0, 1).map((c) => ({ year: e.year, registered: c.registered, turnout: c.turnout })));
   return {
     place, elections, registrationTrend: trend, turnoutTrend: turnout,
