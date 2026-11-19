@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import type { ExperienceCalendarEvent } from "@mzizi/api-client/types/experience/calendar-event.ts";
 
 const day = (iso: string) => new Date(`${iso}T00:00:00`);
@@ -25,7 +27,7 @@ export function CalendarList({ events }: { events: readonly ExperienceCalendarEv
                     <p className="text-[10px] font-semibold uppercase tracking-wide text-content-muted">{shown.toLocaleDateString("en", { weekday: "short" })}</p>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold">{event.name}</p>
+                    <p className="font-semibold"><Link className="hover:underline" href={`/events/${event.eventCode}`}>{event.name}</Link></p>
                     <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-content-muted">
                       <span className="chip">{event.kindLabel}</span>
                       <span className="chip">{event.knowledgeLabel}</span>

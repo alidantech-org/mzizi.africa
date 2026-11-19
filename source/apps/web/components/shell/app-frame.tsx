@@ -114,8 +114,9 @@ export function AppFrame({ context, children }: { context: ShellContext; childre
       sidebarTop={<PlaceChip countryName={context.countryName} countryIso={context.countryIso ?? null} placeName={context.place?.name ?? null} placePath={context.place?.path ?? null} />}
       sidebarFoot={
         <ul className="space-y-1">
-          <li><Link href="/me" className="hover:underline">{tr("Privacy and preferences")}</Link></li>
+          <li><Link href="/me/privacy" className="hover:underline">{tr("Privacy and preferences")}</Link></li>
           <li><Link href="/data/sources" className="hover:underline">{tr("Data sources and licences")}</Link></li>
+          <li><Link href="/help" className="hover:underline">{tr("Help")}</Link></li>
         </ul>
       }
     >

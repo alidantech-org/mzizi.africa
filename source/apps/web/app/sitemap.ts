@@ -6,7 +6,7 @@ import { electionAt } from "#/lib/site/links.ts";
 export const dynamic = "force-dynamic";
 
 /** Sections that exist at country level; each also exists under a place. */
-const SECTIONS = ["", "explore", "places", "elections", "leaders", "calendar", "politics/parties", "government/institutions", "government/law", "government/parliament", "procurement/tenders", "finance", "infrastructure", "data/statistics", "data/rankings", "data/compare", "data/sources"];
+const SECTIONS = ["", "explore", "places", "elections", "leaders", "calendar", "politics/parties", "government/institutions", "government/law", "government/parliament", "procurement/tenders", "finance", "infrastructure", "data/statistics", "data/rankings", "data/compare", "data/sources", "data/coverage", "finance/budgets", "finance/funds", "politics/coalitions", "politics/manifestos", "help", "me/privacy", "me/notifications"];
 
 /** The canonical addresses: the country sections, every election, every party and the places down to the second level. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
