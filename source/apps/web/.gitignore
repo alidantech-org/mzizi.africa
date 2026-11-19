@@ -2,3 +2,43 @@ node_modules/
 .next/
 next-env.d.ts
 *.tsbuildinfo
+
+# Local content and demonstration datasets. Keep source code separate from data.
+/src/data/*
+!/src/data/*.d.ts
+/scripts/geo-input/
+/scripts/inputs/
+/scripts/build-data.ts
+**/*.geojson
+**/*.geojson.*
+**/*.topojson
+**/*.topojson.*
+**/fixtures/
+**/seed/
+
+# Historical local code is not part of the active UI checkpoint.
+/_archives/
+
+# Downloaded media and flags stay local. Only app identity assets are tracked.
+/public/*
+!/public/offline.html
+!/public/sw.js
+!/public/icons/
+/public/icons/*
+!/public/icons/icon-192.png
+!/public/icons/icon-512.png
+!/public/icons/maskable-512.png
+
+# Content images elsewhere in the app are excluded; app identity is explicit.
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.avif
+*.ico
+!/src/app/apple-icon.png
+!/src/app/favicon.ico
+!/public/icons/icon-192.png
+!/public/icons/icon-512.png
+!/public/icons/maskable-512.png

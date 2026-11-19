@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Offline · Mzizi</title>
+  <style>
+    :root { color-scheme: light dark; --bg: #f4efe5; --ink: #1d1a16; --muted: #6b6356; --line: #e0d7c6; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #14110d; --ink: #f2ecde; --muted: #a59b89; --line: #352f25; } }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink); font-family: Georgia, serif; }
+    main { max-width: 32rem; padding: 2rem; text-align: center; }
+    svg { width: 56px; height: 56px; stroke: currentColor; fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+    h1 { font-size: 2rem; margin: 1rem 0 .5rem; } p { color: var(--muted); line-height: 1.6; font-family: system-ui, sans-serif; }
+    a { display: inline-block; margin-top: 1rem; padding: .6rem 1rem; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); text-decoration: none; font-family: system-ui, sans-serif; }
+  </style>
+</head>
+<body>
+  <main>
+    <svg viewBox="0 0 32 32" role="img" aria-label="Mzizi"><path d="M5.5 23.5V7.5L16 17.5L26.5 7.5V23.5"/><path d="M16 17.5V25.5"/><path d="M16 25.5L11.8 29M16 25.5L20.2 29"/><path d="M5.5 23.5L3.2 26M26.5 23.5L28.8 26"/></svg>
+    <h1>You are offline</h1>
+    <p>Mzizi could not reach the network. Pages you have already opened are still available. Reconnect to load anything new.</p>
+    <a href="/">Try again</a>
+  </main>
+</body>
+</html>

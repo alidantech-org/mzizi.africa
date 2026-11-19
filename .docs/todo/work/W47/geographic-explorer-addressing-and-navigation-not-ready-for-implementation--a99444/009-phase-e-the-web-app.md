@@ -43,3 +43,7 @@ The owner explicitly requested implementation of the integrated database, API an
 ### 2026-11-19T13:19:14.130Z · PETER IRUNGU
 
 Implemented the contextual shell and generated catch-all, government structure presentation with position detail, grouped navigation, language-aware sharing, and SSR finance/comparison wiring. Initial likes, legal basis and explanatory content now load on the server; writes remain client-triggered. Browser proof at desktop1440/mobile390 verified ex officio selection, country prefix, ZA isolation, language cookie, canonical selected identity, and one active sidebar item. This is a partial foundation: search/place-switcher results, many contextual renderers, locally scoped applicability, diagrams and remaining client reads are unfinished. Do not accept the full web proof yet.
+
+### 2026-11-19T21:30:02.228Z · PETER IRUNGU
+
+Owner replaced the web UI and changed ownership: all UI/theme/pages are handwritten; Dryv remains responsible for backend schemas and generated bridge clients. Current request is a code-only Git checkpoint: retain local data on disk, ignore fake/prepared datasets, GeoJSON, flags and downloaded media; include reusable active source and app identity assets. Backend integration planning follows separately. Data-dependent pages are not a self-contained clean-checkout application until their local imports are replaced.

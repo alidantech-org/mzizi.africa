@@ -89,7 +89,7 @@ export const projects: readonly Project[] = [
     summary: "generated Dart API client (mzizi_api)",
     byDefault: false,
   },
-  { name: "web", kind: "bun", dir: "source/apps/web", summary: "public website (Next.js, generated)", byDefault: true },
+  { name: "web", kind: "bun", dir: "source/apps/web", summary: "handwritten public web UI (Next.js, Tailwind CSS)", byDefault: true },
   { name: "dev", kind: "bun", dir: "source/apps/dev", summary: "developer portal (Next.js, generated)", byDefault: true },
   {
     name: "app",

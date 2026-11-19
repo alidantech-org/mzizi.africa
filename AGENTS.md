@@ -79,6 +79,7 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 - Keep exactly the eight overview documents in `.docs/docs/`. Put detailed design in an existing topic under `.docs/design/`, and planning proposals in `.docs/_plan/`.
 - Manifest and seed row codes follow [codes.md](.docs/rules/codes.md). Filesystem registry codes follow [the filesystem code rules](.docs/rules/code-columns.md).
 - Never invent versions: no version folders, file-name suffixes or new version fields unless the owner asks. Read `.docs/rules/versioning.md`.
+- Web navigation, scroll position and URL state (place in the path, subject and selections in the query, `#section` in the hash, never lose scroll when switching place) follow `.docs/rules/web-navigation.md`.
 - Put contributor and agent process in `.docs/rules/`. Do not recreate `.docs/guidance/`.
 - All hand-written Python, Rust and TypeScript follows `.docs/rules/typed-code.md`: named typed contracts (no free `dict`/`Any`/`any`/`serde_json::Value` past the parsing boundary), no hard-coded source or classification knowledge (it lives in manifests), and pattern matching only in the pattern-matching packages.
 - When paths or behavior change, update the affected README/design guide and every link that points to it in the same work. Mark incomplete behavior and proposals clearly.

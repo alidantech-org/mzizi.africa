@@ -1,45 +1,67 @@
-# Public Mzizi web application
+# Mzizi web
 
-This Next.js application is the public civic explorer on port 3300. It consumes the NestJS product API through generated operation clients under `lib/api/`; authored presentation lives in `app/`, `components/site/` and `lib/site/`. It does not own canonical governance classifications, source acquisition or database writes.
-
-## Governance and explanatory reading
-
-- `/institutions` searches and filters the directory by the arms and kinds returned by the API. `/institutions/[code]` presents responsibilities, holders, relationships, explanatory text and legal foundations.
-- `/leaders` renders connected, collapsible branches from the governance operation's nodes and edges. Category tabs, institution choices, scope labels and connection meanings come from the server. Select a node for its reference values and related records; select a scope to filter other levels out; only existing same-level connections remain.
-- `/constitution` opens the stored constitutional overview and chapters. Legal links can open a provision with `?provision=<code>`. Child provisions are linked through the content operation.
-- `/content` lists explanatory content by category and tag; `/content/[slug]` renders Markdown and GFM tables using `react-markdown`, with raw HTML disabled. The backend resolves media references. Development text is labelled.
-- `/compare?place=<feature UUID>` offers the nearest and top ranked peers returned by the API, an upward level selector, and a side-by-side table. Missing figures stay missing rather than becoming zero or a low rank.
-
-The dynamic nested sections of generated responses are validated at `lib/site/governance/parse/documents.ts` into named contracts before reaching components. The API still owns the metrics, relationships and classifications. Unknown node kinds fail explicitly rather than being misclassified.
-
-## Running and checking
+Handwritten Next.js App Router UI using TypeScript, Tailwind CSS and Bun. The welcome page is `/`; the explorer uses `/[country]/[[...place]]` with query-based subjects, alongside personal and help pages. Screens currently use local prepared/demo data; backend integration is pending.
 
 Run from the repository root:
 
-```bash
-bun run dev:stack -- web
-bun run typecheck --only web
+```sh
+bun run dev web
 bun run build --only web
+bun run typecheck --only web
+bun run start web
 ```
 
-The API must be available on port 8700 for data-backed screens. Avoid building and serving development output concurrently: both currently use `.next`. The coordinating process should restart the development server after a production build if needed.
+The default address is http://localhost:3300. Install workspace dependencies with `bun install --cwd source`. Tailwind is imported in `src/app/globals.css` and compiled by the Tailwind Turbopack loader.
 
-## Data limits
+The previous implementation is preserved in `_archives/` and excluded from TypeScript compilation. It is historical reference, not active application code. Dryv app generation may overwrite the starter; run it only when intentionally replacing this scaffold.
 
-The local development database contains invented holders and explanatory development text; it is not a verified register of current public officials. Available performance measures describe recorded votes or projects and are not overall leader ratings. Legal effects carry their review status. Some Acts are recorded only as statements, and some institution and place records lack legal links or measurements. Missing translations are not silently presented as completed localisation.
+## Accessibility commitments
 
-See [the governance and content design](../../../.docs/design/data/GOVERNANCE_AND_CONTENT.md) for backend operations, and [the root command guide](../../../scripts/README.md) for service ownership.
+Every page and component follows these rules (also published on the Help page):
 
-## Responsive exploration and preferences
+- Semantic HTML first: one heading outline, landmarks (`nav`, `main`, `aside`), real table headers, and `aria-sort` on sortable columns.
+- Every icon-only control has an `aria-label`; every chart (`role="img"`) and map (`role="group"`) has a text label; images need alternative text.
+- Sheets and dialogs use the shared shells in `src/components/shells.tsx`: focus trap, Escape to close, focus restored, `aria-modal` and a labelled title.
+- Colour is never the only signal. Contrast modes (high contrast, high contrast light, yellow on black, black on yellow), text size, spacing, link underline and reduced motion are in the settings menu and override every palette, including charts and the map.
+- Voice: speech input and output use the browser's Web Speech API; controls are in the settings menu and the search boxes.
+- Keyboard: `/` opens search, `Ctrl+B` toggles the sidebar, and every popover is reachable and closable without a mouse.
 
-The shared shell uses a desktop sidebar and a small-screen drawer. Navigation is ordered and grouped by the authored explorer contract. Sidebar selection follows the current place and `view`; record and presentation parameters do not highlight a second subject. Governance details stack beneath the structure on small screens. The browser proof covers the 1440-pixel desktop and 390-pixel mobile layouts, position selection, country isolation and optional-language cookie behaviour. Screenshots are development review artifacts, not evidence that every destination has migrated.
+## Language rule
 
-Legacy leadership graph components retain their presentation controls, but the old client-loading container is removed. The contextual leadership entry currently uses the generated country structure document. Full contextual holder profiles, family/radial diagrams and generated server read bindings for every old destination remain unfinished.
+When the language changes, every part of the page and its content must be in that language. Where something is not translated:
 
-## Contextual explorer implementation in progress
+- A notice at the top of the page says that the language is selected, what is translated on that page, what is not, and why (no translation has been loaded for it). See `src/components/language-notice.tsx`.
+- The untranslated text is shown in English, marked as English, and never silently mixed in.
+- Evidence is never machine-translated and presented as the source. Where a translation exists in the seed (for example the Swahili Constitution, `translations.csv`, URAIA translation, unofficial, review pending), that translation is shown: in Kiswahili the Constitution reader and quick-view sheets show the Swahili text, provision by provision, with English fallback marked "English only".
+- Local-language options in the switcher are listed as "Coming later" until content exists.
+- The language comes from `?lang=`, then the `mzizi-lang` cookie, then English.
 
-The generated catch-all now accepts explicit country/place paths and contract-generated grouped query state. `lang` is optional, stays visible when explicitly supplied and persists to a cookie; sharing can include the effective language. The main shell consumes generated navigation and synchronizes its server-resolved context on page navigation. The new `structure` API screen is generated from an authored read query, with country-isolated institutions, positions, seat definitions, formal powers and function assignments. The read explicitly describes national structure rather than claiming all returned institutions apply to a selected locality.
+## Navigation, scroll and URL state
 
-Finance, comparison, attached legal-basis/explanatory reads and leadership entry no longer start their product reads from browser effects. The legacy graph component receives data rather than importing read clients. Device-local state and engagement writes remain separate. Thirteen web tests cover identity validation, view-specific parameters, state round-trips, navigation ordering, list pagination reset and context-preserving navigation. Initial like counts now render on the server; client leaves retain explicit like/unlike and view-recording writes. Canonical URLs retain record, filter and pagination state.
+Full rule: `.docs/rules/web-navigation.md`. In short: the path is the place, the query is the subject and its selections, the `#section` is where you are reading. Switching place, filters, sort, tabs or language never scrolls back to the top and keeps the section in the address; sections have stable ids; use `useNav()` rather than the router directly.
 
-This is not the completed redesign: several view renderers, full scoped applicability, generated typed replacement of all old insights shapes, election-detail browser reads, the complete chart set, copy migration, analytical fixtures and release-stream synchronization still need implementation. The generated SQL snapshot has been applied to an isolated proof database; existing development databases have not been reset or migrated to all new constraints. Development fixtures live in `scripts/dev/web_proof/` and are explicitly synthetic. Existing template generation also emits API SDK artifacts for Dart; the Flutter frontend itself is not part of this work.
+## Brand and installable app
+
+- **Mark and sitemark:** `src/components/logo.tsx`. The identity is the shape (an M whose middle stroke is a trunk forking into roots) and the way the name is lettered (soft Fraunces, seed-dotted i’s), never a colour. Everything is drawn in `currentColor`, so all palettes, light, dark and contrast modes work with no variants.
+- **Favicon and icons:** `src/app/icon.svg` (adapts to light and dark tabs), `src/app/favicon.ico`, `src/app/apple-icon.png` and `public/icons/*`. Regenerate the raster icons with `bun scripts/build-icons.ts` (needs ImageMagick).
+- **Install as an app:** `src/app/manifest.ts` (name, short name, icons including a maskable one, start page, shortcuts, theme colours), `public/sw.js` (offline shell: network first for pages, cached copy or `public/offline.html` when offline) and `src/components/pwa.tsx` (registers the worker in production and offers "Install Mzizi as an app" in the settings menu; on iOS it explains Share then Add to Home Screen). Installing needs HTTPS or localhost.
+
+## Form controls
+
+Every control comes from `src/components/controls.tsx` (React Aria underneath): `Select` (a searchable combo box for long lists), `Checkbox`, `Switch`, `Slider` and `TextField`. Do not use native `<select>`, checkbox, radio or range elements, or hand-rolled bordered inputs. The `TextField` wrapper draws the only focus outline.
+
+## Flags
+
+Country flags are the MIT-licensed [flag-icons](https://github.com/lipis/flag-icons) set (`flag-icons` dev dependency). Only the flags we use are copied into `public/flags/<code>.svg`, so nothing is fetched from another site. To add a country, copy its SVG from `node_modules/flag-icons/flags/4x3/` and add the country to `COUNTRIES` in `src/lib/route.ts` (with its ISO code and dial code).
+
+## Flag palette
+
+Choosing a flag colour in the theme switcher means "follow the flag of the country I am in". The palette is rebuilt for each country from its flag (`src/data/flag-colors.ts`, `src/lib/flag-palette.ts`), with the picked flag colour as the primary one. Every country starts at its dominant colour: the choice is cleared when the country changes. Choosing one of the three ordinary palettes switches following off.
+
+## Code-only checkpoint and local data
+
+The active UI is handwritten under `src/`; Dryv is intended to own backend contracts and generated API bridge clients, not these pages or their theme. The current Dryv application configuration and older guidance still need reconciliation before running frontend generation.
+
+This checkpoint deliberately excludes `src/data/` content modules and generated datasets (except ambient type declarations), GeoJSON/TopoJSON, fixture/seed folders, local preparation inputs, flags, source documents and downloaded images. The source-specific `scripts/build-data.ts` preparation script stays local too. Files are ignored, not deleted. Logo code, the favicon and app/install identity icons are included, together with the icon-building utility.
+
+Several views still import the ignored local data, and demonstration figures also remain embedded in prototype screens. They are not backend-connected or verified facts. Local typechecking uses those existing local files; it does not establish that the code-only checkpoint builds from a fresh checkout. Replacing these imports and illustrative values with generated-client responses is the next integration work. Do not solve missing imports by committing local datasets or silently substituting another place's data.

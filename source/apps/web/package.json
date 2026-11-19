@@ -1,32 +1,46 @@
 {
   "name": "mzizi-web",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "bun --bun next dev -p 3300",
     "build": "bun --bun next build",
     "start": "bun --bun next start -p 3300",
-    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
-    "test": "bun test tests"
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
-    "@mzizi/api-client": "workspace:*",
-    "@mzizi/ui-web": "workspace:*",
-    "leaflet": "^1.9.4",
-    "next": "^16.4.6",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
+    "clsx": "^2.1.1",
+    "d3-delaunay": "^6.0.6",
+    "echarts": "^6.1.0",
+    "graphology": "^0.26.0",
+    "graphology-layout-forceatlas2": "^0.10.1",
+    "graphology-types": "^0.24.8",
+    "lucide-react": "^1.76.0",
+    "mammoth": "^1.13.0",
+    "motion": "^14.14.0",
+    "next": "16.4.6",
+    "react": "19.3.0",
+    "react-aria-components": "^1.22.1",
+    "react-dom": "19.3.0",
+    "read-excel-file": "^9.3.19",
+    "sigma": "^4.0.6"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.5",
-    "@types/leaflet": "^1.9.22",
-    "@types/node": "^26.6.6",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "bun-types": "^1.4.4",
+    "@tailwindcss/turbopack": "^4.3.5",
+    "@types/d3-delaunay": "^6.0.4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "flag-icons": "^7.6.0",
     "tailwindcss": "^4.3.5",
-    "typescript": "^7.0.2"
-  }
+    "typescript": "^5"
+  },
+  "ignoreScripts": [
+    "sharp",
+    "unrs-resolver"
+  ],
+  "trustedDependencies": [
+    "sharp",
+    "unrs-resolver"
+  ],
+  "type": "module"
 }
