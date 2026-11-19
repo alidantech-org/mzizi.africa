@@ -8,7 +8,7 @@ import { findPlaces, type PlaceChoice } from "#/app/actions.ts";
 import { useLanguage } from "#/lib/site/i18n.tsx";
 
 /** The sections that exist under a place, so switching place keeps the section the visitor is in. */
-const SCOPED = ["infrastructure", "calendar"];
+const SCOPED = ["places", "leaders", "elections", "finance", "data/statistics", "data/compare", "infrastructure", "calendar"];
 
 /** Finds a place by name and opens it, keeping the current section when that section exists under a place. */
 export function PlaceSwitcher({ currentPath }: { currentPath: string | null }) {
@@ -17,7 +17,8 @@ export function PlaceSwitcher({ currentPath }: { currentPath: string | null }) {
   const [query, setQuery] = useState("");
   const [choices, setChoices] = useState<PlaceChoice[]>([]);
   const [pending, start] = useTransition();
-  const section = SCOPED.find((word) => pathname === `/${word}` || pathname.endsWith(`/${word}`));
+  const rest = currentPath && pathname.startsWith(`/${currentPath}/`) ? pathname.slice(currentPath.length + 2) : pathname.slice(1);
+  const section = SCOPED.find((word) => rest === word);
   useEffect(() => {
     if (query.trim().length < 2) {
       setChoices([]);

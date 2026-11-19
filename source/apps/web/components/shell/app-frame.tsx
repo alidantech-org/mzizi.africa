@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
+import { PlaceChip } from "#/components/shell/place-chip.tsx";
 import { Icon, type IconName } from "#/components/brand/icon.tsx";
 import { Logo } from "#/components/brand/logo.tsx";
 import { GlobalSearchBox } from "#/components/site/global-search-box.tsx";
@@ -105,6 +106,7 @@ export function AppFrame({ context, children }: { context: ShellContext; childre
           <Link href="/me" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0" aria-label={tr("Profile and preferences")}><Icon name="user" /></Link>
         </>
       }
+      sidebarTop={<PlaceChip countryName={context.countryName} countryIso={context.countryIso ?? null} placeName={context.place?.name ?? null} placePath={context.place?.path ?? null} />}
       sidebarFoot={
         <ul className="space-y-1">
           <li><Link href="/me" className="hover:underline">{tr("Privacy and preferences")}</Link></li>
