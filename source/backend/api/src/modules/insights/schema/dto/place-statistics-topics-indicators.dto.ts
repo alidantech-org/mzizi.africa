@@ -50,6 +50,11 @@ export class PlaceStatisticsTopicsIndicatorsDto {
   @Type(() => PlaceStatisticsTopicsIndicatorsPreviousDto)
   previous?: PlaceStatisticsTopicsIndicatorsPreviousDto | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.role !== null)
+  @IsString()
+  role?: String | null;
+
   @IsArray()
   @IsDefined()
   @ValidateNested({ each: true })

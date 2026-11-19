@@ -11,6 +11,7 @@ export interface InsightsPlaceStatisticsTopicsIndicators {
   measure: string;
   name: string;
   previous?: InsightsPlaceStatisticsTopicsIndicatorsPrevious | null;
+  role?: string | null;
   series: InsightsPlaceStatisticsTopicsIndicatorsSeries[];
   unit: string;
 }

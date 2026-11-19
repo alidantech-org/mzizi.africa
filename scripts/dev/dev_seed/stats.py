@@ -64,6 +64,13 @@ LANGUAGE_OF = {
     "somali": "so",
     "meru": "mer",
 }
+# The part each indicator plays on the screens; the screens ask for a role, never for a code.
+INDICATOR_ROLES = {
+    "sta.population.total": "sta.indicator.role.population",
+    "sta.population.density": "sta.indicator.role.density",
+    "sta.area.km2": "sta.indicator.role.area",
+}
+
 INDICATORS: list[tuple[str, str, str, str, str, str, bool | None]] = [
     (
         "sta.area.km2",
@@ -202,6 +209,7 @@ def build_statistics(
             "unit_code": unit,
             "measure_kind_code": measure,
             "higher_is_better": "" if better is None else str(better).lower(),
+            "role_code": INDICATOR_ROLES.get(code, ""),
         }
         t.add("ke/statistics/indicators.csv", row)
     demography = Demography({}, {}, {})

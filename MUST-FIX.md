@@ -25,7 +25,7 @@ Audit written 2026-11-19 against `UI_INFORMATION_ARCHITECTURE.md`, `DEC-CONTRACT
 ## 3. No hard-coding
 
 - ✅ **Country, currency and colour literals: zero** (the gate reports 0, 0, 0). Map colours come from the theme.
-- ⏳ **Indicator and metric codes** (`sta.population.total`, `sta.population.density`, `sta.area.km2`, `civ.projects.per-100k`, `civ.projects.completion-rate`) are literals in home, statistics, place statistics, rankings and finance. The fix is a role on indicator rows (headline, default) in the database, which is a schema and seed change that needs the owner's approval first (`seed/README.md`).
+- ✅ **Indicator and metric codes** are gone from the web code (the gate fails if one returns). Indicators carry a role (`population`, `density`, `area`: scheme `sta.indicator.role`, approved by the owner 2026-11-19) and the screens ask for a role; the default and highlighted rankings are the first of the domain the API lists. The API reads still name the three indicator codes in their SQL (`reads/shared.ts`); deriving them from the role is open.
 - ⏳ **Level lists** (`county`, `constituency`, `ward`) in rankings and finance; the Explore topics and the sidebar groups are lists in code.
 - ⏳ **About 40 English strings** in view files bypass the copy system.
 

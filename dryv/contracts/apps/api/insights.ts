@@ -843,6 +843,8 @@ const sections0 = insights.schemas({
 const sections1 = insights.schemas({
   PlaceStatisticsTopicsIndicators: dryv.schema({
     code: dryv.field(p.String),
+    /** The part the indicator plays on the screens (population, density, area); the screens ask for a role, never a code. */
+    role: dryv.field(p.String).maybe(),
     name: dryv.field(p.String),
     unit: dryv.field(p.String),
     measure: dryv.field(p.String),

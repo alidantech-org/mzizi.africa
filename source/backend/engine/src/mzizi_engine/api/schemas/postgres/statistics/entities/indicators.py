@@ -31,6 +31,7 @@ class IndicatorsRow(BaseModel):
     id: UUID
     measure_kind_id: UUID
     name: Annotated[str, Field(min_length=1, max_length=300)]
+    role_id: UUID | None = None
     source_citation_id: UUID | None = None
     topic_id: UUID
     unit_id: UUID | None = None

@@ -14,6 +14,7 @@ export interface PlaceStatisticsTopicsIndicators {
   measure: String;
   name: String;
   previous?: PlaceStatisticsTopicsIndicatorsPrevious | null;
+  role?: String | null;
   series: PlaceStatisticsTopicsIndicatorsSeries[];
   unit: String;
 }

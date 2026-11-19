@@ -11,22 +11,27 @@ import { LineChart } from "#/components/site/ui/charts.tsx";
 import { n, short } from "#/lib/site/format.ts";
 import { useCountry } from "#/lib/site/country.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
-import { mapOf, metrics, browse, seriesOf } from "#/lib/site/insights.ts";
+import { indicatorByRole, mapOf, metrics, browse, seriesOf, statisticsOf } from "#/lib/site/insights.ts";
 import { optional, useAsync } from "#/lib/site/use-async.ts";
-
-const EXTRA = [{ code: "sta.population.density", title: "Population density", unit: "per km²" }, { code: "sta.area.km2", title: "Land area", unit: "km²" }];
 
 function Explorer() {
   const country = useCountry();
   const { tr } = useLanguage();
   const router = useRouter();
   const params = useSearchParams();
-  const indicator = params.get("indicator") ?? "sta.population.total";
   const level = params.get("kind") ?? "county";
   const list = useAsync(() => metrics(), "metrics");
-  const root = useAsync(() => browse(), "root");
-  const map = useAsync(() => mapOf(indicator, undefined, level), `map-${indicator}-${level}`);
-  const series = useAsync(async () => (root.state === "ready" && root.value.place ? seriesOf("sta.population.total", root.value.place.featureId) : Promise.reject(new Error("wait"))), `series-${root.state}`);
+  const country_ = useAsync(async () => {
+    const b = await browse();
+    if (!b.place) throw new Error("The country is not recorded.");
+    return { featureId: b.place.featureId, children: b.children.length, stats: await statisticsOf(b.place.featureId) };
+  }, "country-stats");
+  const ready = country_.state === "ready" ? country_.value : null;
+  const population = ready ? indicatorByRole(ready.stats, "population") : undefined;
+  const extra = ready ? (["density", "area"] as const).flatMap((role) => { const i = indicatorByRole(ready.stats, role); return i ? [{ code: i.code, title: i.name }] : []; }) : [];
+  const indicator = params.get("indicator") ?? population?.code ?? "";
+  const map = useAsync(() => (indicator ? mapOf(indicator, undefined, level) : new Promise<never>(() => {})), `map-${indicator}-${level}`);
+  const series = useAsync(async () => (ready && population ? seriesOf(population.code, ready.featureId) : new Promise<never>(() => {})), `series-${country_.state}-${population?.code}`);
   const go = (next: Record<string, string>) => {
     const q = new URLSearchParams({ indicator, kind: level, ...next });
     router.push(`/data/statistics?${q.toString()}`);
@@ -41,7 +46,7 @@ function Explorer() {
         {(s) => s ? (
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <Stat label="Population (latest)" value={short(s.points.at(-1)?.value)} hint={`${s.points.at(-1)?.period.slice(0, 4)} · ${n(s.points.at(-1)?.value)} people`} />
-            <Stat label="Counties" value="47" hint="Each with its own statistics page" />
+            <Stat label="Counties" value={ready ? String(ready.children) : "—"} hint="Each with its own statistics page" />
             <div className="glass card md:col-span-1"><p className="text-xs font-semibold uppercase tracking-wide text-content-muted">Population over time</p><LineChart points={s.points} label={`${country.name}'s population over time`} height={120} /></div>
           </div>
         ) : null}
@@ -50,8 +55,8 @@ function Explorer() {
         <div className="glass mb-4 flex flex-wrap items-center gap-3 rounded-3xl p-3">
           <label className="text-sm font-semibold" htmlFor="indicator">Measure</label>
           <select id="indicator" className="glass rounded-full bg-transparent px-4 py-2 text-sm" value={indicator} onChange={(e) => go({ indicator: e.target.value })}>
-            {EXTRA.map((e) => <option key={e.code} value={e.code}>{e.title}</option>)}
-            {list.state === "ready" ? list.value.metrics.filter((m) => m.domain === "statistics" && !EXTRA.some((e) => e.code === m.code)).map((m) => <option key={m.code} value={m.code}>{m.title}</option>) : null}
+            {[...(population ? [{ code: population.code, title: population.name }] : []), ...extra].map((e) => <option key={e.code} value={e.code}>{e.title}</option>)}
+            {list.state === "ready" ? list.value.metrics.filter((m) => m.domain === "statistics" && ![population?.code, ...extra.map((e) => e.code)].includes(m.code)).map((m) => <option key={m.code} value={m.code}>{m.title}</option>) : null}
           </select>
           <label className="ml-2 text-sm font-semibold" htmlFor="level">Level</label>
           <select id="level" className="glass rounded-full bg-transparent px-4 py-2 text-sm" value={level} onChange={(e) => go({ kind: e.target.value })}>

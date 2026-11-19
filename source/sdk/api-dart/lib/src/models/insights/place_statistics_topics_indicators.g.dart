@@ -17,6 +17,7 @@ InsightsPlaceStatisticsTopicsIndicators _$InsightsPlaceStatisticsTopicsIndicator
       previous: json['previous'] == null
           ? null
           : InsightsPlaceStatisticsTopicsIndicatorsPrevious.fromJson(json['previous'] as Map<String, dynamic>),
+      role: json['role'] as String?,
       series: (json['series'] as List<dynamic>)
           .map((e) => InsightsPlaceStatisticsTopicsIndicatorsSeries.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -31,6 +32,7 @@ Map<String, dynamic> _$InsightsPlaceStatisticsTopicsIndicatorsToJson(InsightsPla
   'measure': instance.measure,
   'name': instance.name,
   'previous': ?instance.previous,
+  'role': ?instance.role,
   'series': instance.series,
   'unit': instance.unit,
 };

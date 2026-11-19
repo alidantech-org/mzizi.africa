@@ -30,12 +30,14 @@ export const Indicators = statistics
     measureKindId: belongsTo(() => Value),
     /** True when a larger figure is the better outcome (ranking direction); empty when neither is better. */
     higherIsBetter: dryv.field(sharedProperties.Flag).maybe(),
+    /** Scheme sta.indicator.role: the part an indicator plays on the screens (population, density, area); empty for the rest. */
+    roleId: belongsTo(() => Value).maybe(),
     sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
   .description("One measured quantity, for example total population, registered voters or audit opinion score.")
   .role("entity")
-  .facets({ storage: dryv.storage("indicators").index("topicId").index("measureKindId").index("sourceCitationId") });
+  .facets({ storage: dryv.storage("indicators").index("topicId").index("measureKindId").index("roleId").index("sourceCitationId") });
 
 /*---------------- statistics.observations ----------------*/
 export const Observations = statistics

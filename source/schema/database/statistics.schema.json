@@ -40,6 +40,7 @@
           ,"higher_is_better"
           ,"measure_kind_code"
           ,"name"
+          ,"role_code"
           ,"source_citation_code"
           ,"topic_code"
           ,"unit_code"
@@ -106,6 +107,13 @@
           "maxLength": 300,
           "minLength": 1,
           "x-role": "data"
+        }
+        ,"role_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "role_code" }
         }
         ,"source_citation_id": {
           "type": ["string", "null"],

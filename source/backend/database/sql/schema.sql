@@ -3134,6 +3134,7 @@ CREATE TABLE "statistics"."indicators" (
     "id" uuid NOT NULL,
     "measure_kind_id" uuid NOT NULL,
     "name" varchar(300) NOT NULL,
+    "role_id" uuid,
     "source_citation_id" uuid,
     "topic_id" uuid NOT NULL,
     "unit_id" uuid,
@@ -6583,6 +6584,9 @@ ALTER TABLE "statistics"."indicators"
 ADD CONSTRAINT "fk_indicators_measure_kind_id" FOREIGN KEY ("measure_kind_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "statistics"."indicators"
+ADD CONSTRAINT "fk_indicators_role_id" FOREIGN KEY ("role_id") REFERENCES "reference"."values" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "statistics"."indicators"
 ADD CONSTRAINT "fk_indicators_source_citation_id" FOREIGN KEY ("source_citation_id") REFERENCES "source"."citations" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "statistics"."indicators"
@@ -6598,6 +6602,8 @@ WHERE
 CREATE INDEX "ix_indicators__topic_id" ON "statistics"."indicators" USING btree ("topic_id");
 
 CREATE INDEX "ix_indicators__measure_kind_id" ON "statistics"."indicators" USING btree ("measure_kind_id");
+
+CREATE INDEX "ix_indicators__role_id" ON "statistics"."indicators" USING btree ("role_id");
 
 CREATE INDEX "ix_indicators__source_citation_id" ON "statistics"."indicators" USING btree ("source_citation_id");
 

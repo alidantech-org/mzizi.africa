@@ -108,6 +108,8 @@ export interface Point {
 }
 export interface IndicatorView {
   code: string;
+  /** The part the indicator plays on the screens (`population`, `density`, `area`); screens ask for a role, never a code. */
+  role?: string | null;
   name: string;
   unit: string | null;
   measure: string;
@@ -596,6 +598,9 @@ export interface Leader {
 /* ---------------------------------------------------------------------------------------------- reads */
 export const search = (query: string, kinds?: string, limit = 30) => body<SearchResults>(globalSearch({ query: { query, ...opt({ kinds }), limit } }));
 export const browse = (featureId?: string) => body<Browse>(browsePlaces({ query: opt({ featureId }) }));
+/** The indicator that plays a role in a place's statistics (population, density, area). */
+export const indicatorByRole = (stats: { topics: { indicators: IndicatorView[] }[] }, role: string): IndicatorView | undefined =>
+  stats.topics.flatMap((t) => t.indicators).find((i) => i.role === role);
 export const statisticsOf = (featureId: string) => body<PlaceStatistics>(getPlaceStatistics({ params: { featureId } }));
 export const seriesOf = (indicatorCode: string, featureId: string) => body<Series>(getIndicatorSeries({ params: { indicatorCode }, query: { featureId } }));
 export const mapOf = (indicatorCode: string, parentFeatureId?: string, kindCode?: string) =>

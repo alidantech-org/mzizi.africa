@@ -7,7 +7,7 @@ import { AgeBars, BarList, Donut, LineChart, Sparkline } from "#/components/site
 import { Gaps, PageFrame, PlaceTabs, PlaceTrail, Section, Stat } from "#/components/site/ui/primitives.tsx";
 import { n, n1, pct, short } from "#/lib/site/format.ts";
 import { placeAt } from "#/lib/site/links.ts";
-import { mapOf, statisticsOf, type IndicatorView } from "#/lib/site/insights.ts";
+import { indicatorByRole, mapOf, statisticsOf, type IndicatorView } from "#/lib/site/insights.ts";
 
 function IndicatorCard({ i }: { i: IndicatorView }) {
   const good = i.change === null || i.higherIsBetter === null ? undefined : (i.change > 0) === i.higherIsBetter;
@@ -23,14 +23,17 @@ function IndicatorCard({ i }: { i: IndicatorView }) {
 }
 
 export default async function PlaceStatistics({ id }: { id: string }) {
-  const inside = await mapOf("sta.population.total", id).catch(() => null);
   return (
     <PageFrame>
-      <Loaded read={() => statisticsOf(id)}>
-        {(s) => {
-          const pop = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.total");
-          const density = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.density");
-          const area = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.area.km2");
+      <Loaded read={async () => {
+        const s = await statisticsOf(id);
+        const code = indicatorByRole(s, "population")?.code;
+        return { s, inside: code ? await mapOf(code, id).catch(() => null) : null };
+      }}>
+        {({ s, inside }) => {
+          const pop = indicatorByRole(s, "population");
+          const density = indicatorByRole(s, "density");
+          const area = indicatorByRole(s, "area");
           const b = s.breakdowns;
           return (
             <>
@@ -56,10 +59,10 @@ export default async function PlaceStatistics({ id }: { id: string }) {
                   {b.language ? <div className="glass card"><h3 className="mb-3 font-semibold">Languages spoken at home</h3><BarList items={b.language.slice(0, 7).map((x) => ({ label: x.label, value: x.value }))} unit="short" /></div> : null}
                 </div>
               </Section>
-              {s.topics.filter((t) => t.indicators.some((i) => !["sta.population.total", "sta.population.density", "sta.area.km2", "sta.population.language-speakers"].includes(i.code))).map((topic) => (
+              {s.topics.filter((t) => t.indicators.some((i) => !i.role)).map((topic) => (
                 <Section key={topic.code} title={topic.label} kicker="Indicators">
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {topic.indicators.filter((i) => !["sta.population.total", "sta.population.density", "sta.area.km2", "sta.population.language-speakers"].includes(i.code)).map((i) => <IndicatorCard key={i.code} i={i} />)}
+                    {topic.indicators.filter((i) => !i.role).map((i) => <IndicatorCard key={i.code} i={i} />)}
                   </div>
                 </Section>
               ))}

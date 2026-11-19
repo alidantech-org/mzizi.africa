@@ -16,6 +16,7 @@ class InsightsPlaceStatisticsTopicsIndicators {
     required this.measure,
     required this.name,
     this.previous,
+    this.role,
     required this.series,
     required this.unit,
   });
@@ -26,6 +27,7 @@ class InsightsPlaceStatisticsTopicsIndicators {
   final String measure;
   final String name;
   final InsightsPlaceStatisticsTopicsIndicatorsPrevious? previous;
+  final String? role;
   final List<InsightsPlaceStatisticsTopicsIndicatorsSeries> series;
   final String unit;
 

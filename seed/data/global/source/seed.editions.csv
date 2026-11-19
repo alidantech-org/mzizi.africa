@@ -2,7 +2,7 @@ code,product_code,designation,description
 seed.global.reference.countries~1834e703b30e,seed.global.reference.countries,1834e703b30e,authored CSV
 seed.global.reference.language-names~680c97962388,seed.global.reference.language-names,680c97962388,authored CSV
 seed.global.reference.languages~e2ba41f928ee,seed.global.reference.languages,e2ba41f928ee,authored CSV
-seed.global.reference.schemes~52f47a73de8b,seed.global.reference.schemes,52f47a73de8b,authored CSV
+seed.global.reference.schemes~c04b0dba57dc,seed.global.reference.schemes,c04b0dba57dc,authored CSV
 seed.global.reference.value-labels~66b40f4ffa28,seed.global.reference.value-labels,66b40f4ffa28,authored CSV
 seed.global.reference.values.civ-values~3bb6cb279776,seed.global.reference.values.civ-values,3bb6cb279776,authored CSV
 seed.global.reference.values.com-values~ff67771c4615,seed.global.reference.values.com-values,ff67771c4615,authored CSV
@@ -16,7 +16,7 @@ seed.global.reference.values.ofc-values~15032c147c3a,seed.global.reference.value
 seed.global.reference.values.pol-values~94b88c469e73,seed.global.reference.values.pol-values,94b88c469e73,authored CSV
 seed.global.reference.values.ref-values~50b270a96e6b,seed.global.reference.values.ref-values,50b270a96e6b,authored CSV
 seed.global.reference.values.src-values~7150a1180781,seed.global.reference.values.src-values,7150a1180781,authored CSV
-seed.global.reference.values.sta-values~dd090201d2dc,seed.global.reference.values.sta-values,dd090201d2dc,authored CSV
+seed.global.reference.values.sta-values~c7810ca1e517,seed.global.reference.values.sta-values,c7810ca1e517,authored CSV
 seed.global.source.addresses~4d6e5cc1d921,seed.global.source.addresses,4d6e5cc1d921,authored CSV
 seed.global.source.artifacts~fc02c9e9deeb,seed.global.source.artifacts,fc02c9e9deeb,authored CSV
 seed.global.source.domains~5b56074e87df,seed.global.source.domains,5b56074e87df,authored CSV

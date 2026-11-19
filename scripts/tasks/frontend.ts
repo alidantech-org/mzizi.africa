@@ -48,9 +48,10 @@ export function checkFrontend(): boolean {
   // Settled: no country, currency or colour literal may come back.
   if (literals.kenya > 0) failures.push(`${literals.kenya} country literal(s) in hand-written code`);
   if (literals.currency > 0) failures.push(`${literals.currency} currency literal(s) in hand-written code`);
+  if (literals.indicators > 0) failures.push(`${literals.indicators} indicator code(s) in hand-written code (ask for a role instead)`);
   if (literals.hex > 0) failures.push(`${literals.hex} hex colour(s) in hand-written code`);
-  for (const line of failures) if (line.includes("literal") || line.includes("hex")) console.error(`frontend: ${line}`);
-  console.log(`frontend: report: indicator codes in code ${literals.indicators}, client view files under app ${literals.clientViews} (both to reach zero; see MUST-FIX.md)`);
+  for (const line of failures) if (line.includes("literal") || line.includes("hex") || line.includes("indicator code")) console.error(`frontend: ${line}`);
+  console.log(`frontend: report: client view files under app ${literals.clientViews} (to reach zero; see MUST-FIX.md)`);
   if (failures.length === 0) console.log("frontend: ok");
   return failures.length === 0;
 }

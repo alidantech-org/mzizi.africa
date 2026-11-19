@@ -27,6 +27,7 @@ interface ObsRow {
   topic_label: string;
   unit: string | null;
   measure: string;
+  role: string | null;
   period: string;
   value: number;
   estimated: boolean | null;
@@ -39,13 +40,14 @@ export async function placeStatistics(db: DataSource, featureId: string) {
   if (chain.length === 0) throw new NotFoundException("No such place.");
   const place = chain[chain.length - 1]!;
   const rows: ObsRow[] = await db.query(
-    `select i.code, i.name, i.higher_is_better, t.code as topic_code, t.label as topic_label, u.symbol as unit, regexp_replace(mk.code, '^.*\\.', '') as measure,
+    `select i.code, i.name, i.higher_is_better, t.code as topic_code, t.label as topic_label, u.symbol as unit, regexp_replace(mk.code, '^.*\\.', '') as measure, regexp_replace(rl.code, '^.*\\.', '') as role,
        o.period_from::text as period, o.value::float8 as value, o.estimated
      from statistics.observations o
      join statistics.indicators i on i.id = o.indicator_id
      join reference.topics t on t.id = i.topic_id
      left join reference.units u on u.id = i.unit_id
      join reference.values mk on mk.id = i.measure_kind_id
+     left join reference.values rl on rl.id = i.role_id
      where o.feature_id = $1 and ${BASELINE} order by i.code, o.period_from`,
     [featureId],
   );
@@ -59,7 +61,7 @@ export async function placeStatistics(db: DataSource, featureId: string) {
     const previous = series.length > 1 ? series[series.length - 2]! : null;
     const topic = topics.get(row.topic_code) ?? { code: row.topic_code, label: row.topic_label, indicators: [] };
     topic.indicators.push({
-      code: indicatorShort(row.code), name: row.name, unit: row.unit, measure: row.measure, higherIsBetter: row.higher_is_better,
+      code: indicatorShort(row.code), name: row.name, unit: row.unit, measure: row.measure, role: row.role, higherIsBetter: row.higher_is_better,
       latest, previous, change: previous === null || previous.value === 0 ? null : (latest.value - previous.value) / previous.value, series,
     });
     topics.set(row.topic_code, topic);
@@ -71,7 +73,7 @@ export async function placeStatistics(db: DataSource, featureId: string) {
   }
   if (area !== null && population.length > 0) {
     addIndicator(
-      { ...population[0]!, code: DENSITY, name: "Population density", unit: "per km²", measure: "density", topic_code: "ref.top.topic.population", topic_label: "Population", higher_is_better: null },
+      { ...population[0]!, code: DENSITY, name: "Population density", unit: "per km²", measure: "density", role: "density", topic_code: "ref.top.topic.population", topic_label: "Population", higher_is_better: null },
       population.map((r) => ({ period: r.period, value: r.value / area, estimated: true })),
     );
   }

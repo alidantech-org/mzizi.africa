@@ -59,6 +59,12 @@ export const placeStatisticsTopicsIndicatorsExample: ContractExample = contractE
       },
     },
     {
+      name: "role",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string" },
+    },
+    {
       name: "series",
       optional: false,
       nullable: false,

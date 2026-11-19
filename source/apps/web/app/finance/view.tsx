@@ -12,9 +12,17 @@ import { Icon } from "#/components/brand/icon.tsx";
 import { ProjectsMapLazy } from "#/components/site/map/projects-map-lazy.tsx";
 import { ProjectCard } from "#/components/site/project-card.tsx";
 import { Gaps } from "#/components/site/ui/primitives.tsx";
-import { boardOf, nearbyOf, type NearbyProject } from "#/lib/site/insights.ts";
+import { boardOf, metrics, nearbyOf, type NearbyProject } from "#/lib/site/insights.ts";
 import { useEffect, useState } from "react";
 import { useAsync } from "#/lib/site/use-async.ts";
+
+/** The first rankings of the delivery and finance domains, as the API lists them. */
+function Highlights() {
+  const list = useAsync(() => metrics(), "highlight-metrics");
+  if (list.state !== "ready") return null;
+  const shown = list.value.metrics.filter((m) => m.domain === "civic" || m.domain === "finance").slice(0, 3);
+  return <>{shown.map((m) => <Mini key={m.code} metric={m.code} title={m.title} kind="constituency" />)}</>;
+}
 
 function Mini({ metric, title, kind }: { metric: string; title: string; kind: string }) {
   const loaded = useAsync(() => boardOf(metric, kind, undefined, 8), `civic-${metric}`);
@@ -96,9 +104,7 @@ export default function CivicRoute() {
       <p className="mt-4"><Link className="btn btn-primary" href="/places"><T>Find your area →</T></Link> <Link className="btn btn-ghost ml-2" href="/procurement/tenders"><T>See tenders</T></Link></p>
       <Section kicker="Highlights" title="Who delivers the most">
         <div className="grid gap-4 lg:grid-cols-3">
-          <Mini metric="civ.projects.per-100k" title="Projects per 100,000 people" kind="constituency" />
-          <Mini metric="fin.ngcdf.project-share" title="Fund that reaches projects" kind="constituency" />
-          <Mini metric="civ.projects.completion-rate" title="Projects completed" kind="constituency" />
+          <Highlights />
         </div>
       </Section>
       <NearYou />
