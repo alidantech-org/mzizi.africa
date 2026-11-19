@@ -2,7 +2,7 @@
 
 /**
  * The "round table": every member of a body as a dot on concentric arcs facing the speaker. Colour says how they voted
- * (yes, no, abstained, absent); members are ordered by party so blocs sit together. Hover or focus a dot for the member.
+ * (yes, no, abstained, absent); members are ordered by party so blocs sit together. Click a dot for the member.
  */
 import Link from "next/link";
 import { useState } from "react";
@@ -39,13 +39,15 @@ export function Hemicycle({ members, selectedParty }: { members: readonly Motion
           const seat = seats[i]!;
           const dim = selectedParty && m.party !== selectedParty;
           return (
-            <circle key={m.holderId} className="dot" cx={seat.x} cy={seat.y} r={size} fill={COLOUR[m.position]} opacity={dim ? 0.18 : 1} tabIndex={0}
-              onMouseEnter={() => setActive(m)} onFocus={() => setActive(m)}>
+            <circle key={m.holderId} className="dot cursor-pointer" cx={seat.x} cy={seat.y} r={size} fill={COLOUR[m.position]} opacity={dim ? 0.18 : 1} tabIndex={0} role="button"
+              aria-pressed={active?.holderId === m.holderId} stroke={active?.holderId === m.holderId ? "var(--content-default, currentColor)" : "none"} strokeWidth={2}
+              onClick={() => setActive(active?.holderId === m.holderId ? null : m)}
+              onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActive(active?.holderId === m.holderId ? null : m); } }}>
               <title>{`${m.name} (${m.party ?? "no party"}): ${LABEL[m.position]}`}</title>
             </circle>
           );
         })}
-        <text x="280" y="299" textAnchor="middle" fontSize="13" fill="var(--content-muted)">{active ? `${active.name} · ${active.party ?? "no party"} · ${LABEL[active.position]}` : "Hover a dot"}</text>
+        <text x="280" y="299" textAnchor="middle" fontSize="13" fill="var(--content-muted)">{active ? `${active.name} · ${active.party ?? "no party"} · ${LABEL[active.position]}` : "Select a dot"}</text>
       </svg>
       <ul className="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1 text-xs">
         {Object.entries(LABEL).map(([key, label]) => (
