@@ -2,6 +2,7 @@
 
 /** One institution connects responsibility, relationships, current holders, explanatory content and legal effects. */
 import Link from "next/link";
+import { leaderAt } from "#/lib/site/links.ts";
 import { useParams } from "next/navigation";
 import { AsyncView } from "#/components/site/async-view.tsx";
 import {
@@ -114,7 +115,7 @@ export default function InstitutionRoute() {
                   <li className="py-4" key={l.holderId}>
                     <Link
                       className="flex items-center gap-3"
-                      href={`/leaders/${l.holderId}`}
+                      href={leaderAt(l)}
                     >
                       <Avatar src={l.photo} name={l.name} size={48} />
                       <span>

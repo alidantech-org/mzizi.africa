@@ -17,7 +17,6 @@ import 'package:mzizi_api/src/models/insights/election_list.dart';
 import 'package:mzizi_api/src/models/insights/gov_tree_input.dart';
 import 'package:mzizi_api/src/models/insights/governance_tabs.dart';
 import 'package:mzizi_api/src/models/insights/governance_tree.dart';
-import 'package:mzizi_api/src/models/insights/id_input.dart';
 import 'package:mzizi_api/src/models/insights/indicator_map.dart';
 import 'package:mzizi_api/src/models/insights/indicator_series.dart';
 import 'package:mzizi_api/src/models/insights/institution_detail.dart';
@@ -216,13 +215,13 @@ class InsightsFeature {
     );
   }
 
-  /// A leader: offices, contacts, media, voting and attendance record, the fund they oversee and evidence.
+  /// A leader, by the person's slug: offices, contacts, media, voting and attendance record, the fund they oversee and evidence.
   ///
-  /// GET /v1/leaders/{id}
-  Future<ApiResult<InsightsLeaderProfile>> getLeaderProfile({required String id, ApiGetRequestOptions? options}) {
+  /// GET /v1/leaders/{code}
+  Future<ApiResult<InsightsLeaderProfile>> getLeaderProfile({required String code, ApiGetRequestOptions? options}) {
     return _connection.execute(
       GetRequest<InsightsLeaderProfile>(
-        endpoint: _routes.getLeaderProfile(id: id),
+        endpoint: _routes.getLeaderProfile(code: code),
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getLeaderProfile'),
         fromJson: (json) => InsightsLeaderProfile.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),

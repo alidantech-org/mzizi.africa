@@ -12,7 +12,19 @@ interface HolderRow {
   institution: string | null; took_office_on: string | null; birth_date: string | null; entity_id: string | null;
 }
 
-export async function leaderProfile(db: DataSource, holderId: string) {
+/** A leader is addressed by the person's slug (`william-ruto`); the identity of a holding is still accepted. */
+async function holderOf(db: DataSource, idOrSlug: string): Promise<string> {
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrSlug)) return idOrSlug;
+  const rows: { id: string }[] = await db.query(
+    `select h.id from source.slugs s join governance.holders h on h.individual_id = s.subject_id
+      where s.subject_table = 'official.individuals' and s.slug = $1 and s.to_year is null and h.deleted_at is null
+      order by (h.left_office_on is null) desc, h.took_office_on desc nulls last limit 1`, [idOrSlug]);
+  if (!rows[0]) throw new NotFoundException("No such leader.");
+  return rows[0].id;
+}
+
+export async function leaderProfile(db: DataSource, idOrSlug: string) {
+  const holderId = await holderOf(db, idOrSlug);
   const rows: HolderRow[] = await db.query(
     `select h.id, h.individual_id, h.office_id, ${personName("h.individual_id")} as name, ${partyOf("h.individual_id")} as party,
        (select k.label from reference.values k where k.id = o.office_kind_id) as office, o.unit_feature_id as unit_id, ${featureName("o.unit_feature_id", "'en'")} as unit,

@@ -2,6 +2,7 @@
 
 /** A connected, collapsible graph built exclusively from API nodes, edges, categories and scope labels. */
 import Link from "next/link";
+import { leaderAt } from "#/lib/site/links.ts";
 import { useEffect, useRef, useState } from "react";
 import { AsyncView } from "#/components/site/async-view.tsx";
 import {
@@ -422,7 +423,7 @@ export function GovernanceGraph({ document }: { document: GovernanceTree }) {
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 <Link
-                  href={`/leaders/${selected.holderId}`}
+                  href={leaderAt(selected)}
                   className="btn btn-primary"
                 >
                   Open leader record →

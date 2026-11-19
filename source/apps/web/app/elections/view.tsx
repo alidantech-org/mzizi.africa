@@ -3,7 +3,7 @@
 /** Route `/elections/<id>`: one election as a heat map and a table. Choose the contest and drill into a region. */
 import Link from "next/link";
 import { placeAt } from "#/lib/site/links.ts";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -12,25 +12,25 @@ import { ChoroplethLazy } from "#/components/site/map/choropleth-lazy.tsx";
 import { BarList, Stacked, paletteAt } from "#/components/site/ui/charts.tsx";
 import { Breadcrumbs, Gaps, PageFrame, Section } from "#/components/site/ui/primitives.tsx";
 import { date, n, pct, short, words } from "#/lib/site/format.ts";
+import { placeIdOfPath } from "#/app/actions.ts";
 import { categoryFill, rampFill } from "#/lib/site/ramp.ts";
 import { browse, electionOf, type ElectionUnit } from "#/lib/site/insights.ts";
 import { useAsync } from "#/lib/site/use-async.ts";
 
 type Lens = "winner" | "turnout" | "margin";
 
-function Detail() {
-  const { id } = useParams<{ id: string }>();
+function Detail({ id, base }: { id: string; base: string }) {
   const q = useSearchParams();
   const router = useRouter();
   const contest = q.get("contest") ?? undefined;
   const parent = q.get("parent") ?? undefined;
   const [lens, setLens] = useState<Lens>("winner");
-  const loaded = useAsync(() => electionOf(id, parent, contest), `election-${id}-${contest}-${parent}`);
-  const crumb = useAsync(() => (parent ? browse(parent) : Promise.resolve(null)), `crumb-${parent}`);
+  const loaded = useAsync(async () => electionOf(id, parent ? ((await placeIdOfPath(parent)) ?? undefined) : undefined, contest), `election-${id}-${contest}-${parent}`);
+  const crumb = useAsync(async () => { const parentId = parent ? await placeIdOfPath(parent) : null; return parentId ? browse(parentId) : null; }, `crumb-${parent}`);
   const go = (next: Record<string, string | undefined>) => {
     const params = new URLSearchParams();
     for (const [k, v] of Object.entries({ contest, parent, ...next })) if (v) params.set(k, v);
-    router.push(`/elections/${id}${params.size ? `?${params}` : ""}`);
+    router.push(`${base}${params.size ? `?${params}` : ""}`);
   };
   return (
     <PageFrame wide>
@@ -83,7 +83,7 @@ function Body({ d, lens, setLens, go, parentName }: { d: Awaited<ReturnType<type
                 <BarList items={selected.candidates.slice(0, 6).map((c) => ({ label: `${c.name} (${c.party ?? "ind."})`, value: c.share, note: n(c.votes) }))} unit="pct" />
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link className="btn btn-primary" href={placeAt(selected.path, "elections")}>This place's history</Link>
-                  {kind === "presidential" || kind === "governor" ? <button className="btn btn-ghost" onClick={() => go({ contest: "member-of-parliament", parent: selected.featureId })}>Constituencies inside</button> : null}
+                  {kind === "presidential" || kind === "governor" ? <button className="btn btn-ghost" onClick={() => go({ contest: "member-of-parliament", parent: selected.path ?? undefined })}>Constituencies inside</button> : null}
                 </div>
               </>
             ) : (
@@ -112,6 +112,6 @@ function Body({ d, lens, setLens, go, parentName }: { d: Awaited<ReturnType<type
   );
 }
 
-export default function ElectionDetailRoute() {
-  return <Suspense><Detail /></Suspense>;
+export default function ElectionDetailRoute({ id, base }: { id: string; base: string }) {
+  return <Suspense><Detail id={id} base={base} /></Suspense>;
 }

@@ -5,6 +5,7 @@ import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList, LineChart, Stacked } from "#/components/site/ui/charts.tsx";
 import { Gaps, PageFrame, PlaceTabs, PlaceTrail, Section, Stat } from "#/components/site/ui/primitives.tsx";
 import { date, n, pct, words } from "#/lib/site/format.ts";
+import { electionAt } from "#/lib/site/links.ts";
 import { placeElections } from "#/lib/site/insights.ts";
 
 export default async function PlaceElections({ id }: { id: string }) {
@@ -30,7 +31,7 @@ export default async function PlaceElections({ id }: { id: string }) {
                 </Section>
               ) : null}
               {d.elections.map((e) => (
-                <Section key={e.electionId} kicker={date(e.heldOn)} title={`${e.year} general election`} action={<Link className="btn btn-ghost" href={`/elections/${e.electionId}`}>Whole-country results</Link>}>
+                <Section key={e.electionId} kicker={date(e.heldOn)} title={`${e.year} general election`} action={<Link className="btn btn-ghost" href={electionAt(e)}>Whole-country results</Link>}>
                   <div className="grid gap-4 lg:grid-cols-2">
                     {e.contests.map((c) => (
                       <div key={c.kind} className="glass card">

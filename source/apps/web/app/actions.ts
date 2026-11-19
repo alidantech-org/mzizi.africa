@@ -33,3 +33,9 @@ export async function placeAtPosition(latitude: number, longitude: number, langu
   const context = await getContext({ query: { featureId, languageCode } });
   return context.success ? (context.body?.place?.path ?? null) : null;
 }
+
+/** The identity of the place at a clean address (`nairobi/westlands`), for views that still read by identity. */
+export async function placeIdOfPath(path: string): Promise<string | null> {
+  const context = await getContext({ query: { path } });
+  return context.success ? (context.body?.place?.featureId ?? null) : null;
+}

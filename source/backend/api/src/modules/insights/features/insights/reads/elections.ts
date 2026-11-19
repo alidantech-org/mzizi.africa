@@ -95,8 +95,8 @@ export async function placeElections(db: DataSource, featureId: string) {
   const chain = await crumbs(db, featureId);
   if (chain.length === 0) throw new NotFoundException("No such place.");
   const place = chain[chain.length - 1]!;
-  const rows: (ResultRow & { held_on: string; election_code: string; election_id: string })[] = await db.query(
-    `select e.id as election_id, e.code as election_code, e.held_on::text, c.code as contest_code, ca.code as candidate_code, ca.individual_id, r.votes::float8 as votes,
+  const rows: (ResultRow & { held_on: string; election_code: string; election_id: string; election_kind: string })[] = await db.query(
+    `select e.id as election_id, e.code as election_code, e.held_on::text, (select regexp_replace(k.code, '^.*\\.', '') from reference.values k where k.id = e.election_kind_id) as election_kind, c.code as contest_code, ca.code as candidate_code, ca.individual_id, r.votes::float8 as votes,
        ${personName("ca.individual_id")} as candidate,
        (select n.name from official.names n join politics.parties pt on pt.entity_id = n.entity_id where pt.id = ca.party_id_at_election limit 1) as party,
        (select pt.code from politics.parties pt where pt.id = ca.party_id_at_election) as party_code,
@@ -110,7 +110,7 @@ export async function placeElections(db: DataSource, featureId: string) {
     const byContest = new Map<string, typeof rows>();
     for (const r of list) byContest.set(r.contest_code, [...(byContest.get(r.contest_code) ?? []), r]);
     return {
-      electionId: list[0]!.election_id, year: year(list[0]!.election_code), heldOn: list[0]!.held_on,
+      electionId: list[0]!.election_id, kind: list[0]!.election_kind, year: year(list[0]!.election_code), heldOn: list[0]!.held_on,
       contests: [...byContest.values()].map((cs) => {
         const total = cs.reduce((a, r) => a + r.votes, 0);
         const first = cs[0]!;

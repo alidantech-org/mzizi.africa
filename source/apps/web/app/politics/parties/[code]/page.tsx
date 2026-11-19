@@ -1,6 +1,7 @@
 /** Route `/politics/parties/<code>`: a party's members, its votes by election and the fund money it received. */
 import Link from "next/link";
 
+import { leaderAt } from "#/lib/site/links.ts";
 import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList } from "#/components/site/ui/charts.tsx";
 import { Gallery } from "#/components/site/ui/media.tsx";
@@ -36,7 +37,7 @@ export default async function PartyRoute({ params }: { params: Promise<{ code: s
               <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {d.members.map((m) => (
                   <li key={m.individualId}>
-                    {m.holderId ? <Link href={`/leaders/${m.holderId}`} className="glass card card-lift block !py-3"><span className="block font-semibold">{m.name}</span><span className="text-xs text-content-muted">{m.office ?? "Member"}{m.unit ? ` · ${m.unit}` : ""}</span></Link>
+                    {m.holderId ? <Link href={leaderAt(m)} className="glass card card-lift block !py-3"><span className="block font-semibold">{m.name}</span><span className="text-xs text-content-muted">{m.office ?? "Member"}{m.unit ? ` · ${m.unit}` : ""}</span></Link>
                       : <span className="glass card block !py-3"><span className="block font-semibold">{m.name}</span><span className="text-xs text-content-muted">Member</span></span>}
                   </li>
                 ))}

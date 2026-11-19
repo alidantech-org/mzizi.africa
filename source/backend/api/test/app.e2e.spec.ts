@@ -99,13 +99,7 @@ const routes: Array<[method: string, path: string]> = [
     ),
   ],
   ["GET", "/v1/institutions/{code}".replace("{code}", encodeURIComponent(String("value")))],
-  [
-    "GET",
-    "/v1/leaders/{id}".replace(
-      "{id}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
+  ["GET", "/v1/leaders/{code}".replace("{code}", encodeURIComponent(String("value")))],
   ["GET", "/v1/leaders/tree"],
   [
     "GET",

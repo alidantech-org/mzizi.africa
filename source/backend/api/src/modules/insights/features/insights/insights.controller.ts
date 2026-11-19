@@ -200,10 +200,10 @@ export class InsightsInsightsController {
     return this.service.getInstitution({ code });
   }
 
-  @Get("/v1/leaders/:id")
+  @Get("/v1/leaders/:code")
   @HttpCode(200)
-  getLeaderProfile(@Param("id") id: string): Promise<LeaderProfileDto> {
-    return this.service.getLeaderProfile({ id });
+  getLeaderProfile(@Param("code") code: string): Promise<LeaderProfileDto> {
+    return this.service.getLeaderProfile({ code });
   }
 
   @Get("/v1/leaderboards/:metricCode")

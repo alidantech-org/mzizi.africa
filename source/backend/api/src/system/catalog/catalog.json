@@ -292,11 +292,11 @@
       "group": "insights",
       "feature": "insights",
       "method": "GET",
-      "path": "/v1/leaders/{id}",
+      "path": "/v1/leaders/{code}",
       "role": "detail",
-      "inputs": ["id"],
+      "inputs": ["code"],
       "output": "LeaderProfile",
-      "summary": "A leader: offices, contacts, media, voting and attendance record, the fund they oversee and evidence."
+      "summary": "A leader, by the person\u0027s slug: offices, contacts, media, voting and attendance record, the fund they oversee and evidence."
     },
     {
       "name": "GetLeaderTree",

@@ -7,6 +7,7 @@ import { Loaded } from "#/components/site/loaded.tsx";
 import { Stacked } from "#/components/site/ui/charts.tsx";
 import { Breadcrumbs, Gaps, PageFrame } from "#/components/site/ui/primitives.tsx";
 import { date, n, pct } from "#/lib/site/format.ts";
+import { electionAt } from "#/lib/site/links.ts";
 import { elections } from "#/lib/site/insights.ts";
 
 export default function ElectionsRoute() {
@@ -23,7 +24,7 @@ export default function ElectionsRoute() {
             <ol className="mt-8 grid gap-5 lg:grid-cols-3">
               {list.map((e, index) => (
                 <li key={e.electionId}>
-                  <Link href={`/elections/${e.electionId}`} className="glass card card-lift block h-full" style={{ animationDelay: `${index * 80}ms` }}>
+                  <Link href={electionAt(e)} className="glass card card-lift block h-full" style={{ animationDelay: `${index * 80}ms` }}>
                     <p className="kicker">{date(e.heldOn)}</p>
                     <h2 className="font-display text-3xl">{e.year} general election</h2>
                     <p className="mt-3 text-sm text-content-muted">Registered voters</p>

@@ -9,6 +9,17 @@ import { Observable, from, switchMap } from "rxjs";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+function collectHolders(value: unknown, into: Record<string, unknown>[], depth = 0): void {
+  if (depth > 12 || value === null || typeof value !== "object") return;
+  if (Array.isArray(value)) {
+    for (const item of value) collectHolders(item, into, depth + 1);
+    return;
+  }
+  const record = value as Record<string, unknown>;
+  if ((typeof record.holderId === "string" && UUID.test(record.holderId) && record.leaderSlug === undefined) || (typeof record.subjectId === "string" && UUID.test(record.subjectId) && record.leaderSlug === undefined)) into.push(record);
+  for (const child of Object.values(record)) collectHolders(child, into, depth + 1);
+}
+
 function collect(value: unknown, into: Record<string, unknown>[], depth = 0): void {
   if (depth > 12 || value === null || typeof value !== "object") return;
   if (Array.isArray(value)) {
@@ -29,7 +40,27 @@ export class PlacePathsInterceptor implements NestInterceptor {
     return next.handle().pipe(switchMap((body) => from(this.enrich(body))));
   }
 
+  /** Gives every holding in a response the slug of its person, so clients address leaders as `/leaders/<slug>`. */
+  private async enrichLeaders(body: unknown): Promise<void> {
+    const records: Record<string, unknown>[] = [];
+    collectHolders(body, records);
+    if (records.length === 0) return;
+    const idOf = (r: Record<string, unknown>): string => (typeof r.holderId === "string" ? r.holderId : (r.subjectId as string));
+    const ids = [...new Set(records.map(idOf))];
+    const rows: { id: string; slug: string }[] = await this.db.query(
+      `select h.id, s.slug from governance.holders h join source.slugs s on s.subject_table = 'official.individuals' and s.subject_id = h.individual_id and s.to_year is null
+        where h.id = any($1::uuid[])`,
+      [ids],
+    );
+    const byId = new Map(rows.map((r) => [r.id, r.slug]));
+    for (const record of records) {
+      const slug = byId.get(idOf(record));
+      if (slug !== undefined) record.leaderSlug = slug;
+    }
+  }
+
   private async enrich(body: unknown): Promise<unknown> {
+    await this.enrichLeaders(body);
     const records: Record<string, unknown>[] = [];
     collect(body, records);
     if (records.length === 0) return body;

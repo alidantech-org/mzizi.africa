@@ -77,6 +77,7 @@ export interface ContentLibrary {
 }
 export interface InstitutionLeader {
   holderId: string;
+  leaderSlug?: string | null;
   name: string;
   party: string | null;
   tier: Label;
@@ -150,6 +151,7 @@ export interface BodyNode extends NodeBase {
 export interface LeaderNode extends NodeBase {
   type: "leader";
   holderId: string;
+  leaderSlug?: string | null;
   party: string | null;
   photo: string | null;
   since: string | null;

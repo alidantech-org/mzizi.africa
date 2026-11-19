@@ -33,8 +33,8 @@ class InsightsEndpoints {
   /// GET /v1/institutions/{code}
   String getInstitution({required String code}) => '/v1/institutions/$code';
 
-  /// GET /v1/leaders/{id}
-  String getLeaderProfile({required String id}) => '/v1/leaders/$id';
+  /// GET /v1/leaders/{code}
+  String getLeaderProfile({required String code}) => '/v1/leaders/$code';
 
   /// GET /v1/leaders/tree
   String get getLeaderTree => '/v1/leaders/tree';

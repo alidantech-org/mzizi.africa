@@ -5,6 +5,7 @@
  * (yes, no, abstained, absent); members are ordered by party so blocs sit together. Click a dot for the member.
  */
 import Link from "next/link";
+import { leaderAt } from "#/lib/site/links.ts";
 import { useState } from "react";
 
 import type { MotionMember } from "#/lib/site/insights.ts";
@@ -54,7 +55,7 @@ export function Hemicycle({ members, selectedParty }: { members: readonly Motion
           <li key={key} className="flex items-center gap-1.5"><i className="inline-block h-3 w-3 rounded-full" style={{ background: COLOUR[key] }} />{label}</li>
         ))}
       </ul>
-      <p className="mt-2 min-h-6 text-center text-sm">{active ? <Link className="underline" href={`/leaders/${active.holderId}`}>Open {active.name}</Link> : null}</p>
+      <p className="mt-2 min-h-6 text-center text-sm">{active ? <Link className="underline" href={leaderAt(active)}>Open {active.name}</Link> : null}</p>
     </div>
   );
 }

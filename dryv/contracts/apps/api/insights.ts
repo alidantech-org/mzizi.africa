@@ -515,11 +515,11 @@ export const insightOperations = reads.operations({
   GetLeaderProfile: dryv
     .operation()
     .role("detail")
-    .description("A leader: offices, contacts, media, voting and attendance record, the fund they oversee and evidence.")
-    .input(inputs.IdInput)
+    .description("A leader, by the person's slug: offices, contacts, media, voting and attendance record, the fund they oversee and evidence.")
+    .input(inputs.CodeInput)
     .output(documents.LeaderProfile)
     .facets(({ inputField, output }) => ({
-      http: dryv.http("GET", "/v1/leaders/{id}").input(inputField("id"), dryv.path()).output(output),
+      http: dryv.http("GET", "/v1/leaders/{code}").input(inputField("code"), dryv.path()).output(output),
     })),
 
   GetPlaceCivic: dryv

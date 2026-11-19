@@ -25,8 +25,8 @@ export const insightsRoutes = {
     `/v1/statistics/indicators/${params.indicatorCode}/series`,
   /** GET /v1/institutions/{code} */
   getInstitution: (params: { code: string }) => `/v1/institutions/${params.code}`,
-  /** GET /v1/leaders/{id} */
-  getLeaderProfile: (params: { id: string }) => `/v1/leaders/${params.id}`,
+  /** GET /v1/leaders/{code} */
+  getLeaderProfile: (params: { code: string }) => `/v1/leaders/${params.code}`,
   /** GET /v1/leaders/tree */
   getLeaderTree: "/v1/leaders/tree",
   /** GET /v1/leaderboards/{metricCode} */

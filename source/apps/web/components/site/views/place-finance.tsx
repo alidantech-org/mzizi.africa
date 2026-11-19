@@ -2,6 +2,7 @@
 
 /** A place's money (`/<place>/finance`): a place's fund and spending by year and class, its projects on a map, infrastructure coverage and leadership. */
 import Link from "next/link";
+import { leaderAt } from "#/lib/site/links.ts";
 import { useState } from "react";
 
 import { AsyncView } from "#/components/site/async-view.tsx";
@@ -65,7 +66,7 @@ export default function PlaceFinance({ id }: { id: string }) {
               {d.leadership.length > 0 ? (
                 <Section kicker="Responsible" title="Leadership here">
                   <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">{d.leadership.slice(0, 9).map((o) => (
-                    <li key={o.holderId} className="min-w-0"><Link href={`/leaders/${o.holderId}`} className="glass card card-lift flex min-w-0 items-center gap-3 !py-3"><Avatar name={o.personName} size={44} /><span className="min-w-0"><span className="block truncate font-semibold">{o.personName}</span><span className="block truncate text-xs text-content-muted">{o.officeTitle}{o.partyName ? ` · ${o.partyName}` : ""}</span></span></Link></li>
+                    <li key={o.holderId} className="min-w-0"><Link href={leaderAt(o)} className="glass card card-lift flex min-w-0 items-center gap-3 !py-3"><Avatar name={o.personName} size={44} /><span className="min-w-0"><span className="block truncate font-semibold">{o.personName}</span><span className="block truncate text-xs text-content-muted">{o.officeTitle}{o.partyName ? ` · ${o.partyName}` : ""}</span></span></Link></li>
                   ))}</ul>
                 </Section>
               ) : null}

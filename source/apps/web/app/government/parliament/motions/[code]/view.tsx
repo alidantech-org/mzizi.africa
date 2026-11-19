@@ -2,6 +2,7 @@
 
 /** Route `/government/parliament/motions/<code>`: one decision with a round-table of every member's vote, the party blocs and the law or budget it concerns. */
 import Link from "next/link";
+import { leaderAt } from "#/lib/site/links.ts";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
@@ -65,7 +66,7 @@ export default function MotionRoute() {
             <Section kicker="Members" title="Every vote">
               <div className="glass card max-h-[32rem] overflow-auto">
                 <table className="table-clean"><thead><tr><th>Member</th><th>Party</th><th>Seat</th><th>Vote</th></tr></thead>
-                  <tbody>{d.members.map((m) => <tr key={m.holderId}><td><Link className="underline-offset-2 hover:underline" href={`/leaders/${m.holderId}`}>{m.name}</Link></td><td>{m.party ?? "—"}</td><td className="text-content-muted">{m.unit ?? m.office}</td><td><Pill tone={m.position === "yes" ? "good" : m.position === "no" ? "bad" : m.position === "abstain" ? "warn" : "plain"}>{words(m.position)}</Pill></td></tr>)}</tbody></table>
+                  <tbody>{d.members.map((m) => <tr key={m.holderId}><td><Link className="underline-offset-2 hover:underline" href={leaderAt(m)}>{m.name}</Link></td><td>{m.party ?? "—"}</td><td className="text-content-muted">{m.unit ?? m.office}</td><td><Pill tone={m.position === "yes" ? "good" : m.position === "no" ? "bad" : m.position === "abstain" ? "warn" : "plain"}>{words(m.position)}</Pill></td></tr>)}</tbody></table>
               </div>
             </Section>
             <Gaps items={d.gaps} topic={d.motion.title} />

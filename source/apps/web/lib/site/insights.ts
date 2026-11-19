@@ -195,6 +195,7 @@ export interface BoardRow {
   featureId: string | null;
   path?: string | null;
   subjectId: string | null;
+  leaderSlug?: string | null;
   name: string;
   detail: string | null;
   value: number;
@@ -266,6 +267,7 @@ export interface PlaceElections {
   place: Crumb;
   elections: {
     electionId: string;
+    kind: string;
     year: number;
     heldOn: string;
     contests: {
@@ -301,6 +303,7 @@ export interface PartyDetail {
   };
   members: {
     holderId: string | null;
+    leaderSlug?: string | null;
     individualId: string;
     name: string;
     office: string | null;
@@ -335,6 +338,7 @@ export interface MotionRow {
 }
 export interface MotionMember {
   holderId: string;
+  leaderSlug?: string | null;
   individualId: string;
   name: string;
   party: string | null;
@@ -392,6 +396,7 @@ export interface MotionDetail {
 
 export interface Official {
   holderId: string;
+  leaderSlug?: string | null;
   officeCode: string;
   officeTitle: string;
   unitFeatureId: string | null;
@@ -511,6 +516,7 @@ export interface TenderList {
 export interface Leader {
   leader: {
     holderId: string;
+    leaderSlug?: string | null;
     individualId: string;
     name: string;
     party: string | null;
@@ -524,6 +530,7 @@ export interface Leader {
   };
   offices: {
     holderId: string;
+    leaderSlug?: string | null;
     office: string;
     unit: string | null;
     tookOfficeOn: string | null;
@@ -605,7 +612,7 @@ export const motions = (institutionId?: string) => body<{ motions: MotionRow[] }
 export interface LawInstrument { code: string; name: string; kindCode: string; kindLabel: string; enactedOn: string | null; provisions: number }
 export const law = (kindCode?: string) => body<{ instruments: LawInstrument[]; gaps: string[] }>(listLaw({ query: opt({ kindCode }) }));
 export const motionOf = (code: string) => body<MotionDetail>(getMotion({ params: { code } }));
-export const leaderOf = (id: string) => body<Leader>(getLeaderProfile({ params: { id } }));
+export const leaderOf = (id: string) => body<Leader>(getLeaderProfile({ params: { code: id } }));
 export const civicOf = (featureId: string) => body<PlaceCivic>(getPlaceCivic({ params: { featureId } }));
 export const projectOf = (code: string) => body<ProjectDetail>(getProject({ params: { code } }));
 export const tenders = (status?: string, featureId?: string) => body<TenderList>(listTenders({ query: { ...opt({ status, featureId }), limit: 80 } }));
@@ -625,6 +632,7 @@ export interface NearbyProject extends Omit<
 
 export interface TreeLeader {
   holderId: string;
+  leaderSlug?: string | null;
   name: string;
   party: string | null;
   office: string;

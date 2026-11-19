@@ -21,7 +21,6 @@ import { electionListExample } from "@test/modules/insights/schema/dto/examples/
 import { govTreeInputExample } from "@test/modules/insights/schema/dto/examples/gov-tree-input.dto.example.ts";
 import { governanceTabsExample } from "@test/modules/insights/schema/dto/examples/governance-tabs.dto.example.ts";
 import { governanceTreeExample } from "@test/modules/insights/schema/dto/examples/governance-tree.dto.example.ts";
-import { idInputExample } from "@test/modules/insights/schema/dto/examples/id-input.dto.example.ts";
 import { indicatorMapExample } from "@test/modules/insights/schema/dto/examples/indicator-map.dto.example.ts";
 import { indicatorSeriesExample } from "@test/modules/insights/schema/dto/examples/indicator-series.dto.example.ts";
 import { institutionDetailExample } from "@test/modules/insights/schema/dto/examples/institution-detail.dto.example.ts";
@@ -388,24 +387,22 @@ describe("GET /v1/institutions/{code} (getInstitution)", () => {
   });
 });
 
-describe("GET /v1/leaders/{id} (getLeaderProfile)", () => {
+describe("GET /v1/leaders/{code} (getLeaderProfile)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
-      params: { id: "7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11" },
+      params: { code: "value" },
       query: {},
       headers: {},
     };
     const result = leaderProfileExample.valid();
     service.getLeaderProfile.mockResolvedValue(result);
 
-    const response = await send("GET", "/v1/leaders/{id}", sent);
+    const response = await send("GET", "/v1/leaders/{code}", sent);
 
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getLeaderProfile).toHaveBeenCalledTimes(1);
     expect(service.getLeaderProfile).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
-      }),
+      expect.objectContaining({ code: String("value") }),
     );
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });

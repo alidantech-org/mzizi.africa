@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { leaderAt } from "#/lib/site/links.ts";
 import { Avatar } from "#/components/site/ui/media.tsx";
 import { LikeLeader } from "#/components/site/save-buttons.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
@@ -17,7 +18,7 @@ export function OfficialCard({ holder, portrait }: { holder: OfficeHolder; portr
         <p className="text-xs font-semibold uppercase tracking-wide text-clay">
           {holder.officeTitle}
         </p>
-        <h3 className="mt-0.5 font-display text-xl"><Link className="hover:underline" href={`/leaders/${holder.holderId}`}>{holder.personName}</Link></h3>
+        <h3 className="mt-0.5 font-display text-xl"><Link className="hover:underline" href={leaderAt(holder)}>{holder.personName}</Link></h3>
         <dl className="mt-2 space-y-0.5 text-sm text-content-muted">
           <div className="flex gap-2">
             <dt>{t("party")}:</dt>

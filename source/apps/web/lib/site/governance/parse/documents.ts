@@ -167,6 +167,7 @@ export function institution(v: unknown): C.InstitutionProfile {
       const h = obj(v);
       return {
         holderId: str(h.holderId),
+        leaderSlug: typeof h.leaderSlug === "string" ? h.leaderSlug : null,
         name: str(h.name),
         party: nullable(h.party),
         tier: label(h.tier),
@@ -257,6 +258,7 @@ function node(v: unknown): C.TreeNode {
         ...base,
         type: "leader",
         holderId: str(r.holderId),
+        leaderSlug: typeof r.leaderSlug === "string" ? r.leaderSlug : null,
         party: nullable(r.party),
         photo: nullable(r.photo),
         since: nullable(r.since),

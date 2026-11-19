@@ -2,7 +2,7 @@
 
 /** Route `/data/rankings`: rank places, leaders and parties by finance, civic delivery, elections, activity and statistics. */
 import Link from "next/link";
-import { placeAt } from "#/lib/site/links.ts";
+import { placeAt, leaderAt } from "#/lib/site/links.ts";
 import { T } from "#/lib/site/i18n.tsx";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -70,7 +70,7 @@ function Boards() {
                   <ol className="mt-4 space-y-2">
                     {b.rows.map((r) => (
                       <li key={`${r.rank}-${r.name}`}>
-                        <Link href={r.subjectId ? `/leaders/${r.subjectId}` : placeAt(r.path, "finance")} className="glass card card-lift grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 !py-3">
+                        <Link href={r.subjectId ? leaderAt(r) : placeAt(r.path, "finance")} className="glass card card-lift grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 !py-3">
                           <span className="num grid h-9 w-9 place-items-center rounded-full text-sm font-bold" style={{ background: r.rank <= 3 ? "var(--calabash)" : "var(--surface-sunken)", color: r.rank <= 3 ? "var(--ink)" : undefined }}>{r.rank}</span>
                           <span className="min-w-0">
                             <span className="block truncate font-semibold">{r.name}</span>

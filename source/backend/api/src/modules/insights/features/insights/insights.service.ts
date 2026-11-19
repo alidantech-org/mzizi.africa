@@ -16,7 +16,6 @@ import type { ElectionListDto } from "#/modules/insights/schema/dto/election-lis
 import type { GovTreeInputDto } from "#/modules/insights/schema/dto/gov-tree-input.dto.ts";
 import type { GovernanceTabsDto } from "#/modules/insights/schema/dto/governance-tabs.dto.ts";
 import type { GovernanceTreeDto } from "#/modules/insights/schema/dto/governance-tree.dto.ts";
-import type { IdInputDto } from "#/modules/insights/schema/dto/id-input.dto.ts";
 import type { IndicatorMapDto } from "#/modules/insights/schema/dto/indicator-map.dto.ts";
 import type { IndicatorSeriesDto } from "#/modules/insights/schema/dto/indicator-series.dto.ts";
 import type { InstitutionDetailDto } from "#/modules/insights/schema/dto/institution-detail.dto.ts";
@@ -96,7 +95,7 @@ export abstract class InsightsInsightsService {
   abstract getIndicatorMap(input: MapInputDto): Promise<IndicatorMapDto>;
   abstract getIndicatorSeries(input: SeriesInputDto): Promise<IndicatorSeriesDto>;
   abstract getInstitution(input: CodeInputDto): Promise<InstitutionDetailDto>;
-  abstract getLeaderProfile(input: IdInputDto): Promise<LeaderProfileDto>;
+  abstract getLeaderProfile(input: CodeInputDto): Promise<LeaderProfileDto>;
   abstract getLeaderTree(input: TreeInputDto): Promise<LeaderTreeDto>;
   abstract getLeaderboard(input: BoardInputDto): Promise<LeaderboardDto>;
   abstract getLegalBasis(input: LegalBasisInputDto): Promise<LegalBasisDto>;
@@ -195,7 +194,7 @@ export class InsightsInsightsServiceImpl extends InsightsInsightsService {
     return this.getInstitutionUseCase.execute(input);
   }
 
-  getLeaderProfile(input: IdInputDto): Promise<LeaderProfileDto> {
+  getLeaderProfile(input: CodeInputDto): Promise<LeaderProfileDto> {
     return this.getLeaderProfileUseCase.execute(input);
   }
 
