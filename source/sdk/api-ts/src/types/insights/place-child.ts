@@ -5,5 +5,6 @@ export interface InsightsPlaceChild {
   kindCode: string;
   kindLabel: string;
   name: string;
+  path?: string | null;
   population?: number | null;
 }

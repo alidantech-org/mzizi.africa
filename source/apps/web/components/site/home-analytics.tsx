@@ -3,6 +3,7 @@
 /** Home: starts from Kenya in numbers, then your places compared with the country, then ways to explore. */
 import Link from "next/link";
 
+import { placeAt } from "#/lib/site/links.ts";
 import { Icon, type IconName } from "#/components/brand/icon.tsx";
 import { LocateButton } from "#/components/site/locate-button.tsx";
 import { PlaceSearchBox } from "#/components/site/place-search-box.tsx";
@@ -17,11 +18,11 @@ import { useSaved } from "#/lib/site/saved.tsx";
 import { useAsync } from "#/lib/site/use-async.ts";
 
 const MORE: readonly { href: string; icon: IconName; title: string }[] = [
-  { href: "/explore", icon: "compass", title: "Explore everything" }, { href: "/profile", icon: "user", title: "Profile and preferences" },
-  { href: "/institutions", icon: "parliament", title: "Institutions" }, { href: "/law", icon: "book", title: "Law" }, { href: "/compare", icon: "chart", title: "Compare places" }, { href: "/content", icon: "book", title: "Knowledge library" },
-  { href: "/browse", icon: "pin", title: "Browse places" }, { href: "/leaders", icon: "tree", title: "Leaders tree" }, { href: "/statistics", icon: "chart", title: "Statistics" },
-  { href: "/elections", icon: "vote", title: "Elections" }, { href: "/parliament", icon: "parliament", title: "Parliament" }, { href: "/civic", icon: "build", title: "Money & projects" },
-  { href: "/tenders", icon: "document", title: "Tenders" }, { href: "/parties", icon: "flag", title: "Parties" },
+  { href: "/explore", icon: "compass", title: "Explore everything" }, { href: "/me", icon: "user", title: "Profile and preferences" },
+  { href: "/government/institutions", icon: "parliament", title: "Institutions" }, { href: "/government/law", icon: "book", title: "Law" }, { href: "/data/compare", icon: "chart", title: "Compare places" }, { href: "/content", icon: "book", title: "Knowledge library" },
+  { href: "/places", icon: "pin", title: "Browse places" }, { href: "/leaders", icon: "tree", title: "Leaders tree" }, { href: "/data/statistics", icon: "chart", title: "Statistics" },
+  { href: "/elections", icon: "vote", title: "Elections" }, { href: "/government/parliament", icon: "parliament", title: "Parliament" }, { href: "/finance", icon: "build", title: "Money & projects" },
+  { href: "/procurement/tenders", icon: "document", title: "Tenders" }, { href: "/politics/parties", icon: "flag", title: "Parties" },
 ];
 
 function Compare({ id, name }: { id: string; name: string }) {
@@ -33,7 +34,7 @@ function Compare({ id, name }: { id: string; name: string }) {
         const pop = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.total");
         const density = s.topics.flatMap((t) => t.indicators).find((i) => i.code === "sta.population.density");
         return (
-          <Link href={`/statistics/${id}`} className="glass card card-lift block">
+          <Link href={placeAt(s.place.path, "data/statistics")} className="glass card card-lift block">
             <p className="kicker">{tr("Your place")}</p><p className="font-display text-2xl">{name}</p>
             <p className="mt-2 text-sm text-content-muted">{tr("{} people", short(pop?.latest.value))} · {tr("{} per km²", n(density?.latest.value))}</p>
             {s.siblings.population ? <p className="mt-1 text-sm">{tr("#{} of {} by population", s.siblings.population.position, s.siblings.population.of)}</p> : null}
@@ -82,7 +83,7 @@ export function HomeAnalytics({ country }: { country: string }) {
         ) : null}
         <Section kicker={tr("Across {}", country)} title="Where people live">
           <AsyncView loaded={map}>{(m) => <StatMap data={m} height={400} />}</AsyncView>
-          <p className="mt-2 text-xs text-content-muted">{tr("People per square kilometre in each county. Darker is more crowded.")} <Link className="underline" href="/statistics">{tr("More statistics →")}</Link></p>
+          <p className="mt-2 text-xs text-content-muted">{tr("People per square kilometre in each county. Darker is more crowded.")} <Link className="underline" href="/data/statistics">{tr("More statistics →")}</Link></p>
         </Section>
         <AsyncView loaded={series}>{(s) => (<Section kicker="Growth" title="How the population has grown"><div className="glass card"><LineChart points={s.points} unit="people" label={tr("{} population over time", country)} /></div></Section>)}</AsyncView>
         <Section kicker="Keep exploring" title="More to look at">

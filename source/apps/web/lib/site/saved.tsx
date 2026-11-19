@@ -17,6 +17,8 @@ import {
 
 export interface SavedPlace {
   readonly id: string;
+  /** Clean address of the place, kept so links never need the id. */
+  readonly path?: string | null;
   readonly name: string;
   readonly kind: string;
 }

@@ -7,15 +7,18 @@
 import "reflect-metadata";
 
 import { NestFactory } from "@nestjs/core";
+import { DataSource } from "typeorm";
 
 import { AppModule } from "./app.module.ts";
 import { httpLogger } from "./http-logger.ts";
+import { PlacePathsInterceptor } from "./server/place-paths.interceptor.ts";
 
 const DEFAULT_PORT = 8700;
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   app.use(httpLogger());
+  app.useGlobalInterceptors(new PlacePathsInterceptor(app.get(DataSource)));
   // Browser apps (the Flutter app on the web) may call the API only from the origins listed here; none by default.
   const origins = (process.env.CORS_ORIGINS ?? "")
     .split(",")

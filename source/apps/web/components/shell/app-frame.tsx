@@ -30,29 +30,29 @@ const GROUPS: readonly { readonly id: string; readonly label: string; readonly m
   { id: "main", label: "Main", items: [
     { href: "/", label: "Home", icon: "home" },
     { href: "/explore", label: "Explore", icon: "compare" },
-    { href: "/browse", label: "Places", icon: "pin" },
+    { href: "/places", label: "Places", icon: "pin" },
     { href: "/elections", label: "Elections", icon: "vote" },
     { href: "/leaders", label: "Leaders", icon: "tree" },
     { href: "/calendar", label: "Calendar", icon: "calendar", scoped: true },
   ] },
   { id: "politics", label: "Politics", more: true, items: [
-    { href: "/parties", label: "Parties and coalitions", icon: "flag" },
-    { href: "/parliament", label: "Parliament", icon: "parliament" },
+    { href: "/politics/parties", label: "Parties and coalitions", icon: "flag" },
+    { href: "/government/parliament", label: "Parliament", icon: "parliament" },
   ] },
   { id: "government", label: "Government", more: true, items: [
-    { href: "/institutions", label: "Institutions", icon: "parliament" },
-    { href: "/law", label: "Law", icon: "book" },
+    { href: "/government/institutions", label: "Institutions", icon: "parliament" },
+    { href: "/government/law", label: "Law", icon: "book" },
   ] },
   { id: "money", label: "Public money", more: true, items: [
-    { href: "/civic", label: "Finance and projects", icon: "build" },
-    { href: "/tenders", label: "Procurement", icon: "document" },
+    { href: "/finance", label: "Finance and projects", icon: "build" },
+    { href: "/procurement/tenders", label: "Procurement", icon: "document" },
     { href: "/infrastructure", label: "Infrastructure", icon: "build", scoped: true },
   ] },
   { id: "data", label: "Data", more: true, items: [
-    { href: "/statistics", label: "Statistics", icon: "chart" },
-    { href: "/leaderboards", label: "Rankings", icon: "trophy" },
-    { href: "/compare", label: "Compare", icon: "chart" },
-    { href: "/source-browse", label: "Sources", icon: "book" },
+    { href: "/data/statistics", label: "Statistics", icon: "chart" },
+    { href: "/data/rankings", label: "Rankings", icon: "trophy" },
+    { href: "/data/compare", label: "Compare", icon: "chart" },
+    { href: "/data/sources", label: "Sources", icon: "book" },
   ] },
 ];
 
@@ -98,17 +98,17 @@ export function AppFrame({ context, children }: { context: ShellContext; childre
           <div className="xl:hidden"><Link href="/search" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0" aria-label={tr("Search")}><Icon name="search" /></Link></div>
           <ThemeToggle />
           <div className="hidden sm:block"><LanguageSwitcher /></div>
-          <Link href="/saved" className="btn btn-ghost relative !h-10 !w-10 !justify-center !p-0" aria-label={tr("Saved")}>
+          <Link href="/me/saved" className="btn btn-ghost relative !h-10 !w-10 !justify-center !p-0" aria-label={tr("Saved")}>
             <Icon name="heart" />
             {count > 0 ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-calabash px-1 text-[10px] font-bold text-ink">{count}</span> : null}
           </Link>
-          <Link href="/profile" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0" aria-label={tr("Profile and preferences")}><Icon name="user" /></Link>
+          <Link href="/me" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0" aria-label={tr("Profile and preferences")}><Icon name="user" /></Link>
         </>
       }
       sidebarFoot={
         <ul className="space-y-1">
-          <li><Link href="/profile" className="hover:underline">{tr("Privacy and preferences")}</Link></li>
-          <li><Link href="/source-browse" className="hover:underline">{tr("Data sources and licences")}</Link></li>
+          <li><Link href="/me" className="hover:underline">{tr("Privacy and preferences")}</Link></li>
+          <li><Link href="/data/sources" className="hover:underline">{tr("Data sources and licences")}</Link></li>
         </ul>
       }
     >

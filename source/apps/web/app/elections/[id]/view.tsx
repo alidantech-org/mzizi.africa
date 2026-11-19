@@ -2,6 +2,7 @@
 
 /** Route `/elections/<id>`: one election as a heat map and a table. Choose the contest and drill into a region. */
 import Link from "next/link";
+import { placeAt } from "#/lib/site/links.ts";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -81,7 +82,7 @@ function Body({ d, lens, setLens, go, parentName }: { d: Awaited<ReturnType<type
                 <div className="my-4"><Stacked label="Share of votes" parts={selected.candidates.map((c) => ({ label: c.name, value: c.votes }))} /></div>
                 <BarList items={selected.candidates.slice(0, 6).map((c) => ({ label: `${c.name} (${c.party ?? "ind."})`, value: c.share, note: n(c.votes) }))} unit="pct" />
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <Link className="btn btn-primary" href={`/elections/place/${selected.featureId}`}>This place's history</Link>
+                  <Link className="btn btn-primary" href={placeAt(selected.path, "elections")}>This place's history</Link>
                   {kind === "presidential" || kind === "governor" ? <button className="btn btn-ghost" onClick={() => go({ contest: "member-of-parliament", parent: selected.featureId })}>Constituencies inside</button> : null}
                 </div>
               </>
@@ -100,7 +101,7 @@ function Body({ d, lens, setLens, go, parentName }: { d: Awaited<ReturnType<type
           <table className="table-clean">
             <thead><tr><th>Region</th><th>Winner</th><th>Party</th><th>Votes</th><th>Share</th><th>Registered</th><th>Turnout</th></tr></thead>
             <tbody>{d.units.map((u) => (
-              <tr key={u.featureId} className="cursor-pointer" onClick={() => router.push(`/elections/place/${u.featureId}`)}>
+              <tr key={u.featureId} className="cursor-pointer" onClick={() => router.push(placeAt(u.path, "elections"))}>
                 <td className="font-semibold">{u.name}</td><td>{u.winner.name}</td><td>{u.winner.party ?? "Independent"}</td><td className="num">{short(u.winner.votes)}</td><td className="num">{pct(u.winner.share)}</td><td className="num">{short(u.registered)}</td><td className="num">{pct(u.turnout)}</td>
               </tr>))}</tbody>
           </table>

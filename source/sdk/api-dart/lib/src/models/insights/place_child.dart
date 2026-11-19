@@ -11,6 +11,7 @@ class InsightsPlaceChild {
     required this.kindCode,
     required this.kindLabel,
     required this.name,
+    this.path,
     this.population,
   });
   final int childCount;
@@ -18,6 +19,7 @@ class InsightsPlaceChild {
   final String kindCode;
   final String kindLabel;
   final String name;
+  final String? path;
   final double? population;
 
   factory InsightsPlaceChild.fromJson(Map<String, dynamic> json) => _$InsightsPlaceChildFromJson(json);

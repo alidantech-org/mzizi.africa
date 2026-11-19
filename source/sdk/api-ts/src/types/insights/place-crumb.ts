@@ -4,4 +4,5 @@ export interface InsightsPlaceCrumb {
   kindCode: string;
   kindLabel: string;
   name: string;
+  path?: string | null;
 }

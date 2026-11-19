@@ -41,16 +41,17 @@ function place(v: unknown): C.Place | null {
   return typeof r.featureId === "string"
     ? {
         featureId: r.featureId,
+        path: typeof r.path === "string" ? r.path : null,
         name: str(r.name),
         kindCode: str(r.kindCode),
         kindLabel: str(r.kindLabel),
       }
     : null;
 }
-function unit(v: unknown): { featureId: string; name: string } | null {
+function unit(v: unknown): { featureId: string; name: string; path?: string | null } | null {
   if (v == null) return null;
   const r = obj(v);
-  return { featureId: str(r.featureId), name: str(r.name) };
+  return { featureId: str(r.featureId), name: str(r.name), path: typeof r.path === "string" ? r.path : null };
 }
 function card(v: unknown): C.InstitutionCard {
   const r = obj(v),

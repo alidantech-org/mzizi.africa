@@ -7,6 +7,7 @@ import { useMemo, useState } from "react";
 
 import { Icon } from "#/components/brand/icon.tsx";
 import { AsyncView } from "#/components/site/async-view.tsx";
+import { placeAt } from "#/lib/site/links.ts";
 import { Gaps, PageFrame, PlaceTabs, PlaceTrail } from "#/components/site/ui/primitives.tsx";
 import { n, short } from "#/lib/site/format.ts";
 import { browse } from "#/lib/site/insights.ts";
@@ -37,14 +38,14 @@ function Body({ data, featureId, filter, setFilter }: { data: Awaited<ReturnType
   }, [kids]);
   return (
     <>
-      <PlaceTrail chain={data.chain} section={{ label: "Places", href: "/browse" }} />
-      {featureId && data.place ? <PlaceTabs featureId={featureId} /> : null}
+      <PlaceTrail chain={data.chain} section={{ label: "Places", suffix: "places" }} />
+      {featureId && data.place ? <PlaceTabs path={data.place.path} /> : null}
       <p className="kicker">{data.place?.kindLabel ?? "Country"}</p>
       <h1 className="hero-title text-4xl sm:text-5xl">{data.place?.name ?? country.name}</h1>
       <p className="mt-2 max-w-2xl text-content-muted">
         {data.children.length > 0 ? `${data.children.length} ${NEXT[kind] ?? "places"} inside. Choose one to go deeper, or open its statistics, elections and money.` : "This is the smallest place recorded here. Open its profile to see who serves it."}
       </p>
-      {data.place && featureId ? <p className="mt-4"><Link className="btn btn-primary" href={`/place-profile?featureId=${featureId}`}>Who serves {data.place.name} →</Link></p> : null}
+      {data.place && featureId ? <p className="mt-4"><Link className="btn btn-primary" href={placeAt(data.place.path, "")}>Who serves {data.place.name} →</Link></p> : null}
       {data.children.length > 8 ? (
         <label className="glass mt-6 flex max-w-sm items-center gap-2 rounded-full px-4 py-2"><Icon name="search" size={18} />
           <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter this list" className="min-w-0 flex-1 bg-transparent text-sm outline-none" aria-label="Filter this list" />
@@ -56,7 +57,7 @@ function Body({ data, featureId, filter, setFilter }: { data: Awaited<ReturnType
           <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((child) => (
               <li key={child.featureId}>
-                <Link href={child.childCount > 0 ? `/browse/${child.featureId}` : `/place-profile?featureId=${child.featureId}`} className="glass card card-lift flex items-center justify-between gap-3">
+                <Link href={placeAt(child.path, child.childCount > 0 ? "places" : "")} className="glass card card-lift flex items-center justify-between gap-3">
                   <span className="min-w-0">
                     <span className="block truncate font-display text-lg">{child.name}</span>
                     <span className="text-xs text-content-muted">{child.kindLabel}{child.childCount > 0 ? ` · ${n(child.childCount)} inside` : ""}</span>

@@ -38,6 +38,12 @@ export const placeCrumbExample: ContractExample = contractExample({
       nullable: false,
       spec: { kind: "string", minLength: 1, maxLength: 300 },
     },
+    {
+      name: "path",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 500 },
+    },
   ],
   invariants: [],
 });

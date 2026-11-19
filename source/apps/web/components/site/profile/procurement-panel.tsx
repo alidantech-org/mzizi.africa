@@ -4,7 +4,6 @@ import Link from "next/link";
 
 import { LikeProject } from "#/components/site/save-buttons.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
-import { routes } from "#/lib/dryv/routes.ts";
 import type { ProcurementSummary } from "#/lib/types/procurement-summary.ts";
 
 const money = (amount: number | null | undefined, currency: string | null | undefined): string =>
@@ -41,7 +40,7 @@ export function ProcurementPanel({ summary }: { summary: ProcurementSummary }) {
               </p>
               {item.evidence[0] ? (
                 <Link
-                  href={`${routes.evidenceView}?citationId=${item.evidence[0].citationId}`}
+                  href={`/data/evidence/${item.evidence[0].citationId}`}
                   className="mt-1 inline-block text-sm font-medium text-link hover:underline"
                 >
                   {t("seeEvidence")} →

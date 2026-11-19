@@ -42,6 +42,8 @@ const opt = <T extends Record<string, unknown>>(o: T): Partial<T> =>
 /* ---------------------------------------------------------------------------------------------- shapes */
 export interface Crumb {
   featureId: string;
+  /** Clean address of the place (`nairobi/westlands`); absent for the country itself. */
+  path?: string | null;
   name: string;
   kindCode: string;
   kindLabel: string;
@@ -74,6 +76,7 @@ export interface SearchHit {
   subtitle: string | null;
   path: string[];
   featureId: string | null;
+  placePath?: string | null;
   imageUrl: string | null;
 }
 export interface SearchResults {
@@ -84,6 +87,7 @@ export interface SearchResults {
 }
 export interface Child {
   featureId: string;
+  path?: string | null;
   name: string;
   kindCode: string;
   kindLabel: string;
@@ -157,6 +161,7 @@ export interface Series {
 }
 export interface MapUnit {
   featureId: string;
+  path?: string | null;
   name: string;
   kind: string;
   value: number | null;
@@ -188,6 +193,7 @@ export interface Metric {
 export interface BoardRow {
   rank: number;
   featureId: string | null;
+  path?: string | null;
   subjectId: string | null;
   name: string;
   detail: string | null;
@@ -224,6 +230,7 @@ export interface ElectionSummary {
 }
 export interface ElectionUnit {
   featureId: string;
+  path?: string | null;
   name: string;
   geometry: GeoJSON.Geometry | null;
   registered: number | null;
@@ -299,6 +306,7 @@ export interface PartyDetail {
     office: string | null;
     unit: string | null;
     unitId: string | null;
+    unitPath?: string | null;
   }[];
   results: {
     year: number;
@@ -401,6 +409,7 @@ export interface CivicProject {
   completed_on: string | null;
   unit: string;
   unit_id: string;
+  unit_path?: string | null;
   location: GeoJSON.Point | null;
   amount: number | null;
   contractor: string | null;
@@ -440,6 +449,7 @@ export interface ProjectDetail {
     started_on: string | null;
     completed_on: string | null;
     unit_id: string;
+    unit_path?: string | null;
     unit: string;
     responsible: string | null;
     location: GeoJSON.Point | null;
@@ -506,6 +516,7 @@ export interface Leader {
     party: string | null;
     office: string;
     unitId: string | null;
+    unitPath?: string | null;
     unit: string | null;
     institution: string | null;
     tookOfficeOn: string | null;
@@ -606,7 +617,7 @@ export const facts = (featureId?: string) => body<{ facts: Fact[]; gaps: string[
 
 export interface NearbyProject extends Omit<
   CivicProject,
-  "started_on" | "completed_on" | "description" | "unit_id"
+  "started_on" | "completed_on" | "description" | "unit_id" | "unit_path"
 > {
   distance_km: number;
   responsible: string | null;

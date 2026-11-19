@@ -2,6 +2,7 @@
 
 /** Place search for the sidebar switcher: matches come from the generated SDK, each with the clean path of the place. */
 import { searchLocalities } from "@mzizi/api-client/actions/locality/search-localities.actions.ts";
+import { resolveLocality } from "@mzizi/api-client/actions/locality/resolve-locality.actions.ts";
 import { getContext } from "@mzizi/api-client/actions/experience/get-context.actions.ts";
 
 export interface PlaceChoice {
@@ -22,4 +23,13 @@ export async function findPlaces(query: string, languageCode: string): Promise<P
     }),
   );
   return resolved.filter((item): item is PlaceChoice => item !== null);
+}
+
+/** The address of the place at a device position, or null when the position is outside the places held. */
+export async function placeAtPosition(latitude: number, longitude: number, languageCode: string): Promise<string | null> {
+  const found = await resolveLocality({ query: { latitude, longitude, languageCode } });
+  const featureId = found.success ? found.body?.place?.featureId : null;
+  if (!featureId) return null;
+  const context = await getContext({ query: { featureId, languageCode } });
+  return context.success ? (context.body?.place?.path ?? null) : null;
 }

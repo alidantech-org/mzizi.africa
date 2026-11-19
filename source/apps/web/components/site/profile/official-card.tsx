@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Avatar } from "#/components/site/ui/media.tsx";
 import { LikeLeader } from "#/components/site/save-buttons.tsx";
 import { useLanguage } from "#/lib/site/i18n.tsx";
-import { routes } from "#/lib/dryv/routes.ts";
 import type { OfficeHolder } from "#/lib/types/office-holder.ts";
 
 export function OfficialCard({ holder, portrait }: { holder: OfficeHolder; portrait?: string | null }) {
@@ -42,7 +41,7 @@ export function OfficialCard({ holder, portrait }: { holder: OfficeHolder; portr
           />
           {evidence ? (
             <Link
-              href={`${routes.evidenceView}?citationId=${evidence.citationId}`}
+              href={`/data/evidence/${evidence.citationId}`}
               className="inline-block text-sm font-medium text-link underline-offset-2 hover:underline"
             >
               {t("seeEvidence")} →

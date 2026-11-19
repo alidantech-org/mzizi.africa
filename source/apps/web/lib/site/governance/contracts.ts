@@ -5,6 +5,7 @@ export interface Label {
 }
 export interface Place {
   featureId: string;
+  path?: string | null;
   name: string;
   kindLabel: string;
   kindCode: string;

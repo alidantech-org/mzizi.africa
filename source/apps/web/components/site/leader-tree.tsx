@@ -428,7 +428,7 @@ export function GovernanceGraph({ document }: { document: GovernanceTree }) {
                   Open leader record →
                 </Link>
                 <Link
-                  href={`/institutions/${encodeURIComponent(selected.body.code)}`}
+                  href={`/government/institutions/${encodeURIComponent(selected.body.code)}`}
                   className="btn btn-ghost"
                 >
                   {selected.body.name} →
@@ -450,7 +450,7 @@ export function GovernanceGraph({ document }: { document: GovernanceTree }) {
               </p>
               <Link
                 className="btn btn-primary mt-4"
-                href={`/institutions/${encodeURIComponent(selected.code)}`}
+                href={`/government/institutions/${encodeURIComponent(selected.code)}`}
               >
                 Explore institution →
               </Link>

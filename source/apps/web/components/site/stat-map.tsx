@@ -7,9 +7,10 @@ import { useMemo } from "react";
 import { ChoroplethLazy } from "#/components/site/map/choropleth-lazy.tsx";
 import { n1, short } from "#/lib/site/format.ts";
 import type { IndicatorMap } from "#/lib/site/insights.ts";
+import { placeAt } from "#/lib/site/links.ts";
 import { rampFill } from "#/lib/site/ramp.ts";
 
-export function StatMap({ data, onSelect, height = 440, drill }: { data: IndicatorMap; onSelect?: (id: string) => void; height?: number; drill?: (id: string) => string }) {
+export function StatMap({ data, onSelect, height = 440, drill }: { data: IndicatorMap; onSelect?: (path: string | null) => void; height?: number; drill?: (path: string | null) => string }) {
   const unit = data.indicator.unit ?? "";
   const values = data.units.map((u) => u.value).filter((v): v is number => v !== null);
   const regions = useMemo(() => {
@@ -26,7 +27,7 @@ export function StatMap({ data, onSelect, height = 440, drill }: { data: Indicat
   return (
     <div className="grid gap-4 lg:grid-cols-[1.5fr_1fr]">
       <div>
-        <ChoroplethLazy regions={regions} onSelect={onSelect} height={height} />
+        <ChoroplethLazy regions={regions} onSelect={onSelect ? (id) => onSelect(data.units.find((u) => u.featureId === id)?.path ?? null) : undefined} height={height} />
         <div className="mt-3 flex items-center gap-3 text-xs text-content-muted" aria-label="Colour scale">
           <span className="num">{short(lo)}</span>
           <div className="h-2.5 flex-1 rounded-full" style={{ background: `linear-gradient(90deg, ${rampFill(0)}, ${rampFill(0.5)}, ${rampFill(1)})` }} />
@@ -36,7 +37,7 @@ export function StatMap({ data, onSelect, height = 440, drill }: { data: Indicat
       <ol className="glass card max-h-[34rem] space-y-1 overflow-auto p-2" aria-label="Ranking">
         {data.units.filter((u) => u.value !== null).map((u) => (
           <li key={u.featureId}>
-            <Link href={drill ? drill(u.featureId) : `/statistics/${u.featureId}`} className="grid grid-cols-[2rem_1fr_auto] items-center gap-2 rounded-xl px-2 py-1.5 text-sm hover:bg-surface-sunken">
+            <Link href={drill ? drill(u.path ?? null) : placeAt(u.path, "data/statistics")} className="grid grid-cols-[2rem_1fr_auto] items-center gap-2 rounded-xl px-2 py-1.5 text-sm hover:bg-surface-sunken">
               <span className="num text-xs text-content-muted">{u.rank}</span>
               <span className="truncate">{u.name}</span>
               <span className="num font-semibold">{u.value !== null && u.value > 1000 ? short(u.value) : n1(u.value)}</span>

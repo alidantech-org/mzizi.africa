@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Icon } from "#/components/brand/icon.tsx";
+import { placeAt } from "#/lib/site/links.ts";
 import { search, type SearchHit } from "#/lib/site/insights.ts";
 
-/** Type a place and pick it from the list; each choice links to `base?place=<id>`. */
-export function PlacePicker({ base }: { base: string }) {
+/** Type a place and pick it from the list; each choice opens `/<place>/<section>`. */
+export function PlacePicker({ section }: { section: string }) {
   const [text, setText] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
   useEffect(() => {
@@ -22,7 +23,7 @@ export function PlacePicker({ base }: { base: string }) {
       </label>
       {hits.length > 0 ? (
         <ul className="glass-strong absolute left-0 right-0 z-20 mt-2 rounded-3xl p-2">{hits.map((h) => (
-          <li key={h.id}><Link onClick={() => { setHits([]); setText(""); }} href={`${base}?place=${h.id}`} className="flex items-center justify-between gap-3 rounded-2xl px-3 py-2 hover:bg-surface-sunken"><span className="font-semibold">{h.title}</span><span className="truncate text-xs text-content-muted">{h.path.slice(1, -1).join(" › ")} · {h.subtitle}</span></Link></li>
+          <li key={h.id}><Link onClick={() => { setHits([]); setText(""); }} href={placeAt(h.placePath, section)} className="flex items-center justify-between gap-3 rounded-2xl px-3 py-2 hover:bg-surface-sunken"><span className="font-semibold">{h.title}</span><span className="truncate text-xs text-content-muted">{h.path.slice(1, -1).join(" › ")} · {h.subtitle}</span></Link></li>
         ))}</ul>
       ) : null}
     </div>

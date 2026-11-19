@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { useLanguage } from "#/lib/site/i18n.tsx";
-import { routes } from "#/lib/dryv/routes.ts";
+import { placeAtPosition } from "#/app/actions.ts";
 
 /** Reads the browser's position (only when pressed) and opens the profile of the place there. */
 export function LocateButton() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const router = useRouter();
   const [state, setState] = useState<"idle" | "locating" | "denied">("idle");
   const locate = () => {
@@ -20,9 +20,7 @@ export function LocateButton() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        router.push(
-          `${routes.placeProfile}?lat=${latitude.toFixed(5)}&lng=${longitude.toFixed(5)}`,
-        );
+        void placeAtPosition(latitude, longitude, language).then((path) => (path ? router.push(`/${path}`) : setState("denied")));
       },
       () => setState("denied"),
       { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },

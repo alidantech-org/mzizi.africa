@@ -1,6 +1,7 @@
 /** Route `/leaders/<holder>`: a leader — who they are, how to reach them, how they got the seat, how they vote and the fund they oversee. */
 import Link from "next/link";
 
+import { placeAt } from "#/lib/site/links.ts";
 import { LegalBasisSection, SubjectContentSection } from "#/components/site/governance/shared.tsx";
 import { Loaded } from "#/components/site/loaded.tsx";
 import { BarList, Donut } from "#/components/site/ui/charts.tsx";
@@ -26,7 +27,7 @@ export default async function LeaderRoute({ params }: { params: Promise<{ id: st
           const v = d.activity.votes;
           return (
             <>
-              <Breadcrumbs items={[{ label: "Home", href: "/" }, ...(l.unitId ? [{ label: l.unit ?? "Place", href: `/place-profile?featureId=${l.unitId}`, hint: "The area this leader serves" }] : []), { label: l.name }]} />
+              <Breadcrumbs items={[{ label: "Home", href: "/" }, ...(l.unitId ? [{ label: l.unit ?? "Place", href: placeAt(l.unitPath, ""), hint: "The area this leader serves" }] : []), { label: l.name }]} />
               <div className="glass card flex flex-wrap items-center gap-6">
                 <Avatar src={portrait?.url} name={l.name} size={112} />
                 <div className="min-w-0 flex-1">
@@ -68,7 +69,7 @@ export default async function LeaderRoute({ params }: { params: Promise<{ id: st
                 <div className="grid gap-4 lg:grid-cols-2">
                   <div className="glass card"><Donut label="Votes cast" slices={[{ label: "Yes", value: v.yes }, { label: "No", value: v.no }, { label: "Abstained", value: v.abstain }, { label: "Absent", value: v.absent }]} center={`${v.total}`} /></div>
                   <div className="glass card"><h3 className="mb-2 font-semibold">Recent decisions</h3>
-                    <ul className="space-y-2 text-sm">{d.activity.recent.map((r) => <li key={r.code} className="flex items-center justify-between gap-3"><Link className="min-w-0 truncate underline-offset-2 hover:underline" href={`/motions/${r.code}`}>{r.title}</Link><Pill tone={r.position === "yes" ? "good" : r.position === "no" ? "bad" : "warn"}>{words(r.position)}</Pill></li>)}</ul>
+                    <ul className="space-y-2 text-sm">{d.activity.recent.map((r) => <li key={r.code} className="flex items-center justify-between gap-3"><Link className="min-w-0 truncate underline-offset-2 hover:underline" href={`/government/parliament/motions/${r.code}`}>{r.title}</Link><Pill tone={r.position === "yes" ? "good" : r.position === "no" ? "bad" : "warn"}>{words(r.position)}</Pill></li>)}</ul>
                   </div>
                 </div>
               </Section>
@@ -78,7 +79,7 @@ export default async function LeaderRoute({ params }: { params: Promise<{ id: st
                 </Section>
               ) : null}
               {d.fund ? (
-                <Section kicker="Public money" title={`Constituency development fund · ${d.fund.place.name}`} action={<Link className="btn btn-primary" href={`/civic/${d.fund.place.featureId}`}>Everything funded here →</Link>}>
+                <Section kicker="Public money" title={`Constituency development fund · ${d.fund.place.name}`} action={<Link className="btn btn-primary" href={placeAt(d.fund.place.path, "finance")}>Everything funded here →</Link>}>
                   <div className="grid gap-4 lg:grid-cols-2">
                     <div className="glass card"><p className="kicker">Latest year</p><p className="num font-display text-3xl"><Money value={d.fund.latestYear?.total} /></p><p className="text-sm text-content-muted">{d.fund.latestYear?.year} allocation · {d.fund.infrastructure.projects} projects · {pct(d.fund.infrastructure.completionRate, 0)} completed</p></div>
                     <div className="glass card"><BarList items={d.fund.classes.slice(0, 5).map((c) => ({ label: c.label, value: c.amount }))} unit="money" /></div>
@@ -90,7 +91,7 @@ export default async function LeaderRoute({ params }: { params: Promise<{ id: st
               ) : null}
               {d.media.length > 0 ? <Section title="Pictures and posts" kicker="Media"><Gallery items={d.media} /></Section> : null}
               {d.evidence.length > 0 ? (
-                <Section kicker="Sources" title="Evidence"><ul className="space-y-2 text-sm">{d.evidence.map((e) => <li key={e.citationId}><Link className="underline" href={`/evidence-view?citationId=${e.citationId}`}>{e.sourceName}</Link> <span className="text-content-muted">· {e.locator}</span></li>)}</ul></Section>
+                <Section kicker="Sources" title="Evidence"><ul className="space-y-2 text-sm">{d.evidence.map((e) => <li key={e.citationId}><Link className="underline" href={`/data/sources?citationId=${e.citationId}`}>{e.sourceName}</Link> <span className="text-content-muted">· {e.locator}</span></li>)}</ul></Section>
               ) : null}
               <p className="mt-8 flex items-center gap-3 text-sm text-content-muted"><LikeLeader leader={{ id: l.holderId, name: l.name, office: l.office, unitId: l.unitId }} /> Follow this leader</p>
               <SubjectContentSection table="official.individuals" code={l.individualId} title="About this person" />

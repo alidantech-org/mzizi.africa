@@ -2,10 +2,10 @@
  * The Mzizi public website application (generated frontend).
  *
  * The public Next.js website. It talks only to the main product API.
- * First slice only: the shared theme, one surface and one destination, to inspect what generation produces.
+ * The views of the site are hand-written server pages (see `source/apps/web/app`); this contract owns the operations it consumes and the theme.
  */
-import { dryv, inputFrom, outputFrom, part, surface, view } from "@dryvcode/author";
-import { shared, sharedProperties as p } from "#/schemas/_shared.ts";
+import { dryv, surface } from "@dryvcode/author";
+import { shared } from "#/schemas/_shared.ts";
 import { geography } from "#/schemas/postgres/geography.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
 import api from "#/apps/api/index.ts";
@@ -18,69 +18,6 @@ import { locality, localityOperations } from "#/apps/api/locality.ts";
 const web = dryv.group({ name: "web" }).description("The public website: its surface and views.");
 const surfaces = web.surfaces({ Main: surface.web() });
 const features = web.feature("Features");
-
-/**
- * Browse the geographic features: a filter the visitor fills in and the page of features it feeds. The filter
- * collects only the filter fields of the list operation; the page window stays the operation's own default.
- */
-const views = features.views({
-  FeatureBrowse: view()
-    .role("list")
-    .description("Browse geographic features, narrowed by feature kind or code prefix.")
-    .parts({
-      filters: part
-        .collect(inputFrom(geographyOperations.BrowseFeatures.in, ["featureTypeId", "codePrefix"]))
-        .flow("inline"),
-      features: part.present(outputFrom(geographyOperations.BrowseFeatures.out, ["features"])).collection("table"),
-    })
-    .presentation("web", surfaces.Main),
-
-  FeatureDetail: view()
-    .role("detail")
-    .description("One geographic feature with its names.")
-    .context("featureId", p.Id)
-    .parts({
-      // The detail view shows GetFeature for the identifier it holds as context.
-      feature: part.present(outputFrom(geographyOperations.GetFeature.out)).context({ featureId: "featureId" }),
-    })
-    .presentation("web", surfaces.Main),
-
-  PlaceSearch: view()
-    .role("list")
-    .description("Find a place by name and open its profile.")
-    .parts({
-      filters: part.collect(inputFrom(localityOperations.SearchLocalities.in, ["query"])).flow("inline"),
-      places: part.present(outputFrom(localityOperations.SearchLocalities.out, ["places"])).collection("table"),
-    })
-    .presentation("web", surfaces.Main),
-
-  PlaceProfile: view()
-    .role("detail")
-    .description("Who serves a place: officials, procurement, media and the evidence for each claim.")
-    .context("featureId", p.Id)
-    .parts({
-      profile: part.present(outputFrom(localityOperations.GetLocality.out)).context({ featureId: "featureId" }),
-    })
-    .presentation("web", surfaces.Main),
-
-  SourceBrowse: view()
-    .role("list")
-    .description("The data sources behind the platform.")
-    .parts({
-      filters: part.collect(inputFrom(localityOperations.BrowseSources.in, ["query"])).flow("inline"),
-      sources: part.present(outputFrom(localityOperations.BrowseSources.out, ["sources"])).collection("table"),
-    })
-    .presentation("web", surfaces.Main),
-
-  EvidenceView: view()
-    .role("detail")
-    .description("One citation with its source and files.")
-    .context("citationId", p.Id)
-    .parts({
-      evidence: part.present(outputFrom(localityOperations.GetEvidence.out)).context({ citationId: "citationId" }),
-    })
-    .presentation("web", surfaces.Main),
-});
 
 const web_app = dryv
   .app({ name: "mzizi-web" })
@@ -136,14 +73,6 @@ const web_app = dryv
     experienceOperations.ListFacilities,
     experienceOperations.GetFacility,
     experienceOperations.ListFacts,
-  )
-  .destination("places", views.PlaceSearch)
-  .destination("sources", views.SourceBrowse)
-  .destination("browse", views.FeatureBrowse)
-  .destination("detail", views.FeatureDetail)
-  .destination("place", views.PlaceProfile)
-  .destination("evidence", views.EvidenceView)
-  .transition("openPlace", "places", "place", { operation: localityOperations.GetLocality })
-  .transition("openFeature", "browse", "detail", { operation: geographyOperations.GetFeature });
+  );
 
 export default dryv.project({ name: "mzizi-web" }).apps(api, web_app);

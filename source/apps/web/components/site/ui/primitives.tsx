@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
 import { useLanguage } from "#/lib/site/i18n.tsx";
+import { placeAt } from "#/lib/site/links.ts";
 import type { Crumb } from "#/lib/site/insights.ts";
 
 export interface TrailItem {
@@ -55,13 +56,14 @@ const KIND_HINT: Record<string, string> = {
 };
 
 /** Breadcrumbs for a chain of units, widest first; the place itself ends the trail unless `after` adds more. */
-export function PlaceTrail({ chain, section, after }: { chain: readonly Crumb[]; section: { label: string; href: string }; after?: readonly TrailItem[] }) {
+/** `section.suffix` is the section's address under a place (`data/statistics`); it is the same section at country level without the place. */
+export function PlaceTrail({ chain, section, after }: { chain: readonly Crumb[]; section: { label: string; suffix: string }; after?: readonly TrailItem[] }) {
   const items: TrailItem[] = [
     { label: "Home", href: "/", hint: "Start page" },
-    { label: section.label, href: section.href },
+    { label: section.label, href: placeAt(null, section.suffix) },
     ...chain.map((unit, index): TrailItem => ({
       label: unit.name,
-      href: index === chain.length - 1 && !after ? undefined : `${section.href}/${unit.featureId}`,
+      href: index === chain.length - 1 && !after ? undefined : placeAt(unit.path, section.suffix),
       hint: `${unit.kindLabel}. ${KIND_HINT[unit.kindCode.replace(/^.*\./, "")] ?? ""}`.trim(),
     })),
     ...(after ?? []),
@@ -116,21 +118,22 @@ export function Stat({ label, value, hint, tone }: { label: string; value: React
   );
 }
 
-/** Links that act as tabs for one place: the path decides which is active. */
-export function PlaceTabs({ featureId }: { featureId: string }) {
-  const path = usePathname();
+/** Links that act as tabs for one place: the address decides which is active. */
+export function PlaceTabs({ path }: { path?: string | null }) {
+  const here = usePathname();
   const tabs = [
-    { href: `/place-profile?featureId=${featureId}`, label: "Overview", match: "/place-profile" },
-    { href: `/statistics/${featureId}`, label: "Statistics", match: "/statistics" },
-    { href: `/elections/place/${featureId}`, label: "Elections", match: "/elections/place" },
-    { href: `/civic/${featureId}`, label: "Money & projects", match: "/civic" },
-    { href: `/browse/${featureId}`, label: "Places inside", match: "/browse" },
-    { href: `/compare?place=${featureId}`, label: "Compare", match: "/compare" },
+    { href: placeAt(path, ""), label: "Overview", suffix: "" },
+    { href: placeAt(path, "data/statistics"), label: "Statistics", suffix: "/data/statistics" },
+    { href: placeAt(path, "elections"), label: "Elections", suffix: "/elections" },
+    { href: placeAt(path, "finance"), label: "Money & projects", suffix: "/finance" },
+    { href: placeAt(path, "places"), label: "Places inside", suffix: "/places" },
+    { href: "/data/compare", label: "Compare", suffix: "/data/compare" },
   ];
+  const active = (suffix: string): boolean => (suffix === "" ? here === placeAt(path, "") : here.endsWith(suffix));
   return (
     <div role="tablist" aria-label="About this place" className="glass mb-6 flex gap-1 overflow-x-auto rounded-full p-1">
       {tabs.map((tab) => (
-        <Link key={tab.label} role="tab" href={tab.href} className="tab" data-active={path.startsWith(tab.match)} aria-selected={path.startsWith(tab.match)}>
+        <Link key={tab.label} role="tab" href={tab.href} className="tab" data-active={active(tab.suffix)} aria-selected={active(tab.suffix)}>
           {tab.label}
         </Link>
       ))}
@@ -154,7 +157,7 @@ export function Gaps({ items, topic }: { items: readonly string[]; topic?: strin
       </ul>
       <div className="mt-3 flex flex-wrap gap-2">
         <a className="btn btn-primary" href={ask}>Ask for this data</a>
-        <Link className="btn btn-ghost" href="/source-browse">Check the official sources yourself</Link>
+        <Link className="btn btn-ghost" href="/data/sources">Check the official sources yourself</Link>
       </div>
     </aside>
   );
