@@ -5,6 +5,7 @@ import 'package:mzizi_api/src/features/geography_feature.dart';
 import 'package:mzizi_api/src/features/governance_feature.dart';
 import 'package:mzizi_api/src/features/insights_feature.dart';
 import 'package:mzizi_api/src/features/interactions_feature.dart';
+import 'package:mzizi_api/src/features/ledger_feature.dart';
 import 'package:mzizi_api/src/features/locality_feature.dart';
 import 'package:mzizi_api/src/features/reference_feature.dart';
 
@@ -31,6 +32,9 @@ class MziziApiClient {
 
   /// Interactions operations.
   late final interactions = InteractionsFeature(_connection);
+
+  /// Ledger operations.
+  late final ledger = LedgerFeature(_connection);
 
   /// Locality operations.
   late final locality = LocalityFeature(_connection);

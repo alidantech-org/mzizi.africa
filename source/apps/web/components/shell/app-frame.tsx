@@ -37,7 +37,9 @@ const GROUPS: readonly { readonly id: string; readonly label: string; readonly m
     { href: "/calendar", label: "Calendar", icon: "calendar", scoped: true },
   ] },
   { id: "politics", label: "Politics", more: true, items: [
-    { href: "/politics/parties", label: "Parties and coalitions", icon: "flag" },
+    { href: "/politics/parties", label: "Parties", icon: "flag" },
+    { href: "/politics/coalitions", label: "Coalitions", icon: "flag" },
+    { href: "/politics/manifestos", label: "Manifestos", icon: "document" },
     { href: "/government/parliament", label: "Parliament", icon: "parliament" },
   ] },
   { id: "government", label: "Government", more: true, items: [
@@ -46,6 +48,8 @@ const GROUPS: readonly { readonly id: string; readonly label: string; readonly m
   ] },
   { id: "money", label: "Public money", more: true, items: [
     { href: "/finance", label: "Finance and projects", icon: "build" },
+    { href: "/finance/budgets", label: "Budgets", icon: "document" },
+    { href: "/finance/funds", label: "Funds", icon: "build" },
     { href: "/procurement/tenders", label: "Procurement", icon: "document" },
     { href: "/infrastructure", label: "Infrastructure", icon: "build", scoped: true },
   ] },
@@ -54,6 +58,7 @@ const GROUPS: readonly { readonly id: string; readonly label: string; readonly m
     { href: "/data/rankings", label: "Rankings", icon: "trophy" },
     { href: "/data/compare", label: "Compare", icon: "chart" },
     { href: "/data/sources", label: "Sources", icon: "book" },
+    { href: "/data/coverage", label: "Coverage", icon: "chart" },
   ] },
 ];
 

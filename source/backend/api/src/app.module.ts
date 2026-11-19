@@ -8,6 +8,7 @@ import { GeographyModule } from "#/modules/geography/geography.module.ts";
 import { GovernanceModule } from "#/modules/governance/governance.module.ts";
 import { InsightsModule } from "#/modules/insights/insights.module.ts";
 import { InteractionsModule } from "#/modules/interactions/interactions.module.ts";
+import { LedgerModule } from "#/modules/ledger/ledger.module.ts";
 import { LocalityModule } from "#/modules/locality/locality.module.ts";
 import { ReferenceModule } from "#/modules/reference/reference.module.ts";
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
@@ -21,6 +22,7 @@ import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
     GovernanceModule,
     InsightsModule,
     InteractionsModule,
+    LedgerModule,
     LocalityModule,
     ReferenceModule,
   ],

@@ -552,6 +552,61 @@
       "summary": "This device withdraws its like."
     },
     {
+      "name": "GetCoverage",
+      "group": "ledger",
+      "feature": "ledger",
+      "method": "GET",
+      "path": "/v1/coverage",
+      "role": "list",
+      "inputs": [],
+      "output": "CoverageList",
+      "summary": "What the platform expects to be published and what has been checked: the honest map of what is missing."
+    },
+    {
+      "name": "ListBudgets",
+      "group": "ledger",
+      "feature": "ledger",
+      "method": "GET",
+      "path": "/v1/budgets",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "BudgetList",
+      "summary": "Budgets by fiscal year with their revisions, newest first."
+    },
+    {
+      "name": "ListCoalitions",
+      "group": "ledger",
+      "feature": "ledger",
+      "method": "GET",
+      "path": "/v1/coalitions",
+      "role": "list",
+      "inputs": [],
+      "output": "CoalitionList",
+      "summary": "Coalitions of parties."
+    },
+    {
+      "name": "ListFunds",
+      "group": "ledger",
+      "feature": "ledger",
+      "method": "GET",
+      "path": "/v1/funds",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "FundList",
+      "summary": "Funds with who manages them, where they apply and how many money flows are recorded."
+    },
+    {
+      "name": "ListManifestos",
+      "group": "ledger",
+      "feature": "ledger",
+      "method": "GET",
+      "path": "/v1/manifestos",
+      "role": "list",
+      "inputs": [],
+      "output": "ManifestoList",
+      "summary": "Party and candidate manifestos by election."
+    },
+    {
       "name": "BrowseSources",
       "group": "locality",
       "feature": "places",

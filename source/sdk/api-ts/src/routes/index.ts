@@ -4,5 +4,6 @@ export * from "./geography";
 export * from "./governance";
 export * from "./insights";
 export * from "./interactions";
+export * from "./ledger";
 export * from "./locality";
 export * from "./reference";

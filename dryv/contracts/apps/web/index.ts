@@ -14,6 +14,7 @@ import { geographyOperations } from "#/apps/api/geography.ts";
 import { insightOperations, insights } from "#/apps/api/insights.ts";
 import { experience, experienceOperations } from "#/apps/api/experience.ts";
 import { interactionOperations, interactions } from "#/apps/api/interactions.ts";
+import { ledger, ledgerOperations } from "#/apps/api/ledger.ts";
 import { locality, localityOperations } from "#/apps/api/locality.ts";
 
 const web = dryv.group({ name: "web" }).description("The public website: its surface and views.");
@@ -23,7 +24,7 @@ const features = web.feature("Features");
 const web_app = dryv
   .app({ name: "mzizi-web" })
   .info({ title: "Mzizi public website", version: "0.1.0" })
-  .groups(shared, reference, geography, locality, insights, experience, interactions, brand, web)
+  .groups(shared, reference, geography, locality, insights, experience, interactions, ledger, brand, web)
   .surfaces(surfaces.Main)
   .theme(themes.Mzizi)
   .consumes(
@@ -78,6 +79,11 @@ const web_app = dryv
     interactionOperations.Like,
     interactionOperations.Unlike,
     interactionOperations.RecordView,
+    ledgerOperations.ListBudgets,
+    ledgerOperations.ListFunds,
+    ledgerOperations.GetCoverage,
+    ledgerOperations.ListCoalitions,
+    ledgerOperations.ListManifestos,
   );
 
 export default dryv.project({ name: "mzizi-web" }).apps(api, web_app);

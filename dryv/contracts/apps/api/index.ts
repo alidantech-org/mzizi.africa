@@ -25,6 +25,7 @@ import { geographyOperations } from "./geography.ts";
 import { governanceOperations } from "./governance.ts";
 import { insightOperations, insights } from "./insights.ts";
 import { interactionOperations, interactions } from "./interactions.ts";
+import { ledger, ledgerOperations } from "./ledger.ts";
 import { locality, localityOperations } from "./locality.ts";
 import { referenceOperations } from "./reference.ts";
 
@@ -42,6 +43,7 @@ export default dryv
     ...Object.values(insightOperations),
     ...Object.values(experienceOperations),
     ...Object.values(interactionOperations),
+    ...Object.values(ledgerOperations),
   )
   .groups(
     shared,
@@ -60,4 +62,5 @@ export default dryv
     insights,
     experience,
     interactions,
+    ledger,
   );
