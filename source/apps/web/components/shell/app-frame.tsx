@@ -6,8 +6,6 @@ import type { ReactNode } from "react";
 
 import { Icon, type IconName } from "#/components/brand/icon.tsx";
 import { Logo } from "#/components/brand/logo.tsx";
-import { PlaceSwitcher } from "#/components/shell/place-switcher.tsx";
-import { Flag } from "#/components/site/ui/flag.tsx";
 import { GlobalSearchBox } from "#/components/site/global-search-box.tsx";
 import { LanguageSwitcher } from "#/components/site/language-switcher.tsx";
 import { ThemeToggle } from "#/components/site/theme-toggle.tsx";
@@ -106,15 +104,6 @@ export function AppFrame({ context, children }: { context: ShellContext; childre
           </Link>
           <Link href="/profile" className="btn btn-ghost !h-10 !w-10 !justify-center !p-0" aria-label={tr("Profile and preferences")}><Icon name="user" /></Link>
         </>
-      }
-      sidebarTop={
-        <div className="rounded-xl border border-[var(--border-default)] bg-surface-background p-3 shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
-          <p className="flex items-center gap-1.5 text-[0.68rem] font-semibold uppercase tracking-wider text-content-muted"><Flag iso={context.countryIso} name={context.countryName} size={16} />{context.countryName}</p>
-          <p className="mt-0.5 truncate text-sm font-semibold leading-tight">{context.place ? context.place.name : tr("Whole country")}</p>
-          {context.place ? <p className="text-xs text-content-muted">{context.place.kindLabel}</p> : null}
-          <div className="mt-2.5"><PlaceSwitcher currentPath={context.place?.path ?? null} /></div>
-          {context.place ? <Link href="/" className="mt-2 block text-xs font-medium text-clay hover:underline">{tr("Show the whole country")}</Link> : null}
-        </div>
       }
       sidebarFoot={
         <ul className="space-y-1">

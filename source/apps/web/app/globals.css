@@ -209,3 +209,11 @@ body { min-height: 100vh; }
 .mz-mobile-nav { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .mz-web-trophy { position: relative; margin-top: -1rem; background: linear-gradient(135deg, var(--calabash), var(--clay)); box-shadow: 0 0 0 6px var(--surface-elevated); }
 @media (max-width: 639px) { body { padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); } .mz-tree-levels { bottom: calc(5rem + env(safe-area-inset-bottom, 0px)); } }
+
+/* Scrollbars, everywhere: slim, rounded and tinted from the theme (Firefox through scrollbar-*, others through ::-webkit-scrollbar). */
+* { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--content-muted) 45%, transparent) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--content-muted) 40%, transparent); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--content-muted) 70%, transparent); background-clip: content-box; }
+*::-webkit-scrollbar-corner { background: transparent; }
