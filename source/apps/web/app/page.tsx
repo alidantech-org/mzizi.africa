@@ -1,4 +1,4 @@
-/** Home: the visitor's context first (countdown, a tip, what is coming), then the analytics. A server page; the analytics below are the earlier client sections, kept whole. */
+/** Home: the visitor's context first (countdown, a tip), then the analytics, then what is coming. A server page; the analytics below are the earlier client sections, kept whole. */
 import { getCalendar } from "@mzizi/api-client/actions/experience/get-calendar.actions.ts";
 import { listFacts } from "@mzizi/api-client/actions/experience/list-facts.actions.ts";
 
@@ -25,10 +25,14 @@ export default async function HomePage() {
         {calendar?.next ? <CountdownCard next={calendar.next} href={context?.place ? `/${context.place.path}/calendar` : "/calendar"} /> : null}
         <div className="space-y-5">
           <FactsCarousel facts={facts?.facts ?? []} scopeName={context?.place?.name ?? country} />
-          {calendar && calendar.events.length > 0 ? <CalendarList events={calendar.events.slice(0, 4)} /> : null}
         </div>
       </div>
       <HomeAnalytics country={country} />
+      {calendar && calendar.events.length > 0 ? (
+        <section className="mx-auto max-w-7xl px-5 pb-10" aria-label="Coming up">
+          <CalendarList events={calendar.events.slice(0, 6)} />
+        </section>
+      ) : null}
     </div>
   );
 }
