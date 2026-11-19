@@ -1,3 +1,4 @@
+import 'package:mzizi_app/presentation/i18n/copy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_app/presentation/brand/mz_icon.dart';
@@ -218,7 +219,7 @@ class BrowseScreen extends StatelessWidget {
           (label: c.name, path: '/browse/${c.featureId}'),
       ],
       children: [
-        Heading(d.place?.name ?? 'Kenya', kicker: d.place?.kindLabel),
+        Heading(d.place?.name ?? AppCountry.name, kicker: d.place?.kindLabel),
         if (featureId != null)
           Wrap(
             spacing: 8,

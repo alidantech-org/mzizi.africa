@@ -4,18 +4,37 @@ import 'package:mzizi_app/presentation/i18n/strings.dart';
 import 'package:mzizi_app/presentation/saved/saved_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'support/copy.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('tr', () {
-    test('returns the Swahili word and falls back to English', () {
-      expect(tr('sw', 'home'), 'Mwanzo');
-      expect(tr('en', 'home'), 'Home');
-      expect(tr('fr', 'home'), 'Home');
-      expect(tr('sw', 'no-such-key'), 'no-such-key');
-    });
+    test(
+      'returns the word of the installed copy and falls back to the key',
+      () {
+        installCopy('sw');
+        expect(tr('sw', 'home'), 'Mwanzo');
+        installCopy('en');
+        expect(tr('en', 'home'), 'Home');
+        expect(tr('en', 'no-such-key'), 'no-such-key');
+      },
+    );
 
     test('has every English word in Swahili', () {
+      installCopy('en');
+      final english = {
+        for (final key in [
+          'likeLeader',
+          'savePlace',
+          'saved',
+          'mapTitle',
+          'useLocation',
+          'sources',
+        ])
+          key: tr('en', key),
+      };
+      installCopy('sw');
       for (final key in [
         'likeLeader',
         'savePlace',
@@ -24,12 +43,13 @@ void main() {
         'useLocation',
         'sources',
       ]) {
-        expect(tr('sw', key), isNot(tr('en', key)), reason: key);
+        expect(tr('sw', key), isNot(english[key]), reason: key);
       }
     });
   });
 
   test('every Explore card has Swahili for its title, text and tags', () {
+    installCopy('sw');
     for (final e in exploreCatalog) {
       for (final text in [e.title, e.body, ...e.finds]) {
         expect(hasSwahili(text), isTrue, reason: text);

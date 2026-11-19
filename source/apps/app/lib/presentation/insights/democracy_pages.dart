@@ -556,7 +556,7 @@ class PartiesScreen extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                       Text(
-                        '${compact(asNum(p['votes2022']))} votes · ${p['members']} members · ${ksh(asNum(p['fundAllocationKes']))}',
+                        '${compact(asNum(p['votes2022']))} votes · ${p['members']} members · ${money(asNum(p['fundAllocationKes']))}',
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
@@ -592,7 +592,7 @@ class PartyScreen extends StatelessWidget {
               StatTile(label: 'Members', value: '${members.length}'),
               StatTile(
                 label: 'Latest fund',
-                value: ksh(
+                value: money(
                   asNum(
                     asMaps(d.funding).isEmpty
                         ? null
@@ -794,7 +794,7 @@ class LeaderScreen extends StatelessWidget {
               onTap: () =>
                   context.push('/civic/${asMap(fund['place'])['featureId']}'),
               child: Text(
-                '${ksh(asNum(asMap(fund['latestYear'])['total']))} in ${asMap(fund['latestYear'])['year']} · ${asMap(fund['infrastructure'])['projects']} projects. Tap for everything funded here.',
+                '${money(asNum(asMap(fund['latestYear'])['total']))} in ${asMap(fund['latestYear'])['year']} · ${asMap(fund['infrastructure'])['projects']} projects. Tap for everything funded here.',
               ),
             ),
           ],

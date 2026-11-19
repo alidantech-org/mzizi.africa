@@ -1,3 +1,4 @@
+import 'package:mzizi_app/presentation/i18n/copy.dart';
 import 'dart:ui' show ImageFilter;
 
 import 'dart:math' as math;
@@ -37,7 +38,11 @@ String compact(num? value) {
   return v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
 }
 
-String ksh(num? value) => value == null ? '—' : 'KSh ${compact(value)}';
+/// An amount in the visitor's country's currency, compact.
+String money(num? value) => value == null
+    ? '—'
+    : '${AppCountry.currencySymbol} ${compact(value)}'.trim();
+
 String pct(num? fraction, [int digits = 1]) =>
     fraction == null ? '—' : '${(fraction * 100).toStringAsFixed(digits)}%';
 String words(String code) {

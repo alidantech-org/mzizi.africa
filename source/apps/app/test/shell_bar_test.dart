@@ -3,7 +3,10 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mzizi_app/presentation/shell/app_shell.dart';
 import 'package:mzizi_app/presentation/shell/shell_bar.dart';
 
+import 'support/copy.dart';
+
 void main() {
+  setUpAll(() => installCopy('en'));
   testWidgets(
     'five tabs, the centre one is the unlabeled trophy and selects the leaderboard',
     (tester) async {

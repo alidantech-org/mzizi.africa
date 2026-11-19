@@ -63,7 +63,7 @@ export function LanguageProvider({
       setLanguage,
       t: (word) => copy[wordKey(word)] ?? word,
       tr: (english, ...values) => {
-        let text = copy[phraseKey(english)] ?? english;
+        let text = language === "en" ? english : (copy[phraseKey(english)] ?? english);
         for (const v of values) text = text.replace("{}", String(v ?? "—"));
         return text;
       },

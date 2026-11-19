@@ -6,6 +6,7 @@ import 'package:mzizi_api/api.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/mzizi_theme.dart';
 import 'presentation/routers/go_router.dart';
+import 'presentation/i18n/copy.dart';
 import 'presentation/i18n/strings.dart';
 import 'presentation/user/user_store.dart';
 
@@ -14,8 +15,15 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MziziApi.initialize(baseUri: Uri.parse(AppConfig.apiBaseUrl));
   await UserStore.instance.load();
+  await Future.wait([
+    loadCopy(UserStore.instance.language),
+    loadCountry(UserStore.instance.language),
+  ]);
   runApp(const ProviderScope(child: MziziAppApp()));
 }
+
+/// Counts how many times the wording was reloaded, so screens rebuild when a language's copy arrives.
+final copyRevisionProvider = StateProvider<int>((ref) => 0);
 
 class MziziAppApp extends ConsumerWidget {
   const MziziAppApp({super.key});
@@ -23,6 +31,11 @@ class MziziAppApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final language = ref.watch(languageProvider);
+    final revision = ref.watch(copyRevisionProvider);
+    ref.listen<String>(languageProvider, (_, next) async {
+      await loadCopy(next);
+      ref.read(copyRevisionProvider.notifier).state++;
+    });
     uiLanguage = language;
     return ListenableBuilder(
       listenable: UserStore.instance,
@@ -42,7 +55,7 @@ class MziziAppApp extends ConsumerWidget {
                       systemNavigationBarColor: Colors.transparent,
                     ),
             child: KeyedSubtree(
-              key: ValueKey(language),
+              key: ValueKey('$language-$revision'),
               child: child ?? const SizedBox.shrink(),
             ),
           );

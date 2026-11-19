@@ -52,8 +52,9 @@ class _PlaceSearchScreenState extends State<PlaceSearchScreen> {
       input[paging.limit] = min(_window.limit, paging.maxLimit);
       input[paging.offset] = _window.offset;
     }
-    final result = await LocalityFeature(MziziApi.connection)
-        .searchLocalities(input: LocalitySearchInput.fromJson(input));
+    final result = await LocalityFeature(
+      MziziApi.connection,
+    ).searchLocalities(input: LocalitySearchInput.fromJson(input));
     if (!mounted) return;
     setState(() {
       if (result.isError) {

@@ -106,7 +106,7 @@ class _CivicScreenState extends State<CivicScreen> {
             children: [
               StatTile(
                 label: 'Latest allocation',
-                value: ksh(
+                value: money(
                   asNum(
                     asMaps(d.years).isEmpty
                         ? null
@@ -148,7 +148,7 @@ class _CivicScreenState extends State<CivicScreen> {
                       note: null,
                     ),
                 ],
-                format: ksh,
+                format: money,
               ),
             ),
           ],
@@ -338,7 +338,7 @@ class _CivicScreenState extends State<CivicScreen> {
         Text(
           '${p['unit']}${p['started_on'] == null ? '' : ' · started ${p['started_on']}'}',
         ),
-        if (p['amount'] != null) Text('Money: ${ksh(asNum(p['amount']))}'),
+        if (p['amount'] != null) Text('Money: ${money(asNum(p['amount']))}'),
         if (p['contractor'] != null) Text('Contractor: ${p['contractor']}'),
         const SizedBox(height: 14),
         FilledButton(
@@ -404,7 +404,7 @@ class ProjectScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      ksh(asNum(m['amount'])),
+                      money(asNum(m['amount'])),
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ],
@@ -422,7 +422,7 @@ class ProjectScreen extends StatelessWidget {
                   children: [
                     for (final c in asMaps(pr['contracts']))
                       Text(
-                        'Awarded to ${c['contractor']} · ${ksh(asNum(c['amount']))}',
+                        'Awarded to ${c['contractor']} · ${money(asNum(c['amount']))}',
                       ),
                     const SizedBox(height: 10),
                     for (final b in asMaps(pr['bids']))
@@ -430,7 +430,7 @@ class ProjectScreen extends StatelessWidget {
                         dense: true,
                         title: Text(asText(b['bidder'])),
                         subtitle: Text(words(asText(b['outcome']))),
-                        trailing: Text(ksh(asNum(b['amount']))),
+                        trailing: Text(money(asNum(b['amount']))),
                       ),
                   ],
                 ),
@@ -497,7 +497,7 @@ class TendersScreen extends StatelessWidget {
                     Text('Reference: ${t['reference'] ?? 'not published'}'),
                     Text('Closes: ${t['closes_on'] ?? '—'}'),
                     Text('Supplier: ${t['supplier'] ?? 'not published'}'),
-                    Text('Value: ${ksh(asNum(t['amount']))}'),
+                    Text('Value: ${money(asNum(t['amount']))}'),
                     const SizedBox(height: 10),
                     Text(
                       '${t['disclosed']} of ${t['disclosedOf']} basic details published.',

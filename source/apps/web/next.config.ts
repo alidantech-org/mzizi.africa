@@ -2,13 +2,7 @@
 import { resolve } from "node:path";
 import type { NextConfig } from "next";
 
-/** The API the site proxies to. The browser calls this origin (`/v1/...`), so a visitor on mz-web.alidantech.org never needs to reach the API host. */
-const API_TARGET = process.env.API_PROXY_TARGET ?? "http://127.0.0.1:8700";
-
 const config: NextConfig = {
-  async rewrites() {
-    return [{ source: "/v1/:path*", destination: `${API_TARGET}/v1/:path*` }];
-  },
   // Development pages are opened as 127.0.0.1 as well as localhost; Next blocks dev resources (hydration, HMR) from other origins.
   allowedDevOrigins: ["127.0.0.1", "localhost", "mz-web.alidantech.org", "mz-app.alidantech.org", "mz-api.alidantech.org"],
   // The repository has its own AGENTS.md; do not let `next dev` write another one inside the app.

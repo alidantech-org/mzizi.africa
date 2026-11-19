@@ -31,7 +31,12 @@ def phrase_key(english: str) -> str:
 def build_copy(t: Tables) -> None:
     data = json.loads((Path(__file__).parent / "data" / "copy.json").read_text(encoding="utf-8"))
 
+    seen: set[tuple[str, str]] = set()
+
     def add(key: str, language: str, text: str) -> None:
+        if (key, language) in seen:
+            return  # two sentences that differ only in punctuation share one key; the first wins
+        seen.add((key, language))
         t.add(
             "global/reference/dev.copy.csv",
             {
@@ -48,3 +53,11 @@ def build_copy(t: Tables) -> None:
     for english, swahili in data["phrases"].items():
         add(phrase_key(english), "en", english)
         add(phrase_key(english), "sw", swahili)
+    app = data["app"]
+    for language, words in app["words"].items():
+        for name, text in words.items():
+            add(f"app.word.{name.lower()}", language, text)
+    for english, swahili in app["phrases"].items():
+        key = phrase_key(english).replace("web.phrase.", "app.phrase.", 1)
+        add(key, "en", english)
+        add(key, "sw", swahili)
