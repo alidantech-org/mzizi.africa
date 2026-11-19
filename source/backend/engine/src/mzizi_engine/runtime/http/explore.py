@@ -124,7 +124,9 @@ def explore_router(config: ExploreConfig) -> APIRouter:
             raise HTTPException(413, f"the file is {size} bytes; previews are limited to {MAX_RAW_BYTES}")
         data = await asyncio.to_thread(target.read_bytes)
         content_type = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
-        return RawFile(name=target.name, content_type=content_type, size=size, base64=base64.b64encode(data).decode("ascii"))
+        return RawFile(
+            name=target.name, content_type=content_type, size=size, base64=base64.b64encode(data).decode("ascii")
+        )
 
     @router.get("/file/raw")
     async def raw_file(root: str, path: str) -> FileResponse:

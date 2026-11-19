@@ -33,7 +33,9 @@ class _Registry:
         self.rows: list[Row] = []
         self._taken: set[tuple[str, str, str, str]] = set()
 
-    def add(self, namespace: str, text: str, table: str, subject: str, parent: str = "", ended: str = "", language: str = "") -> str:
+    def add(
+        self, namespace: str, text: str, table: str, subject: str, parent: str = "", ended: str = "", language: str = ""
+    ) -> str:
         base = _slug(text) or "item"
         if len(base) > 80:
             base = base[:80].rsplit("-", 1)[0]
@@ -65,7 +67,13 @@ def build_slugs() -> int:
     reg = _Registry()
     # places: the code path is the slug chain
     codes: dict[str, str] = {}
-    for folder, ended in [("counties", ""), ("constituencies", ""), ("wards", ""), ("sub-counties", ""), ("provinces", "2013")]:
+    for folder, ended in [
+        ("counties", ""),
+        ("constituencies", ""),
+        ("wards", ""),
+        ("sub-counties", ""),
+        ("provinces", "2013"),
+    ]:
         base = SEED / "data/ke/geo" / folder
         for row in _read(base / "features.csv"):
             code = row["code"]
@@ -82,9 +90,19 @@ def build_slugs() -> int:
             reg.add("leader", names[holder], "official.individuals", holder)
     entity_names = {r["entity_code"]: r["name"] for r in _read(DATA / "ke/official/names.csv") if r.get("entity_code")}
     for row in _read(DATA / "ke/politics/parties.csv"):
-        reg.add("party", entity_names.get(row["entity_code"], row["code"].rsplit(".", 1)[-1]), "politics.parties", row["code"])
+        reg.add(
+            "party",
+            entity_names.get(row["entity_code"], row["code"].rsplit(".", 1)[-1]),
+            "politics.parties",
+            row["code"],
+        )
     for row in _read(DATA / "ke/governance/institutions.csv"):
-        reg.add("institution", entity_names.get(row["entity_code"], row["code"].rsplit(".", 1)[-1]), "governance.institutions", row["code"])
+        reg.add(
+            "institution",
+            entity_names.get(row["entity_code"], row["code"].rsplit(".", 1)[-1]),
+            "governance.institutions",
+            row["code"],
+        )
     # elections hang under a slug for their kind: /elections/general/2022
     kinds: dict[str, str] = {}
     for row in _read(DATA / "ke/politics/elections.csv"):
@@ -101,6 +119,18 @@ def build_slugs() -> int:
         reg.add("content", row["title"], "filesystem.contents", row["code"], language=row["language_code"])
     for row in _read(DATA / "ke/event/events.csv"):
         reg.add("event", row["code"].rsplit(".", 1)[-1], "event.events", row["code"])
-    header = ["code", "country_code", "namespace_code", "slug", "parent_slug_code", "language_code", "subject_table", "subject_code", "from_year", "to_year", "from_to_precision"]
+    header = [
+        "code",
+        "country_code",
+        "namespace_code",
+        "slug",
+        "parent_slug_code",
+        "language_code",
+        "subject_table",
+        "subject_code",
+        "from_year",
+        "to_year",
+        "from_to_precision",
+    ]
     write_csv("ke/source/slugs.csv", header, reg.rows)
     return len(reg.rows)

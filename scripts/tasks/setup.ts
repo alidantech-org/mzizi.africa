@@ -21,9 +21,7 @@ export function syncSteps(selected: readonly Project[]): Step[] {
 
 /** One-time local preparation that follows dependency installation. */
 export function prepareSteps(): Step[] {
-  return [
-    step("Link local Dryv checkout", at("dryv"), ["bun", "run", "link"], { DRYV_HOME: dryvHome() }),
-  ];
+  return [step("Link local Dryv checkout", at("dryv"), ["bun", "run", "link"], { DRYV_HOME: dryvHome() })];
 }
 
 /** Report the tools and local files the commands rely on. Returns false when something required is missing. */

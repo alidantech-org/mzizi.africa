@@ -71,9 +71,18 @@ const documents = ledger.schemas({
     total: dryv.field(props.Count),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
-  CoverageList: dryv.schema({ items: dryv.field(shapes.CoverageItem).array(), gaps: dryv.field(p.NonEmptyString500).array() }),
-  CoalitionList: dryv.schema({ coalitions: dryv.field(shapes.Coalition).array(), gaps: dryv.field(p.NonEmptyString500).array() }),
-  ManifestoList: dryv.schema({ manifestos: dryv.field(shapes.Manifesto).array(), gaps: dryv.field(p.NonEmptyString500).array() }),
+  CoverageList: dryv.schema({
+    items: dryv.field(shapes.CoverageItem).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  CoalitionList: dryv.schema({
+    coalitions: dryv.field(shapes.Coalition).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
+  ManifestoList: dryv.schema({
+    manifestos: dryv.field(shapes.Manifesto).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
 });
 
 export const ledgerOperations = feature.operations({
@@ -83,7 +92,9 @@ export const ledgerOperations = feature.operations({
     .description("Budgets by fiscal year with their revisions, newest first.")
     .input(inputs.LedgerInput)
     .output(documents.BudgetList)
-    .facets(({ input, output }) => ({ http: dryv.http("GET", "/v1/budgets").input(input, dryv.queryObject()).output(output) })),
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/budgets").input(input, dryv.queryObject()).output(output),
+    })),
 
   ListFunds: dryv
     .operation()
@@ -91,7 +102,9 @@ export const ledgerOperations = feature.operations({
     .description("Funds with who manages them, where they apply and how many money flows are recorded.")
     .input(inputs.LedgerInput)
     .output(documents.FundList)
-    .facets(({ input, output }) => ({ http: dryv.http("GET", "/v1/funds").input(input, dryv.queryObject()).output(output) })),
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/funds").input(input, dryv.queryObject()).output(output),
+    })),
 
   GetCoverage: dryv
     .operation()

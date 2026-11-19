@@ -40,7 +40,17 @@ const expected: Record<string, string[]> = {
     "option_results",
     "polls",
   ],
-  civic: ["services", "projects", "project_features", "procurements", "bids", "contracts", "deliveries", "facilities", "beneficiaries"],
+  civic: [
+    "services",
+    "projects",
+    "project_features",
+    "procurements",
+    "bids",
+    "contracts",
+    "deliveries",
+    "facilities",
+    "beneficiaries",
+  ],
   statistics: ["indicators", "observations", "metrics"],
   finance: ["fiscal_periods", "budgets", "budget_versions", "appropriations", "funds", "flows", "debts"],
 };

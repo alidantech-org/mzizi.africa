@@ -1255,7 +1255,10 @@ const documents = insights.schemas({
     units: dryv.field(sections1.ElectionDetailUnits).array(),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
-  PartyList: dryv.schema({ parties: dryv.field(sections0.PartyListParties).array(), gaps: dryv.field(p.NonEmptyString500).array() }),
+  PartyList: dryv.schema({
+    parties: dryv.field(sections0.PartyListParties).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
   PartyDetail: dryv.schema({
     party: dryv.field(sections0.PartyDetailParty),
     members: dryv.field(sections0.PartyDetailMembers).array(),
@@ -1599,7 +1602,9 @@ export const insightOperations = reads.operations({
   ListLaw: dryv
     .operation()
     .role("list")
-    .description("Legal instruments held, highest authority first (constitution, then acts, then regulations), with their size.")
+    .description(
+      "Legal instruments held, highest authority first (constitution, then acts, then regulations), with their size.",
+    )
     .input(inputs.LawInput)
     .output(documents.LawList)
     .facets(({ input, output }) => ({
@@ -1631,7 +1636,9 @@ export const insightOperations = reads.operations({
   GetLeaderProfile: dryv
     .operation()
     .role("detail")
-    .description("A leader, by the person's slug: offices, contacts, media, voting and attendance record, the fund they oversee and evidence.")
+    .description(
+      "A leader, by the person's slug: offices, contacts, media, voting and attendance record, the fund they oversee and evidence.",
+    )
     .input(inputs.CodeInput)
     .output(documents.LeaderProfile)
     .facets(({ inputField, output }) => ({
