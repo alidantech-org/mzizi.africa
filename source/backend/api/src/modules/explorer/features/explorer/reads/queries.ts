@@ -39,7 +39,7 @@ export const placeCte = `with recursive routes as (
   from routes r cross join root where r.feature_id is distinct from root.feature_id
 ), places as (
   select distinct on (p.feature_id,p.segments) p.feature_id,p.segments,p.parent_feature_id,p.ancestors,
-    f.code,coalesce(n.name,f.code) as name,n.language_code,coalesce(vl.label,k.label) as kind,
+    f.code,coalesce(n.name,f.code) as name,n.language_code,coalesce(vl.label,k.label) as kind,k.code as kind_code,
     c.iso_alpha2 as country_code,'/'||lower(c.iso_alpha2)||case when cardinality(p.segments)>0 then '/'||array_to_string(p.segments,'/') else '' end as path
   from registered p join geography.features f on f.id=p.feature_id and f.deleted_at is null
     and (f.from_year is null or f.from_year<=extract(year from current_date)) and (f.to_year is null or f.to_year>=extract(year from current_date))

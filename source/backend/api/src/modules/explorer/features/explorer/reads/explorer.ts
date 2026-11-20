@@ -149,11 +149,11 @@ export async function context(db: DataSource, input: PlaceInputDto): Promise<Con
     ),
     queryRows(
       db,
-      `select l.depth,v.code as "kindCode",
+      `select min(l.depth)::int as depth,v.code as "kindCode",
          coalesce((select vl.label from reference.value_labels vl join reference.languages lang on lang.id=vl.language_id
                     where vl.value_id=v.id and lang.iso6391=$2 and vl.deleted_at is null order by vl.id limit 1), v.label) as label
        from geography.levels l join reference.values v on v.id=l.feature_kind_id
-      where l.country_id=$1 and l.is_routing_hierarchy and l.deleted_at is null order by l.depth,l.id`,
+      where l.country_id=$1 and l.deleted_at is null group by v.id,v.code,v.label order by min(l.depth),v.code`,
       [selected.id, lang],
       LevelDto,
     ),
@@ -182,18 +182,19 @@ export async function search(db: DataSource, input: SearchInputDto): Promise<Pla
       featureId: input.parentFeatureId,
       languageCode: lang,
     });
-  const filter = `position(lower($3) in lower(p.name))>0 and ($4::uuid is null or $4=any(p.ancestors)) and ($5::int is null or cardinality(p.segments)=$5)`;
+  const filter = `($3::text is null or position(lower($3) in lower(p.name))>0) and ($4::uuid is null or $4=any(p.ancestors)) and ($5::int is null or cardinality(p.segments)=$5) and ($6::text is null or p.kind_code=$6)`;
   const parameters = [
     selected.id,
     lang,
-    input.query,
+    input.query ?? null,
     input.parentFeatureId ?? null,
     input.depth ?? null,
+    input.kindCode ?? null,
   ];
   const [result, counts] = await Promise.all([
     queryRows(
       db,
-      `${placeCte} select ${placeColumns} from places p where ${filter} order by lower(p.name),p.feature_id,p.path limit $6 offset $7`,
+      `${placeCte} select ${placeColumns} from places p where ${filter} order by lower(p.name),p.feature_id,p.path limit $7 offset $8`,
       [...parameters, limit, pageOffset(page, limit)],
       PlaceDto,
     ),

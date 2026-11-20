@@ -133,7 +133,10 @@ const inputs = explorer.schemas({
   }),
   SearchInput: dryv.schema({
     countryCode: dryv.field(countryProperties.IsoAlpha2),
-    query: dryv.field(props.Query),
+    /** Part of a place name; omit to list every place (of one kind) in stable name order. */
+    query: dryv.field(props.Query).optional(),
+    /** Only places of one kind, by its reference value code, for example the wards of a country. */
+    kindCode: dryv.field(p.NonEmptyString255).optional(),
     parentFeatureId: dryv.field(p.Id).optional(),
     depth: dryv.field(p.NonNegativeInteger).optional(),
     languageCode: dryv.field(props.LanguageCode).optional(),
