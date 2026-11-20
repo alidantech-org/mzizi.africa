@@ -5,7 +5,8 @@ import { useCopy } from "#/lib/copy/copy";
 import { ChevronDown, Monitor, Moon, Sun } from "lucide-react";
 import { useState } from "react";
 import { Radio, RadioGroup, ToggleButton, ToggleButtonGroup } from "react-aria-components";
-import { FLAG_COLORS } from "#demo/_data/flag-colors";
+import { flagOf } from "#/lib/preferences/flag-colors";
+import { usePlaceNames } from "#/lib/places/catalogue";
 import { chromaticColors } from "#/lib/charts/flag-palette";
 import { customActive, flagActive, flagPrimaryOf, setTheme, useTheme, type Mode } from "#/lib/preferences/prefs";
 import { Flag } from "#/components/brand/flag";
@@ -39,7 +40,12 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
   const tr = useCopy();
   const t = useTheme();
   const [open, setOpen] = useState(flagOpen); // the flag colours section is closed until opened
-  const flag = FLAG_COLORS[t.country]; // offered only where the current country has a flag
+  const flag = flagOf(t.country); // offered only where the current country has a measured flag
+  const names = usePlaceNames();
+  const colourName = (label: string) => {
+    const key = label.replace(/ (\w)/, (_, c: string) => c.toUpperCase()) as keyof typeof copy.preferences.colour;
+    return key in copy.preferences.colour ? tr(copy.preferences.colour[key]) : label;
+  };
   const following = flagActive(t);
   const custom = customActive(t);
   const primary = following ? flagPrimaryOf(t) : null;
@@ -86,7 +92,7 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
           >
             <Flag code={t.country} size={16} />
             <span className="font-medium">{tr(copy.preferences.theme.flagTitle)}</span>
-            <span className="min-w-0 truncate text-muted">· {flag.name}</span>
+            <span className="min-w-0 truncate text-muted">· {names.countryName(t.country)}</span>
             {following && (
               <span className="ml-auto shrink-0 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent">
                 {tr(copy.preferences.theme.flagFollowing)}
@@ -103,14 +109,14 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
                 {tr(copy.preferences.theme.flagHelp)}
               </p>
               <RadioGroup
-                aria-label={tr(copy.preferences.theme.flagMain, { country: flag.name })}
+                aria-label={tr(copy.preferences.theme.flagMain, { country: names.countryName(t.country) })}
                 orientation="horizontal"
                 value={primary}
                 onChange={(hex) => setTheme({ palette: "flag", flagPrimary: hex })}
                 className="mt-2 flex gap-2"
               >
                 {chromaticColors(flag.colors.map((c) => c.hex)).map((hex) => {
-                  const name = flag.colors.find((c) => c.hex === hex)?.name ?? hex;
+                  const name = colourName(flag.colors.find((c) => c.hex === hex)?.label ?? hex);
                   return (
                     <Radio
                       key={hex}

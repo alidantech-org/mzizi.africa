@@ -2,7 +2,9 @@
 /** Place catalogue loaded on the server from the generated client and handed to the existing location UI. */
 import { createContext, useContext, type ReactNode } from "react";
 
-export type CatalogueCountry = { code: string; iso: string; name: string; levels: string[]; /** True when the backend holds place data for it. */ served: boolean };
+import { registerFlags, type FlagColor } from "#/lib/preferences/flag-colors";
+
+export type CatalogueCountry = { code: string; iso: string; name: string; levels: string[]; flagUrl: string | null; flagColors: FlagColor[]; /** True when the backend holds place data for it. */ served: boolean };
 export type CatalogueEntry = { kind: string; name: string; where: string; href: string; tag?: string };
 export type CatalogueLanguage = { code: string; name: string; nativeName: string | null };
 export type PlaceCatalogue = {
@@ -22,6 +24,7 @@ const EMPTY: PlaceCatalogue = { navigation: {}, languages: [], countries: [], en
 const Ctx = createContext<PlaceCatalogue>(EMPTY);
 
 export function PlaceCatalogueProvider({ value, children }: { value: PlaceCatalogue; children: ReactNode }) {
+  registerFlags(value.countries);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

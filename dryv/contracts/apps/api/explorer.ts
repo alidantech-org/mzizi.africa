@@ -16,9 +16,21 @@ const props = explorer.properties({
   Latitude: dryv.property.number.double({ range: { min: -90, max: 90 } }),
   Longitude: dryv.property.number.double({ range: { min: -180, max: 180 } }),
   Accuracy: dryv.property.number.double({ range: { min: 0, max: 100000 } }),
+  HexColor: dryv.property.string().length({ min: 7, max: 7 }),
+  Share: dryv.property.number.double({ range: { min: 0, max: 1 } }),
   CopyArea: dryv.property.string().length({ min: 1, max: 100 }),
   CopyHash: dryv.property.string().length({ min: 8, max: 64 }),
   ResolutionStatus: dryv.property.enum({ Matched: "matched", Ambiguous: "ambiguous", Unresolved: "unresolved" }),
+});
+const flag = explorer.schemas({
+  FlagColor: dryv.schema({
+    /** The nearest basic colour name, only a label for what was measured. */
+    label: dryv.field(p.Name),
+    /** The measured colour as `#rrggbb`. */
+    hex: dryv.field(props.HexColor),
+    /** The share of the flag this colour covers, between 0 and 1. */
+    share: dryv.field(props.Share),
+  }),
 });
 const rows = explorer.schemas({
   CountryChoice: dryv.schema({
@@ -28,6 +40,8 @@ const rows = explorer.schemas({
     served: dryv.field(p.Flag),
     rootFeatureId: dryv.field(p.Id).maybe(),
     flagUrl: dryv.field(p.Url).maybe(),
+    /** Colours measured from the registered flag file; empty when the flag has no measured colours. */
+    flagColors: dryv.field(flag.FlagColor).array(),
   }),
   LanguageChoice: dryv.schema({
     code: dryv.field(props.LanguageCode),
@@ -152,7 +166,9 @@ export const explorerOperations = feature.operations({
   GetSetupBootstrap: dryv
     .operation()
     .role("detail")
-    .description("Country catalogue and the interface languages that have recorded wording. Never chooses a default country.")
+    .description(
+      "Country catalogue and the interface languages that have recorded wording. Never chooses a default country.",
+    )
     .input(inputs.BootstrapInput)
     .output(documents.Bootstrap)
     .facets(({ input, output }) => ({

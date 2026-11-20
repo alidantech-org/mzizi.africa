@@ -112,8 +112,29 @@ def main(argv: list[str] | None = None) -> int:
     )
     files.add_argument("--apply", action="store_true", help="write to the object store and the database")
     files.add_argument("--root", type=Path, default=None, help="folder holding data/ (default: seed/)")
+    media = sub.add_parser(
+        "register-media",
+        help="store the media files of a reviewed drafts folder and write their media rows (dry run unless --apply)",
+    )
+    media.add_argument("--drafts", type=Path, required=True, help="folder holding media.csv")
+    media.add_argument("--files-root", type=Path, required=True, help="folder the file column is relative to")
+    media.add_argument("--folders", default="media/flags", help="store folders, slash separated")
+    media.add_argument("--apply", action="store_true", help="write to the object store and the database")
     args = parser.parse_args(argv)
     config = EngineConfig.load()
+    if args.command == "register-media":
+        from mzizi_engine.runtime.assembly.filesystem_operations import sync_media_files
+
+        outcome = sync_media_files(
+            {
+                "apply": args.apply,
+                "drafts": str(args.drafts),
+                "files_root": str(args.files_root),
+                "folders": args.folders,
+            }
+        )
+        print(json.dumps(outcome, indent=2))
+        return 0 if outcome.get("ok") else 1
     if args.command == "register-files":
         from mzizi_engine.runtime.assembly.filesystem_operations import sync_source_files
 

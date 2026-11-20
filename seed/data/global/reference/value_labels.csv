@@ -112,3 +112,14 @@ fil.media.kind.photograph,sw,preferred,Picha
 fil.media.kind.audio,sw,preferred,Rekodi ya sauti
 fil.media.kind.video,sw,preferred,Rekodi ya video
 fil.media.kind.document-scan,sw,preferred,Hati iliyochanganuliwa
+geo.feature.kind.country,sw,preferred,Nchi
+geo.feature.kind.province,sw,preferred,Mkoa
+geo.feature.kind.county,sw,preferred,Kaunti
+geo.feature.kind.sub-county,sw,preferred,Kaunti ndogo
+geo.feature.kind.constituency,sw,preferred,Eneo bunge
+geo.feature.kind.ward,sw,preferred,Wadi
+geo.feature.kind.city,sw,preferred,Jiji
+geo.feature.kind.town,sw,preferred,Mji
+geo.feature.kind.village,sw,preferred,Kijiji
+geo.feature.kind.polling-station,sw,preferred,Kituo cha kupigia kura
+geo.feature.kind.building,sw,preferred,Jengo

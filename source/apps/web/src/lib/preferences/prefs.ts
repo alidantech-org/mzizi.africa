@@ -4,7 +4,7 @@
  * the page script in layout.tsx applies the saved values before first paint and the server renders the rest.
  */
 import { createContext, useContext, useSyncExternalStore } from "react";
-import { FLAG_COLORS } from "#demo/_data/flag-colors";
+import { flagOf } from "#/lib/preferences/flag-colors";
 import {
   COOKIES,
   DEFAULT_A11Y,
@@ -58,12 +58,12 @@ export function seedPrefs(init: PrefsInit) {
 }
 
 /** True when the reader follows flags and the current country has one. */
-export const flagActive = (t: Theme) => t.palette === "flag" && !!FLAG_COLORS[t.country];
+export const flagActive = (t: Theme) => t.palette === "flag" && !!flagOf(t.country);
 /** True when the reader chose their own colour. */
 export const customActive = (t: Theme) => t.palette === "custom" && !!t.custom;
 /** The primary colour in use: the picked one if it belongs to this flag, otherwise the country's dominant colour. */
 export const flagPrimaryOf = (t: Theme) => {
-  const f = FLAG_COLORS[t.country];
+  const f = flagOf(t.country);
   return f && t.flagPrimary && f.colors.some((c) => c.hex === t.flagPrimary) ? t.flagPrimary : (f?.dominant ?? "");
 };
 

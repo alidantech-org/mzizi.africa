@@ -35,6 +35,7 @@ class MediaRow(BaseModel):
     file_version_id: UUID | None = None
     id: UUID
     kind_id: UUID
+    metadata: str | None = None
     platform_id: UUID | None = None
     position: Annotated[int, Field(ge=0)] | None = None
     purpose: Annotated[str, Field(max_length=4000)] | None = None

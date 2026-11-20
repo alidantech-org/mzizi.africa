@@ -48,6 +48,7 @@
   {%- if primitive.is.string and primitive.is.uuid -%}uuid
   {%- elif primitive.is.string and primitive.constraints.length is not none and primitive.constraints.length.has_max -%}varchar({{ primitive.constraints.length.max }})
   {%- elif primitive.is.string and primitive.constraints.length is not none and primitive.constraints.length.has_exact -%}char({{ primitive.constraints.length.exact }})
+  {%- elif primitive.is.string and primitive.format == 'json' -%}jsonb
   {%- elif primitive.is.string -%}text
   {%- elif primitive.is.boolean -%}boolean
   {%- elif primitive.money is not none and primitive.money.minor_units -%}bigint

@@ -1,0 +1,38 @@
+import { defineCopy } from "../define.ts";
+
+/** First-visit setup: where you are, your language and your look. */
+export const setup = defineCopy("setup", {
+  title: { en: "Set up your place", sw: "Weka eneo lako" },
+  step: { en: "Step {step} of {total}: {name}", sw: "Hatua ya {step} kati ya {total}: {name}" },
+  stepPlace: { en: "Your place", sw: "Eneo lako" },
+  stepLook: { en: "Language and look", sw: "Lugha na mwonekano" },
+  progress: { en: "Setup progress", sw: "Maendeleo ya kuweka" },
+  skip: { en: "Skip for now", sw: "Ruka kwa sasa" },
+  back: { en: "Back", sw: "Rudi" },
+  next: { en: "Next", sw: "Endelea" },
+  skipPlace: { en: "Skip place", sw: "Ruka eneo" },
+  done: { en: "Done", sw: "Imekamilika" },
+  country: { en: "Country", sw: "Nchi" },
+  countrySearch: { en: "Search countries", sw: "Tafuta nchi" },
+  countryList: { en: "Country", sw: "Nchi" },
+  nothingMatches: { en: "Nothing matches.", sw: "Hakuna kinacholingana." },
+  findLocation: { en: "Find your location", sw: "Tafuta eneo lako" },
+  myLocation: { en: "My location", sw: "Eneo langu" },
+  waiting: { en: "Waiting…", sw: "Inasubiri…" },
+  searchPlaces: { en: "Search places", sw: "Tafuta maeneo" },
+  places: { en: "Places", sw: "Maeneo" },
+  language: { en: "Language", sw: "Lugha" },
+  look: { en: "Look", sw: "Mwonekano" },
+  status: {
+    none: { en: "Search or choose a place below.", sw: "Tafuta au chagua eneo hapa chini." },
+    asking: { en: "Waiting for your device…", sw: "Inasubiri kifaa chako…" },
+    finding: { en: "Finding your area…", sw: "Inatafuta eneo lako…" },
+    foundDevice: { en: "{place} · from your device", sw: "{place} · kutoka kwa kifaa chako" },
+    foundSearch: { en: "{place} · from your search", sw: "{place} · kutoka kwa utafutaji wako" },
+    outside: { en: "That spot is outside the places we have.", sw: "Mahali hapo ni nje ya maeneo tuliyo nayo." },
+    several: { en: "Several places match. Choose one below.", sw: "Maeneo kadhaa yanalingana. Chagua moja hapa chini." },
+    denied: { en: "Location is blocked. Search or choose below.", sw: "Eneo limezuiwa. Tafuta au chagua hapa chini." },
+    noData: { en: "{country} has no place data yet.", sw: "{country} haina data ya maeneo bado." },
+    noPlaces: { en: "No places are loaded for this country yet.", sw: "Hakuna maeneo yaliyopakiwa kwa nchi hii bado." },
+  },
+});

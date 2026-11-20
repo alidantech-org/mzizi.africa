@@ -197,6 +197,29 @@ def sync_source_files(payload: Payload) -> Payload:
     return _open(payload, act)
 
 
+def sync_media_files(payload: Payload) -> Payload:
+    """Register the media files of a reviewed drafts folder and write their media rows (a dry run unless `apply`)."""
+    from mzizi_engine.runtime.assembly.media_files import read_drafts, register_media
+
+    apply = payload.get("apply") is True
+    folder = Path(_text(payload, "drafts"))
+    files_root = Path(_text(payload, "files_root"))
+    folders = tuple(_text(payload, "folders").split("/"))
+
+    def act(fs: FilesystemOrchestrator, wiring: _Wiring, conn: Connection) -> Payload:
+        report = register_media(
+            fs,
+            conn,
+            read_drafts(folder, files_root),
+            folders=folders,
+            apply=apply,
+            created_by={"task": "register media files", **_actor(payload)},
+        )
+        return {**report.model_dump(mode="json"), "ok": report.ok}
+
+    return _open(payload, act)
+
+
 def upload_begin(payload: Payload) -> Payload:
     return _run(
         payload,

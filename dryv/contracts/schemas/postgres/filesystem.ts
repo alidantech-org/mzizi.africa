@@ -169,6 +169,12 @@ export const Media = filesystem
       .maybe()
       .tags("scheme:ref.sch.fil.media.platform"),
     thumbnailUrl: dryv.field(sharedProperties.Url).maybe(),
+    /**
+     * Facts derived from the media, one object per facet, each with its own provenance, for example
+     * `{"colors": {"method": "svg-fill-area", "sourceSha256": "…", "swatches": [{"label": "red", "hex": "#bb0000", "share": 0.31}]},
+     * "dimensions": {"width": 900, "height": 600}}`. Facets are added without changing the others; a JSON object, never a list.
+     */
+    metadata: dryv.field(sharedProperties.JsonText).maybe(),
   })
   .rule("MediaHasBytesOrUrl", rule.atLeastOne("fileVersionId", "externalUrl"))
   .rule("MediaSecondsAreOrdered", rule.ordered("startSecond", "endSecond", { allowEqual: false }))

@@ -39,7 +39,7 @@ export async function loadPlaceCatalogue(fallbackCountry?: string): Promise<Plac
 
   const languages = boot.languages.map((l) => ({ code: l.code, name: l.name, nativeName: l.nativeName ?? null }));
   const served = boot.countries.filter((c) => c.served);
-  const countries = boot.countries.map((c) => ({ code: c.code.toLowerCase(), iso: c.code, name: c.name, levels: [] as string[], served: c.served }));
+  const countries = boot.countries.map((c) => ({ code: c.code.toLowerCase(), iso: c.code, name: c.name, levels: [] as string[], served: c.served, flagUrl: c.flagUrl ?? null, flagColors: c.flagColors }));
   const entries: CatalogueEntry[] = boot.countries.map((c) => ({
     kind: "Country",
     name: c.name,

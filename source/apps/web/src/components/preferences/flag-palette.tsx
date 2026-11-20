@@ -1,6 +1,6 @@
 "use client";
 /** Writes the flag palette as CSS, so the server sends it with the page and nothing repaints on load. */
-import { FLAG_COLORS } from "#demo/_data/flag-colors";
+import { flagOf } from "#/lib/preferences/flag-colors";
 import { flagCss } from "#/lib/charts/flag-palette";
 import { customActive, flagActive, flagPrimaryOf, useTheme } from "#/lib/preferences/prefs";
 import { useCtx } from "#/lib/navigation/use-ctx";
@@ -17,7 +17,7 @@ export function FlagPalette() {
       id="mzizi-app-flag-palette"
       dangerouslySetInnerHTML={{
         __html: flagCss(
-          FLAG_COLORS[t.country].colors.map((c) => c.hex),
+          flagOf(t.country)!.colors.map((c) => c.hex),
           flagPrimaryOf(t),
         ),
       }}
