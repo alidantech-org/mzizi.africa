@@ -175,8 +175,8 @@ function NavLinks({ rail, onNavigate }: { rail: boolean; onNavigate: () => void 
                 aria-expanded={open}
                 className="flex w-full items-center justify-between rounded-md px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted hover:text-ink"
               >
-                {groupLabel(g)}
-                <ChevronDown size={12} className={`transition-transform ${open ? "" : "-rotate-90"}`} />
+                <span className="min-w-0 truncate">{groupLabel(g)}</span>
+                <ChevronDown size={12} className={`shrink-0 transition-transform ${open ? "" : "-rotate-90"}`} />
               </button>
             )}
             {open && (

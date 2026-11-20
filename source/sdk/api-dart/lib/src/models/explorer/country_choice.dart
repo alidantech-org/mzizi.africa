@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/explorer/flag_color.dart';
 
 part 'country_choice.g.dart';
 
@@ -7,6 +8,7 @@ part 'country_choice.g.dart';
 class ExplorerCountryChoice {
   const ExplorerCountryChoice({
     required this.code,
+    required this.flagColors,
     this.flagUrl,
     required this.id,
     required this.name,
@@ -14,6 +16,7 @@ class ExplorerCountryChoice {
     required this.served,
   });
   final String code;
+  final List<ExplorerFlagColor> flagColors;
   final String? flagUrl;
   final String id;
   final String name;

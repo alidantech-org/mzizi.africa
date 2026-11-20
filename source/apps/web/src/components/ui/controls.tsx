@@ -231,7 +231,7 @@ export function Switch({
     >
       {({ isSelected, isFocusVisible }) => (
         <>
-          <span>{children}</span>
+          <span className="min-w-0 truncate">{children}</span>
           <span
             className={`relative h-5 w-9 shrink-0 rounded-full border transition ${isSelected ? "border-accent bg-accent" : "border-muted bg-line"} ${isFocusVisible ? "ring-2 ring-accent ring-offset-1 ring-offset-surface" : ""}`}
           >

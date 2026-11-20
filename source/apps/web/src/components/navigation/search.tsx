@@ -219,9 +219,9 @@ export function SearchDialog() {
                     onClick={() => go(r)}
                     className={`flex w-full items-center gap-3 rounded-md px-4 py-2.5 text-left ${i === active ? "bg-accent-soft" : ""}`}
                   >
-                    <span className="w-24 shrink-0 font-mono text-[10px] uppercase tracking-widest text-accent">{r.kind}</span>
-                    <span className="font-medium">{r.name}</span>
-                    <span className="ml-auto truncate text-xs text-muted">{r.where}</span>
+                    <span className="w-24 shrink-0 truncate font-mono text-[10px] uppercase tracking-widest text-accent">{r.kind}</span>
+                    <span className="min-w-0 truncate font-medium">{r.name}</span>
+                    <span className="ml-auto max-w-[40%] shrink-0 truncate text-xs text-muted">{r.where}</span>
                   </button>
                 </li>
               ))}

@@ -807,6 +807,7 @@
           ,"external_url"
           ,"file_version_code"
           ,"kind_code"
+          ,"metadata"
           ,"platform_code"
           ,"position"
           ,"purpose"
@@ -891,6 +892,11 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code" }
+        }
+        ,"metadata": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "x-role": "data"
         }
         ,"platform_id": {
           "type": ["string", "null"],

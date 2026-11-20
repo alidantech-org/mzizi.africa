@@ -2,6 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { flagColorExample } from "@test/modules/explorer/schema/dto/examples/flag-color.dto.example.ts";
 
 /** The contract shape of CountryChoice, for generated tests. */
 export const countryChoiceExample: ContractExample = contractExample({
@@ -12,6 +13,13 @@ export const countryChoiceExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "string", exactLength: 2, patterns: ["^[A-Z]{2}$"] },
+    },
+    {
+      name: "flagColors",
+      optional: false,
+      nullable: false,
+      array: {},
+      spec: { kind: "schema", example: () => flagColorExample },
     },
     {
       name: "flagUrl",

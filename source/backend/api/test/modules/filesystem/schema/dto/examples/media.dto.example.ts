@@ -79,6 +79,12 @@ export const mediaExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "metadata",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "json" },
+    },
+    {
       name: "platformId",
       optional: true,
       nullable: true,

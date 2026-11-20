@@ -32,7 +32,7 @@ function Reveal({ show, children }: { show: boolean; children: ReactNode }) {
 /** A labelled part of the dialog. The label sits on top. */
 const Part = ({ label, children }: { label: ReactNode; children: ReactNode }) => (
   <div className="py-2.5">
-    <div className="mb-1.5 text-xs font-medium text-muted">{label}</div>
+    <div className="mb-1.5 truncate text-xs font-medium text-muted">{label}</div>
     {children}
   </div>
 );
@@ -70,7 +70,7 @@ function CountrySelect({ value, onPick }: { value: string; onPick: (code: string
         className="flex h-9 w-full items-center gap-2.5 rounded-md border border-line px-3 text-sm hover:border-muted"
       >
         {current && <Flag code={current.code} size={16} />}
-        <span className="font-medium">{current?.name ?? t(copy.setup.country)}</span>
+        <span className="min-w-0 truncate font-medium">{current?.name ?? t(copy.setup.country)}</span>
         <ChevronDown size={14} className={`ml-auto text-muted transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
@@ -98,12 +98,12 @@ function CountrySelect({ value, onPick }: { value: string; onPick: (code: string
                   className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm hover:bg-accent-soft ${c.code === value ? "bg-accent-soft font-medium" : ""}`}
                 >
                   <Flag code={c.code} size={16} />
-                  {c.name}
-                  {c.code === value && <Check size={13} className="ml-auto text-accent" />}
+                  <span className="min-w-0 flex-1 truncate">{c.name}</span>
+                  {c.code === value && <Check size={13} className="shrink-0 text-accent" />}
                 </button>
               </li>
             ))}
-            {!list.length && <li className="px-2.5 py-2 text-sm text-muted">{t(copy.setup.nothingMatches)}</li>}
+            {!list.length && <li className="truncate px-2.5 py-2 text-sm text-muted">{t(copy.setup.nothingMatches)}</li>}
           </ul>
         </div>
       )}
@@ -274,7 +274,7 @@ export function SetupDialog({ open, onClose }: { open: boolean; onClose: () => v
                   <button
                     onClick={locate}
                     disabled={status === "asking" || status === "finding"}
-                    className="flex h-9 shrink-0 items-center gap-2 rounded-md border border-line px-3 text-sm hover:bg-accent-soft disabled:opacity-60"
+                    className="flex h-9 max-w-[45%] shrink-0 items-center gap-2 truncate rounded-md border border-line px-3 text-sm hover:bg-accent-soft disabled:opacity-60"
                   >
                     <Crosshair size={14} />
                     {status === "asking" ? t(copy.setup.waiting) : t(copy.setup.myLocation)}
@@ -290,7 +290,7 @@ export function SetupDialog({ open, onClose }: { open: boolean; onClose: () => v
                     />
                   </label>
                 </div>
-                <p className="mt-2 flex items-center gap-1.5 text-xs text-muted">{statusLine}</p>
+                <p className="mt-2 flex min-w-0 items-center gap-1.5 truncate text-xs text-muted">{statusLine}</p>
               </Part>
               <Part label={t(copy.setup.places)}>
                 {!served ? (
@@ -329,8 +329,8 @@ export function SetupDialog({ open, onClose }: { open: boolean; onClose: () => v
                       onClick={() => setLang(l.code)}
                       className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-sm hover:bg-accent-soft ${lang === l.code ? "bg-accent-soft font-medium" : ""}`}
                     >
-                      <span>{l.name}</span>
-                      {l.nativeName && l.nativeName !== l.name && <span className="text-xs text-muted">{l.nativeName}</span>}
+                      <span className="min-w-0 truncate">{l.name}</span>
+                      {l.nativeName && l.nativeName !== l.name && <span className="min-w-0 truncate text-xs text-muted">{l.nativeName}</span>}
                       {lang === l.code && <Check size={13} className="ml-auto text-accent" />}
                     </button>
                   </li>

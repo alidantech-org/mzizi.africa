@@ -152,8 +152,12 @@ def _columns_by_seed_name(table: Table) -> dict[str, Column]:
     return {(column.link.alias if column.link else column.name): column for column in table.columns.values()}
 
 
-def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
+def check_data(root: Path, schema_root: Path = SCHEMA_ROOT, context_roots: tuple[Path, ...] = ()) -> DataResult:
     """Check every CSV under `root/data` and return the problems, the rows and the load order.
+
+    `context_roots` are seed folders loaded earlier (a batch's parents). Their rows are read only so that links and
+    subjects in `root` can name them; they are not checked for problems, not returned in `rows`, not loaded, and need no
+    artifact rows. This is what lets a seed be loaded in batches that each hold only their own files.
 
     A `code` cell and a link cell hold the identity path alone (`ke`, `geo.continent.africa`): the file and the link column
     already say which table. The stored code is `<schema short>.<table short>.<path>` (`ref.cty.ke`).
@@ -170,6 +174,23 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
             result.problems.append(f"{shown}: {why}")
             continue
         result.rows.setdefault(table.qualified_name, []).extend(_read(path, table, shown, result.problems))
+
+    # Rows of earlier batches: only their keys are kept, to resolve links and subjects.
+    context_keys: dict[str, set[tuple[str, ...]]] = {}
+    for context in context_roots:
+        for path in sorted((context / "data").rglob("*.csv")) if (context / "data").is_dir() else []:
+            table, _ = _table_for(path, context, tables, glossary.schemas)
+            if table is None:
+                continue
+            bucket = context_keys.setdefault(table.qualified_name, set())
+            for row in _read(path, table, str(path.relative_to(context)), []):
+                bucket.add(tuple(row.values.get(k, "") for k in table.natural_key))
+
+    def known_table(name: str) -> bool:
+        return name in result.rows or name in context_keys
+
+    def known_key(name: str, key: tuple[str, ...]) -> bool:
+        return key in keys.get(name, {}) or key in context_keys.get(name, set())
 
     # Values and uniqueness.
     keys: dict[str, dict[tuple[str, ...], Row]] = {}
@@ -247,18 +268,18 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                 if composite:
                     # A table without a code is linked by its natural key, the key cells joined by `|` (the loader's identity).
                     parts = tuple(value.split("|"))
-                    if target.qualified_name not in result.rows:
+                    if not known_table(target.qualified_name):
                         result.problems.append(
                             f"{where}: {alias}: {value!r} names a {target.qualified_name} row but that table has no seed file"
                         )
-                    elif len(parts) != len(target.natural_key) or parts not in keys.get(target.qualified_name, {}):
+                    elif len(parts) != len(target.natural_key) or not known_key(target.qualified_name, parts):
                         result.problems.append(
                             f"{where}: {alias}: unknown {target.qualified_name} key {value!r} (expected {'|'.join(target.natural_key)})"
                         )
-                    elif target.qualified_name != name:
+                    elif target.qualified_name != name and target.qualified_name in result.rows:
                         edges[name].add(target.qualified_name)
                     continue
-                if target.qualified_name not in result.rows:
+                if not known_table(target.qualified_name):
                     result.problems.append(
                         f"{where}: {alias}: {value!r} is a {target.qualified_name} code but that table has no seed file"
                     )
@@ -266,9 +287,9 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                 if reason := segments_problem(value):
                     result.problems.append(f"{where}: {alias} {value!r} {reason}")
                     continue
-                if (value,) not in keys.get(target.qualified_name, {}):
+                if not known_key(target.qualified_name, (value,)):
                     result.problems.append(f"{where}: {alias}: unknown {target.qualified_name} code {value!r}")
-                if target.qualified_name != name:
+                if target.qualified_name != name and target.qualified_name in result.rows:
                     edges[name].add(target.qualified_name)
 
     # Periods: a row with an exact date always has the matching year filled, and a precision.
@@ -307,11 +328,11 @@ def check_data(root: Path, schema_root: Path = SCHEMA_ROOT) -> DataResult:
                 result.problems.append(f"{where}: subject_table {subject!r} is not a stored table")
             elif target.natural_key != ("code",):
                 result.problems.append(f"{where}: {subject} cannot be a subject named by code")
-            elif subject not in result.rows:
+            elif not known_table(subject):
                 result.problems.append(f"{where}: subject {code!r} is a {subject} code but that table has no seed file")
-            elif (code,) not in keys.get(subject, {}):
+            elif not known_key(subject, (code,)):
                 result.problems.append(f"{where}: unknown {subject} subject code {code!r}")
-            elif subject != name:
+            elif subject != name and subject in result.rows:
                 subject_edges.setdefault(name, set()).add(subject)
 
     if "source.artifacts" in result.rows:

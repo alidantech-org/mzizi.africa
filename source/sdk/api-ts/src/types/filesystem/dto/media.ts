@@ -12,6 +12,7 @@ export interface FilesystemMedia {
   fileVersionId?: string | null;
   id: string;
   kindId: string;
+  metadata?: string | null;
   platformId?: string | null;
   position?: number | null;
   purpose?: string | null;

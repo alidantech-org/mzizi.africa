@@ -40,6 +40,7 @@ export interface IMedia extends B.IBase {
   externalUrl: string | null;
   fileVersionId: string | null;
   kindId: string;
+  metadata: string | null;
   platformId: string | null;
   position: number | null;
   purpose: string | null;

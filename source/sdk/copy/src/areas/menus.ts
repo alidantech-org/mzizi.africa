@@ -18,6 +18,7 @@ export const menus = defineCopy("menus", {
   saved: {
     label: { en: "Saved places", sw: "Maeneo yaliyohifadhiwa" },
     labelWithCount: { en: "Saved places, {count}", sw: "Maeneo yaliyohifadhiwa, {count}" },
+    home: { en: "Home", sw: "Nyumbani" },
     empty: { en: "Nothing saved yet.", sw: "Hakuna kilichohifadhiwa bado." },
     hideCount: { en: "Hide count", sw: "Ficha idadi" },
     viewAll: { en: "View all →", sw: "Tazama yote →" },

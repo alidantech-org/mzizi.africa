@@ -161,6 +161,6 @@ export function DialogShell({
 }
 
 export const buttonClass = {
-  primary: "rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-paper hover:opacity-90",
-  outline: "rounded-md border border-line px-3.5 py-2 text-sm hover:bg-accent-soft",
+  primary: "max-w-full truncate rounded-md bg-accent px-3.5 py-2 text-sm font-medium text-paper hover:opacity-90",
+  outline: "max-w-full truncate rounded-md border border-line px-3.5 py-2 text-sm hover:bg-accent-soft",
 };

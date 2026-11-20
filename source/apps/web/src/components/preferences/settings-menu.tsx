@@ -34,7 +34,7 @@ export function SettingsMenu({ placement }: { placement: "top" | "bottom" }) {
       id={`prefs-tab-${id}`}
       aria-controls={`prefs-panel-${id}`}
       onClick={() => setTab(id)}
-      className={`-mb-px flex-1 border-b-2 py-2.5 text-center text-sm transition ${tab === id ? "border-accent font-medium text-ink" : "border-transparent text-muted hover:text-ink"}`}
+      className={`-mb-px min-w-0 flex-1 truncate border-b-2 px-2 py-2.5 text-center text-sm transition ${tab === id ? "border-accent font-medium text-ink" : "border-transparent text-muted hover:text-ink"}`}
     >
       {label}
     </button>
@@ -72,11 +72,11 @@ export function SettingsMenu({ placement }: { placement: "top" | "bottom" }) {
           >
             {tab === "look" ? <LookPanel /> : <AudioPanel />}
           </div>
-          <div className="flex shrink-0 items-center justify-between border-t border-line px-3 py-2">
-            <button onClick={resetPrefs} className="text-xs text-muted hover:text-ink">
+          <div className="flex shrink-0 items-center justify-between gap-3 border-t border-line px-3 py-2">
+            <button onClick={resetPrefs} className="min-w-0 truncate text-xs text-muted hover:text-ink">
               {t(copy.menus.settings.reset)}
             </button>
-            <Link href="/me" onClick={() => setOpen(false)} className="text-xs font-medium text-accent hover:underline">
+            <Link href="/me" onClick={() => setOpen(false)} className="min-w-0 truncate text-xs font-medium text-accent hover:underline">
               {t(copy.menus.settings.manage)}
             </Link>
           </div>

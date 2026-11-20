@@ -56,8 +56,8 @@ export function SavedMenu() {
         style={{ top: pos.top, right: pos.right }}
         className="floating fixed z-[61] w-72 rounded-lg border border-line bg-surface p-1.5"
       >
-        <div className="px-3 pb-1 pt-1.5 font-mono text-[10px] uppercase tracking-widest text-muted">{t(copy.menus.saved.label)}</div>
-        {shown.length === 0 && <p className="px-3 py-3 text-sm text-muted">{t(copy.menus.saved.empty)}</p>}
+        <div className="px-3 pb-1 pt-1.5 font-mono text-[10px] uppercase tracking-widest text-muted truncate">{t(copy.menus.saved.label)}</div>
+        {shown.length === 0 && <p className="truncate px-3 py-3 text-sm text-muted">{t(copy.menus.saved.empty)}</p>}
         {shown.map((s) => (
           <button
             key={s.path}
@@ -73,12 +73,12 @@ export function SavedMenu() {
             </span>
             {s.label && (
               <span className="shrink-0 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent">
-                {s.label}
+                {s.label === "Home" ? t(copy.menus.saved.home) : s.label}
               </span>
             )}
           </button>
         ))}
-        <div className="mt-1 flex items-center justify-between border-t border-line px-3 py-2">
+        <div className="mt-1 flex min-w-0 items-center justify-between gap-2 border-t border-line px-3 py-2">
           <Checkbox
             size="sm"
             selected={hide}
@@ -93,7 +93,7 @@ export function SavedMenu() {
             role="menuitem"
             href="/me/saved"
             onClick={() => setOpen(false)}
-            className="text-xs font-medium text-accent hover:underline"
+            className="min-w-0 shrink-0 truncate text-xs font-medium text-accent hover:underline"
           >
             {t(copy.menus.saved.viewAll)}
           </Link>

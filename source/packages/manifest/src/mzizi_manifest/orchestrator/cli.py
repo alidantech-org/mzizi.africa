@@ -20,6 +20,13 @@ def main(argv: list[str] | None = None) -> int:
         "data", help="check seed CSV files (data/<scope>/<domain>/<table>.csv) against the database schemas"
     )
     data.add_argument("root", nargs="?", type=Path, default=SEED_ROOT, help="folder holding data/ (default: seed/)")
+    data.add_argument(
+        "--context",
+        action="append",
+        type=Path,
+        default=[],
+        help="an earlier batch's seed folder, read only so links can name its rows (repeatable)",
+    )
     verify = sub.add_parser(
         "verify", help="check seed rows against the real datasets named in each folder's _source.yaml"
     )
@@ -89,7 +96,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "data":
         from mzizi_manifest.features.data.check import check_data
 
-        checked = check_data(args.root)
+        checked = check_data(args.root, context_roots=tuple(args.context))
         for table in checked.order:
             print(f"{table}\t{len(checked.rows[table])} rows")
         for problem in checked.problems:

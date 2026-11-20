@@ -15,6 +15,7 @@ import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
+import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
@@ -82,6 +83,9 @@ export class MediaEntity {
   @ManyToOne(() => ValueEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "kind_id" })
   kind?: Relation<ValueEntity>;
+
+  @Column({ name: "metadata", type: "text", nullable: true })
+  metadata?: JsonText | null;
 
   @Column({ name: "platform_id", type: "uuid", nullable: true })
   platformId?: Id | null;

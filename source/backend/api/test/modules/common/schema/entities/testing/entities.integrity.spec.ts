@@ -2873,6 +2873,7 @@ describe("entity schema matches the contract", () => {
             ["file_version_id", true, false],
             ["id", false, true],
             ["kind_id", false, false],
+            ["metadata", true, false],
             ["platform_id", true, false],
             ["position", true, false],
             ["purpose", true, false],

@@ -106,6 +106,13 @@ def main(argv: list[str] | None = None) -> int:
     seed = sub.add_parser("seed", help="load the seed CSVs into PostgreSQL (a dry run unless --apply)")
     seed.add_argument("--apply", action="store_true", help="write the changes; without it the run is rolled back")
     seed.add_argument("--root", type=Path, default=None, help="folder holding data/ (default: seed/)")
+    seed.add_argument(
+        "--context",
+        action="append",
+        type=Path,
+        default=[],
+        help="an earlier batch's folder, read only so links can name its rows (repeatable)",
+    )
     files = sub.add_parser(
         "register-files",
         help="store the downloaded source files and seed CSVs and link their records (dry run unless --apply)",
@@ -147,7 +154,7 @@ def main(argv: list[str] | None = None) -> int:
         from mzizi_manifest.shared.paths import SEED_ROOT
 
         with connect(config.require_postgres().url) as conn:
-            seeded = load_seed(conn, args.root or SEED_ROOT, apply=args.apply)
+            seeded = load_seed(conn, args.root or SEED_ROOT, apply=args.apply, context_roots=tuple(args.context))
         for problem in seeded.problems:
             print(f"error: {problem}", file=sys.stderr)
         if seeded.ok:

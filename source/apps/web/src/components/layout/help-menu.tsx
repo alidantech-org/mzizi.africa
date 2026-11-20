@@ -27,7 +27,7 @@ export function HelpMenu() {
     setPos({ top: r.bottom + 8, right: Math.max(8, innerWidth - r.right) });
     setOpen(true);
   };
-  const item = "flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent-soft";
+  const item = "flex min-w-0 items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent-soft [&>svg]:shrink-0 [&>span]:min-w-0 [&>span]:truncate";
   const panel = open && (
     <>
       <div className="fixed inset-0 z-[60]" onMouseDown={() => setOpen(false)} />
@@ -39,31 +39,31 @@ export function HelpMenu() {
       >
         <Link role="menuitem" href="/help" onClick={() => setOpen(false)} className={item}>
           <CircleHelp size={16} className="text-muted" />
-          {t(copy.menus.help.help)}
+          <span>{t(copy.menus.help.help)}</span>
         </Link>
         <Link role="menuitem" href={nav.viewHref("sources")} onClick={() => setOpen(false)} className={item}>
           <Library size={16} className="text-muted" />
-          {t(copy.shell.link.sources)}
+          <span>{t(copy.shell.link.sources)}</span>
         </Link>
         <Link role="menuitem" href="/me" onClick={() => setOpen(false)} className={item}>
           <SlidersHorizontal size={16} className="text-muted" />
-          {t(copy.menus.help.preferences)}
+          <span>{t(copy.menus.help.preferences)}</span>
         </Link>
         <div className="px-1">
           <InstallApp />
         </div>
         <div className="mt-1 border-t border-line px-3 pb-2 pt-3">
           <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted">
-            <Keyboard size={14} />
-            {t(copy.menus.help.shortcuts)}
+            <Keyboard size={14} className="shrink-0" />
+            <span className="min-w-0 truncate">{t(copy.menus.help.shortcuts)}</span>
           </div>
           <ul className="space-y-2.5 text-sm">
             <li className="flex items-center justify-between gap-4">
-              <span>{t(copy.menus.help.searchPlaces)}</span>
+              <span className="min-w-0 truncate">{t(copy.menus.help.searchPlaces)}</span>
               <Keys keys={["/"]} />
             </li>
             <li className="flex items-center justify-between gap-4">
-              <span>{t(copy.menus.help.toggleSidebar)}</span>
+              <span className="min-w-0 truncate">{t(copy.menus.help.toggleSidebar)}</span>
               <Keys keys={["Ctrl", "B"]} />
             </li>
           </ul>

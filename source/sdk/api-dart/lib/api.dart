@@ -117,6 +117,7 @@ export 'package:mzizi_api/src/models/explorer/copy_entry.dart';
 export 'package:mzizi_api/src/models/explorer/copy_input.dart';
 export 'package:mzizi_api/src/models/explorer/count.dart';
 export 'package:mzizi_api/src/models/explorer/country_choice.dart';
+export 'package:mzizi_api/src/models/explorer/flag_color.dart';
 export 'package:mzizi_api/src/models/explorer/language_choice.dart';
 export 'package:mzizi_api/src/models/explorer/level.dart';
 export 'package:mzizi_api/src/models/explorer/navigation.dart';

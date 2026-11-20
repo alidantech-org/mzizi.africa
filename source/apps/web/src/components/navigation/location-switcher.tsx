@@ -378,10 +378,10 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
       tabIndex={scrolled ? -1 : 0}
       aria-pressed={level === c.id}
       onClick={() => pickChip(c.id)}
-      className={`flex shrink-0 items-center gap-1 rounded-md border px-2.5 py-1 ${level === c.id ? "border-accent bg-accent-soft" : "border-line hover:border-muted"}`}
+      className={`flex max-w-[10rem] shrink-0 items-center gap-1 rounded-md border px-2.5 py-1 ${level === c.id ? "border-accent bg-accent-soft" : "border-line hover:border-muted"}`}
     >
-      {c.icon && <c.icon size={11} />}
-      {c.label}
+      {c.icon && <c.icon size={11} className="shrink-0" />}
+      <span className="min-w-0 truncate">{c.label}</span>
     </button>
   );
   const edge = "absolute z-10 hover:bg-accent/40";

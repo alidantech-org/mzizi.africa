@@ -30,6 +30,14 @@ from mzizi_filesystem.shared.contracts import (
 )
 
 
+def _authorization_out(stored: str | None) -> str:
+    """The recorded authorization is stored as a JSON string value; read it back as the plain text it was written as."""
+    if stored is None:
+        return ""
+    value = json.loads(stored)
+    return value if isinstance(value, str) else stored
+
+
 def _folder(row: FoldersRow) -> FolderRecord:
     return FolderRecord(
         id=str(row.id),
@@ -37,7 +45,7 @@ def _folder(row: FoldersRow) -> FolderRecord:
         code=row.code,
         name=row.name,
         access=Access(row.access.value),
-        authorization=row.authorization,
+        authorization=_authorization_out(row.authorization),
         role_id=str(row.role_id),
     )
 
@@ -119,7 +127,7 @@ class PostgresRegistry:
                 folder.code,
                 folder.name,
                 folder.access.value,
-                folder.authorization,
+                json.dumps(folder.authorization),
                 UUID(folder.role_id),
             ),
         ).fetchone()
@@ -139,7 +147,7 @@ class PostgresRegistry:
             values.append(change.access.value)
         if change.authorization is not None:
             sets.append('"authorization" = %s')
-            values.append(change.authorization)
+            values.append(json.dumps(change.authorization))
         row = self._conn.execute(
             f"UPDATE filesystem.folders SET {', '.join(sets)} WHERE id = %s AND deleted_at IS NULL RETURNING *",
             (*values, UUID(folder_id)),

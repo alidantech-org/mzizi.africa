@@ -27,6 +27,12 @@ import type { OverviewDto } from "#/modules/explorer/schema/dto/overview.dto";
 import { queryRows } from "./parse.ts";
 import { countriesSql, placeCte, placeColumns } from "./queries.ts";
 
+/** Public origin of the object store, with a trailing slash; empty when none is configured. */
+function publicOrigin(): string {
+  const origin = process.env.S3_PUBLIC_ORIGIN ?? process.env.S3_PUBLIC_ENDPOINT ?? "";
+  return origin && !origin.endsWith("/") ? `${origin}/` : origin;
+}
+
 async function language(db: DataSource, requested?: string): Promise<string> {
   const code = requested ?? "en";
   const available = await queryRows(
@@ -40,13 +46,13 @@ async function language(db: DataSource, requested?: string): Promise<string> {
 }
 /** A registered country, served or not; unlike `country`, a missing routing root is not an error here. */
 async function countryRow(db: DataSource, code: string): Promise<CountryChoiceDto> {
-  const rows = await queryRows(db, countriesSql, [], CountryChoiceDto);
+  const rows = await queryRows(db, countriesSql, [publicOrigin()], CountryChoiceDto);
   const selected = rows.find((row) => row.code === code.toUpperCase());
   if (!selected) throw new NotFoundException("This country is not registered.");
   return selected;
 }
 async function country(db: DataSource, code: string): Promise<CountryChoiceDto> {
-  const rows = await queryRows(db, countriesSql, [], CountryChoiceDto);
+  const rows = await queryRows(db, countriesSql, [publicOrigin()], CountryChoiceDto);
   const selected = rows.find((row) => row.code === code.toUpperCase());
   if (!selected) throw new NotFoundException("This country is not registered.");
   if (!selected.rootFeatureId)
@@ -75,7 +81,7 @@ function canonical(place: PlaceDto): PlaceDto {
 export async function bootstrap(db: DataSource, input: BootstrapInputDto): Promise<BootstrapDto> {
   const lang = await language(db, input.languageCode);
   const [countries, languages] = await Promise.all([
-    queryRows(db, countriesSql, [], CountryChoiceDto),
+    queryRows(db, countriesSql, [publicOrigin()], CountryChoiceDto),
     queryRows(
       db,
       `select l.iso6391 as code,
@@ -143,8 +149,12 @@ export async function context(db: DataSource, input: PlaceInputDto): Promise<Con
     ),
     queryRows(
       db,
-      `select l.depth,v.code as "kindCode",v.label from geography.levels l join reference.values v on v.id=l.feature_kind_id where l.country_id=$1 and l.is_routing_hierarchy and l.deleted_at is null order by l.depth,l.id`,
-      [selected.id],
+      `select l.depth,v.code as "kindCode",
+         coalesce((select vl.label from reference.value_labels vl join reference.languages lang on lang.id=vl.language_id
+                    where vl.value_id=v.id and lang.iso6391=$2 and vl.deleted_at is null order by vl.id limit 1), v.label) as label
+       from geography.levels l join reference.values v on v.id=l.feature_kind_id
+      where l.country_id=$1 and l.is_routing_hierarchy and l.deleted_at is null order by l.depth,l.id`,
+      [selected.id, lang],
       LevelDto,
     ),
   ]);
@@ -230,7 +240,7 @@ export async function children(db: DataSource, input: ChildrenInputDto): Promise
 }
 export async function resolve(db: DataSource, input: CoordinatesInputDto): Promise<ResolutionDto> {
   const lang = await language(db, input.languageCode);
-  const countries = await queryRows(db, countriesSql, [], CountryChoiceDto);
+  const countries = await queryRows(db, countriesSql, [publicOrigin()], CountryChoiceDto);
   if (input.countryCode) await country(db, input.countryCode);
   const candidates: PlaceDto[] = [];
   for (const c of countries.filter(

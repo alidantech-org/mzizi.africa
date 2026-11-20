@@ -53,7 +53,7 @@ export function LanguageSwitcher() {
         onClick={() => choose(l.code)}
         className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm hover:bg-accent-soft"
       >
-        <span className="flex-1">
+        <span className="min-w-0 flex-1 truncate">
           <span className="font-medium">{l.name}</span>
           {l.nativeName && l.nativeName !== l.name && <span className="ml-2 text-xs text-muted">{l.nativeName}</span>}
         </span>
@@ -64,7 +64,7 @@ export function LanguageSwitcher() {
   const group = (title: string, items: CatalogueLanguage[]) =>
     items.length > 0 && (
       <div key={title}>
-        <div className="px-3 pb-1 pt-2 font-mono text-[10px] uppercase tracking-widest text-muted">{title}</div>
+        <div className="truncate px-3 pb-1 pt-2 font-mono text-[10px] uppercase tracking-widest text-muted">{title}</div>
         <ul role="listbox" aria-label={title}>
           {items.map(row)}
         </ul>
@@ -99,7 +99,7 @@ export function LanguageSwitcher() {
             matches.length ? (
               group(t(copy.menus.language.found, { count: matches.length }), matches)
             ) : (
-              <p className="px-3 py-5 text-sm text-muted">{t(copy.menus.language.noMatch)}</p>
+              <p className="truncate px-3 py-5 text-sm text-muted">{t(copy.menus.language.noMatch)}</p>
             )
           ) : (
             group(t(copy.menus.language.available), languages)

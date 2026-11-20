@@ -245,10 +245,21 @@ def _fill_links(conn: Connection, table: Table, links: list[tuple[UUID, dict[str
             cursor.execute(statement, [*(values[c] for c in columns), str(row_id_), *(values[c] for c in columns)])
 
 
-def load_seed(conn: Connection, seed_root: Path, *, apply: bool, schema_root: Path = SCHEMA_ROOT) -> SeedReport:
-    """Load every seed CSV under `seed_root`. With `apply` false the work is done and rolled back."""
+def load_seed(
+    conn: Connection,
+    seed_root: Path,
+    *,
+    apply: bool,
+    schema_root: Path = SCHEMA_ROOT,
+    context_roots: tuple[Path, ...] = (),
+) -> SeedReport:
+    """Load every seed CSV under `seed_root`. With `apply` false the work is done and rolled back.
+
+    `context_roots` are folders of batches loaded earlier: their rows are only read so links in this batch can name
+    them. They are not written again.
+    """
     report = SeedReport(applied=apply)
-    checked = check_data(seed_root, schema_root)
+    checked = check_data(seed_root, schema_root, context_roots)
     if checked.problems:
         report.problems = list(checked.problems)
         return report

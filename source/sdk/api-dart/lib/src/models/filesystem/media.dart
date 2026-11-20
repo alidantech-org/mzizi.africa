@@ -20,6 +20,7 @@ class FilesystemMedia {
     this.fileVersionId,
     required this.id,
     required this.kindId,
+    this.metadata,
     this.platformId,
     this.position,
     this.purpose,
@@ -41,6 +42,7 @@ class FilesystemMedia {
   final String? fileVersionId;
   final String id;
   final String kindId;
+  final String? metadata;
   final String? platformId;
   final int? position;
   final String? purpose;

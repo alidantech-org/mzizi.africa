@@ -1,4 +1,6 @@
+import { Type } from "class-transformer";
 import {
+  IsArray,
   IsBoolean,
   IsOptional,
   IsString,
@@ -8,8 +10,11 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  IsDefined,
   ValidateIf,
+  ValidateNested,
 } from "class-validator";
+import { FlagColorDto } from "#/modules/explorer/schema/dto/flag-color.dto.ts";
 import type { IsoAlpha2 } from "#/modules/reference/schema/type/iso-alpha2.type.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -24,6 +29,12 @@ export class CountryChoiceDto {
   @Length(2, 2)
   @Matches(new RegExp("^[A-Z]{2}$"))
   code!: IsoAlpha2;
+
+  @IsArray()
+  @IsDefined()
+  @ValidateNested({ each: true })
+  @Type(() => FlagColorDto)
+  flagColors!: FlagColorDto[];
 
   @IsOptional()
   @ValidateIf((object) => object.flagUrl !== null)

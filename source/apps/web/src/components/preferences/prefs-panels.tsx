@@ -23,7 +23,7 @@ const sizes: [number, string][] = [
 ];
 
 export const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted">{children}</h3>
+  <h3 className="mb-2 truncate font-mono text-[10px] uppercase tracking-widest text-muted">{children}</h3>
 );
 
 /** Colours, contrast, text size and display options. */

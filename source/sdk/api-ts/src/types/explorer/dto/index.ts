@@ -8,6 +8,7 @@ export * from "./copy-entry";
 export * from "./copy-input";
 export * from "./count";
 export * from "./country-choice";
+export * from "./flag-color";
 export * from "./language-choice";
 export * from "./level";
 export * from "./navigation";

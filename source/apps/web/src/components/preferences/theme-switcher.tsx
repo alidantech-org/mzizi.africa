@@ -24,7 +24,7 @@ const modes = [
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
   <div className="flex items-center justify-between gap-3">
-    <span className="text-xs text-muted">{label}</span>
+    <span className="min-w-0 truncate text-xs text-muted">{label}</span>
     {children}
   </div>
 );
@@ -91,10 +91,10 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
             className="flex w-full items-center gap-2 rounded-md p-2.5 text-left text-xs hover:bg-accent-soft/50"
           >
             <Flag code={t.country} size={16} />
-            <span className="font-medium">{tr(copy.preferences.theme.flagTitle)}</span>
+            <span className="min-w-0 shrink truncate font-medium">{tr(copy.preferences.theme.flagTitle)}</span>
             <span className="min-w-0 truncate text-muted">· {names.countryName(t.country)}</span>
             {following && (
-              <span className="ml-auto shrink-0 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent">
+              <span className="ml-auto max-w-[40%] shrink-0 truncate rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent">
                 {tr(copy.preferences.theme.flagFollowing)}
               </span>
             )}

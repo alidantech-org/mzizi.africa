@@ -1,8 +1,19 @@
 /** SQL follows registered routing roots and slugs, never country names or a guessed hierarchy. */
+/** $1 is the public origin of the object store (empty when none is configured), used to turn a stored key into a URL. */
 export const countriesSql = `select c.id, c.iso_alpha2 as code, c.name, c.is_served as served,
   (select case when count(distinct l.root_feature_id)=1 then min(l.root_feature_id::text)::uuid else null end
    from geography.levels l where l.country_id=c.id and l.is_routing_hierarchy and l.depth=0 and l.deleted_at is null) as "rootFeatureId",
-  null::text as "flagUrl"
+  (select case when $1::text = '' then null else $1::text || fv.s3_key end
+     from filesystem.media m
+     join reference.values k on k.id=m.kind_id and k.code='ref.val.fil.media.kind.flag'
+     join filesystem.file_versions fv on fv.id=m.file_version_id
+    where m.subject_table='reference.countries' and m.subject_id=c.id and m.deleted_at is null
+    order by m.position nulls last, m.id limit 1) as "flagUrl",
+  coalesce((select m.metadata->'colors'->'swatches'
+     from filesystem.media m
+     join reference.values k on k.id=m.kind_id and k.code='ref.val.fil.media.kind.flag'
+    where m.subject_table='reference.countries' and m.subject_id=c.id and m.deleted_at is null and m.metadata is not null
+    order by m.position nulls last, m.id limit 1), '[]'::jsonb) as "flagColors"
   from reference.countries c where c.deleted_at is null and c.iso_alpha2 is not null order by c.name,c.id`;
 
 /** $1 country identity, $2 language. Parentage is the registered route, not service coverage or authority. */
