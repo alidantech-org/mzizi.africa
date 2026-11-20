@@ -8,19 +8,21 @@ class ExplorerSearchInput {
   const ExplorerSearchInput({
     required this.countryCode,
     this.depth,
+    this.kindCode,
     this.languageCode,
     this.limit,
     this.page,
     this.parentFeatureId,
-    required this.query,
+    this.query,
   });
   final String countryCode;
   final int? depth;
+  final String? kindCode;
   final String? languageCode;
   final int? limit;
   final int? page;
   final String? parentFeatureId;
-  final String query;
+  final String? query;
 
   factory ExplorerSearchInput.fromJson(Map<String, dynamic> json) => _$ExplorerSearchInputFromJson(json);
 

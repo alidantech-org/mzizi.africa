@@ -18,11 +18,14 @@
  * shows that place's children, so you can drill Kenya > Kilifi > Ganze > a ward in one go. Choosing a place with
  * nothing below it (or a saved or recent place) closes the panel.
  */
+import { replaceQuery } from "#/lib/navigation/replace";
 import {
   Bookmark,
   Building2,
   Check,
   ChevronLeft,
+  Crosshair,
+  Loader2,
   ChevronRight,
   Clock,
   Landmark,
@@ -35,12 +38,15 @@ import {
 } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { usePathname, useRouter } from "next/navigation";
 import { getVoice, listen, speak } from "#/lib/accessibility/speech";
 import { demoSegments } from "#/lib/navigation/base";
 import { prettify } from "#/lib/navigation/route";
 import { copy } from "@mzizi/copy";
 import { useCopy } from "#/lib/copy/copy";
 import { usePlaceCatalogue } from "#/lib/places/catalogue";
+import { locate } from "#/lib/places/locate";
+import { useLanguage } from "#/lib/copy/copy";
 import { readSaved as readSavedList } from "#/lib/preferences/saved";
 import { placeFromHref, useNav } from "#/lib/navigation/use-ctx";
 import { TextField } from "#/components/ui/controls";
@@ -57,9 +63,10 @@ const Caret = ({ className = "" }: { className?: string }) => (
 );
 
 /** Avatar for a place row. There are no real pictures for counties, wards and so on, so each kind gets its own icon; countries get their flag. */
-function Avatar({ kind, href }: { kind: string; href: string }) {
-  if (kind === "Country") return <Flag code={demoSegments(href)[0] ?? ""} size={22} />;
-  const Icon = kind === "County" ? Building2 : kind === "Constituency" ? Landmark : kind === "Ward" ? MapPin : MapPinned;
+function Avatar({ href }: { href: string }) {
+  const depth = demoSegments(href).length - 1; // 0 is the country, 1 its first level, and so on
+  if (depth === 0) return <Flag code={demoSegments(href)[0] ?? ""} size={22} />;
+  const Icon = depth === 1 ? Building2 : depth === 2 ? Landmark : depth === 3 ? MapPin : MapPinned;
   return (
     <span className="grid size-7 shrink-0 place-items-center rounded-md bg-accent-soft text-accent">
       <Icon size={14} />
@@ -89,7 +96,18 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
   const [page, setPage] = useState(0);
   const [active, setActive] = useState(0);
   const [listening, setListening] = useState(false);
-  const { countries: COUNTRIES, entries } = usePlaceCatalogue();
+  const { countries: COUNTRIES, entries, found } = usePlaceCatalogue();
+  const router = useRouter();
+  const path = usePathname();
+  const language = useLanguage();
+  const [locating, setLocating] = useState<"idle" | "busy" | "failed">("idle");
+  const useDevice = async () => {
+    setLocating("busy");
+    const found = await locate({ languageCode: language });
+    if (found.status !== "found") return setLocating("failed");
+    setLocating("idle");
+    go(found.href, false);
+  };
   const [recent, setRecent] = useState<string[]>([]);
   const [saved, setSaved] = useState<{ path: string; label: string }[]>([]);
   const [bc, setBc] = useState(ctx.country); // the country being browsed
@@ -111,6 +129,9 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
   const names = useMemo(() => new Map(entries.map((e) => [e.href.split("?")[0], e.name])), [entries]);
   const countryDef = COUNTRIES.find((c) => c.code === bc) ?? COUNTRIES[0] ?? { code: bc, iso: bc.toUpperCase(), name: bc.toUpperCase(), levels: [] };
   const levels = countryDef.levels;
+  const levelDefs = countryDef.levelDefs;
+  const kindMode = levelDefs.some((l) => l.code === level);
+  const searchMode = q.trim().length >= 2;
   const leafDepth = 1 + levels.length; // path segments of the deepest level
   const inCountry = useMemo(() => entries.filter((e) => e.kind !== "Country" && segs(e.href)[0] === bc), [entries, bc]);
 
@@ -145,7 +166,17 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
     } catch {}
     setOpen(true);
   };
-  const close = () => {
+  /** The location list is read on the server: its level, search text and page live in the address (`lvl`, `find`, `pg`). */
+  const sync = (patch: Record<string, string | null>) => {
+    const params = new URLSearchParams(location.search);
+    for (const [k, v] of Object.entries(patch)) (v === null ? params.delete(k) : params.set(k, v));
+    const qs = params.toString();
+    if (qs === location.search.replace(/^\?/, "")) return;
+    replaceQuery(router, `${path}${qs ? `?${qs}` : ""}${location.hash}`);
+  };
+  const typedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const close = (leaving = false) => {
+    if (!leaving) sync({ find: null, lvl: null, pg: null }); // choosing a place navigates, and that address carries none of these
     setOpen(false);
     stop.current?.();
     setListening(false);
@@ -229,6 +260,15 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
       const mine = level === "saved" ? saved.map((x) => ({ ...byHref(x.path), tag: x.label })) : recent.map(byHref);
       return s ? mine.filter((e) => e.name.toLowerCase().includes(s)) : mine;
     }
+    if (kindMode || searchMode) {
+      // Every place of the level, or every match, comes from the server one page at a time.
+      const fresh =
+        found !== null &&
+        found.kind === (kindMode ? level : null) &&
+        found.query === (searchMode ? q.trim() : "") &&
+        found.page === page + 1;
+      return fresh ? found.entries : [];
+    }
     if (s) {
       const hit = inCountry.filter((e) => chip(e) && (e.name.toLowerCase().includes(s) || e.where.toLowerCase().includes(s)));
       return byRelevance([
@@ -249,11 +289,14 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
       return sg.length === hereSegs.length && hereSegs.slice(0, -1).every((x, i) => sg[i] === x);
     });
     return byRelevance(siblings);
-  }, [inCountry, q, level, browsingHome, trailKey]);
+  }, [inCountry, q, level, browsingHome, trailKey, found, page, kindMode, searchMode]);
 
-  const pages = Math.max(1, Math.ceil(full.length / PAGE));
+  const serverList = (kindMode || searchMode) && level !== "saved" && level !== "recent";
+  const total = serverList ? (found?.total ?? 0) : full.length;
+  const pages = Math.max(1, Math.ceil(total / PAGE));
   const safePage = Math.min(page, pages - 1);
-  const list = full.slice(safePage * PAGE, safePage * PAGE + PAGE);
+  const list = serverList ? full : full.slice(safePage * PAGE, safePage * PAGE + PAGE);
+  const loadingList = serverList && !full.length && (found === null || found.total > 0 || found.page !== page + 1 || found.query !== (searchMode ? q.trim() : ""));
   const showingSiblings = !q.trim() && level === "all" && browsingHome && ctx.trail.length === leafDepth - 1;
   const heading =
     level === "saved"
@@ -261,9 +304,9 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
       : level === "recent"
         ? t(copy.location.heading.recent)
         : q.trim()
-          ? t(full.length === 1 ? copy.location.heading.resultsOne : copy.location.heading.resultsOther, { count: full.length })
+          ? t(total === 1 ? copy.location.heading.resultsOne : copy.location.heading.resultsOther, { count: total })
           : level !== "all"
-            ? t(copy.location.heading.level, { level, count: full.length, country: countryDef.name })
+            ? t(copy.location.heading.level, { level: levelDefs.find((l) => l.code === level)?.label ?? level, count: total, country: countryDef.name })
             : showingSiblings
               ? t(copy.location.heading.others, { place: label(trailPaths.at(-2) ?? "") })
               : t(copy.location.heading.inside, { place: browsingHome ? here : countryDef.name });
@@ -277,7 +320,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
       setBc(segs(href)[0]);
       reset();
     } // auto-narrow: stay open on the next level
-    else close();
+    else close(true);
   };
 
   const speakAndMaybeOpen = (text: string) => {
@@ -327,6 +370,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
     if (e.key === "Enter" && list[active]) go(list[active].href, true);
   };
   const turn = (p: number) => {
+    if (serverList) sync({ pg: p > 0 ? String(p + 1) : null });
     setPage(p);
     setActive(0);
     listRef.current?.scrollTo({ top: 0 });
@@ -361,13 +405,14 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
   /** The view chips: every level of the country, plus Saved and Recent when there are some. Chips that do not fit move into a small [...] menu. */
   const chipDefs: { id: string; label: string; icon?: typeof Bookmark }[] = [
     { id: "all", label: t(copy.location.chip.all) },
-    ...levels.map((l) => ({ id: l, label: l })),
+    ...levelDefs.map((l) => ({ id: l.code, label: l.label })),
     ...(saved.length ? [{ id: "saved", label: t(copy.location.chip.saved), icon: Bookmark }] : []),
     ...(recent.length ? [{ id: "recent", label: t(copy.location.chip.recent), icon: Clock }] : []),
   ];
   const pickChip = (id: string) => {
     setLevel(id);
     setPage(0);
+    sync({ lvl: levelDefs.some((l) => l.code === id) ? id : null, pg: null });
     setActive(0);
     listRef.current?.scrollTo({ top: 0 });
   };
@@ -401,7 +446,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
 
   const panel = open && (
     <>
-      <div className="fixed inset-0 z-[60]" onMouseDown={close} />
+      <div className="fixed inset-0 z-[60]" onMouseDown={() => close()} />
       <div
         role="dialog"
         aria-label={t(copy.location.change)}
@@ -484,7 +529,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
             )}
           </nav>
           <button
-            onClick={close}
+            onClick={() => close()}
             aria-label={t(copy.location.close)}
             className="grid size-8 shrink-0 place-items-center rounded-md text-muted hover:bg-accent-soft"
           >
@@ -539,12 +584,23 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                 setQ(v);
                 setActive(0);
                 setPage(0);
+                if (typedTimer.current) clearTimeout(typedTimer.current);
+                typedTimer.current = setTimeout(() => sync({ find: v.trim().length >= 2 ? v.trim() : null, pg: null }), 250);
               }}
               onKeyDown={keyNav}
               placeholder={listening ? t(copy.location.listening) : t(copy.location.placeholder, { levels: levels.join(", ").toLowerCase(), country: countryDef.name })}
               icon={<Search size={15} />}
               autoFocus
             />
+            <button
+              onClick={useDevice}
+              disabled={locating === "busy"}
+              aria-label={locating === "failed" ? t(copy.location.locationFailed) : t(copy.location.myLocation)}
+              title={locating === "busy" ? t(copy.location.locating) : locating === "failed" ? t(copy.location.locationFailed) : t(copy.location.myLocation)}
+              className={`grid size-10 place-items-center rounded-md border border-line hover:bg-accent-soft disabled:opacity-60 ${locating === "failed" ? "text-muted" : ""}`}
+            >
+              {locating === "busy" ? <Loader2 size={16} className="animate-spin" /> : <Crosshair size={16} />}
+            </button>
             <button
               onClick={voice}
               aria-label={listening ? t(copy.location.stopListening) : t(copy.location.byVoice)}
@@ -680,7 +736,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                     onClick={() => go(e.href, true)}
                     className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm ${i === active ? "bg-accent-soft" : ""} ${current ? "bg-accent-soft/60" : ""}`}
                   >
-                    <Avatar kind={e.kind} href={e.href} />
+                    <Avatar href={e.href} />
                     <span className="min-w-0 truncate font-medium">{e.name}</span>
                     {e.tag && (
                       <span className="shrink-0 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent">
@@ -696,7 +752,8 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                 </li>
               );
             })}
-            {!list.length && entries.length > 0 && (
+            {!list.length && loadingList && <li className="truncate px-3 py-6 text-sm text-muted">{t(copy.location.loading)}</li>}
+            {!list.length && !loadingList && entries.length > 0 && (
               <li className="px-3 py-6 text-sm text-muted">
                 {q ? t(copy.location.noMatch, { query: q }) : t(copy.location.noFiner, { place: browsingHome ? here : countryDef.name })}
               </li>
@@ -710,7 +767,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
           {drag === "hide" && <span className="mr-auto">Release to hide</span>}
           {full.length > 0 && (
             <span className="shrink-0 font-mono">
-              {t(copy.location.range, { from: safePage * PAGE + 1, to: Math.min(full.length, safePage * PAGE + PAGE), total: full.length })}
+              {t(copy.location.range, { from: safePage * PAGE + 1, to: Math.min(total, safePage * PAGE + PAGE), total })}
             </span>
           )}
           <button

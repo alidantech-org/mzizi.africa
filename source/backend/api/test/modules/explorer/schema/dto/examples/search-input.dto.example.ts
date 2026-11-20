@@ -20,6 +20,12 @@ export const searchInputExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 0 },
     },
     {
+      name: "kindCode",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", minLength: 1, maxLength: 255 },
+    },
+    {
       name: "languageCode",
       optional: true,
       nullable: false,
@@ -45,7 +51,7 @@ export const searchInputExample: ContractExample = contractExample({
     },
     {
       name: "query",
-      optional: false,
+      optional: true,
       nullable: false,
       spec: { kind: "string", minLength: 2, maxLength: 100 },
     },

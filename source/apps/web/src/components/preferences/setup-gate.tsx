@@ -1,5 +1,5 @@
 "use client";
-/** Opens the setup dialog on the first visit (no saved home) or when the address asks for it (`?setup=1`). */
+/** Opens the setup dialog on the first visit to any page (no saved home) or when the address asks for it (`?setup=1`). Skipping it keeps it closed for the rest of the session. */
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SetupDialog } from "#/components/preferences/setup-dialog";
@@ -12,8 +12,8 @@ export function SetupGate() {
   const asked = sp.get("setup") === "1";
   const [first, setFirst] = useState(false);
   useEffect(() => {
-    setFirst(path === "/" && !readCookie("mzizi-app-home") && sessionStorageFlag() !== "closed");
-  }, [path]);
+    setFirst(!readCookie("mzizi-app-home") && sessionStorageFlag() !== "closed");
+  }, []);
   const open = asked || first;
   const close = () => {
     try {

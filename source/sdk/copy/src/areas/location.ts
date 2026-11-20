@@ -20,6 +20,12 @@ export const location = defineCopy("location", {
   placeholder: { en: "Search {levels} in {country}", sw: "Tafuta {levels} katika {country}" },
   listening: { en: "Listening…", sw: "Inasikiliza…" },
   stopListening: { en: "Stop listening", sw: "Acha kusikiliza" },
+  myLocation: { en: "Use my location", sw: "Tumia eneo langu" },
+  locating: { en: "Finding your place…", sw: "Inatafuta eneo lako…" },
+  locationFailed: {
+    en: "Your place could not be found. Search or choose below.",
+    sw: "Eneo lako halikupatikana. Tafuta au chagua hapa chini.",
+  },
   byVoice: { en: "Search by voice", sw: "Tafuta kwa sauti" },
   viewsOf: { en: "Views of {country}", sw: "Mionekano ya {country}" },
   moreViews: { en: "{count} more views", sw: "Mionekano {count} zaidi" },

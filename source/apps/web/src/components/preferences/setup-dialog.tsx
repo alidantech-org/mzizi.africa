@@ -1,9 +1,9 @@
 "use client";
 /** First-visit setup. Choose a country and a place (by search, by list or by your device's location), then your language and look. */
+import { replaceQuery } from "#/lib/navigation/replace";
 import { Check, ChevronDown, Crosshair, Loader2, MapPin, Palette, Search } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { explorerResolveExplorerCoordinates } from "@mzizi/api-client/actions/explorer";
 import { copy } from "@mzizi/copy";
 import { Flag } from "#/components/brand/flag";
 import { ThemeSwitcher } from "#/components/preferences/theme-switcher";
@@ -11,6 +11,7 @@ import { buttonClass, DialogShell } from "#/components/ui/shells";
 import { useCopy, useLanguage } from "#/lib/copy/copy";
 import { demoSegments } from "#/lib/navigation/base";
 import { usePlaceCatalogue, usePlaceNames } from "#/lib/places/catalogue";
+import { locate } from "#/lib/places/locate";
 import { writeHome, writeLang } from "#/lib/preferences/saved";
 
 type Status = "none" | "asking" | "finding" | "found" | "outside" | "several" | "denied";
@@ -136,7 +137,7 @@ export function SetupDialog({ open, onClose }: { open: boolean; onClose: () => v
     if (!target.includes("?")) for (const [k, v] of sp.entries()) params.set(k, v);
     for (const [k, v] of Object.entries(patch)) v === null ? params.delete(k) : params.set(k, v);
     const base = target.split("?")[0];
-    router.replace(`${base}${params.size ? `?${params}` : ""}`, { scroll: false });
+    replaceQuery(router, `${base}${params.size ? `?${params}` : ""}`);
   };
   const pickCountry = (code: string) => {
     setPicked(null);
@@ -152,34 +153,13 @@ export function SetupDialog({ open, onClose }: { open: boolean; onClose: () => v
 
   const places = q.trim().length >= 2 && found ? found.entries : entries.filter((e) => demoSegments(e.href).length === 2 && demoSegments(e.href)[0] === country);
 
-  const locate = () => {
-    if (!navigator.geolocation) return setStatus("denied");
+  const useDevice = async () => {
     setStatus("asking");
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        setStatus("finding");
-        // Coordinates go to the generated resolve operation as a POST body, never into an address.
-        const res = await explorerResolveExplorerCoordinates({
-          body: {
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            accuracyMeters: pos.coords.accuracy,
-            countryCode: country ? country.toUpperCase() : undefined,
-            languageCode: language,
-          },
-        });
-        const body = res.body;
-        if (!res.success || !body || body.status === "unresolved" || !body.candidates.length) return setStatus("outside");
-        const best = body.candidates[0];
-        if (body.status === "ambiguous") return setStatus("several");
-        const code = best.countryCode.toLowerCase();
-        setPicked({ href: best.canonicalPath, name: best.name, from: "device" });
-        setStatus("found");
-        if (code !== country) goTo(`/${code}`, { find: null, setup: "1" });
-      },
-      () => setStatus("denied"),
-      { enableHighAccuracy: true, timeout: 10_000 },
-    );
+    const found = await locate({ countryCode: country || undefined, languageCode: language });
+    if (found.status !== "found") return setStatus(found.status);
+    setPicked({ href: found.href, name: found.name, from: "device" });
+    setStatus("found");
+    if (found.countryCode !== country) goTo(`/${found.countryCode}`, { find: null, setup: "1" });
   };
 
   const choose = (href: string, name: string) => {
@@ -272,7 +252,7 @@ export function SetupDialog({ open, onClose }: { open: boolean; onClose: () => v
               <Part label={t(copy.setup.findLocation)}>
                 <div className="flex gap-2">
                   <button
-                    onClick={locate}
+                    onClick={useDevice}
                     disabled={status === "asking" || status === "finding"}
                     className="flex h-9 max-w-[45%] shrink-0 items-center gap-2 truncate rounded-md border border-line px-3 text-sm hover:bg-accent-soft disabled:opacity-60"
                   >

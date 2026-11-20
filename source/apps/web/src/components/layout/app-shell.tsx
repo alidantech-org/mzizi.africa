@@ -43,6 +43,7 @@ import { HelpMenu } from "#/components/layout/help-menu";
 import { SavedMenu } from "#/components/layout/saved-menu";
 import { VoiceEffects } from "#/components/accessibility/voice-bar";
 import { SetupGate } from "#/components/preferences/setup-gate";
+import { ListRefresh } from "#/lib/navigation/list-refresh";
 
 const icons: Record<ViewId, typeof Home> = {
   overview: MapPin,
@@ -426,6 +427,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <VoiceEffects />
         <Suspense>
           <SetupGate />
+          <ListRefresh />
         </Suspense>
         <Suspense>
           <CountryTheme />

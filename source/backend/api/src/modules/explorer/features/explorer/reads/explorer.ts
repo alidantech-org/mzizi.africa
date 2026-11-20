@@ -171,7 +171,24 @@ export async function context(db: DataSource, input: PlaceInputDto): Promise<Con
     gaps: selected.served ? [] : ["Only partial coverage is recorded for this country."],
   };
 }
-export async function search(db: DataSource, input: SearchInputDto): Promise<PlacesDto> {
+/** The place registry changes with seed loads, not by the minute; its lists are costly to build, so recent answers are kept briefly. */
+const MEMO_MS = 10 * 60 * 1000;
+const MEMO_MAX = 400;
+const memo = new Map<string, { at: number; value: Promise<unknown> }>();
+function remembered<T>(key: string, make: () => Promise<T>): Promise<T> {
+  const hit = memo.get(key);
+  if (hit && Date.now() - hit.at < MEMO_MS) return hit.value as Promise<T>;
+  const value = make();
+  memo.set(key, { at: Date.now(), value });
+  value.catch(() => memo.delete(key)); // a failure is never kept
+  if (memo.size > MEMO_MAX) memo.delete(memo.keys().next().value as string);
+  return value;
+}
+
+export function search(db: DataSource, input: SearchInputDto): Promise<PlacesDto> {
+  return remembered(`search:${JSON.stringify(input)}`, () => searchUncached(db, input));
+}
+async function searchUncached(db: DataSource, input: SearchInputDto): Promise<PlacesDto> {
   const selected = await country(db, input.countryCode);
   const lang = await language(db, input.languageCode);
   const page = input.page ?? 1,
@@ -207,7 +224,10 @@ export async function search(db: DataSource, input: SearchInputDto): Promise<Pla
   ]);
   return { places: result.map(canonical), total: counts[0]!.value, page, limit, gaps: [] };
 }
-export async function children(db: DataSource, input: ChildrenInputDto): Promise<PlacesDto> {
+export function children(db: DataSource, input: ChildrenInputDto): Promise<PlacesDto> {
+  return remembered(`children:${JSON.stringify(input)}`, () => childrenUncached(db, input));
+}
+async function childrenUncached(db: DataSource, input: ChildrenInputDto): Promise<PlacesDto> {
   const current = await context(db, {
     countryCode: input.countryCode,
     featureId: input.featureId,

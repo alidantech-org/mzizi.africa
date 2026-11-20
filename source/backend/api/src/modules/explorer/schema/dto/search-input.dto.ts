@@ -15,6 +15,7 @@ import type { Limit } from "#/modules/explorer/schema/type/limit.type.ts";
 import type { Query } from "#/modules/explorer/schema/type/query.type.ts";
 import type { IsoAlpha2 } from "#/modules/reference/schema/type/iso-alpha2.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 
@@ -31,6 +32,12 @@ export class SearchInputDto {
   @IsInt()
   @Min(0)
   depth?: NonNegativeInteger;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  kindCode?: NonEmptyString255;
 
   @IsOptional()
   @IsString()
@@ -54,8 +61,9 @@ export class SearchInputDto {
   @IsUUID()
   parentFeatureId?: Id;
 
+  @IsOptional()
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  query!: Query;
+  query?: Query;
 }

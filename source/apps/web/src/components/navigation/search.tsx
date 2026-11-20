@@ -1,5 +1,6 @@
 "use client";
 /** Search across every real county, constituency, ward and institution. Press / to open. */
+import { replaceQuery } from "#/lib/navigation/replace";
 import { Mic, Search } from "lucide-react";
 import { demoHref } from "#/lib/navigation/base";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -26,10 +27,12 @@ export function SearchDialog() {
   /** The query is in the URL (`find`) so the server renders the matches; the dialog itself stays open. */
   const setFind = (value: string) => {
     const params = new URLSearchParams(location.search);
+    params.delete("lvl");
+    params.delete("pg");
     if (value.trim().length >= 2) params.set("find", value.trim());
     else params.delete("find");
     const qs = params.toString();
-    next.replace(`${path}${qs ? `?${qs}` : ""}${location.hash}`, { scroll: false });
+    replaceQuery(next, `${path}${qs ? `?${qs}` : ""}${location.hash}`);
   };
   const leaving = useRef(false); // a chosen result navigates itself; do not rewrite the old URL over it
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -95,7 +98,7 @@ export function SearchDialog() {
   const results = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return index.filter((e) => e.href.split("/").filter(Boolean).length === 2).slice(0, 8); // the first level below the country
-    if (s.length >= 2 && found && found.query.toLowerCase() === s) return found.entries;
+    if (s.length >= 2 && found && found.kind === null && found.query.toLowerCase() === s) return found.entries.slice(0, 12);
     const starts = index.filter((e) => e.name.toLowerCase().startsWith(s));
     const has = index.filter((e) => !e.name.toLowerCase().startsWith(s) && e.name.toLowerCase().includes(s));
     return [...starts, ...has].slice(0, 12);
