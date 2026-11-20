@@ -4,8 +4,8 @@ next-env.d.ts
 *.tsbuildinfo
 
 # Local content and demonstration datasets. Keep source code separate from data.
-/src/data/*
-!/src/data/*.d.ts
+/src/app/demo/_data/*
+!/src/app/demo/_data/*.d.ts
 /scripts/geo-input/
 /scripts/inputs/
 /scripts/build-data.ts
@@ -21,7 +21,10 @@ next-env.d.ts
 
 # Downloaded media and flags stay local. Only app identity assets are tracked.
 /public/*
-!/public/offline.html
+!/public/demo/
+/public/demo/*
+!/public/demo/offline.html
+!/public/demo/sw.js
 !/public/sw.js
 !/public/icons/
 /public/icons/*
@@ -37,8 +40,11 @@ next-env.d.ts
 *.gif
 *.avif
 *.ico
-!/src/app/apple-icon.png
-!/src/app/favicon.ico
 !/public/icons/icon-192.png
 !/public/icons/icon-512.png
 !/public/icons/maskable-512.png
+
+# Static app identity assets referenced by document metadata and the manifest.
+!/public/icons/icon.svg
+!/public/icons/favicon.ico
+!/public/icons/apple-icon.png

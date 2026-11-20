@@ -10,6 +10,13 @@ extra: {status: proposal_for_owner_agreement, date: 2026-11-18, code_changes: no
 
 **Status: proposal.** It replaces the 2026-11-17 rule that "implementation is hand-written" ([DEC-FRONTEND-ASSEMBLY-20261117](../../decisions/DEC-FRONTEND-ASSEMBLY-20261117.md)). Rules from the owner: schemas, operations, queries and all backend and frontend behaviour are authored in `dryv/contracts/apps` and `dryv/contracts/schemas`; packs generate code; frontends reach the backend only through the generated SDK; whatever Dryv cannot express is fixed by improving Dryv and its packs, never by hard-coding in an app.
 
+## Web ownership update, 2026-11-20
+
+The owner superseded the web UI generation proposal: web pages, themes, components, routing and screen assembly are handwritten for this stage. The web/theme activation is disabled in `dryv.yaml`. Backend schemas, transport validation and the shared API bridge client remain generated. Custom backend composition may use typed project-owned readers behind generated controller/use-case signatures; this does not require moving every business query into Dryv first. App and dev frontend generation is not changed by the web decision.
+
+The first connected web slice is welcome-dialog device setup followed by canonical country/place exploration. It consumes the shared generated feature helpers during server rendering and uses named generated response types. Browser location resolution and approved preference mutations are explicit server actions. The permanent `/demo` remains isolated and supplies no fallback product values. The older frontend-generation sections below remain proposals for their stated scope and must not be treated as requirements to regenerate the handwritten web UI.
+
+
 ## 1. Layers and who owns what
 
 | Layer | Owns | Never contains |

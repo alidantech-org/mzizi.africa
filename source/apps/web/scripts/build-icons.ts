@@ -11,12 +11,17 @@ const tile = (size: number, scale: number, radius: number) => {
 };
 
 mkdirSync("public/icons", { recursive: true });
-const out = async (file: string, svg: string, px: number) => { const tmp = `${file}.svg`; writeFileSync(tmp, svg); await $`magick -background none -density 600 ${tmp} -resize ${px}x${px} ${file}`; await $`rm ${tmp}`; };
+const out = async (file: string, svg: string, px: number) => {
+  const tmp = `${file}.svg`;
+  writeFileSync(tmp, svg);
+  await $`magick -background none -density 600 ${tmp} -resize ${px}x${px} ${file}`;
+  await $`rm ${tmp}`;
+};
 
-await out("public/icons/icon-192.png", tile(192, 0.78, 7), 192);          // "any": rounded tile
+await out("public/icons/icon-192.png", tile(192, 0.78, 7), 192); // "any": rounded tile
 await out("public/icons/icon-512.png", tile(512, 0.78, 7), 512);
-await out("public/icons/maskable-512.png", tile(512, 0.56, 0), 512);      // full bleed, mark inside the safe zone
-await out("src/app/apple-icon.png", tile(180, 0.7, 0), 180);              // iOS rounds it itself
+await out("public/icons/maskable-512.png", tile(512, 0.56, 0), 512); // full bleed, mark inside the safe zone
+await out("public/icons/apple-icon.png", tile(180, 0.7, 0), 180); // iOS rounds it itself
 for (const s of [16, 32, 48]) await out(`/tmp/fav-${s}.png`, tile(s, 0.86, 6), s);
-await $`magick /tmp/fav-16.png /tmp/fav-32.png /tmp/fav-48.png src/app/favicon.ico`;
+await $`magick /tmp/fav-16.png /tmp/fav-32.png /tmp/fav-48.png public/icons/favicon.ico`;
 console.log("icons written");

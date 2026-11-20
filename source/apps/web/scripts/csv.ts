@@ -12,7 +12,7 @@ export function readCsv(path: string): Row[] {
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     if (quoted) {
-      if (ch === '"' && text[i + 1] === '"') (field += '"', i++);
+      if (ch === '"' && text[i + 1] === '"') ((field += '"'), i++);
       else if (ch === '"') quoted = false;
       else field += ch;
     } else if (ch === '"') quoted = true;

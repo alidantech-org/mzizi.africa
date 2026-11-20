@@ -1,6 +1,41 @@
 # Mzizi web
 
-Handwritten Next.js App Router UI using TypeScript, Tailwind CSS and Bun. The welcome page is `/`; the explorer uses `/[country]/[[...place]]` with query-based subjects, alongside personal and help pages. Screens currently use local prepared/demo data; backend integration is pending.
+Two independent handwritten Next.js applications share this web project: a permanent prototype at `/demo`, and the fresh backend-connected application under `src/app/(app)`. Dryv owns backend schemas, request/response contracts and generated API bridge clients. Both UIs are handwritten. The web UI/theme activation is disabled in `dryv.yaml`; app and dev generation remain separate.
+
+## Source layout
+
+```text
+src/app/
+  (app)/
+    layout.tsx                    independent real document layout
+    page.tsx                      real entry skeleton (/)
+    _components/explorer-start.tsx
+    [country]/page.tsx             country root skeleton
+    [country]/[...place]/page.tsx   deeper real explorer skeleton
+  demo/
+    layout.tsx                    demo document, fonts and theme setup
+    page.tsx                      demo welcome (/demo)
+    demo.css                      demo-only styles
+    manifest.webmanifest/route.ts
+    [country]/[[...place]]/page.tsx
+    help/page.tsx
+    me/page.tsx
+    me/saved/page.tsx
+    api/locate/route.ts
+    _components/                  brand, ui, layout, navigation, preferences,
+                                  accessibility, visualization, media
+    _lib/                         grouped helpers and authored install manifest
+    _view/                        subject screens and private components
+    _data/                        ignored local content and prepared/demo data
+public/
+  icons/                          shared brand identity assets
+  demo/                           demo worker, offline page and ignored content
+  sw.js                           retirement of the old root-scoped worker
+```
+
+`#/*` resolves to `src/*`; `#demo/*` resolves to `src/app/demo/*`. Demo views use explicit imports rather than broad server/client barrel exports. No real route imports the demo. `(app)` is an organisational route group and does not appear in URLs; `demo` is an actual URL prefix. There is no shared top-level root layout: switching between the two document roots reloads the document and keeps demo styles and setup isolated.
+
+## Run and verify
 
 Run from the repository root:
 
@@ -9,59 +44,43 @@ bun run dev web
 bun run build --only web
 bun run typecheck --only web
 bun run start web
+bun test source/apps/web/src/app/demo/_lib/navigation/route.test.ts
 ```
 
-The default address is http://localhost:3300. Install workspace dependencies with `bun install --cwd source`. Tailwind is imported in `src/app/globals.css` and compiled by the Tailwind Turbopack loader.
+The normal address is http://localhost:3300. Open `/demo` for the prototype or `/demo/ke/nairobi?view=law` for a contextual subject. `/` and `/ke/...` are honest real-application skeletons: no backend product reads or substitute demo values are implemented there yet. Do not build into `.next` while a production server is serving that same output.
 
-The previous implementation is preserved in `_archives/` and excluded from TypeScript compilation. It is historical reference, not active application code. Dryv app generation may overwrite the starter; run it only when intentionally replacing this scaffold.
+## Permanent prototype ownership
 
-## Accessibility commitments
+Keep the demo working alongside the real application until the owner explicitly authorises its removal. Backend integration is incremental: implement a real typed read and screen, compare it against the prototype, and leave the prototype intact. The demo deliberately contains country lists, availability rules, illustrative budgets/elections, example-place fallbacks, simplified geometry and local applicability logic. These are prototype limitations, not canonical backend rules. Some prepared geography, legal text and observations have recorded sources; neighbouring synthetic claims remain demonstrations.
 
-Every page and component follows these rules (also published on the Help page):
+## Navigation and preferences
 
-- Semantic HTML first: one heading outline, landmarks (`nav`, `main`, `aside`), real table headers, and `aria-sort` on sortable columns.
-- Every icon-only control has an `aria-label`; every chart (`role="img"`) and map (`role="group"`) has a text label; images need alternative text.
-- Sheets and dialogs use the shared shells in `src/components/shells.tsx`: focus trap, Escape to close, focus restored, `aria-modal` and a labelled title.
-- Colour is never the only signal. Contrast modes (high contrast, high contrast light, yellow on black, black on yellow), text size, spacing, link underline and reduced motion are in the settings menu and override every palette, including charts and the map.
-- Voice: speech input and output use the browser's Web Speech API; controls are in the settings menu and the search boxes.
-- Keyboard: `/` opens search, `Ctrl+B` toggles the sidebar, and every popover is reachable and closable without a mouse.
+The complete interaction rule is in [web-navigation.md](../../../.docs/rules/web-navigation.md). Within the demo, the place is in `/demo/<country>/<place...>`, query namespaces choose the subject/selections, and the hash records the reading section. Same-subject place/filter/tab/language changes preserve scroll and valid hashes; subject changes start at their appropriate section. Use demo `useNav()` helpers. The local Link wrapper prefixes internal paths, including those supplied by prototype data.
 
-## Language rule
+Demo cookies use `mzizi-demo-*` names and `Path=/demo`; local storage and UI events have their own demo namespace too. Existing real/root preference records are not deleted or reused. Server preference reads and the pre-paint theme script stay inside the demo root. Language comes from `?lang=`, then the demo language cookie, then English. Missing translations are explicitly described and English fallback is marked; evidence is never silently translated and presented as the original.
 
-When the language changes, every part of the page and its content must be in that language. Where something is not translated:
+## Accessibility and components
 
-- A notice at the top of the page says that the language is selected, what is translated on that page, what is not, and why (no translation has been loaded for it). See `src/components/language-notice.tsx`.
-- The untranslated text is shown in English, marked as English, and never silently mixed in.
-- Evidence is never machine-translated and presented as the source. Where a translation exists in the seed (for example the Swahili Constitution, `translations.csv`, URAIA translation, unofficial, review pending), that translation is shown: in Kiswahili the Constitution reader and quick-view sheets show the Swahili text, provision by provision, with English fallback marked "English only".
-- Local-language options in the switcher are listed as "Coming later" until content exists.
-- The language comes from `?lang=`, then the `mzizi-lang` cookie, then English.
+Use semantic HTML, real table headers and `aria-sort`, labelled icon controls/charts/maps, meaningful alternative text and keyboard focus. The shared demo sheet/dialog shells trap focus, restore it and close on Escape. React Aria control wrappers in `_components/ui/controls.tsx` remain the demo's standard controls. Contrast, text size, spacing, underlined links and reduced motion override its theme and charts; colour is not the only signal. Browser speech and keyboard controls remain demo components.
 
-## Navigation, scroll and URL state
+## Assets and installable demo
 
-Full rule: `.docs/rules/web-navigation.md`. In short: the path is the place, the query is the subject and its selections, the `#section` is where you are reading. Switching place, filters, sort, tabs or language never scrolls back to the top and keeps the section in the address; sections have stable ids; use `useNav()` rather than the router directly.
+The React logo is in `demo/_components/brand/logo.tsx`, using `currentColor`. Static SVG/favicon/Apple/install icons are in `public/icons/`; the document roots declare browser icons explicitly, and the demo manifest declares SVG/PNG/maskable install icons. Regenerate raster identity icons with `bun scripts/build-icons.ts` from this folder (ImageMagick required).
 
-## Brand and installable app
+Demo country flags are locally served from `public/demo/flags/`, initially copied from the MIT-licensed flag-icons package. Source documents and media are under `public/demo/sources/`. They remain ignored local assets, not committed fixture content. Flag-derived theme colours stay in the demo's ignored data and presentation helpers.
 
-- **Mark and sitemark:** `src/components/logo.tsx`. The identity is the shape (an M whose middle stroke is a trunk forking into roots) and the way the name is lettered (soft Fraunces, seed-dotted i’s), never a colour. Everything is drawn in `currentColor`, so all palettes, light, dark and contrast modes work with no variants.
-- **Favicon and icons:** `src/app/icon.svg` (adapts to light and dark tabs), `src/app/favicon.ico`, `src/app/apple-icon.png` and `public/icons/*`. Regenerate the raster icons with `bun scripts/build-icons.ts` (needs ImageMagick).
-- **Install as an app:** `src/app/manifest.ts` (name, short name, icons including a maskable one, start page, shortcuts, theme colours), `public/sw.js` (offline shell: network first for pages, cached copy or `public/offline.html` when offline) and `src/components/pwa.tsx` (registers the worker in production and offers "Install Mzizi as an app" in the settings menu; on iOS it explains Share then Add to Home Screen). Installing needs HTTPS or localhost.
+The install manifest is `/demo/manifest.webmanifest`, with start and scope under `/demo`. The demo worker `/demo/sw.js` is permitted that exact prefix by a `Service-Worker-Allowed` response header. It ignores navigation outside the demo and only manages its own named caches. `/sw.js` contains no fetch handler: it retires the former root-scoped prototype worker. No real app worker or install manifest is set up yet.
 
-## Form controls
+## Local content and verification limits
 
-Every control comes from `src/components/controls.tsx` (React Aria underneath): `Select` (a searchable combo box for long lists), `Checkbox`, `Switch`, `Slider` and `TextField`. Do not use native `<select>`, checkbox, radio or range elements, or hand-rolled bordered inputs. The `TextField` wrapper draws the only focus outline.
+The code checkpoint excludes `_data/` content (apart from ambient type declarations), GeoJSON/TopoJSON, preparation inputs, seed/fixture folders, flags, downloaded images and source documents. The source-specific `scripts/build-data.ts` stays local; its outputs now target the demo `_data` directory. Files were moved, not discarded. Logo and app identity assets remain eligible for Git.
 
-## Flags
+The demo still imports those local files, so passing local checks does not establish a data-free clean-checkout build. Preserve demo labels; do not commit local datasets to fix missing imports. The real application must obtain product data through the generated server API client and typed contracts as its screens are implemented.
 
-Country flags are the MIT-licensed [flag-icons](https://github.com/lipis/flag-icons) set (`flag-icons` dev dependency). Only the flags we use are copied into `public/flags/<code>.svg`, so nothing is fetched from another site. To add a country, copy its SVG from `node_modules/flag-icons/flags/4x3/` and add the country to `COUNTRIES` in `src/lib/route.ts` (with its ISO code and dial code).
+## First real backend slice
 
-## Flag palette
+The independent `(app)` root now uses the generated `@mzizi/api-client` server helpers for explorer setup, country-scoped place search, registered hierarchy children, context confirmation and place overview. Set `SERVER_URL` to the running product API origin. Root-runner environment values take precedence over Next local environment files; for the local API use `SERVER_URL=http://127.0.0.1:8700 bun run dev web`. Product reads happen in server components; the browser receives rendered content and navigates with forms and links. It never imports the demo to fill a missing real value.
 
-Choosing a flag colour in the theme switcher means "follow the flag of the country I am in". The palette is rebuilt for each country from its flag (`src/data/flag-colors.ts`, `src/lib/flag-palette.ts`), with the picked flag colour as the primary one. Every country starts at its dominant colour: the choice is cleared when the country changes. Choosing one of the three ordinary palettes switches following off.
+`/` opens the welcome dialog for a device without completed setup. Its state uses `view=setup`, `view.tab=place|preferences`, `filters.country`, `filters.query`, and `view.entity=place&view.id=…`. Place confirmation revalidates through the API, stores independent `mzizi-*` cookies, and redirects to the API's canonical country-prefixed path. Explicit device location is the one browser capability: coordinates are posted through a server action for resolution and the suggested place still needs confirmation. Coordinates are not included in public URLs.
 
-## Code-only checkpoint and local data
-
-The active UI is handwritten under `src/`; Dryv is intended to own backend contracts and generated API bridge clients, not these pages or their theme. The current Dryv application configuration and older guidance still need reconciliation before running frontend generation.
-
-This checkpoint deliberately excludes `src/data/` content modules and generated datasets (except ambient type declarations), GeoJSON/TopoJSON, fixture/seed folders, local preparation inputs, flags, source documents and downloaded images. The source-specific `scripts/build-data.ts` preparation script stays local too. Files are ignored, not deleted. Logo code, the favicon and app/install identity icons are included, together with the icon-building utility.
-
-Several views still import the ignored local data, and demonstration figures also remain embedded in prototype screens. They are not backend-connected or verified facts. Local typechecking uses those existing local files; it does not establish that the code-only checkpoint builds from a fresh checkout. Replacing these imports and illustrative values with generated-client responses is the next integration work. Do not solve missing imports by committing local datasets or silently substituting another place's data.
+`/[country]` and deeper place URLs resolve from the address, regardless of the saved place. This initial overview shows recorded child-place and citation counts, not prototype statistics. Unavailable data and unknown paths remain explicit. Optional `lang` overrides cookie preference; place links preserve an explicit language without adding it to cookie-only journeys. Interface translations may fall back to English and are labelled accordingly. Other subject screens remain migration work; a demo screen is not a connected production screen.

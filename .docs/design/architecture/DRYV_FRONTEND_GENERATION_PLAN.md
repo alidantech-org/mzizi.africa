@@ -10,6 +10,13 @@ extra: {status: proposal_for_owner_agreement, date: 2026-11-19, code_changes: no
 
 **Status: proposal.** It answers the owner's request (2026-11-19) to explain the contract and Dryv changes, the changes the web, app and dev apps will go through, and the owner's issue that code which Dryv should manage was written by hand. Nothing below is implemented. It extends [CONTRACT_AUTHORING_FOR_FRONTENDS](CONTRACT_AUTHORING_FOR_FRONTENDS.md), [UI_INFORMATION_ARCHITECTURE](UI_INFORMATION_ARCHITECTURE.md) and [DRYV_CAPABILITY_PLAN](DRYV_CAPABILITY_PLAN.md).
 
+## Web ownership update, 2026-11-20
+
+The owner superseded the web UI generation proposal: web pages, themes, components, routing and screen assembly are handwritten for this stage. The web/theme activation is disabled in `dryv.yaml`. Backend schemas, transport validation and the shared API bridge client remain generated. Custom backend composition may use typed project-owned readers behind generated controller/use-case signatures; this does not require moving every business query into Dryv first. App and dev frontend generation is not changed by the web decision.
+
+The first connected web slice is welcome-dialog device setup followed by canonical country/place exploration. It consumes the shared generated feature helpers during server rendering and uses named generated response types. Browser location resolution and approved preference mutations are explicit server actions. The permanent `/demo` remains isolated and supplies no fallback product values. The older frontend-generation sections below remain proposals for their stated scope and must not be treated as requirements to regenerate the handwritten web UI.
+
+
 ## 1. The owner's issue, stated precisely
 
 Work that Dryv should have produced was written by hand, in four ways that repeat in every app:

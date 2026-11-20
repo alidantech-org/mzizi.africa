@@ -22,7 +22,8 @@
     "react-aria-components": "^1.22.1",
     "react-dom": "19.3.0",
     "read-excel-file": "^9.3.19",
-    "sigma": "^4.0.6"
+    "sigma": "^4.0.6",
+    "@mzizi/api-client": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4.3.5",

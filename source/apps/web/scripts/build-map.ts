@@ -85,7 +85,7 @@ const regions = collection.features.map((f) => ({
 const country = outline.features.map((f) => path(f.geometry).d).join("");
 
 writeFileSync(
-  "src/data/maps/kenya.json",
+  "src/app/demo/_data/maps/kenya.json",
   JSON.stringify({ width: WIDTH, height: HEIGHT, proj: { lon0, lat1, cos: Math.cos(midLat), scale }, country, regions }),
 );
 console.log(`kenya: ${regions.length} regions, ${(JSON.stringify(regions).length / 1024).toFixed(0)} KB`);

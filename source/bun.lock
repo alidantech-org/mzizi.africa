@@ -29,6 +29,7 @@
     "apps/web": {
       "name": "mzizi-web",
       "dependencies": {
+        "@mzizi/api-client": "workspace:*",
         "clsx": "^2.1.1",
         "d3-delaunay": "^6.0.6",
         "echarts": "^6.1.0",

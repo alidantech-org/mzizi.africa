@@ -20,7 +20,7 @@ Use `.docs/docs/ROADMAP.md` for current priorities. Proposals under `.docs/_plan
 ```text
 source/sdk/{api-ts,api-dart}      Generated API client SDKs (Dryv)
 source/sdk/ui/{web,flutter}            Hand-written components the generated screens assemble
-source/apps/{app,web,dev,www}      Flutter app and Next.js applications (app, web, dev are generated from dryv/contracts/apps; source/package.json is the Bun workspace for the SDK and the Next.js apps). The earlier admin and mobile apps are deferred and removed (2026-11-18); `dev` is the administrative interface until an admin app is funded
+source/apps/{app,web,dev,www}      Flutter app and Next.js applications (app and dev use Dryv frontend generation; web UI is handwritten, with a permanent isolated src/app/demo and fresh src/app/(app) real routes; source/package.json is the Bun workspace for the SDK and the Next.js apps). The earlier admin and mobile apps are deferred and removed (2026-11-18); `dev` is the administrative interface until an admin app is funded
 source/backend/api                 NestJS product API
 source/backend/database            Bun CLI, generated SQL and immutable migrations for the single PostgreSQL database
 source/backend/engine               Python runtime: EngineRuntime, its HTTP front door and executor, persistence adapters, Dryv-generated code
