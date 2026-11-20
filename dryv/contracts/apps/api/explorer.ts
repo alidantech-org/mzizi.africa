@@ -29,7 +29,19 @@ const rows = explorer.schemas({
     rootFeatureId: dryv.field(p.Id).maybe(),
     flagUrl: dryv.field(p.Url).maybe(),
   }),
-  LanguageChoice: dryv.schema({ code: dryv.field(props.LanguageCode), name: dryv.field(p.Name) }),
+  LanguageChoice: dryv.schema({
+    code: dryv.field(props.LanguageCode),
+    /** The language named in the requested interface language (an exonym, or the endonym when it is the same language). */
+    name: dryv.field(p.Name),
+    /** The language named in itself, as recorded in reference.language_names. */
+    nativeName: dryv.field(p.Name).maybe(),
+  }),
+  NavigationItem: dryv.schema({
+    /** A subject id of the app's navigation (`elections`, `leaders`, ...). */
+    view: dryv.field(p.NonEmptyString255),
+    /** True when recorded data exists for the country; never decided by the client. */
+    available: dryv.field(p.Flag),
+  }),
   CopyEntry: dryv.schema({ key: dryv.field(p.NonEmptyString255), text: dryv.field(p.Description) }),
   Place: dryv.schema({
     featureId: dryv.field(p.Id),
@@ -51,6 +63,11 @@ const rows = explorer.schemas({
   Count: dryv.schema({ label: dryv.field(p.Name), value: dryv.field(p.NonNegativeInteger) }),
 });
 const documents = explorer.schemas({
+  Navigation: dryv.schema({
+    country: dryv.field(rows.CountryChoice),
+    items: dryv.field(rows.NavigationItem).array(),
+    gaps: dryv.field(p.NonEmptyString500).array(),
+  }),
   CopyBundle: dryv.schema({
     language: dryv.field(props.LanguageCode),
     /** Content hash of the entries, so a client can cache the bundle for as long as it is unchanged. */
@@ -116,6 +133,7 @@ const inputs = explorer.schemas({
     page: dryv.field(p.PositiveInteger).optional(),
     limit: dryv.field(props.Limit).optional(),
   }),
+  NavigationInput: dryv.schema({ countryCode: dryv.field(countryProperties.IsoAlpha2) }),
   CopyInput: dryv.schema({
     languageCode: dryv.field(props.LanguageCode),
     countryCode: dryv.field(countryProperties.IsoAlpha2).optional(),
@@ -150,6 +168,17 @@ export const explorerOperations = feature.operations({
     .output(documents.CopyBundle)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/explorer/copy").input(input, dryv.queryObject()).output(output),
+    })),
+  GetExplorerNavigation: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "Which navigation subjects have recorded data for one explicit country. Availability follows the data, not a list kept by the client.",
+    )
+    .input(inputs.NavigationInput)
+    .output(documents.Navigation)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/explorer/navigation").input(input, dryv.queryObject()).output(output),
     })),
   GetExplorerContext: dryv
     .operation()

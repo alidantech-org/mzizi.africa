@@ -6,6 +6,8 @@ import type { ContextDto } from "#/modules/explorer/schema/dto/context.dto.ts";
 import type { CoordinatesInputDto } from "#/modules/explorer/schema/dto/coordinates-input.dto.ts";
 import type { CopyBundleDto } from "#/modules/explorer/schema/dto/copy-bundle.dto.ts";
 import type { CopyInputDto } from "#/modules/explorer/schema/dto/copy-input.dto.ts";
+import type { NavigationInputDto } from "#/modules/explorer/schema/dto/navigation-input.dto.ts";
+import type { NavigationDto } from "#/modules/explorer/schema/dto/navigation.dto.ts";
 import type { OverviewDto } from "#/modules/explorer/schema/dto/overview.dto.ts";
 import type { PlaceInputDto } from "#/modules/explorer/schema/dto/place-input.dto.ts";
 import type { PlacesDto } from "#/modules/explorer/schema/dto/places.dto.ts";
@@ -13,6 +15,7 @@ import type { ResolutionDto } from "#/modules/explorer/schema/dto/resolution.dto
 import type { SearchInputDto } from "#/modules/explorer/schema/dto/search-input.dto.ts";
 import { GetCopyBundleUseCase } from "#/modules/explorer/features/explorer/use-cases/get-copy-bundle.usecase.ts";
 import { GetExplorerContextUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-context.usecase.ts";
+import { GetExplorerNavigationUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-navigation.usecase.ts";
 import { GetExplorerOverviewUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-overview.usecase.ts";
 import { GetSetupBootstrapUseCase } from "#/modules/explorer/features/explorer/use-cases/get-setup-bootstrap.usecase.ts";
 import { ListExplorerChildrenUseCase } from "#/modules/explorer/features/explorer/use-cases/list-explorer-children.usecase.ts";
@@ -26,6 +29,7 @@ import { SearchExplorerPlacesUseCase } from "#/modules/explorer/features/explore
 export abstract class ExplorerExplorerService {
   abstract getCopyBundle(input: CopyInputDto): Promise<CopyBundleDto>;
   abstract getExplorerContext(input: PlaceInputDto): Promise<ContextDto>;
+  abstract getExplorerNavigation(input: NavigationInputDto): Promise<NavigationDto>;
   abstract getExplorerOverview(input: PlaceInputDto): Promise<OverviewDto>;
   abstract getSetupBootstrap(input: BootstrapInputDto): Promise<BootstrapDto>;
   abstract listExplorerChildren(input: ChildrenInputDto): Promise<PlacesDto>;
@@ -38,6 +42,7 @@ export class ExplorerExplorerServiceImpl extends ExplorerExplorerService {
   constructor(
     private readonly getCopyBundleUseCase: GetCopyBundleUseCase,
     private readonly getExplorerContextUseCase: GetExplorerContextUseCase,
+    private readonly getExplorerNavigationUseCase: GetExplorerNavigationUseCase,
     private readonly getExplorerOverviewUseCase: GetExplorerOverviewUseCase,
     private readonly getSetupBootstrapUseCase: GetSetupBootstrapUseCase,
     private readonly listExplorerChildrenUseCase: ListExplorerChildrenUseCase,
@@ -53,6 +58,10 @@ export class ExplorerExplorerServiceImpl extends ExplorerExplorerService {
 
   getExplorerContext(input: PlaceInputDto): Promise<ContextDto> {
     return this.getExplorerContextUseCase.execute(input);
+  }
+
+  getExplorerNavigation(input: NavigationInputDto): Promise<NavigationDto> {
+    return this.getExplorerNavigationUseCase.execute(input);
   }
 
   getExplorerOverview(input: PlaceInputDto): Promise<OverviewDto> {

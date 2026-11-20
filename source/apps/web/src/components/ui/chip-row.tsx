@@ -3,6 +3,8 @@
  * Choices in a single row. As many chips as fit are shown; the rest go behind a "…" button that opens a small
  * searchable list. The picked chip is always kept in view. The row never wraps, so its height never changes.
  */
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
 import { MoreHorizontal, Search } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
@@ -21,6 +23,7 @@ export function ChipRow({
   value: string;
   onPick: (id: string) => void;
 }) {
+  const t = useCopy();
   const box = useRef<HTMLDivElement>(null);
   const probe = useRef<HTMLDivElement>(null);
   const [fit, setFit] = useState(items.length);
@@ -159,7 +162,7 @@ export function ChipRow({
                 </button>
               </li>
             ))}
-            {!list.length && <li className="px-2.5 py-2 text-sm text-muted">Nothing matches.</li>}
+            {!list.length && <li className="px-2.5 py-2 text-sm text-muted">{t(copy.common.nothingMatches)}</li>}
           </ul>
         </div>
       )}

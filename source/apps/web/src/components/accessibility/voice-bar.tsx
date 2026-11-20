@@ -1,6 +1,8 @@
 "use client";
 /** Voice controls: read the page or a selection aloud, set the spoken-response mode, and speak after navigation. */
-import { Mic, Square, Volume2 } from "lucide-react";
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
+import { Square, Volume2 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Select, Slider } from "#/components/ui/controls";
@@ -17,11 +19,11 @@ import {
   type VoiceMode,
 } from "#/lib/accessibility/speech";
 
-const modes: { id: VoiceMode; label: string; hint: string }[] = [
-  { id: "off", label: "Off", hint: "Nothing is spoken unless you press Read" },
-  { id: "speak", label: "Answer aloud", hint: "Search results and answers are spoken" },
-  { id: "handsfree", label: "Hands-free", hint: "Opens the best match and reads the new page" },
-];
+const modes = [
+  { id: "off", label: copy.preferences.voice.off, hint: copy.preferences.voice.offHint },
+  { id: "speak", label: copy.preferences.voice.speak, hint: copy.preferences.voice.speakHint },
+  { id: "handsfree", label: copy.preferences.voice.handsfree, hint: copy.preferences.voice.handsfreeHint },
+] as const satisfies readonly { id: VoiceMode; label: unknown; hint: unknown }[];
 
 export const useVoice = () => useSyncExternalStore(subscribeVoice, getVoice, getVoice);
 
@@ -29,22 +31,6 @@ export const useVoice = () => useSyncExternalStore(subscribeVoice, getVoice, get
 export function readMain() {
   const sel = window.getSelection()?.toString().trim();
   speak(sel || readable(document.querySelector("main")));
-}
-
-export function MicButton() {
-  const [ok, setOk] = useState(false);
-  useEffect(() => setOk(canListen()), []);
-  return (
-    <button
-      onClick={() => dispatchEvent(new CustomEvent("mzizi-app:search", { detail: { voice: true } }))}
-      disabled={!ok}
-      aria-label="Talk to search"
-      title={ok ? "Talk to search" : "Voice input is not supported in this browser"}
-      className="grid size-9 place-items-center rounded-md text-muted hover:bg-accent-soft hover:text-ink disabled:opacity-40"
-    >
-      <Mic size={18} />
-    </button>
-  );
 }
 
 /** Headless: in hands-free mode, reads the heading and first paragraph after each navigation. */
@@ -69,11 +55,12 @@ export function VoiceEffects() {
 
 /** Voice section of the settings menu: read aloud, response mode and speed. */
 export function VoicePanel() {
+  const t = useCopy();
   const v = useVoice();
   const [reading, setReading] = useState(false);
   const [ok, setOk] = useState(false);
   useEffect(() => setOk(canSpeak()), []);
-  if (!ok) return <p className="text-xs text-muted">Speech is not available in this browser.</p>;
+  if (!ok) return <p className="text-xs text-muted">{t(copy.preferences.voice.unsupported)}</p>;
   return (
     <div className="space-y-2">
       <button
@@ -81,22 +68,22 @@ export function VoicePanel() {
         className="flex w-full items-center gap-2 rounded-md border border-line px-2.5 py-1.5 text-sm hover:bg-accent-soft"
       >
         {reading ? <Square size={14} /> : <Volume2 size={15} />}
-        {reading ? "Stop reading" : "Read this page aloud"}
+        {reading ? t(copy.preferences.voice.stopReading) : t(copy.preferences.voice.readPage)}
       </button>
       <div>
-        <div className="mb-1 text-xs text-muted">Voice responses</div>
+        <div className="mb-1 text-xs text-muted">{t(copy.preferences.voice.responses)}</div>
         <Select
-          label="Voice responses"
+          label={t(copy.preferences.voice.responses)}
           value={v.mode}
           onChange={(id) => {
             setVoice({ mode: id as VoiceMode });
             stopSpeaking();
           }}
-          options={modes.map((m) => ({ id: m.id, label: m.label, hint: m.hint }))}
+          options={modes.map((m) => ({ id: m.id, label: t(m.label), hint: t(m.hint) }))}
         />
       </div>
       <Slider
-        label="Speaking speed"
+        label={t(copy.preferences.voice.speed)}
         value={v.rate}
         onChange={(r) => setVoice({ rate: r })}
         min={0.6}

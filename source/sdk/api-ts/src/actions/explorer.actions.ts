@@ -8,11 +8,23 @@ import type { ExplorerBootstrap } from "#sdk/types/explorer/dto/bootstrap.ts";
 import type { ExplorerChildrenInput } from "#sdk/types/explorer/dto/children-input.ts";
 import type { ExplorerContext } from "#sdk/types/explorer/dto/context.ts";
 import type { ExplorerCoordinatesInput } from "#sdk/types/explorer/dto/coordinates-input.ts";
+import type { ExplorerCopyBundle } from "#sdk/types/explorer/dto/copy-bundle.ts";
+import type { ExplorerCopyInput } from "#sdk/types/explorer/dto/copy-input.ts";
+import type { ExplorerNavigationInput } from "#sdk/types/explorer/dto/navigation-input.ts";
+import type { ExplorerNavigation } from "#sdk/types/explorer/dto/navigation.ts";
 import type { ExplorerOverview } from "#sdk/types/explorer/dto/overview.ts";
 import type { ExplorerPlaceInput } from "#sdk/types/explorer/dto/place-input.ts";
 import type { ExplorerPlaces } from "#sdk/types/explorer/dto/places.ts";
 import type { ExplorerResolution } from "#sdk/types/explorer/dto/resolution.ts";
 import type { ExplorerSearchInput } from "#sdk/types/explorer/dto/search-input.ts";
+/** GET /v1/explorer/copy */
+export type ExplorerGetCopyBundleActionInput = ActionInput<never, ExplorerCopyInput, never>;
+
+export async function explorerGetCopyBundle(input: ExplorerGetCopyBundleActionInput) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.explorer.getCopyBundle;
+  return api.get<ExplorerCopyBundle>(path, options);
+}
 /** GET /v1/explorer/context */
 export type ExplorerGetExplorerContextActionInput = ActionInput<never, ExplorerPlaceInput, never>;
 
@@ -20,6 +32,20 @@ export async function explorerGetExplorerContext(input: ExplorerGetExplorerConte
   const options = requestOptions(input.options, input.query, false);
   const path = routes.explorer.getExplorerContext;
   return api.get<ExplorerContext>(path, options);
+}
+/** GET /v1/explorer/navigation */
+export type ExplorerGetExplorerNavigationActionInput = ActionInput<
+  never,
+  ExplorerNavigationInput,
+  never
+>;
+
+export async function explorerGetExplorerNavigation(
+  input: ExplorerGetExplorerNavigationActionInput,
+) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.explorer.getExplorerNavigation;
+  return api.get<ExplorerNavigation>(path, options);
 }
 /** GET /v1/explorer/overview */
 export type ExplorerGetExplorerOverviewActionInput = ActionInput<never, ExplorerPlaceInput, never>;

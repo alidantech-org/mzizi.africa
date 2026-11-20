@@ -6,6 +6,8 @@ import { ContextDto } from "#/modules/explorer/schema/dto/context.dto.ts";
 import { CoordinatesInputDto } from "#/modules/explorer/schema/dto/coordinates-input.dto.ts";
 import { CopyBundleDto } from "#/modules/explorer/schema/dto/copy-bundle.dto.ts";
 import { CopyInputDto } from "#/modules/explorer/schema/dto/copy-input.dto.ts";
+import { NavigationInputDto } from "#/modules/explorer/schema/dto/navigation-input.dto.ts";
+import { NavigationDto } from "#/modules/explorer/schema/dto/navigation.dto.ts";
 import { OverviewDto } from "#/modules/explorer/schema/dto/overview.dto.ts";
 import { PlaceInputDto } from "#/modules/explorer/schema/dto/place-input.dto.ts";
 import { PlacesDto } from "#/modules/explorer/schema/dto/places.dto.ts";
@@ -27,6 +29,12 @@ export class ExplorerExplorerController {
   @HttpCode(200)
   getExplorerContext(@Query() input: PlaceInputDto): Promise<ContextDto> {
     return this.service.getExplorerContext(input);
+  }
+
+  @Get("/v1/explorer/navigation")
+  @HttpCode(200)
+  getExplorerNavigation(@Query() input: NavigationInputDto): Promise<NavigationDto> {
+    return this.service.getExplorerNavigation(input);
   }
 
   @Get("/v1/explorer/overview")

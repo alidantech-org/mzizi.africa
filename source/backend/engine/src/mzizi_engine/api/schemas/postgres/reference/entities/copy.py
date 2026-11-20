@@ -20,7 +20,6 @@ class CopyRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
-    is_development_text: bool
     key: Annotated[
         str,
         Field(

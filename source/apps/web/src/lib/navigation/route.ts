@@ -37,73 +37,56 @@ type ViewDef = {
   allowed: string[];
   /** Subsection state that stops making sense when the place changes. Everything else is kept so switching place never loses the screen. */
   dropOnPlaceChange: string[];
-  /** Countries that have data for this view ("all" means every country) and the deepest place level where it still makes sense (0 = country, 1 = county...). */
-  countries: readonly string[] | "all";
-  maxDepth: number;
 };
 export const VIEWS: Record<ViewId, ViewDef> = {
-  overview: { label: "Overview", group: "Place", allowed: [], dropOnPlaceChange: [], countries: "all", maxDepth: 9 },
+  overview: { label: "Overview", group: "Place", allowed: [], dropOnPlaceChange: [] },
   leaders: {
     label: "Leaders",
     group: "Government",
     allowed: ["view.mode", "view.office"],
     dropOnPlaceChange: [],
-    countries: ["ke"],
-    maxDepth: 9,
   },
   elections: {
     label: "Elections",
     group: "Politics",
     allowed: ["filters.party", "sort.by", "sort.dir", "page.no", "page.limit"],
     dropOnPlaceChange: [],
-    countries: ["ke"],
-    maxDepth: 2,
   },
   parliament: {
     label: "Parliament",
     group: "Politics",
     allowed: ["view.seat"],
     dropOnPlaceChange: ["view.seat"],
-    countries: ["ke"],
-    maxDepth: 2,
   },
   institutions: {
     label: "Institutions",
     group: "Government",
     allowed: ["view.entity", "view.id", "filters.kind"],
     dropOnPlaceChange: [],
-    countries: ["ke"],
-    maxDepth: 1,
   },
-  arms: { label: "Three arms", group: "Government", allowed: [], dropOnPlaceChange: [], countries: ["ke"], maxDepth: 1 },
-  power: { label: "Power model", group: "Government", allowed: [], dropOnPlaceChange: [], countries: ["ke"], maxDepth: 1 },
+  arms: { label: "Three arms", group: "Government", allowed: [], dropOnPlaceChange: [] },
+  power: { label: "Power model", group: "Government", allowed: [], dropOnPlaceChange: [] },
   law: {
     label: "Law",
     group: "Government",
     allowed: ["view.entity", "view.id", "view.chapter", "view.provision"],
     dropOnPlaceChange: [],
-    countries: ["ke"],
-    maxDepth: 9,
   },
-  finance: { label: "Finance analytics", group: "Money", allowed: [], dropOnPlaceChange: [], countries: ["ke"], maxDepth: 3 },
-  suppliers: { label: "Suppliers", group: "Money", allowed: [], dropOnPlaceChange: [], countries: ["ke"], maxDepth: 1 },
+  finance: { label: "Finance analytics", group: "Money", allowed: [], dropOnPlaceChange: [] },
+  suppliers: { label: "Suppliers", group: "Money", allowed: [], dropOnPlaceChange: [] },
   statistics: {
     label: "Statistics",
     group: "Data",
     allowed: ["view.indicator"],
     dropOnPlaceChange: [],
-    countries: ["ke"],
-    maxDepth: 2,
   },
   compare: {
     label: "Compare",
     group: "Data",
     allowed: ["view.places"],
     dropOnPlaceChange: ["view.places"],
-    countries: "all",
-    maxDepth: 9,
   },
-  sources: { label: "Sources", group: "Data", allowed: [], dropOnPlaceChange: [], countries: "all", maxDepth: 9 },
+  sources: { label: "Sources", group: "Data", allowed: [], dropOnPlaceChange: [] },
 };
 export const isView = (v: string): v is ViewId => v in VIEWS;
 
@@ -152,32 +135,11 @@ export function build(
 /** Sidebar: change the subject, keep the place and language, clear everything else. */
 export const toView = (ctx: Ctx, view: ViewId) => build(ctx, { view, params: {} });
 
-/** Is this subject meaningful at this place? Data exists for the country, and the place is not deeper than the subject supports. */
-export function available(view: ViewId, place: Place) {
-  const v = VIEWS[view];
-  return (v.countries === "all" || v.countries.includes(place.country)) && place.trail.length <= v.maxDepth;
-}
-
-/** Why a subject cannot be opened at this place, as data the screen words in the reader's language; null when it can. Links are disabled with this reason, never removed. */
-export type Unavailable =
-  | { kind: "noData"; countries: readonly string[] }
-  | { kind: "tooDeep"; limit: number; depth: number };
-export function whyUnavailable(view: ViewId, place: Place): Unavailable | null {
-  if (available(view, place)) return null;
-  const v = VIEWS[view];
-  if (v.countries !== "all" && !v.countries.includes(place.country)) return { kind: "noData", countries: v.countries };
-  return { kind: "tooDeep", limit: v.maxDepth, depth: place.trail.length };
-}
-
-/** Place switcher: stay on the same screen. Only state that depends on the old place (and pagination) is cleared. If the subject does not apply at the new place, fall back to the overview. */
+/** Place switcher: stay on the same screen. Only state that depends on the old place (and pagination) is cleared. */
 export function toPlace(ctx: Ctx, place: Place) {
-  const view = available(ctx.view, place) ? ctx.view : "overview";
   const drop = VIEWS[ctx.view].dropOnPlaceChange;
-  const params =
-    view === ctx.view
-      ? Object.fromEntries(Object.entries(ctx.params).filter(([k]) => !drop.includes(k) && !k.startsWith("page.")))
-      : {};
-  return build({ ...place, lang: ctx.lang }, { view, params });
+  const params = Object.fromEntries(Object.entries(ctx.params).filter(([k]) => !drop.includes(k) && !k.startsWith("page.")));
+  return build({ ...place, lang: ctx.lang }, { view: ctx.view, params });
 }
 
 /** Change filters, sorting or a subsection in place. Pagination resets unless the change is to the page itself. */

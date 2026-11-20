@@ -112,6 +112,17 @@
       "summary": "Resolve an explicit country and registered place path or identity; incompatible identities are rejected."
     },
     {
+      "name": "GetExplorerNavigation",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/navigation",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Navigation",
+      "summary": "Which navigation subjects have recorded data for one explicit country. Availability follows the data, not a list kept by the client."
+    },
+    {
       "name": "GetExplorerOverview",
       "group": "explorer",
       "feature": "explorer",

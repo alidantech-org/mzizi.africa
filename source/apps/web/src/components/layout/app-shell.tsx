@@ -28,11 +28,11 @@ import { createPortal } from "react-dom";
 import { SearchDialog } from "#/components/navigation/search";
 import { copy } from "@mzizi/copy";
 import { useCopy } from "#/lib/copy/copy";
-import { usePlaceNames } from "#/lib/places/catalogue";
+import { usePlaceCatalogue, usePlaceNames } from "#/lib/places/catalogue";
 import { initPrefs, setCountry, usePrefsInit } from "#/lib/preferences/prefs";
 import { COOKIES, GROUPS, encodeGroups, encodeSide, writeCookie, type Side } from "#/lib/preferences/pref-cookies";
 import { FlagPalette } from "#/components/preferences/flag-palette";
-import { VIEWS, whyUnavailable, type ViewId } from "#/lib/navigation/route";
+import { VIEWS, type ViewId } from "#/lib/navigation/route";
 import { useCtx, useNav } from "#/lib/navigation/use-ctx";
 import { Logo } from "#/components/brand/logo";
 import { ScrollKeeper } from "#/components/navigation/scroll-keeper";
@@ -129,25 +129,9 @@ function NavLinks({ rail, onNavigate }: { rail: boolean; onNavigate: () => void 
   const nav = useNav();
   const t = useCopy();
   const names = usePlaceNames();
-  const lower = (text: string) => text.toLocaleLowerCase();
-  const levelWord = (depth: number) =>
-    depth <= 0
-      ? t(copy.shell.unavailable.countryLevel)
-      : lower(names.levelOf(nav.ctx.country, depth) ?? t(copy.shell.unavailable.placeLevel));
-  const reasonText = (v: ViewId, why: NonNullable<ReturnType<typeof whyUnavailable>>) => {
-    const view = t(copy.shell.link[v]);
-    if (why.kind === "noData")
-      return t(copy.shell.unavailable.noData, {
-        view,
-        country: names.countryName(nav.ctx.country),
-        loaded: why.countries.map((c) => names.countryName(c)).join(", "),
-      });
-    const up =
-      why.depth > why.limit
-        ? t(copy.shell.unavailable.goUp, { level: levelWord(why.limit) })
-        : t(copy.shell.unavailable.goUpHigher);
-    return `${t(copy.shell.unavailable.tooDeep, { view, limit: levelWord(why.limit), level: levelWord(why.depth) })} ${up}`;
-  };
+  const { navigation } = usePlaceCatalogue();
+  const reasonText = (v: ViewId) =>
+    t(copy.shell.unavailable.noData, { view: t(copy.shell.link[v]), country: names.countryName(nav.ctx.country) });
   const groupLabel = (g: string) => t(copy.shell.group[g.toLowerCase() as "politics" | "government" | "money" | "data"]);
   const [closed, setClosed] = useState<string[]>(usePrefsInit().groups);
   const toggle = (g: string) =>
@@ -198,9 +182,9 @@ function NavLinks({ rail, onNavigate }: { rail: boolean; onNavigate: () => void 
               <div className="flex flex-col gap-0.5">
                 {views.map((v) => {
                   const label = t(copy.shell.link[v]);
-                  const why = whyUnavailable(v, place); // never removed: a link this place cannot open is greyed out with a reason
-                  return why ? (
-                    <DisabledItem key={v} label={label} Icon={icons[v]} rail={rail} reason={reasonText(v, why)} />
+                  const unavailable = navigation[v] === false; // never removed: a subject with no recorded data is greyed out with a reason
+                  return unavailable ? (
+                    <DisabledItem key={v} label={label} Icon={icons[v]} rail={rail} reason={reasonText(v)} />
                   ) : (
                     item(
                       v,

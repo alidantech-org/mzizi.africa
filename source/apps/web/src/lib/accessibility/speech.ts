@@ -60,7 +60,7 @@ export function speak(text: string, onEnd?: () => void) {
   parts.forEach((p, i) => {
     const u = new SpeechSynthesisUtterance(p);
     u.rate = current.rate;
-    u.lang = "en-KE";
+    u.lang = document.documentElement.lang || "en";
     if (i === parts.length - 1 && onEnd) u.onend = onEnd;
     speechSynthesis.speak(u);
   });
@@ -70,7 +70,7 @@ export function listen(onText: (text: string, final: boolean) => void, onEnd: ()
   const R = ctor();
   if (!R) return null;
   const rec = new R();
-  rec.lang = "en-KE";
+  rec.lang = document.documentElement.lang || "en";
   rec.interimResults = true;
   rec.continuous = false;
   rec.onresult = (e) => {

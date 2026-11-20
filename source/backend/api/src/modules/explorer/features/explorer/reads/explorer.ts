@@ -8,6 +8,9 @@ import { CopyEntryDto } from "#/modules/explorer/schema/dto/copy-entry.dto";
 import { CountDto } from "#/modules/explorer/schema/dto/count.dto";
 import { PlaceDto } from "#/modules/explorer/schema/dto/place.dto";
 import { LevelDto } from "#/modules/explorer/schema/dto/level.dto";
+import type { NavigationInputDto } from "#/modules/explorer/schema/dto/navigation-input.dto";
+import type { NavigationDto } from "#/modules/explorer/schema/dto/navigation.dto";
+import { NavigationItemDto } from "#/modules/explorer/schema/dto/navigation-item.dto";
 import type { CopyInputDto } from "#/modules/explorer/schema/dto/copy-input.dto";
 import type { CopyBundleDto } from "#/modules/explorer/schema/dto/copy-bundle.dto";
 import type { BootstrapInputDto } from "#/modules/explorer/schema/dto/bootstrap-input.dto";
@@ -34,6 +37,13 @@ async function language(db: DataSource, requested?: string): Promise<string> {
   );
   if (!available.length) throw new BadRequestException("The requested language is not registered.");
   return code;
+}
+/** A registered country, served or not; unlike `country`, a missing routing root is not an error here. */
+async function countryRow(db: DataSource, code: string): Promise<CountryChoiceDto> {
+  const rows = await queryRows(db, countriesSql, [], CountryChoiceDto);
+  const selected = rows.find((row) => row.code === code.toUpperCase());
+  if (!selected) throw new NotFoundException("This country is not registered.");
+  return selected;
 }
 async function country(db: DataSource, code: string): Promise<CountryChoiceDto> {
   const rows = await queryRows(db, countriesSql, [], CountryChoiceDto);
@@ -68,8 +78,15 @@ export async function bootstrap(db: DataSource, input: BootstrapInputDto): Promi
     queryRows(db, countriesSql, [], CountryChoiceDto),
     queryRows(
       db,
-      `select l.iso6391 as code,l.name from reference.languages l where l.iso6391 is not null and l.deleted_at is null and exists(select 1 from reference.copy c where c.language_id=l.id and c.deleted_at is null) order by l.name,l.id`,
-      [],
+      `select l.iso6391 as code,
+         coalesce((select n.name from reference.language_names n join reference.languages il on il.id=n.in_language_id
+                    where n.language_id=l.id and il.iso6391=$1 and n.deleted_at is null order by n.id limit 1), l.name) as name,
+         (select n.name from reference.language_names n where n.language_id=l.id and n.in_language_id=l.id and n.deleted_at is null order by n.id limit 1) as "nativeName"
+       from reference.languages l
+      where l.iso6391 is not null and l.deleted_at is null
+        and exists(select 1 from reference.copy c where c.language_id=l.id and c.deleted_at is null)
+      order by l.name,l.id`,
+      [lang],
       LanguageChoiceDto,
     ),
   ]);
@@ -304,4 +321,42 @@ export async function copyBundle(db: DataSource, input: CopyInputDto): Promise<C
   ]);
   const hash = createHash("sha256").update(JSON.stringify(entries.map((e) => [e.key, e.text]))).digest("hex").slice(0, 16);
   return { language: lang, hash, entries, missing: missing.map((m) => m.key) };
+}
+
+/** Navigation subjects and the records that make each one worth opening for a country. $1 is the country identity, or its lowercase code for subjects marked `by: "code"`. */
+const SUBJECTS: readonly { view: string; exists: string; by?: "code" }[] = [
+  { view: "elections", exists: "select 1 from politics.elections t where t.country_id=$1 and t.deleted_at is null" },
+  { view: "parliament", exists: "select 1 from governance.bills t where t.country_id=$1 and t.deleted_at is null" },
+  { view: "leaders", exists: "select 1 from governance.terms t where t.country_id=$1 and t.deleted_at is null" },
+  { view: "institutions", exists: "select 1 from governance.institutions t where t.country_id=$1 and t.deleted_at is null" },
+  { view: "arms", exists: "select 1 from governance.institutions t where t.country_id=$1 and t.arm_id is not null and t.deleted_at is null" },
+  { view: "power", exists: "select 1 from governance.authority_scopes t where t.country_id=$1 and t.deleted_at is null" },
+  {
+    view: "law",
+    exists:
+      "select 1 from legal.instruments i join geography.features f on f.id=i.issuing_unit_id where f.code like 'geo.ftr.'||$1||'%' and i.deleted_at is null",
+    by: "code",
+  },
+  { view: "finance", exists: "select 1 from finance.budgets t where t.country_id=$1 and t.deleted_at is null" },
+  { view: "suppliers", exists: "select 1 from civic.procurements t where t.country_id=$1 and t.deleted_at is null" },
+  {
+    view: "statistics",
+    exists:
+      "select 1 from statistics.observations o join geography.features f on f.id=o.feature_id where f.code like 'geo.ftr.'||$1||'%' and o.deleted_at is null",
+    by: "code",
+  },
+  { view: "compare", exists: "select 1 from geography.levels t where t.country_id=$1 and t.deleted_at is null" },
+  { view: "sources", exists: "select 1 from source.coverage t where t.country_id=$1 and t.deleted_at is null" },
+];
+
+export async function navigation(db: DataSource, input: NavigationInputDto): Promise<NavigationDto> {
+  const selected = await countryRow(db, input.countryCode);
+  const items = await Promise.all(
+    SUBJECTS.map(async (subject) => {
+      const parameters = [subject.by === "code" ? input.countryCode.toLowerCase() : selected.id];
+      const found = await db.query(`select exists(${subject.exists}) as "ok"`, parameters);
+      return Object.assign(new NavigationItemDto(), { view: subject.view, available: found[0]?.ok === true });
+    }),
+  );
+  return { country: selected, items, gaps: [] };
 }

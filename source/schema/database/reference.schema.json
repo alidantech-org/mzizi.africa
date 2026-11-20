@@ -20,7 +20,6 @@
       ],
       "required": [
         "id"
-        ,"is_development_text"
         ,"key"
         ,"language_id"
         ,"text"
@@ -35,14 +34,12 @@
         ],
         "columns": [
           "country_code"
-          ,"is_development_text"
           ,"key"
           ,"language_code"
           ,"text"
         ],
         "required": [
-          "is_development_text"
-          ,"key"
+          "key"
           ,"language_code"
           ,"text"
         ]
@@ -75,11 +72,6 @@
           "format": "uuid",
           "x-primaryKey": true,
           "x-role": "system"
-        }
-        ,"is_development_text": {
-          "type": "boolean",
-          "x-type": "boolean",
-          "x-role": "data"
         }
         ,"key": {
           "type": "string",

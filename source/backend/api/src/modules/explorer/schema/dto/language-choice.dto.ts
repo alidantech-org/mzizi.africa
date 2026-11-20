@@ -1,4 +1,4 @@
-import { IsString, MaxLength, MinLength } from "class-validator";
+import { IsOptional, IsString, MaxLength, MinLength, ValidateIf } from "class-validator";
 import type { LanguageCode } from "#/modules/explorer/schema/type/language-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 
@@ -15,4 +15,11 @@ export class LanguageChoiceDto {
   @MinLength(1)
   @MaxLength(300)
   name!: Name;
+
+  @IsOptional()
+  @ValidateIf((object) => object.nativeName !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(300)
+  nativeName?: Name | null;
 }

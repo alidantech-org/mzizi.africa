@@ -1,5 +1,7 @@
 "use client";
 /** Palette and colour mode. Palette swatches are circles; the mode control is small and squared with the app's own corner radius. State lives in the preferences store. */
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
 import { ChevronDown, Monitor, Moon, Sun } from "lucide-react";
 import { useState } from "react";
 import { Radio, RadioGroup, ToggleButton, ToggleButtonGroup } from "react-aria-components";
@@ -9,14 +11,14 @@ import { customActive, flagActive, flagPrimaryOf, setTheme, useTheme, type Mode 
 import { Flag } from "#/components/brand/flag";
 
 export const PALETTES = [
-  { id: "savanna", label: "Savanna", swatch: ["#b8431f", "#d49a2a", "#1f6b52"] },
-  { id: "lagoon", label: "Lagoon", swatch: ["#0b7285", "#e0603a", "#6558c9"] },
-  { id: "baobab", label: "Baobab", swatch: ["#a1295f", "#dd9a26", "#2f7568"] },
+  { id: "savanna", label: copy.preferences.theme.savanna, swatch: ["#b8431f", "#d49a2a", "#1f6b52"] },
+  { id: "lagoon", label: copy.preferences.theme.lagoon, swatch: ["#0b7285", "#e0603a", "#6558c9"] },
+  { id: "baobab", label: copy.preferences.theme.baobab, swatch: ["#a1295f", "#dd9a26", "#2f7568"] },
 ];
 const modes = [
-  { id: "system", label: "System", icon: Monitor },
-  { id: "light", label: "Light", icon: Sun },
-  { id: "dark", label: "Dark", icon: Moon },
+  { id: "system", label: copy.preferences.theme.system, icon: Monitor },
+  { id: "light", label: copy.preferences.theme.light, icon: Sun },
+  { id: "dark", label: copy.preferences.theme.dark, icon: Moon },
 ] as const;
 
 const Row = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -34,6 +36,7 @@ const radio =
   "group cursor-pointer rounded-full outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-accent data-[focus-visible]:ring-offset-2 data-[focus-visible]:ring-offset-surface";
 
 export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
+  const tr = useCopy();
   const t = useTheme();
   const [open, setOpen] = useState(flagOpen); // the flag colours section is closed until opened
   const flag = FLAG_COLORS[t.country]; // offered only where the current country has a flag
@@ -42,21 +45,21 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
   const primary = following ? flagPrimaryOf(t) : null;
   return (
     <div className="space-y-3">
-      <Row label="Palette">
+      <Row label={tr(copy.preferences.theme.palette)}>
         <RadioGroup
-          aria-label="Colour palette"
+          aria-label={tr(copy.preferences.theme.paletteGroup)}
           orientation="horizontal"
           value={following || custom ? null : t.palette === "flag" || t.palette === "custom" ? t.base : t.palette}
           onChange={(v) => setTheme({ palette: v, base: v })}
           className="flex gap-2"
         >
           {PALETTES.map((p) => (
-            <Radio key={p.id} value={p.id} aria-label={p.label} className={radio}>
-              <span title={p.label} className={circle} style={{ background: conic(p.swatch) }} />
+            <Radio key={p.id} value={p.id} aria-label={tr(p.label)} className={radio}>
+              <span title={tr(p.label)} className={circle} style={{ background: conic(p.swatch) }} />
             </Radio>
           ))}
           <label
-            title="Your own colour"
+            title={tr(copy.preferences.theme.ownColour)}
             className="group relative cursor-pointer rounded-full has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-surface"
           >
             <span
@@ -65,7 +68,7 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
             />
             <input
               type="color"
-              aria-label="Choose your own colour"
+              aria-label={tr(copy.preferences.theme.chooseColour)}
               value={t.custom ?? "#b8431f"}
               onChange={(e) => setTheme({ palette: "custom", custom: e.target.value })}
               className="absolute inset-0 size-full cursor-pointer opacity-0"
@@ -82,11 +85,11 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
             className="flex w-full items-center gap-2 rounded-md p-2.5 text-left text-xs hover:bg-accent-soft/50"
           >
             <Flag code={t.country} size={16} />
-            <span className="font-medium">Flag colours</span>
+            <span className="font-medium">{tr(copy.preferences.theme.flagTitle)}</span>
             <span className="min-w-0 truncate text-muted">· {flag.name}</span>
             {following && (
               <span className="ml-auto shrink-0 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent">
-                Following
+                {tr(copy.preferences.theme.flagFollowing)}
               </span>
             )}
             <ChevronDown
@@ -97,10 +100,10 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
           {open && (
             <div id="flag-colours-body" className="border-t border-line px-2.5 pb-2.5 pt-2">
               <p className="text-[11px] leading-snug text-muted">
-                Follows the flag of the country you are in. Pick its main colour; each country starts at its own.
+                {tr(copy.preferences.theme.flagHelp)}
               </p>
               <RadioGroup
-                aria-label={`Main colour from the ${flag.name} flag`}
+                aria-label={tr(copy.preferences.theme.flagMain, { country: flag.name })}
                 orientation="horizontal"
                 value={primary}
                 onChange={(hex) => setTheme({ palette: "flag", flagPrimary: hex })}
@@ -112,11 +115,11 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
                     <Radio
                       key={hex}
                       value={hex}
-                      aria-label={`${name}${hex === flag.dominant ? " (starting colour)" : ""}`}
+                      aria-label={hex === flag.dominant ? tr(copy.preferences.theme.flagStarting, { name }) : name}
                       className={radio}
                     >
                       <span
-                        title={`${name}${hex === flag.dominant ? " · starting colour" : ""}`}
+                        title={hex === flag.dominant ? tr(copy.preferences.theme.flagStarting, { name }) : name}
                         className={circle}
                         style={{ background: hex }}
                       />
@@ -128,9 +131,9 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
           )}
         </div>
       )}
-      <Row label="Mode">
+      <Row label={tr(copy.preferences.theme.mode)}>
         <ToggleButtonGroup
-          aria-label="Colour mode"
+          aria-label={tr(copy.preferences.theme.modeGroup)}
           selectionMode="single"
           disallowEmptySelection
           selectedKeys={[t.mode]}
@@ -141,7 +144,7 @@ export function ThemeSwitcher({ flagOpen = false }: { flagOpen?: boolean }) {
             <ToggleButton
               key={id}
               id={id}
-              aria-label={label}
+              aria-label={tr(label)}
               className="grid size-6 cursor-pointer place-items-center rounded text-muted outline-none transition data-[selected]:bg-ink data-[selected]:text-paper data-[focus-visible]:ring-2 data-[focus-visible]:ring-accent"
             >
               <Icon size={13} />

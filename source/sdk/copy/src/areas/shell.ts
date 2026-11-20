@@ -38,17 +38,8 @@ export const shell = defineCopy("shell", {
     title: { en: "{label} is not available here", sw: "{label} haipatikani hapa" },
     description: { en: "{label} is not available here. {reason}", sw: "{label} haipatikani hapa. {reason}" },
     noData: {
-      en: "{view} has no data for {country} yet. It is loaded for {loaded}.",
-      sw: "{view} haina data ya {country} bado. Imepakiwa kwa {loaded}.",
+      en: "{view} has no recorded data for {country} yet.",
+      sw: "{view} haina data iliyorekodiwa ya {country} bado.",
     },
-    tooDeep: {
-      en: "{view} only applies down to {limit} level. You are at {level} level.",
-      sw: "{view} inatumika hadi ngazi ya {limit} tu. Uko katika ngazi ya {level}.",
-    },
-    goUp: { en: "Go up to a {level} to open it.", sw: "Panda hadi {level} ili kuifungua." },
-    goUpHigher: { en: "Go up to a higher level to open it.", sw: "Panda hadi ngazi ya juu ili kuifungua." },
-    countryLevel: { en: "country", sw: "nchi" },
-    placeLevel: { en: "place", sw: "eneo" },
-    thisCountry: { en: "this country", sw: "nchi hii" },
   },
 });

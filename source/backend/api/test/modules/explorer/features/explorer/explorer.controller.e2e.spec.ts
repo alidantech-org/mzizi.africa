@@ -9,6 +9,10 @@ import { bootstrapExample } from "@test/modules/explorer/schema/dto/examples/boo
 import { childrenInputExample } from "@test/modules/explorer/schema/dto/examples/children-input.dto.example.ts";
 import { contextExample } from "@test/modules/explorer/schema/dto/examples/context.dto.example.ts";
 import { coordinatesInputExample } from "@test/modules/explorer/schema/dto/examples/coordinates-input.dto.example.ts";
+import { copyBundleExample } from "@test/modules/explorer/schema/dto/examples/copy-bundle.dto.example.ts";
+import { copyInputExample } from "@test/modules/explorer/schema/dto/examples/copy-input.dto.example.ts";
+import { navigationInputExample } from "@test/modules/explorer/schema/dto/examples/navigation-input.dto.example.ts";
+import { navigationExample } from "@test/modules/explorer/schema/dto/examples/navigation.dto.example.ts";
 import { overviewExample } from "@test/modules/explorer/schema/dto/examples/overview.dto.example.ts";
 import { placeInputExample } from "@test/modules/explorer/schema/dto/examples/place-input.dto.example.ts";
 import { placesExample } from "@test/modules/explorer/schema/dto/examples/places.dto.example.ts";
@@ -43,7 +47,9 @@ import { ExplorerExplorerService } from "#/modules/explorer/features/explorer/ex
 class InMemoryDataSourceModule {}
 
 const service = {
+  getCopyBundle: vi.fn(),
   getExplorerContext: vi.fn(),
+  getExplorerNavigation: vi.fn(),
   getExplorerOverview: vi.fn(),
   getSetupBootstrap: vi.fn(),
   listExplorerChildren: vi.fn(),
@@ -109,6 +115,25 @@ async function send(method: string, path: string, sent: Sent): Promise<Response>
   });
 }
 
+describe("GET /v1/explorer/copy (getCopyBundle)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(copyInputExample.valid()) },
+      headers: {},
+    };
+    const result = copyBundleExample.valid();
+    service.getCopyBundle.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/explorer/copy", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getCopyBundle).toHaveBeenCalledTimes(1);
+    expect(service.getCopyBundle).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/explorer/context (getExplorerContext)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -124,6 +149,25 @@ describe("GET /v1/explorer/context (getExplorerContext)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getExplorerContext).toHaveBeenCalledTimes(1);
     expect(service.getExplorerContext).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/explorer/navigation (getExplorerNavigation)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(navigationInputExample.valid()) },
+      headers: {},
+    };
+    const result = navigationExample.valid();
+    service.getExplorerNavigation.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/explorer/navigation", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getExplorerNavigation).toHaveBeenCalledTimes(1);
+    expect(service.getExplorerNavigation).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

@@ -55,6 +55,7 @@ export function LanguageSwitcher() {
       >
         <span className="flex-1">
           <span className="font-medium">{l.name}</span>
+          {l.nativeName && l.nativeName !== l.name && <span className="ml-2 text-xs text-muted">{l.nativeName}</span>}
         </span>
         {current === l.code && <Check size={14} className="text-accent" />}
       </button>
@@ -71,7 +72,7 @@ export function LanguageSwitcher() {
     );
 
   const searching = q.trim().length > 0;
-  const matches = languages.filter((l) => l.name.toLowerCase().includes(q.trim().toLowerCase()));
+  const matches = languages.filter((l) => `${l.name} ${l.nativeName ?? ""}`.toLowerCase().includes(q.trim().toLowerCase()));
 
   const panel = open && (
     <>

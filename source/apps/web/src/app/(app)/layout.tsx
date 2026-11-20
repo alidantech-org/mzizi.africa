@@ -2,6 +2,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Hanken_Grotesk, IBM_Plex_Mono } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
+import { effectiveLanguage } from "#/lib/server/copy";
 import { Shell } from "#/components/layout/shell";
 import "./real.css";
 
@@ -35,11 +36,12 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function AppLayout({ children }: { children: ReactNode }) {
+export default async function AppLayout({ children }: { children: ReactNode }) {
+  const language = await effectiveLanguage();
   return (
     <html
       data-ui="real"
-      lang="en"
+      lang={language}
       suppressHydrationWarning
       data-palette="savanna"
       className={`${fraunces.variable} ${hanken.variable} ${plex.variable}`}

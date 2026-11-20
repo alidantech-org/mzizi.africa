@@ -35,12 +35,6 @@ export const copyExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "isDevelopmentText",
-      optional: false,
-      nullable: false,
-      spec: { kind: "boolean" },
-    },
-    {
       name: "key",
       optional: false,
       nullable: false,

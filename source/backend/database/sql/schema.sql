@@ -4997,7 +4997,6 @@ CREATE TABLE "reference"."copy" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
-    "is_development_text" boolean NOT NULL,
     "key" varchar(255) NOT NULL,
     "language_id" uuid NOT NULL,
     "text" text NOT NULL,

@@ -1,0 +1,61 @@
+import { defineCopy } from "../define.ts";
+
+/** The location popover: country, breadcrumb, search, level chips and the list of places. */
+export const location = defineCopy("location", {
+  change: { en: "Change location", sw: "Badilisha eneo" },
+  button: { en: "Location: {here}. Change location", sw: "Eneo: {here}. Badilisha eneo" },
+  buttonIn: { en: "Location: {here}, in {parents}. Change location", sw: "Eneo: {here}, ndani ya {parents}. Badilisha eneo" },
+  levelCountry: { en: "Country", sw: "Nchi" },
+  levelPlace: { en: "Place", sw: "Eneo" },
+  resizeHeight: { en: "Resize height", sw: "Badilisha urefu" },
+  resizeWidth: { en: "Resize width", sw: "Badilisha upana" },
+  close: { en: "Close", sw: "Funga" },
+  countryButton: { en: "Country: {country}. Change country", sw: "Nchi: {country}. Badilisha nchi" },
+  searchCountries: { en: "Search countries", sw: "Tafuta nchi" },
+  youAreHere: { en: "You are here", sw: "Uko hapa" },
+  showPath: { en: "Show the whole path", sw: "Onyesha njia yote" },
+  open: { en: "Open {country}", sw: "Fungua {country}" },
+  wholeCountry: { en: "Whole country", sw: "Nchi nzima" },
+  searchPlaces: { en: "Search places in {country}", sw: "Tafuta maeneo katika {country}" },
+  placeholder: { en: "Search {levels} in {country}", sw: "Tafuta {levels} katika {country}" },
+  listening: { en: "Listening…", sw: "Inasikiliza…" },
+  stopListening: { en: "Stop listening", sw: "Acha kusikiliza" },
+  byVoice: { en: "Search by voice", sw: "Tafuta kwa sauti" },
+  viewsOf: { en: "Views of {country}", sw: "Mionekano ya {country}" },
+  moreViews: { en: "{count} more views", sw: "Mionekano {count} zaidi" },
+  places: { en: "Places", sw: "Maeneo" },
+  loading: { en: "Loading places…", sw: "Inapakia maeneo…" },
+  noMatch: { en: "Nothing matches “{query}”.", sw: "Hakuna kinacholingana na “{query}”." },
+  noFiner: {
+    en: "No finer places are loaded inside {place}.",
+    sw: "Hakuna maeneo madogo zaidi yaliyopakiwa ndani ya {place}.",
+  },
+  previous: { en: "Previous page", sw: "Ukurasa uliotangulia" },
+  next: { en: "Next page", sw: "Ukurasa unaofuata" },
+  range: { en: "{from}–{to} of {total}", sw: "{from}–{to} kati ya {total}" },
+  chip: {
+    all: { en: "All levels", sw: "Ngazi zote" },
+    saved: { en: "Saved", sw: "Zilizohifadhiwa" },
+    recent: { en: "Recent", sw: "Za hivi karibuni" },
+  },
+  heading: {
+    saved: { en: "Saved places", sw: "Maeneo yaliyohifadhiwa" },
+    recent: { en: "Recent places", sw: "Maeneo ya hivi karibuni" },
+    resultsOne: { en: "{count} result", sw: "Tokeo {count}" },
+    resultsOther: { en: "{count} results", sw: "Matokeo {count}" },
+    level: { en: "{level}: {count} in {country}", sw: "{level}: {count} katika {country}" },
+    others: { en: "Other places in {place}", sw: "Maeneo mengine katika {place}" },
+    inside: { en: "Inside {place}", sw: "Ndani ya {place}" },
+  },
+  voice: {
+    resultsOne: {
+      en: "{count} result. Best match: {name}, {kind}, in {where}.",
+      sw: "Tokeo {count}. Linalolingana zaidi: {name}, {kind}, katika {where}.",
+    },
+    resultsOther: {
+      en: "{count} results. Best match: {name}, {kind}, in {where}.",
+      sw: "Matokeo {count}. Linalolingana zaidi: {name}, {kind}, katika {where}.",
+    },
+    noMatch: { en: "Nothing matches {query}.", sw: "Hakuna kinacholingana na {query}." },
+  },
+});

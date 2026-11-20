@@ -1,0 +1,72 @@
+import { defineCopy } from "../define.ts";
+
+/** Appearance, accessibility and voice preferences. */
+export const preferences = defineCopy("preferences", {
+  section: {
+    colours: { en: "Colours", sw: "Rangi" },
+    contrast: { en: "Contrast", sw: "Utofautishaji" },
+    textSize: { en: "Text size", sw: "Ukubwa wa maandishi" },
+    display: { en: "Display", sw: "Mwonekano" },
+    voice: { en: "Voice", sw: "Sauti" },
+  },
+  contrast: {
+    standard: { en: "Standard", sw: "Kawaida" },
+    high: { en: "High contrast", sw: "Utofautishaji wa juu" },
+    highLight: { en: "High contrast light", sw: "Utofautishaji wa juu, mwanga" },
+    yellow: { en: "Yellow on black", sw: "Njano kwenye nyeusi" },
+    yellowLight: { en: "Black on yellow", sw: "Nyeusi kwenye njano" },
+    sample: { en: "Aa", sw: "Aa" },
+  },
+  display: {
+    links: { en: "Underline links", sw: "Pigia mstari viungo" },
+    motion: { en: "Reduce motion", sw: "Punguza mwendo" },
+    spacing: { en: "Wider text spacing", sw: "Nafasi pana ya maandishi" },
+  },
+  theme: {
+    palette: { en: "Palette", sw: "Paleti" },
+    paletteGroup: { en: "Colour palette", sw: "Paleti ya rangi" },
+    savanna: { en: "Savanna", sw: "Savanna" },
+    lagoon: { en: "Lagoon", sw: "Rasi" },
+    baobab: { en: "Baobab", sw: "Mbuyu" },
+    ownColour: { en: "Your own colour", sw: "Rangi yako mwenyewe" },
+    chooseColour: { en: "Choose your own colour", sw: "Chagua rangi yako mwenyewe" },
+    mode: { en: "Mode", sw: "Hali" },
+    modeGroup: { en: "Colour mode", sw: "Hali ya rangi" },
+    system: { en: "System", sw: "Mfumo" },
+    light: { en: "Light", sw: "Mwanga" },
+    dark: { en: "Dark", sw: "Giza" },
+    flagTitle: { en: "Flag colours", sw: "Rangi za bendera" },
+    flagFollowing: { en: "Following", sw: "Inafuata" },
+    flagHelp: {
+      en: "Follows the flag of the country you are in. Pick its main colour; each country starts at its own.",
+      sw: "Inafuata bendera ya nchi uliyomo. Chagua rangi yake kuu; kila nchi huanza na yake.",
+    },
+    flagMain: { en: "Main colour from the {country} flag", sw: "Rangi kuu kutoka bendera ya {country}" },
+    flagStarting: { en: "{name} (starting colour)", sw: "{name} (rangi ya kuanzia)" },
+  },
+  voice: {
+    unsupported: { en: "Speech is not available in this browser.", sw: "Usemaji haupatikani kwenye kivinjari hiki." },
+    stopReading: { en: "Stop reading", sw: "Acha kusoma" },
+    readPage: { en: "Read this page aloud", sw: "Soma ukurasa huu kwa sauti" },
+    responses: { en: "Voice responses", sw: "Majibu ya sauti" },
+    speed: { en: "Speaking speed", sw: "Kasi ya kuongea" },
+    off: { en: "Off", sw: "Zimezimwa" },
+    offHint: { en: "Nothing is spoken unless you press Read", sw: "Hakuna kinachosemwa usipobonyeza Soma" },
+    speak: { en: "Answer aloud", sw: "Jibu kwa sauti" },
+    speakHint: { en: "Search results and answers are spoken", sw: "Matokeo ya utafutaji na majibu husemwa" },
+    handsfree: { en: "Hands-free", sw: "Bila mikono" },
+    handsfreeHint: {
+      en: "Opens the best match and reads the new page",
+      sw: "Hufungua linalolingana zaidi na kusoma ukurasa mpya",
+    },
+    note: {
+      en: "Speech uses your browser's own voices. Talk-to-search is the mic in the search box.",
+      sw: "Usemaji hutumia sauti za kivinjari chako. Kutafuta kwa sauti ni kipaza sauti kwenye kisanduku cha kutafuta.",
+    },
+    opening: { en: "Opening {page}", sw: "Inafungua {page}" },
+    results: { en: "{count} results. Best match: {name}, a {kind} in {where}.", sw: "Matokeo {count}. Linalolingana zaidi: {name}, {kind} katika {where}." },
+    resultOne: { en: "{count} result. Best match: {name}, a {kind} in {where}.", sw: "Tokeo {count}. Linalolingana zaidi: {name}, {kind} katika {where}." },
+    noMatch: { en: "Nothing matches {query}.", sw: "Hakuna kinacholingana na {query}." },
+    home: { en: "home", sw: "mwanzo" },
+  },
+});

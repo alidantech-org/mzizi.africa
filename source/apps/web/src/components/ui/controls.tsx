@@ -3,6 +3,8 @@
  * The control set. Every form control in the app comes from here, so selects, checkboxes, switches, sliders and
  * text fields look and behave the same everywhere. Built on React Aria for keyboard, focus and screen-reader behaviour.
  */
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
 import { Check, ChevronDown, X } from "lucide-react";
 import { useEffect, useState, type ReactNode, type Ref } from "react";
 import {
@@ -85,6 +87,7 @@ export function Select({
   disabled?: boolean;
   className?: string;
 }) {
+  const t = useCopy();
   const key = value || (clearLabel ? NONE : null);
   const change = (k: string | number | null) => onChange(k == null || k === NONE ? "" : String(k));
   const chosen = options.find((o) => o.id === value)?.label ?? "";
@@ -135,7 +138,7 @@ export function Select({
         <Popover className={popover}>
           <ListBox
             className="max-h-60 overflow-y-auto outline-none"
-            renderEmptyState={() => <div className="px-3 py-3 text-sm text-muted">Nothing matches.</div>}
+            renderEmptyState={() => <div className="px-3 py-3 text-sm text-muted">{t(copy.common.nothingMatches)}</div>}
           >
             {(o: Option) => (
               <ListBoxItem id={o.id} textValue={o.label} className={optionClass}>
@@ -315,6 +318,7 @@ export function TextField({
   className?: string;
   size?: "sm" | "md" | "lg";
 }) {
+  const t = useCopy();
   const h = { sm: "h-8 text-xs", md: "h-10 text-sm", lg: "h-12 text-base" }[size];
   return (
     <div
@@ -335,7 +339,7 @@ export function TextField({
         <button
           type="button"
           onClick={() => onChange("")}
-          aria-label="Clear"
+          aria-label={t(copy.common.clear)}
           className="grid size-5 shrink-0 place-items-center rounded text-muted hover:bg-accent-soft hover:text-ink"
         >
           <X size={13} />

@@ -38,6 +38,8 @@ import { createPortal } from "react-dom";
 import { getVoice, listen, speak } from "#/lib/accessibility/speech";
 import { demoSegments } from "#/lib/navigation/base";
 import { prettify } from "#/lib/navigation/route";
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
 import { usePlaceCatalogue } from "#/lib/places/catalogue";
 import { readSaved as readSavedList } from "#/lib/preferences/saved";
 import { placeFromHref, useNav } from "#/lib/navigation/use-ctx";
@@ -78,6 +80,7 @@ const read = (key: string): string[] => {
 const segs = demoSegments;
 
 export function LocationSwitcher({ compact }: { compact: boolean }) {
+  const t = useCopy();
   const nav = useNav();
   const { ctx } = nav;
   const [open, setOpen] = useState(false);
@@ -254,16 +257,16 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
   const showingSiblings = !q.trim() && level === "all" && browsingHome && ctx.trail.length === leafDepth - 1;
   const heading =
     level === "saved"
-      ? "Saved places"
+      ? t(copy.location.heading.saved)
       : level === "recent"
-        ? "Recent places"
+        ? t(copy.location.heading.recent)
         : q.trim()
-          ? `${full.length} result${full.length === 1 ? "" : "s"}`
+          ? t(full.length === 1 ? copy.location.heading.resultsOne : copy.location.heading.resultsOther, { count: full.length })
           : level !== "all"
-            ? `${full.length} ${level.toLowerCase()}${full.length === 1 ? "" : "s"} in ${countryDef.name}`
+            ? t(copy.location.heading.level, { level, count: full.length, country: countryDef.name })
             : showingSiblings
-              ? `Other places in ${label(trailPaths.at(-2) ?? "")}`
-              : `Inside ${browsingHome ? here : countryDef.name}`;
+              ? t(copy.location.heading.others, { place: label(trailPaths.at(-2) ?? "") })
+              : t(copy.location.heading.inside, { place: browsingHome ? here : countryDef.name });
 
   const go = (href: string, keepOpen: boolean) => {
     try {
@@ -285,8 +288,13 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
     if (mode !== "off")
       speak(
         best
-          ? `${hit.length} ${hit.length === 1 ? "result" : "results"}. Best match: ${best.name}, ${best.kind.toLowerCase()}, in ${best.where}.`
-          : `Nothing matches ${text}.`,
+          ? t(hit.length === 1 ? copy.location.voice.resultsOne : copy.location.voice.resultsOther, {
+              count: hit.length,
+              name: best.name,
+              kind: best.kind.toLowerCase(),
+              where: best.where,
+            })
+          : t(copy.location.voice.noMatch, { query: text }),
       );
     if (mode === "handsfree" && best) go(best.href, false);
   };
@@ -297,11 +305,11 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
     }
     setListening(true);
     stop.current = listen(
-      (t, f) => {
-        setQ(t);
+      (said, f) => {
+        setQ(said);
         setActive(0);
         setPage(0);
-        if (f) speakAndMaybeOpen(t);
+        if (f) speakAndMaybeOpen(said);
       },
       () => setListening(false),
     );
@@ -352,10 +360,10 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
 
   /** The view chips: every level of the country, plus Saved and Recent when there are some. Chips that do not fit move into a small [...] menu. */
   const chipDefs: { id: string; label: string; icon?: typeof Bookmark }[] = [
-    { id: "all", label: "All levels" },
+    { id: "all", label: t(copy.location.chip.all) },
     ...levels.map((l) => ({ id: l, label: l })),
-    ...(saved.length ? [{ id: "saved", label: "Saved", icon: Bookmark }] : []),
-    ...(recent.length ? [{ id: "recent", label: "Recent", icon: Clock }] : []),
+    ...(saved.length ? [{ id: "saved", label: t(copy.location.chip.saved), icon: Bookmark }] : []),
+    ...(recent.length ? [{ id: "recent", label: t(copy.location.chip.recent), icon: Clock }] : []),
   ];
   const pickChip = (id: string) => {
     setLevel(id);
@@ -396,7 +404,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
       <div className="fixed inset-0 z-[60]" onMouseDown={close} />
       <div
         role="dialog"
-        aria-label="Change location"
+        aria-label={t(copy.location.change)}
         style={{ left: pos.left, bottom: pos.bottom, width: size.w, height: size.h }}
         className={`@container floating fixed z-[61] flex flex-col overflow-hidden rounded-lg border border-line bg-surface ${drag === "hide" ? "opacity-60" : ""}`}
       >
@@ -407,7 +415,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
           onPointerUp={endDrag}
           role="separator"
           aria-orientation="horizontal"
-          aria-label="Resize height"
+          aria-label={t(copy.location.resizeHeight)}
         />
         <div
           className={`${edge} inset-y-0 right-0 w-1.5 cursor-col-resize`}
@@ -416,7 +424,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
           onPointerUp={endDrag}
           role="separator"
           aria-orientation="vertical"
-          aria-label="Resize width"
+          aria-label={t(copy.location.resizeWidth)}
         />
         <div
           className={`${edge} right-0 top-0 size-3 cursor-nesw-resize`}
@@ -435,7 +443,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
             }}
             aria-expanded={picking}
             aria-haspopup="listbox"
-            aria-label={`Country: ${countryDef.name}. Change country`}
+            aria-label={t(copy.location.countryButton, { country: countryDef.name })}
             className="flex h-7 shrink-0 items-center gap-1.5 rounded-md border border-line bg-accent-soft/60 px-2 text-xs font-medium hover:border-muted"
           >
             <Flag code={countryDef.code} size={16} />
@@ -444,7 +452,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
           </button>
           <nav
             ref={crumbRow}
-            aria-label="You are here"
+            aria-label={t(copy.location.youAreHere)}
             className={`flex min-w-0 flex-1 items-center gap-0.5 ${crumbs === "expanded" ? "flex-wrap" : "overflow-hidden whitespace-nowrap"}`}
           >
             {browsingHome ? (
@@ -455,7 +463,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                     <button
                       onClick={() => setCrumbs("expanded")}
                       title={ctx.trail.map((_, i) => label(trailPaths[i])).join(" › ")}
-                      aria-label="Show the whole path"
+                      aria-label={t(copy.location.showPath)}
                       className="rounded-md px-1.5 py-1 text-sm text-muted hover:bg-accent-soft hover:text-ink"
                     >
                       …
@@ -471,13 +479,13 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                 onClick={() => go(`/${bc}`, true)}
                 className="ml-1 rounded-md px-1.5 py-1 text-sm text-accent hover:bg-accent-soft"
               >
-                Open {countryDef.name}
+                {t(copy.location.open, { country: countryDef.name })}
               </button>
             )}
           </nav>
           <button
             onClick={close}
-            aria-label="Close"
+            aria-label={t(copy.location.close)}
             className="grid size-8 shrink-0 place-items-center rounded-md text-muted hover:bg-accent-soft"
           >
             <X size={15} />
@@ -485,10 +493,10 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
           {picking && (
             <div className="floating absolute left-3 top-full z-20 mt-1 w-72 max-w-[calc(100%-1.5rem)] rounded-lg border border-line bg-surface p-2">
               <TextField
-                label="Search countries"
+                label={t(copy.location.searchCountries)}
                 value={cq}
                 onChange={setCq}
-                placeholder="Search countries"
+                placeholder={t(copy.location.searchCountries)}
                 icon={<Search size={15} />}
                 autoFocus
                 size="sm"
@@ -525,7 +533,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
           <div className="flex items-center gap-2">
             <TextField
               className="flex-1"
-              label={`Search places in ${countryDef.name}`}
+              label={t(copy.location.searchPlaces, { country: countryDef.name })}
               value={q}
               onChange={(v) => {
                 setQ(v);
@@ -533,13 +541,13 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                 setPage(0);
               }}
               onKeyDown={keyNav}
-              placeholder={listening ? "Listening…" : `Search ${levels.join(", ").toLowerCase()} in ${countryDef.name}`}
+              placeholder={listening ? t(copy.location.listening) : t(copy.location.placeholder, { levels: levels.join(", ").toLowerCase(), country: countryDef.name })}
               icon={<Search size={15} />}
               autoFocus
             />
             <button
               onClick={voice}
-              aria-label={listening ? "Stop listening" : "Search by voice"}
+              aria-label={listening ? t(copy.location.stopListening) : t(copy.location.byVoice)}
               aria-pressed={listening}
               className={`grid size-10 place-items-center rounded-md border ${listening ? "border-accent bg-accent text-paper" : "border-line hover:bg-accent-soft"}`}
             >
@@ -556,14 +564,14 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                   ref={chipRow}
                   className={`flex gap-1.5 whitespace-nowrap text-xs ${chipFit === null ? "invisible" : ""}`}
                   role="group"
-                  aria-label={`Views of ${countryDef.name}`}
+                  aria-label={t(copy.location.viewsOf, { country: countryDef.name })}
                 >
                   {(chipFit === null ? chipDefs : chipDefs.slice(0, chipFit)).map((c) => chipButton(c))}
                   {chipFit !== null && chipFit < chipDefs.length && (
                     <button
                       onClick={() => setMoreOpen(!moreOpen)}
                       aria-expanded={moreOpen}
-                      aria-label={`${chipDefs.length - (chipFit ?? 0)} more views`}
+                      aria-label={t(copy.location.moreViews, { count: chipDefs.length - (chipFit ?? 0) })}
                       tabIndex={scrolled ? -1 : 0}
                       className={`grid h-[26px] w-9 shrink-0 place-items-center rounded-md border ${chipDefs.slice(chipFit ?? 0).some((c) => c.id === level) ? "border-accent bg-accent-soft" : "border-line hover:border-muted"}`}
                     >
@@ -647,7 +655,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
             </div>
           )}
           <div className="px-2 pb-1 pt-1 font-mono text-[10px] uppercase tracking-widest text-muted">{heading}</div>
-          <ul role="listbox" aria-label="Places">
+          <ul role="listbox" aria-label={t(copy.location.places)}>
             {/* The whole country is always one tap away on All levels, wherever you are inside it. */}
             {level === "all" && !q.trim() && (
               <li role="option" aria-selected={browsingHome && ctx.trail.length === 0}>
@@ -656,7 +664,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                   className={`mb-1 flex w-full items-center gap-3 rounded-md border border-line px-3 py-2 text-left text-sm hover:bg-accent-soft ${browsingHome && ctx.trail.length === 0 ? "bg-accent-soft/60" : ""}`}
                 >
                   <Flag code={bc} size={22} />
-                  <span className="min-w-0 truncate font-medium">Whole country</span>
+                  <span className="min-w-0 truncate font-medium">{t(copy.location.wholeCountry)}</span>
                   <span className="shrink-0 text-muted">·</span>
                   <span className="min-w-0 truncate text-muted">{countryDef.name}</span>
                   {browsingHome && ctx.trail.length === 0 && <Check size={13} className="ml-auto shrink-0 text-accent" />}
@@ -690,10 +698,10 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
             })}
             {!list.length && entries.length > 0 && (
               <li className="px-3 py-6 text-sm text-muted">
-                {q ? `Nothing matches “${q}”.` : `No finer places are loaded inside ${browsingHome ? here : countryDef.name}.`}
+                {q ? t(copy.location.noMatch, { query: q }) : t(copy.location.noFiner, { place: browsingHome ? here : countryDef.name })}
               </li>
             )}
-            {!entries.length && <li className="px-3 py-6 text-sm text-muted">Loading places…</li>}
+            {!entries.length && <li className="px-3 py-6 text-sm text-muted">{t(copy.location.loading)}</li>}
           </ul>
         </div>
 
@@ -702,13 +710,13 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
           {drag === "hide" && <span className="mr-auto">Release to hide</span>}
           {full.length > 0 && (
             <span className="shrink-0 font-mono">
-              {safePage * PAGE + 1}–{Math.min(full.length, safePage * PAGE + PAGE)} of {full.length}
+              {t(copy.location.range, { from: safePage * PAGE + 1, to: Math.min(full.length, safePage * PAGE + PAGE), total: full.length })}
             </span>
           )}
           <button
             onClick={() => turn(safePage - 1)}
             disabled={safePage === 0}
-            aria-label="Previous page"
+            aria-label={t(copy.location.previous)}
             className="grid size-7 shrink-0 place-items-center rounded-md border border-line hover:bg-accent-soft disabled:opacity-40"
           >
             <ChevronLeft size={14} />
@@ -716,7 +724,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
           <button
             onClick={() => turn(safePage + 1)}
             disabled={safePage >= pages - 1}
-            aria-label="Next page"
+            aria-label={t(copy.location.next)}
             className="grid size-7 shrink-0 place-items-center rounded-md border border-line hover:bg-accent-soft disabled:opacity-40"
           >
             <ChevronRight size={14} />
@@ -739,7 +747,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
         onClick={() => (open ? close() : show())}
         aria-expanded={open}
         aria-haspopup="dialog"
-        aria-label={`Location: ${here}${ctx.trail.length > 1 ? `, in ${trailPaths.map(label).slice(0, -1).join(", ")}` : ""}. Change location`}
+        aria-label={ctx.trail.length > 1 ? t(copy.location.buttonIn, { here, parents: trailPaths.map(label).slice(0, -1).join(", ") }) : t(copy.location.button, { here })}
         title={`${COUNTRIES.find((c) => c.code === ctx.country)?.name ?? ""} › ${ctx.trail.map((_, i) => label(trailPaths[i])).join(" › ")}`}
         className={`flex h-9 items-center rounded-md border border-line bg-accent-soft/60 text-sm text-ink transition hover:border-muted ${compact ? "w-9 justify-center" : "w-full min-w-0 gap-2 px-2"}`}
       >
@@ -770,10 +778,10 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
             {/* The level of the place, when the sidebar is wide enough to show it. */}
             <span className="hidden shrink-0 rounded bg-surface px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted @[230px]:inline">
               {ctx.trail.length === 0
-                ? "Country"
+                ? t(copy.location.levelCountry)
                 : ((COUNTRIES.find((c) => c.code === ctx.country)?.levels)?.[
                     ctx.trail.length - 1
-                  ] ?? "Place")}
+                  ] ?? t(copy.location.levelPlace))}
             </span>
             <Caret className="shrink-0 text-muted" />
           </>

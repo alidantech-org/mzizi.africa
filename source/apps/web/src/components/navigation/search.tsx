@@ -94,7 +94,7 @@ export function SearchDialog() {
 
   const results = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return index.filter((e) => e.kind === "County").slice(0, 8);
+    if (!s) return index.filter((e) => e.href.split("/").filter(Boolean).length === 2).slice(0, 8); // the first level below the country
     if (s.length >= 2 && found && found.query.toLowerCase() === s) return found.entries;
     const starts = index.filter((e) => e.name.toLowerCase().startsWith(s));
     const has = index.filter((e) => !e.name.toLowerCase().startsWith(s) && e.name.toLowerCase().includes(s));
@@ -104,30 +104,18 @@ export function SearchDialog() {
   /** After a spoken query: go to a named page, or answer aloud and optionally open the best match. */
   useEffect(() => {
     if (!heard || !index.length) return;
-    const said = heard
-      .toLowerCase()
-      .replace(/^(go to|open|show me|take me to)\s+/, "")
-      .trim();
+    const said = heard.toLowerCase().trim();
+    // Spoken page names are the sidebar names in the current language.
     const pages: Record<string, ViewId | "home"> = {
-      home: "home",
-      overview: "overview",
-      leaders: "leaders",
-      elections: "elections",
-      parliament: "parliament",
-      institutions: "institutions",
-      law: "law",
-      constitution: "law",
-      statistics: "statistics",
-      compare: "compare",
-      sources: "sources",
-      money: "finance",
-      finance: "finance",
-      "three arms": "arms",
-      "power model": "power",
+      [t(copy.preferences.voice.home).toLowerCase()]: "home",
+      [t(copy.shell.link.overview).toLowerCase()]: "overview",
+      ...Object.fromEntries(
+        (Object.keys(copy.shell.link) as ViewId[]).map((v) => [t(copy.shell.link[v]).toLowerCase(), v] as const),
+      ),
     };
     const { mode } = getVoice();
     if (pages[said]) {
-      if (mode !== "off") speak(`Opening ${said}`);
+      if (mode !== "off") speak(t(copy.preferences.voice.opening, { page: said }));
       setOpen(false);
       next.push(pages[said] === "home" ? "/demo" : nav.viewHref(pages[said] as ViewId));
       setHeard("");
@@ -138,8 +126,13 @@ export function SearchDialog() {
     if (mode !== "off")
       speak(
         best
-          ? `${hit.length} ${hit.length === 1 ? "result" : "results"}. Best match: ${best.name}, a ${best.kind.toLowerCase()} in ${best.where}.`
-          : `Nothing matches ${said}.`,
+          ? t(hit.length === 1 ? copy.preferences.voice.resultOne : copy.preferences.voice.results, {
+              count: hit.length,
+              name: best.name,
+              kind: best.kind.toLowerCase(),
+              where: best.where,
+            })
+          : t(copy.preferences.voice.noMatch, { query: said }),
       );
     if (mode === "handsfree" && best) {
       setOpen(false);

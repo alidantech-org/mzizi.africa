@@ -19,6 +19,12 @@ export const languageChoiceExample: ContractExample = contractExample({
       nullable: false,
       spec: { kind: "string", minLength: 1, maxLength: 300 },
     },
+    {
+      name: "nativeName",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 300 },
+    },
   ],
   invariants: [],
 });

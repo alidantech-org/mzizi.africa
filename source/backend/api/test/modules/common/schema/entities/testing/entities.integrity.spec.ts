@@ -6718,7 +6718,6 @@ describe("entity schema matches the contract", () => {
             ["created_at", false, false],
             ["deleted_at", true, false],
             ["id", false, true],
-            ["is_development_text", false, false],
             ["key", false, false],
             ["language_id", false, false],
             ["text", false, false],

@@ -21,8 +21,12 @@ export const routes = {
     listFacts: "/v1/facts",
   },
   explorer: {
+    /** GET /v1/explorer/copy */
+    getCopyBundle: "/v1/explorer/copy",
     /** GET /v1/explorer/context */
     getExplorerContext: "/v1/explorer/context",
+    /** GET /v1/explorer/navigation */
+    getExplorerNavigation: "/v1/explorer/navigation",
     /** GET /v1/explorer/overview */
     getExplorerOverview: "/v1/explorer/overview",
     /** GET /v1/explorer/setup */

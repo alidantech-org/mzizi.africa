@@ -13,7 +13,6 @@ class ReferenceCopy {
     required this.createdAt,
     this.deletedAt,
     required this.id,
-    required this.isDevelopmentText,
     required this.key,
     required this.languageId,
     required this.text,
@@ -24,7 +23,6 @@ class ReferenceCopy {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String id;
-  final bool isDevelopmentText;
   final String key;
   final String languageId;
   final String text;

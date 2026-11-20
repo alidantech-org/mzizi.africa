@@ -4,8 +4,10 @@ import { createContext, useContext, type ReactNode } from "react";
 
 export type CatalogueCountry = { code: string; iso: string; name: string; levels: string[]; /** True when the backend holds place data for it. */ served: boolean };
 export type CatalogueEntry = { kind: string; name: string; where: string; href: string; tag?: string };
-export type CatalogueLanguage = { code: string; name: string };
+export type CatalogueLanguage = { code: string; name: string; nativeName: string | null };
 export type PlaceCatalogue = {
+  /** Which navigation subjects have recorded data for the country in view; empty when no country is in view. */
+  navigation: Record<string, boolean>;
   /** Interface languages the backend has wording for. */
   languages: CatalogueLanguage[];
   countries: CatalogueCountry[];
@@ -16,7 +18,7 @@ export type PlaceCatalogue = {
   gaps: string[];
 };
 
-const EMPTY: PlaceCatalogue = { languages: [], countries: [], entries: [], found: null, gaps: [] };
+const EMPTY: PlaceCatalogue = { navigation: {}, languages: [], countries: [], entries: [], found: null, gaps: [] };
 const Ctx = createContext<PlaceCatalogue>(EMPTY);
 
 export function PlaceCatalogueProvider({ value, children }: { value: PlaceCatalogue; children: ReactNode }) {

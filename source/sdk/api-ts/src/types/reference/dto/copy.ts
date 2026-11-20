@@ -4,7 +4,6 @@ export interface ReferenceCopy {
   createdAt: string;
   deletedAt?: string | null;
   id: string;
-  isDevelopmentText: boolean;
   key: string;
   languageId: string;
   text: string;

@@ -5,4 +5,5 @@ import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 export interface LanguageChoice {
   code: LanguageCode;
   name: Name;
+  nativeName?: Name | null;
 }
