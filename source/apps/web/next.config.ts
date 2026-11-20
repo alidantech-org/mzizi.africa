@@ -4,10 +4,7 @@ const nextConfig: NextConfig = {
   agentRules: false,
   cacheComponents: true,
   partialPrefetching: true,
-  // The demo includes its exact /demo entry URL; permit that worker scope without granting the root scope.
-  async headers() {
-    return [{ source: "/demo/sw.js", headers: [{ key: "Service-Worker-Allowed", value: "/demo" }] }];
-  },
+  outputFileTracingIncludes: { "/demo/**": ["./src/app/demo/_assets/**/*"] },
   turbopack: { rules: { "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" } } },
 };
 export default nextConfig;

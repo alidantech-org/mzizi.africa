@@ -1,5 +1,5 @@
 /**
- * Country flag as an avatar. Images are the MIT-licensed flag-icons set, copied into public/demo/flags so nothing is
+ * Country flag as an avatar. Images are the MIT-licensed flag-icons set, copied into src/app/demo/_assets/flags so nothing is
  * fetched from another site and they work offline. Later these can come from the system's own assets.
  */
 import { Globe } from "lucide-react";

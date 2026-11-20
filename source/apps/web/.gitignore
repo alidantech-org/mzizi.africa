@@ -6,9 +6,9 @@ next-env.d.ts
 # Local content and demonstration datasets. Keep source code separate from data.
 /src/app/demo/_data/*
 !/src/app/demo/_data/*.d.ts
-/scripts/geo-input/
-/scripts/inputs/
-/scripts/build-data.ts
+/src/app/demo/_scripts/geo-input/
+/src/app/demo/_scripts/inputs/
+/src/app/demo/_scripts/build-data.ts
 **/*.geojson
 **/*.geojson.*
 **/*.topojson
@@ -17,14 +17,10 @@ next-env.d.ts
 **/seed/
 
 # Historical local code is not part of the active UI checkpoint.
-/_archives/
+/src/app/demo/_archives/
 
 # Downloaded media and flags stay local. Only app identity assets are tracked.
 /public/*
-!/public/demo/
-/public/demo/*
-!/public/demo/offline.html
-!/public/demo/sw.js
 !/public/sw.js
 !/public/icons/
 /public/icons/*
@@ -48,3 +44,8 @@ next-env.d.ts
 !/public/icons/icon.svg
 !/public/icons/favicon.ico
 !/public/icons/apple-icon.png
+
+# Demo downloads stay local; only its worker and offline-page source are tracked.
+/src/app/demo/_assets/*
+!/src/app/demo/_assets/sw.js
+!/src/app/demo/_assets/offline.html

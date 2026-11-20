@@ -25,5 +25,5 @@
     "allowImportingTsExtensions": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "**/*.mts"],
-  "exclude": ["node_modules", "_archives"]
+  "exclude": ["node_modules", "src/app/demo/_archives"]
 }

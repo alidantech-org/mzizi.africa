@@ -105,3 +105,15 @@ Owner explicitly requested committing all remaining active changes, including th
 ### 2026-11-20T08:08:40.347Z · PETER IRUNGU
 
 All active remaining edits are being committed as explicitly requested, including permanent demo moves, real web routes, assets/ignore rules, formatting/dependencies, owner guidance and active planning notes. Documentation validation and staged whitespace checks pass. Web typecheck fails because real loaders/actions and compile assertions still import the previous SDK action paths/names; those imports need a later migration to the committed resource SDK. This commit is an active-work checkpoint, not a passing web release. Local datasets, flags, downloaded content, fixtures and build outputs remain ignored.
+
+### 2026-11-20T08:14:34.215Z · PETER IRUNGU
+
+Owner requested cleanup before real UI development: remove web-root scripts, move demo preparation inputs, fake data, downloaded assets and historical UI under src/app/demo, keep local content ignored, and preserve demo operation. Move public/demo payloads into private demo assets with demo-owned serving routes, preserve existing URLs, update script paths and archive exclusion. Keep shared identity icons and the root service-worker retirement guard public. Preserve unrelated planning edits; no seed or database mutations.
+
+### 2026-11-20T08:18:03.052Z · PETER IRUNGU
+
+Owner additionally directs no automated web tests until explicitly requested; browser verification is preferred. Removed the stale web/test compile assertions (old SDK imports) and the active demo navigation test. No new web tests added. Historical archived files stay local, ignored and excluded from compilation; backend/SDK tests are unaffected.
+
+### 2026-11-20T08:30:17.023Z · PETER IRUNGU
+
+Owner approved the cleanup and explicitly requested committing it. Moved web-root preparation scripts/inputs, downloaded demo assets and historical UI archive beneath src/app/demo; data/media/archive remain ignored. Added demo-owned file routes preserving existing source, flag, worker and offline URLs. Removed stale web/test assertions and the active demo navigation test; no new web tests added. Browser source panel/PDF viewer opened; HTTP checks confirmed unchanged flag/PDF/worker/offline bytes and 404 traversal/missing-file behaviour. Full web typecheck still reports the existing real-app SDK import migration failures. Unrelated owner planning edits remain uncommitted.

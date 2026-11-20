@@ -65,15 +65,15 @@ Use semantic HTML, real table headers and `aria-sort`, labelled icon controls/ch
 
 ## Assets and installable demo
 
-The React logo is in `demo/_components/brand/logo.tsx`, using `currentColor`. Static SVG/favicon/Apple/install icons are in `public/icons/`; the document roots declare browser icons explicitly, and the demo manifest declares SVG/PNG/maskable install icons. Regenerate raster identity icons with `bun scripts/build-icons.ts` from this folder (ImageMagick required).
+The React logo is in `demo/_components/brand/logo.tsx`, using `currentColor`. Static SVG/favicon/Apple/install icons are in `public/icons/`; the document roots declare browser icons explicitly, and the demo manifest declares SVG/PNG/maskable install icons. Regenerate raster identity icons with `bun source/apps/web/src/app/demo/_scripts/build-icons.ts` from the repository root (ImageMagick required).
 
-Demo country flags are locally served from `public/demo/flags/`, initially copied from the MIT-licensed flag-icons package. Source documents and media are under `public/demo/sources/`. They remain ignored local assets, not committed fixture content. Flag-derived theme colours stay in the demo's ignored data and presentation helpers.
+Demo country flags are locally served from `src/app/demo/_assets/flags/`, initially copied from the MIT-licensed flag-icons package. Source documents and media are under `src/app/demo/_assets/sources/`. They remain ignored local assets, not committed fixture content. Flag-derived theme colours stay in the demo's ignored data and presentation helpers.
 
-The install manifest is `/demo/manifest.webmanifest`, with start and scope under `/demo`. The demo worker `/demo/sw.js` is permitted that exact prefix by a `Service-Worker-Allowed` response header. It ignores navigation outside the demo and only manages its own named caches. `/sw.js` contains no fetch handler: it retires the former root-scoped prototype worker. No real app worker or install manifest is set up yet.
+The install manifest is `/demo/manifest.webmanifest`, with start and scope under `/demo`. The demo worker `/demo/sw.js` is served by a demo route with the exact `Service-Worker-Allowed: /demo` scope header. It ignores navigation outside the demo and only manages its own named caches. `/sw.js` contains no fetch handler: it retires the former root-scoped prototype worker. No real app worker or install manifest is set up yet.
 
 ## Local content and verification limits
 
-The code checkpoint excludes `_data/` content (apart from ambient type declarations), GeoJSON/TopoJSON, preparation inputs, seed/fixture folders, flags, downloaded images and source documents. The source-specific `scripts/build-data.ts` stays local; its outputs now target the demo `_data` directory. Files were moved, not discarded. Logo and app identity assets remain eligible for Git.
+The code checkpoint excludes `_data/` content (apart from ambient type declarations), GeoJSON/TopoJSON, preparation inputs, seed/fixture folders, flags, downloaded images and source documents. The source-specific `src/app/demo/_scripts/build-data.ts` stays local; its outputs now target the demo `_data` directory. Files were moved, not discarded. Logo and app identity assets remain eligible for Git.
 
 The demo still imports those local files, so passing local checks does not establish a data-free clean-checkout build. Preserve demo labels; do not commit local datasets to fix missing imports. The real application must obtain product data through the generated server API client and typed contracts as its screens are implemented.
 
@@ -84,3 +84,13 @@ The independent `(app)` root now uses the generated `@mzizi/api-client` server h
 `/` opens the welcome dialog for a device without completed setup. Its state uses `view=setup`, `view.tab=place|preferences`, `filters.country`, `filters.query`, and `view.entity=place&view.id=…`. Place confirmation revalidates through the API, stores independent `mzizi-*` cookies, and redirects to the API's canonical country-prefixed path. Explicit device location is the one browser capability: coordinates are posted through a server action for resolution and the suggested place still needs confirmation. Coordinates are not included in public URLs.
 
 `/[country]` and deeper place URLs resolve from the address, regardless of the saved place. This initial overview shows recorded child-place and citation counts, not prototype statistics. Unavailable data and unknown paths remain explicit. Optional `lang` overrides cookie preference; place links preserve an explicit language without adding it to cookie-only journeys. Interface translations may fall back to English and are labelled accordingly. Other subject screens remain migration work; a demo screen is not a connected production screen.
+
+## Demo isolation and local preparation
+
+All prototype code, ignored data, preparation scripts/inputs, downloaded documents/flags and the historical UI archive live under `src/app/demo/`. `_scripts/` contains the moved builders and their ignored `inputs/` and `geo-input/` folders. Paths are resolved from the scripts themselves, so a repository-root invocation writes only to the intended demo or shared icon directory. The local source-specific data builder remains ignored. `_data/` remains ignored except ambient declarations; `_archives/` is ignored and excluded from TypeScript compilation.
+
+Downloaded files live in ignored `_assets/flags/` and `_assets/sources/`. Demo-owned route handlers preserve `/demo/flags/<file>` and `/demo/sources/<file>`; the worker/offline page are served from tracked `_assets/sw.js` and `_assets/offline.html`. Routes reject path traversal, return proper media types and 404 when a local download is missing. Next output tracing includes these files for demo deployments. There is no `public/demo/` or web-root `scripts/` folder.
+
+`public/icons/` contains shared app identity assets. The small root `/sw.js` retirement guard remains public to unregister the previous root-scoped prototype worker before it can intercept real pages; it serves no demo content.
+
+There are no active automated web tests at this stage, by owner direction. The stale `test/` compile assertions and prototype test files have been removed. Verify visible behaviour in the browser; type-checking remains a code-quality check. Do not introduce web tests until the owner asks for them.
