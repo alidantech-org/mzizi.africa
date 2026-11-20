@@ -28,7 +28,7 @@ from dev_seed.geometry import build_geometries, write_geometries
 from dev_seed.governance import build_governance
 from dev_seed.media import build_media
 from dev_seed.merge import merge_trees
-from dev_seed.output import write_people
+from dev_seed.output import write_people, write_routing_roots
 from dev_seed.people import Builder, build_people
 from dev_seed.places import build_places
 from dev_seed.procurement import build_procurement
@@ -76,6 +76,7 @@ def main() -> None:
     build_media(b, t, counties, constituencies, places, [p["code"] for p in b.projects], names)
     build_extra(b, t, counties, constituencies, wards, geometries)
     write_people(b)
+    write_routing_roots()
     reshape(t)
     build_copy(t)
     build_bills(t)

@@ -1,11 +1,12 @@
 "use client";
 /** Saved places: a drop-down with the first few and a link to see and manage them all. */
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
 import { Bookmark } from "lucide-react";
 import Link from "#/components/navigation/demo-link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { resolvePlace } from "#demo/_data/places";
-import { prettify } from "#/lib/navigation/route";
+import { usePlaceNames } from "#/lib/places/catalogue";
 import { readHideCount, readSaved, writeHideCount, type Saved } from "#/lib/preferences/saved";
 import { placeFromHref, useNav } from "#/lib/navigation/use-ctx";
 import { Checkbox } from "#/components/ui/controls";
@@ -14,6 +15,8 @@ const SHOWN = 5;
 
 export function SavedMenu() {
   const nav = useNav();
+  const t = useCopy();
+  const names = usePlaceNames();
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState<Saved[]>([]);
   const [pos, setPos] = useState({ top: 48, right: 8 });
@@ -40,16 +43,8 @@ export function SavedMenu() {
     setOpen(true);
   };
 
-  const nameOf = (path: string) => {
-    const p = placeFromHref(path);
-    const r = resolvePlace(p.country, p.trail);
-    return r.ok ? (r.trail.at(-1)?.name ?? r.countryName) : prettify(p.trail.at(-1) ?? p.country);
-  };
-  const where = (path: string) => {
-    const p = placeFromHref(path);
-    const r = resolvePlace(p.country, p.trail);
-    return r.ok ? [r.countryName, ...r.trail.slice(0, -1).map((t) => t.name)].join(" › ") : "";
-  };
+  const nameOf = (path: string) => names.nameOf(placeFromHref(path));
+  const where = (path: string) => names.parentsOf(placeFromHref(path)).join(" › ");
   const shown = saved.slice(0, SHOWN);
 
   const panel = open && (
@@ -57,12 +52,12 @@ export function SavedMenu() {
       <div className="fixed inset-0 z-[60]" onMouseDown={() => setOpen(false)} />
       <div
         role="menu"
-        aria-label="Saved places"
+        aria-label={t(copy.menus.saved.label)}
         style={{ top: pos.top, right: pos.right }}
         className="floating fixed z-[61] w-72 rounded-lg border border-line bg-surface p-1.5"
       >
-        <div className="px-3 pb-1 pt-1.5 font-mono text-[10px] uppercase tracking-widest text-muted">Saved places</div>
-        {shown.length === 0 && <p className="px-3 py-3 text-sm text-muted">Nothing saved yet.</p>}
+        <div className="px-3 pb-1 pt-1.5 font-mono text-[10px] uppercase tracking-widest text-muted">{t(copy.menus.saved.label)}</div>
+        {shown.length === 0 && <p className="px-3 py-3 text-sm text-muted">{t(copy.menus.saved.empty)}</p>}
         {shown.map((s) => (
           <button
             key={s.path}
@@ -92,7 +87,7 @@ export function SavedMenu() {
               writeHideCount(v);
             }}
           >
-            Hide count
+            {t(copy.menus.saved.hideCount)}
           </Checkbox>
           <Link
             role="menuitem"
@@ -100,7 +95,7 @@ export function SavedMenu() {
             onClick={() => setOpen(false)}
             className="text-xs font-medium text-accent hover:underline"
           >
-            View all →
+            {t(copy.menus.saved.viewAll)}
           </Link>
         </div>
       </div>
@@ -113,8 +108,8 @@ export function SavedMenu() {
         onClick={() => (open ? setOpen(false) : show())}
         aria-expanded={open}
         aria-haspopup="menu"
-        aria-label={`Saved places${saved.length && !hide ? `, ${saved.length}` : ""}`}
-        title="Saved places"
+        aria-label={saved.length && !hide ? t(copy.menus.saved.labelWithCount, { count: saved.length }) : t(copy.menus.saved.label)}
+        title={t(copy.menus.saved.label)}
         className="relative grid size-9 place-items-center rounded-md text-muted hover:bg-accent-soft hover:text-ink"
       >
         <Bookmark size={18} />

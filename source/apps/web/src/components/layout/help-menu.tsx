@@ -1,5 +1,7 @@
 "use client";
 /** Help menu: reference and personal pages in one place, plus the keyboard shortcuts. */
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
 import { CircleHelp, Keyboard, Library, SlidersHorizontal } from "lucide-react";
 import Link from "#/components/navigation/demo-link";
 import { useEffect, useRef, useState } from "react";
@@ -10,6 +12,7 @@ import { InstallApp } from "#/components/layout/pwa";
 
 export function HelpMenu() {
   const nav = useNav();
+  const t = useCopy();
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 48, right: 8 });
   const btn = useRef<HTMLButtonElement>(null);
@@ -30,21 +33,21 @@ export function HelpMenu() {
       <div className="fixed inset-0 z-[60]" onMouseDown={() => setOpen(false)} />
       <div
         role="menu"
-        aria-label="Help and more"
+        aria-label={t(copy.menus.help.label)}
         style={{ top: pos.top, right: pos.right }}
         className="floating fixed z-[61] w-72 rounded-lg border border-line bg-surface p-1.5"
       >
         <Link role="menuitem" href="/help" onClick={() => setOpen(false)} className={item}>
           <CircleHelp size={16} className="text-muted" />
-          Help
+          {t(copy.menus.help.help)}
         </Link>
         <Link role="menuitem" href={nav.viewHref("sources")} onClick={() => setOpen(false)} className={item}>
           <Library size={16} className="text-muted" />
-          Sources
+          {t(copy.shell.link.sources)}
         </Link>
         <Link role="menuitem" href="/me" onClick={() => setOpen(false)} className={item}>
           <SlidersHorizontal size={16} className="text-muted" />
-          Your preferences
+          {t(copy.menus.help.preferences)}
         </Link>
         <div className="px-1">
           <InstallApp />
@@ -52,15 +55,15 @@ export function HelpMenu() {
         <div className="mt-1 border-t border-line px-3 pb-2 pt-3">
           <div className="mb-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted">
             <Keyboard size={14} />
-            Keyboard shortcuts
+            {t(copy.menus.help.shortcuts)}
           </div>
           <ul className="space-y-2.5 text-sm">
             <li className="flex items-center justify-between gap-4">
-              <span>Search places</span>
+              <span>{t(copy.menus.help.searchPlaces)}</span>
               <Keys keys={["/"]} />
             </li>
             <li className="flex items-center justify-between gap-4">
-              <span>Show or hide sidebar</span>
+              <span>{t(copy.menus.help.toggleSidebar)}</span>
               <Keys keys={["Ctrl", "B"]} />
             </li>
           </ul>
@@ -75,8 +78,8 @@ export function HelpMenu() {
         onClick={() => (open ? setOpen(false) : show())}
         aria-expanded={open}
         aria-haspopup="menu"
-        aria-label="Help and more"
-        title="Help and more"
+        aria-label={t(copy.menus.help.label)}
+        title={t(copy.menus.help.label)}
         className="grid size-9 place-items-center rounded-md text-muted hover:bg-accent-soft hover:text-ink"
       >
         <CircleHelp size={18} />

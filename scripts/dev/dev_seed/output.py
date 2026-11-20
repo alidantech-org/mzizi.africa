@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from dev_seed.common import Row, write_csv
+import csv
+
+from dev_seed.common import SEED, Row, write_csv
 from dev_seed.people import Builder
 
 
@@ -124,9 +126,16 @@ def write_people(b: Builder) -> None:
         ],
         positions,
     )
+    # Several seats of one position in one unit (or with no unit) are told apart by seat_ordinal.
+    seats: dict[tuple[str, str], list[dict[str, str]]] = {}
+    for office in offices:
+        seats.setdefault((office["position_code"], office.get("unit_feature_code", "")), []).append(office)
+    for group in seats.values():
+        for n, office in enumerate(group, 1):
+            office["seat_ordinal"] = str(n) if len(group) > 1 else ""
     write_csv(
         "ke/governance/offices.csv",
-        ["code", "institution_code", "position_code", "unit_feature_code", "from_year", "from_to_precision"],
+        ["code", "institution_code", "position_code", "unit_feature_code", "seat_ordinal", "from_year", "from_to_precision"],
         offices,
     )
     write_csv(
@@ -215,3 +224,16 @@ def write_people(b: Builder) -> None:
         ],
         b.contracts,
     )
+
+
+
+def write_routing_roots() -> None:
+    """Writes the Kenya levels with `root_feature_code`, the country's own feature, which the explorer needs to resolve a country.
+
+    The registered `seed/` levels carry no root. This dev file replaces them in the merged tree only.
+    """
+    with (SEED / "data/ke/geo/levels.csv").open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle)
+        header = [*(reader.fieldnames or []), "root_feature_code"]
+        rows = [{**r, "root_feature_code": r["country_code"] if r["is_routing_hierarchy"] == "true" else ""} for r in reader]
+    write_csv("ke/geo/levels.csv", header, rows)

@@ -3,10 +3,13 @@ import { BadRequestException, NotFoundException } from "@nestjs/common";
 import type { DataSource } from "typeorm";
 import { CountryChoiceDto } from "#/modules/explorer/schema/dto/country-choice.dto";
 import { LanguageChoiceDto } from "#/modules/explorer/schema/dto/language-choice.dto";
+import { createHash } from "node:crypto";
 import { CopyEntryDto } from "#/modules/explorer/schema/dto/copy-entry.dto";
 import { CountDto } from "#/modules/explorer/schema/dto/count.dto";
 import { PlaceDto } from "#/modules/explorer/schema/dto/place.dto";
 import { LevelDto } from "#/modules/explorer/schema/dto/level.dto";
+import type { CopyInputDto } from "#/modules/explorer/schema/dto/copy-input.dto";
+import type { CopyBundleDto } from "#/modules/explorer/schema/dto/copy-bundle.dto";
 import type { BootstrapInputDto } from "#/modules/explorer/schema/dto/bootstrap-input.dto";
 import type { BootstrapDto } from "#/modules/explorer/schema/dto/bootstrap.dto";
 import type { PlaceInputDto } from "#/modules/explorer/schema/dto/place-input.dto";
@@ -61,7 +64,7 @@ function canonical(place: PlaceDto): PlaceDto {
 
 export async function bootstrap(db: DataSource, input: BootstrapInputDto): Promise<BootstrapDto> {
   const lang = await language(db, input.languageCode);
-  const [countries, languages, copy] = await Promise.all([
+  const [countries, languages] = await Promise.all([
     queryRows(db, countriesSql, [], CountryChoiceDto),
     queryRows(
       db,
@@ -69,17 +72,10 @@ export async function bootstrap(db: DataSource, input: BootstrapInputDto): Promi
       [],
       LanguageChoiceDto,
     ),
-    queryRows(
-      db,
-      `select distinct on(c.key) c.key,c.text from reference.copy c join reference.languages l on l.id=c.language_id where l.iso6391=$1 and c.country_id is null and c.deleted_at is null order by c.key,c.id`,
-      [lang],
-      CopyEntryDto,
-    ),
   ]);
   return {
     countries,
     languages,
-    copy,
     language: lang,
     gaps: [
       "Flags without registered display media use a neutral marker. Recorded data is not an assertion of completeness or verification.",
@@ -273,4 +269,39 @@ export async function overview(db: DataSource, input: PlaceInputDto): Promise<Ov
       "Counts describe recorded coverage, not verified completeness. Statistics, office-holder details and financial measures are not included in this overview.",
     ],
   };
+}
+
+/** One language's wording. Country wording overrides the general wording; another language is never substituted. */
+export async function copyBundle(db: DataSource, input: CopyInputDto): Promise<CopyBundleDto> {
+  const lang = await language(db, input.languageCode);
+  const prefix = input.area ? `${input.area}.%` : null;
+  const country = input.countryCode?.toUpperCase() ?? null;
+  const [entries, missing] = await Promise.all([
+    queryRows(
+      db,
+      `select distinct on(c.key) c.key,c.text
+         from reference.copy c
+         join reference.languages l on l.id=c.language_id
+         left join reference.countries co on co.id=c.country_id
+        where l.iso6391=$1 and c.deleted_at is null
+          and (c.country_id is null or co.iso_alpha2=$2)
+          and ($3::text is null or c.key like $3)
+        order by c.key,(c.country_id is null),c.id`,
+      [lang, country, prefix],
+      CopyEntryDto,
+    ),
+    queryRows(
+      db,
+      `select distinct k.key as "key",''::text as "text"
+         from reference.copy k
+        where k.deleted_at is null and ($2::text is null or k.key like $2)
+          and not exists (select 1 from reference.copy c join reference.languages l on l.id=c.language_id
+                           where c.key=k.key and l.iso6391=$1 and c.deleted_at is null)
+        order by 1`,
+      [lang, prefix],
+      CopyEntryDto,
+    ),
+  ]);
+  const hash = createHash("sha256").update(JSON.stringify(entries.map((e) => [e.key, e.text]))).digest("hex").slice(0, 16);
+  return { language: lang, hash, entries, missing: missing.map((m) => m.key) };
 }

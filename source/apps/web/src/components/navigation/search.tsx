@@ -3,6 +3,8 @@
 import { Mic, Search } from "lucide-react";
 import { demoHref } from "#/lib/navigation/base";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
 import { usePlaceCatalogue } from "#/lib/places/catalogue";
 import { placeFromHref, useNav } from "#/lib/navigation/use-ctx";
 import type { ViewId } from "#/lib/navigation/route";
@@ -12,6 +14,7 @@ import { getVoice, listen, speak } from "#/lib/accessibility/speech";
 type Entry = { kind: string; name: string; where: string; href: string };
 
 export function SearchDialog() {
+  const t = useCopy();
   const nav = useNav();
   const next = useRouter();
   const router = { push: (href: string) => (href.includes("?") ? next.push(demoHref(href)) : nav.goPlace(placeFromHref(href))) };
@@ -162,15 +165,15 @@ export function SearchDialog() {
           className="flex h-full min-w-0 flex-1 items-center gap-2 rounded-l-md px-2.5 text-left"
         >
           <Search size={15} className="shrink-0" />
-          <span className="truncate">Search places, institutions…</span>
+          <span className="truncate">{t(copy.search.field.placeholder)}</span>
           <kbd className="ml-auto shrink-0 rounded border border-line bg-surface px-1.5 py-0.5 font-mono text-[11px] leading-none">
             /
           </kbd>
         </button>
         <button
           onClick={() => dispatchEvent(new CustomEvent("mzizi-app:search", { detail: { voice: true } }))}
-          aria-label="Search by voice"
-          title="Search by voice"
+          aria-label={t(copy.search.field.byVoice)}
+          title={t(copy.search.field.byVoice)}
           className="grid h-full w-8 shrink-0 place-items-center rounded-r-md border-l border-line hover:bg-accent-soft hover:text-ink"
         >
           <Mic size={16} />
@@ -183,14 +186,14 @@ export function SearchDialog() {
         >
           <div
             role="dialog"
-            aria-label="Search"
+            aria-label={t(copy.search.dialog.label)}
             className="floating w-full max-w-xl overflow-hidden rounded-lg border border-line bg-surface"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 border-b border-line px-5">
               <button
                 onClick={startVoice}
-                aria-label="Speak your search"
+                aria-label={t(copy.search.dialog.speak)}
                 className={`grid size-7 place-items-center rounded-md ${listening ? "bg-accent text-paper" : "text-muted hover:bg-accent-soft"}`}
               >
                 <Mic size={16} />
@@ -199,7 +202,7 @@ export function SearchDialog() {
                 ref={input}
                 value={q}
                 onChange={(e) => typed(e.target.value)}
-                placeholder={listening ? "Listening…" : "A county, constituency, ward or public body"}
+                placeholder={listening ? t(copy.search.dialog.listening) : t(copy.search.dialog.placeholder)}
                 className="h-14 flex-1 bg-transparent outline-none placeholder:text-muted"
                 onKeyDown={(e) => {
                   if (e.key === "ArrowDown") {
@@ -215,7 +218,7 @@ export function SearchDialog() {
               />
             </div>
             <ul className="max-h-[50vh] overflow-y-auto p-2">
-              {!index.length && <li className="px-4 py-6 text-sm text-muted">Loading places…</li>}
+              {!index.length && <li className="px-4 py-6 text-sm text-muted">{t(copy.search.dialog.loading)}</li>}
               {results.map((r, i) => (
                 <li key={r.href + r.name}>
                   <button
@@ -229,7 +232,7 @@ export function SearchDialog() {
                   </button>
                 </li>
               ))}
-              {index.length > 0 && !results.length && <li className="px-4 py-6 text-sm text-muted">Nothing matches “{q}”.</li>}
+              {index.length > 0 && !results.length && <li className="px-4 py-6 text-sm text-muted">{t(copy.search.dialog.noMatch, { query: q })}</li>}
             </ul>
           </div>
         </div>

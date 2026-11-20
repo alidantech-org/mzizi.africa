@@ -9,7 +9,6 @@ import {
 } from "typeorm";
 import { CountryEntity } from "#/modules/reference/schema/entities/country.entity.ts";
 import { LanguageEntity } from "#/modules/reference/schema/entities/language.entity.ts";
-import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString } from "#/modules/shared/schema/type/non-empty-string.type.ts";
@@ -39,9 +38,6 @@ export class CopyEntity {
 
   @Column({ name: "deleted_at", type: "timestamptz", nullable: true })
   deletedAt?: Date | null;
-
-  @Column({ name: "is_development_text", type: "boolean" })
-  isDevelopmentText!: Flag;
 
   @Column({ name: "key", type: "varchar", length: 255 })
   key!: IdentityCode;

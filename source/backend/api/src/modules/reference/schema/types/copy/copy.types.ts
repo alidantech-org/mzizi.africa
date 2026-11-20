@@ -33,7 +33,6 @@ import type {
 /** One interface or explanatory wording for one copy key in one language, optionally specific to a country. Screens declare keys; the words live here. */
 export interface ICopy extends B.IBase {
   countryId: string | null;
-  isDevelopmentText: boolean;
   key: string;
   languageId: string;
   text: string;

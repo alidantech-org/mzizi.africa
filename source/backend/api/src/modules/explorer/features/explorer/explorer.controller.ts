@@ -4,6 +4,8 @@ import { BootstrapDto } from "#/modules/explorer/schema/dto/bootstrap.dto.ts";
 import { ChildrenInputDto } from "#/modules/explorer/schema/dto/children-input.dto.ts";
 import { ContextDto } from "#/modules/explorer/schema/dto/context.dto.ts";
 import { CoordinatesInputDto } from "#/modules/explorer/schema/dto/coordinates-input.dto.ts";
+import { CopyBundleDto } from "#/modules/explorer/schema/dto/copy-bundle.dto.ts";
+import { CopyInputDto } from "#/modules/explorer/schema/dto/copy-input.dto.ts";
 import { OverviewDto } from "#/modules/explorer/schema/dto/overview.dto.ts";
 import { PlaceInputDto } from "#/modules/explorer/schema/dto/place-input.dto.ts";
 import { PlacesDto } from "#/modules/explorer/schema/dto/places.dto.ts";
@@ -14,6 +16,12 @@ import { ExplorerExplorerService } from "./explorer.service.ts";
 @Controller()
 export class ExplorerExplorerController {
   constructor(private readonly service: ExplorerExplorerService) {}
+
+  @Get("/v1/explorer/copy")
+  @HttpCode(200)
+  getCopyBundle(@Query() input: CopyInputDto): Promise<CopyBundleDto> {
+    return this.service.getCopyBundle(input);
+  }
 
   @Get("/v1/explorer/context")
   @HttpCode(200)

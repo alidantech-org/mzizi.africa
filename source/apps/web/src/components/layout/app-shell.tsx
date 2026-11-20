@@ -26,7 +26,9 @@ import { usePathname } from "next/navigation";
 import { Suspense, useCallback, useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { SearchDialog } from "#/components/navigation/search";
-import { resolvePlace } from "#demo/_data/places";
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
+import { usePlaceNames } from "#/lib/places/catalogue";
 import { initPrefs, setCountry, usePrefsInit } from "#/lib/preferences/prefs";
 import { COOKIES, GROUPS, encodeGroups, encodeSide, writeCookie, type Side } from "#/lib/preferences/pref-cookies";
 import { FlagPalette } from "#/components/preferences/flag-palette";
@@ -58,8 +60,6 @@ const icons: Record<ViewId, typeof Home> = {
 };
 
 const groupsOrder = GROUPS;
-/** Sidebar wording. Overview is named after the place in context. */
-const navLabel: Partial<Record<ViewId, string>> = { law: "Laws", leaders: "Leadership", finance: "Finance" };
 /** Law, leadership and institutions are the Government links; the arms and power pages are reached from Leadership. */
 const sidebar: ViewId[] = [
   "elections",
@@ -78,6 +78,7 @@ function DisabledItem({ label, Icon, rail, reason }: { label: string; Icon: type
   const [tip, setTip] = useState<{ top: number; left: number } | null>(null);
   const ref = useRef<HTMLButtonElement>(null);
   const id = useId();
+  const t = useCopy();
   const show = () => {
     const r = ref.current!.getBoundingClientRect();
     setTip({ top: r.top + r.height / 2, left: r.right + 10 });
@@ -105,7 +106,7 @@ function DisabledItem({ label, Icon, rail, reason }: { label: string; Icon: type
         )}
       </button>
       <span id={id} className="sr-only">
-        {label} is not available here. {reason}
+        {t(copy.shell.unavailable.description, { label, reason })}
       </span>
       {tip &&
         typeof document !== "undefined" &&
@@ -115,7 +116,7 @@ function DisabledItem({ label, Icon, rail, reason }: { label: string; Icon: type
             style={{ top: tip.top, left: tip.left }}
             className="floating fixed z-[80] w-64 -translate-y-1/2 rounded-lg border border-line bg-surface p-3 text-xs leading-relaxed"
           >
-            <b className="mb-1 block text-sm text-ink">{label} is not available here</b>
+            <b className="mb-1 block text-sm text-ink">{t(copy.shell.unavailable.title, { label })}</b>
             <span className="text-muted">{reason}</span>
           </div>,
           document.body,
@@ -126,6 +127,28 @@ function DisabledItem({ label, Icon, rail, reason }: { label: string; Icon: type
 
 function NavLinks({ rail, onNavigate }: { rail: boolean; onNavigate: () => void }) {
   const nav = useNav();
+  const t = useCopy();
+  const names = usePlaceNames();
+  const lower = (text: string) => text.toLocaleLowerCase();
+  const levelWord = (depth: number) =>
+    depth <= 0
+      ? t(copy.shell.unavailable.countryLevel)
+      : lower(names.levelOf(nav.ctx.country, depth) ?? t(copy.shell.unavailable.placeLevel));
+  const reasonText = (v: ViewId, why: NonNullable<ReturnType<typeof whyUnavailable>>) => {
+    const view = t(copy.shell.link[v]);
+    if (why.kind === "noData")
+      return t(copy.shell.unavailable.noData, {
+        view,
+        country: names.countryName(nav.ctx.country),
+        loaded: why.countries.map((c) => names.countryName(c)).join(", "),
+      });
+    const up =
+      why.depth > why.limit
+        ? t(copy.shell.unavailable.goUp, { level: levelWord(why.limit) })
+        : t(copy.shell.unavailable.goUpHigher);
+    return `${t(copy.shell.unavailable.tooDeep, { view, limit: levelWord(why.limit), level: levelWord(why.depth) })} ${up}`;
+  };
+  const groupLabel = (g: string) => t(copy.shell.group[g.toLowerCase() as "politics" | "government" | "money" | "data"]);
   const [closed, setClosed] = useState<string[]>(usePrefsInit().groups);
   const toggle = (g: string) =>
     setClosed((c) => {
@@ -149,10 +172,9 @@ function NavLinks({ rail, onNavigate }: { rail: boolean; onNavigate: () => void 
     </Link>
   );
   const place = { country: nav.ctx.country, trail: nav.ctx.trail };
-  const here = resolvePlace(place.country, place.trail);
-  const placeName = here.ok ? (here.trail.at(-1)?.name ?? here.countryName) : "Overview";
+  const placeName = names.nameOf(place);
   return (
-    <nav className="flex flex-col gap-0.5 p-2" aria-label="Main">
+    <nav className="flex flex-col gap-0.5 p-2" aria-label={t(copy.shell.main)}>
       {/* The place you are in is the home: one link, named after it. */}
       {item("overview", nav.viewHref("overview"), placeName, Home, nav.ctx.explorer && nav.ctx.view === "overview")}
       {groupsOrder.map((g) => {
@@ -168,17 +190,17 @@ function NavLinks({ rail, onNavigate }: { rail: boolean; onNavigate: () => void 
                 aria-expanded={open}
                 className="flex w-full items-center justify-between rounded-md px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-muted hover:text-ink"
               >
-                {g}
+                {groupLabel(g)}
                 <ChevronDown size={12} className={`transition-transform ${open ? "" : "-rotate-90"}`} />
               </button>
             )}
             {open && (
               <div className="flex flex-col gap-0.5">
                 {views.map((v) => {
-                  const label = navLabel[v] ?? VIEWS[v].label;
+                  const label = t(copy.shell.link[v]);
                   const why = whyUnavailable(v, place); // never removed: a link this place cannot open is greyed out with a reason
                   return why ? (
-                    <DisabledItem key={v} label={label} Icon={icons[v]} rail={rail} reason={why} />
+                    <DisabledItem key={v} label={label} Icon={icons[v]} rail={rail} reason={reasonText(v, why)} />
                   ) : (
                     item(
                       v,
@@ -215,6 +237,7 @@ const RAIL = 56;
 const clampW = (w: number) => Math.max(200, Math.min(380, w));
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const t = useCopy();
   const init = usePrefsInit();
   const [side, setSide] = useState<Side>(init.side);
   const [drawer, setDrawer] = useState(false);
@@ -290,14 +313,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link
             href="/"
             className="grid size-9 place-items-center group-hover/head:hidden group-focus-within/head:hidden"
-            aria-label="Mzizi home"
+            aria-label={t(copy.shell.home)}
           >
             <Logo compact markSize={28} />
           </Link>
           <button
             onClick={() => save({ ...side, mode: "expanded" })}
-            aria-label="Expand sidebar"
-            title="Expand sidebar"
+            aria-label={t(copy.shell.sidebar.expand)}
+            title={t(copy.shell.sidebar.expand)}
             className="hidden size-9 place-items-center rounded-md text-muted hover:bg-accent-soft hover:text-ink group-hover/head:grid group-focus-within/head:grid"
           >
             <PanelLeftOpen size={18} />
@@ -305,13 +328,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         </>
       ) : (
         <>
-          <Link href="/" className="flex items-center gap-2" aria-label="Mzizi home">
+          <Link href="/" className="flex items-center gap-2" aria-label={t(copy.shell.home)}>
             <Logo compact={false} />
           </Link>
           <button
             onClick={() => save({ ...side, mode: "rail" })}
-            aria-label="Minimise sidebar"
-            title="Minimise sidebar"
+            aria-label={t(copy.shell.sidebar.minimise)}
+            title={t(copy.shell.sidebar.minimise)}
             className="hidden size-8 place-items-center rounded-md text-muted hover:bg-accent-soft hover:text-ink lg:grid"
           >
             <PanelLeft size={17} />
@@ -331,7 +354,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="relative z-10 flex h-screen overflow-hidden bg-paper text-ink">
       <aside
-        aria-label="Sidebar"
+        aria-label={t(copy.shell.sidebar.label)}
         style={{ width, transition: dragging ? "none" : "width .18s" }}
         className="relative hidden shrink-0 flex-col overflow-hidden border-r border-line bg-surface lg:flex"
       >
@@ -348,7 +371,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div
         role="separator"
         aria-orientation="vertical"
-        aria-label="Resize sidebar"
+        aria-label={t(copy.shell.sidebar.resize)}
         aria-valuenow={width}
         tabIndex={0}
         onPointerDown={onDown}
@@ -362,7 +385,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {drawer && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <button aria-label="Close menu" className="absolute inset-0 bg-black/40" onClick={() => setDrawer(false)} />
+          <button aria-label={t(copy.shell.sidebar.closeMenu)} className="absolute inset-0 bg-black/40" onClick={() => setDrawer(false)} />
           <div className="relative flex h-full w-[260px] flex-col border-r border-line bg-surface">
             {header(false)}
             <div className="min-h-0 flex-1 overflow-y-auto">
@@ -371,7 +394,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </Suspense>
             </div>
             <button
-              aria-label="Close menu"
+              aria-label={t(copy.shell.sidebar.closeMenu)}
               onClick={() => setDrawer(false)}
               className="absolute right-2 top-1.5 grid size-7 place-items-center text-muted"
             >
@@ -388,8 +411,8 @@ export function AppShell({ children }: { children: ReactNode }) {
             onClick={() =>
               window.matchMedia("(min-width:1024px)").matches ? save({ ...side, mode: "expanded" }) : setDrawer(true)
             }
-            aria-label="Open sidebar"
-            title="Open sidebar (Ctrl+B)"
+            aria-label={t(copy.shell.sidebar.open)}
+            title={t(copy.shell.sidebar.openWithKey)}
             className={`grid size-9 place-items-center rounded-md text-muted hover:bg-accent-soft hover:text-ink ${side.mode === "hidden" ? "" : "lg:hidden"}`}
           >
             <PanelLeft size={18} />

@@ -26,6 +26,8 @@ def merge_trees() -> None:
     for source in sorted(DATA.rglob("*.csv")):
         target = MERGED / "data" / source.relative_to(DATA)
         target.parent.mkdir(parents=True, exist_ok=True)
+        if target.is_symlink():
+            target.unlink()  # a dev file replaces the registered one in the merged tree; `seed/` itself is never written
         shutil.copyfile(source, target)
         added.append(target)
     catalogue = MERGED / "data" / "global" / "source"
@@ -77,4 +79,6 @@ def merge_trees() -> None:
         with path.open("w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=header, extrasaction="ignore", lineterminator="\n")
             writer.writeheader()
-            writer.writerows([*existing, *rows])
+            known = {row["code"] for row in existing}  # a dev file that replaces a registered one keeps its product
+            writer.writerows([*existing, *[row for row in rows if row["code"] not in known]])
+

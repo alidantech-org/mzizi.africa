@@ -43,7 +43,6 @@ export const COPY_SORTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "id",
-  "isDevelopmentText",
   "key",
   "languageId",
   "text",
@@ -56,7 +55,6 @@ export const COPY_SEARCHABLE_FIELDS = ["key", "text"] as const satisfies readonl
 export const COPY_FILTERABLE_FIELDS = [
   "countryId",
   "id",
-  "isDevelopmentText",
   "languageId",
 ] as const satisfies readonly CopyKey[];
 
@@ -81,7 +79,6 @@ export const COPY_SELECTABLE_FIELDS = [
   "createdAt",
   "deletedAt",
   "id",
-  "isDevelopmentText",
   "key",
   "languageId",
   "text",
@@ -94,7 +91,6 @@ export const COPY_DEFAULT_SELECT_FIELDS = [
   "createdAt",
   "deletedAt",
   "id",
-  "isDevelopmentText",
   "key",
   "languageId",
   "text",
@@ -108,7 +104,6 @@ export const COPY_DEFAULT_SELECT_FIELDS = [
 
 export const COPY_EDITABLE_FIELDS = [
   "countryId",
-  "isDevelopmentText",
   "key",
   "languageId",
   "text",

@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import re
+import subprocess
 
 from dev_seed.store import Tables
 
@@ -60,3 +61,12 @@ def build_copy(t: Tables) -> None:
         key = phrase_key(english).replace("web.phrase.", "app.phrase.", 1)
         add(key, "en", english)
         add(key, "sw", swahili)
+
+    # Typed declarations (source/sdk/copy): one row per language under the same key, so the app and the database agree.
+    root = Path(__file__).resolve().parents[3]
+    declared = subprocess.run(
+        ["bun", str(root / "source/sdk/copy/src/export.ts")], check=True, capture_output=True, text=True, cwd=root
+    ).stdout
+    for item in json.loads(declared):
+        add(item["key"], "en", item["en"])
+        add(item["key"], "sw", item["sw"])

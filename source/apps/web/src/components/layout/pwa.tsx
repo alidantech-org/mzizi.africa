@@ -1,5 +1,7 @@
 "use client";
 /** Registers the service worker (production only) and exposes the browser's install prompt. */
+import { copy } from "@mzizi/copy";
+import { useCopy } from "#/lib/copy/copy";
 import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -40,6 +42,7 @@ export function PwaRegister() {
 
 /** Install button for the settings menu. Shows nothing when already installed. On iOS it explains the manual step. */
 export function InstallApp() {
+  const t = useCopy();
   const [, force] = useState(0);
   const [standalone, setStandalone] = useState(false);
   const [ios, setIos] = useState(false);
@@ -67,9 +70,9 @@ export function InstallApp() {
         className="flex w-full items-center gap-2 rounded-md border border-line px-2.5 py-1.5 text-sm hover:bg-accent-soft"
       >
         <Download size={15} />
-        Install Mzizi as an app
+        {t(copy.menus.help.install)}
       </button>
     );
-  if (ios) return <p className="text-xs text-muted">To install: tap Share, then Add to Home Screen.</p>;
+  if (ios) return <p className="text-xs text-muted">{t(copy.menus.help.installIos)}</p>;
   return null;
 }

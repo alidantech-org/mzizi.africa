@@ -5,6 +5,7 @@ export function proxy(request: NextRequest) {
   const headers = new Headers(request.headers);
   headers.set("x-mzizi-path", request.nextUrl.pathname);
   headers.set("x-mzizi-find", request.nextUrl.searchParams.get("find") ?? "");
+  headers.set("x-mzizi-lang", request.nextUrl.searchParams.get("lang") ?? "");
   return NextResponse.next({ request: { headers } });
 }
 

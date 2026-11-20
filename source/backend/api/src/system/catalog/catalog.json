@@ -90,6 +90,17 @@
       "summary": "Fun facts for the country and, with a place, for it and the places above it."
     },
     {
+      "name": "GetCopyBundle",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/copy",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "CopyBundle",
+      "summary": "Every recorded wording for one language, optionally one area and country wording, with a content hash for long-lived caching. Words are never taken from another language."
+    },
+    {
       "name": "GetExplorerContext",
       "group": "explorer",
       "feature": "explorer",
@@ -120,7 +131,7 @@
       "role": "detail",
       "inputs": ["input"],
       "output": "Bootstrap",
-      "summary": "Country catalogue, available interface languages and recorded copy. Never chooses a default country."
+      "summary": "Country catalogue and the interface languages that have recorded wording. Never chooses a default country."
     },
     {
       "name": "ListExplorerChildren",

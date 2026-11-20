@@ -2,8 +2,10 @@
  * `dev` and `start`: run the long-running services together from the root.
  *
  * Each service gets the root `.env` values plus its own fixed port, and its output is prefixed with its
- * name. Stopping the runner (Ctrl+C or SIGTERM) stops every service; if one service exits, the others are
- * stopped too so a half-running stack is never left behind.
+ * name. Stopping the runner (Ctrl+C or SIGTERM) stops every service. Each service is supervised on its own: when
+ * one exits (a crash, a watcher restart, a failed compile) it is started again after a short delay and the others keep
+ * running. A service that fails again and again without staying up is left stopped, reported, and does not take the
+ * rest of the stack down; the runner ends when Ctrl+C is pressed or every service has given up.
  */
 import type { Subprocess } from "bun";
 import { at, localEnv } from "../lib/paths.ts";
@@ -68,35 +70,58 @@ async function relay(stream: ReadableStream<Uint8Array>, name: string, write: (l
   if (pending) write(`${name} ${pending}`);
 }
 
+/** A service that stays up this long counts as healthy, so its failure count starts again. */
+const HEALTHY_MS = 30_000;
+/** Consecutive quick failures after which a service is left stopped. */
+const MAX_QUICK_FAILURES = 5;
+const restartDelay = (failures: number): number => Math.min(2_000 * 2 ** failures, 30_000);
+
 /** Start the chosen services and wait until they stop. Resolves to the exit code for the runner. */
 export async function serve(mode: Mode, names: readonly string[]): Promise<number> {
   const chosen = pick(names);
   const base = localEnv();
   const children = new Map<string, Subprocess<"ignore", "pipe", "pipe">>();
-  for (const [index, service] of chosen.entries()) {
+  let stopping = false;
+
+  /** Run one service until the runner stops; restart it when it exits. Resolves true when it gave up. */
+  const supervise = async (service: Service, index: number): Promise<boolean> => {
     const port = String(portOf(service, base));
     const command = service[mode].map((part) => part.replace("{port}", port).replace("{api}", apiUrl(base)));
-    console.log(`▶ ${service.name.padEnd(7)} http://127.0.0.1:${port}  (${service.dir}: ${command.join(" ")})`);
-    const child = Bun.spawn(command, {
-      cwd: at(service.dir),
-      env: {
-        ...base,
-        [service.portEnv]: port,
-        FORCE_COLOR: "1",
-        // The API accepts browser calls only from the browser apps running alongside it.
-        ...(service.name === "api" && base.CORS_ORIGINS === undefined ? { CORS_ORIGINS: browserOrigins(chosen, base) } : {}),
-      },
-      stdin: "ignore",
-      stdout: "pipe",
-      stderr: "pipe",
-    });
-    children.set(service.name, child);
     const label = tag(service.name, index);
-    void relay(child.stdout, label, (line) => console.log(line));
-    void relay(child.stderr, label, (line) => console.log(line));
-  }
+    let failures = 0;
+    while (!stopping) {
+      console.log(`▶ ${service.name.padEnd(7)} http://127.0.0.1:${port}  (${service.dir}: ${command.join(" ")})`);
+      const startedAt = Date.now();
+      const child = Bun.spawn(command, {
+        cwd: at(service.dir),
+        env: {
+          ...base,
+          [service.portEnv]: port,
+          FORCE_COLOR: "1",
+          // The API accepts browser calls only from the browser apps running alongside it.
+          ...(service.name === "api" && base.CORS_ORIGINS === undefined ? { CORS_ORIGINS: browserOrigins(chosen, base) } : {}),
+        },
+        stdin: "ignore",
+        stdout: "pipe",
+        stderr: "pipe",
+      });
+      children.set(service.name, child);
+      void relay(child.stdout, label, (line) => console.log(line));
+      void relay(child.stderr, label, (line) => console.log(line));
+      const code = await child.exited;
+      if (stopping) return false;
+      failures = Date.now() - startedAt >= HEALTHY_MS ? 1 : failures + 1;
+      if (failures >= MAX_QUICK_FAILURES) {
+        console.error(`✖ ${service.name} exited with code ${code} ${failures} times in a row; left stopped, the others keep running`);
+        return true;
+      }
+      const wait = restartDelay(failures - 1);
+      console.error(`✖ ${service.name} exited with code ${code}; restarting in ${wait / 1000}s (the others keep running)`);
+      await Bun.sleep(wait);
+    }
+    return false;
+  };
 
-  let stopping = false;
   const stop = (): void => {
     if (stopping) return;
     stopping = true;
@@ -105,11 +130,7 @@ export async function serve(mode: Mode, names: readonly string[]): Promise<numbe
   process.on("SIGINT", stop);
   process.on("SIGTERM", stop);
 
-  // The first service to exit decides the result; a requested stop is a clean exit.
-  const first = await Promise.race([...children].map(async ([name, child]) => ({ name, code: await child.exited })));
-  const requested = stopping;
-  if (!requested) console.error(`✖ ${first.name} exited with code ${first.code}; stopping the other services`);
-  stop();
+  const gaveUp = await Promise.all(chosen.map((service, index) => supervise(service, index)));
   await Promise.all([...children.values()].map((child) => child.exited));
-  return requested ? 0 : first.code || 1;
+  return stopping || !gaveUp.every(Boolean) ? 0 : 1;
 }

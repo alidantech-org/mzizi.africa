@@ -128,7 +128,7 @@ export function parseQuery(sp: Query): { view: ViewId; params: Record<string, st
     else errors.push(`"${k}" is not used by the ${VIEWS[view].label} view.`);
   }
   const lang = first(sp.lang);
-  return { view, params, lang: lang === "sw" || lang === "en" ? lang : undefined, errors };
+  return { view, params, lang: lang && /^[a-z]{2,3}(-[A-Za-z0-9]+)*$/.test(lang) ? lang : undefined, errors };
 }
 
 export function pathOf(p: Place) {
@@ -152,26 +152,21 @@ export function build(
 /** Sidebar: change the subject, keep the place and language, clear everything else. */
 export const toView = (ctx: Ctx, view: ViewId) => build(ctx, { view, params: {} });
 
-/** Name of a level of a country: depth 0 is the country itself, 1 the first level (county, province...), and so on. */
-export function levelName(countryCode: string, depth: number) {
-  if (depth <= 0) return "country";
-  return (country(countryCode)?.levels as readonly string[] | undefined)?.[depth - 1]?.toLowerCase() ?? "place";
-}
-
 /** Is this subject meaningful at this place? Data exists for the country, and the place is not deeper than the subject supports. */
 export function available(view: ViewId, place: Place) {
   const v = VIEWS[view];
   return (v.countries === "all" || v.countries.includes(place.country)) && place.trail.length <= v.maxDepth;
 }
 
-/** Why a subject cannot be opened at this place, in plain words, or null when it can. Links are disabled with this reason, never removed. */
-export function whyUnavailable(view: ViewId, place: Place): string | null {
+/** Why a subject cannot be opened at this place, as data the screen words in the reader's language; null when it can. Links are disabled with this reason, never removed. */
+export type Unavailable =
+  | { kind: "noData"; countries: readonly string[] }
+  | { kind: "tooDeep"; limit: number; depth: number };
+export function whyUnavailable(view: ViewId, place: Place): Unavailable | null {
   if (available(view, place)) return null;
   const v = VIEWS[view];
-  const c = country(place.country);
-  if (v.countries !== "all" && !v.countries.includes(place.country))
-    return `${v.label} has no data for ${c?.name ?? "this country"} yet. It is loaded for ${v.countries.map((x) => country(x)?.name ?? x).join(" and ")}.`;
-  return `${v.label} only applies down to ${levelName(place.country, v.maxDepth)} level. You are at ${levelName(place.country, place.trail.length)} level. Go up to ${place.trail.length > v.maxDepth ? "a " + levelName(place.country, v.maxDepth) : "a higher level"} to open it.`;
+  if (v.countries !== "all" && !v.countries.includes(place.country)) return { kind: "noData", countries: v.countries };
+  return { kind: "tooDeep", limit: v.maxDepth, depth: place.trail.length };
 }
 
 /** Place switcher: stay on the same screen. Only state that depends on the old place (and pagination) is cleared. If the subject does not apply at the new place, fall back to the overview. */
