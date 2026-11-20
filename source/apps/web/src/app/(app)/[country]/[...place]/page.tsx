@@ -1,1 +1,1 @@
-export { default } from "#/app/(app)/_components/explorer-start";
+export { default } from "#/app/(app)/_views/home";

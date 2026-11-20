@@ -117,3 +117,27 @@ Owner additionally directs no automated web tests until explicitly requested; br
 ### 2026-11-20T08:30:17.023Z · PETER IRUNGU
 
 Owner approved the cleanup and explicitly requested committing it. Moved web-root preparation scripts/inputs, downloaded demo assets and historical UI archive beneath src/app/demo; data/media/archive remain ignored. Added demo-owned file routes preserving existing source, flag, worker and offline URLs. Removed stale web/test assertions and the active demo navigation test; no new web tests added. Browser source panel/PDF viewer opened; HTTP checks confirmed unchanged flag/PDF/worker/offline bytes and 404 traversal/missing-file behaviour. Full web typecheck still reports the existing real-app SDK import migration failures. Unrelated owner planning edits remain uncommitted.
+
+### 2026-11-20T08:40:59.268Z · PETER IRUNGU
+
+Owner requested the next real UI slice: repair SDK imports, copy reusable demo components/lib via cp into src/components and src/lib, sidebar/appbar connected to a composed typed API, only an empty home view in app/(app)/_views, and complete API/database-delivered English/Swahili text. No web tests; verify in the browser. Reuse reference values/labels/copy for shell configuration rather than hard-coded frontend navigation. Do not alter root seed inputs or unrelated owner planning changes.
+
+### 2026-11-20T08:52:16.976Z · PETER IRUNGU
+
+Owner rejected the rewritten API-driven shell and explicitly changed the immediate scope: copy the demo UI as-is, including layout/appbar/popovers/settings, and plan integration edits later. Copied _components to src/components and _lib to src/lib via cp -R; copied stylesheet and root layout. Only module roots, root navigation adapter, independent mzizi-app preference namespace/path, and document/PWA ownership differ. Removed old real (app)/_components and _lib. Home is a placeholder under (app)/_views. Demo datasets remain under app/demo and are still consumed by the copied prototype; this is not backend integration or complete translation coverage. Reverted the rejected shell API/contracts/fixture code. Browser verified root shell and full appearance/accessibility popover. No web tests added.
+
+### 2026-11-20T08:53:25.480Z · PETER IRUNGU
+
+Validation for copied-shell checkpoint: web TypeScript passes, task validate passes, git diff --check passes. Browser shows copied sidebar/appbar and full theme/accessibility settings popover. Source comparison: 55 component/helper files are identical after import/cookie/storage relocation; only navigation/base.ts is adapted for root addresses. Root check reports existing oversized extra.py and insights.ts plus existing Python lint/mypy failures; unrelated owner planning edits preserved.
+
+### 2026-11-20T08:57:03.341Z · PETER IRUNGU
+
+Owner requested a continuation handoff for the whole web integration. Added .docs/handoffs/HANDOFF-WEB-BACKEND-INTEGRATION-PRESERVE-UI-20261120.md. Non-negotiable: preserve the exact copied UI/design/interactions; replace prototype inputs through typed generated server SDK reads, extend backend/contracts where missing, complete English/Swahili and context behavior, and migrate all screens/control dependencies without redesigning or simplifying them. Records present scaffold, no implemented shell endpoint, SDK import/layout, SSR boundaries, slice sequence, seed approval and browser-only web verification. Handoff preparation only; implementation remains in existing programme tasks.
+
+### 2026-11-20T09:04:54.634Z · PETER IRUNGU
+
+Slice 1 (location switcher on real places): added src/proxy.ts (x-mzizi-path), lib/server/places.ts (generated explorer client: setup, context, children), lib/places/catalogue.tsx provider, shell.tsx loads it; location-switcher.tsx now reads the catalogue instead of #demo/_data/places and COUNTRIES. Verified in browser at /ke/nairobi: popover layout unchanged, real Nairobi children, no client explorer requests, tsc clean. Gaps: only served countries (Kenya) listed; dial codes not in contract (dropped); only children of the country root, ancestors and current place are loaded, so County/Constituency/Ward chips are incomplete until search-by-URL is built; /ke/nope still renders Home with the gap unshown; onboarding.tsx, search.tsx, app-shell.tsx, language-switcher and prefs still import #demo/_data.
+
+### 2026-11-20T09:08:11.455Z · PETER IRUNGU
+
+Slice 2 (header search): query lives in the URL as ?find=; proxy forwards it, lib/server/places.ts calls explorerSearchExplorerPlaces server-side, search.tsx reads catalogue.found and keeps the same dialog; #demo/_data removed from search.tsx. Verified /ke/nairobi: type 'westl' -> ?find=westl, 2 real results, Enter -> /ke/nairobi/westlands, find cleared, no client API requests, tsc clean. Gaps: institutions no longer searchable (no backend search op for them; placeholder text unchanged); on / search uses the cookie country; voice-command page names still local.

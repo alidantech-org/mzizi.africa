@@ -55,21 +55,18 @@ IMPORTANT. Changing the place, a filter, a sort order, a tab or the language **m
 
 ## Permanent demo and real application boundary
 
-The existing prototype remains permanently available under `/demo` until the owner explicitly decides to remove it. Its routes, `_components`, `_lib`, `_view`, `_data`, stylesheet and root document layout live together in `src/app/demo/`. The real application starts independently in `src/app/(app)/layout.tsx`, with `/`, `/[country]` and `/[country]/[...place]`. The first real slice uses the generated explorer API for welcome-dialog setup, explicit-country resolution and recorded geography/evidence coverage. Other subjects remain migration work. Never import prototype datasets, availability rules, financial examples or applicability inference into the real application.
+The existing prototype remains permanently available under `/demo` until the owner explicitly decides to remove it. Its routes, `_components`, `_lib`, `_view`, `_data`, stylesheet and root document layout live together in `src/app/demo/`. The real application starts independently in `src/app/(app)/layout.tsx`, with `/`, `/[country]` and `/[country]/[...place]`. The current real slice copies the prototype shell and renders a home placeholder; generated API integration is deferred for planning. Other subjects remain migration work. Never import prototype datasets, availability rules, financial examples or applicability inference into the real application.
 
 Internal demo links and navigation stay under `/demo`; `#demo/*` resolves only to private demo files. Demo cookies use `mzizi-demo-*` names and `/demo` paths; local storage/events are separately named too. Its manifest, service worker, connection-header endpoint and downloaded assets are scoped to demo URLs. The demo worker must not intercept real-page navigation or clear unrelated caches. The root `/sw.js` only retires the previous root-scoped prototype worker. The demo worker route supplies its own scope header; the former country/view redirects are removed.
 
 Crossing between the two root layouts performs a full document navigation, keeping the demo's fonts, theme scripts and CSS out of the real document. Migration means intentionally reimplementing a supported screen against generated backend clients and typed data, while preserving the working demo for comparison. A screen's existence in the demo is not proof that its data or rules are ready for production.
 
 
-## Real backend setup and explorer
+## Current real shell checkpoint
 
-The real UI is handwritten. Dryv generates the backend boundary and shared API bridge client, not web screens or themes. Real server components call the generated feature-grouped explorer helpers. The package root exports only route definitions and types; server request helpers use explicit action imports.
+At the owner's request, the real UI now copies the demo components/helpers and design before API adaptation. Reusable copies live in `src/components` and `src/lib`; route content stays in `(app)/_views`. There are no `(app)/_components` or `(app)/_lib` duplicates. The copied root URL adapter removes the `/demo` prefix while the original demo remains unchanged. Copied preferences use independent `mzizi-app-*` cookies at `/` and matching storage/event names. The real layout does not register the demo PWA.
 
-The welcome dialog belongs to `/`, using `view=setup`, `view.tab=place|preferences`, `filters.country`, `filters.query`, and a selected `view.entity=place&view.id`. Confirming a place validates its country-bound identity through the API before storing independent device cookies and navigating to its canonical address. No account is needed. Browser coordinates are posted only after a device-location request; confirmation remains mandatory and late results are discarded after navigation. Public URLs do not contain coordinates.
-
-The place address is authoritative over cookies. Registered routing roots and current canonical slug parentage define paths and breadcrumbs; they do not imply governmental authority or service coverage. Missing roots, ambiguous identities and unsupported views must remain explicit. The initial overview shows recorded children and citations, with coverage limitations. No prototype measures are substituted.
-
+The sidebar, appbar, popovers and settings retain prototype behavior and their existing labels/data dependencies. All real country/place routes currently show the home placeholder; subject and utility screens have not been migrated. Generated API integration and complete translated copy are deferred for planning. Do not describe this copied prototype shell as backend-connected. Future server SDK imports use `@mzizi/api-client/actions/explorer` and generated group-prefixed operation names.
 
 ## Demo-only files and verification
 

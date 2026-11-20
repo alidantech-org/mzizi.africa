@@ -5,11 +5,13 @@ Two independent handwritten Next.js applications share this web project: a perma
 ## Source layout
 
 ```text
+src/components/                   copied demo UI: layout, popovers, settings and reusable components
+src/lib/                          copied helpers; independent real-app URL/cookie adapter
 src/app/
   (app)/
     layout.tsx                    independent real document layout
     page.tsx                      real entry skeleton (/)
-    _components/explorer-start.tsx
+    _views/home.tsx               placeholder content; no migrated product screens
     [country]/page.tsx             country root skeleton
     [country]/[...place]/page.tsx   deeper real explorer skeleton
   demo/
@@ -77,20 +79,12 @@ The code checkpoint excludes `_data/` content (apart from ambient type declarati
 
 The demo still imports those local files, so passing local checks does not establish a data-free clean-checkout build. Preserve demo labels; do not commit local datasets to fix missing imports. The real application must obtain product data through the generated server API client and typed contracts as its screens are implemented.
 
-## First real backend slice
+## Current real shell checkpoint
 
-The independent `(app)` root now uses the generated `@mzizi/api-client` server helpers for explorer setup, country-scoped place search, registered hierarchy children, context confirmation and place overview. Set `SERVER_URL` to the running product API origin. Root-runner environment values take precedence over Next local environment files; for the local API use `SERVER_URL=http://127.0.0.1:8700 bun run dev web`. Product reads happen in server components; the browser receives rendered content and navigates with forms and links. It never imports the demo to fill a missing real value.
+The owner requested an exact copy of the demo design before planning API adaptation. `src/components/` and `src/lib/` were copied with `cp -R` from the permanent demo, alongside its stylesheet and document layout. The sidebar, app bar, search/location/language popovers, saved/help controls, theme, sound and accessibility settings retain their prototype markup and behavior. Only import roots, root URL addressing, independent `mzizi-app-*` preference storage and document/PWA ownership were adapted. The real document does not register the demo worker or manifest.
 
-`/` opens the welcome dialog for a device without completed setup. Its state uses `view=setup`, `view.tab=place|preferences`, `filters.country`, `filters.query`, and `view.entity=place&view.id=…`. Place confirmation revalidates through the API, stores independent `mzizi-*` cookies, and redirects to the API's canonical country-prefixed path. Explicit device location is the one browser capability: coordinates are posted through a server action for resolution and the suggested place still needs confirmation. Coordinates are not included in public URLs.
+Real routes render only the placeholder `src/app/(app)/_views/home.tsx` inside that copied shell. There are no duplicate `(app)/_components` or `(app)/_lib` folders. Other subjects have not been migrated: copied navigation can change the URL, but these routes still show the placeholder. Utility destinations such as `/me` and `/help` are not yet migrated either.
 
-`/[country]` and deeper place URLs resolve from the address, regardless of the saved place. This initial overview shows recorded child-place and citation counts, not prototype statistics. Unavailable data and unknown paths remain explicit. Optional `lang` overrides cookie preference; place links preserve an explicit language without adding it to cookie-only journeys. Interface translations may fall back to English and are labelled accordingly. Other subject screens remain migration work; a demo screen is not a connected production screen.
+This is a design checkpoint, not an API integration claim. The copied shell still consumes prototype data explicitly from `app/demo/_data` and retains its existing hardcoded labels and country rules. Fake datasets were not copied into `src/lib` or `src/components`. Database-backed copy, complete Swahili coverage and generated API integration remain future work to plan with the owner. The rejected rewritten shell API and fixture code were reverted.
 
-## Demo isolation and local preparation
-
-All prototype code, ignored data, preparation scripts/inputs, downloaded documents/flags and the historical UI archive live under `src/app/demo/`. `_scripts/` contains the moved builders and their ignored `inputs/` and `geo-input/` folders. Paths are resolved from the scripts themselves, so a repository-root invocation writes only to the intended demo or shared icon directory. The local source-specific data builder remains ignored. `_data/` remains ignored except ambient declarations; `_archives/` is ignored and excluded from TypeScript compilation.
-
-Downloaded files live in ignored `_assets/flags/` and `_assets/sources/`. Demo-owned route handlers preserve `/demo/flags/<file>` and `/demo/sources/<file>`; the worker/offline page are served from tracked `_assets/sw.js` and `_assets/offline.html`. Routes reject path traversal, return proper media types and 404 when a local download is missing. Next output tracing includes these files for demo deployments. There is no `public/demo/` or web-root `scripts/` folder.
-
-`public/icons/` contains shared app identity assets. The small root `/sw.js` retirement guard remains public to unregister the previous root-scoped prototype worker before it can intercept real pages; it serves no demo content.
-
-There are no active automated web tests at this stage, by owner direction. The stale `test/` compile assertions and prototype test files have been removed. Verify visible behaviour in the browser; type-checking remains a code-quality check. Do not introduce web tests until the owner asks for them.
+The original SDK resolution error came from an obsolete action import path. The old real welcome/overview consumers were removed in this checkpoint, so that failing import is no longer present. Future API consumers must use `@mzizi/api-client/actions/explorer` and the generated `explorer`-prefixed operation names, without a `.actions.ts` suffix.
