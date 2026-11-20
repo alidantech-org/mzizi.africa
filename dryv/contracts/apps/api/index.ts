@@ -7,6 +7,7 @@
  * It lists only the groups it serves (and the groups those point at).
  */
 import { dryv } from "@dryvcode/author";
+import { explorer, explorerOperations } from "./explorer.ts";
 import { civic } from "#/schemas/postgres/civic.ts";
 import { shared } from "#/schemas/_shared.ts";
 import { auth } from "#/schemas/postgres/auth.ts";
@@ -36,6 +37,7 @@ export default dryv
   .stores({ main: { description: "Verified knowledge, evidence metadata, platform access." } })
   .accessStore("main", { write: true })
   .provides(
+    ...Object.values(explorerOperations),
     ...Object.values(authOperations),
     ...Object.values(structureOperations),
     ...Object.values(referenceOperations),
@@ -48,6 +50,7 @@ export default dryv
     ...Object.values(ledgerOperations),
   )
   .groups(
+    explorer,
     shared,
     structure,
     reference,

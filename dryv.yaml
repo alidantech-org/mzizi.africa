@@ -464,12 +464,7 @@ applications:
     packs:
       - { $ref: "#/packs/app-app" }
       - { $ref: "#/packs/app-theme" }
-  web:
-    authoring: { $ref: "#/sources/authoring/web" }
-    application: { $ref: "#/applications/mzizi-web" }
-    packs:
-      - { $ref: "#/packs/web-app" }
-      - { $ref: "#/packs/web-theme" }
+  # Web UI is handwritten. Generate its shared SDK through the api activation only.
   dev:
     authoring: { $ref: "#/sources/authoring/dev" }
     application: { $ref: "#/applications/mzizi-dev" }

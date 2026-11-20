@@ -1,0 +1,22 @@
+{%- macro group_seen(operation, position) -%}
+{%- for other in operations -%}{%- if loop.index < position and other.group.id == operation.group.id -%}yes{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+/** Generated registry of all product HTTP operations. Safe to import in client code. */
+export const routes = {
+{%- for first in operations %}{%- if group_seen(first, loop.index) == '' %}
+  {{ first.group.name.camel }}: {
+{%- for operation in operations %}{% if operation.group.id == first.group.id %}
+{%- set http = operation.facets.http %}
+    /** {{ http.method }} {{ http.path.local }} */
+{%- set inputs = namespace(has_path=false) %}{%- for binding in http.inputs %}{% if binding.is.path %}{% set inputs.has_path=true %}{% endif %}{% endfor %}
+{%- if inputs.has_path %}
+    {{ operation.name.camel }}: (params: { {% for binding in http.inputs %}{% if binding.is.path %}{{ binding.name }}: string; {% endif %}{% endfor %}}) =>
+      `{{ http.path.local | replace('{', '${encodeURIComponent(params.') | replace('}', ')}') }}`,
+{%- else %}
+    {{ operation.name.camel }}: {{ http.path.local | tojson }},
+{%- endif %}
+{%- endif %}{% endfor %}
+  },
+{%- endif %}{% endfor %}
+} as const;
+export default routes;

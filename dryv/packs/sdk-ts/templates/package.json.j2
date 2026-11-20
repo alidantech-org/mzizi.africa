@@ -7,7 +7,14 @@
     "#sdk/*": "./src/*"
   },
   "exports": {
-    "./*": "./src/*"
+    ".": "./src/index.ts",
+    "./actions": "./src/actions/index.ts",
+    "./actions/*": "./src/actions/*.actions.ts",
+    "./routes": "./src/routes.ts",
+    "./types": "./src/types/index.ts"
+  },
+  "scripts": {
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "next-api-bridge": "^0.1.10",

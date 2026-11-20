@@ -4,6 +4,7 @@ import { APP_PIPE } from "@nestjs/core";
 import { DatabaseModule } from "./database/database.module.ts";
 import { AuthModule } from "#/modules/auth/auth.module.ts";
 import { ExperienceModule } from "#/modules/experience/experience.module.ts";
+import { ExplorerModule } from "#/modules/explorer/explorer.module.ts";
 import { GeographyModule } from "#/modules/geography/geography.module.ts";
 import { GovernanceModule } from "#/modules/governance/governance.module.ts";
 import { InsightsModule } from "#/modules/insights/insights.module.ts";
@@ -19,6 +20,7 @@ import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
     DatabaseModule,
     AuthModule,
     ExperienceModule,
+    ExplorerModule,
     GeographyModule,
     GovernanceModule,
     InsightsModule,

@@ -4,6 +4,20 @@
 
 # Phase B: author the API contract, response shapes and queries
 
+## Current owner-approved integration slice
+
+The November 20 direction supersedes earlier web generation and planning-only prose below. Keep this same delivery programme: no second backlog. The web UI, theme, pages and navigation are handwritten. Dryv owns backend contracts, generated validation/controllers/service signatures, and the shared typed Next API Bridge client. Typed project-owned backend readers are allowed. App/dev generation and engine operations are outside this slice.
+
+Implement anonymous setup in the welcome-page dialog, using registered country roots and canonical place slugs, country-scoped search and child-place reads, coordinate candidates requiring confirmation, independent device preferences, and a real place overview with honest recorded coverage. Preserve the permanent `/demo`; no prototype import or fallback dataset enters the real application. Do not add root seed inputs or reset a database. The remaining subject migrations in the broader programme remain open.
+
+### Integration slice acceptance
+
+- [x] Generate one shared route registry, grouped typed request helpers, compatibility re-exports and a client-safe routes/types barrel.
+- [x] Generate and implement explicit-country bootstrap, context, search, children, coordinate and overview endpoints with validated named responses.
+- [x] Connect the handwritten welcome dialog and canonical country/place pages through server-rendered generated-client reads.
+- [x] Verify API scoping, identity errors, pagination, language/cookies, SSR and the complete setup flow; preserve `/demo` and record quality limitations.
+
+
 ## Goal
 
 Author in the contracts every composed read, typed response section and data-driven query the web screens need, so no screen assembles endpoints and no section is dynamic. It follows the delivery plan backend-web-dev-delivery-plan and the decisions recorded with it, and is now governed by the consolidated group readiness gate; no runtime work, commit or push is authorized yet.
@@ -35,3 +49,17 @@ This existing task now owns API contract and data requirements for the combined 
 ## Implementation authorization
 
 The owner explicitly requested implementation of the integrated database, API and web redesign on 19 November 2026. That request supersedes earlier planning-only gates in this record. Implement web only, with realistic labelled synthetic development fixtures, contract-generated screen reads and clients/types. Engine operations, the dev frontend, Flutter and real-data acquisition are excluded. The accepted plan in this conversation is authoritative where older task prose conflicts. Seed-file approval rules remain in force.
+
+## Comments
+
+### 2026-11-19T22:36:33.435Z · PETER IRUNGU
+
+Owner approved backend/client integration plan: shared generated next-api-bridge client with one routes.ts and feature-grouped request helpers; handwritten UI and permanent demo; anonymous welcome-dialog setup with cookie preferences; typed custom backend handlers are allowed. Implement bootstrap/context/search/children/coordinate resolution and initial overview, preserve active consumers with generated compatibility exports, and stop web frontend generation. No root seed additions or database resets are authorised by this work.
+
+### 2026-11-20T07:19:09.617Z · PETER IRUNGU
+
+Owner narrowed the immediate delivery: finish backend and Dryv contracts, regenerate and verify api-ts, then commit only backend/contracts/client work before any further web changes. Preserve all existing web edits untouched; no web migration or web commit in this checkpoint.
+
+### 2026-11-20T08:02:18.014Z · PETER IRUNGU
+
+Backend checkpoint contains six implemented typed explorer reads (bootstrap/context/search/children/coordinate resolution/overview), generated controller/DTO integration, PostgreSQL pagination with safe-offset rejection, canonical identity checks and validated SQL result parsing. Backend generation and contract/API typechecks pass. Verification covers live Kenya/South Africa reads plus generated DTO/controller tests. Commit is limited to backend, Dryv, API client and their documentation/tests; frontend migration is intentionally deferred without shims.

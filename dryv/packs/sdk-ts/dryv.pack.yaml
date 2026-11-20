@@ -4,90 +4,90 @@ package:
   name: { $ref: "#/inputs/package_name" }
   import_root: src
 source: templates
-
 info:
   title: Next API Bridge
   version: 0.1.0
-  description: Generates Next.js server actions over next-api-bridge for every HTTP operation, with route maps, useActionState form actions and schema types.
+  description: Resource action modules, one route registry and nested DTO and enum exports.
   purpose: clients
-  summary: Next.js server actions over next-api-bridge, with routes, form actions and types.
+  summary: Next API Bridge client using the DefyTickets source layout without versions or compatibility shims.
   languages: [typescript]
   frameworks: [nextjs, next-api-bridge]
-  tags: [client, server-actions, forms, sdk]
-
+  tags: [client, server-actions, sdk]
 plugins:
   - name: jinja
     extensions: [.j2]
-
 inputs:
   package_name: { type: string, default: next_api_bridge }
-
 selections:
   enums:
     subject: property.enum
     scope: each
-
   models:
     subject: schema
     scope: each
-
-  # Only operations reachable over HTTP get an action.
+  model-groups:
+    subject: schema
+    scope: collects.group
+  enum-groups:
+    subject: property.enum
+    scope: collects.group
   actions:
     subject: operation
     filter:
       all: { facet: http }
-    scope: each
-
+    scope: collects.group
   routes:
     subject: operation
     filter:
       all: { facet: http }
-    scope: collects.group
-
+    scope: all
 templates:
   enum:
     $ref: "#/selections/enums"
     output:
-      path:
-        - $(group.name.kebab)
+      path: [$(group.name.kebab), enums]
       name: $(subject.name.kebab)
       symbol: $(group.name.pascal)$(subject.name.pascal)
-
   model:
     $ref: "#/selections/models"
     output:
-      path:
-        - $(group.name.kebab)
+      path: [$(group.name.kebab), dto]
       name: $(subject.name.kebab)
       symbol: $(group.name.pascal)$(subject.name.pascal)
     imports:
       - $ref: "#/templates/enum"
       - $ref: "#/templates/model"
-
+  dto-index:
+    $ref: "#/selections/model-groups"
+    output:
+      path: [$(group.name.kebab), dto]
+  enum-index:
+    $ref: "#/selections/enum-groups"
+    output:
+      path: [$(group.name.kebab), enums]
+  resource-index:
+    barrel: each
+    output:
+      path: [$(group.name.kebab)]
+    exports:
+      - $ref: "#/templates/dto-index"
+      - $ref: "#/templates/enum-index"
   action:
     $ref: "#/selections/actions"
     output:
-      name: $(subject.name.kebab)
-      path:
-        - $(group.name.kebab)
-      symbol: $(subject.name.camel)
+      name: $(group.name.kebab)
     imports:
       - $ref: "#/templates/model"
       - $ref: "#/templates/enum"
-
+  actions-index:
+    exports:
+      - $ref: "#/templates/action"
   routes:
     $ref: "#/selections/routes"
-    output:
-      name: $(group.name.kebab)
-      symbol: $(group.name.camel)Routes
-
-  routes-index:
+  types-index:
     exports:
-      - $ref: "#/templates/routes"
-
+      - $ref: "#/templates/resource-index"
 provides:
-  operation.client:
-    $ref: "#/templates/action"
   schema.types:
     $ref: "#/templates/model"
   property.enum.types:

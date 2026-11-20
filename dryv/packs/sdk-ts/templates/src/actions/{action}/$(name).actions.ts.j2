@@ -6,7 +6,7 @@
 {%- endmacro -%}
 
 {%- macro ts_type(value) -%}
-{%- if value.is.schema -%}{{ symbol_for(value.schema) or 'unknown' }}
+{%- if value.is.schema -%}{{ symbol_for(value.schema) or {}['Missing generated request/response schema type: ' ~ value.schema.id] }}
 {%- elif value.is.property and value.is.enum -%}{{ symbol_for(value.property.enum) or 'string' }}
 {%- elif value.is.property and value.is.primitive -%}{{ value.property.primitive.type }}
 {%- elif value.is.property and value.is.temporal -%}string
@@ -19,13 +19,20 @@
 {%- for binding in http.inputs -%}{%- if binding.kind == kind -%}yes{%- endif -%}{%- endfor -%}
 {%- endmacro -%}
 
+{%- macro query_optional(operation, binding) -%}
+{%- if operation.input -%}
+{%- for f in operation.input.fields -%}
+{%- if binding.port.field and f.name.raw == binding.port.field.raw and f.optional -%}yes{%- endif -%}
+{%- endfor -%}{%- endif -%}
+{%- endmacro -%}
+
 {%- macro params_type(http) -%}
 {%- if has(http, 'path') -%}{ {% for binding in http.inputs %}{% if binding.is.path %}{{ binding.name }}: string; {% endif %}{% endfor %}}{%- else -%}never{%- endif -%}
 {%- endmacro -%}
 
-{%- macro query_type(http) -%}
+{%- macro query_type(http, operation) -%}
 {%- if has(http, 'query-object') -%}{% for binding in http.inputs %}{% if binding.is.query_object %}{{ ts_type(binding.port.value) }}{% endif %}{% endfor %}
-{%- elif has(http, 'query') -%}{ {% for binding in http.inputs %}{% if binding.is.query %}{{ binding.name }}?: {{ ts_type(binding.port.value) }}; {% endif %}{% endfor %}}
+{%- elif has(http, 'query') -%}{ {% for binding in http.inputs %}{% if binding.is.query %}{{ binding.name }}{% if query_optional(operation, binding) %}?{% endif %}: {{ ts_type(binding.port.value) }}; {% endif %}{% endfor %}}
 {%- else -%}never
 {%- endif -%}
 {%- endmacro -%}
@@ -43,50 +50,39 @@
 {%- if operation.output -%}{{ ts_type(operation.output.value) }}{%- else -%}void{%- endif -%}
 {%- endmacro -%}
 
-{%- set http = operation.facets.http -%}
-{%- set name = operation.name.camel -%}
-{%- set input_type = operation.name.pascal ~ "Input" -%}
-{%- set form_action = operation.role in ['create', 'update'] and body_type(http) != 'never' -%}
-'use server';
 
-/**
- * {{ operation.description or operation.name.title }}
- *
- * {{ http.method }} {{ http.path.local }}
- */
-{%- if form_action %}
+{%- macro required_query(http, operation) -%}
+{%- for binding in http.inputs -%}
+{%- if binding.is.query_object -%}{%- for f in binding.port.value.schema.fields -%}{%- if not f.optional -%}yes{%- endif -%}{%- endfor -%}
+{%- elif binding.is.query and not query_optional(operation, binding) -%}yes
+{%- endif -%}{%- endfor -%}
+{%- endmacro -%}
+
+'use server';
+/** Generated HTTP request helpers. Endpoint spelling belongs exclusively to routes.ts. */
+import { type ActionInput, requestOptions, actionFormDataValue, cleanActionFormData, formActionRedirectPath, type FormActionResult } from '#sdk/helpers/index.ts';
+import { api } from '#sdk/helpers/api.ts';
+import { routes } from '#sdk/routes.ts';
 import type { ApiBridgeResponse } from 'next-api-bridge';
 import { redirect } from 'next/navigation';
-{%- endif %}
-
-import {
-  api,
-  type ActionInput,
-{%- if form_action and has(http, 'path') %}
-  actionFormDataValue,
-{%- endif %}
-{%- if form_action and not multipart(http) %}
-  cleanActionFormData,
-{%- endif %}
-{%- if form_action %}
-  formActionRedirectPath,
-  type FormActionResult,
-{%- endif %}
-  requestOptions,
-} from '#sdk/helpers/index.ts';
 {%- for dependency in file.dependencies %}{% if dependency.symbol %}
 import {% if dependency.template != 'enum' %}type {% endif %}{ {{ dependency.symbol }} } from '{{ dependency.path.prefixed }}';
 {%- endif %}{% endfor %}
+{%- for operation in operations %}
+{%- set http = operation.facets.http -%}
+{%- set name = operation.group.name.camel ~ operation.name.pascal -%}
+{%- set input_type = operation.group.name.pascal ~ operation.name.pascal ~ "ActionInput" -%}
+{%- set form_action = operation.role in ['create', 'update'] and body_type(http) != 'never' %}
+/** {{ http.method }} {{ http.path.local }} */
+export type {{ input_type }} = ActionInput<{{ params_type(http) }}, {{ query_type(http, operation) }}, {{ body_type(http) }}>;
 
-export type {{ input_type }} = ActionInput<{{ params_type(http) }}, {{ query_type(http) }}, {{ body_type(http) }}>;
-
-export async function {{ name }}(input: {{ input_type }}{% if not has(http, 'path') and body_type(http) == 'never' %} = {}{% endif %}) {
+export async function {{ name }}(input: {{ input_type }}{% if not has(http, 'path') and body_type(http) == 'never' and not required_query(http, operation) %} = {}{% endif %}) {
   const options = requestOptions(
     input.options,
-    {% if query_type(http) != 'never' %}input.query{% else %}undefined{% endif %},
+    {% if query_type(http, operation) != 'never' %}input.query{% else %}undefined{% endif %},
     {{ 'true' if multipart(http) else 'false' }},
   );
-  const path = {% if has(http, 'path') %}`{{ http.path.local | replace('{', '${input.params.') }}`{% else %}'{{ http.path.local }}'{% endif %};
+  const path = routes.{{ operation.group.name.camel }}.{{ operation.name.camel }}{% if has(http, 'path') %}(input.params){% endif %};
 {%- if http.method == 'GET' %}
   return api.get<{{ response_type(operation) }}>(path, options);
 {%- else %}
@@ -120,3 +116,5 @@ export async function {{ name }}Action(
   return { response, formdata: body };
 }
 {%- endif %}
+
+{%- endfor %}

@@ -192,5 +192,5 @@ type IsNever<T> = [T] extends [never] ? true : false;
 export type ActionInput<Params = never, Query = never, Body = never> = { options?: GeneratedRequestOptions } & (IsNever<Params> extends true
   ? object
   : { params: Params }) &
-  (IsNever<Query> extends true ? object : { query?: Query }) &
+  (IsNever<Query> extends true ? object : {} extends Query ? { query?: Query } : { query: Query }) &
   (IsNever<Body> extends true ? object : { body: Body });

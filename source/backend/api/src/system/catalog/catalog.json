@@ -90,6 +90,72 @@
       "summary": "Fun facts for the country and, with a place, for it and the places above it."
     },
     {
+      "name": "GetExplorerContext",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/context",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Context",
+      "summary": "Resolve an explicit country and registered place path or identity; incompatible identities are rejected."
+    },
+    {
+      "name": "GetExplorerOverview",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/overview",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Overview",
+      "summary": "One place\u0027s context, direct children and recorded coverage counts; never substitutes demonstration measures."
+    },
+    {
+      "name": "GetSetupBootstrap",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/setup",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Bootstrap",
+      "summary": "Country catalogue, available interface languages and recorded copy. Never chooses a default country."
+    },
+    {
+      "name": "ListExplorerChildren",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/children",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "Places",
+      "summary": "Direct children in the recorded routing hierarchy of one explicit country."
+    },
+    {
+      "name": "ResolveExplorerCoordinates",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "POST",
+      "path": "/v1/explorer/resolve",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Resolution",
+      "summary": "Read geographic candidates from recorded boundaries. POST keeps device coordinates out of shared query strings; it performs no writes."
+    },
+    {
+      "name": "SearchExplorerPlaces",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/search",
+      "role": "search",
+      "inputs": ["input"],
+      "output": "Places",
+      "summary": "Country-scoped registered places with stable pagination and canonical destinations."
+    },
+    {
       "name": "BrowseFeatureKinds",
       "group": "geography",
       "feature": "places",

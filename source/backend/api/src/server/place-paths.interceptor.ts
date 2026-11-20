@@ -28,7 +28,7 @@ function collect(value: unknown, into: Record<string, unknown>[], depth = 0): vo
   }
   const record = value as Record<string, unknown>;
   const place = (typeof record.featureId === "string" && record.featureId) || (typeof record.unit_id === "string" && record.unit_id) || (typeof record.unitId === "string" && record.unitId) || "";
-  if (UUID.test(place) && (record.path === undefined || Array.isArray(record.path)) && record.unit_path === undefined && record.unitPath === undefined) into.push(record);
+  if (record.canonicalPath === undefined && UUID.test(place) && (record.path === undefined || Array.isArray(record.path)) && record.unit_path === undefined && record.unitPath === undefined) into.push(record);
   for (const child of Object.values(record)) collect(child, into, depth + 1);
 }
 

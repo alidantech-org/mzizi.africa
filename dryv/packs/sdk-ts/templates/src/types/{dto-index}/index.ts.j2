@@ -1,0 +1,3 @@
+{%- for schema in schemas %}
+export * from './{{ schema.name.kebab }}';
+{%- endfor %}
