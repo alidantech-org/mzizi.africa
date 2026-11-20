@@ -30,6 +30,7 @@
       "name": "mzizi-web",
       "dependencies": {
         "@mzizi/api-client": "workspace:*",
+        "@mzizi/copy": "workspace:*",
         "clsx": "^2.1.1",
         "d3-delaunay": "^6.0.6",
         "echarts": "^6.1.0",
@@ -74,6 +75,9 @@
         "next": ">=16",
         "react": ">=19",
       },
+    },
+    "sdk/copy": {
+      "name": "@mzizi/copy",
     },
     "sdk/engine-ts": {
       "name": "@mzizi/engine-client",
@@ -185,6 +189,8 @@
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
     "@mzizi/api-client": ["@mzizi/api-client@workspace:sdk/api-ts"],
+
+    "@mzizi/copy": ["@mzizi/copy@workspace:sdk/copy"],
 
     "@mzizi/engine-client": ["@mzizi/engine-client@workspace:sdk/engine-ts"],
 

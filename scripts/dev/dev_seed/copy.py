@@ -2,7 +2,7 @@
 
 Keys: `web.word.<name>` for the interface words, `web.phrase.<slug>` for sentences and headings, where the slug is the
 English text lowercased with every run of other characters turned into one hyphen; a slug over 60 characters is cut to 50 and ends with the FNV-1a hash of the whole slug (the app computes the same key).
-The English phrase row exists so the database holds the wording in every language; the Swahili rows are development text.
+The English phrase row exists so the database holds the wording in every language.
 """
 
 from __future__ import annotations
@@ -43,7 +43,6 @@ def build_copy(t: Tables) -> None:
                 "key": key,
                 "language_code": language,
                 "text": text,
-                "is_development_text": "true",
             },
         )
 

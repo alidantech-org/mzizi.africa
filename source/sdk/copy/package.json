@@ -1,0 +1,13 @@
+{
+  "name": "@mzizi/copy",
+  "private": true,
+  "type": "module",
+  "description": "Typed interface copy declarations: every key, its parameters and its English and Swahili wording. The database copy rows are seeded from these; the apps reference them as typed descriptors.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json"
+  }
+}

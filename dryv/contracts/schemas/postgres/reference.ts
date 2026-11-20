@@ -488,8 +488,6 @@ export const Copy = reference
     /** Set when the wording differs for one country; absent for the language's general wording. */
     countryId: belongsTo(() => Country).maybe(),
     text: dryv.field(sharedProperties.NonEmptyString),
-    /** True for wording written for the interface and not yet reviewed. */
-    isDevelopmentText: dryv.field(sharedProperties.Flag),
   })
   .extends(baseSchemas.Entity)
   .description(

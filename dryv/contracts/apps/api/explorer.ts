@@ -16,6 +16,8 @@ const props = explorer.properties({
   Latitude: dryv.property.number.double({ range: { min: -90, max: 90 } }),
   Longitude: dryv.property.number.double({ range: { min: -180, max: 180 } }),
   Accuracy: dryv.property.number.double({ range: { min: 0, max: 100000 } }),
+  CopyArea: dryv.property.string().length({ min: 1, max: 100 }),
+  CopyHash: dryv.property.string().length({ min: 8, max: 64 }),
   ResolutionStatus: dryv.property.enum({ Matched: "matched", Ambiguous: "ambiguous", Unresolved: "unresolved" }),
 });
 const rows = explorer.schemas({
@@ -49,10 +51,17 @@ const rows = explorer.schemas({
   Count: dryv.schema({ label: dryv.field(p.Name), value: dryv.field(p.NonNegativeInteger) }),
 });
 const documents = explorer.schemas({
+  CopyBundle: dryv.schema({
+    language: dryv.field(props.LanguageCode),
+    /** Content hash of the entries, so a client can cache the bundle for as long as it is unchanged. */
+    hash: dryv.field(props.CopyHash),
+    entries: dryv.field(rows.CopyEntry).array(),
+    /** Declared keys with no wording in this language; never filled from another language. */
+    missing: dryv.field(p.NonEmptyString255).array(),
+  }),
   Bootstrap: dryv.schema({
     countries: dryv.field(rows.CountryChoice).array(),
     languages: dryv.field(rows.LanguageChoice).array(),
-    copy: dryv.field(rows.CopyEntry).array(),
     language: dryv.field(props.LanguageCode),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
@@ -107,6 +116,12 @@ const inputs = explorer.schemas({
     page: dryv.field(p.PositiveInteger).optional(),
     limit: dryv.field(props.Limit).optional(),
   }),
+  CopyInput: dryv.schema({
+    languageCode: dryv.field(props.LanguageCode),
+    countryCode: dryv.field(countryProperties.IsoAlpha2).optional(),
+    /** Key prefix such as `app.shell`; omit for the whole language. */
+    area: dryv.field(props.CopyArea).optional(),
+  }),
   CoordinatesInput: dryv.schema({
     latitude: dryv.field(props.Latitude),
     longitude: dryv.field(props.Longitude),
@@ -119,11 +134,22 @@ export const explorerOperations = feature.operations({
   GetSetupBootstrap: dryv
     .operation()
     .role("detail")
-    .description("Country catalogue, available interface languages and recorded copy. Never chooses a default country.")
+    .description("Country catalogue and the interface languages that have recorded wording. Never chooses a default country.")
     .input(inputs.BootstrapInput)
     .output(documents.Bootstrap)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/explorer/setup").input(input, dryv.queryObject()).output(output),
+    })),
+  GetCopyBundle: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "Every recorded wording for one language, optionally one area and country wording, with a content hash for long-lived caching. Words are never taken from another language.",
+    )
+    .input(inputs.CopyInput)
+    .output(documents.CopyBundle)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/explorer/copy").input(input, dryv.queryObject()).output(output),
     })),
   GetExplorerContext: dryv
     .operation()

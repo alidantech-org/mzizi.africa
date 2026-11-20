@@ -23,7 +23,8 @@
     "react-dom": "19.3.0",
     "read-excel-file": "^9.3.19",
     "sigma": "^4.0.6",
-    "@mzizi/api-client": "workspace:*"
+    "@mzizi/api-client": "workspace:*",
+    "@mzizi/copy": "workspace:*"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4.3.5",
