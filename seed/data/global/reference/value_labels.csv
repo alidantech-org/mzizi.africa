@@ -123,3 +123,30 @@ geo.feature.kind.town,sw,preferred,Mji
 geo.feature.kind.village,sw,preferred,Kijiji
 geo.feature.kind.polling-station,sw,preferred,Kituo cha kupigia kura
 geo.feature.kind.building,sw,preferred,Jengo
+geo.feature.kind.administrative,sw,preferred,Kitengo cha utawala
+geo.feature.kind.airport,sw,preferred,Uwanja wa ndege
+geo.feature.kind.bridge,sw,preferred,Daraja
+geo.feature.kind.built,sw,preferred,Eneo lililojengwa
+geo.feature.kind.cultural,sw,preferred,Kitamaduni
+geo.feature.kind.culture-area,sw,preferred,Eneo la kitamaduni
+geo.feature.kind.dam,sw,preferred,Bwawa
+geo.feature.kind.district,sw,preferred,Wilaya
+geo.feature.kind.heritage-site,sw,preferred,Eneo la urithi
+geo.feature.kind.historical-territory,sw,preferred,Eneo la kihistoria
+geo.feature.kind.infrastructure,sw,preferred,Miundombinu
+geo.feature.kind.island,sw,preferred,Kisiwa
+geo.feature.kind.lake,sw,preferred,Ziwa
+geo.feature.kind.landform,sw,preferred,Umbo la ardhi
+geo.feature.kind.mountain,sw,preferred,Mlima
+geo.feature.kind.natural,sw,preferred,Asilia
+geo.feature.kind.plateau,sw,preferred,Nyanda ya juu
+geo.feature.kind.port,sw,preferred,Bandari
+geo.feature.kind.railway,sw,preferred,Reli
+geo.feature.kind.river,sw,preferred,Mto
+geo.feature.kind.road,sw,preferred,Barabara
+geo.feature.kind.sea,sw,preferred,Bahari
+geo.feature.kind.settlement,sw,preferred,Makazi
+geo.feature.kind.valley,sw,preferred,Bonde
+geo.feature.kind.volcano,sw,preferred,Volkeno
+geo.feature.kind.water-body,sw,preferred,Eneo la maji
+geo.feature.kind.wetland,sw,preferred,Ardhi oevu
