@@ -4,6 +4,8 @@ import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { addressesInputExample } from "@test/modules/explorer/schema/dto/examples/addresses-input.dto.example.ts";
+import { addressesExample } from "@test/modules/explorer/schema/dto/examples/addresses.dto.example.ts";
 import { bootstrapInputExample } from "@test/modules/explorer/schema/dto/examples/bootstrap-input.dto.example.ts";
 import { bootstrapExample } from "@test/modules/explorer/schema/dto/examples/bootstrap.dto.example.ts";
 import { childrenInputExample } from "@test/modules/explorer/schema/dto/examples/children-input.dto.example.ts";
@@ -11,6 +13,8 @@ import { contextExample } from "@test/modules/explorer/schema/dto/examples/conte
 import { coordinatesInputExample } from "@test/modules/explorer/schema/dto/examples/coordinates-input.dto.example.ts";
 import { copyBundleExample } from "@test/modules/explorer/schema/dto/examples/copy-bundle.dto.example.ts";
 import { copyInputExample } from "@test/modules/explorer/schema/dto/examples/copy-input.dto.example.ts";
+import { locationInputExample } from "@test/modules/explorer/schema/dto/examples/location-input.dto.example.ts";
+import { locationExample } from "@test/modules/explorer/schema/dto/examples/location.dto.example.ts";
 import { navigationInputExample } from "@test/modules/explorer/schema/dto/examples/navigation-input.dto.example.ts";
 import { navigationExample } from "@test/modules/explorer/schema/dto/examples/navigation.dto.example.ts";
 import { overviewExample } from "@test/modules/explorer/schema/dto/examples/overview.dto.example.ts";
@@ -49,10 +53,12 @@ class InMemoryDataSourceModule {}
 const service = {
   getCopyBundle: vi.fn(),
   getExplorerContext: vi.fn(),
+  getExplorerLocation: vi.fn(),
   getExplorerNavigation: vi.fn(),
   getExplorerOverview: vi.fn(),
   getSetupBootstrap: vi.fn(),
   listExplorerChildren: vi.fn(),
+  resolveExplorerAddresses: vi.fn(),
   resolveExplorerCoordinates: vi.fn(),
   searchExplorerPlaces: vi.fn(),
 };
@@ -153,6 +159,25 @@ describe("GET /v1/explorer/context (getExplorerContext)", () => {
   });
 });
 
+describe("GET /v1/explorer/location (getExplorerLocation)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(locationInputExample.valid()) },
+      headers: {},
+    };
+    const result = locationExample.valid();
+    service.getExplorerLocation.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/explorer/location", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getExplorerLocation).toHaveBeenCalledTimes(1);
+    expect(service.getExplorerLocation).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/explorer/navigation (getExplorerNavigation)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -226,6 +251,47 @@ describe("GET /v1/explorer/children (listExplorerChildren)", () => {
     expect(service.listExplorerChildren).toHaveBeenCalledTimes(1);
     expect(service.listExplorerChildren).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("POST /v1/explorer/addresses (resolveExplorerAddresses)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: {},
+      headers: {},
+      body: addressesInputExample.valid(),
+    };
+    const result = addressesExample.valid();
+    service.resolveExplorerAddresses.mockResolvedValue(result);
+
+    const response = await send("POST", "/v1/explorer/addresses", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.resolveExplorerAddresses).toHaveBeenCalledTimes(1);
+    expect(service.resolveExplorerAddresses).toHaveBeenCalledWith(
+      expect.objectContaining(sent.body),
+    );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+
+  it("rejects an invalid body without calling the service", async () => {
+    const [violation] = addressesInputExample.violations();
+    if (violation === undefined) return;
+    const sent: Sent = {
+      ...{
+        params: {},
+        query: {},
+        headers: {},
+        body: addressesInputExample.valid(),
+      },
+      body: violation.value,
+    };
+
+    const response = await send("POST", "/v1/explorer/addresses", sent);
+
+    expect(response.status).toBe(400);
+    expect(service.resolveExplorerAddresses).not.toHaveBeenCalled();
   });
 });
 

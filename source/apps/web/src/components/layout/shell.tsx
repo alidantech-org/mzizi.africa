@@ -9,9 +9,14 @@ import { PlaceCatalogueProvider } from "#/lib/places/catalogue";
 import { AppShell } from "#/components/layout/app-shell";
 import { PrefsProvider } from "#/components/preferences/prefs-provider";
 
+/** Saved places and the home place, as addresses, so the backend can name them in the reader's language. */
+const savedAddresses = (init: Awaited<ReturnType<typeof readPrefs>>): string[] => [
+  ...new Set([...(init.home ? [`/${[init.home.country, ...init.home.trail].join("/")}`] : []), ...init.saved.map((s) => s.path)]),
+];
+
 export async function Shell({ children }: { children: ReactNode }) {
   const init = await readPrefs();
-  const [catalogue, bundle] = await Promise.all([loadPlaceCatalogue(init.place?.country), loadCopy(init.place?.country)]);
+  const [catalogue, bundle] = await Promise.all([loadPlaceCatalogue(init.place?.country, savedAddresses(init)), loadCopy(init.place?.country)]);
   return (
     <PrefsProvider init={init}>
       <CopyProvider bundle={bundle}>

@@ -26,7 +26,7 @@ import { SchemeEntity } from "#/modules/reference/schema/entities/scheme.entity.
 import { TemplateEntity } from "#/modules/reference/schema/entities/template.entity.ts";
 import { TopicEntity } from "#/modules/reference/schema/entities/topic.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
-import { AddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
+import { SourceAddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
 import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
 import { CitationsEntity } from "#/modules/source/schema/entities/citations.entity.ts";
@@ -72,7 +72,7 @@ import { StructureStructureService, StructureStructureServiceImpl } from "./stru
       TemplateEntity,
       TopicEntity,
       ValueEntity,
-      AddressesEntity,
+      SourceAddressesEntity,
       ArtifactsEntity,
       CapturesEntity,
       CitationsEntity,

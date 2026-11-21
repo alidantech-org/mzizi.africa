@@ -3,6 +3,8 @@
 import { type ActionInput, requestOptions } from "#sdk/helpers/index.ts";
 import { api } from "#sdk/helpers/api.ts";
 import { routes } from "#sdk/routes.ts";
+import type { ExplorerAddressesInput } from "#sdk/types/explorer/dto/addresses-input.ts";
+import type { ExplorerAddresses } from "#sdk/types/explorer/dto/addresses.ts";
 import type { ExplorerBootstrapInput } from "#sdk/types/explorer/dto/bootstrap-input.ts";
 import type { ExplorerBootstrap } from "#sdk/types/explorer/dto/bootstrap.ts";
 import type { ExplorerChildrenInput } from "#sdk/types/explorer/dto/children-input.ts";
@@ -10,6 +12,8 @@ import type { ExplorerContext } from "#sdk/types/explorer/dto/context.ts";
 import type { ExplorerCoordinatesInput } from "#sdk/types/explorer/dto/coordinates-input.ts";
 import type { ExplorerCopyBundle } from "#sdk/types/explorer/dto/copy-bundle.ts";
 import type { ExplorerCopyInput } from "#sdk/types/explorer/dto/copy-input.ts";
+import type { ExplorerLocationInput } from "#sdk/types/explorer/dto/location-input.ts";
+import type { ExplorerLocation } from "#sdk/types/explorer/dto/location.ts";
 import type { ExplorerNavigationInput } from "#sdk/types/explorer/dto/navigation-input.ts";
 import type { ExplorerNavigation } from "#sdk/types/explorer/dto/navigation.ts";
 import type { ExplorerOverview } from "#sdk/types/explorer/dto/overview.ts";
@@ -32,6 +36,18 @@ export async function explorerGetExplorerContext(input: ExplorerGetExplorerConte
   const options = requestOptions(input.options, input.query, false);
   const path = routes.explorer.getExplorerContext;
   return api.get<ExplorerContext>(path, options);
+}
+/** GET /v1/explorer/location */
+export type ExplorerGetExplorerLocationActionInput = ActionInput<
+  never,
+  ExplorerLocationInput,
+  never
+>;
+
+export async function explorerGetExplorerLocation(input: ExplorerGetExplorerLocationActionInput) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.explorer.getExplorerLocation;
+  return api.get<ExplorerLocation>(path, options);
 }
 /** GET /v1/explorer/navigation */
 export type ExplorerGetExplorerNavigationActionInput = ActionInput<
@@ -78,6 +94,20 @@ export async function explorerListExplorerChildren(input: ExplorerListExplorerCh
   const options = requestOptions(input.options, input.query, false);
   const path = routes.explorer.listExplorerChildren;
   return api.get<ExplorerPlaces>(path, options);
+}
+/** POST /v1/explorer/addresses */
+export type ExplorerResolveExplorerAddressesActionInput = ActionInput<
+  never,
+  never,
+  ExplorerAddressesInput
+>;
+
+export async function explorerResolveExplorerAddresses(
+  input: ExplorerResolveExplorerAddressesActionInput,
+) {
+  const options = requestOptions(input.options, undefined, false);
+  const path = routes.explorer.resolveExplorerAddresses;
+  return api.post<ExplorerAddresses>(path, input.body, options);
 }
 /** POST /v1/explorer/resolve */
 export type ExplorerResolveExplorerCoordinatesActionInput = ActionInput<

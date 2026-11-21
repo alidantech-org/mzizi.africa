@@ -13,8 +13,6 @@ import { build, type ViewId } from "#/lib/navigation/route";
 import { usePlaceCatalogue } from "#/lib/places/catalogue";
 import { addSaved, labelSaved, removeSaved, useSaved } from "#/lib/preferences/saved";
 
-/** A saved place as the server resolved it: its name and the places above it, in the reader's language. */
-export type ResolvedPlace = { name: string; kind: string; parents: string[] };
 const SUBJECTS: ViewId[] = ["leaders", "law", "compare"];
 
 function PlaceFinder({ onPick }: { onPick: (path: string) => void }) {
@@ -69,15 +67,20 @@ function PlaceFinder({ onPick }: { onPick: (path: string) => void }) {
   );
 }
 
-export function SavedPlaces({ manage = false, resolved }: { manage?: boolean; resolved: Record<string, ResolvedPlace | null> }) {
+export function SavedPlaces({ manage = false }: { manage?: boolean }) {
   const t = useCopy();
   const router = useRouter();
   const saved = useSaved();
-  const { navigation, countries } = usePlaceCatalogue();
+  const { navigation, countries, resolved } = usePlaceCatalogue();
   const [label, setLabel] = useState("");
-  // The server resolves names for the places saved when the page was read; a change is read again by the server.
+  // The layout names the places saved when the page was read; a place added since is named by reading the page again, once.
+  const asked = useRef("");
   useEffect(() => {
-    if (saved.some((s) => !(s.path in resolved))) router.refresh();
+    const key = saved.map((s) => s.path).join("|");
+    if (key !== asked.current && saved.some((s) => !(s.path in resolved))) {
+      asked.current = key;
+      router.refresh();
+    }
   }, [saved, resolved, router]);
   const here = countries.find((c) => c.levelDefs.length > 0)?.code; // the country the subject availability is known for
 
@@ -108,7 +111,7 @@ export function SavedPlaces({ manage = false, resolved }: { manage?: boolean; re
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {saved.map((s) => {
             const [country, ...trail] = demoSegments(s.path);
-            const known = resolved[s.path];
+            const known = resolved[s.path] ?? null;
             const name = known?.name ?? t(copy.pages.saved.unresolved);
             const place = { country: country ?? "", trail };
             return (
@@ -122,9 +125,7 @@ export function SavedPlaces({ manage = false, resolved }: { manage?: boolean; re
                     )}
                     <div className="truncate font-display text-xl">{name}</div>
                     {known && (
-                      <div className="truncate text-xs text-muted">
-                        {[known.kind, ...known.parents].filter(Boolean).join(" · ")}
-                      </div>
+                      <div className="truncate text-xs text-muted">{[known.kind, known.parent].filter(Boolean).join(" · ")}</div>
                     )}
                   </div>
                   {manage && (

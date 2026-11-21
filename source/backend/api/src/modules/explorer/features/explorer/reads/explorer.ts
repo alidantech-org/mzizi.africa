@@ -7,6 +7,12 @@ import { createHash } from "node:crypto";
 import { CopyEntryDto } from "#/modules/explorer/schema/dto/copy-entry.dto";
 import { CountDto } from "#/modules/explorer/schema/dto/count.dto";
 import { PlaceDto } from "#/modules/explorer/schema/dto/place.dto";
+import { PlaceGroupDto } from "#/modules/explorer/schema/dto/place-group.dto";
+import { PlacesDto } from "#/modules/explorer/schema/dto/places.dto";
+import { ContextDto } from "#/modules/explorer/schema/dto/context.dto";
+import { AddressPlaceDto } from "#/modules/explorer/schema/dto/address-place.dto";
+import { AddressesDto } from "#/modules/explorer/schema/dto/addresses.dto";
+import { LocationDto } from "#/modules/explorer/schema/dto/location.dto";
 import { LevelDto } from "#/modules/explorer/schema/dto/level.dto";
 import type { NavigationInputDto } from "#/modules/explorer/schema/dto/navigation-input.dto";
 import type { NavigationDto } from "#/modules/explorer/schema/dto/navigation.dto";
@@ -16,8 +22,6 @@ import type { CopyBundleDto } from "#/modules/explorer/schema/dto/copy-bundle.dt
 import type { BootstrapInputDto } from "#/modules/explorer/schema/dto/bootstrap-input.dto";
 import type { BootstrapDto } from "#/modules/explorer/schema/dto/bootstrap.dto";
 import type { PlaceInputDto } from "#/modules/explorer/schema/dto/place-input.dto";
-import type { ContextDto } from "#/modules/explorer/schema/dto/context.dto";
-import type { PlacesDto } from "#/modules/explorer/schema/dto/places.dto";
 import type { SearchInputDto } from "#/modules/explorer/schema/dto/search-input.dto";
 import type { ChildrenInputDto } from "#/modules/explorer/schema/dto/children-input.dto";
 import type { CoordinatesInputDto } from "#/modules/explorer/schema/dto/coordinates-input.dto";
@@ -25,6 +29,9 @@ import { ResolutionStatus } from "#/modules/explorer/schema/enum/resolution-stat
 import type { ResolutionDto } from "#/modules/explorer/schema/dto/resolution.dto";
 import type { OverviewDto } from "#/modules/explorer/schema/dto/overview.dto";
 import { queryRows } from "./parse.ts";
+import { atPath, insideOf, registry, type RegPlace } from "./registry.ts";
+import type { LocationInputDto } from "#/modules/explorer/schema/dto/location-input.dto";
+import type { AddressesInputDto } from "#/modules/explorer/schema/dto/addresses-input.dto";
 import { countriesSql, placeCte, placeColumns } from "./queries.ts";
 
 /** Public origin of the object store, with a trailing slash; empty when none is configured. */
@@ -390,4 +397,104 @@ export async function navigation(db: DataSource, input: NavigationInputDto): Pro
     }),
   );
   return { country: selected, items, gaps: [] };
+}
+
+/* ---- reads answered from the place registry: one set of places per country and language, matched by readable address ---- */
+
+const asPlace = (r: RegPlace): PlaceDto =>
+  Object.assign(new PlaceDto(), {
+    featureId: r.featureId,
+    code: r.code,
+    countryCode: r.countryCode,
+    name: r.name,
+    nameLanguage: r.nameLanguage,
+    kind: r.kind,
+    kindCode: r.kindCode,
+    canonicalPath: r.canonicalPath,
+    depth: r.depth,
+    parentFeatureId: r.parentFeatureId,
+    parentName: r.parentName,
+    citationCount: r.citationCount,
+  });
+
+/** Level kinds of a country in the reader's language, kept with the registry's lifetime. */
+function levelsOf(db: DataSource, countryId: string, lang: string): Promise<LevelDto[]> {
+  return remembered(`levels:${countryId}:${lang}`, () =>
+    queryRows(
+      db,
+      `select min(l.depth)::int as depth,v.code as "kindCode",
+         coalesce((select vl.label from reference.value_labels vl join reference.languages lang on lang.id=vl.language_id
+                    where vl.value_id=v.id and lang.iso6391=$2 and vl.deleted_at is null order by vl.id limit 1), v.label) as label
+       from geography.levels l join reference.values v on v.id=l.feature_kind_id
+      where l.country_id=$1 and l.deleted_at is null group by v.id,v.code,v.label order by min(l.depth),v.code`,
+      [countryId, lang],
+      LevelDto,
+    ),
+  );
+}
+
+const segmentsOf = (path?: string): string[] => (path ?? "").split("/").filter(Boolean).map((s) => decodeURIComponent(s));
+
+export async function location(db: DataSource, input: LocationInputDto): Promise<LocationDto> {
+  const selected = await country(db, input.countryCode);
+  const lang = await language(db, input.languageCode);
+  const [rows, levels] = await Promise.all([registry(db, selected.id, lang), levelsOf(db, selected.id, lang)]);
+  const segments = segmentsOf(input.path);
+  const place = atPath(rows, segments);
+  if (!place) throw new NotFoundException("This place has no current registered path in the selected country.");
+
+  const chain = Array.from({ length: segments.length + 1 }, (_, i) => atPath(rows, segments.slice(0, i))).filter(
+    (r): r is RegPlace => r !== undefined,
+  );
+  const groups = chain.map((above) => {
+    const inside = insideOf(rows, above);
+    return Object.assign(new PlaceGroupDto(), {
+      place: asPlace(above),
+      children: inside.slice(0, 100).map(asPlace),
+      total: inside.length,
+    });
+  });
+
+  const page = input.page ?? 1,
+    limit = input.limit ?? 20;
+  const wanted = (input.find ?? "").trim().toLowerCase();
+  let found: PlacesDto | undefined;
+  if (wanted || input.kindCode) {
+    const hits = rows.filter(
+      (r) => r.depth > 0 && (!input.kindCode || r.kindCode === input.kindCode) && (!wanted || r.name.toLowerCase().includes(wanted)),
+    );
+    const start = pageOffset(page, limit);
+    found = Object.assign(new PlacesDto(), { places: hits.slice(start, start + limit).map(asPlace), total: hits.length, page, limit, gaps: [] });
+  }
+  const context = Object.assign(new ContextDto(), {
+    country: selected,
+    place: asPlace(place),
+    chain: chain.map(asPlace),
+    levels,
+    language: lang,
+    gaps: [],
+  });
+  return Object.assign(new LocationDto(), { context, groups, found, gaps: [] });
+}
+
+export async function addresses(db: DataSource, input: AddressesInputDto): Promise<AddressesDto> {
+  const lang = await language(db, input.languageCode);
+  const byCountry = new Map<string, RegPlace[] | null>();
+  const places = await Promise.all(
+    input.addresses.map(async (address) => {
+      const [code, ...rest] = segmentsOf(address);
+      let rows = code ? byCountry.get(code) : null;
+      if (code && rows === undefined) {
+        try {
+          rows = await registry(db, (await countryRow(db, code)).id, lang);
+        } catch {
+          rows = null;
+        }
+        byCountry.set(code, rows);
+      }
+      const place = rows ? atPath(rows, rest) : undefined;
+      return Object.assign(new AddressPlaceDto(), { address, place: place ? asPlace(place) : null });
+    }),
+  );
+  return Object.assign(new AddressesDto(), { places, gaps: [] });
 }

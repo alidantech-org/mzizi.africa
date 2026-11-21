@@ -25,6 +25,8 @@ export const routes = {
     getCopyBundle: "/v1/explorer/copy",
     /** GET /v1/explorer/context */
     getExplorerContext: "/v1/explorer/context",
+    /** GET /v1/explorer/location */
+    getExplorerLocation: "/v1/explorer/location",
     /** GET /v1/explorer/navigation */
     getExplorerNavigation: "/v1/explorer/navigation",
     /** GET /v1/explorer/overview */
@@ -33,6 +35,8 @@ export const routes = {
     getSetupBootstrap: "/v1/explorer/setup",
     /** GET /v1/explorer/children */
     listExplorerChildren: "/v1/explorer/children",
+    /** POST /v1/explorer/addresses */
+    resolveExplorerAddresses: "/v1/explorer/addresses",
     /** POST /v1/explorer/resolve */
     resolveExplorerCoordinates: "/v1/explorer/resolve",
     /** GET /v1/explorer/search */

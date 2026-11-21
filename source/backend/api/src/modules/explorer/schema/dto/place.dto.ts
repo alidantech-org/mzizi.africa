@@ -56,6 +56,11 @@ export class PlaceDto {
 
   @IsString()
   @MinLength(1)
+  @MaxLength(255)
+  kindCode!: NonEmptyString255;
+
+  @IsString()
+  @MinLength(1)
   @MaxLength(300)
   name!: Name;
 
@@ -71,4 +76,11 @@ export class PlaceDto {
   @IsString()
   @IsUUID()
   parentFeatureId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.parentName !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(300)
+  parentName?: Name | null;
 }

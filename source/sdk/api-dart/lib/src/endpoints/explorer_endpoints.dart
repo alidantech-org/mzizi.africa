@@ -9,6 +9,9 @@ class ExplorerEndpoints {
   /// GET /v1/explorer/context
   String get getExplorerContext => '/v1/explorer/context';
 
+  /// GET /v1/explorer/location
+  String get getExplorerLocation => '/v1/explorer/location';
+
   /// GET /v1/explorer/navigation
   String get getExplorerNavigation => '/v1/explorer/navigation';
 
@@ -20,6 +23,9 @@ class ExplorerEndpoints {
 
   /// GET /v1/explorer/children
   String get listExplorerChildren => '/v1/explorer/children';
+
+  /// POST /v1/explorer/addresses
+  String get resolveExplorerAddresses => '/v1/explorer/addresses';
 
   /// POST /v1/explorer/resolve
   String get resolveExplorerCoordinates => '/v1/explorer/resolve';

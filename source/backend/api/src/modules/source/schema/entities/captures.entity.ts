@@ -7,7 +7,7 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
-import { AddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
+import { SourceAddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
 import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { DiscoveriesEntity } from "#/modules/source/schema/entities/discoveries.entity.ts";
 import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
@@ -33,9 +33,9 @@ export class CapturesEntity {
   @Column({ name: "address_id", type: "uuid", nullable: true })
   addressId?: Id | null;
 
-  @ManyToOne(() => AddressesEntity, { onDelete: "RESTRICT" })
+  @ManyToOne(() => SourceAddressesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "address_id" })
-  address?: Relation<AddressesEntity>;
+  address?: Relation<SourceAddressesEntity>;
 
   @Column({ name: "artifact_id", type: "uuid", nullable: true })
   artifactId?: Id | null;

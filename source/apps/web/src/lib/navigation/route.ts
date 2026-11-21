@@ -150,11 +150,6 @@ export function withParams(ctx: Ctx, patch: Record<string, string | null>) {
   return build(ctx, { params: next });
 }
 
-export const prettify = (slug: string) =>
-  slug
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
 
 /** The context used for sidebar links when the page is not an explorer page (home, me, help). */
 export const DEFAULT_PLACE: Place = { country: "ke", trail: [] };

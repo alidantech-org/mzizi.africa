@@ -14,9 +14,11 @@ ExplorerPlace _$ExplorerPlaceFromJson(Map<String, dynamic> json) => ExplorerPlac
   depth: (json['depth'] as num).toInt(),
   featureId: json['featureId'] as String,
   kind: json['kind'] as String,
+  kindCode: json['kindCode'] as String,
   name: json['name'] as String,
   nameLanguage: json['nameLanguage'] as String?,
   parentFeatureId: json['parentFeatureId'] as String?,
+  parentName: json['parentName'] as String?,
 );
 
 Map<String, dynamic> _$ExplorerPlaceToJson(ExplorerPlace instance) => <String, dynamic>{
@@ -27,7 +29,9 @@ Map<String, dynamic> _$ExplorerPlaceToJson(ExplorerPlace instance) => <String, d
   'depth': instance.depth,
   'featureId': instance.featureId,
   'kind': instance.kind,
+  'kindCode': instance.kindCode,
   'name': instance.name,
   'nameLanguage': ?instance.nameLanguage,
   'parentFeatureId': ?instance.parentFeatureId,
+  'parentName': ?instance.parentName,
 };

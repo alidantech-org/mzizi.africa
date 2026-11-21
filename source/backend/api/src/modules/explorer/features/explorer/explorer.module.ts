@@ -2,10 +2,12 @@ import { Module, type Type } from "@nestjs/common";
 import { ExplorerExplorerRepository } from "#/modules/explorer/features/explorer/repositories/explorer.repository.ts";
 import { GetCopyBundleUseCase } from "#/modules/explorer/features/explorer/use-cases/get-copy-bundle.usecase.ts";
 import { GetExplorerContextUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-context.usecase.ts";
+import { GetExplorerLocationUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-location.usecase.ts";
 import { GetExplorerNavigationUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-navigation.usecase.ts";
 import { GetExplorerOverviewUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-overview.usecase.ts";
 import { GetSetupBootstrapUseCase } from "#/modules/explorer/features/explorer/use-cases/get-setup-bootstrap.usecase.ts";
 import { ListExplorerChildrenUseCase } from "#/modules/explorer/features/explorer/use-cases/list-explorer-children.usecase.ts";
+import { ResolveExplorerAddressesUseCase } from "#/modules/explorer/features/explorer/use-cases/resolve-explorer-addresses.usecase.ts";
 import { ResolveExplorerCoordinatesUseCase } from "#/modules/explorer/features/explorer/use-cases/resolve-explorer-coordinates.usecase.ts";
 import { SearchExplorerPlacesUseCase } from "#/modules/explorer/features/explorer/use-cases/search-explorer-places.usecase.ts";
 
@@ -21,10 +23,12 @@ import { ExplorerExplorerService, ExplorerExplorerServiceImpl } from "./explorer
     },
     GetCopyBundleUseCase,
     GetExplorerContextUseCase,
+    GetExplorerLocationUseCase,
     GetExplorerNavigationUseCase,
     GetExplorerOverviewUseCase,
     GetSetupBootstrapUseCase,
     ListExplorerChildrenUseCase,
+    ResolveExplorerAddressesUseCase,
     ResolveExplorerCoordinatesUseCase,
     SearchExplorerPlacesUseCase,
     ExplorerExplorerRepository,

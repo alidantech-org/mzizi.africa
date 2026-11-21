@@ -1,4 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post, Query } from "@nestjs/common";
+import { AddressesInputDto } from "#/modules/explorer/schema/dto/addresses-input.dto.ts";
+import { AddressesDto } from "#/modules/explorer/schema/dto/addresses.dto.ts";
 import { BootstrapInputDto } from "#/modules/explorer/schema/dto/bootstrap-input.dto.ts";
 import { BootstrapDto } from "#/modules/explorer/schema/dto/bootstrap.dto.ts";
 import { ChildrenInputDto } from "#/modules/explorer/schema/dto/children-input.dto.ts";
@@ -6,6 +8,8 @@ import { ContextDto } from "#/modules/explorer/schema/dto/context.dto.ts";
 import { CoordinatesInputDto } from "#/modules/explorer/schema/dto/coordinates-input.dto.ts";
 import { CopyBundleDto } from "#/modules/explorer/schema/dto/copy-bundle.dto.ts";
 import { CopyInputDto } from "#/modules/explorer/schema/dto/copy-input.dto.ts";
+import { LocationInputDto } from "#/modules/explorer/schema/dto/location-input.dto.ts";
+import { LocationDto } from "#/modules/explorer/schema/dto/location.dto.ts";
 import { NavigationInputDto } from "#/modules/explorer/schema/dto/navigation-input.dto.ts";
 import { NavigationDto } from "#/modules/explorer/schema/dto/navigation.dto.ts";
 import { OverviewDto } from "#/modules/explorer/schema/dto/overview.dto.ts";
@@ -31,6 +35,12 @@ export class ExplorerExplorerController {
     return this.service.getExplorerContext(input);
   }
 
+  @Get("/v1/explorer/location")
+  @HttpCode(200)
+  getExplorerLocation(@Query() input: LocationInputDto): Promise<LocationDto> {
+    return this.service.getExplorerLocation(input);
+  }
+
   @Get("/v1/explorer/navigation")
   @HttpCode(200)
   getExplorerNavigation(@Query() input: NavigationInputDto): Promise<NavigationDto> {
@@ -53,6 +63,12 @@ export class ExplorerExplorerController {
   @HttpCode(200)
   listExplorerChildren(@Query() input: ChildrenInputDto): Promise<PlacesDto> {
     return this.service.listExplorerChildren(input);
+  }
+
+  @Post("/v1/explorer/addresses")
+  @HttpCode(200)
+  resolveExplorerAddresses(@Body() input: AddressesInputDto): Promise<AddressesDto> {
+    return this.service.resolveExplorerAddresses(input);
   }
 
   @Post("/v1/explorer/resolve")

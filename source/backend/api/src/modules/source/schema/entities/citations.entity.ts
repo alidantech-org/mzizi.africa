@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
-import { AddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
+import { SourceAddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
 import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
@@ -42,9 +42,9 @@ export class CitationsEntity {
   @Column({ name: "address_id", type: "uuid", nullable: true })
   addressId?: Id | null;
 
-  @ManyToOne(() => AddressesEntity, { onDelete: "RESTRICT" })
+  @ManyToOne(() => SourceAddressesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "address_id" })
-  address?: Relation<AddressesEntity>;
+  address?: Relation<SourceAddressesEntity>;
 
   @Column({ name: "artifact_id", type: "uuid", nullable: true })
   artifactId?: Id | null;

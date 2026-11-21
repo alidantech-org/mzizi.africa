@@ -15,7 +15,9 @@ export interface Place {
   depth: NonNegativeInteger;
   featureId: Id;
   kind: Name;
+  kindCode: NonEmptyString255;
   name: Name;
   nameLanguage?: LanguageCode | null;
   parentFeatureId?: Id | null;
+  parentName?: Name | null;
 }

@@ -1,13 +1,16 @@
 import "server-only";
-/** Loads the place catalogue for the URL's country from the generated API client. No frontend constants decide what exists. */
+/**
+ * Loads the place catalogue for the page from the generated API client: the country list, which subjects have data, and
+ * one location read for the address in the URL. The address goes to the backend as the readable slugs of the URL; the
+ * backend resolves it and returns names, parents and kinds, so nothing here derives a name from a slug.
+ */
 import { connection } from "next/server";
 import { headers } from "next/headers";
 import {
-  explorerGetExplorerContext,
+  explorerGetExplorerLocation,
   explorerGetExplorerNavigation,
   explorerGetSetupBootstrap,
-  explorerListExplorerChildren,
-  explorerSearchExplorerPlaces,
+  explorerResolveExplorerAddresses,
 } from "@mzizi/api-client/actions/explorer";
 import type { ExplorerPlace } from "@mzizi/api-client";
 import { effectiveLanguage } from "#/lib/server/copy";
@@ -15,29 +18,22 @@ import type { CatalogueEntry, PlaceCatalogue } from "#/lib/places/catalogue";
 
 /** The country list and navigation availability are the same for every reader, so they are cached for an hour. */
 const sharedCache = () => ({ caching: { revalidate: 3600, tags: ["countries"] } });
+/** Places are public and change only when data is loaded; each answer is kept for ten minutes, keyed by its query. */
+const placeCache = () => ({ caching: { revalidate: 600, tags: ["places"] } });
 
 /** Places per page in the location list and search. */
 const LIST_LIMIT = 25;
 
-const slugName = (slug: string) =>
-  decodeURIComponent(slug)
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-/** Where a place sits, from its registered address: the places above it, nearest first, without the country. */
-const parentsOf = (path: string, countryName: string) => {
-  const above = path.split("/").filter(Boolean).slice(1, -1).reverse().map(slugName);
-  return above.length ? above.join(", ") : countryName;
-};
-
-const entry = (p: ExplorerPlace, where: string): CatalogueEntry => ({
+const entry = (p: ExplorerPlace, fallbackWhere: string): CatalogueEntry => ({
   kind: p.kind,
+  kindCode: p.kindCode,
   name: p.name,
-  where,
+  where: p.parentName ?? fallbackWhere,
   href: p.canonicalPath,
 });
 
-export async function loadPlaceCatalogue(fallbackCountry?: string): Promise<PlaceCatalogue> {
+/** `addresses` are saved or home places as they appear in URLs; their names come back from the backend in the reader's language. */
+export async function loadPlaceCatalogue(fallbackCountry?: string, addresses: readonly string[] = []): Promise<PlaceCatalogue> {
   await connection(); // read per request: the API bridge tags requests with random ids, which cannot be prerendered
   const languageCode = await effectiveLanguage();
   const h = await headers();
@@ -45,98 +41,111 @@ export async function loadPlaceCatalogue(fallbackCountry?: string): Promise<Plac
   const find = (h.get("x-mzizi-find") ?? "").trim();
   const kind = (h.get("x-mzizi-lvl") ?? "").trim();
   const pageNo = Math.max(1, Number.parseInt(h.get("x-mzizi-pg") ?? "1", 10) || 1);
-  const [pathCode, ...trail] = path.split("/").filter(Boolean);
-  const code = pathCode;
+  const [code, ...trail] = path.split("/").filter(Boolean);
   const gaps: string[] = [];
+  const empty = (extra: string): PlaceCatalogue => ({
+    searchable: false,
+    navigation: {},
+    languages: [],
+    countries: [],
+    entries: [],
+    resolved: {},
+    found: null,
+    gaps: [extra],
+  });
 
   const setup = await explorerGetSetupBootstrap({ query: { languageCode }, options: sharedCache() });
   const boot = setup.body;
-  if (!setup.success || !boot) return { searchable: false, navigation: {}, languages: [], countries: [], entries: [], found: null, gaps: ["The country catalogue could not be loaded."] };
+  if (!setup.success || !boot) return empty("The country catalogue could not be loaded.");
 
   const languages = boot.languages.map((l) => ({ code: l.code, name: l.name, nativeName: l.nativeName ?? null }));
-  const served = boot.countries.filter((c) => c.served);
-  const countries = boot.countries.map((c) => ({ code: c.code.toLowerCase(), iso: c.code, name: c.name, levels: [] as string[], levelDefs: [] as { code: string; label: string }[], served: c.served, flagUrl: c.flagUrl ?? null, flagColors: c.flagColors }));
-  const entries: CatalogueEntry[] = boot.countries.map((c) => ({
-    kind: "Country",
+  const countries = boot.countries.map((c) => ({
+    code: c.code.toLowerCase(),
+    iso: c.code,
     name: c.name,
-    where: "Country",
+    levels: [] as string[],
+    levelDefs: [] as { code: string; label: string }[],
+    served: c.served,
+    flagUrl: c.flagUrl ?? null,
+    flagColors: c.flagColors,
+  }));
+  const entries: CatalogueEntry[] = boot.countries.map((c) => ({
+    kind: "",
+    kindCode: "ref.val.geo.feature.kind.country",
+    name: c.name,
+    where: "",
     href: `/${c.code.toLowerCase()}`,
   }));
 
+  const served = boot.countries.filter((c) => c.served);
   const current = served.find((c) => c.code.toLowerCase() === code?.toLowerCase());
   const searchCountry = current ?? served.find((c) => c.code.toLowerCase() === fallbackCountry?.toLowerCase());
   const navigation: Record<string, boolean> = {};
-  if (searchCountry) {
-    const nav = await explorerGetExplorerNavigation({ query: { countryCode: searchCountry.code }, options: sharedCache() });
+  const resolved: PlaceCatalogue["resolved"] = {};
+  let found: PlaceCatalogue["found"] = null;
+
+  // These reads are independent, so they run together.
+  const [nav, loc, names] = await Promise.all([
+    searchCountry
+      ? explorerGetExplorerNavigation({ query: { countryCode: searchCountry.code }, options: sharedCache() })
+      : Promise.resolve(null),
+    searchCountry
+      ? explorerGetExplorerLocation({
+          query: {
+            countryCode: searchCountry.code,
+            // The readable address exactly as in the URL; the backend resolves it.
+            path: current && trail.length ? trail.join("/") : undefined,
+            languageCode,
+            find: find.length >= 2 ? find : undefined,
+            kindCode: kind || undefined,
+            page: pageNo,
+            limit: LIST_LIMIT,
+          },
+          options: placeCache(),
+        })
+      : Promise.resolve(null),
+    addresses.length
+      ? explorerResolveExplorerAddresses({ body: { addresses: [...addresses], languageCode }, options: placeCache() })
+      : Promise.resolve(null),
+  ]);
+
+  if (nav) {
     if (nav.success && nav.body) for (const item of nav.body.items) navigation[item.view] = item.available;
     else gaps.push("Which subjects have data could not be loaded.");
   }
-  const nameById = new Map<string, string>();
-  const search = async (): Promise<PlaceCatalogue["found"]> => {
-    if ((find.length < 2 && !kind) || !searchCountry) return null;
-    const res = await explorerSearchExplorerPlaces({
-      query: {
-        countryCode: searchCountry.code,
-        query: find.length >= 2 ? find : undefined,
-        kindCode: kind || undefined,
-        page: pageNo,
-        limit: LIST_LIMIT,
-        languageCode,
-      },
-    });
-    if (!res.success || !res.body) {
-      gaps.push("Search could not be completed.");
-      return null;
-    }
-    return {
-      query: find.length >= 2 ? find : "",
-      kind: kind || null,
-      page: res.body.page,
-      limit: res.body.limit,
-      total: res.body.total,
-      entries: res.body.places.map((p) => entry(p, (p.parentFeatureId && nameById.get(p.parentFeatureId)) || parentsOf(p.canonicalPath, searchCountry.name))),
-    };
-  };
-  if (!current) return { searchable: Boolean(searchCountry), navigation, languages, countries, entries, found: await search(), gaps: [...boot.gaps, ...gaps] };
+  if (names?.success && names.body)
+    for (const a of names.body.places)
+      if (a.place) resolved[a.address] = { name: a.place.name, kind: a.place.kind, parent: a.place.parentName ?? null };
 
-  const ctxRes = await explorerGetExplorerContext({
-    query: { countryCode: current.code, path: trail.join("/") || undefined, languageCode },
-  });
-  const ctx = ctxRes.body;
-  if (!ctxRes.success || !ctx) {
-    gaps.push(`${trail.join("/") || current.name} is not a registered place of ${current.name}.`);
-    return { searchable: Boolean(searchCountry), navigation, languages, countries, entries, found: await search(), gaps: [...boot.gaps, ...gaps] };
+  if (searchCountry && loc) {
+    const body = loc.body;
+    if (!loc.success || !body) {
+      gaps.push(`${trail.join("/") || searchCountry.name} is not a registered place of ${searchCountry.name}.`);
+    } else {
+      const own = countries.find((c) => c.iso === searchCountry.code)!;
+      own.levelDefs = body.context.levels.filter((l) => l.depth > 0).map((l) => ({ code: l.kindCode, label: l.label }));
+      own.levels = own.levelDefs.map((l) => l.label);
+      const seen = new Set<string>();
+      for (const group of body.groups) {
+        for (const p of group.children) {
+          if (seen.has(p.featureId)) continue;
+          seen.add(p.featureId);
+          entries.push(entry(p, group.place.name));
+        }
+        if (group.total > group.children.length)
+          gaps.push(`Only the first ${group.children.length} of ${group.total} places inside ${group.place.name} are loaded.`);
+      }
+      for (const p of body.context.chain) resolved[p.canonicalPath] = { name: p.name, kind: p.kind, parent: p.parentName ?? null };
+      if (body.found)
+        found = {
+          query: find.length >= 2 ? find : "",
+          kind: kind || null,
+          page: body.found.page,
+          limit: body.found.limit,
+          total: body.found.total,
+          entries: body.found.places.map((p) => entry(p, searchCountry.name)),
+        };
+    }
   }
-  const own = countries.find((c) => c.iso === current.code)!;
-  own.levelDefs = ctx.levels.filter((l) => l.depth > 0).map((l) => ({ code: l.kindCode, label: l.label }));
-  own.levels = own.levelDefs.map((l) => l.label);
-
-  // Children of the country root, of every ancestor and of the current place, so the list can drill down from here.
-  // These reads and the search are independent, so they run together.
-  const parents = [...ctx.chain, ...(ctx.chain.some((p) => p.featureId === ctx.place.featureId) ? [] : [ctx.place])];
-  const seen = new Set<string>();
-  for (const p of parents) nameById.set(p.featureId, p.name);
-  const [foundList, ...childLists] = await Promise.all([
-    search(),
-    ...parents.map((parent) =>
-      explorerListExplorerChildren({ query: { countryCode: current.code, featureId: parent.featureId, limit: 100, languageCode } }),
-    ),
-  ]);
-  parents.forEach((parent, i) => {
-    const res = childLists[i]!;
-    const body = res.body;
-    if (!res.success || !body) {
-      gaps.push(`Places inside ${parent.name} could not be loaded.`);
-      return;
-    }
-    const where = parent.depth === 0 ? current.name : parent.name;
-    for (const p of body.places) {
-      if (seen.has(p.featureId)) continue;
-      seen.add(p.featureId);
-      nameById.set(p.featureId, p.name);
-      entries.push(entry(p, where));
-    }
-    if (body.total > body.places.length) gaps.push(`Only the first ${body.places.length} of ${body.total} places inside ${parent.name} are loaded.`);
-  });
-  return { searchable: Boolean(searchCountry), navigation, languages, countries, entries, found: foundList, gaps: [...boot.gaps, ...gaps] };
+  return { searchable: Boolean(searchCountry), navigation, languages, countries, entries, resolved, found, gaps: [...boot.gaps, ...gaps] };
 }

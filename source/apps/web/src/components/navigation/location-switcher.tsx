@@ -41,7 +41,6 @@ import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { getVoice, listen, speak } from "#/lib/accessibility/speech";
 import { demoSegments } from "#/lib/navigation/base";
-import { prettify } from "#/lib/navigation/route";
 import { copy } from "@mzizi/copy";
 import { useCopy } from "#/lib/copy/copy";
 import { usePlaceCatalogue } from "#/lib/places/catalogue";
@@ -96,7 +95,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
   const [page, setPage] = useState(0);
   const [active, setActive] = useState(0);
   const [listening, setListening] = useState(false);
-  const { countries: COUNTRIES, entries, found } = usePlaceCatalogue();
+  const { countries: COUNTRIES, entries, found, resolved } = usePlaceCatalogue();
   const router = useRouter();
   const path = usePathname();
   const language = useLanguage();
@@ -234,7 +233,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
   }, [chipFit, chipKey, open]);
 
   const trailPaths = ctx.trail.map((_, i) => `/${[ctx.country, ...ctx.trail.slice(0, i + 1)].join("/")}`);
-  const label = (p: string) => names.get(p) ?? prettify(p.split("/").pop() ?? "");
+  const label = (p: string) => names.get(p) ?? resolved[p]?.name ?? decodeURIComponent(p.split("/").pop() ?? "");
   const here = ctx.trail.length
     ? label(trailPaths.at(-1)!)
     : (COUNTRIES.find((c) => c.code === ctx.country)?.name ?? ctx.country);

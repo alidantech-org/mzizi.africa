@@ -53,6 +53,7 @@ export const placeCte = `with recursive routes as (
   left join lateral (select l.label from reference.value_labels l join reference.languages lang on lang.id=l.language_id
     where l.value_id=k.id and lang.iso6391=$2 and l.deleted_at is null order by l.id limit 1) vl on true
 )`;
-export const placeColumns = `p.feature_id as "featureId",p.code,p.country_code as "countryCode",p.name,p.language_code as "nameLanguage",p.kind,
+export const placeColumns = `p.feature_id as "featureId",p.code,p.country_code as "countryCode",p.name,p.language_code as "nameLanguage",p.kind,p.kind_code as "kindCode",
+  (select pp.name from places pp where pp.feature_id=p.parent_feature_id order by cardinality(pp.segments) limit 1) as "parentName",
   p.path as "canonicalPath",cardinality(p.segments)::int as depth,p.parent_feature_id as "parentFeatureId",
   (select count(*)::int from source.citations c where c.subject_table='geography.features' and c.subject_id=p.feature_id and c.deleted_at is null) as "citationCount"`;

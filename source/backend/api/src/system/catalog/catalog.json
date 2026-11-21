@@ -112,6 +112,17 @@
       "summary": "Resolve an explicit country and registered place path or identity; incompatible identities are rejected."
     },
     {
+      "name": "GetExplorerLocation",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/location",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Location",
+      "summary": "Everything the location UI shows for one place, resolved on the server from the readable address: the place, its chain, every level kind, the places inside the country root, each ancestor and the place, and one page of a search or level list. Clients send slugs, never identities."
+    },
+    {
       "name": "GetExplorerNavigation",
       "group": "explorer",
       "feature": "explorer",
@@ -154,6 +165,17 @@
       "inputs": ["input"],
       "output": "Places",
       "summary": "Direct children in the recorded routing hierarchy of one explicit country."
+    },
+    {
+      "name": "ResolveExplorerAddresses",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "POST",
+      "path": "/v1/explorer/addresses",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Addresses",
+      "summary": "Names and places above them for a list of addresses (saved places), in one language. A body keeps the list out of the address."
     },
     {
       "name": "ResolveExplorerCoordinates",

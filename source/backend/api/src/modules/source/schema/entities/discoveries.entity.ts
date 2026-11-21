@@ -7,7 +7,7 @@ import {
   PrimaryColumn,
   type Relation,
 } from "typeorm";
-import { AddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
+import { SourceAddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
 import { SourcesEntity } from "#/modules/source/schema/entities/sources.entity.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -30,9 +30,9 @@ export class DiscoveriesEntity {
   @Column({ name: "address_id", type: "uuid", nullable: true })
   addressId?: Id | null;
 
-  @ManyToOne(() => AddressesEntity, { onDelete: "RESTRICT" })
+  @ManyToOne(() => SourceAddressesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "address_id" })
-  address?: Relation<AddressesEntity>;
+  address?: Relation<SourceAddressesEntity>;
 
   @Column({
     name: "anchor_text",
@@ -57,9 +57,9 @@ export class DiscoveriesEntity {
   @Column({ name: "found_on_address_id", type: "uuid", nullable: true })
   foundOnAddressId?: Id | null;
 
-  @ManyToOne(() => AddressesEntity, { onDelete: "RESTRICT" })
+  @ManyToOne(() => SourceAddressesEntity, { onDelete: "RESTRICT" })
   @JoinColumn({ name: "found_on_address_id" })
-  foundOnAddress?: Relation<AddressesEntity>;
+  foundOnAddress?: Relation<SourceAddressesEntity>;
 
   @Column({ name: "observed_url", type: "varchar", length: 2048 })
   observedUrl!: Url;

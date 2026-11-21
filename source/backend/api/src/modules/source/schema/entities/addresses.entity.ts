@@ -27,7 +27,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
   where: '"query" IS NULL',
 })
 @Index(["domainId"])
-export class AddressesEntity {
+export class SourceAddressesEntity {
   @PrimaryColumn({ name: "id", type: "uuid" })
   id!: Id;
 

@@ -50,6 +50,12 @@ export const placeExample: ContractExample = contractExample({
       spec: { kind: "string", minLength: 1, maxLength: 300 },
     },
     {
+      name: "kindCode",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", minLength: 1, maxLength: 255 },
+    },
+    {
       name: "name",
       optional: false,
       nullable: false,
@@ -66,6 +72,12 @@ export const placeExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "parentName",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 300 },
     },
   ],
   invariants: [],

@@ -35,7 +35,7 @@ export function SavedMenu() {
   };
 
   const nameOf = (path: string) => names.nameOf(placeFromHref(path));
-  const where = (path: string) => names.parentsOf(placeFromHref(path)).join(" › ");
+  const where = (path: string) => names.parentOf(placeFromHref(path)) ?? "";
   const shown = saved.slice(0, SHOWN);
 
   const panel = open && (

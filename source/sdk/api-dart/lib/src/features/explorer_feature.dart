@@ -1,5 +1,7 @@
 import 'package:flutter_api_bridge/flutter_api_bridge.dart';
 import 'package:mzizi_api/src/endpoints/explorer_endpoints.dart';
+import 'package:mzizi_api/src/models/explorer/addresses.dart';
+import 'package:mzizi_api/src/models/explorer/addresses_input.dart';
 import 'package:mzizi_api/src/models/explorer/bootstrap.dart';
 import 'package:mzizi_api/src/models/explorer/bootstrap_input.dart';
 import 'package:mzizi_api/src/models/explorer/children_input.dart';
@@ -7,6 +9,8 @@ import 'package:mzizi_api/src/models/explorer/context.dart';
 import 'package:mzizi_api/src/models/explorer/coordinates_input.dart';
 import 'package:mzizi_api/src/models/explorer/copy_bundle.dart';
 import 'package:mzizi_api/src/models/explorer/copy_input.dart';
+import 'package:mzizi_api/src/models/explorer/location.dart';
+import 'package:mzizi_api/src/models/explorer/location_input.dart';
 import 'package:mzizi_api/src/models/explorer/navigation.dart';
 import 'package:mzizi_api/src/models/explorer/navigation_input.dart';
 import 'package:mzizi_api/src/models/explorer/overview.dart';
@@ -48,6 +52,20 @@ class ExplorerFeature {
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'explorer.getExplorerContext'),
         query: input?.toJson(),
         fromJson: (json) => ExplorerContext.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Everything the location UI shows for one place, resolved on the server from the readable address: the place, its chain, every level kind, the places inside the country root, each ancestor and the place, and one page of a search or level list. Clients send slugs, never identities.
+  ///
+  /// GET /v1/explorer/location
+  Future<ApiResult<ExplorerLocation>> getExplorerLocation({ExplorerLocationInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<ExplorerLocation>(
+        endpoint: _routes.getExplorerLocation,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'explorer.getExplorerLocation'),
+        query: input?.toJson(),
+        fromJson: (json) => ExplorerLocation.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }
@@ -104,6 +122,20 @@ class ExplorerFeature {
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'explorer.listExplorerChildren'),
         query: input?.toJson(),
         fromJson: (json) => ExplorerPlaces.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Names and places above them for a list of addresses (saved places), in one language. A body keeps the list out of the address.
+  ///
+  /// POST /v1/explorer/addresses
+  Future<ApiResult<ExplorerAddresses>> resolveExplorerAddresses({required ExplorerAddressesInput input, ApiRequestOptions? options}) {
+    return _connection.execute(
+      PostRequest<ExplorerAddresses>(
+        endpoint: _routes.resolveExplorerAddresses,
+        options: (options ?? const ApiRequestOptions()).copyWith(operationId: 'explorer.resolveExplorerAddresses'),
+        body: input.toJson(),
+        fromJson: (json) => ExplorerAddresses.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }

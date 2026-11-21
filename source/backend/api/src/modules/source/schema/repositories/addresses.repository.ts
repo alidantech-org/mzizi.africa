@@ -4,7 +4,7 @@ import { IsNull, type Repository } from "typeorm";
 import { EntityRepository, type IUpdatableRepository } from "#/database/base/entity-repository.ts";
 import { BaseQueryDto } from "#/database/base/base-query.dto.ts";
 import type { IFindAllResponse } from "#/database/base/query.types.ts";
-import { AddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
+import { SourceAddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
 import * as Addresses from "#/modules/source/schema/types/addresses/index.ts";
 
 /**
@@ -15,17 +15,17 @@ import * as Addresses from "#/modules/source/schema/types/addresses/index.ts";
 @Injectable()
 export class AddressesRepository
   extends EntityRepository<
-    AddressesEntity,
+    SourceAddressesEntity,
     Addresses.Types.AddressesSortableField,
     Addresses.Types.AddressesEditableField,
     Addresses.Types.AddressesSelectableField,
     Addresses.Types.IAddressesCreatable
   >
-  implements IUpdatableRepository<AddressesEntity, Addresses.Types.IAddressesUpdatable>
+  implements IUpdatableRepository<SourceAddressesEntity, Addresses.Types.IAddressesUpdatable>
 {
   constructor(
-    @InjectRepository(AddressesEntity)
-    repository: Repository<AddressesEntity>,
+    @InjectRepository(SourceAddressesEntity)
+    repository: Repository<SourceAddressesEntity>,
   ) {
     super(repository, Addresses.Config.ADDRESSES_QUERY_OPTIONS);
   }
@@ -34,37 +34,39 @@ export class AddressesRepository
   async updateEditable(
     id: string,
     data: Addresses.Types.IAddressesUpdatable,
-  ): Promise<AddressesEntity | null> {
+  ): Promise<SourceAddressesEntity | null> {
     const stamped = await this.stampUpdate(id, data);
     return stamped === null ? null : await this.update(id, stamped);
   }
 
   /** Find addresses by domain id, paged by the shared query. */
   async findByDomain(
-    query: BaseQueryDto<AddressesEntity>,
-    domainId: NonNullable<AddressesEntity["domainId"]>,
-  ): Promise<IFindAllResponse<AddressesEntity>> {
+    query: BaseQueryDto<SourceAddressesEntity>,
+    domainId: NonNullable<SourceAddressesEntity["domainId"]>,
+  ): Promise<IFindAllResponse<SourceAddressesEntity>> {
     return await this.findByQuery(query, { domainId, deletedAt: IsNull() });
   }
 
   /** Find addresses by kind, paged by the shared query. */
   async findByKind(
-    query: BaseQueryDto<AddressesEntity>,
-    kind: NonNullable<AddressesEntity["kind"]>,
-  ): Promise<IFindAllResponse<AddressesEntity>> {
+    query: BaseQueryDto<SourceAddressesEntity>,
+    kind: NonNullable<SourceAddressesEntity["kind"]>,
+  ): Promise<IFindAllResponse<SourceAddressesEntity>> {
     return await this.findByQuery(query, { kind, deletedAt: IsNull() });
   }
 
   /** Find addresses by method, paged by the shared query. */
   async findByMethod(
-    query: BaseQueryDto<AddressesEntity>,
-    method: NonNullable<AddressesEntity["method"]>,
-  ): Promise<IFindAllResponse<AddressesEntity>> {
+    query: BaseQueryDto<SourceAddressesEntity>,
+    method: NonNullable<SourceAddressesEntity["method"]>,
+  ): Promise<IFindAllResponse<SourceAddressesEntity>> {
     return await this.findByQuery(query, { method, deletedAt: IsNull() });
   }
 
   /** Find the addresses with this code (unique). */
-  async findByCode(code: NonNullable<AddressesEntity["code"]>): Promise<AddressesEntity | null> {
+  async findByCode(
+    code: NonNullable<SourceAddressesEntity["code"]>,
+  ): Promise<SourceAddressesEntity | null> {
     return await this.findOne({ code, deletedAt: IsNull() });
   }
 }

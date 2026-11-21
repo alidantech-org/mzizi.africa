@@ -117,7 +117,7 @@ import { UnitEntity } from "#/modules/reference/schema/entities/unit.entity.ts";
 import { ValueLabelEntity } from "#/modules/reference/schema/entities/value-label.entity.ts";
 import { ValueRelationEntity } from "#/modules/reference/schema/entities/value-relation.entity.ts";
 import { ValueEntity } from "#/modules/reference/schema/entities/value.entity.ts";
-import { AddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
+import { SourceAddressesEntity } from "#/modules/source/schema/entities/addresses.entity.ts";
 import { ArtifactsEntity } from "#/modules/source/schema/entities/artifacts.entity.ts";
 import { AttributionsEntity } from "#/modules/source/schema/entities/attributions.entity.ts";
 import { CapturesEntity } from "#/modules/source/schema/entities/captures.entity.ts";
@@ -254,7 +254,7 @@ const entities = [
   ValueEntity,
   ValueLabelEntity,
   ValueRelationEntity,
-  AddressesEntity,
+  SourceAddressesEntity,
   ArtifactsEntity,
   AttributionsEntity,
   CapturesEntity,
@@ -7459,7 +7459,7 @@ describe("entity schema matches the contract", () => {
   });
 
   describe("Addresses", () => {
-    const metadata = () => dataSource.getMetadata(AddressesEntity);
+    const metadata = () => dataSource.getMetadata(SourceAddressesEntity);
 
     it("maps its contract table and columns", () => {
       expect(metadata().tableName).toBe("addresses");
