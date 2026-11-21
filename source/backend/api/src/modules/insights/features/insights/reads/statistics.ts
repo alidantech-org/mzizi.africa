@@ -131,14 +131,13 @@ interface DimRow { dim: string; label: string; value: number; period: string }
 
 async function breakdownsOf(db: DataSource, featureId: string) {
   const rows: DimRow[] = await db.query(
-    `select d.dim, d.label, o.value::float8 as value, o.period_from::text as period from (
-       select o.id, 'sex' as dim, ${valueLabel("o.sex_id", "'en'")} as label from statistics.observations o where o.sex_id is not null
-       union all select o.id, 'age', ${valueLabel("o.age_group_id", "'en'")} from statistics.observations o where o.age_group_id is not null
-       union all select o.id, 'residence', ${valueLabel("o.residence_id", "'en'")} from statistics.observations o where o.residence_id is not null
-       union all select o.id, 'community', ${valueLabel("o.ethnicity_id", "'en'")} from statistics.observations o where o.ethnicity_id is not null
-       union all select o.id, 'language', (select l.name from reference.languages l where l.id = o.language_id) from statistics.observations o where o.language_id is not null) d
-     join statistics.observations o on o.id = d.id
-     where o.feature_id = $1 order by d.dim, o.value desc`,
+    `select d.dim, d.label, d.value, d.period from (
+       select 'sex' as dim, ${valueLabel("o.sex_id", "'en'")} as label, o.value::float8 as value, o.period_from::text as period from statistics.observations o where o.feature_id = $1 and o.sex_id is not null
+       union all select 'age', ${valueLabel("o.age_group_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.age_group_id is not null
+       union all select 'residence', ${valueLabel("o.residence_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.residence_id is not null
+       union all select 'community', ${valueLabel("o.ethnicity_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.ethnicity_id is not null
+       union all select 'language', (select l.name from reference.languages l where l.id = o.language_id), o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.language_id is not null) d
+     order by d.dim, d.value desc`,
     [featureId],
   );
   const groups: Record<string, { label: string; value: number; share: number }[]> = {};
