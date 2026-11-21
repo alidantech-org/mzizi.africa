@@ -5,6 +5,7 @@ import {
   decodeA11y,
   decodeGroups,
   decodePlace,
+  decodeSaved,
   decodeSide,
   decodeTheme,
   type PrefsInit,
@@ -28,5 +29,8 @@ export async function readPrefs(): Promise<PrefsInit> {
     side: decodeSide(v(COOKIES.side)),
     groups: decodeGroups(v(COOKIES.groups)),
     place,
+    home: decodePlace(v(COOKIES.home)),
+    saved: decodeSaved(v(COOKIES.saved)),
+    hideCount: v(COOKIES.hideCount) === "1",
   };
 }

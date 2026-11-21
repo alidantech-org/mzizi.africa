@@ -51,7 +51,7 @@ export async function loadPlaceCatalogue(fallbackCountry?: string): Promise<Plac
 
   const setup = await explorerGetSetupBootstrap({ query: { languageCode }, options: sharedCache() });
   const boot = setup.body;
-  if (!setup.success || !boot) return { navigation: {}, languages: [], countries: [], entries: [], found: null, gaps: ["The country catalogue could not be loaded."] };
+  if (!setup.success || !boot) return { searchable: false, navigation: {}, languages: [], countries: [], entries: [], found: null, gaps: ["The country catalogue could not be loaded."] };
 
   const languages = boot.languages.map((l) => ({ code: l.code, name: l.name, nativeName: l.nativeName ?? null }));
   const served = boot.countries.filter((c) => c.served);
@@ -97,7 +97,7 @@ export async function loadPlaceCatalogue(fallbackCountry?: string): Promise<Plac
       entries: res.body.places.map((p) => entry(p, (p.parentFeatureId && nameById.get(p.parentFeatureId)) || parentsOf(p.canonicalPath, searchCountry.name))),
     };
   };
-  if (!current) return { navigation, languages, countries, entries, found: await search(), gaps: [...boot.gaps, ...gaps] };
+  if (!current) return { searchable: Boolean(searchCountry), navigation, languages, countries, entries, found: await search(), gaps: [...boot.gaps, ...gaps] };
 
   const ctxRes = await explorerGetExplorerContext({
     query: { countryCode: current.code, path: trail.join("/") || undefined, languageCode },
@@ -105,7 +105,7 @@ export async function loadPlaceCatalogue(fallbackCountry?: string): Promise<Plac
   const ctx = ctxRes.body;
   if (!ctxRes.success || !ctx) {
     gaps.push(`${trail.join("/") || current.name} is not a registered place of ${current.name}.`);
-    return { navigation, languages, countries, entries, found: await search(), gaps: [...boot.gaps, ...gaps] };
+    return { searchable: Boolean(searchCountry), navigation, languages, countries, entries, found: await search(), gaps: [...boot.gaps, ...gaps] };
   }
   const own = countries.find((c) => c.iso === current.code)!;
   own.levelDefs = ctx.levels.filter((l) => l.depth > 0).map((l) => ({ code: l.kindCode, label: l.label }));
@@ -138,5 +138,5 @@ export async function loadPlaceCatalogue(fallbackCountry?: string): Promise<Plac
     }
     if (body.total > body.places.length) gaps.push(`Only the first ${body.places.length} of ${body.total} places inside ${parent.name} are loaded.`);
   });
-  return { navigation, languages, countries, entries, found: foundList, gaps: [...boot.gaps, ...gaps] };
+  return { searchable: Boolean(searchCountry), navigation, languages, countries, entries, found: foundList, gaps: [...boot.gaps, ...gaps] };
 }

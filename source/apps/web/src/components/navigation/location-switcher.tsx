@@ -127,9 +127,9 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
   const listRef = useRef<HTMLDivElement>(null);
 
   const names = useMemo(() => new Map(entries.map((e) => [e.href.split("?")[0], e.name])), [entries]);
-  const countryDef = COUNTRIES.find((c) => c.code === bc) ?? COUNTRIES[0] ?? { code: bc, iso: bc.toUpperCase(), name: bc.toUpperCase(), levels: [] };
-  const levels = countryDef.levels;
-  const levelDefs = countryDef.levelDefs;
+  const countryDef = COUNTRIES.find((c) => c.code === bc) ?? COUNTRIES[0] ?? { code: bc, iso: bc.toUpperCase(), name: bc.toUpperCase(), levels: [], levelDefs: [] };
+  const levels = countryDef.levels ?? [];
+  const levelDefs = countryDef.levelDefs ?? [];
   const kindMode = levelDefs.some((l) => l.code === level);
   const searchMode = q.trim().length >= 2;
   const leafDepth = 1 + levels.length; // path segments of the deepest level

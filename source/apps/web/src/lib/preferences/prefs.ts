@@ -47,6 +47,9 @@ export const PrefsInitContext = createContext<PrefsInit>({
   side: DEFAULT_SIDE,
   groups: [],
   place: null,
+  home: null,
+  saved: [],
+  hideCount: false,
 });
 export const usePrefsInit = () => useContext(PrefsInitContext);
 /** Called while rendering in the browser, before the first hook reads the store. */

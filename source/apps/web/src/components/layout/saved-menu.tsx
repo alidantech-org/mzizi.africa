@@ -7,7 +7,7 @@ import Link from "#/components/navigation/demo-link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePlaceNames } from "#/lib/places/catalogue";
-import { readHideCount, readSaved, writeHideCount, type Saved } from "#/lib/preferences/saved";
+import { useHideCount, useSaved, writeHideCount } from "#/lib/preferences/saved";
 import { placeFromHref, useNav } from "#/lib/navigation/use-ctx";
 import { Checkbox } from "#/components/ui/controls";
 
@@ -18,17 +18,10 @@ export function SavedMenu() {
   const t = useCopy();
   const names = usePlaceNames();
   const [open, setOpen] = useState(false);
-  const [saved, setSaved] = useState<Saved[]>([]);
+  const saved = useSaved();
+  const hide = useHideCount();
   const [pos, setPos] = useState({ top: 48, right: 8 });
   const btn = useRef<HTMLButtonElement>(null);
-  const [hide, setHide] = useState(false);
-  useEffect(() => {
-    const sync = () => setHide(readHideCount());
-    setSaved(readSaved());
-    sync();
-    addEventListener("mzizi-app:count", sync);
-    return () => removeEventListener("mzizi-app:count", sync);
-  }, []);
   useEffect(() => {
     if (!open) return;
     const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
@@ -36,8 +29,6 @@ export function SavedMenu() {
     return () => removeEventListener("keydown", esc);
   }, [open]);
   const show = () => {
-    setSaved(readSaved());
-    setHide(readHideCount());
     const r = btn.current!.getBoundingClientRect();
     setPos({ top: r.bottom + 8, right: Math.max(8, innerWidth - r.right) });
     setOpen(true);
@@ -82,10 +73,7 @@ export function SavedMenu() {
           <Checkbox
             size="sm"
             selected={hide}
-            onChange={(v) => {
-              setHide(v);
-              writeHideCount(v);
-            }}
+            onChange={(v) => writeHideCount(v)}
           >
             {t(copy.menus.saved.hideCount)}
           </Checkbox>

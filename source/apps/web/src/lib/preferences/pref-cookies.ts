@@ -17,7 +17,19 @@ export type Theme = {
 export type A11y = { contrast: string; size: number; links: boolean; motion: boolean; spacing: boolean };
 export type SideMode = "expanded" | "rail" | "hidden";
 export type Side = { w: number; mode: SideMode };
-export type PrefsInit = { theme: Theme; a11y: A11y; side: Side; groups: string[]; place: Place | null };
+export type Saved = { path: string; label: string };
+export type PrefsInit = {
+  theme: Theme;
+  a11y: A11y;
+  side: Side;
+  groups: string[];
+  place: Place | null;
+  /** The place the reader chose as home in setup; null until they do. */
+  home: Place | null;
+  saved: Saved[];
+  /** Hide the count badge on the saved-places icon. */
+  hideCount: boolean;
+};
 
 export const DEFAULT_THEME: Theme = {
   mode: "system",
@@ -37,6 +49,10 @@ export const COOKIES = {
   side: "mzizi-app-side",
   groups: "mzizi-app-groups",
   place: "mzizi-app-place",
+  home: "mzizi-app-home",
+  saved: "mzizi-app-saved",
+  hideCount: "mzizi-app-hide-count",
+  lang: "mzizi-app-lang",
 } as const;
 
 const MODES: Record<string, Mode> = { s: "system", l: "light", d: "dark" };
@@ -108,6 +124,31 @@ export function decodePlace(raw?: string): Place | null {
   return s.length ? { country: s[0], trail: s.slice(1) } : null;
 }
 
+/** Most places a reader can keep, so the cookie stays well under the browser limit of about 4 KB. */
+export const MAX_SAVED = 40;
+const SAVED_ITEM = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/;
+/** `ke/nairobi~Work|ke/kisumu~` = each saved place as its address without the leading slash, `~`, then its label (percent-encoded); items joined by `|`. */
+export const encodeSaved = (list: Saved[]) =>
+  list
+    .slice(0, MAX_SAVED)
+    .map((s) => `${s.path.replace(/^\//, "")}~${encodeURIComponent(s.label).replace(/~/g, "%7E")}`)
+    .join("|");
+export function decodeSaved(raw?: string): Saved[] {
+  const out: Saved[] = [];
+  for (const item of (raw ?? "").split("|")) {
+    const [path, label = ""] = item.split("~");
+    if (!path || !SAVED_ITEM.test(path)) continue;
+    let text = "";
+    try {
+      text = decodeURIComponent(label);
+    } catch {
+      text = "";
+    }
+    out.push({ path: `/${path}`, label: text });
+  }
+  return out;
+}
+
 /** Browser only: read and write one cookie. Kept for a year, sent with every page request. */
 export const readCookie = (name: string) => {
   const m = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
@@ -134,6 +175,10 @@ export function migrateLegacy() {
       writeCookie(COOKIES.side, encodeSide({ ...DEFAULT_SIDE, ...JSON.parse(ls("mzizi-app-side")!) }));
     if (readCookie(COOKIES.groups) === undefined && ls("mzizi-app-groups"))
       writeCookie(COOKIES.groups, encodeGroups(JSON.parse(ls("mzizi-app-groups")!)));
+    if (readCookie(COOKIES.saved) === undefined && ls("mzizi-app-saved")) {
+      const raw = JSON.parse(ls("mzizi-app-saved")!) as (string | Saved)[];
+      writeCookie(COOKIES.saved, encodeSaved(raw.map((x) => (typeof x === "string" ? { path: x, label: "" } : x))));
+    }
     if (readCookie(COOKIES.place) === undefined && ls("mzizi-app-place"))
       writeCookie(COOKIES.place, encodePlace(JSON.parse(ls("mzizi-app-place")!) as Place));
   } catch {}

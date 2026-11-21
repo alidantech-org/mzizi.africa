@@ -9,6 +9,8 @@ export type CatalogueCountry = { code: string; iso: string; name: string; levels
 export type CatalogueEntry = { kind: string; name: string; where: string; href: string; tag?: string };
 export type CatalogueLanguage = { code: string; name: string; nativeName: string | null };
 export type PlaceCatalogue = {
+  /** True when a country is in view (address or saved place), so place search can run. */
+  searchable: boolean;
   /** Which navigation subjects have recorded data for the country in view; empty when no country is in view. */
   navigation: Record<string, boolean>;
   /** Interface languages the backend has wording for. */
@@ -21,7 +23,7 @@ export type PlaceCatalogue = {
   gaps: string[];
 };
 
-const EMPTY: PlaceCatalogue = { navigation: {}, languages: [], countries: [], entries: [], found: null, gaps: [] };
+const EMPTY: PlaceCatalogue = { searchable: false, navigation: {}, languages: [], countries: [], entries: [], found: null, gaps: [] };
 const Ctx = createContext<PlaceCatalogue>(EMPTY);
 
 export function PlaceCatalogueProvider({ value, children }: { value: PlaceCatalogue; children: ReactNode }) {

@@ -1,48 +1,79 @@
-/** Saved places with labels, kept in this browser. The home place and language are also written to cookies so the server can personalise. */
+"use client";
+/**
+ * Saved places, the home place and the count badge, all in cookies so the server renders them with the page.
+ * The browser keeps one small store over the saved cookie: every component that shows saved places reads it
+ * and re-renders when it changes (on this page, or in another tab).
+ */
+import { useSyncExternalStore } from "react";
+import { COOKIES, MAX_SAVED, decodePlace, decodeSaved, encodePlace, encodeSaved, readCookie, writeCookie, type Saved } from "#/lib/preferences/pref-cookies";
+import { usePrefsInit } from "#/lib/preferences/prefs";
 import { pathOf } from "#/lib/navigation/route";
 import type { Place } from "#/lib/navigation/route";
 
-export type Saved = { path: string; label: string };
-const KEY = "mzizi-app-saved";
-
-export function readSaved(): Saved[] {
-  try {
-    const raw = JSON.parse(localStorage.getItem(KEY) ?? "[]") as (string | Saved)[];
-    return raw.map((x) => (typeof x === "string" ? { path: x, label: "" } : x));
-  } catch {
-    return [];
-  }
-}
-export function writeSaved(list: Saved[]) {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(list));
-  } catch {}
-}
-
-const cookie = (name: string, value: string) => {
-  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=31536000; samesite=lax`;
-};
-export const readCookie = (name: string) => {
-  const m = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return m ? decodeURIComponent(m[1]) : null;
-};
-
+export type { Saved };
 export const homePath = pathOf;
-export function readHome(): Place | null {
-  try {
-    const c = readCookie("mzizi-app-home");
-    return c ? (JSON.parse(c) as Place) : null;
-  } catch {
-    return null;
+
+/* ---- saved places ---- */
+const subs = new Set<() => void>();
+let raw: string | undefined;
+let cache: Saved[] = [];
+function snapshot(): Saved[] {
+  const now = readCookie(COOKIES.saved) ?? "";
+  if (now !== raw) {
+    raw = now;
+    cache = decodeSaved(now);
   }
+  return cache;
 }
+const emit = () => subs.forEach((f) => f());
+const subscribe = (f: () => void) => {
+  subs.add(f);
+  addEventListener("focus", f); // another tab may have changed it
+  return () => {
+    subs.delete(f);
+    removeEventListener("focus", f);
+  };
+};
+
+/** Saved places: the server's copy while rendering and hydrating, the cookie afterwards. */
+export function useSaved(): Saved[] {
+  const init = usePrefsInit();
+  return useSyncExternalStore(subscribe, snapshot, () => init.saved);
+}
+export const readSaved = (): Saved[] => snapshot();
+export function writeSaved(list: Saved[]) {
+  writeCookie(COOKIES.saved, encodeSaved(list.slice(0, MAX_SAVED)));
+  emit();
+}
+export const addSaved = (path: string, label = "") =>
+  writeSaved([...snapshot().filter((s) => s.path !== path), { path, label }]);
+export const removeSaved = (path: string) => writeSaved(snapshot().filter((s) => s.path !== path));
+export const labelSaved = (path: string, label: string) =>
+  writeSaved(snapshot().map((s) => (s.path === path ? { ...s, label } : s)));
+
+/* ---- home place ---- */
+/** The home place is stored like the last place: country then trail. An older JSON value is still understood. */
+export function readHome(): Place | null {
+  const value = readCookie(COOKIES.home);
+  if (!value) return null;
+  if (value.startsWith("{")) {
+    try {
+      return JSON.parse(value) as Place;
+    } catch {
+      return null;
+    }
+  }
+  return decodePlace(value);
+}
+/** Choosing a home place also saves it, labelled Home, at the top of the saved places. */
 export function writeHome(p: Place) {
-  cookie("mzizi-app-home", JSON.stringify(p));
-  const list = readSaved().filter((s) => s.label !== "Home");
-  writeSaved([{ path: homePath(p), label: "Home" }, ...list.filter((s) => s.path !== homePath(p))]);
+  writeCookie(COOKIES.home, encodePlace(p));
+  const path = homePath(p);
+  writeSaved([{ path, label: "Home" }, ...snapshot().filter((s) => s.label !== "Home" && s.path !== path)]);
 }
-export const writeLang = (l: string) => cookie("mzizi-app-lang", l);
-export const readLang = () => readCookie("mzizi-app-lang") ?? "en";
+
+/* ---- language, views, count badge ---- */
+export const writeLang = (l: string) => writeCookie(COOKIES.lang, l);
 
 /** How often each subject is opened, so the home page can lead with what you use. Stays on this device. */
 export function countView(view: string) {
@@ -63,17 +94,16 @@ export function topViews(n: number): string[] {
   }
 }
 
-/** The count badge on the saved-places icon can be hidden. Kept in localStorage and in a cookie, so it survives either being cleared. */
-export const readHideCount = () => {
-  try {
-    if (localStorage.getItem("mzizi-app-hide-count") === "1") return true;
-  } catch {}
-  return readCookie("mzizi-app-hide-count") === "1";
-};
+const hideSubs = new Set<() => void>();
+export function useHideCount(): boolean {
+  const init = usePrefsInit();
+  return useSyncExternalStore(
+    (f) => (hideSubs.add(f), () => void hideSubs.delete(f)),
+    () => readCookie(COOKIES.hideCount) === "1",
+    () => init.hideCount,
+  );
+}
 export function writeHideCount(hide: boolean) {
-  try {
-    localStorage.setItem("mzizi-app-hide-count", hide ? "1" : "0");
-  } catch {}
-  document.cookie = `mzizi-app-hide-count=${hide ? 1 : 0}; path=/; max-age=31536000; samesite=lax`;
-  dispatchEvent(new Event("mzizi-app:count"));
+  writeCookie(COOKIES.hideCount, hide ? "1" : "0");
+  hideSubs.forEach((f) => f());
 }
