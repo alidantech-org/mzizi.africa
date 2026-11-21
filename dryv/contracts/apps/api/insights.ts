@@ -1690,6 +1690,18 @@ export const insightOperations = reads.operations({
       http: dryv.http("GET", "/v1/civic/places/{featureId}").input(inputField("featureId"), dryv.path()).output(output),
     })),
 
+  GetPlaceCivicAt: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "The same civic delivery as GetPlaceCivic, for a place named by its readable address. The address is resolved on the server; no identity is sent.",
+    )
+    .input(inputs.PlaceAt)
+    .output(documents.PlaceCivic)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/civic/place").input(input, dryv.queryObject()).output(output),
+    })),
+
   GetProject: dryv
     .operation()
     .role("detail")

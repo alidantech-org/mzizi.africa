@@ -34,17 +34,21 @@ const EVIDENCE_SELECT = `
   join source.products p on p.id = e.product_id
   left join source.publishers pub on pub.id = p.publisher_id`;
 
-/** A locator is stored as JSON (`{"line": 12}` for a CSV line); a reader sees words. */
-function readableLocator(stored: string | null): string | null {
-  if (stored === null || !stored.startsWith("{")) return stored;
-  try {
-    const parsed = JSON.parse(stored) as { line?: number; page?: number };
-    if (parsed.line !== undefined) return `Line ${parsed.line} of the source file`;
-    if (parsed.page !== undefined) return `Page ${parsed.page}`;
-  } catch {
-    return stored;
-  }
-  return stored;
+/** A locator is stored as JSON (`{"line": 12}` for a CSV line); the driver may hand it over parsed or as text. A reader sees words. */
+function readableLocator(stored: string | { line?: number; page?: number } | null): string | null {
+  if (stored === null) return null;
+  let parsed: { line?: number; page?: number } | null = null;
+  if (typeof stored === "object") parsed = stored;
+  else if (stored.startsWith("{")) {
+    try {
+      parsed = JSON.parse(stored) as { line?: number; page?: number };
+    } catch {
+      return stored;
+    }
+  } else return stored;
+  if (parsed.line !== undefined) return `Line ${parsed.line} of the source file`;
+  if (parsed.page !== undefined) return `Page ${parsed.page}`;
+  return typeof stored === "string" ? stored : null;
 }
 
 function toEvidence(row: EvidenceRow): EvidenceRef {
