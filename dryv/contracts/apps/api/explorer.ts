@@ -234,7 +234,11 @@ const inputs = explorer.schemas({
     page: dryv.field(p.PositiveInteger).optional(),
     limit: dryv.field(props.Limit).optional(),
   }),
-  NavigationInput: dryv.schema({ countryCode: dryv.field(countryProperties.IsoAlpha2) }),
+  NavigationInput: dryv.schema({
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    /** The place in view, as readable slugs below the country. Subjects that depend on the place are checked for it; the rest stay country-wide. */
+    path: dryv.field(props.AddressPath).optional(),
+  }),
   CopyInput: dryv.schema({
     languageCode: dryv.field(props.LanguageCode),
     countryCode: dryv.field(countryProperties.IsoAlpha2).optional(),

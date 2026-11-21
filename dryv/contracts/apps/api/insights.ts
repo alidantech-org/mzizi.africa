@@ -1415,6 +1415,35 @@ const inputs = insights.schemas({
     scope: dryv.field(p.String).optional(),
     topic: dryv.field(p.String).optional(),
   }),
+  /** Compare options for a place named by its readable address. */
+  CompareOptionsAtInput: dryv.schema({
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    path: dryv.field(props.AddressPath).optional(),
+    languageCode: dryv.field(props.AddressLanguage).optional(),
+    metric: dryv.field(props.Code).optional(),
+  }),
+  /** Two places of one country, each by its readable address below the country (`a` and `b`). */
+  ComparisonAtInput: dryv.schema({
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    a: dryv.field(props.AddressPath),
+    b: dryv.field(props.AddressPath),
+    languageCode: dryv.field(props.AddressLanguage).optional(),
+    metrics: dryv.field(p.NonEmptyString1000).optional(),
+  }),
+  ElectionAtInput: dryv.schema({
+    electionId: dryv.field(p.Id),
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    path: dryv.field(props.AddressPath).optional(),
+    languageCode: dryv.field(props.AddressLanguage).optional(),
+    contestKind: dryv.field(p.NonEmptyString100).optional(),
+  }),
+  TendersAtInput: dryv.schema({
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    path: dryv.field(props.AddressPath).optional(),
+    languageCode: dryv.field(props.AddressLanguage).optional(),
+    status: dryv.field(p.NonEmptyString100).optional(),
+    limit: dryv.field(props.Limit).optional(),
+  }),
   SeriesInput: dryv.schema({ indicatorCode: dryv.field(props.Code), featureId: dryv.field(p.Id) }),
   MapInput: dryv.schema({
     indicatorCode: dryv.field(props.Code),
@@ -1700,6 +1729,56 @@ export const insightOperations = reads.operations({
     .output(documents.PlaceCivic)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/civic/place").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetCompareOptionsAt: dryv
+    .operation()
+    .role("detail")
+    .description("Compare options for a place named by its readable address: peers, nearby places, top places and the metrics offered.")
+    .input(inputs.CompareOptionsAtInput)
+    .output(documents.CompareOptions)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/compare/options/at").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetComparisonAt: dryv
+    .operation()
+    .role("detail")
+    .description("Two places of one country on the same figures, each named by its readable address.")
+    .input(inputs.ComparisonAtInput)
+    .output(documents.Comparison)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/compare/at").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetElectionAt: dryv
+    .operation()
+    .role("detail")
+    .description("One election with its contests and results by unit under a place named by its readable address.")
+    .input(inputs.ElectionAtInput)
+    .output(documents.ElectionDetail)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/election-at").input(input, dryv.queryObject()).output(output),
+    })),
+
+  ListTendersAt: dryv
+    .operation()
+    .role("list")
+    .description("Tenders for a place named by its readable address (and the places inside it), or for the country when no place is named.")
+    .input(inputs.TendersAtInput)
+    .output(documents.TenderList)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/tenders/at").input(input, dryv.queryObject()).output(output),
+    })),
+
+  GetTender: dryv
+    .operation()
+    .role("detail")
+    .description("One tender by its code, in the shape of the tender list (a list of one).")
+    .input(inputs.CodeInput)
+    .output(documents.TenderList)
+    .facets(({ inputField, output }) => ({
+      http: dryv.http("GET", "/v1/tender/{code}").input(inputField("code"), dryv.path()).output(output),
     })),
 
   GetProject: dryv
