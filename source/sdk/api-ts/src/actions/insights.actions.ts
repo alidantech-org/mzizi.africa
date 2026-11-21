@@ -37,10 +37,10 @@ import type { InsightsNearbyInput } from "#sdk/types/insights/dto/nearby-input.t
 import type { InsightsNearbyProjects } from "#sdk/types/insights/dto/nearby-projects.ts";
 import type { InsightsPartyDetail } from "#sdk/types/insights/dto/party-detail.ts";
 import type { InsightsPartyList } from "#sdk/types/insights/dto/party-list.ts";
-import type { InsightsPlaceAt } from "#sdk/types/insights/dto/place-at.ts";
 import type { InsightsPlaceBrowse } from "#sdk/types/insights/dto/place-browse.ts";
 import type { InsightsPlaceCivic } from "#sdk/types/insights/dto/place-civic.ts";
 import type { InsightsPlaceElections } from "#sdk/types/insights/dto/place-elections.ts";
+import type { InsightsPlaceStatisticsInput } from "#sdk/types/insights/dto/place-statistics-input.ts";
 import type { InsightsPlaceStatistics } from "#sdk/types/insights/dto/place-statistics.ts";
 import type { InsightsProjectDetail } from "#sdk/types/insights/dto/project-detail.ts";
 import type { InsightsSearchQuery } from "#sdk/types/insights/dto/search-query.ts";
@@ -233,7 +233,11 @@ export async function insightsGetPlaceStatistics(input: InsightsGetPlaceStatisti
   return api.get<InsightsPlaceStatistics>(path, options);
 }
 /** GET /v1/statistics/place */
-export type InsightsGetPlaceStatisticsAtActionInput = ActionInput<never, InsightsPlaceAt, never>;
+export type InsightsGetPlaceStatisticsAtActionInput = ActionInput<
+  never,
+  InsightsPlaceStatisticsInput,
+  never
+>;
 
 export async function insightsGetPlaceStatisticsAt(input: InsightsGetPlaceStatisticsAtActionInput) {
   const options = requestOptions(input.options, input.query, false);

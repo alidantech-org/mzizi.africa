@@ -42,11 +42,11 @@ import { nearbyInputExample } from "@test/modules/insights/schema/dto/examples/n
 import { nearbyProjectsExample } from "@test/modules/insights/schema/dto/examples/nearby-projects.dto.example.ts";
 import { partyDetailExample } from "@test/modules/insights/schema/dto/examples/party-detail.dto.example.ts";
 import { partyListExample } from "@test/modules/insights/schema/dto/examples/party-list.dto.example.ts";
-import { placeAtExample } from "@test/modules/insights/schema/dto/examples/place-at.dto.example.ts";
 import { placeBrowseExample } from "@test/modules/insights/schema/dto/examples/place-browse.dto.example.ts";
 import { placeCivicExample } from "@test/modules/insights/schema/dto/examples/place-civic.dto.example.ts";
 import { placeElectionsExample } from "@test/modules/insights/schema/dto/examples/place-elections.dto.example.ts";
 import { placeOnlyExample } from "@test/modules/insights/schema/dto/examples/place-only.dto.example.ts";
+import { placeStatisticsInputExample } from "@test/modules/insights/schema/dto/examples/place-statistics-input.dto.example.ts";
 import { placeStatisticsExample } from "@test/modules/insights/schema/dto/examples/place-statistics.dto.example.ts";
 import { projectDetailExample } from "@test/modules/insights/schema/dto/examples/project-detail.dto.example.ts";
 import { searchQueryExample } from "@test/modules/insights/schema/dto/examples/search-query.dto.example.ts";
@@ -612,7 +612,7 @@ describe("GET /v1/statistics/place (getPlaceStatisticsAt)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
       params: {},
-      query: { ...queryOf(placeAtExample.valid()) },
+      query: { ...queryOf(placeStatisticsInputExample.valid()) },
       headers: {},
     };
     const result = placeStatisticsExample.valid();

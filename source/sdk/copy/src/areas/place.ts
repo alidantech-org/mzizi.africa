@@ -72,6 +72,10 @@ export const place = defineCopy("place", {
     back: { en: "Back to {place}", sw: "Rudi {place}" },
   },
   empty: {
+    statisticsFailed: {
+      en: "Statistics could not be loaded just now. Reload in a moment; this is not the same as none being recorded.",
+      sw: "Takwimu hazikuweza kupakiwa kwa sasa. Pakia tena baada ya muda mfupi; hii si sawa na kutokuwepo kwa takwimu zilizorekodiwa.",
+    },
     statistics: {
       en: "No statistics are recorded for this place yet.",
       sw: "Bado hakuna takwimu zilizorekodiwa za eneo hili.",

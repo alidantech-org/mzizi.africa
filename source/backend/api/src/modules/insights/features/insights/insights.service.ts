@@ -37,11 +37,11 @@ import type { NearbyInputDto } from "#/modules/insights/schema/dto/nearby-input.
 import type { NearbyProjectsDto } from "#/modules/insights/schema/dto/nearby-projects.dto.ts";
 import type { PartyDetailDto } from "#/modules/insights/schema/dto/party-detail.dto.ts";
 import type { PartyListDto } from "#/modules/insights/schema/dto/party-list.dto.ts";
-import type { PlaceAtDto } from "#/modules/insights/schema/dto/place-at.dto.ts";
 import type { PlaceBrowseDto } from "#/modules/insights/schema/dto/place-browse.dto.ts";
 import type { PlaceCivicDto } from "#/modules/insights/schema/dto/place-civic.dto.ts";
 import type { PlaceElectionsDto } from "#/modules/insights/schema/dto/place-elections.dto.ts";
 import type { PlaceOnlyDto } from "#/modules/insights/schema/dto/place-only.dto.ts";
+import type { PlaceStatisticsInputDto } from "#/modules/insights/schema/dto/place-statistics-input.dto.ts";
 import type { PlaceStatisticsDto } from "#/modules/insights/schema/dto/place-statistics.dto.ts";
 import type { ProjectDetailDto } from "#/modules/insights/schema/dto/project-detail.dto.ts";
 import type { SearchQueryDto } from "#/modules/insights/schema/dto/search-query.dto.ts";
@@ -107,7 +107,7 @@ export abstract class InsightsInsightsService {
   abstract getPlaceCivic(input: PlaceOnlyDto): Promise<PlaceCivicDto>;
   abstract getPlaceElections(input: PlaceOnlyDto): Promise<PlaceElectionsDto>;
   abstract getPlaceStatistics(input: PlaceOnlyDto): Promise<PlaceStatisticsDto>;
-  abstract getPlaceStatisticsAt(input: PlaceAtDto): Promise<PlaceStatisticsDto>;
+  abstract getPlaceStatisticsAt(input: PlaceStatisticsInputDto): Promise<PlaceStatisticsDto>;
   abstract getProject(input: CodeInputDto): Promise<ProjectDetailDto>;
   abstract globalSearch(input: SearchQueryDto): Promise<SearchResultsDto>;
   abstract listContent(input: ContentListInputDto): Promise<ContentListDto>;
@@ -238,7 +238,7 @@ export class InsightsInsightsServiceImpl extends InsightsInsightsService {
     return this.getPlaceStatisticsUseCase.execute(input);
   }
 
-  getPlaceStatisticsAt(input: PlaceAtDto): Promise<PlaceStatisticsDto> {
+  getPlaceStatisticsAt(input: PlaceStatisticsInputDto): Promise<PlaceStatisticsDto> {
     return this.getPlaceStatisticsAtUseCase.execute(input);
   }
 

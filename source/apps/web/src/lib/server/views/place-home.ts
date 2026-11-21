@@ -24,9 +24,18 @@ export const loadLocation = async (a: PlaceAddress, languageCode: string): Promi
   return res.success && res.body ? res.body : null;
 };
 
-export const loadStatistics = async (a: PlaceAddress, languageCode: string): Promise<InsightsPlaceStatistics | null> => {
-  const res = await insightsGetPlaceStatisticsAt({ query: query(a, languageCode), options: cache() });
-  return res.success && res.body ? res.body : null;
+/** What a statistics read found. `failed` means the read itself did not work, which is not the same as nothing being recorded. */
+export type StatisticsResult = { data: InsightsPlaceStatistics | null; failed: boolean };
+
+/** `scope` sizes the answer to the screen: `headline` for the home view, `topics` for the topic list, `topic` for one topic's indicators. */
+export const loadStatistics = async (
+  a: PlaceAddress,
+  languageCode: string,
+  scope: "headline" | "topics" | "topic" = "headline",
+  topic?: string,
+): Promise<StatisticsResult> => {
+  const res = await insightsGetPlaceStatisticsAt({ query: { ...query(a, languageCode), scope, topic }, options: cache() });
+  return res.success && res.body ? { data: res.body, failed: false } : { data: null, failed: true };
 };
 
 /** The places inside this one drawn as one map; a place with no outlined children is drawn itself. */

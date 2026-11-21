@@ -12,7 +12,7 @@ import { Panel } from "#/components/ui/panel";
 import { SkeletonPanel } from "#/components/ui/skeleton";
 import { axis, grid, valueAxis } from "#/lib/charts/chart";
 import { change, compact, decimal } from "#/lib/formatting/format";
-import { loadLocation, loadStatistics, type PlaceAddress } from "#/lib/server/views/place-home";
+import { loadLocation, loadStatistics, type PlaceAddress, type StatisticsResult } from "#/lib/server/views/place-home";
 import { getCopy } from "#/lib/server/copy";
 
 type T = Awaited<ReturnType<typeof getCopy>>;
@@ -58,14 +58,17 @@ function Card({ ind, place, language, t }: { ind: Indicator; place: string; lang
   );
 }
 
-async function Topics({ address, statistics, topic, place, language, t }: { address: PlaceAddress; statistics: Promise<InsightsPlaceStatistics | null>; topic?: string; place: string; language: string; t: T }) {
-  const stats = await statistics;
+async function Topics({ address, topic, topics, picked, place, language, t }: { address: PlaceAddress; topic?: string; topics: Promise<StatisticsResult>; picked: Promise<StatisticsResult>; place: string; language: string; t: T }) {
+  const { data: stats, failed } = await topics;
+  if (failed) return <p className="rounded-lg border border-dashed border-muted p-3 text-sm text-muted sm:p-6">{t(copy.place.empty.statisticsFailed)}</p>;
   if (!stats || !stats.topics.length) return <p className="rounded-lg border border-dashed border-muted p-3 text-sm text-muted sm:p-6">{t(copy.place.empty.statistics)}</p>;
   const current = stats.topics.find((x) => x.code === topic) ?? stats.topics[0]!;
+  const read = await picked;
+  const withData = read.data?.topics.find((x) => x.code === current.code) ?? current;
   const base = `/${[address.country, ...address.trail].join("/")}?view=statistics`;
   return (
     <>
-      <nav aria-label={t(copy.place.stats.topics)} className="mb-4 flex flex-wrap gap-1 sm:gap-2">
+      <nav aria-label={t(copy.place.stats.topics)} className="mb-4 flex max-h-32 flex-wrap gap-1 overflow-y-auto sm:gap-2">
         {stats.topics.map((x) => (
           <Link
             key={x.code}
@@ -78,9 +81,9 @@ async function Topics({ address, statistics, topic, place, language, t }: { addr
         ))}
       </nav>
       <Panel id={current.code} title={current.label} note={t(copy.place.people.note)}>
-        {current.indicators.length ? (
+        {withData.indicators.length ? (
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
-            {current.indicators.map((ind) => (
+            {withData.indicators.map((ind) => (
               <Card key={ind.code} ind={ind} place={place} language={language} t={t} />
             ))}
           </div>
@@ -94,15 +97,17 @@ async function Topics({ address, statistics, topic, place, language, t }: { addr
 
 export default async function PlaceStatistics({ address, language, topic }: { address: PlaceAddress; language: string; topic?: string }) {
   const t = await getCopy(language);
-  const statistics = loadStatistics(address, language);
   const loc = await loadLocation(address, language);
   if (!loc) return <p className="text-sm text-muted">{t(copy.place.empty.unavailable)}</p>;
   const place = loc.context.place;
+  // The topic list is small and fast; the chosen topic's indicators are read alongside it. With no topic chosen the first one is shown.
+  const topics = loadStatistics(address, language, "topics");
+  const picked = topic ? loadStatistics(address, language, "topic", topic) : topics.then(async (r) => (r.data?.topics[0] ? loadStatistics(address, language, "topic", r.data.topics[0].code) : r));
   return (
     <>
       <PageHeader eyebrow={place.name} title={t(copy.place.stats.title)} />
       <Suspense fallback={<SkeletonPanel height={420} />}>
-        <Topics address={address} statistics={statistics} topic={topic} place={place.name} language={language} t={t} />
+        <Topics address={address} topic={topic} topics={topics} picked={picked} place={place.name} language={language} t={t} />
       </Suspense>
     </>
   );

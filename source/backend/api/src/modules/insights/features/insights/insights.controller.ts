@@ -33,10 +33,10 @@ import { NearbyInputDto } from "#/modules/insights/schema/dto/nearby-input.dto.t
 import { NearbyProjectsDto } from "#/modules/insights/schema/dto/nearby-projects.dto.ts";
 import { PartyDetailDto } from "#/modules/insights/schema/dto/party-detail.dto.ts";
 import { PartyListDto } from "#/modules/insights/schema/dto/party-list.dto.ts";
-import { PlaceAtDto } from "#/modules/insights/schema/dto/place-at.dto.ts";
 import { PlaceBrowseDto } from "#/modules/insights/schema/dto/place-browse.dto.ts";
 import { PlaceCivicDto } from "#/modules/insights/schema/dto/place-civic.dto.ts";
 import { PlaceElectionsDto } from "#/modules/insights/schema/dto/place-elections.dto.ts";
+import { PlaceStatisticsInputDto } from "#/modules/insights/schema/dto/place-statistics-input.dto.ts";
 import { PlaceStatisticsDto } from "#/modules/insights/schema/dto/place-statistics.dto.ts";
 import { ProjectDetailDto } from "#/modules/insights/schema/dto/project-detail.dto.ts";
 import { SearchQueryDto } from "#/modules/insights/schema/dto/search-query.dto.ts";
@@ -106,7 +106,7 @@ export class InsightsInsightsController {
 
   @Get("/v1/statistics/place")
   @HttpCode(200)
-  getPlaceStatisticsAt(@Query() input: PlaceAtDto): Promise<PlaceStatisticsDto> {
+  getPlaceStatisticsAt(@Query() input: PlaceStatisticsInputDto): Promise<PlaceStatisticsDto> {
     return this.service.getPlaceStatisticsAt(input);
   }
 

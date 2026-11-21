@@ -16,7 +16,7 @@ import Link from "#/components/navigation/demo-link";
 import { axis, grid, valueAxis } from "#/lib/charts/chart";
 import { stepFor } from "#/lib/charts/scale";
 import { change, compact, int, pct } from "#/lib/formatting/format";
-import { loadLocation, loadMap, loadStatistics, type PlaceAddress } from "#/lib/server/views/place-home";
+import { loadLocation, loadMap, loadStatistics, type PlaceAddress, type StatisticsResult } from "#/lib/server/views/place-home";
 import { getCopy } from "#/lib/server/copy";
 
 type Indicator = InsightsPlaceStatistics["topics"][number]["indicators"][number];
@@ -58,8 +58,8 @@ export default async function PlaceHome({ address, language }: { address: PlaceA
 
 type T = Awaited<ReturnType<typeof getCopy>>;
 
-async function Figures({ statistics, language, t }: { statistics: Promise<InsightsPlaceStatistics | null>; language: string; t: T }) {
-  const stats = await statistics;
+async function Figures({ statistics, language, t }: { statistics: Promise<StatisticsResult>; language: string; t: T }) {
+  const { data: stats, failed } = await statistics;
   const tiles = [
     { role: "population", label: t(copy.place.kpi.population), icon: Users, tone: "c1" as const, text: (v: number) => compact(v, language) },
     { role: "area", label: t(copy.place.kpi.area), icon: Ruler, tone: "c2" as const, text: (v: number) => `${int(v, language)} km²` },
@@ -70,7 +70,8 @@ async function Figures({ statistics, language, t }: { statistics: Promise<Insigh
     const ind = byRole(stats, tile.role);
     return ind ? [{ tile, ind }] : [];
   });
-  if (!shown.length) return <p className="rounded-lg border border-dashed border-muted p-3 text-sm sm:p-6 text-muted">{t(copy.place.empty.statistics)}</p>;
+  if (!shown.length)
+    return <p className="rounded-lg border border-dashed border-muted p-3 text-sm text-muted sm:p-6">{failed ? t(copy.place.empty.statisticsFailed) : t(copy.place.empty.statistics)}</p>;
   return (
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
       {shown.map(({ tile, ind }) => {
@@ -153,12 +154,12 @@ async function People({
   language,
   t,
 }: {
-  statistics: Promise<InsightsPlaceStatistics | null>;
+  statistics: Promise<StatisticsResult>;
   placeName: string;
   language: string;
   t: T;
 }) {
-  const stats = await statistics;
+  const { data: stats } = await statistics;
   if (!stats) return null;
   const b = {
     age: stats.breakdowns.age ?? [],

@@ -398,6 +398,7 @@ export 'package:mzizi_api/src/models/insights/place_statistics_breakdowns_reside
 export 'package:mzizi_api/src/models/insights/place_statistics_breakdowns_sex.dart';
 export 'package:mzizi_api/src/models/insights/place_statistics_comparisons.dart';
 export 'package:mzizi_api/src/models/insights/place_statistics_comparisons_place.dart';
+export 'package:mzizi_api/src/models/insights/place_statistics_input.dart';
 export 'package:mzizi_api/src/models/insights/place_statistics_siblings.dart';
 export 'package:mzizi_api/src/models/insights/place_statistics_siblings_density.dart';
 export 'package:mzizi_api/src/models/insights/place_statistics_siblings_population.dart';

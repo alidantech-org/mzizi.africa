@@ -183,6 +183,7 @@ export * from "./place-statistics-breakdowns-residence";
 export * from "./place-statistics-breakdowns-sex";
 export * from "./place-statistics-comparisons";
 export * from "./place-statistics-comparisons-place";
+export * from "./place-statistics-input";
 export * from "./place-statistics-siblings";
 export * from "./place-statistics-siblings-density";
 export * from "./place-statistics-siblings-population";
