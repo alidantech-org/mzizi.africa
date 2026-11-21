@@ -8,6 +8,8 @@ import { addressesInputExample } from "@test/modules/explorer/schema/dto/example
 import { addressesExample } from "@test/modules/explorer/schema/dto/examples/addresses.dto.example.ts";
 import { bootstrapInputExample } from "@test/modules/explorer/schema/dto/examples/bootstrap-input.dto.example.ts";
 import { bootstrapExample } from "@test/modules/explorer/schema/dto/examples/bootstrap.dto.example.ts";
+import { boundariesInputExample } from "@test/modules/explorer/schema/dto/examples/boundaries-input.dto.example.ts";
+import { boundariesExample } from "@test/modules/explorer/schema/dto/examples/boundaries.dto.example.ts";
 import { childrenInputExample } from "@test/modules/explorer/schema/dto/examples/children-input.dto.example.ts";
 import { contextExample } from "@test/modules/explorer/schema/dto/examples/context.dto.example.ts";
 import { coordinatesInputExample } from "@test/modules/explorer/schema/dto/examples/coordinates-input.dto.example.ts";
@@ -52,6 +54,7 @@ class InMemoryDataSourceModule {}
 
 const service = {
   getCopyBundle: vi.fn(),
+  getExplorerBoundaries: vi.fn(),
   getExplorerContext: vi.fn(),
   getExplorerLocation: vi.fn(),
   getExplorerNavigation: vi.fn(),
@@ -136,6 +139,25 @@ describe("GET /v1/explorer/copy (getCopyBundle)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getCopyBundle).toHaveBeenCalledTimes(1);
     expect(service.getCopyBundle).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/explorer/boundaries (getExplorerBoundaries)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(boundariesInputExample.valid()) },
+      headers: {},
+    };
+    const result = boundariesExample.valid();
+    service.getExplorerBoundaries.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/explorer/boundaries", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getExplorerBoundaries).toHaveBeenCalledTimes(1);
+    expect(service.getExplorerBoundaries).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

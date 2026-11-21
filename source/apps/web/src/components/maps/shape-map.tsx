@@ -40,7 +40,7 @@ export function ShapeMap({
             role="button"
             tabIndex={0}
             aria-label={titles?.[s.address] ? t(copy.place.map.shape, { name: s.name, value: titles[s.address]! }) : s.name}
-            fill={fills[s.address] ?? "var(--scale-0)"}
+            fill={fills[s.address] ?? "var(--line)"}
             stroke={selected === s.address ? "var(--ink)" : "var(--surface)"}
             strokeWidth={selected === s.address ? 2.6 : 1.1}
             strokeLinejoin="round"

@@ -23,6 +23,8 @@ export const routes = {
   explorer: {
     /** GET /v1/explorer/copy */
     getCopyBundle: "/v1/explorer/copy",
+    /** GET /v1/explorer/boundaries */
+    getExplorerBoundaries: "/v1/explorer/boundaries",
     /** GET /v1/explorer/context */
     getExplorerContext: "/v1/explorer/context",
     /** GET /v1/explorer/location */
@@ -116,6 +118,8 @@ export const routes = {
     /** GET /v1/statistics/places/{featureId} */
     getPlaceStatistics: (params: { featureId: string }) =>
       `/v1/statistics/places/${encodeURIComponent(params.featureId)}`,
+    /** GET /v1/statistics/place */
+    getPlaceStatisticsAt: "/v1/statistics/place",
     /** GET /v1/projects/{code} */
     getProject: (params: { code: string }) => `/v1/projects/${encodeURIComponent(params.code)}`,
     /** GET /v1/search */

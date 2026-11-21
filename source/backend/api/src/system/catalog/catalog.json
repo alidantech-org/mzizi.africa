@@ -101,6 +101,17 @@
       "summary": "Every recorded wording for one language, optionally one area and country wording, with a content hash for long-lived caching. Words are never taken from another language."
     },
     {
+      "name": "GetExplorerBoundaries",
+      "group": "explorer",
+      "feature": "explorer",
+      "method": "GET",
+      "path": "/v1/explorer/boundaries",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Boundaries",
+      "summary": "Simplified boundaries to draw a map: the place itself or the places directly inside it, from the recorded geometries, resolved from the readable address. Places with no recorded boundary are counted, never drawn."
+    },
+    {
       "name": "GetExplorerContext",
       "group": "explorer",
       "feature": "explorer",
@@ -506,6 +517,17 @@
       "inputs": ["featureId"],
       "output": "PlaceStatistics",
       "summary": "Population and other statistics of a place, by topic, with history, breakdowns and comparison to its parents."
+    },
+    {
+      "name": "GetPlaceStatisticsAt",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/statistics/place",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "PlaceStatistics",
+      "summary": "The same statistics as GetPlaceStatistics, for a place named by its readable address. The address is resolved on the server; no identity is sent."
     },
     {
       "name": "GetProject",

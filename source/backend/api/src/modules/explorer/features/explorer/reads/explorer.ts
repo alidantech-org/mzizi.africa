@@ -40,7 +40,7 @@ function publicOrigin(): string {
   return origin && !origin.endsWith("/") ? `${origin}/` : origin;
 }
 
-async function language(db: DataSource, requested?: string): Promise<string> {
+export async function language(db: DataSource, requested?: string): Promise<string> {
   const code = requested ?? "en";
   const available = await queryRows(
     db,
@@ -58,7 +58,7 @@ async function countryRow(db: DataSource, code: string): Promise<CountryChoiceDt
   if (!selected) throw new NotFoundException("This country is not registered.");
   return selected;
 }
-async function country(db: DataSource, code: string): Promise<CountryChoiceDto> {
+export async function country(db: DataSource, code: string): Promise<CountryChoiceDto> {
   const rows = await queryRows(db, countriesSql, [publicOrigin()], CountryChoiceDto);
   const selected = rows.find((row) => row.code === code.toUpperCase());
   if (!selected) throw new NotFoundException("This country is not registered.");
@@ -182,7 +182,7 @@ export async function context(db: DataSource, input: PlaceInputDto): Promise<Con
 const MEMO_MS = 10 * 60 * 1000;
 const MEMO_MAX = 400;
 const memo = new Map<string, { at: number; value: Promise<unknown> }>();
-function remembered<T>(key: string, make: () => Promise<T>): Promise<T> {
+export function remembered<T>(key: string, make: () => Promise<T>): Promise<T> {
   const hit = memo.get(key);
   if (hit && Date.now() - hit.at < MEMO_MS) return hit.value as Promise<T>;
   const value = make();
@@ -401,7 +401,7 @@ export async function navigation(db: DataSource, input: NavigationInputDto): Pro
 
 /* ---- reads answered from the place registry: one set of places per country and language, matched by readable address ---- */
 
-const asPlace = (r: RegPlace): PlaceDto =>
+export const asPlace = (r: RegPlace): PlaceDto =>
   Object.assign(new PlaceDto(), {
     featureId: r.featureId,
     code: r.code,
@@ -433,7 +433,7 @@ function levelsOf(db: DataSource, countryId: string, lang: string): Promise<Leve
   );
 }
 
-const segmentsOf = (path?: string): string[] => (path ?? "").split("/").filter(Boolean).map((s) => decodeURIComponent(s));
+export const segmentsOf = (path?: string): string[] => (path ?? "").split("/").filter(Boolean).map((s) => decodeURIComponent(s));
 
 export async function location(db: DataSource, input: LocationInputDto): Promise<LocationDto> {
   const selected = await country(db, input.countryCode);
@@ -497,4 +497,13 @@ export async function addresses(db: DataSource, input: AddressesInputDto): Promi
     }),
   );
   return Object.assign(new AddressesDto(), { places, gaps: [] });
+}
+
+/** The identity of the place at a readable address; used inside the server to reach reads that work by identity. */
+export async function featureIdAt(db: DataSource, countryCode: string, path: string | undefined, languageCode?: string): Promise<string> {
+  const selected = await country(db, countryCode);
+  const lang = await language(db, languageCode);
+  const place = atPath(await registry(db, selected.id, lang), segmentsOf(path));
+  if (!place) throw new NotFoundException("This place has no current registered path in the selected country.");
+  return place.featureId;
 }

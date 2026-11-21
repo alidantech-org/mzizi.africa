@@ -3,7 +3,7 @@ import "server-only";
 import { connection } from "next/server";
 import { cookies, headers } from "next/headers";
 import { explorerGetCopyBundle } from "@mzizi/api-client/actions/explorer";
-import type { CopyBundle } from "#/lib/copy/copy";
+import { translate, type CopyBundle } from "#/lib/copy/translate";
 
 const LANGUAGE_COOKIE = "mzizi-app-lang";
 
@@ -28,4 +28,11 @@ export async function loadCopy(country?: string): Promise<CopyBundle> {
     entries: Object.fromEntries(body.entries.map((e) => [e.key, e.text])),
     missing: body.missing,
   };
+}
+
+/** A translator for server components, for the language they are rendering in. Same keys and parameters as the client's `useCopy`. */
+export async function getCopy(language: string) {
+  const res = await explorerGetCopyBundle({ query: { languageCode: language }, options: { caching: { revalidate: 600, tags: ["copy"] } } });
+  const entries = Object.fromEntries((res.body?.entries ?? []).map((e) => [e.key, e.text]));
+  return translate({ language, hash: res.body?.hash ?? "", entries, missing: res.body?.missing ?? [] });
 }

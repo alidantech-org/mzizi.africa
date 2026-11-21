@@ -152,6 +152,7 @@ export * from "./party-detail-party";
 export * from "./party-detail-results";
 export * from "./party-list";
 export * from "./party-list-parties";
+export * from "./place-at";
 export * from "./place-browse";
 export * from "./place-browse-media";
 export * from "./place-child";

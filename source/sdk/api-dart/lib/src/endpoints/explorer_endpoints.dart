@@ -6,6 +6,9 @@ class ExplorerEndpoints {
   /// GET /v1/explorer/copy
   String get getCopyBundle => '/v1/explorer/copy';
 
+  /// GET /v1/explorer/boundaries
+  String get getExplorerBoundaries => '/v1/explorer/boundaries';
+
   /// GET /v1/explorer/context
   String get getExplorerContext => '/v1/explorer/context';
 

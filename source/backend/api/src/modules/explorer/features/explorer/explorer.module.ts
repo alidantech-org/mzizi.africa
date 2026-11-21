@@ -1,6 +1,7 @@
 import { Module, type Type } from "@nestjs/common";
 import { ExplorerExplorerRepository } from "#/modules/explorer/features/explorer/repositories/explorer.repository.ts";
 import { GetCopyBundleUseCase } from "#/modules/explorer/features/explorer/use-cases/get-copy-bundle.usecase.ts";
+import { GetExplorerBoundariesUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-boundaries.usecase.ts";
 import { GetExplorerContextUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-context.usecase.ts";
 import { GetExplorerLocationUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-location.usecase.ts";
 import { GetExplorerNavigationUseCase } from "#/modules/explorer/features/explorer/use-cases/get-explorer-navigation.usecase.ts";
@@ -22,6 +23,7 @@ import { ExplorerExplorerService, ExplorerExplorerServiceImpl } from "./explorer
       useClass: ExplorerExplorerServiceImpl satisfies Type<ExplorerExplorerService>,
     },
     GetCopyBundleUseCase,
+    GetExplorerBoundariesUseCase,
     GetExplorerContextUseCase,
     GetExplorerLocationUseCase,
     GetExplorerNavigationUseCase,

@@ -3,6 +3,8 @@ import { AddressesInputDto } from "#/modules/explorer/schema/dto/addresses-input
 import { AddressesDto } from "#/modules/explorer/schema/dto/addresses.dto.ts";
 import { BootstrapInputDto } from "#/modules/explorer/schema/dto/bootstrap-input.dto.ts";
 import { BootstrapDto } from "#/modules/explorer/schema/dto/bootstrap.dto.ts";
+import { BoundariesInputDto } from "#/modules/explorer/schema/dto/boundaries-input.dto.ts";
+import { BoundariesDto } from "#/modules/explorer/schema/dto/boundaries.dto.ts";
 import { ChildrenInputDto } from "#/modules/explorer/schema/dto/children-input.dto.ts";
 import { ContextDto } from "#/modules/explorer/schema/dto/context.dto.ts";
 import { CoordinatesInputDto } from "#/modules/explorer/schema/dto/coordinates-input.dto.ts";
@@ -27,6 +29,12 @@ export class ExplorerExplorerController {
   @HttpCode(200)
   getCopyBundle(@Query() input: CopyInputDto): Promise<CopyBundleDto> {
     return this.service.getCopyBundle(input);
+  }
+
+  @Get("/v1/explorer/boundaries")
+  @HttpCode(200)
+  getExplorerBoundaries(@Query() input: BoundariesInputDto): Promise<BoundariesDto> {
+    return this.service.getExplorerBoundaries(input);
   }
 
   @Get("/v1/explorer/context")

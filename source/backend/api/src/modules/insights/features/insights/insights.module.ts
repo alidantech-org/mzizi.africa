@@ -19,6 +19,7 @@ import { GetNearbyProjectsUseCase } from "#/modules/insights/features/insights/u
 import { GetPartyUseCase } from "#/modules/insights/features/insights/use-cases/get-party.usecase.ts";
 import { GetPlaceCivicUseCase } from "#/modules/insights/features/insights/use-cases/get-place-civic.usecase.ts";
 import { GetPlaceElectionsUseCase } from "#/modules/insights/features/insights/use-cases/get-place-elections.usecase.ts";
+import { GetPlaceStatisticsAtUseCase } from "#/modules/insights/features/insights/use-cases/get-place-statistics-at.usecase.ts";
 import { GetPlaceStatisticsUseCase } from "#/modules/insights/features/insights/use-cases/get-place-statistics.usecase.ts";
 import { GetProjectUseCase } from "#/modules/insights/features/insights/use-cases/get-project.usecase.ts";
 import { GlobalSearchUseCase } from "#/modules/insights/features/insights/use-cases/global-search.usecase.ts";
@@ -60,6 +61,7 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
     GetPartyUseCase,
     GetPlaceCivicUseCase,
     GetPlaceElectionsUseCase,
+    GetPlaceStatisticsAtUseCase,
     GetPlaceStatisticsUseCase,
     GetProjectUseCase,
     GlobalSearchUseCase,

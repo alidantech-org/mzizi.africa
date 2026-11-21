@@ -37,6 +37,7 @@ import type { NearbyInputDto } from "#/modules/insights/schema/dto/nearby-input.
 import type { NearbyProjectsDto } from "#/modules/insights/schema/dto/nearby-projects.dto.ts";
 import type { PartyDetailDto } from "#/modules/insights/schema/dto/party-detail.dto.ts";
 import type { PartyListDto } from "#/modules/insights/schema/dto/party-list.dto.ts";
+import type { PlaceAtDto } from "#/modules/insights/schema/dto/place-at.dto.ts";
 import type { PlaceBrowseDto } from "#/modules/insights/schema/dto/place-browse.dto.ts";
 import type { PlaceCivicDto } from "#/modules/insights/schema/dto/place-civic.dto.ts";
 import type { PlaceElectionsDto } from "#/modules/insights/schema/dto/place-elections.dto.ts";
@@ -69,6 +70,7 @@ import { GetPartyUseCase } from "#/modules/insights/features/insights/use-cases/
 import { GetPlaceCivicUseCase } from "#/modules/insights/features/insights/use-cases/get-place-civic.usecase.ts";
 import { GetPlaceElectionsUseCase } from "#/modules/insights/features/insights/use-cases/get-place-elections.usecase.ts";
 import { GetPlaceStatisticsUseCase } from "#/modules/insights/features/insights/use-cases/get-place-statistics.usecase.ts";
+import { GetPlaceStatisticsAtUseCase } from "#/modules/insights/features/insights/use-cases/get-place-statistics-at.usecase.ts";
 import { GetProjectUseCase } from "#/modules/insights/features/insights/use-cases/get-project.usecase.ts";
 import { GlobalSearchUseCase } from "#/modules/insights/features/insights/use-cases/global-search.usecase.ts";
 import { ListContentUseCase } from "#/modules/insights/features/insights/use-cases/list-content.usecase.ts";
@@ -105,6 +107,7 @@ export abstract class InsightsInsightsService {
   abstract getPlaceCivic(input: PlaceOnlyDto): Promise<PlaceCivicDto>;
   abstract getPlaceElections(input: PlaceOnlyDto): Promise<PlaceElectionsDto>;
   abstract getPlaceStatistics(input: PlaceOnlyDto): Promise<PlaceStatisticsDto>;
+  abstract getPlaceStatisticsAt(input: PlaceAtDto): Promise<PlaceStatisticsDto>;
   abstract getProject(input: CodeInputDto): Promise<ProjectDetailDto>;
   abstract globalSearch(input: SearchQueryDto): Promise<SearchResultsDto>;
   abstract listContent(input: ContentListInputDto): Promise<ContentListDto>;
@@ -140,6 +143,7 @@ export class InsightsInsightsServiceImpl extends InsightsInsightsService {
     private readonly getPlaceCivicUseCase: GetPlaceCivicUseCase,
     private readonly getPlaceElectionsUseCase: GetPlaceElectionsUseCase,
     private readonly getPlaceStatisticsUseCase: GetPlaceStatisticsUseCase,
+    private readonly getPlaceStatisticsAtUseCase: GetPlaceStatisticsAtUseCase,
     private readonly getProjectUseCase: GetProjectUseCase,
     private readonly globalSearchUseCase: GlobalSearchUseCase,
     private readonly listContentUseCase: ListContentUseCase,
@@ -232,6 +236,10 @@ export class InsightsInsightsServiceImpl extends InsightsInsightsService {
 
   getPlaceStatistics(input: PlaceOnlyDto): Promise<PlaceStatisticsDto> {
     return this.getPlaceStatisticsUseCase.execute(input);
+  }
+
+  getPlaceStatisticsAt(input: PlaceAtDto): Promise<PlaceStatisticsDto> {
+    return this.getPlaceStatisticsAtUseCase.execute(input);
   }
 
   getProject(input: CodeInputDto): Promise<ProjectDetailDto> {

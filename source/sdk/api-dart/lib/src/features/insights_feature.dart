@@ -38,6 +38,7 @@ import 'package:mzizi_api/src/models/insights/nearby_input.dart';
 import 'package:mzizi_api/src/models/insights/nearby_projects.dart';
 import 'package:mzizi_api/src/models/insights/party_detail.dart';
 import 'package:mzizi_api/src/models/insights/party_list.dart';
+import 'package:mzizi_api/src/models/insights/place_at.dart';
 import 'package:mzizi_api/src/models/insights/place_browse.dart';
 import 'package:mzizi_api/src/models/insights/place_civic.dart';
 import 'package:mzizi_api/src/models/insights/place_elections.dart';
@@ -354,6 +355,20 @@ class InsightsFeature {
       GetRequest<InsightsPlaceStatistics>(
         endpoint: _routes.getPlaceStatistics(featureId: featureId),
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getPlaceStatistics'),
+        fromJson: (json) => InsightsPlaceStatistics.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// The same statistics as GetPlaceStatistics, for a place named by its readable address. The address is resolved on the server; no identity is sent.
+  ///
+  /// GET /v1/statistics/place
+  Future<ApiResult<InsightsPlaceStatistics>> getPlaceStatisticsAt({InsightsPlaceAt? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsPlaceStatistics>(
+        endpoint: _routes.getPlaceStatisticsAt,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getPlaceStatisticsAt'),
+        query: input?.toJson(),
         fromJson: (json) => InsightsPlaceStatistics.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );

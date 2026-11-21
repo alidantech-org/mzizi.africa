@@ -1,1 +1,1 @@
-export { default } from "#/app/(app)/_views/home";
+export { default } from "#/app/(app)/_views/place-page";

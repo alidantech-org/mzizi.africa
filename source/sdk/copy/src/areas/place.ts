@@ -54,6 +54,14 @@ export const place = defineCopy("place", {
     inside: { en: "Places inside", sw: "Maeneo ya ndani" },
     none: { en: "No places are registered inside this one.", sw: "Hakuna maeneo yaliyosajiliwa ndani ya eneo hili." },
   },
+  pending: {
+    title: { en: "{subject} is not shown for places yet", sw: "{subject} bado haionyeshwi kwa maeneo" },
+    text: {
+      en: "The place and the subject are kept in the address, so this link will work as soon as the subject is added.",
+      sw: "Eneo na mada vinahifadhiwa kwenye anwani, hivyo kiungo hiki kitafanya kazi mara mada itakapoongezwa.",
+    },
+    back: { en: "Back to {place}", sw: "Rudi {place}" },
+  },
   empty: {
     statistics: {
       en: "No statistics are recorded for this place yet.",

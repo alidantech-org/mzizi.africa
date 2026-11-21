@@ -7,6 +7,8 @@ import type { ExplorerAddressesInput } from "#sdk/types/explorer/dto/addresses-i
 import type { ExplorerAddresses } from "#sdk/types/explorer/dto/addresses.ts";
 import type { ExplorerBootstrapInput } from "#sdk/types/explorer/dto/bootstrap-input.ts";
 import type { ExplorerBootstrap } from "#sdk/types/explorer/dto/bootstrap.ts";
+import type { ExplorerBoundariesInput } from "#sdk/types/explorer/dto/boundaries-input.ts";
+import type { ExplorerBoundaries } from "#sdk/types/explorer/dto/boundaries.ts";
 import type { ExplorerChildrenInput } from "#sdk/types/explorer/dto/children-input.ts";
 import type { ExplorerContext } from "#sdk/types/explorer/dto/context.ts";
 import type { ExplorerCoordinatesInput } from "#sdk/types/explorer/dto/coordinates-input.ts";
@@ -28,6 +30,20 @@ export async function explorerGetCopyBundle(input: ExplorerGetCopyBundleActionIn
   const options = requestOptions(input.options, input.query, false);
   const path = routes.explorer.getCopyBundle;
   return api.get<ExplorerCopyBundle>(path, options);
+}
+/** GET /v1/explorer/boundaries */
+export type ExplorerGetExplorerBoundariesActionInput = ActionInput<
+  never,
+  ExplorerBoundariesInput,
+  never
+>;
+
+export async function explorerGetExplorerBoundaries(
+  input: ExplorerGetExplorerBoundariesActionInput,
+) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.explorer.getExplorerBoundaries;
+  return api.get<ExplorerBoundaries>(path, options);
 }
 /** GET /v1/explorer/context */
 export type ExplorerGetExplorerContextActionInput = ActionInput<never, ExplorerPlaceInput, never>;

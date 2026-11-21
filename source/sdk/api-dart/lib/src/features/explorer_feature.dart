@@ -4,6 +4,8 @@ import 'package:mzizi_api/src/models/explorer/addresses.dart';
 import 'package:mzizi_api/src/models/explorer/addresses_input.dart';
 import 'package:mzizi_api/src/models/explorer/bootstrap.dart';
 import 'package:mzizi_api/src/models/explorer/bootstrap_input.dart';
+import 'package:mzizi_api/src/models/explorer/boundaries.dart';
+import 'package:mzizi_api/src/models/explorer/boundaries_input.dart';
 import 'package:mzizi_api/src/models/explorer/children_input.dart';
 import 'package:mzizi_api/src/models/explorer/context.dart';
 import 'package:mzizi_api/src/models/explorer/coordinates_input.dart';
@@ -38,6 +40,20 @@ class ExplorerFeature {
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'explorer.getCopyBundle'),
         query: input?.toJson(),
         fromJson: (json) => ExplorerCopyBundle.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Simplified boundaries to draw a map: the place itself or the places directly inside it, from the recorded geometries, resolved from the readable address. Places with no recorded boundary are counted, never drawn.
+  ///
+  /// GET /v1/explorer/boundaries
+  Future<ApiResult<ExplorerBoundaries>> getExplorerBoundaries({ExplorerBoundariesInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<ExplorerBoundaries>(
+        endpoint: _routes.getExplorerBoundaries,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'explorer.getExplorerBoundaries'),
+        query: input?.toJson(),
+        fromJson: (json) => ExplorerBoundaries.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
   }

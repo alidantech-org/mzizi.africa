@@ -63,6 +63,9 @@ class InsightsEndpoints {
   /// GET /v1/statistics/places/{featureId}
   String getPlaceStatistics({required String featureId}) => '/v1/statistics/places/$featureId';
 
+  /// GET /v1/statistics/place
+  String get getPlaceStatisticsAt => '/v1/statistics/place';
+
   /// GET /v1/projects/{code}
   String getProject({required String code}) => '/v1/projects/$code';
 
