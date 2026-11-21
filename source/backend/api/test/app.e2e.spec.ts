@@ -84,7 +84,9 @@ const routes: Array<[method: string, path: string]> = [
   ],
   ["GET", "/v1/browse"],
   ["GET", "/v1/compare/options"],
+  ["GET", "/v1/compare/options/at"],
   ["GET", "/v1/compare"],
+  ["GET", "/v1/compare/at"],
   ["GET", "/v1/content"],
   [
     "GET",
@@ -93,6 +95,7 @@ const routes: Array<[method: string, path: string]> = [
       encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
     ),
   ],
+  ["GET", "/v1/election-at"],
   ["GET", "/v1/governance/tabs"],
   ["GET", "/v1/governance/tree"],
   [
@@ -144,6 +147,7 @@ const routes: Array<[method: string, path: string]> = [
   ],
   ["GET", "/v1/statistics/place"],
   ["GET", "/v1/projects/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/tender/{code}".replace("{code}", encodeURIComponent(String("value")))],
   ["GET", "/v1/search"],
   ["GET", "/v1/content/list"],
   ["GET", "/v1/elections"],
@@ -153,6 +157,7 @@ const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/motions"],
   ["GET", "/v1/parties"],
   ["GET", "/v1/tenders"],
+  ["GET", "/v1/tenders/at"],
   ["GET", "/v1/engagement"],
   ["POST", "/v1/likes"],
   ["POST", "/v1/views"],

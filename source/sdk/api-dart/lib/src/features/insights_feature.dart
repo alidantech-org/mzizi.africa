@@ -4,13 +4,16 @@ import 'package:mzizi_api/src/models/insights/board_input.dart';
 import 'package:mzizi_api/src/models/insights/browse_input.dart';
 import 'package:mzizi_api/src/models/insights/code_input.dart';
 import 'package:mzizi_api/src/models/insights/compare_options.dart';
+import 'package:mzizi_api/src/models/insights/compare_options_at_input.dart';
 import 'package:mzizi_api/src/models/insights/compare_options_input.dart';
 import 'package:mzizi_api/src/models/insights/comparison.dart';
+import 'package:mzizi_api/src/models/insights/comparison_at_input.dart';
 import 'package:mzizi_api/src/models/insights/comparison_input.dart';
 import 'package:mzizi_api/src/models/insights/content_input.dart';
 import 'package:mzizi_api/src/models/insights/content_list.dart';
 import 'package:mzizi_api/src/models/insights/content_list_input.dart';
 import 'package:mzizi_api/src/models/insights/content_page.dart';
+import 'package:mzizi_api/src/models/insights/election_at_input.dart';
 import 'package:mzizi_api/src/models/insights/election_detail.dart';
 import 'package:mzizi_api/src/models/insights/election_input.dart';
 import 'package:mzizi_api/src/models/insights/election_list.dart';
@@ -51,6 +54,7 @@ import 'package:mzizi_api/src/models/insights/search_results.dart';
 import 'package:mzizi_api/src/models/insights/series_input.dart';
 import 'package:mzizi_api/src/models/insights/tender_input.dart';
 import 'package:mzizi_api/src/models/insights/tender_list.dart';
+import 'package:mzizi_api/src/models/insights/tenders_at_input.dart';
 import 'package:mzizi_api/src/models/insights/tree_input.dart';
 
 /// Typed client for the Insights group. Every method runs through the package's
@@ -90,6 +94,20 @@ class InsightsFeature {
     );
   }
 
+  /// Compare options for a place named by its readable address: peers, nearby places, top places and the metrics offered.
+  ///
+  /// GET /v1/compare/options/at
+  Future<ApiResult<InsightsCompareOptions>> getCompareOptionsAt({InsightsCompareOptionsAtInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsCompareOptions>(
+        endpoint: _routes.getCompareOptionsAt,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getCompareOptionsAt'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsCompareOptions.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
   /// Two places on the same figures, aligned, with the difference in percent.
   ///
   /// GET /v1/compare
@@ -98,6 +116,20 @@ class InsightsFeature {
       GetRequest<InsightsComparison>(
         endpoint: _routes.getComparison,
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getComparison'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsComparison.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Two places of one country on the same figures, each named by its readable address.
+  ///
+  /// GET /v1/compare/at
+  Future<ApiResult<InsightsComparison>> getComparisonAt({InsightsComparisonAtInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsComparison>(
+        endpoint: _routes.getComparisonAt,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getComparisonAt'),
         query: input?.toJson(),
         fromJson: (json) => InsightsComparison.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
@@ -135,6 +167,20 @@ class InsightsFeature {
           if (parentFeatureId != null) 'parentFeatureId': parentFeatureId,
           if (contestKind != null) 'contestKind': contestKind,
         },
+        fromJson: (json) => InsightsElectionDetail.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// One election with its contests and results by unit under a place named by its readable address.
+  ///
+  /// GET /v1/election-at
+  Future<ApiResult<InsightsElectionDetail>> getElectionAt({InsightsElectionAtInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsElectionDetail>(
+        endpoint: _routes.getElectionAt,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getElectionAt'),
+        query: input?.toJson(),
         fromJson: (json) => InsightsElectionDetail.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );
@@ -402,6 +448,19 @@ class InsightsFeature {
     );
   }
 
+  /// One tender by its code, in the shape of the tender list (a list of one).
+  ///
+  /// GET /v1/tender/{code}
+  Future<ApiResult<InsightsTenderList>> getTender({required String code, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsTenderList>(
+        endpoint: _routes.getTender(code: code),
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getTender'),
+        fromJson: (json) => InsightsTenderList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
   /// One search over places, leaders, parties, projects, tenders, indicators, sources and laws; every hit says what it is.
   ///
   /// GET /v1/search
@@ -519,6 +578,20 @@ class InsightsFeature {
       GetRequest<InsightsTenderList>(
         endpoint: _routes.listTenders,
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listTenders'),
+        query: input?.toJson(),
+        fromJson: (json) => InsightsTenderList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// Tenders for a place named by its readable address (and the places inside it), or for the country when no place is named.
+  ///
+  /// GET /v1/tenders/at
+  Future<ApiResult<InsightsTenderList>> listTendersAt({InsightsTendersAtInput? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsTenderList>(
+        endpoint: _routes.listTendersAt,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.listTendersAt'),
         query: input?.toJson(),
         fromJson: (json) => InsightsTenderList.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),

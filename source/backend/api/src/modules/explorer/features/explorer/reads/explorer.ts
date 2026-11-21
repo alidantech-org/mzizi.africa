@@ -396,7 +396,27 @@ export async function navigation(db: DataSource, input: NavigationInputDto): Pro
       return Object.assign(new NavigationItemDto(), { view: subject.view, available: found[0]?.ok === true });
     }),
   );
-  return { country: selected, items, gaps: [] };
+  if (!input.path) return { country: selected, items, gaps: [] };
+  // A place is in view: the subjects whose records belong to places are checked for that place and the places inside it.
+  const featureId = await featureIdAt(db, input.countryCode, input.path, undefined);
+  const below = `with recursive down as (
+       select $1::uuid as id, 0 as depth
+       union
+       select r.subject_feature_id, d.depth + 1 from geography.relationships r join down d on r.object_feature_id = d.id where d.depth < 6 and r.to_year is null)`;
+  const placeChecks: Record<string, string> = {
+    statistics: `${below} select exists(select 1 from statistics.observations o where o.feature_id in (select id from down) and o.deleted_at is null) as "ok"`,
+    compare: `${below} select exists(select 1 from statistics.observations o where o.feature_id in (select id from down) and o.deleted_at is null) as "ok"`,
+    finance: `${below} select (exists(select 1 from finance.flows f where f.scope_unit_feature_id in (select id from down)) or exists(select 1 from civic.projects p where p.scope_unit_feature_id in (select id from down))) as "ok"`,
+  };
+  const scoped = await Promise.all(
+    items.map(async (item) => {
+      const sql = placeChecks[item.view];
+      if (!sql) return item;
+      const found = await db.query(sql, [featureId]);
+      return Object.assign(new NavigationItemDto(), { view: item.view, available: found[0]?.ok === true });
+    }),
+  );
+  return { country: selected, items: scoped, gaps: [] };
 }
 
 /* ---- reads answered from the place registry: one set of places per country and language, matched by readable address ---- */

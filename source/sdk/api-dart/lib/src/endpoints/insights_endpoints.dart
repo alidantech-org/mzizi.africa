@@ -9,14 +9,23 @@ class InsightsEndpoints {
   /// GET /v1/compare/options
   String get getCompareOptions => '/v1/compare/options';
 
+  /// GET /v1/compare/options/at
+  String get getCompareOptionsAt => '/v1/compare/options/at';
+
   /// GET /v1/compare
   String get getComparison => '/v1/compare';
+
+  /// GET /v1/compare/at
+  String get getComparisonAt => '/v1/compare/at';
 
   /// GET /v1/content
   String get getContent => '/v1/content';
 
   /// GET /v1/elections/{electionId}
   String getElection({required String electionId}) => '/v1/elections/$electionId';
+
+  /// GET /v1/election-at
+  String get getElectionAt => '/v1/election-at';
 
   /// GET /v1/governance/tabs
   String get getGovernanceTabs => '/v1/governance/tabs';
@@ -72,6 +81,9 @@ class InsightsEndpoints {
   /// GET /v1/projects/{code}
   String getProject({required String code}) => '/v1/projects/$code';
 
+  /// GET /v1/tender/{code}
+  String getTender({required String code}) => '/v1/tender/$code';
+
   /// GET /v1/search
   String get globalSearch => '/v1/search';
 
@@ -98,4 +110,7 @@ class InsightsEndpoints {
 
   /// GET /v1/tenders
   String get listTenders => '/v1/tenders';
+
+  /// GET /v1/tenders/at
+  String get listTendersAt => '/v1/tenders/at';
 }

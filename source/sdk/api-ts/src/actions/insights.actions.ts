@@ -4,14 +4,17 @@ import { type ActionInput, requestOptions } from "#sdk/helpers/index.ts";
 import { api } from "#sdk/helpers/api.ts";
 import { routes } from "#sdk/routes.ts";
 import type { InsightsBrowseInput } from "#sdk/types/insights/dto/browse-input.ts";
+import type { InsightsCompareOptionsAtInput } from "#sdk/types/insights/dto/compare-options-at-input.ts";
 import type { InsightsCompareOptionsInput } from "#sdk/types/insights/dto/compare-options-input.ts";
 import type { InsightsCompareOptions } from "#sdk/types/insights/dto/compare-options.ts";
+import type { InsightsComparisonAtInput } from "#sdk/types/insights/dto/comparison-at-input.ts";
 import type { InsightsComparisonInput } from "#sdk/types/insights/dto/comparison-input.ts";
 import type { InsightsComparison } from "#sdk/types/insights/dto/comparison.ts";
 import type { InsightsContentInput } from "#sdk/types/insights/dto/content-input.ts";
 import type { InsightsContentListInput } from "#sdk/types/insights/dto/content-list-input.ts";
 import type { InsightsContentList } from "#sdk/types/insights/dto/content-list.ts";
 import type { InsightsContentPage } from "#sdk/types/insights/dto/content-page.ts";
+import type { InsightsElectionAtInput } from "#sdk/types/insights/dto/election-at-input.ts";
 import type { InsightsElectionDetail } from "#sdk/types/insights/dto/election-detail.ts";
 import type { InsightsElectionList } from "#sdk/types/insights/dto/election-list.ts";
 import type { InsightsGovTreeInput } from "#sdk/types/insights/dto/gov-tree-input.ts";
@@ -48,6 +51,7 @@ import type { InsightsSearchQuery } from "#sdk/types/insights/dto/search-query.t
 import type { InsightsSearchResults } from "#sdk/types/insights/dto/search-results.ts";
 import type { InsightsTenderInput } from "#sdk/types/insights/dto/tender-input.ts";
 import type { InsightsTenderList } from "#sdk/types/insights/dto/tender-list.ts";
+import type { InsightsTendersAtInput } from "#sdk/types/insights/dto/tenders-at-input.ts";
 import type { InsightsTreeInput } from "#sdk/types/insights/dto/tree-input.ts";
 /** GET /v1/browse */
 export type InsightsBrowsePlacesActionInput = ActionInput<never, InsightsBrowseInput, never>;
@@ -69,12 +73,36 @@ export async function insightsGetCompareOptions(input: InsightsGetCompareOptions
   const path = routes.insights.getCompareOptions;
   return api.get<InsightsCompareOptions>(path, options);
 }
+/** GET /v1/compare/options/at */
+export type InsightsGetCompareOptionsAtActionInput = ActionInput<
+  never,
+  InsightsCompareOptionsAtInput,
+  never
+>;
+
+export async function insightsGetCompareOptionsAt(input: InsightsGetCompareOptionsAtActionInput) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.insights.getCompareOptionsAt;
+  return api.get<InsightsCompareOptions>(path, options);
+}
 /** GET /v1/compare */
 export type InsightsGetComparisonActionInput = ActionInput<never, InsightsComparisonInput, never>;
 
 export async function insightsGetComparison(input: InsightsGetComparisonActionInput) {
   const options = requestOptions(input.options, input.query, false);
   const path = routes.insights.getComparison;
+  return api.get<InsightsComparison>(path, options);
+}
+/** GET /v1/compare/at */
+export type InsightsGetComparisonAtActionInput = ActionInput<
+  never,
+  InsightsComparisonAtInput,
+  never
+>;
+
+export async function insightsGetComparisonAt(input: InsightsGetComparisonAtActionInput) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.insights.getComparisonAt;
   return api.get<InsightsComparison>(path, options);
 }
 /** GET /v1/content */
@@ -95,6 +123,14 @@ export type InsightsGetElectionActionInput = ActionInput<
 export async function insightsGetElection(input: InsightsGetElectionActionInput) {
   const options = requestOptions(input.options, input.query, false);
   const path = routes.insights.getElection(input.params);
+  return api.get<InsightsElectionDetail>(path, options);
+}
+/** GET /v1/election-at */
+export type InsightsGetElectionAtActionInput = ActionInput<never, InsightsElectionAtInput, never>;
+
+export async function insightsGetElectionAt(input: InsightsGetElectionAtActionInput) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.insights.getElectionAt;
   return api.get<InsightsElectionDetail>(path, options);
 }
 /** GET /v1/governance/tabs */
@@ -261,6 +297,14 @@ export async function insightsGetProject(input: InsightsGetProjectActionInput) {
   const path = routes.insights.getProject(input.params);
   return api.get<InsightsProjectDetail>(path, options);
 }
+/** GET /v1/tender/{code} */
+export type InsightsGetTenderActionInput = ActionInput<{ code: string }, never, never>;
+
+export async function insightsGetTender(input: InsightsGetTenderActionInput) {
+  const options = requestOptions(input.options, undefined, false);
+  const path = routes.insights.getTender(input.params);
+  return api.get<InsightsTenderList>(path, options);
+}
 /** GET /v1/search */
 export type InsightsGlobalSearchActionInput = ActionInput<never, InsightsSearchQuery, never>;
 
@@ -337,5 +381,13 @@ export type InsightsListTendersActionInput = ActionInput<never, InsightsTenderIn
 export async function insightsListTenders(input: InsightsListTendersActionInput = {}) {
   const options = requestOptions(input.options, input.query, false);
   const path = routes.insights.listTenders;
+  return api.get<InsightsTenderList>(path, options);
+}
+/** GET /v1/tenders/at */
+export type InsightsListTendersAtActionInput = ActionInput<never, InsightsTendersAtInput, never>;
+
+export async function insightsListTendersAt(input: InsightsListTendersAtActionInput) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.insights.listTendersAt;
   return api.get<InsightsTenderList>(path, options);
 }

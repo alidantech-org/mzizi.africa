@@ -7,14 +7,17 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 import { boardInputExample } from "@test/modules/insights/schema/dto/examples/board-input.dto.example.ts";
 import { browseInputExample } from "@test/modules/insights/schema/dto/examples/browse-input.dto.example.ts";
 import { codeInputExample } from "@test/modules/insights/schema/dto/examples/code-input.dto.example.ts";
+import { compareOptionsAtInputExample } from "@test/modules/insights/schema/dto/examples/compare-options-at-input.dto.example.ts";
 import { compareOptionsInputExample } from "@test/modules/insights/schema/dto/examples/compare-options-input.dto.example.ts";
 import { compareOptionsExample } from "@test/modules/insights/schema/dto/examples/compare-options.dto.example.ts";
+import { comparisonAtInputExample } from "@test/modules/insights/schema/dto/examples/comparison-at-input.dto.example.ts";
 import { comparisonInputExample } from "@test/modules/insights/schema/dto/examples/comparison-input.dto.example.ts";
 import { comparisonExample } from "@test/modules/insights/schema/dto/examples/comparison.dto.example.ts";
 import { contentInputExample } from "@test/modules/insights/schema/dto/examples/content-input.dto.example.ts";
 import { contentListInputExample } from "@test/modules/insights/schema/dto/examples/content-list-input.dto.example.ts";
 import { contentListExample } from "@test/modules/insights/schema/dto/examples/content-list.dto.example.ts";
 import { contentPageExample } from "@test/modules/insights/schema/dto/examples/content-page.dto.example.ts";
+import { electionAtInputExample } from "@test/modules/insights/schema/dto/examples/election-at-input.dto.example.ts";
 import { electionDetailExample } from "@test/modules/insights/schema/dto/examples/election-detail.dto.example.ts";
 import { electionInputExample } from "@test/modules/insights/schema/dto/examples/election-input.dto.example.ts";
 import { electionListExample } from "@test/modules/insights/schema/dto/examples/election-list.dto.example.ts";
@@ -55,6 +58,7 @@ import { searchResultsExample } from "@test/modules/insights/schema/dto/examples
 import { seriesInputExample } from "@test/modules/insights/schema/dto/examples/series-input.dto.example.ts";
 import { tenderInputExample } from "@test/modules/insights/schema/dto/examples/tender-input.dto.example.ts";
 import { tenderListExample } from "@test/modules/insights/schema/dto/examples/tender-list.dto.example.ts";
+import { tendersAtInputExample } from "@test/modules/insights/schema/dto/examples/tenders-at-input.dto.example.ts";
 import { treeInputExample } from "@test/modules/insights/schema/dto/examples/tree-input.dto.example.ts";
 
 import { HttpValidationPipe, httpOptions } from "#/server/http.options.ts";
@@ -87,9 +91,12 @@ class InMemoryDataSourceModule {}
 const service = {
   browsePlaces: vi.fn(),
   getCompareOptions: vi.fn(),
+  getCompareOptionsAt: vi.fn(),
   getComparison: vi.fn(),
+  getComparisonAt: vi.fn(),
   getContent: vi.fn(),
   getElection: vi.fn(),
+  getElectionAt: vi.fn(),
   getGovernanceTabs: vi.fn(),
   getGovernanceTree: vi.fn(),
   getIndicatorMap: vi.fn(),
@@ -108,6 +115,7 @@ const service = {
   getPlaceStatistics: vi.fn(),
   getPlaceStatisticsAt: vi.fn(),
   getProject: vi.fn(),
+  getTender: vi.fn(),
   globalSearch: vi.fn(),
   listContent: vi.fn(),
   listElections: vi.fn(),
@@ -117,6 +125,7 @@ const service = {
   listMotions: vi.fn(),
   listParties: vi.fn(),
   listTenders: vi.fn(),
+  listTendersAt: vi.fn(),
 };
 
 type Sent = {
@@ -215,6 +224,25 @@ describe("GET /v1/compare/options (getCompareOptions)", () => {
   });
 });
 
+describe("GET /v1/compare/options/at (getCompareOptionsAt)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(compareOptionsAtInputExample.valid()) },
+      headers: {},
+    };
+    const result = compareOptionsExample.valid();
+    service.getCompareOptionsAt.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/compare/options/at", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getCompareOptionsAt).toHaveBeenCalledTimes(1);
+    expect(service.getCompareOptionsAt).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/compare (getComparison)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -230,6 +258,25 @@ describe("GET /v1/compare (getComparison)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.getComparison).toHaveBeenCalledTimes(1);
     expect(service.getComparison).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/compare/at (getComparisonAt)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(comparisonAtInputExample.valid()) },
+      headers: {},
+    };
+    const result = comparisonExample.valid();
+    service.getComparisonAt.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/compare/at", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getComparisonAt).toHaveBeenCalledTimes(1);
+    expect(service.getComparisonAt).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -277,6 +324,25 @@ describe("GET /v1/elections/{electionId} (getElection)", () => {
         contestKind: String("value"),
       }),
     );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/election-at (getElectionAt)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(electionAtInputExample.valid()) },
+      headers: {},
+    };
+    const result = electionDetailExample.valid();
+    service.getElectionAt.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/election-at", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getElectionAt).toHaveBeenCalledTimes(1);
+    expect(service.getElectionAt).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });
@@ -669,6 +735,27 @@ describe("GET /v1/projects/{code} (getProject)", () => {
   });
 });
 
+describe("GET /v1/tender/{code} (getTender)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: { code: "value" },
+      query: {},
+      headers: {},
+    };
+    const result = tenderListExample.valid();
+    service.getTender.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/tender/{code}", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getTender).toHaveBeenCalledTimes(1);
+    expect(service.getTender).toHaveBeenCalledWith(
+      expect.objectContaining({ code: String("value") }),
+    );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
 describe("GET /v1/search (globalSearch)", () => {
   it("passes a valid request to the service and answers with the contract status", async () => {
     const sent: Sent = {
@@ -833,6 +920,25 @@ describe("GET /v1/tenders (listTenders)", () => {
     expect(response.status, await response.clone().text()).toBe(200);
     expect(service.listTenders).toHaveBeenCalledTimes(1);
     expect(service.listTenders).toHaveBeenCalledWith(expect.anything());
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/tenders/at (listTendersAt)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(tendersAtInputExample.valid()) },
+      headers: {},
+    };
+    const result = tenderListExample.valid();
+    service.listTendersAt.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/tenders/at", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.listTendersAt).toHaveBeenCalledTimes(1);
+    expect(service.listTendersAt).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

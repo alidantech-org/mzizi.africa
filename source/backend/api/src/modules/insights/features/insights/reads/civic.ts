@@ -116,7 +116,7 @@ export async function projectDetail(db: DataSource, code: string) {
   };
 }
 
-export async function listTenders(db: DataSource, status: string | undefined, featureId: string | undefined, limit: number) {
+export async function listTenders(db: DataSource, status: string | undefined, featureId: string | undefined, limit: number, code?: string) {
   const ids = featureId ? await descendantIds(db, featureId) : null;
   const rows: Record<string, unknown>[] = await db.query(
     `select pr.code, coalesce(pr.title, pr.code) as title, pr.reference, regexp_replace(st.code, '^.*\\.', '') as status, regexp_replace(pk.code, '^.*\\.', '') as procedure,
@@ -131,7 +131,8 @@ export async function listTenders(db: DataSource, status: string | undefined, fe
      from civic.procurements pr left join reference.values st on st.id = pr.status_id join reference.values pk on pk.id = pr.procedure_kind_id
      where ($1::text is null or st.code = 'ref.val.civ.procurement.status.' || $1)
        and ($2::uuid[] is null or exists (select 1 from civic.projects p where p.id = pr.project_id and p.scope_unit_feature_id = any($2::uuid[])))
-     order by pr.published_on desc nulls last, pr.code limit $3`, [status ?? null, ids, Math.min(Math.max(limit, 1), 300)]);
+       and ($4::text is null or pr.code = $4 or pr.code like '%.' || $4)
+     order by pr.published_on desc nulls last, pr.code limit $3`, [status ?? null, ids, Math.min(Math.max(limit, 1), 300), code ?? null]);
   const summary: { status: string; n: string; value: string | null }[] = await db.query(
     `select regexp_replace(st.code, '^.*\\.', '') as status, count(*)::text as n, sum((select c.amount_minor_units from civic.contracts c where c.procurement_id = pr.id limit 1))::text as value
      from civic.procurements pr join reference.values st on st.id = pr.status_id group by 1 order by 2 desc`);

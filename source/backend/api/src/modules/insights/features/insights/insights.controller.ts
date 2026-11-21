@@ -1,13 +1,16 @@
 import { Controller, Get, HttpCode, Param, ParseIntPipe, Query } from "@nestjs/common";
 import { BrowseInputDto } from "#/modules/insights/schema/dto/browse-input.dto.ts";
+import { CompareOptionsAtInputDto } from "#/modules/insights/schema/dto/compare-options-at-input.dto.ts";
 import { CompareOptionsInputDto } from "#/modules/insights/schema/dto/compare-options-input.dto.ts";
 import { CompareOptionsDto } from "#/modules/insights/schema/dto/compare-options.dto.ts";
+import { ComparisonAtInputDto } from "#/modules/insights/schema/dto/comparison-at-input.dto.ts";
 import { ComparisonInputDto } from "#/modules/insights/schema/dto/comparison-input.dto.ts";
 import { ComparisonDto } from "#/modules/insights/schema/dto/comparison.dto.ts";
 import { ContentInputDto } from "#/modules/insights/schema/dto/content-input.dto.ts";
 import { ContentListInputDto } from "#/modules/insights/schema/dto/content-list-input.dto.ts";
 import { ContentListDto } from "#/modules/insights/schema/dto/content-list.dto.ts";
 import { ContentPageDto } from "#/modules/insights/schema/dto/content-page.dto.ts";
+import { ElectionAtInputDto } from "#/modules/insights/schema/dto/election-at-input.dto.ts";
 import { ElectionDetailDto } from "#/modules/insights/schema/dto/election-detail.dto.ts";
 import { ElectionListDto } from "#/modules/insights/schema/dto/election-list.dto.ts";
 import { GovTreeInputDto } from "#/modules/insights/schema/dto/gov-tree-input.dto.ts";
@@ -44,6 +47,7 @@ import { SearchQueryDto } from "#/modules/insights/schema/dto/search-query.dto.t
 import { SearchResultsDto } from "#/modules/insights/schema/dto/search-results.dto.ts";
 import { TenderInputDto } from "#/modules/insights/schema/dto/tender-input.dto.ts";
 import { TenderListDto } from "#/modules/insights/schema/dto/tender-list.dto.ts";
+import { TendersAtInputDto } from "#/modules/insights/schema/dto/tenders-at-input.dto.ts";
 import { TreeInputDto } from "#/modules/insights/schema/dto/tree-input.dto.ts";
 import { InsightsInsightsService } from "./insights.service.ts";
 
@@ -63,16 +67,34 @@ export class InsightsInsightsController {
     return this.service.getCompareOptions(input);
   }
 
+  @Get("/v1/compare/options/at")
+  @HttpCode(200)
+  getCompareOptionsAt(@Query() input: CompareOptionsAtInputDto): Promise<CompareOptionsDto> {
+    return this.service.getCompareOptionsAt(input);
+  }
+
   @Get("/v1/compare")
   @HttpCode(200)
   getComparison(@Query() input: ComparisonInputDto): Promise<ComparisonDto> {
     return this.service.getComparison(input);
   }
 
+  @Get("/v1/compare/at")
+  @HttpCode(200)
+  getComparisonAt(@Query() input: ComparisonAtInputDto): Promise<ComparisonDto> {
+    return this.service.getComparisonAt(input);
+  }
+
   @Get("/v1/content")
   @HttpCode(200)
   getContent(@Query() input: ContentInputDto): Promise<ContentPageDto> {
     return this.service.getContent(input);
+  }
+
+  @Get("/v1/election-at")
+  @HttpCode(200)
+  getElectionAt(@Query() input: ElectionAtInputDto): Promise<ElectionDetailDto> {
+    return this.service.getElectionAt(input);
   }
 
   @Get("/v1/governance/tabs")
@@ -169,6 +191,12 @@ export class InsightsInsightsController {
   @HttpCode(200)
   listTenders(@Query() input: TenderInputDto): Promise<TenderListDto> {
     return this.service.listTenders(input);
+  }
+
+  @Get("/v1/tenders/at")
+  @HttpCode(200)
+  listTendersAt(@Query() input: TendersAtInputDto): Promise<TenderListDto> {
+    return this.service.listTendersAt(input);
   }
 
   @Get("/v1/elections/:electionId")
@@ -270,5 +298,11 @@ export class InsightsInsightsController {
   @HttpCode(200)
   getProject(@Param("code") code: string): Promise<ProjectDetailDto> {
     return this.service.getProject({ code });
+  }
+
+  @Get("/v1/tender/:code")
+  @HttpCode(200)
+  getTender(@Param("code") code: string): Promise<TenderListDto> {
+    return this.service.getTender({ code });
   }
 }

@@ -1,9 +1,12 @@
 import { Module, type Type } from "@nestjs/common";
 import { InsightsInsightsRepository } from "#/modules/insights/features/insights/repositories/insights.repository.ts";
 import { BrowsePlacesUseCase } from "#/modules/insights/features/insights/use-cases/browse-places.usecase.ts";
+import { GetCompareOptionsAtUseCase } from "#/modules/insights/features/insights/use-cases/get-compare-options-at.usecase.ts";
 import { GetCompareOptionsUseCase } from "#/modules/insights/features/insights/use-cases/get-compare-options.usecase.ts";
+import { GetComparisonAtUseCase } from "#/modules/insights/features/insights/use-cases/get-comparison-at.usecase.ts";
 import { GetComparisonUseCase } from "#/modules/insights/features/insights/use-cases/get-comparison.usecase.ts";
 import { GetContentUseCase } from "#/modules/insights/features/insights/use-cases/get-content.usecase.ts";
+import { GetElectionAtUseCase } from "#/modules/insights/features/insights/use-cases/get-election-at.usecase.ts";
 import { GetElectionUseCase } from "#/modules/insights/features/insights/use-cases/get-election.usecase.ts";
 import { GetGovernanceTabsUseCase } from "#/modules/insights/features/insights/use-cases/get-governance-tabs.usecase.ts";
 import { GetGovernanceTreeUseCase } from "#/modules/insights/features/insights/use-cases/get-governance-tree.usecase.ts";
@@ -23,6 +26,7 @@ import { GetPlaceElectionsUseCase } from "#/modules/insights/features/insights/u
 import { GetPlaceStatisticsAtUseCase } from "#/modules/insights/features/insights/use-cases/get-place-statistics-at.usecase.ts";
 import { GetPlaceStatisticsUseCase } from "#/modules/insights/features/insights/use-cases/get-place-statistics.usecase.ts";
 import { GetProjectUseCase } from "#/modules/insights/features/insights/use-cases/get-project.usecase.ts";
+import { GetTenderUseCase } from "#/modules/insights/features/insights/use-cases/get-tender.usecase.ts";
 import { GlobalSearchUseCase } from "#/modules/insights/features/insights/use-cases/global-search.usecase.ts";
 import { ListContentUseCase } from "#/modules/insights/features/insights/use-cases/list-content.usecase.ts";
 import { ListElectionsUseCase } from "#/modules/insights/features/insights/use-cases/list-elections.usecase.ts";
@@ -31,6 +35,7 @@ import { ListLawUseCase } from "#/modules/insights/features/insights/use-cases/l
 import { ListLeaderboardMetricsUseCase } from "#/modules/insights/features/insights/use-cases/list-leaderboard-metrics.usecase.ts";
 import { ListMotionsUseCase } from "#/modules/insights/features/insights/use-cases/list-motions.usecase.ts";
 import { ListPartiesUseCase } from "#/modules/insights/features/insights/use-cases/list-parties.usecase.ts";
+import { ListTendersAtUseCase } from "#/modules/insights/features/insights/use-cases/list-tenders-at.usecase.ts";
 import { ListTendersUseCase } from "#/modules/insights/features/insights/use-cases/list-tenders.usecase.ts";
 
 import { InsightsInsightsController } from "./insights.controller.ts";
@@ -44,9 +49,12 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
       useClass: InsightsInsightsServiceImpl satisfies Type<InsightsInsightsService>,
     },
     BrowsePlacesUseCase,
+    GetCompareOptionsAtUseCase,
     GetCompareOptionsUseCase,
+    GetComparisonAtUseCase,
     GetComparisonUseCase,
     GetContentUseCase,
+    GetElectionAtUseCase,
     GetElectionUseCase,
     GetGovernanceTabsUseCase,
     GetGovernanceTreeUseCase,
@@ -66,6 +74,7 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
     GetPlaceStatisticsAtUseCase,
     GetPlaceStatisticsUseCase,
     GetProjectUseCase,
+    GetTenderUseCase,
     GlobalSearchUseCase,
     ListContentUseCase,
     ListElectionsUseCase,
@@ -74,6 +83,7 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
     ListLeaderboardMetricsUseCase,
     ListMotionsUseCase,
     ListPartiesUseCase,
+    ListTendersAtUseCase,
     ListTendersUseCase,
     InsightsInsightsRepository,
   ],

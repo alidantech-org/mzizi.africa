@@ -13,6 +13,12 @@ export const navigationInputExample: ContractExample = contractExample({
       nullable: false,
       spec: { kind: "string", exactLength: 2, patterns: ["^[A-Z]{2}$"] },
     },
+    {
+      name: "path",
+      optional: true,
+      nullable: false,
+      spec: { kind: "string", minLength: 1, maxLength: 1500 },
+    },
   ],
   invariants: [],
 });

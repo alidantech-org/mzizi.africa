@@ -5,8 +5,9 @@ part 'navigation_input.g.dart';
 /// Navigation Input
 @JsonSerializable(includeIfNull: false)
 class ExplorerNavigationInput {
-  const ExplorerNavigationInput({required this.countryCode});
+  const ExplorerNavigationInput({required this.countryCode, this.path});
   final String countryCode;
+  final String? path;
 
   factory ExplorerNavigationInput.fromJson(Map<String, dynamic> json) => _$ExplorerNavigationInputFromJson(json);
 

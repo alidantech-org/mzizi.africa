@@ -321,6 +321,17 @@
       "summary": "Places worth comparing a place with: the ten closest by geography, the ten top performers, and the ladder of the units above it, saying plainly which rungs do not exist."
     },
     {
+      "name": "GetCompareOptionsAt",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/compare/options/at",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "CompareOptions",
+      "summary": "Compare options for a place named by its readable address: peers, nearby places, top places and the metrics offered."
+    },
+    {
       "name": "GetComparison",
       "group": "insights",
       "feature": "insights",
@@ -330,6 +341,17 @@
       "inputs": ["input"],
       "output": "Comparison",
       "summary": "Two places on the same figures, aligned, with the difference in percent."
+    },
+    {
+      "name": "GetComparisonAt",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/compare/at",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "Comparison",
+      "summary": "Two places of one country on the same figures, each named by its readable address."
     },
     {
       "name": "GetContent",
@@ -352,6 +374,17 @@
       "inputs": ["electionId", "parentFeatureId", "contestKind"],
       "output": "ElectionDetail",
       "summary": "One election: its contests, and results by unit under a parent, for tables and heat maps."
+    },
+    {
+      "name": "GetElectionAt",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/election-at",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "ElectionDetail",
+      "summary": "One election with its contests and results by unit under a place named by its readable address."
     },
     {
       "name": "GetGovernanceTabs",
@@ -552,6 +585,17 @@
       "summary": "One project: where, who is responsible, the money, the procurement, pictures and evidence."
     },
     {
+      "name": "GetTender",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/tender/{code}",
+      "role": "detail",
+      "inputs": ["code"],
+      "output": "TenderList",
+      "summary": "One tender by its code, in the shape of the tender list (a list of one)."
+    },
+    {
       "name": "GlobalSearch",
       "group": "insights",
       "feature": "insights",
@@ -649,6 +693,17 @@
       "inputs": ["input"],
       "output": "TenderList",
       "summary": "Tenders and contracts: open, ongoing, closed, awarded and complete, with suppliers, plus transparency information."
+    },
+    {
+      "name": "ListTendersAt",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/tenders/at",
+      "role": "list",
+      "inputs": ["input"],
+      "output": "TenderList",
+      "summary": "Tenders for a place named by its readable address (and the places inside it), or for the country when no place is named."
     },
     {
       "name": "GetEngagement",

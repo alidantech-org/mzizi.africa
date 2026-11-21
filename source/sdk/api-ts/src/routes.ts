@@ -73,13 +73,19 @@ export const routes = {
     browsePlaces: "/v1/browse",
     /** GET /v1/compare/options */
     getCompareOptions: "/v1/compare/options",
+    /** GET /v1/compare/options/at */
+    getCompareOptionsAt: "/v1/compare/options/at",
     /** GET /v1/compare */
     getComparison: "/v1/compare",
+    /** GET /v1/compare/at */
+    getComparisonAt: "/v1/compare/at",
     /** GET /v1/content */
     getContent: "/v1/content",
     /** GET /v1/elections/{electionId} */
     getElection: (params: { electionId: string }) =>
       `/v1/elections/${encodeURIComponent(params.electionId)}`,
+    /** GET /v1/election-at */
+    getElectionAt: "/v1/election-at",
     /** GET /v1/governance/tabs */
     getGovernanceTabs: "/v1/governance/tabs",
     /** GET /v1/governance/tree */
@@ -124,6 +130,8 @@ export const routes = {
     getPlaceStatisticsAt: "/v1/statistics/place",
     /** GET /v1/projects/{code} */
     getProject: (params: { code: string }) => `/v1/projects/${encodeURIComponent(params.code)}`,
+    /** GET /v1/tender/{code} */
+    getTender: (params: { code: string }) => `/v1/tender/${encodeURIComponent(params.code)}`,
     /** GET /v1/search */
     globalSearch: "/v1/search",
     /** GET /v1/content/list */
@@ -142,6 +150,8 @@ export const routes = {
     listParties: "/v1/parties",
     /** GET /v1/tenders */
     listTenders: "/v1/tenders",
+    /** GET /v1/tenders/at */
+    listTendersAt: "/v1/tenders/at",
   },
   interactions: {
     /** GET /v1/engagement */
