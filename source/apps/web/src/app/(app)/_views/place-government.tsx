@@ -13,9 +13,6 @@ import { loadElections, loadInstitution, loadInstitutions, loadLaw, loadMotion, 
 import { getCopy } from "#/lib/server/copy";
 
 type T = Awaited<ReturnType<typeof getCopy>>;
-/** The API sends these two fields in snake case although its contract names them in camel case; both are read until that is corrected. */
-const held = (m: object): string => (m as { heldOn?: string; held_on?: string }).heldOn ?? (m as { held_on?: string }).held_on ?? "";
-const mover = (m: object): string | null => (m as { movedBy?: string | null }).movedBy ?? (m as { moved_by?: string | null }).moved_by ?? null;
 const note = (cls = "") => `rounded-lg border border-dashed border-muted p-3 text-sm text-muted sm:p-6 ${cls}`;
 const date = (iso: string, language: string) => new Intl.DateTimeFormat(language, { dateStyle: "long", timeZone: "UTC" }).format(new Date(iso));
 
@@ -180,7 +177,7 @@ async function Motions({ base, t, language }: { base: string; t: T; language: st
   const { data, failed } = await loadMotions();
   if (failed || !data) return <p className={note()}>{t(copy.place.gov.failed)}</p>;
   return (
-    <Panel id="motions" title={t(copy.place.gov.parliament)} note={t(copy.place.gov.bodies, { count: data.motions.length })} icon={Landmark}>
+    <Panel id="motions" title={t(copy.place.gov.parliament)} note={t(copy.place.gov.motionsCount, { count: data.motions.length })} icon={Landmark}>
       <ul className="divide-y divide-line">
         {data.motions.map((m) => (
           <li key={m.code} className="py-3">
@@ -189,7 +186,7 @@ async function Motions({ base, t, language }: { base: string; t: T; language: st
             </Link>
             <p className="mt-1 text-sm text-muted">{m.summary}</p>
             <p className="mt-1 text-xs text-muted">
-              {m.institution} · {date(held(m), language)} · {m.outcome === "passed" ? t(copy.place.gov.passed) : t(copy.place.gov.failed2)} · {t(copy.place.gov.yes)} {m.yes} · {t(copy.place.gov.no)} {m.no}
+              {m.institution} · {date(m.heldOn, language)} · {m.outcome === "passed" ? t(copy.place.gov.passed) : t(copy.place.gov.failed2)} · {t(copy.place.gov.yes)} {m.yes} · {t(copy.place.gov.no)} {m.no}
             </p>
           </li>
         ))}
@@ -210,8 +207,8 @@ async function Motion({ code, base, t, language }: { code: string; base: string;
       </Link>
       <h2 className="font-display text-2xl">{m.title}</h2>
       <p className="mt-2 text-sm text-muted">
-        {m.institution} · {date(held(m), language)}
-        {mover(m) ? ` · ${t(copy.place.gov.movedBy, { name: mover(m) as string })}` : ""}
+        {m.institution} · {date(m.heldOn, language)}
+        {m.movedBy ? ` · ${t(copy.place.gov.movedBy, { name: m.movedBy })}` : ""}
       </p>
       <p className="mt-2 max-w-2xl">{m.summary}</p>
       <div className="mt-4 grid grid-cols-1 items-start gap-2 sm:gap-4 lg:grid-cols-2">
@@ -225,6 +222,43 @@ async function Motion({ code, base, t, language }: { code: string; base: string;
             ))}
           </dl>
         </Panel>
+        {m.contributions.length > 0 && (
+          <Panel id="said" title={t(copy.place.gov.contributions)} className="lg:col-span-2">
+            <ul className="divide-y divide-line">
+              {m.contributions.map((c, n) => (
+                <li key={`${c.holderId}-${n}`} className="py-3">
+                  <div className="text-sm font-medium">
+                    {c.name} <span className="font-normal text-muted">· {c.party} · {t(copy.place.gov.words, { count: c.wordCount })}</span>
+                  </div>
+                  <p className="mt-1 text-sm">{c.summary}</p>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        )}
+        {data.members.length > 0 && (
+          <Panel id="members" title={t(copy.place.gov.members)} className="lg:col-span-2">
+            <div className="space-y-2">
+              {(["yes", "no", "abstain", "absent"] as const).map((pos) => {
+                const rows = data.members.filter((x) => x.position === pos);
+                return (
+                  <details key={pos} className="rounded-md border border-line p-2">
+                    <summary className="cursor-pointer text-sm font-medium">
+                      {t(copy.place.gov[pos])} · {rows.length}
+                    </summary>
+                    <ul className="mt-2 grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
+                      {rows.map((x) => (
+                        <li key={x.holderId} className="min-w-0 truncate" title={t(copy.place.gov.memberLine, { name: x.name, party: x.party ?? "", unit: x.unit ?? "" })}>
+                          {t(copy.place.gov.memberLine, { name: x.name, party: x.party ?? "", unit: x.unit ?? "" })}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                );
+              })}
+            </div>
+          </Panel>
+        )}
         {data.parties.length > 0 && (
           <Panel id="parties" title={t(copy.place.gov.byParty)}>
             <ul className="divide-y divide-line text-sm">

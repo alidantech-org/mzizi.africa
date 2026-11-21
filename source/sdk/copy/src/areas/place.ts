@@ -128,6 +128,13 @@ export const place = defineCopy("place", {
     movedBy: { en: "Moved by {name}", sw: "Iliwasilishwa na {name}" },
     tally: { en: "Vote count", sw: "Hesabu ya kura" },
     allMotions: { en: "All motions", sw: "Hoja zote" },
+    motionsCount: { en: "{count} motions", sw: "Hoja {count}" },
+    contributions: { en: "What was said", sw: "Yaliyosemwa" },
+    words: { en: "{count} words", sw: "Maneno {count}" },
+    members: { en: "How each member voted", sw: "Jinsi kila mbunge alivyopiga kura" },
+    memberLine: { en: "{name} · {party} · {unit}", sw: "{name} · {party} · {unit}" },
+    concerns: { en: "Concerns", sw: "Inahusu" },
+    fiscalYear: { en: "Financial year {from} to {to}", sw: "Mwaka wa fedha {from} hadi {to}" },
     noBody: { en: "Nothing is recorded under this heading.", sw: "Hakuna kilichorekodiwa chini ya kichwa hiki." },
   },
   pending: {

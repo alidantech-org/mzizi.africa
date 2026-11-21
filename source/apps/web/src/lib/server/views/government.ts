@@ -5,8 +5,19 @@ import type { InsightsInstitutionDetail, InsightsInstitutionList, InsightsLawLis
 
 const cache = () => ({ caching: { revalidate: 600, tags: ["government"] } });
 export type Loaded<T> = { data: T | null; failed: boolean };
+/**
+ * The generated TypeScript types name fields in camel case, but some contract fields (held_on, moved_by, ...) are
+ * written in snake case on the wire, because the Flutter app reads them that way. Until the generator maps names, the
+ * keys are converted here, in one place, so the rest of the web app can trust the generated types.
+ */
+const camel = (v: unknown): unknown =>
+  Array.isArray(v)
+    ? v.map(camel)
+    : v && typeof v === "object"
+      ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()), camel(x)]))
+      : v;
 const pack = <T>(res: { success: boolean; body?: T | null }): Loaded<T> =>
-  res.success && res.body ? { data: res.body, failed: false } : { data: null, failed: true };
+  res.success && res.body ? { data: camel(res.body) as T, failed: false } : { data: null, failed: true };
 
 export const loadInstitutions = async (): Promise<Loaded<InsightsInstitutionList>> => pack(await insightsListInstitutions({ options: cache() }));
 export const loadInstitution = async (code: string): Promise<Loaded<InsightsInstitutionDetail>> =>
