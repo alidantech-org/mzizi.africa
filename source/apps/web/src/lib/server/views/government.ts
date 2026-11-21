@@ -31,3 +31,9 @@ export const loadMotions = async (): Promise<Loaded<InsightsMotionList>> => pack
 export const loadMotion = async (code: string): Promise<Loaded<InsightsMotionDetail>> =>
   pack(await insightsGetMotion({ params: { code }, options: cache() }));
 export const loadElections = async (): Promise<Loaded<InsightsElectionList>> => pack(await insightsListElections({ options: cache() }));
+
+import { insightsGetGovernanceTabs, insightsGetLeaderTree } from "@mzizi/api-client/actions/insights";
+import type { InsightsGovernanceTabs, InsightsLeaderTree } from "@mzizi/api-client";
+
+export const loadLeaders = async (): Promise<Loaded<InsightsLeaderTree>> => pack(await insightsGetLeaderTree({ options: cache() }));
+export const loadArms = async (): Promise<Loaded<InsightsGovernanceTabs>> => pack(await insightsGetGovernanceTabs({ options: cache() }));

@@ -135,6 +135,19 @@ export const place = defineCopy("place", {
     memberLine: { en: "{name} · {party} · {unit}", sw: "{name} · {party} · {unit}" },
     concerns: { en: "Concerns", sw: "Inahusu" },
     fiscalYear: { en: "Financial year {from} to {to}", sw: "Mwaka wa fedha {from} hadi {to}" },
+    leadersPage: { en: "Leaders", sw: "Viongozi" },
+    leadersPageIntro: {
+      en: "The people who hold public office, grouped by how they came to it.",
+      sw: "Watu wanaoshikilia ofisi za umma, wamepangwa kulingana na jinsi walivyozipata.",
+    },
+    arms: { en: "Three arms of government", sw: "Mihimili mitatu ya serikali" },
+    armsIntro: {
+      en: "Who holds power: the bodies of each arm, and how many leaders sit in them.",
+      sw: "Nani ana mamlaka: vyombo vya kila mhimili, na viongozi wangapi wako ndani yake.",
+    },
+    group: { en: "{label} · {count}", sw: "{label} · {count}" },
+    how: { en: "{office}, {institution}", sw: "{office}, {institution}" },
+    tabsTitle: { en: "How leaders come to office", sw: "Jinsi viongozi wanavyopata ofisi" },
     noBody: { en: "Nothing is recorded under this heading.", sw: "Hakuna kilichorekodiwa chini ya kichwa hiki." },
   },
   money: {

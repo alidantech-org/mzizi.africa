@@ -9,14 +9,14 @@ import Link from "#/components/navigation/demo-link";
 import { PageHeader } from "#/components/ui/page-header";
 import { Panel } from "#/components/ui/panel";
 import { SkeletonPanel } from "#/components/ui/skeleton";
-import { loadElections, loadInstitution, loadInstitutions, loadLaw, loadMotion, loadMotions } from "#/lib/server/views/government";
+import { loadArms, loadElections, loadLeaders, loadInstitution, loadInstitutions, loadLaw, loadMotion, loadMotions } from "#/lib/server/views/government";
 import { getCopy } from "#/lib/server/copy";
 
 type T = Awaited<ReturnType<typeof getCopy>>;
 const note = (cls = "") => `rounded-lg border border-dashed border-muted p-3 text-sm text-muted sm:p-6 ${cls}`;
 const date = (iso: string, language: string) => new Intl.DateTimeFormat(language, { dateStyle: "long", timeZone: "UTC" }).format(new Date(iso));
 
-export type GovernanceView = "institutions" | "law" | "parliament" | "elections";
+export type GovernanceView = "institutions" | "law" | "parliament" | "elections" | "leaders" | "arms";
 
 export default async function PlaceGovernment({
   view,
@@ -37,6 +37,8 @@ export default async function PlaceGovernment({
     institutions: [t(copy.place.gov.institutions), t(copy.place.gov.institutionsIntro)],
     parliament: [t(copy.place.gov.parliament), t(copy.place.gov.parliamentIntro)],
     elections: [t(copy.place.gov.elections), t(copy.place.gov.electionsIntro)],
+    leaders: [t(copy.place.gov.leadersPage), t(copy.place.gov.leadersPageIntro)],
+    arms: [t(copy.place.gov.arms), t(copy.place.gov.armsIntro)],
   } as const;
   const [title, intro] = heads[view];
   return (
@@ -50,7 +52,7 @@ export default async function PlaceGovernment({
         <p className={note()}>{t(copy.place.gov.countryGap)}</p>
       ) : (
         <Suspense fallback={<SkeletonPanel height={420} />}>
-          {view === "law" ? <Law t={t} language={language} /> : view === "elections" ? <Elections t={t} language={language} /> : view === "parliament" ? (code ? <Motion code={code} base={base} t={t} language={language} /> : <Motions base={base} t={t} language={language} />) : code ? <Institution code={code} base={base} t={t} language={language} /> : <Institutions base={base} t={t} language={language} />}
+          {view === "law" ? <Law t={t} language={language} /> : view === "leaders" ? <Leaders t={t} language={language} /> : view === "arms" ? <Arms base={base} t={t} /> : view === "elections" ? <Elections t={t} language={language} /> : view === "parliament" ? (code ? <Motion code={code} base={base} t={t} language={language} /> : <Motions base={base} t={t} language={language} />) : code ? <Institution code={code} base={base} t={t} language={language} /> : <Institutions base={base} t={t} language={language} />}
         </Suspense>
       )}
     </>
@@ -297,5 +299,66 @@ async function Elections({ t, language }: { t: T; language: string }) {
         ))}
       </ul>
     </Panel>
+  );
+}
+
+async function Leaders({ t, language }: { t: T; language: string }) {
+  const { data, failed } = await loadLeaders();
+  if (failed || !data) return <p className={note()}>{t(copy.place.gov.failed)}</p>;
+  return (
+    <div className="space-y-4">
+      {data.levels.map((lvl) =>
+        Object.entries(lvl.groups as Record<string, unknown>).map(([how, people]) => (
+          <Panel key={`${lvl.level}-${how}`} id={`${lvl.level}-${how}`} title={t(copy.place.gov.group, { label: how.charAt(0).toUpperCase() + how.slice(1), count: (people as unknown[]).length })} note={lvl.label} icon={Users}>
+            <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+              {(people as { holderId: string; name: string; office: string; institution: string; party: string | null; since: string | null }[]).map((p) => (
+                <li key={p.holderId} className="min-w-0 border-t border-line py-2 first:border-t-0 sm:[&:nth-child(2)]:border-t-0">
+                  <div className="truncate font-medium">{p.name}</div>
+                  <div className="truncate text-sm text-muted">{t(copy.place.gov.how, { office: p.office, institution: p.institution })}</div>
+                  <div className="truncate text-xs text-muted">
+                    {[p.party, p.since ? t(copy.place.gov.since, { date: date(p.since, language) }) : ""].filter(Boolean).join(" · ")}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        )),
+      )}
+    </div>
+  );
+}
+
+async function Arms({ base, t }: { base: string; t: T }) {
+  const { data, failed } = await loadArms();
+  if (failed || !data) return <p className={note()}>{t(copy.place.gov.failed)}</p>;
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4">
+        {data.tabs.map((x) => (
+          <div key={x.code} className="rounded-lg border border-line bg-surface p-3 sm:p-4">
+            <div className="text-xs text-muted">{x.label}</div>
+            <div className="font-display text-2xl">{x.count}</div>
+            <p className="text-sm text-muted">{x.about}</p>
+          </div>
+        ))}
+      </div>
+      {data.arms.map((arm) => (
+        <Panel key={arm.code} id={arm.code} title={arm.label} note={t(copy.place.gov.bodies, { count: arm.institutions.length })} icon={Landmark}>
+          <p className="mb-3 text-sm text-muted">{arm.about}</p>
+          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {arm.institutions.map((i) => (
+              <li key={i.code} className="min-w-0 rounded-md border border-line p-3">
+                <Link href={`${base}?view=institutions&view.id=${encodeURIComponent(i.code)}`} className="block truncate font-medium text-accent hover:underline">
+                  {i.name}
+                </Link>
+                <div className="text-xs text-muted">
+                  {i.kind.label} · {i.leaders === 1 ? t(copy.place.gov.leadersOne) : t(copy.place.gov.leaders, { count: i.leaders })}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      ))}
+    </div>
   );
 }

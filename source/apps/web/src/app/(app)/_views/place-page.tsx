@@ -35,7 +35,7 @@ async function PlaceContent({
   const view: ViewId = raw && isView(raw) ? raw : "overview";
   const address = { country, trail: place.map((s) => decodeURIComponent(s)) };
   if (view === "overview") return <PlaceHome address={address} language={language} />;
-  if (view === "institutions" || view === "law" || view === "parliament" || view === "elections") {
+  if (view === "institutions" || view === "law" || view === "parliament" || view === "elections" || view === "leaders" || view === "arms") {
     const id = Array.isArray(query["view.id"]) ? query["view.id"][0] : query["view.id"];
     const base = `/${[country, ...place].join("/")}`;
     return <PlaceGovernment view={view} country={country.toLowerCase()} base={base} language={language} code={view === "institutions" || view === "parliament" ? id : undefined} />;
