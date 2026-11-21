@@ -54,6 +54,15 @@ export const place = defineCopy("place", {
     inside: { en: "Places inside", sw: "Maeneo ya ndani" },
     none: { en: "No places are registered inside this one.", sw: "Hakuna maeneo yaliyosajiliwa ndani ya eneo hili." },
   },
+  stats: {
+    title: { en: "Statistics", sw: "Takwimu" },
+    topics: { en: "Topics", sw: "Mada" },
+    chart: { en: "{name} in {place} over time", sw: "{name} katika {place} kwa muda" },
+    oneRecord: { en: "Only one year is recorded, so there is no trend to draw.", sw: "Mwaka mmoja tu umerekodiwa, kwa hiyo hakuna mwelekeo wa kuchora." },
+    noTopic: { en: "No statistics are recorded under this topic.", sw: "Hakuna takwimu zilizorekodiwa chini ya mada hii." },
+    unit: { en: "Unit: {unit}", sw: "Kipimo: {unit}" },
+    siblings: { en: "{position} of {of} places like it by population", sw: "Nafasi ya {position} kati ya maeneo {of} yanayofanana kwa idadi ya watu" },
+  },
   pending: {
     title: { en: "{subject} is not shown for places yet", sw: "{subject} bado haionyeshwi kwa maeneo" },
     text: {
