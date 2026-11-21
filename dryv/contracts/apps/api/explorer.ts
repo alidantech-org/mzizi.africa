@@ -18,6 +18,9 @@ const props = explorer.properties({
   Accuracy: dryv.property.number.double({ range: { min: 0, max: 100000 } }),
   HexColor: dryv.property.string().length({ min: 7, max: 7 }),
   Share: dryv.property.number.double({ range: { min: 0, max: 1 } }),
+  Degrees: dryv.property.number.double({ range: { min: -180, max: 180 } }),
+  SimplifyDegrees: dryv.property.number.double({ range: { min: 0, max: 2 } }),
+  BoundaryMode: dryv.property.enum({ Self: "self", Children: "children" }),
   CopyArea: dryv.property.string().length({ min: 1, max: 100 }),
   CopyHash: dryv.property.string().length({ min: 8, max: 64 }),
   ResolutionStatus: dryv.property.enum({ Matched: "matched", Ambiguous: "ambiguous", Unresolved: "unresolved" }),
@@ -67,6 +70,10 @@ const rows = explorer.schemas({
     canonicalPath: dryv.field(props.Path),
     depth: dryv.field(p.NonNegativeInteger),
     parentFeatureId: dryv.field(p.Id).maybe(),
+    /** The name of the place directly above this one, in the requested language; absent for the country itself. */
+    parentName: dryv.field(p.Name).maybe(),
+    /** The reference value code of its kind, so a client can pick an icon without comparing words. */
+    kindCode: dryv.field(p.NonEmptyString255),
     citationCount: dryv.field(p.NonNegativeInteger),
   }),
   Level: dryv.schema({
@@ -111,6 +118,17 @@ const documents = explorer.schemas({
     language: dryv.field(props.LanguageCode),
     gaps: dryv.field(p.NonEmptyString500).array(),
   }),
+  PlaceGroup: dryv.schema({
+    /** One place on the way down (the country, an ancestor, the place itself) and the places directly inside it. */
+    place: dryv.field(rows.Place),
+    children: dryv.field(rows.Place).array(),
+    total: dryv.field(p.NonNegativeInteger),
+  }),
+  AddressPlace: dryv.schema({
+    /** The address as it was asked for, for example `/ke/nairobi/westlands`. */
+    address: dryv.field(props.Path),
+    place: dryv.field(rows.Place).maybe(),
+  }),
   Resolution: dryv.schema({
     status: dryv.field(props.ResolutionStatus),
     candidates: dryv.field(rows.Place).array(),
@@ -123,7 +141,68 @@ const overview = explorer.schema("Overview", {
   counts: dryv.field(rows.Count).array(),
   gaps: dryv.field(p.NonEmptyString500).array(),
 });
+const boundaryShapes = explorer.schemas({
+  BoundaryShape: dryv.schema({
+    /** The place's readable address, for example `/ke/nairobi`; the shape belongs to it. */
+    address: dryv.field(props.Path),
+    name: dryv.field(p.Name),
+    kind: dryv.field(p.Name),
+    kindCode: dryv.field(p.NonEmptyString255),
+    /** A GeoJSON geometry (`Polygon` or `MultiPolygon`, longitude then latitude), simplified for drawing a map. */
+    geometry: dryv.field(p.JsonText),
+    /** Western, southern, eastern and northern edges of the shape. */
+    bbox: dryv.field(props.Degrees).array(),
+  }),
+});
+const boundaries = explorer.schema("Boundaries", {
+  /** The place the shapes were asked for, or the country. */
+  place: dryv.field(rows.Place),
+  shapes: dryv.field(boundaryShapes.BoundaryShape).array(),
+  /** Western, southern, eastern and northern edges of every shape together. */
+  bbox: dryv.field(props.Degrees).array(),
+  /** Places inside the asked-for place that have no recorded boundary. */
+  withoutBoundary: dryv.field(p.NonNegativeInteger),
+  gaps: dryv.field(p.NonEmptyString500).array(),
+});
+const location = explorer.schema("Location", {
+  context: dryv.field(documents.Context),
+  /** The country's places directly below the root, then each ancestor's and the place's own children, outermost first. */
+  groups: dryv.field(documents.PlaceGroup).array(),
+  /** Places matching `find` and `kindCode`, one page; absent when neither was asked for. */
+  found: dryv.field(documents.Places).maybe(),
+  gaps: dryv.field(p.NonEmptyString500).array(),
+});
+const addresses = explorer.schema("Addresses", {
+  places: dryv.field(documents.AddressPlace).array(),
+  gaps: dryv.field(p.NonEmptyString500).array(),
+});
 const inputs = explorer.schemas({
+  LocationInput: dryv.schema({
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    /** The readable address below the country exactly as in the URL, for example `nairobi/westlands`; omit for the country. */
+    path: dryv.field(props.Path).optional(),
+    languageCode: dryv.field(props.LanguageCode).optional(),
+    find: dryv.field(props.Query).optional(),
+    kindCode: dryv.field(p.NonEmptyString255).optional(),
+    page: dryv.field(p.PositiveInteger).optional(),
+    limit: dryv.field(props.Limit).optional(),
+  }),
+  BoundariesInput: dryv.schema({
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    /** The readable address below the country as in the URL; omit for the country. */
+    path: dryv.field(props.Path).optional(),
+    languageCode: dryv.field(props.LanguageCode).optional(),
+    /** `self` draws the place itself; `children` draws the places directly inside it. Defaults to `children`. */
+    mode: dryv.field(props.BoundaryMode).optional(),
+    /** Simplification in degrees; a coarser value for a country-wide map, a finer one for a ward. */
+    simplify: dryv.field(props.SimplifyDegrees).optional(),
+    limit: dryv.field(props.Limit).optional(),
+  }),
+  AddressesInput: dryv.schema({
+    /** Full addresses as they appear in URLs, for example `/ke/nairobi/westlands`. */
+    addresses: dryv.field(props.Path).array(),
+    languageCode: dryv.field(props.LanguageCode).optional(),
+  }),
   BootstrapInput: dryv.schema({ languageCode: dryv.field(props.LanguageCode).optional() }),
   PlaceInput: dryv.schema({
     countryCode: dryv.field(countryProperties.IsoAlpha2),
@@ -198,6 +277,37 @@ export const explorerOperations = feature.operations({
     .output(documents.Navigation)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/explorer/navigation").input(input, dryv.queryObject()).output(output),
+    })),
+  GetExplorerLocation: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "Everything the location UI shows for one place, resolved on the server from the readable address: the place, its chain, every level kind, the places inside the country root, each ancestor and the place, and one page of a search or level list. Clients send slugs, never identities.",
+    )
+    .input(inputs.LocationInput)
+    .output(location.asRef())
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/explorer/location").input(input, dryv.queryObject()).output(output),
+    })),
+  GetExplorerBoundaries: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "Simplified boundaries to draw a map: the place itself or the places directly inside it, from the recorded geometries, resolved from the readable address. Places with no recorded boundary are counted, never drawn.",
+    )
+    .input(inputs.BoundariesInput)
+    .output(boundaries.asRef())
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/explorer/boundaries").input(input, dryv.queryObject()).output(output),
+    })),
+  ResolveExplorerAddresses: dryv
+    .operation()
+    .role("detail")
+    .description("Names and places above them for a list of addresses (saved places), in one language. A body keeps the list out of the address.")
+    .input(inputs.AddressesInput)
+    .output(addresses.asRef())
+    .facets(({ input, output }) => ({
+      http: dryv.http("POST", "/v1/explorer/addresses").input(input, dryv.body()).output(output),
     })),
   GetExplorerContext: dryv
     .operation()

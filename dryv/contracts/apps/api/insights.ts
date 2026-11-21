@@ -8,6 +8,7 @@
  */
 import * as dryv from "@dryvcode/author";
 import { sharedProperties as p } from "#/schemas/_shared.ts";
+import { countryProperties } from "#/schemas/postgres/reference.ts";
 import { apiHttp } from "./_shared.ts";
 
 export const insights = dryv
@@ -16,6 +17,8 @@ export const insights = dryv
 const reads = insights.feature("Insights").failureDefaults(apiHttp);
 
 const props = insights.properties({
+  AddressPath: dryv.property.string().length({ min: 1, max: 1500 }),
+  AddressLanguage: dryv.property.string().length({ min: 2, max: 35 }),
   Text: dryv.property.string().length({ min: 1, max: 100 }),
   Code: dryv.property.string().length({ min: 1, max: 200 }),
   Limit: dryv.property.number.integer({ range: { min: 1, max: 500 } }),
@@ -1394,6 +1397,12 @@ const inputs = insights.schemas({
   }),
   BrowseInput: dryv.schema({ featureId: dryv.field(p.Id).optional() }),
   PlaceOnly: dryv.schema({ featureId: dryv.field(p.Id) }),
+  /** A place by its readable address, exactly as in the URL: the country code and the slugs below it, never an identity. */
+  PlaceAt: dryv.schema({
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    path: dryv.field(props.AddressPath).optional(),
+    languageCode: dryv.field(props.AddressLanguage).optional(),
+  }),
   SeriesInput: dryv.schema({ indicatorCode: dryv.field(props.Code), featureId: dryv.field(p.Id) }),
   MapInput: dryv.schema({
     indicatorCode: dryv.field(props.Code),
@@ -1496,6 +1505,18 @@ export const insightOperations = reads.operations({
     .output(documents.PlaceStatistics)
     .facets(({ inputField, output }) => ({
       http: dryv.http("GET", "/v1/statistics/places/{featureId}").input(inputField("featureId"), dryv.path()).output(output),
+    })),
+
+  GetPlaceStatisticsAt: dryv
+    .operation()
+    .role("detail")
+    .description(
+      "The same statistics as GetPlaceStatistics, for a place named by its readable address. The address is resolved on the server; no identity is sent.",
+    )
+    .input(inputs.PlaceAt)
+    .output(documents.PlaceStatistics)
+    .facets(({ input, output }) => ({
+      http: dryv.http("GET", "/v1/statistics/place").input(input, dryv.queryObject()).output(output),
     })),
 
   GetIndicatorSeries: dryv
