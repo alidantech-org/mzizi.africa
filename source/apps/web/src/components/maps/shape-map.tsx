@@ -30,8 +30,8 @@ export function ShapeMap({
   const act = (address: string) => nav.goPlace(placeFromHref(address));
   const current = hover ? map.shapes.find((s) => s.address === hover) : null;
   return (
-    <div className={`relative ${className}`}>
-      <svg viewBox={`0 0 ${map.width} ${map.height}`} role="group" aria-label={label} className="map-svg mx-auto block max-h-[60svh] w-full sm:max-h-[600px]">
+    <div className={`relative min-w-0 max-w-full ${className}`}>
+      <svg viewBox={`0 0 ${map.width} ${map.height}`} role="group" aria-label={label} className="map-svg mx-auto block h-auto max-h-[60svh] w-full max-w-full sm:max-h-[600px]">
         {map.shapes.map((s) => (
           <path
             key={s.address}

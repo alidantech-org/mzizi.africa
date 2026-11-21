@@ -79,7 +79,7 @@ async function Topics({ address, statistics, topic, place, language, t }: { addr
       </nav>
       <Panel id={current.code} title={current.label} note={t(copy.place.people.note)}>
         {current.indicators.length ? (
-          <div className="grid gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-3">
             {current.indicators.map((ind) => (
               <Card key={ind.code} ind={ind} place={place} language={language} t={t} />
             ))}

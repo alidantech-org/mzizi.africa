@@ -19,7 +19,7 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <section id={id} data-section className={`scroll-mt-4 rounded-lg border border-line bg-surface p-3 sm:p-4 md:p-6 ${className}`}>
+    <section id={id} data-section className={`min-w-0 scroll-mt-4 rounded-lg border border-line bg-surface p-3 sm:p-4 md:p-6 ${className}`}>
       <header className="mb-4 flex items-baseline justify-between gap-4">
         <h2 className="flex min-w-0 flex-1 items-center gap-2.5 font-display text-xl tracking-tight">
           {Icon && <Icon size={18} className="shrink-0 text-accent" />}

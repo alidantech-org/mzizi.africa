@@ -43,7 +43,7 @@ export default async function PlaceHome({ address, language }: { address: PlaceA
       <Suspense fallback={<SkeletonPanel height={120} />}>
         <Figures statistics={statistics} language={language} t={t} />
       </Suspense>
-      <div className="mt-4 grid items-start gap-2 sm:gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 items-start gap-2 sm:gap-4 lg:grid-cols-2">
         <Suspense fallback={<SkeletonPanel height={420} />}>
           <MapRegion map={map} loc={loc} language={language} t={t} />
         </Suspense>
@@ -72,7 +72,7 @@ async function Figures({ statistics, language, t }: { statistics: Promise<Insigh
   });
   if (!shown.length) return <p className="rounded-lg border border-dashed border-muted p-3 text-sm sm:p-6 text-muted">{t(copy.place.empty.statistics)}</p>;
   return (
-    <div className="grid gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
       {shown.map(({ tile, ind }) => {
         const prev = ind.previous ? year(ind.previous.period) : null;
         const delta =
