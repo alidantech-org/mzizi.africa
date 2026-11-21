@@ -1,5 +1,6 @@
 "use client";
 /** Search across every real county, constituency, ward and institution. Press / to open. */
+import { SkeletonRows } from "#/components/ui/skeleton";
 import { replaceQuery } from "#/lib/navigation/replace";
 import { Mic, Search } from "lucide-react";
 import { demoHref } from "#/lib/navigation/base";
@@ -214,7 +215,11 @@ export function SearchDialog() {
               />
             </div>
             <ul className="max-h-[50vh] overflow-y-auto p-2">
-              {!index.length && <li className="px-4 py-6 text-sm text-muted">{t(copy.search.dialog.loading)}</li>}
+              {!index.length && (
+                <li aria-busy="true" aria-label={t(copy.search.dialog.loading)}>
+                  <SkeletonRows rows={5} />
+                </li>
+              )}
               {results.map((r, i) => (
                 <li key={r.href + r.name}>
                   <button

@@ -329,3 +329,35 @@ input[type="range"]:focus-visible {
 :root[data-mode="dark"] .osm-tile {
   filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.9) saturate(0.7);
 }
+
+/* Loading placeholders: a soft band sweeps across a block that holds the space of what is loading. */
+.shimmer {
+  background-color: var(--line);
+  background-image: linear-gradient(100deg, transparent 20%, color-mix(in srgb, var(--surface) 70%, transparent) 50%, transparent 80%);
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+  }
+}
+:root[data-motion="reduce"] .shimmer {
+  animation: none;
+}
+/* The sidebar width the first-paint script read from the cookie; the loading frame uses it too. */
+:root[data-side="rail"] .sk-aside {
+  width: 56px !important;
+}
+:root[data-side="hidden"] .sk-aside {
+  display: none !important;
+}

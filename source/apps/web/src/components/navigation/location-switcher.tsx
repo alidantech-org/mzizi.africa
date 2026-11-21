@@ -18,6 +18,7 @@
  * shows that place's children, so you can drill Kenya > Kilifi > Ganze > a ward in one go. Choosing a place with
  * nothing below it (or a saved or recent place) closes the panel.
  */
+import { SkeletonRows } from "#/components/ui/skeleton";
 import { replaceQuery } from "#/lib/navigation/replace";
 import {
   Bookmark,
@@ -751,13 +752,21 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
                 </li>
               );
             })}
-            {!list.length && loadingList && <li className="truncate px-3 py-6 text-sm text-muted">{t(copy.location.loading)}</li>}
+            {!list.length && loadingList && (
+              <li aria-busy="true" aria-label={t(copy.location.loading)}>
+                <SkeletonRows rows={7} />
+              </li>
+            )}
             {!list.length && !loadingList && entries.length > 0 && (
               <li className="px-3 py-6 text-sm text-muted">
                 {q ? t(copy.location.noMatch, { query: q }) : t(copy.location.noFiner, { place: browsingHome ? here : countryDef.name })}
               </li>
             )}
-            {!entries.length && <li className="px-3 py-6 text-sm text-muted">{t(copy.location.loading)}</li>}
+            {!entries.length && (
+              <li aria-busy="true" aria-label={t(copy.location.loading)}>
+                <SkeletonRows rows={7} />
+              </li>
+            )}
           </ul>
         </div>
 
