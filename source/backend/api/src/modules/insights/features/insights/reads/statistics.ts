@@ -37,7 +37,10 @@ interface ObsRow {
 
 const BASELINE = `o.sex_id is null and o.age_group_id is null and o.residence_id is null and o.ethnicity_id is null and o.language_id is null`;
 
-export async function placeStatistics(db: DataSource, featureId: string) {
+export type StatisticsScope = "headline" | "topics" | "topic";
+
+/** `scope` sizes the answer: `headline` keeps role figures and breakdowns, `topics` lists topics only, `topic` returns one topic's indicators. */
+export async function placeStatistics(db: DataSource, featureId: string, scope?: StatisticsScope, topicCode?: string) {
   const chain = await crumbs(db, featureId);
   if (chain.length === 0) throw new NotFoundException("No such place.");
   const place = chain[chain.length - 1]!;
@@ -84,7 +87,17 @@ export async function placeStatistics(db: DataSource, featureId: string) {
   if (area !== null) {
     addIndicator({ ...areaRows[0]! }, areaRows.map((r) => ({ period: r.period, value: r.value, estimated: r.estimated })));
   }
+  const lean = scope === "topics" || scope === "topic";
+  if (lean) {
+    const all = [...topics.values()].sort((a, b) => a.label.localeCompare(b.label));
+    const shown = all.map((t) => ({ ...t, indicators: scope === "topic" && t.code === topicCode ? t.indicators : [] }));
+    return { place, chain, topics: shown, breakdowns: {}, comparisons: [], siblings: { population: null, density: null, peers: 0 }, gaps: [] };
+  }
   const breakdowns = await breakdownsOf(db, featureId);
+  if (scope === "headline") {
+    for (const t of topics.values()) t.indicators = (t.indicators as { role: string | null }[]).filter((i) => i.role);
+    for (const [code, t] of [...topics]) if (!t.indicators.length) topics.delete(code);
+  }
   const comparisons: unknown[] = [];
   for (const unit of chain) {
     const figures: { pop: number | null; area: number | null }[] = await db.query(
@@ -127,21 +140,33 @@ async function rankAmongSiblings(db: DataSource, featureId: string) {
   return { population: rank(byPop), density: rank(byDensity), peers: rows.length };
 }
 
-interface DimRow { dim: string; label: string; value: number; period: string }
+interface DimRow { dim: string; ind: string; label: string; value: number; period: string }
 
 async function breakdownsOf(db: DataSource, featureId: string) {
   const rows: DimRow[] = await db.query(
-    `select d.dim, d.label, d.value, d.period from (
-       select 'sex' as dim, ${valueLabel("o.sex_id", "'en'")} as label, o.value::float8 as value, o.period_from::text as period from statistics.observations o where o.feature_id = $1 and o.sex_id is not null
-       union all select 'age', ${valueLabel("o.age_group_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.age_group_id is not null
-       union all select 'residence', ${valueLabel("o.residence_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.residence_id is not null
-       union all select 'community', ${valueLabel("o.ethnicity_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.ethnicity_id is not null
-       union all select 'language', (select l.name from reference.languages l where l.id = o.language_id), o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.language_id is not null) d
+    `select d.dim, d.ind, d.label, d.value, d.period from (
+       select 'sex' as dim, o.indicator_id as ind, ${valueLabel("o.sex_id", "'en'")} as label, o.value::float8 as value, o.period_from::text as period from statistics.observations o where o.feature_id = $1 and o.sex_id is not null
+       union all select 'age', o.indicator_id, ${valueLabel("o.age_group_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.age_group_id is not null
+       union all select 'residence', o.indicator_id, ${valueLabel("o.residence_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.residence_id is not null
+       union all select 'community', o.indicator_id, ${valueLabel("o.ethnicity_id", "'en'")}, o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.ethnicity_id is not null
+       union all select 'language', o.indicator_id, (select l.name from reference.languages l where l.id = o.language_id), o.value::float8, o.period_from::text from statistics.observations o where o.feature_id = $1 and o.language_id is not null) d
      order by d.dim, d.value desc`,
     [featureId],
   );
+  // One dimension can be recorded by several indicators and years: keep the indicator with the most categories, at its latest year.
+  const best = new Map<string, { ind: string; period: string; n: number }>();
+  const tally = new Map<string, number>();
+  for (const r of rows) {
+    const k = `${r.dim}|${r.ind}|${r.period}`;
+    tally.set(k, (tally.get(k) ?? 0) + 1);
+  }
+  for (const [k, n] of tally) {
+    const [dim, ind, period] = k.split("|") as [string, string, string];
+    const cur = best.get(dim);
+    if (!cur || n > cur.n || (n === cur.n && period > cur.period)) best.set(dim, { ind, period, n });
+  }
   const groups: Record<string, { label: string; value: number; share: number }[]> = {};
-  for (const row of rows) (groups[row.dim] ??= []).push({ label: row.label, value: row.value, share: 0 });
+  for (const row of rows.filter((r) => best.get(r.dim)?.ind === r.ind && best.get(r.dim)?.period === r.period)) (groups[row.dim] ??= []).push({ label: row.label, value: row.value, share: 0 });
   for (const [dim, list] of Object.entries(groups)) {
     const total = dim === "language" ? 0 : list.reduce((a, b) => a + b.value, 0);
     for (const item of list) item.share = total > 0 ? item.value / total : 0;

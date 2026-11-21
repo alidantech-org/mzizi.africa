@@ -1403,6 +1403,18 @@ const inputs = insights.schemas({
     path: dryv.field(props.AddressPath).optional(),
     languageCode: dryv.field(props.AddressLanguage).optional(),
   }),
+  /**
+   * A place's statistics, sized to the screen that asks. Without `scope` the whole record is returned, which for a
+   * country can be several megabytes; screens ask for `headline` (role figures and breakdowns), `topics` (the topic
+   * list with no indicators) or `topic` (the indicators of the topic named in `topic`).
+   */
+  PlaceStatisticsInput: dryv.schema({
+    countryCode: dryv.field(countryProperties.IsoAlpha2),
+    path: dryv.field(props.AddressPath).optional(),
+    languageCode: dryv.field(props.AddressLanguage).optional(),
+    scope: dryv.field(p.String).optional(),
+    topic: dryv.field(p.String).optional(),
+  }),
   SeriesInput: dryv.schema({ indicatorCode: dryv.field(props.Code), featureId: dryv.field(p.Id) }),
   MapInput: dryv.schema({
     indicatorCode: dryv.field(props.Code),
@@ -1513,7 +1525,7 @@ export const insightOperations = reads.operations({
     .description(
       "The same statistics as GetPlaceStatistics, for a place named by its readable address. The address is resolved on the server; no identity is sent.",
     )
-    .input(inputs.PlaceAt)
+    .input(inputs.PlaceStatisticsInput)
     .output(documents.PlaceStatistics)
     .facets(({ input, output }) => ({
       http: dryv.http("GET", "/v1/statistics/place").input(input, dryv.queryObject()).output(output),
