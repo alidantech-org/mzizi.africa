@@ -37,19 +37,21 @@ export const placeCte = `with recursive routes as (
   union all
   select r.feature_id,r.segments,coalesce(r.parent_feature_id,root.feature_id),array[root.feature_id]||r.ancestors
   from routes r cross join root where r.feature_id is distinct from root.feature_id
+), reg as materialized (
+  select distinct on (feature_id,segments) feature_id,segments,parent_feature_id,ancestors from registered order by feature_id,segments
 ), places as (
-  select distinct on (p.feature_id,p.segments) p.feature_id,p.segments,p.parent_feature_id,p.ancestors,
+  select p.feature_id,p.segments,p.parent_feature_id,p.ancestors,
     f.code,coalesce(n.name,f.code) as name,n.language_code,coalesce(vl.label,k.label) as kind,k.code as kind_code,
     c.iso_alpha2 as country_code,'/'||lower(c.iso_alpha2)||case when cardinality(p.segments)>0 then '/'||array_to_string(p.segments,'/') else '' end as path
-  from registered p join geography.features f on f.id=p.feature_id and f.deleted_at is null
-    and (f.from_year is null or f.from_year<=extract(year from current_date)) and (f.to_year is null or f.to_year>=extract(year from current_date))
+  from reg p
+  cross join lateral (select f.id,f.code,f.feature_type_id from geography.features f where f.id=p.feature_id and f.deleted_at is null
+    and (f.from_year is null or f.from_year<=extract(year from current_date)) and (f.to_year is null or f.to_year>=extract(year from current_date)) offset 0) f
   join reference.countries c on c.id=$1
   join reference.values k on k.id=f.feature_type_id
   left join lateral (select n.name,l.iso6391 as language_code from geography.names n left join reference.languages l on l.id=n.language_id
     where n.feature_id=f.id and n.deleted_at is null order by (l.iso6391=$2) desc nulls last,n.is_default desc,n.id limit 1) n on true
   left join lateral (select l.label from reference.value_labels l join reference.languages lang on lang.id=l.language_id
     where l.value_id=k.id and lang.iso6391=$2 and l.deleted_at is null order by l.id limit 1) vl on true
-  order by p.feature_id,p.segments
 )`;
 export const placeColumns = `p.feature_id as "featureId",p.code,p.country_code as "countryCode",p.name,p.language_code as "nameLanguage",p.kind,
   p.path as "canonicalPath",cardinality(p.segments)::int as depth,p.parent_feature_id as "parentFeatureId",
