@@ -359,7 +359,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   );
 
   return (
-    <div className="relative z-10 flex h-screen overflow-hidden bg-paper text-ink">
+    <div className="relative z-10 flex min-h-dvh bg-paper text-ink lg:h-dvh lg:overflow-hidden">
       <aside
         aria-label={t(copy.shell.sidebar.label)}
         style={{ width, transition: dragging ? "none" : "width .18s" }}
@@ -412,7 +412,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-12 shrink-0 items-center gap-2 border-b border-line bg-surface px-2 sm:px-3">
+        <header className="sticky top-0 z-30 flex min-h-12 shrink-0 items-center gap-2 border-b border-line bg-surface px-2 pt-[env(safe-area-inset-top)] sm:px-3 lg:static">
           {/* On wide screens this button appears only while the sidebar is completely hidden; otherwise it lives in the sidebar header. */}
           <button
             onClick={() =>
@@ -436,7 +436,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </AppbarMenu>
           </div>
         </header>
-        <main className="min-h-0 flex-1 overflow-y-auto">
+        <main className="min-w-0 flex-1 max-lg:overflow-x-clip lg:min-h-0 lg:overflow-y-auto">
           <div className="mx-auto w-full max-w-[1200px] px-3 pb-16 pt-8 sm:px-4 md:px-8">{children}</div>
         </main>
         <VoiceEffects />

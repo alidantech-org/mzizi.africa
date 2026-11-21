@@ -408,3 +408,8 @@ html[data-mstroke="thick"] { --map-stroke: 2; }
 html[data-mheight="short"] .map-svg { max-height: 36svh !important; }
 html[data-mheight="tall"] .map-svg { max-height: 85svh !important; }
 html[data-mlabels="off"] .map-tip { display: none; }
+
+/* Below the frame breakpoint the document scrolls, so anchors must clear the sticky app bar. */
+@media (max-width: 1023px) {
+  [data-section], [id] { scroll-margin-top: 4rem; }
+}

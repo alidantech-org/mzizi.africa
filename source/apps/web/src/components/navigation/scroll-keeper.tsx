@@ -9,7 +9,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { demoSegments, isDemoPath } from "#/lib/navigation/base";
 import { country } from "#/lib/navigation/route";
-import { cancelKeep, keepScroll, keeping, scrollState, scroller } from "#/lib/navigation/scroll";
+import { cancelKeep, contentTop, keepScroll, keeping, scrollState, scrollTarget, scroller } from "#/lib/navigation/scroll";
 
 const viewOf = (search: string) => new URLSearchParams(search).get("view") ?? "overview";
 const isExplorer = (pathname: string) => {
@@ -43,19 +43,19 @@ export function ScrollKeeper() {
 
   /** Hold the position while the page gets shorter and taller again during loading. User input takes over at once. */
   useEffect(() => {
-    const main = scroller();
-    const inner = main?.firstElementChild;
-    if (!main || !inner) return;
+    const inner = document.querySelector("main")?.firstElementChild;
+    if (!inner) return;
     const ro = new ResizeObserver(() => {
-      if (keeping()) main.scrollTop = scrollState.top;
+      const s = scroller();
+      if (s && keeping()) s.scrollTop = scrollState.top;
     });
     ro.observe(inner);
     const stop = () => cancelKeep();
     for (const ev of ["wheel", "touchstart", "keydown", "pointerdown"] as const)
-      main.addEventListener(ev, stop, { passive: true });
+      document.addEventListener(ev, stop, { passive: true });
     return () => {
       ro.disconnect();
-      for (const ev of ["wheel", "touchstart", "keydown", "pointerdown"] as const) main.removeEventListener(ev, stop);
+      for (const ev of ["wheel", "touchstart", "keydown", "pointerdown"] as const) document.removeEventListener(ev, stop);
     };
   }, []);
 
@@ -93,13 +93,13 @@ export function ScrollKeeper() {
 
   /** The address follows the section you are reading. */
   useEffect(() => {
-    const main = scroller();
-    if (!main) return;
+    if (!scroller()) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const update = () => {
-      if (keeping()) return;
-      const top = main.getBoundingClientRect().top;
-      const sections = [...main.querySelectorAll<HTMLElement>("[data-section]")];
+      const main = scroller();
+      if (!main || keeping()) return;
+      const top = contentTop();
+      const sections = [...document.querySelectorAll<HTMLElement>("main [data-section]")];
       let current = "";
       let best = -Infinity;
       for (const s of sections) {
@@ -117,9 +117,10 @@ export function ScrollKeeper() {
       clearTimeout(timer);
       timer = setTimeout(update, 120);
     };
-    main.addEventListener("scroll", onScroll, { passive: true });
+    const target = scrollTarget();
+    target?.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      main.removeEventListener("scroll", onScroll);
+      target?.removeEventListener("scroll", onScroll);
       clearTimeout(timer);
     };
   }, [path]);

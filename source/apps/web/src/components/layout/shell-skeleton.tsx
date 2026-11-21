@@ -7,7 +7,7 @@ import { Skeleton } from "#/components/ui/skeleton";
 
 export function ShellSkeleton() {
   return (
-    <div className="relative z-10 flex h-screen overflow-hidden bg-paper text-ink" role="status" aria-busy="true">
+    <div className="relative z-10 flex min-h-dvh lg:h-dvh lg:overflow-hidden bg-paper text-ink" role="status" aria-busy="true">
       <aside className="sk-aside hidden shrink-0 border-r border-line bg-surface lg:block" style={{ width: "var(--side-w, 264px)" }}>
         <div className="flex h-12 items-center border-b border-line px-3">
           <Skeleton className="h-5 w-20" />

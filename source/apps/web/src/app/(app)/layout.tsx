@@ -30,6 +30,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fcf9f2" },
     { media: "(prefers-color-scheme: dark)", color: "#1d1914" },
@@ -49,7 +50,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-screen antialiased">
+      <body className="min-h-dvh antialiased">
         <Suspense fallback={<ShellSkeleton />}>
           <Shell>{children}</Shell>
         </Suspense>
