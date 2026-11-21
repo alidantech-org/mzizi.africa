@@ -144,7 +144,7 @@ export function DialogShell({
   if (!p.open || typeof document === "undefined") return null;
   return createPortal(
     <div className="fixed inset-0 z-[70] grid place-items-center p-4">
-      <div className="absolute inset-0 bg-black/35 backdrop-blur-sm" onMouseDown={close} aria-hidden />
+      <div className="absolute inset-0 bg-black/35 backdrop-blur-sm" onPointerDown={close} aria-hidden />
       <div
         ref={panel}
         role="dialog"

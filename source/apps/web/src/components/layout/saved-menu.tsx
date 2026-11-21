@@ -40,7 +40,7 @@ export function SavedMenu() {
 
   const panel = open && (
     <>
-      <div className="fixed inset-0 z-[60]" onMouseDown={() => setOpen(false)} />
+      <div className="fixed inset-0 z-[60] cursor-default" onPointerDown={() => setOpen(false)} />
       <div
         role="menu"
         aria-label={t(copy.menus.saved.label)}

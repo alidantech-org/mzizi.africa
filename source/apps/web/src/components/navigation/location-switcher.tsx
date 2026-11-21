@@ -446,7 +446,7 @@ export function LocationSwitcher({ compact }: { compact: boolean }) {
 
   const panel = open && (
     <>
-      <div className="fixed inset-0 z-[60]" onMouseDown={() => close()} />
+      <div className="fixed inset-0 z-[60] cursor-default" onPointerDown={() => close()} />
       <div
         role="dialog"
         aria-label={t(copy.location.change)}

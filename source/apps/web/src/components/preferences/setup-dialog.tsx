@@ -49,10 +49,10 @@ function CountrySelect({ value, onPick }: { value: string; onPick: (code: string
     if (!open) return;
     const away = (e: MouseEvent) => !box.current?.contains(e.target as Node) && setOpen(false);
     const esc = (e: KeyboardEvent) => e.key === "Escape" && (e.stopPropagation(), setOpen(false));
-    addEventListener("mousedown", away);
+    addEventListener("pointerdown", away);
     addEventListener("keydown", esc, true);
     return () => {
-      removeEventListener("mousedown", away);
+      removeEventListener("pointerdown", away);
       removeEventListener("keydown", esc, true);
     };
   }, [open]);

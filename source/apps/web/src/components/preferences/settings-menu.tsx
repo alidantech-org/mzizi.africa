@@ -19,10 +19,10 @@ export function SettingsMenu({ placement }: { placement: "top" | "bottom" }) {
     if (!open) return;
     const away = (e: MouseEvent) => !box.current?.contains(e.target as Node) && setOpen(false);
     const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    addEventListener("mousedown", away);
+    addEventListener("pointerdown", away);
     addEventListener("keydown", esc);
     return () => {
-      removeEventListener("mousedown", away);
+      removeEventListener("pointerdown", away);
       removeEventListener("keydown", esc);
     };
   }, [open]);

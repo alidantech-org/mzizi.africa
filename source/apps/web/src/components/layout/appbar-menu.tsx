@@ -25,7 +25,7 @@ export function AppbarMenu({ children }: { children: ReactNode }) {
   const label = t(copy.menus.help.label);
   const panel = open && (
     <>
-      <div className="fixed inset-0 z-[55]" onMouseDown={() => setOpen(false)} />
+      <div className="fixed inset-0 z-[55] cursor-default" onPointerDown={() => setOpen(false)} />
       <div
         role="menu"
         aria-label={label}

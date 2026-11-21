@@ -76,7 +76,7 @@ export function LanguageSwitcher() {
 
   const panel = open && (
     <>
-      <div className="fixed inset-0 z-[60]" onMouseDown={() => setOpen(false)} />
+      <div className="fixed inset-0 z-[60] cursor-default" onPointerDown={() => setOpen(false)} />
       <div
         role="dialog"
         aria-label={t(copy.menus.language.label)}
