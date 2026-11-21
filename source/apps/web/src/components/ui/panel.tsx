@@ -1,7 +1,6 @@
 /** Card surface and headline figure used across the place views. */
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { ReadSection } from "#/components/accessibility/read-section";
 
 export function Panel({
   id,
@@ -28,7 +27,6 @@ export function Panel({
         </h2>
         <span className="flex min-w-0 max-w-[45%] shrink items-center gap-2">
           {note && <span className="min-w-0 truncate font-mono text-[11px] uppercase tracking-widest text-muted">{note}</span>}
-          <ReadSection />
         </span>
       </header>
       {children}

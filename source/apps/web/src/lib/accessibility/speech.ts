@@ -1,6 +1,15 @@
 /** Browser speech: read text aloud, listen for a spoken query, and share voice settings across components. */
 export type VoiceMode = "off" | "speak" | "handsfree";
-export type VoiceSettings = { mode: VoiceMode; rate: number };
+export type VoiceSettings = {
+  mode: VoiceMode;
+  rate: number;
+  pitch: number;
+  volume: number;
+  /** Speak the text under the pointer (or focus) while on. */
+  hover: boolean;
+  /** Chosen voice per interface language, by the browser's voice URI. */
+  voices: Record<string, string>;
+};
 
 type Result = { isFinal: boolean; 0: { transcript: string } };
 interface Recognition {
@@ -22,7 +31,7 @@ const ctor = (): RecognitionCtor | undefined => {
 export const canSpeak = () => typeof window !== "undefined" && "speechSynthesis" in window;
 export const canListen = () => typeof window !== "undefined" && !!ctor();
 
-let current: VoiceSettings = { mode: "off", rate: 1 };
+let current: VoiceSettings = { mode: "off", rate: 1, pitch: 1, volume: 1, hover: false, voices: {} };
 const listeners = new Set<() => void>();
 export const getVoice = () => current;
 export const subscribeVoice = (fn: () => void) => (listeners.add(fn), () => listeners.delete(fn));
@@ -43,6 +52,30 @@ export function loadVoice() {
   } catch {}
 }
 
+const languageOf = () => (document.documentElement.lang || "en").toLowerCase().slice(0, 2);
+
+/** Voices the browser offers for a language, local ones first. Empty when it has none. */
+export function voicesFor(lang: string): SpeechSynthesisVoice[] {
+  if (!canSpeak()) return [];
+  return speechSynthesis
+    .getVoices()
+    .filter((v) => v.lang.toLowerCase().startsWith(lang.toLowerCase()))
+    .sort((a, b) => Number(b.localService) - Number(a.localService) || a.name.localeCompare(b.name));
+}
+
+/** The voice to speak with: the reader's choice for the language when still offered, else the best one for it, else none. */
+export function pickVoice(lang = languageOf()): SpeechSynthesisVoice | null {
+  const list = voicesFor(lang);
+  return list.find((v) => v.voiceURI === current.voices[lang]) ?? list[0] ?? null;
+}
+
+/** Calls back when the browser's voice list is ready or changes (it loads late in some browsers). */
+export function onVoicesChanged(fn: () => void): () => void {
+  if (!canSpeak()) return () => {};
+  speechSynthesis.addEventListener("voiceschanged", fn);
+  return () => speechSynthesis.removeEventListener("voiceschanged", fn);
+}
+
 export function stopSpeaking() {
   if (canSpeak()) speechSynthesis.cancel();
 }
@@ -59,8 +92,13 @@ export function speak(text: string, onEnd?: () => void) {
       .filter(Boolean) ?? [];
   parts.forEach((p, i) => {
     const u = new SpeechSynthesisUtterance(p);
+    const lang = languageOf();
+    const voice = pickVoice(lang);
+    if (voice) u.voice = voice;
+    u.lang = voice?.lang ?? lang;
     u.rate = current.rate;
-    u.lang = document.documentElement.lang || "en";
+    u.pitch = current.pitch;
+    u.volume = current.volume;
     if (i === parts.length - 1 && onEnd) u.onend = onEnd;
     speechSynthesis.speak(u);
   });

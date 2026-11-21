@@ -41,7 +41,7 @@ import { LocationSwitcher } from "#/components/navigation/location-switcher";
 import { SettingsMenu } from "#/components/preferences/settings-menu";
 import { HelpMenu } from "#/components/layout/help-menu";
 import { SavedMenu } from "#/components/layout/saved-menu";
-import { VoiceEffects } from "#/components/accessibility/voice-bar";
+import { HoverSpeech, VoiceEffects } from "#/components/accessibility/voice-bar";
 import { AppbarMenu } from "#/components/layout/appbar-menu";
 import { SetupGate } from "#/components/preferences/setup-gate";
 import { ListRefresh } from "#/lib/navigation/list-refresh";
@@ -440,6 +440,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="mx-auto w-full max-w-[1200px] px-4 pb-16 pt-8 md:px-8">{children}</div>
         </main>
         <VoiceEffects />
+        <HoverSpeech />
         <Suspense>
           <SetupGate />
           <ListRefresh />

@@ -61,10 +61,27 @@ export const preferences = defineCopy("preferences", {
   voice: {
     unsupported: { en: "Speech is not available in this browser.", sw: "Usemaji haupatikani kwenye kivinjari hiki." },
     stopReading: { en: "Stop reading", sw: "Acha kusoma" },
-    readSection: { en: "Read this section aloud", sw: "Soma sehemu hii kwa sauti" },
     readPage: { en: "Read this page aloud", sw: "Soma ukurasa huu kwa sauti" },
     responses: { en: "Voice responses", sw: "Majibu ya sauti" },
     speed: { en: "Speaking speed", sw: "Kasi ya kuongea" },
+    pitch: { en: "Pitch", sw: "Kiwango cha sauti" },
+    volume: { en: "Volume", sw: "Ukubwa wa sauti" },
+    voiceChoice: { en: "Voice", sw: "Sauti ya msomaji" },
+    voiceDefault: { en: "Automatic", sw: "Otomatiki" },
+    hover: { en: "Speak what I point at", sw: "Soma ninachoelekeza" },
+    hoverHint: {
+      en: "Hover or focus any text to hear it read aloud",
+      sw: "Elekeza au lenga maandishi yoyote ili uyasikie",
+    },
+    noVoice: {
+      en: "This browser has no {language} voice, so the default voice reads it. Install one in your device's speech settings.",
+      sw: "Kivinjari hiki hakina sauti ya {language}, kwa hiyo sauti chaguomsingi inasoma. Sakinisha moja kwenye mipangilio ya usemaji ya kifaa chako.",
+    },
+    test: { en: "Hear a sample", sw: "Sikiliza sampuli" },
+    sample: {
+      en: "This is how I will read to you.",
+      sw: "Hivi ndivyo nitakavyokusomea.",
+    },
     off: { en: "Off", sw: "Zimezimwa" },
     offHint: { en: "Nothing is spoken unless you press Read", sw: "Hakuna kinachosemwa usipobonyeza Soma" },
     speak: { en: "Answer aloud", sw: "Jibu kwa sauti" },
