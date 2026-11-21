@@ -57,6 +57,9 @@ class InsightsEndpoints {
   /// GET /v1/civic/places/{featureId}
   String getPlaceCivic({required String featureId}) => '/v1/civic/places/$featureId';
 
+  /// GET /v1/civic/place
+  String get getPlaceCivicAt => '/v1/civic/place';
+
   /// GET /v1/elections/places/{featureId}
   String getPlaceElections({required String featureId}) => '/v1/elections/places/$featureId';
 

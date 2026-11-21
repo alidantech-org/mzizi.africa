@@ -497,6 +497,17 @@
       "summary": "Civic delivery in a place: fund allocations and spending by class and year, projects with locations, infrastructure and leadership."
     },
     {
+      "name": "GetPlaceCivicAt",
+      "group": "insights",
+      "feature": "insights",
+      "method": "GET",
+      "path": "/v1/civic/place",
+      "role": "detail",
+      "inputs": ["input"],
+      "output": "PlaceCivic",
+      "summary": "The same civic delivery as GetPlaceCivic, for a place named by its readable address. The address is resolved on the server; no identity is sent."
+    },
+    {
       "name": "GetPlaceElections",
       "group": "insights",
       "feature": "insights",

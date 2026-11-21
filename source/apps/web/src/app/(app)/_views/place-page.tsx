@@ -3,6 +3,7 @@ import { copy } from "@mzizi/copy";
 import { Suspense } from "react";
 import { PageSkeleton } from "#/components/ui/skeleton";
 import PlaceGovernment from "#/app/(app)/_views/place-government";
+import PlaceMoney from "#/app/(app)/_views/place-money";
 import PlaceStatistics from "#/app/(app)/_views/place-statistics";
 import PlaceHome from "#/app/(app)/_views/place-home";
 import Link from "#/components/navigation/demo-link";
@@ -38,6 +39,10 @@ async function PlaceContent({
     const id = Array.isArray(query["view.id"]) ? query["view.id"][0] : query["view.id"];
     const base = `/${[country, ...place].join("/")}`;
     return <PlaceGovernment view={view} country={country.toLowerCase()} base={base} language={language} code={view === "institutions" || view === "parliament" ? id : undefined} />;
+  }
+  if (view === "finance" || view === "suppliers") {
+    const status = Array.isArray(query.status) ? query.status[0] : query.status;
+    return <PlaceMoney view={view} address={address} language={language} status={status} />;
   }
   if (view === "statistics") {
     const topic = Array.isArray(query.topic) ? query.topic[0] : query.topic;

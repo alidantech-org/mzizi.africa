@@ -38,6 +38,7 @@ import 'package:mzizi_api/src/models/insights/nearby_input.dart';
 import 'package:mzizi_api/src/models/insights/nearby_projects.dart';
 import 'package:mzizi_api/src/models/insights/party_detail.dart';
 import 'package:mzizi_api/src/models/insights/party_list.dart';
+import 'package:mzizi_api/src/models/insights/place_at.dart';
 import 'package:mzizi_api/src/models/insights/place_browse.dart';
 import 'package:mzizi_api/src/models/insights/place_civic.dart';
 import 'package:mzizi_api/src/models/insights/place_elections.dart';
@@ -329,6 +330,20 @@ class InsightsFeature {
       GetRequest<InsightsPlaceCivic>(
         endpoint: _routes.getPlaceCivic(featureId: featureId),
         options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getPlaceCivic'),
+        fromJson: (json) => InsightsPlaceCivic.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
+      ),
+    );
+  }
+
+  /// The same civic delivery as GetPlaceCivic, for a place named by its readable address. The address is resolved on the server; no identity is sent.
+  ///
+  /// GET /v1/civic/place
+  Future<ApiResult<InsightsPlaceCivic>> getPlaceCivicAt({InsightsPlaceAt? input, ApiGetRequestOptions? options}) {
+    return _connection.execute(
+      GetRequest<InsightsPlaceCivic>(
+        endpoint: _routes.getPlaceCivicAt,
+        options: (options ?? const ApiGetRequestOptions()).copyWith(operationId: 'insights.getPlaceCivicAt'),
+        query: input?.toJson(),
         fromJson: (json) => InsightsPlaceCivic.fromJson(Map<String, dynamic>.from((json as Map?) ?? const {})),
       ),
     );

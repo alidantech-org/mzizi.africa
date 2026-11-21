@@ -33,6 +33,7 @@ import { NearbyInputDto } from "#/modules/insights/schema/dto/nearby-input.dto.t
 import { NearbyProjectsDto } from "#/modules/insights/schema/dto/nearby-projects.dto.ts";
 import { PartyDetailDto } from "#/modules/insights/schema/dto/party-detail.dto.ts";
 import { PartyListDto } from "#/modules/insights/schema/dto/party-list.dto.ts";
+import { PlaceAtDto } from "#/modules/insights/schema/dto/place-at.dto.ts";
 import { PlaceBrowseDto } from "#/modules/insights/schema/dto/place-browse.dto.ts";
 import { PlaceCivicDto } from "#/modules/insights/schema/dto/place-civic.dto.ts";
 import { PlaceElectionsDto } from "#/modules/insights/schema/dto/place-elections.dto.ts";
@@ -102,6 +103,12 @@ export class InsightsInsightsController {
   @HttpCode(200)
   getNearbyProjects(@Query() input: NearbyInputDto): Promise<NearbyProjectsDto> {
     return this.service.getNearbyProjects(input);
+  }
+
+  @Get("/v1/civic/place")
+  @HttpCode(200)
+  getPlaceCivicAt(@Query() input: PlaceAtDto): Promise<PlaceCivicDto> {
+    return this.service.getPlaceCivicAt(input);
   }
 
   @Get("/v1/statistics/place")

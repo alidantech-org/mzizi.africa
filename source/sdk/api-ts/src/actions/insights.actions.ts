@@ -37,6 +37,7 @@ import type { InsightsNearbyInput } from "#sdk/types/insights/dto/nearby-input.t
 import type { InsightsNearbyProjects } from "#sdk/types/insights/dto/nearby-projects.ts";
 import type { InsightsPartyDetail } from "#sdk/types/insights/dto/party-detail.ts";
 import type { InsightsPartyList } from "#sdk/types/insights/dto/party-list.ts";
+import type { InsightsPlaceAt } from "#sdk/types/insights/dto/place-at.ts";
 import type { InsightsPlaceBrowse } from "#sdk/types/insights/dto/place-browse.ts";
 import type { InsightsPlaceCivic } from "#sdk/types/insights/dto/place-civic.ts";
 import type { InsightsPlaceElections } from "#sdk/types/insights/dto/place-elections.ts";
@@ -210,6 +211,14 @@ export type InsightsGetPlaceCivicActionInput = ActionInput<{ featureId: string }
 export async function insightsGetPlaceCivic(input: InsightsGetPlaceCivicActionInput) {
   const options = requestOptions(input.options, undefined, false);
   const path = routes.insights.getPlaceCivic(input.params);
+  return api.get<InsightsPlaceCivic>(path, options);
+}
+/** GET /v1/civic/place */
+export type InsightsGetPlaceCivicAtActionInput = ActionInput<never, InsightsPlaceAt, never>;
+
+export async function insightsGetPlaceCivicAt(input: InsightsGetPlaceCivicAtActionInput) {
+  const options = requestOptions(input.options, input.query, false);
+  const path = routes.insights.getPlaceCivicAt;
   return api.get<InsightsPlaceCivic>(path, options);
 }
 /** GET /v1/elections/places/{featureId} */

@@ -112,6 +112,8 @@ export const routes = {
     /** GET /v1/civic/places/{featureId} */
     getPlaceCivic: (params: { featureId: string }) =>
       `/v1/civic/places/${encodeURIComponent(params.featureId)}`,
+    /** GET /v1/civic/place */
+    getPlaceCivicAt: "/v1/civic/place",
     /** GET /v1/elections/places/{featureId} */
     getPlaceElections: (params: { featureId: string }) =>
       `/v1/elections/places/${encodeURIComponent(params.featureId)}`,

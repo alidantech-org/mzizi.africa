@@ -127,6 +127,7 @@ const routes: Array<[method: string, path: string]> = [
       encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
     ),
   ],
+  ["GET", "/v1/civic/place"],
   [
     "GET",
     "/v1/elections/places/{featureId}".replace(

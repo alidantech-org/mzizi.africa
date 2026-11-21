@@ -42,6 +42,7 @@ import { nearbyInputExample } from "@test/modules/insights/schema/dto/examples/n
 import { nearbyProjectsExample } from "@test/modules/insights/schema/dto/examples/nearby-projects.dto.example.ts";
 import { partyDetailExample } from "@test/modules/insights/schema/dto/examples/party-detail.dto.example.ts";
 import { partyListExample } from "@test/modules/insights/schema/dto/examples/party-list.dto.example.ts";
+import { placeAtExample } from "@test/modules/insights/schema/dto/examples/place-at.dto.example.ts";
 import { placeBrowseExample } from "@test/modules/insights/schema/dto/examples/place-browse.dto.example.ts";
 import { placeCivicExample } from "@test/modules/insights/schema/dto/examples/place-civic.dto.example.ts";
 import { placeElectionsExample } from "@test/modules/insights/schema/dto/examples/place-elections.dto.example.ts";
@@ -102,6 +103,7 @@ const service = {
   getNearbyProjects: vi.fn(),
   getParty: vi.fn(),
   getPlaceCivic: vi.fn(),
+  getPlaceCivicAt: vi.fn(),
   getPlaceElections: vi.fn(),
   getPlaceStatistics: vi.fn(),
   getPlaceStatisticsAt: vi.fn(),
@@ -558,6 +560,25 @@ describe("GET /v1/civic/places/{featureId} (getPlaceCivic)", () => {
         featureId: String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11"),
       }),
     );
+    expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
+  });
+});
+
+describe("GET /v1/civic/place (getPlaceCivicAt)", () => {
+  it("passes a valid request to the service and answers with the contract status", async () => {
+    const sent: Sent = {
+      params: {},
+      query: { ...queryOf(placeAtExample.valid()) },
+      headers: {},
+    };
+    const result = placeCivicExample.valid();
+    service.getPlaceCivicAt.mockResolvedValue(result);
+
+    const response = await send("GET", "/v1/civic/place", sent);
+
+    expect(response.status, await response.clone().text()).toBe(200);
+    expect(service.getPlaceCivicAt).toHaveBeenCalledTimes(1);
+    expect(service.getPlaceCivicAt).toHaveBeenCalledWith(expect.anything());
     expect(await response.json()).toEqual(JSON.parse(JSON.stringify(result)));
   });
 });

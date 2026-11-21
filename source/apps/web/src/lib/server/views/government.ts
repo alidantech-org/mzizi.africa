@@ -16,7 +16,7 @@ const camel = (v: unknown): unknown =>
     : v && typeof v === "object"
       ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()), camel(x)]))
       : v;
-const pack = <T>(res: { success: boolean; body?: T | null }): Loaded<T> =>
+export const pack = <T>(res: { success: boolean; body?: T | null }): Loaded<T> =>
   res.success && res.body ? { data: camel(res.body) as T, failed: false } : { data: null, failed: true };
 
 export const loadInstitutions = async (): Promise<Loaded<InsightsInstitutionList>> => pack(await insightsListInstitutions({ options: cache() }));

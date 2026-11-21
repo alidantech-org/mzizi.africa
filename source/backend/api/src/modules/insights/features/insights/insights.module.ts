@@ -17,6 +17,7 @@ import { GetLegalBasisUseCase } from "#/modules/insights/features/insights/use-c
 import { GetMotionUseCase } from "#/modules/insights/features/insights/use-cases/get-motion.usecase.ts";
 import { GetNearbyProjectsUseCase } from "#/modules/insights/features/insights/use-cases/get-nearby-projects.usecase.ts";
 import { GetPartyUseCase } from "#/modules/insights/features/insights/use-cases/get-party.usecase.ts";
+import { GetPlaceCivicAtUseCase } from "#/modules/insights/features/insights/use-cases/get-place-civic-at.usecase.ts";
 import { GetPlaceCivicUseCase } from "#/modules/insights/features/insights/use-cases/get-place-civic.usecase.ts";
 import { GetPlaceElectionsUseCase } from "#/modules/insights/features/insights/use-cases/get-place-elections.usecase.ts";
 import { GetPlaceStatisticsAtUseCase } from "#/modules/insights/features/insights/use-cases/get-place-statistics-at.usecase.ts";
@@ -59,6 +60,7 @@ import { InsightsInsightsService, InsightsInsightsServiceImpl } from "./insights
     GetMotionUseCase,
     GetNearbyProjectsUseCase,
     GetPartyUseCase,
+    GetPlaceCivicAtUseCase,
     GetPlaceCivicUseCase,
     GetPlaceElectionsUseCase,
     GetPlaceStatisticsAtUseCase,
