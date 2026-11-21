@@ -22,11 +22,11 @@ export function Panel({
   return (
     <section id={id} data-section className={`scroll-mt-4 rounded-lg border border-line bg-surface p-6 ${className}`}>
       <header className="mb-4 flex items-baseline justify-between gap-4">
-        <h2 className="flex min-w-0 items-center gap-2.5 font-display text-xl tracking-tight">
+        <h2 className="flex min-w-0 flex-1 items-center gap-2.5 font-display text-xl tracking-tight">
           {Icon && <Icon size={18} className="shrink-0 text-accent" />}
           <span className="min-w-0 truncate">{title}</span>
         </h2>
-        <span className="flex min-w-0 items-center gap-2">
+        <span className="flex min-w-0 max-w-[45%] shrink items-center gap-2">
           {note && <span className="min-w-0 truncate font-mono text-[11px] uppercase tracking-widest text-muted">{note}</span>}
           <ReadSection />
         </span>
