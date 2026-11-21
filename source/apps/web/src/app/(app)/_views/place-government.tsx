@@ -9,14 +9,17 @@ import Link from "#/components/navigation/demo-link";
 import { PageHeader } from "#/components/ui/page-header";
 import { Panel } from "#/components/ui/panel";
 import { SkeletonPanel } from "#/components/ui/skeleton";
-import { loadInstitution, loadInstitutions, loadLaw } from "#/lib/server/views/government";
+import { loadElections, loadInstitution, loadInstitutions, loadLaw, loadMotion, loadMotions } from "#/lib/server/views/government";
 import { getCopy } from "#/lib/server/copy";
 
 type T = Awaited<ReturnType<typeof getCopy>>;
+/** The API sends these two fields in snake case although its contract names them in camel case; both are read until that is corrected. */
+const held = (m: object): string => (m as { heldOn?: string; held_on?: string }).heldOn ?? (m as { held_on?: string }).held_on ?? "";
+const mover = (m: object): string | null => (m as { movedBy?: string | null }).movedBy ?? (m as { moved_by?: string | null }).moved_by ?? null;
 const note = (cls = "") => `rounded-lg border border-dashed border-muted p-3 text-sm text-muted sm:p-6 ${cls}`;
 const date = (iso: string, language: string) => new Intl.DateTimeFormat(language, { dateStyle: "long", timeZone: "UTC" }).format(new Date(iso));
 
-export type GovernanceView = "institutions" | "law";
+export type GovernanceView = "institutions" | "law" | "parliament" | "elections";
 
 export default async function PlaceGovernment({
   view,
@@ -32,8 +35,13 @@ export default async function PlaceGovernment({
   code?: string;
 }) {
   const t = await getCopy(language);
-  const title = view === "law" ? t(copy.place.gov.law) : code ? "" : t(copy.place.gov.institutions);
-  const intro = view === "law" ? t(copy.place.gov.lawIntro) : t(copy.place.gov.institutionsIntro);
+  const heads = {
+    law: [t(copy.place.gov.law), t(copy.place.gov.lawIntro)],
+    institutions: [t(copy.place.gov.institutions), t(copy.place.gov.institutionsIntro)],
+    parliament: [t(copy.place.gov.parliament), t(copy.place.gov.parliamentIntro)],
+    elections: [t(copy.place.gov.elections), t(copy.place.gov.electionsIntro)],
+  } as const;
+  const [title, intro] = heads[view];
   return (
     <>
       {!code && (
@@ -45,7 +53,7 @@ export default async function PlaceGovernment({
         <p className={note()}>{t(copy.place.gov.countryGap)}</p>
       ) : (
         <Suspense fallback={<SkeletonPanel height={420} />}>
-          {view === "law" ? <Law t={t} language={language} /> : code ? <Institution code={code} base={base} t={t} language={language} /> : <Institutions base={base} t={t} language={language} />}
+          {view === "law" ? <Law t={t} language={language} /> : view === "elections" ? <Elections t={t} language={language} /> : view === "parliament" ? (code ? <Motion code={code} base={base} t={t} language={language} /> : <Motions base={base} t={t} language={language} />) : code ? <Institution code={code} base={base} t={t} language={language} /> : <Institutions base={base} t={t} language={language} />}
         </Suspense>
       )}
     </>
@@ -164,6 +172,96 @@ async function Law({ t, language }: { t: T; language: string }) {
         ))}
       </ul>
       <p className="mt-4 text-xs text-muted">{t(copy.place.gov.lawGap)}</p>
+    </Panel>
+  );
+}
+
+async function Motions({ base, t, language }: { base: string; t: T; language: string }) {
+  const { data, failed } = await loadMotions();
+  if (failed || !data) return <p className={note()}>{t(copy.place.gov.failed)}</p>;
+  return (
+    <Panel id="motions" title={t(copy.place.gov.parliament)} note={t(copy.place.gov.bodies, { count: data.motions.length })} icon={Landmark}>
+      <ul className="divide-y divide-line">
+        {data.motions.map((m) => (
+          <li key={m.code} className="py-3">
+            <Link href={`${base}?view=parliament&view.id=${encodeURIComponent(m.code)}`} className="font-medium text-accent hover:underline">
+              {m.title}
+            </Link>
+            <p className="mt-1 text-sm text-muted">{m.summary}</p>
+            <p className="mt-1 text-xs text-muted">
+              {m.institution} · {date(held(m), language)} · {m.outcome === "passed" ? t(copy.place.gov.passed) : t(copy.place.gov.failed2)} · {t(copy.place.gov.yes)} {m.yes} · {t(copy.place.gov.no)} {m.no}
+            </p>
+          </li>
+        ))}
+      </ul>
+    </Panel>
+  );
+}
+
+async function Motion({ code, base, t, language }: { code: string; base: string; t: T; language: string }) {
+  const { data, failed } = await loadMotion(code);
+  if (failed || !data) return <p className={note()}>{t(copy.place.gov.failed)}</p>;
+  const m = data.motion;
+  const tl = data.tally;
+  return (
+    <>
+      <Link href={`${base}?view=parliament`} className="mb-4 inline-block text-sm font-medium text-accent">
+        {t(copy.place.gov.allMotions)}
+      </Link>
+      <h2 className="font-display text-2xl">{m.title}</h2>
+      <p className="mt-2 text-sm text-muted">
+        {m.institution} · {date(held(m), language)}
+        {mover(m) ? ` · ${t(copy.place.gov.movedBy, { name: mover(m) as string })}` : ""}
+      </p>
+      <p className="mt-2 max-w-2xl">{m.summary}</p>
+      <div className="mt-4 grid grid-cols-1 items-start gap-2 sm:gap-4 lg:grid-cols-2">
+        <Panel id="tally" title={t(copy.place.gov.tally)} note={tl.passed ? t(copy.place.gov.passed) : t(copy.place.gov.failed2)}>
+          <dl className="grid grid-cols-2 gap-3 text-sm">
+            {([["yes", tl.yes], ["no", tl.no], ["abstain", tl.abstain], ["absent", tl.absent]] as const).map(([k, v]) => (
+              <div key={k}>
+                <dt className="text-muted">{t(copy.place.gov[k])}</dt>
+                <dd className="font-display text-2xl">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        </Panel>
+        {data.parties.length > 0 && (
+          <Panel id="parties" title={t(copy.place.gov.byParty)}>
+            <ul className="divide-y divide-line text-sm">
+              {data.parties.map((p) => (
+                <li key={p.party} className="py-2">
+                  <div className="font-medium">{p.party}</div>
+                  <div className="text-muted">
+                    {t(copy.place.gov.yes)} {p.yes} · {t(copy.place.gov.no)} {p.no} · {t(copy.place.gov.abstain)} {p.abstain} · {t(copy.place.gov.absent)} {p.absent}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Panel>
+        )}
+      </div>
+    </>
+  );
+}
+
+async function Elections({ t, language }: { t: T; language: string }) {
+  const { data, failed } = await loadElections();
+  if (failed || !data) return <p className={note()}>{t(copy.place.gov.failed)}</p>;
+  return (
+    <Panel id="elections" title={t(copy.place.gov.elections)} icon={Users}>
+      <ul className="divide-y divide-line">
+        {data.elections.map((e) => (
+          <li key={e.code} className="py-3">
+            <div className="font-medium">
+              {e.year} · {t(copy.place.gov.electionLine, { kind: e.kind, date: date(e.heldOn, language) })}
+            </div>
+            <div className="text-sm text-muted">
+              {e.winner ? t(copy.place.gov.electionWinner, { name: `${(e.winner as { name: string }).name} (${(e.winner as { party: string }).party})` }) : t(copy.place.gov.electionNone)}
+              {e.registeredVoters ? ` · ${t(copy.place.gov.registered, { count: new Intl.NumberFormat(language).format(e.registeredVoters) })}` : ""}
+            </div>
+          </li>
+        ))}
+      </ul>
     </Panel>
   );
 }

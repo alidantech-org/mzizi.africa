@@ -34,10 +34,10 @@ async function PlaceContent({
   const view: ViewId = raw && isView(raw) ? raw : "overview";
   const address = { country, trail: place.map((s) => decodeURIComponent(s)) };
   if (view === "overview") return <PlaceHome address={address} language={language} />;
-  if (view === "institutions" || view === "law") {
+  if (view === "institutions" || view === "law" || view === "parliament" || view === "elections") {
     const id = Array.isArray(query["view.id"]) ? query["view.id"][0] : query["view.id"];
     const base = `/${[country, ...place].join("/")}`;
-    return <PlaceGovernment view={view} country={country.toLowerCase()} base={base} language={language} code={view === "institutions" ? id : undefined} />;
+    return <PlaceGovernment view={view} country={country.toLowerCase()} base={base} language={language} code={view === "institutions" || view === "parliament" ? id : undefined} />;
   }
   if (view === "statistics") {
     const topic = Array.isArray(query.topic) ? query.topic[0] : query.topic;
