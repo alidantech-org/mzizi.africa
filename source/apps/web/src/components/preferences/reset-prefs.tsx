@@ -3,13 +3,14 @@
 import { RotateCcw } from "lucide-react";
 import { copy } from "@mzizi/copy";
 import { useCopy } from "#/lib/copy/copy";
+import { resetLook } from "#/lib/preferences/appearance";
 import { resetPrefs } from "#/lib/preferences/prefs";
 
 export function ResetPrefs() {
   const t = useCopy();
   return (
     <button
-      onClick={resetPrefs}
+      onClick={() => (resetPrefs(), resetLook())}
       className="inline-flex max-w-full items-center gap-2 rounded-md border border-line px-3.5 py-2 text-sm hover:bg-accent-soft"
     >
       <RotateCcw size={14} className="shrink-0" />

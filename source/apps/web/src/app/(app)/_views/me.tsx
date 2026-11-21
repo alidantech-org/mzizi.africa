@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { copy } from "@mzizi/copy";
 import { InstallApp } from "#/components/layout/pwa";
 import { LanguageChoice } from "#/components/preferences/language-choice";
+import { AppearancePanel } from "#/components/preferences/appearance-panel";
 import { AudioPanel, LookPanel } from "#/components/preferences/prefs-panels";
 import { ResetPrefs } from "#/components/preferences/reset-prefs";
 import { PageHeader } from "#/components/ui/page-header";
@@ -13,7 +14,7 @@ import { usePlaceNames } from "#/lib/places/catalogue";
 import { usePrefsInit } from "#/lib/preferences/prefs";
 
 const Card = ({ title, note, children }: { title: string; note?: string; children: ReactNode }) => (
-  <section className="min-w-0 rounded-lg border border-line bg-surface p-2 sm:p-4">
+  <section className="min-w-0 rounded-lg border border-line bg-surface p-3 sm:p-4">
     <h2 className="truncate font-display text-xl">{title}</h2>
     {note && <p className="mt-1 text-sm text-muted">{note}</p>}
     <div className="mt-4">{children}</div>
@@ -34,6 +35,9 @@ export default function MeView() {
           <LookPanel />
         </Card>
         <div className="grid min-w-0 gap-4">
+          <Card title={t(copy.preferences.look.title)} note={t(copy.preferences.look.note)}>
+            <AppearancePanel />
+          </Card>
           <Card title={t(copy.pages.me.sound)} note={t(copy.pages.me.soundNote)}>
             <AudioPanel />
           </Card>

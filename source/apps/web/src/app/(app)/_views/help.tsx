@@ -7,7 +7,7 @@ import { useCopy } from "#/lib/copy/copy";
 import { usePrefsInit } from "#/lib/preferences/prefs";
 
 const Section = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (
-  <section aria-labelledby={id} className="rounded-lg border border-line bg-surface p-2 sm:p-4 text-sm">
+  <section aria-labelledby={id} className="rounded-lg border border-line bg-surface p-3 sm:p-4 text-sm">
     <h2 id={id} className="font-display text-xl">
       {title}
     </h2>

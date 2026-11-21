@@ -31,7 +31,7 @@ function Card({ ind, place, language, t }: { ind: Indicator; place: string; lang
       : t(copy.place.kpi.asOf, { year: year(ind.latest.period) });
   const points = ind.series.filter((p) => Number.isFinite(p.value));
   return (
-    <div className="min-w-0 rounded-lg border border-line bg-surface p-2 sm:p-4">
+    <div className="min-w-0 rounded-lg border border-line bg-surface p-3 sm:p-4">
       <div className="text-xs text-muted">{ind.name}</div>
       <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
         <span className="font-display text-2xl tracking-tight">{show(ind.latest.value, ind.unit, language)}</span>
@@ -60,12 +60,12 @@ function Card({ ind, place, language, t }: { ind: Indicator; place: string; lang
 
 async function Topics({ address, statistics, topic, place, language, t }: { address: PlaceAddress; statistics: Promise<InsightsPlaceStatistics | null>; topic?: string; place: string; language: string; t: T }) {
   const stats = await statistics;
-  if (!stats || !stats.topics.length) return <p className="rounded-lg border border-dashed border-muted p-2 text-sm text-muted sm:p-6">{t(copy.place.empty.statistics)}</p>;
+  if (!stats || !stats.topics.length) return <p className="rounded-lg border border-dashed border-muted p-3 text-sm text-muted sm:p-6">{t(copy.place.empty.statistics)}</p>;
   const current = stats.topics.find((x) => x.code === topic) ?? stats.topics[0]!;
   const base = `/${[address.country, ...address.trail].join("/")}?view=statistics`;
   return (
     <>
-      <nav aria-label={t(copy.place.stats.topics)} className="mb-2 flex flex-wrap gap-1 sm:mb-4 sm:gap-2">
+      <nav aria-label={t(copy.place.stats.topics)} className="mb-4 flex flex-wrap gap-1 sm:gap-2">
         {stats.topics.map((x) => (
           <Link
             key={x.code}

@@ -437,7 +437,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
         <main className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1200px] px-2 pb-8 pt-2 sm:px-4 sm:pt-4 md:px-8 md:pb-16 md:pt-8">{children}</div>
+          <div className="mx-auto w-full max-w-[1200px] px-3 pb-16 pt-8 sm:px-4 md:px-8">{children}</div>
         </main>
         <VoiceEffects />
         <HoverSpeech />

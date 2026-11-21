@@ -43,7 +43,7 @@ export default async function PlaceHome({ address, language }: { address: PlaceA
       <Suspense fallback={<SkeletonPanel height={120} />}>
         <Figures statistics={statistics} language={language} t={t} />
       </Suspense>
-      <div className="mt-2 grid items-start gap-2 sm:mt-4 sm:gap-4 lg:grid-cols-2">
+      <div className="mt-4 grid items-start gap-2 sm:gap-4 lg:grid-cols-2">
         <Suspense fallback={<SkeletonPanel height={420} />}>
           <MapRegion map={map} loc={loc} language={language} t={t} />
         </Suspense>
@@ -70,7 +70,7 @@ async function Figures({ statistics, language, t }: { statistics: Promise<Insigh
     const ind = byRole(stats, tile.role);
     return ind ? [{ tile, ind }] : [];
   });
-  if (!shown.length) return <p className="rounded-lg border border-dashed border-muted p-2 text-sm sm:p-6 text-muted">{t(copy.place.empty.statistics)}</p>;
+  if (!shown.length) return <p className="rounded-lg border border-dashed border-muted p-3 text-sm sm:p-6 text-muted">{t(copy.place.empty.statistics)}</p>;
   return (
     <div className="grid gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
       {shown.map(({ tile, ind }) => {
@@ -196,7 +196,7 @@ async function People({
           />
         </div>
       )}
-      <div className="space-y-2 sm:space-y-5">
+      <div className="space-y-5">
         {block(t(copy.place.people.sex), b.sex)}
         {block(t(copy.place.people.residence), b.residence)}
         {block(t(copy.place.people.languages), top(b.language))}

@@ -361,3 +361,50 @@ input[type="range"]:focus-visible {
 :root[data-side="hidden"] .sk-aside {
   display: none !important;
 }
+
+/* Appearance preferences (see lib/preferences/appearance.ts). Each rule applies only to a non-default choice. */
+html[data-radius="sharp"] { --radius-sm: 0; --radius-md: 0; --radius-lg: 0; --radius-xl: 0; }
+html[data-radius="round"] { --radius-sm: 0.5rem; --radius-md: 0.75rem; --radius-lg: 1.25rem; --radius-xl: 1.5rem; }
+html[data-radius="pill"] { --radius-sm: 0.75rem; --radius-md: 1rem; --radius-lg: 1.75rem; --radius-xl: 2.25rem; }
+
+html[data-density="compact"] main > div.mx-auto { padding-top: 1rem !important; padding-bottom: 2rem !important; }
+html[data-density="compact"] section[data-section] { padding-block: 0.75rem !important; }
+html[data-density="compact"] section[data-section] > header { margin-bottom: 0.5rem !important; }
+html[data-density="compact"] main .grid { gap: 0.5rem !important; }
+html[data-density="compact"] main [class*="space-y-"] > * + * { margin-top: 0.5rem !important; }
+html[data-density="roomy"] main > div.mx-auto { padding-top: 3rem !important; padding-bottom: 6rem !important; }
+html[data-density="roomy"] section[data-section] { padding: 2rem !important; }
+html[data-density="roomy"] main .grid { gap: 1.75rem !important; }
+html[data-density="roomy"] main [class*="space-y-"] > * + * { margin-top: 1.5rem !important; }
+
+html[data-border="none"] .border-line { border-color: transparent !important; }
+html[data-border="faint"] .border-line { border-color: color-mix(in oklab, var(--line) 45%, transparent) !important; }
+html[data-border="strong"] .border-line { border-color: var(--muted) !important; }
+
+html[data-card="flat"] .rounded-lg.bg-surface:not(.floating) { border-color: transparent !important; }
+html[data-card="raised"] .rounded-lg.bg-surface:not(.floating) {
+  border-color: transparent !important;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 8px 20px -8px rgb(0 0 0 / 0.22);
+}
+html[data-card="tinted"] .rounded-lg.bg-surface:not(.floating) { background: color-mix(in oklab, var(--accent) 7%, var(--surface)) !important; }
+
+/* Map colour grading: one hue stepped from pale to full, or a fixed multi-colour ramp. */
+html[data-grade="cool"] { --g: #2a7ba6; }
+html[data-grade="green"] { --g: #2e8b57; }
+html[data-grade="violet"] { --g: #7a4fb3; }
+html[data-grade="mono"] { --g: var(--ink); }
+html[data-grade="cool"], html[data-grade="green"], html[data-grade="violet"], html[data-grade="mono"] {
+  --scale-0: color-mix(in oklab, var(--g) 12%, var(--surface));
+  --scale-1: color-mix(in oklab, var(--g) 32%, var(--surface));
+  --scale-2: color-mix(in oklab, var(--g) 55%, var(--surface));
+  --scale-3: color-mix(in oklab, var(--g) 78%, var(--surface));
+  --scale-4: var(--g);
+}
+html[data-grade="heat"] { --scale-0: #fff1c9; --scale-1: #fdbe5a; --scale-2: #f47b20; --scale-3: #c43a1a; --scale-4: #6b1410; }
+html[data-grade="viridis"] { --scale-0: #440154; --scale-1: #3b528b; --scale-2: #21918c; --scale-3: #5ec962; --scale-4: #fde725; }
+
+html[data-mstroke="thin"] { --map-stroke: 0.4; }
+html[data-mstroke="thick"] { --map-stroke: 2; }
+html[data-mheight="short"] .map-svg { max-height: 36svh !important; }
+html[data-mheight="tall"] .map-svg { max-height: 85svh !important; }
+html[data-mlabels="off"] .map-tip { display: none; }

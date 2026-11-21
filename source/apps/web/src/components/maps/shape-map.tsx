@@ -31,7 +31,7 @@ export function ShapeMap({
   const current = hover ? map.shapes.find((s) => s.address === hover) : null;
   return (
     <div className={`relative ${className}`}>
-      <svg viewBox={`0 0 ${map.width} ${map.height}`} role="group" aria-label={label} className="mx-auto block max-h-[60svh] w-full sm:max-h-[600px]">
+      <svg viewBox={`0 0 ${map.width} ${map.height}`} role="group" aria-label={label} className="map-svg mx-auto block max-h-[60svh] w-full sm:max-h-[600px]">
         {map.shapes.map((s) => (
           <path
             key={s.address}
@@ -42,7 +42,7 @@ export function ShapeMap({
             aria-label={titles?.[s.address] ? t(copy.place.map.shape, { name: s.name, value: titles[s.address]! }) : s.name}
             fill={fills[s.address] ?? "var(--line)"}
             stroke={selected === s.address ? "var(--ink)" : "var(--surface)"}
-            strokeWidth={selected === s.address ? 2.6 : 1.1}
+            style={{ strokeWidth: `calc(var(--map-stroke, 1) * ${selected === s.address ? 2.6 : 1.1}px)` }}
             strokeLinejoin="round"
             onClick={() => act(s.address)}
             onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && act(s.address)}
@@ -54,7 +54,7 @@ export function ShapeMap({
         ))}
       </svg>
       {current && (
-        <div className="pointer-events-none absolute left-1 top-1 max-w-[90%] truncate rounded-md bg-ink px-2 py-1 sm:left-2 sm:top-2 sm:px-3 sm:py-1.5 text-xs text-paper">
+        <div className="map-tip pointer-events-none absolute left-1 top-2 max-w-[90%] truncate rounded-md bg-ink px-2 py-1.5 sm:left-2 sm:px-3 text-xs text-paper">
           <b>{current.name}</b>
           {titles?.[current.address] && <span className="ml-2 opacity-70">{titles[current.address]}</span>}
         </div>

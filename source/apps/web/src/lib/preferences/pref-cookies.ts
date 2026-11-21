@@ -53,6 +53,7 @@ export const COOKIES = {
   saved: "mzizi-app-saved",
   hideCount: "mzizi-app-hide-count",
   lang: "mzizi-app-lang",
+  look: "mzizi-app-look",
 } as const;
 
 const MODES: Record<string, Mode> = { s: "system", l: "light", d: "dark" };

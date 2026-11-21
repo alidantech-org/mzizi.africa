@@ -1,5 +1,7 @@
 /** One page of the app for a place: the subject in `?view=` (home by default) of the place named by the address. */
 import { copy } from "@mzizi/copy";
+import { Suspense } from "react";
+import { PageSkeleton } from "#/components/ui/skeleton";
 import PlaceStatistics from "#/app/(app)/_views/place-statistics";
 import PlaceHome from "#/app/(app)/_views/place-home";
 import Link from "#/components/navigation/demo-link";
@@ -7,7 +9,19 @@ import { PageHeader } from "#/components/ui/page-header";
 import { isView, VIEWS, type ViewId } from "#/lib/navigation/route";
 import { effectiveLanguage, getCopy } from "#/lib/server/copy";
 
-export default async function PlacePage({
+type Params = Promise<{ country: string; place?: string[] }>;
+type Query = Promise<Record<string, string | string[] | undefined>>;
+
+/** The page itself touches no request data: everything dynamic is read inside one boundary, so the frame paints at once. */
+export default function PlacePage({ params, searchParams }: { params: Params; searchParams: Query }) {
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <PlaceContent params={params} searchParams={searchParams} />
+    </Suspense>
+  );
+}
+
+async function PlaceContent({
   params,
   searchParams,
 }: {
