@@ -105,7 +105,7 @@ export async function loadPlaceCatalogue(fallbackCountry?: string, addresses: re
         })
       : Promise.resolve(null),
     addresses.length
-      ? explorerResolveExplorerAddresses({ body: { addresses: [...addresses], languageCode }, options: placeCache() })
+      ? explorerResolveExplorerAddresses({ body: { addresses: [...addresses], languageCode } }) // a POST: the backend keeps the registry, so no bridge cache
       : Promise.resolve(null),
   ]);
 
