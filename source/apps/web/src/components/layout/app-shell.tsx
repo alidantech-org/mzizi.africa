@@ -42,6 +42,7 @@ import { SettingsMenu } from "#/components/preferences/settings-menu";
 import { HelpMenu } from "#/components/layout/help-menu";
 import { SavedMenu } from "#/components/layout/saved-menu";
 import { VoiceEffects } from "#/components/accessibility/voice-bar";
+import { AppbarMenu } from "#/components/layout/appbar-menu";
 import { SetupGate } from "#/components/preferences/setup-gate";
 import { ListRefresh } from "#/lib/navigation/list-refresh";
 
@@ -217,6 +218,26 @@ function CountryTheme() {
     if (explorer) setCountry(country);
   }, [country, explorer]);
   return null;
+}
+
+/** The actions on the right of the top bar: language, appearance, saved places and help. */
+function Actions() {
+  return (
+    <>
+      <Suspense>
+        <LanguageSwitcher />
+      </Suspense>
+      <SettingsMenu placement="bottom" />
+      <Divider />
+      <Suspense>
+        <SavedMenu />
+      </Suspense>
+      <Divider />
+      <Suspense>
+        <HelpMenu />
+      </Suspense>
+    </>
+  );
 }
 
 const RAIL = 56;
@@ -406,19 +427,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Suspense>
             <SearchDialog />
           </Suspense>
-          <div className="ml-auto flex items-center gap-1.5">
-            <Suspense>
-              <LanguageSwitcher />
-            </Suspense>
-            <SettingsMenu placement="bottom" />
-            <Divider />
-            <Suspense>
-              <SavedMenu />
-            </Suspense>
-            <Divider />
-            <Suspense>
-              <HelpMenu />
-            </Suspense>
+          <div className="ml-auto hidden items-center gap-1.5 md:flex">
+            <Actions />
+          </div>
+          <div className="ml-auto md:hidden">
+            <AppbarMenu>
+              <Actions />
+            </AppbarMenu>
           </div>
         </header>
         <main className="min-h-0 flex-1 overflow-y-auto">

@@ -61,6 +61,7 @@ export const preferences = defineCopy("preferences", {
   voice: {
     unsupported: { en: "Speech is not available in this browser.", sw: "Usemaji haupatikani kwenye kivinjari hiki." },
     stopReading: { en: "Stop reading", sw: "Acha kusoma" },
+    readSection: { en: "Read this section aloud", sw: "Soma sehemu hii kwa sauti" },
     readPage: { en: "Read this page aloud", sw: "Soma ukurasa huu kwa sauti" },
     responses: { en: "Voice responses", sw: "Majibu ya sauti" },
     speed: { en: "Speaking speed", sw: "Kasi ya kuongea" },
