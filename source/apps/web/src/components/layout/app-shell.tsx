@@ -312,7 +312,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const header = (compact: boolean) => (
     <div
-      className={`group/head flex h-12 shrink-0 items-center border-b border-line ${compact ? "justify-center" : "justify-between px-3"}`}
+      className={`group/head flex h-12 shrink-0 items-center border-b border-line ${compact ? "justify-center" : "justify-between px-2 sm:px-3"}`}
     >
       {compact ? (
         // Minimised: the mark turns into the expand button while the pointer is over the header.
@@ -412,7 +412,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-12 shrink-0 items-center gap-2 border-b border-line bg-surface px-3">
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b border-line bg-surface px-2 sm:px-3">
           {/* On wide screens this button appears only while the sidebar is completely hidden; otherwise it lives in the sidebar header. */}
           <button
             onClick={() =>
@@ -437,7 +437,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
         <main className="min-h-0 flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1200px] px-4 pb-16 pt-8 md:px-8">{children}</div>
+          <div className="mx-auto w-full max-w-[1200px] px-2 pb-8 pt-2 sm:px-4 sm:pt-4 md:px-8 md:pb-16 md:pt-8">{children}</div>
         </main>
         <VoiceEffects />
         <HoverSpeech />

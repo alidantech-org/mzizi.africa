@@ -13,7 +13,7 @@ import { usePlaceNames } from "#/lib/places/catalogue";
 import { usePrefsInit } from "#/lib/preferences/prefs";
 
 const Card = ({ title, note, children }: { title: string; note?: string; children: ReactNode }) => (
-  <section className="min-w-0 rounded-lg border border-line bg-surface p-5">
+  <section className="min-w-0 rounded-lg border border-line bg-surface p-2 sm:p-4">
     <h2 className="truncate font-display text-xl">{title}</h2>
     {note && <p className="mt-1 text-sm text-muted">{note}</p>}
     <div className="mt-4">{children}</div>

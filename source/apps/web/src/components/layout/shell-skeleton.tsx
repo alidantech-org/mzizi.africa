@@ -24,7 +24,7 @@ export function ShellSkeleton() {
           <Skeleton className="h-8 w-full max-w-[17rem]" />
         </header>
         <main className="min-h-0 flex-1 overflow-y-hidden">
-          <div className="mx-auto w-full max-w-[1200px] px-4 pb-16 pt-8 md:px-8">
+          <div className="mx-auto w-full max-w-[1200px] px-2 pb-8 pt-2 sm:px-4 sm:pt-4 md:px-8 md:pb-16 md:pt-8">
             <Skeleton className="h-3 w-32" />
             <Skeleton className="mt-4 h-10 w-2/3 max-w-md" />
           </div>

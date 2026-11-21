@@ -31,7 +31,7 @@ export function ShapeMap({
   const current = hover ? map.shapes.find((s) => s.address === hover) : null;
   return (
     <div className={`relative ${className}`}>
-      <svg viewBox={`0 0 ${map.width} ${map.height}`} role="group" aria-label={label} className="mx-auto block max-h-[600px] w-full">
+      <svg viewBox={`0 0 ${map.width} ${map.height}`} role="group" aria-label={label} className="mx-auto block max-h-[60svh] w-full sm:max-h-[600px]">
         {map.shapes.map((s) => (
           <path
             key={s.address}
@@ -54,7 +54,7 @@ export function ShapeMap({
         ))}
       </svg>
       {current && (
-        <div className="pointer-events-none absolute left-2 top-2 max-w-[80%] truncate rounded-md bg-ink px-3 py-1.5 text-xs text-paper">
+        <div className="pointer-events-none absolute left-1 top-1 max-w-[90%] truncate rounded-md bg-ink px-2 py-1 sm:left-2 sm:top-2 sm:px-3 sm:py-1.5 text-xs text-paper">
           <b>{current.name}</b>
           {titles?.[current.address] && <span className="ml-2 opacity-70">{titles[current.address]}</span>}
         </div>

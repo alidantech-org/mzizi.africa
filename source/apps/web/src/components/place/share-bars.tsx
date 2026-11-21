@@ -13,7 +13,7 @@ export function ShareBars({
   return (
     <ul role="img" aria-label={label} className="space-y-2.5 text-sm">
       {rows.map((r) => (
-        <li key={r.label} className="grid grid-cols-[minmax(0,9rem)_1fr_3.5rem] items-center gap-3">
+        <li key={r.label} className="grid grid-cols-[minmax(0,6rem)_1fr_3rem] items-center gap-2 sm:grid-cols-[minmax(0,9rem)_1fr_3.5rem] sm:gap-3">
           <span className="truncate">{r.label}</span>
           <span className="h-2.5 overflow-hidden rounded-full bg-line">
             <span className="block h-full rounded-full bg-c1" style={{ width: `${Math.max(2, (r.share / max) * 100)}%` }} />
