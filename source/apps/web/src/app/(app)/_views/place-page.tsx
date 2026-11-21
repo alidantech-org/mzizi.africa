@@ -2,6 +2,7 @@
 import { copy } from "@mzizi/copy";
 import { Suspense } from "react";
 import { PageSkeleton } from "#/components/ui/skeleton";
+import PlaceGovernment from "#/app/(app)/_views/place-government";
 import PlaceStatistics from "#/app/(app)/_views/place-statistics";
 import PlaceHome from "#/app/(app)/_views/place-home";
 import Link from "#/components/navigation/demo-link";
@@ -33,6 +34,11 @@ async function PlaceContent({
   const view: ViewId = raw && isView(raw) ? raw : "overview";
   const address = { country, trail: place.map((s) => decodeURIComponent(s)) };
   if (view === "overview") return <PlaceHome address={address} language={language} />;
+  if (view === "institutions" || view === "law") {
+    const id = Array.isArray(query["view.id"]) ? query["view.id"][0] : query["view.id"];
+    const base = `/${[country, ...place].join("/")}`;
+    return <PlaceGovernment view={view} country={country.toLowerCase()} base={base} language={language} code={view === "institutions" ? id : undefined} />;
+  }
   if (view === "statistics") {
     const topic = Array.isArray(query.topic) ? query.topic[0] : query.topic;
     return <PlaceStatistics address={address} language={language} topic={topic} />;

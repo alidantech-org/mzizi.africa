@@ -63,6 +63,48 @@ export const place = defineCopy("place", {
     unit: { en: "Unit: {unit}", sw: "Kipimo: {unit}" },
     siblings: { en: "{position} of {of} places like it by population", sw: "Nafasi ya {position} kati ya maeneo {of} yanayofanana kwa idadi ya watu" },
   },
+  gov: {
+    eyebrow: { en: "Government", sw: "Serikali" },
+    institutions: { en: "Public institutions", sw: "Taasisi za umma" },
+    institutionsIntro: {
+      en: "Every public body recorded, grouped by arm of government, with what it is for and how many leaders it has.",
+      sw: "Kila chombo cha umma kilichorekodiwa, kimepangwa kwa mhimili wa serikali, kikiwa na madhumuni yake na idadi ya viongozi wake.",
+    },
+    bodies: { en: "{count} bodies", sw: "Vyombo {count}" },
+    leaders: { en: "{count} leaders", sw: "Viongozi {count}" },
+    leadersOne: { en: "1 leader", sw: "Kiongozi 1" },
+    purpose: { en: "What it is for", sw: "Madhumuni yake" },
+    functions: { en: "What it does", sw: "Inachofanya" },
+    basis: { en: "Legal basis", sw: "Msingi wa kisheria" },
+    leadersTitle: { en: "Who leads it", sw: "Nani anaongoza" },
+    since: { en: "since {date}", sw: "tangu {date}" },
+    children: { en: "Bodies under or beside it", sw: "Vyombo vilivyo chini yake au kando yake" },
+    back: { en: "All institutions", sw: "Taasisi zote" },
+    englishOnly: {
+      en: "Descriptions of institutions are recorded in English only so far.",
+      sw: "Maelezo ya taasisi yamerekodiwa kwa Kiingereza pekee hadi sasa.",
+    },
+    countryGap: {
+      en: "No government data is recorded for this country yet. Only Kenya has it so far.",
+      sw: "Bado hakuna data ya serikali iliyorekodiwa kwa nchi hii. Kenya pekee ndiyo ina data hadi sasa.",
+    },
+    failed: {
+      en: "This could not be loaded just now. Reload in a moment; it does not mean nothing is recorded.",
+      sw: "Hii haikuweza kupakiwa kwa sasa. Pakia tena baada ya muda mfupi; haimaanishi kuwa hakuna kilichorekodiwa.",
+    },
+    law: { en: "Laws", sw: "Sheria" },
+    lawIntro: {
+      en: "Legal instruments held, highest authority first.",
+      sw: "Hati za kisheria zilizohifadhiwa, zenye mamlaka ya juu kwanza.",
+    },
+    provisions: { en: "{count} provisions", sw: "Vifungu {count}" },
+    enacted: { en: "Enacted {date}", sw: "Ilitungwa {date}" },
+    lawGap: {
+      en: "Only the instruments listed are recorded. Others, such as the Political Parties Act and the Land Act, are not yet loaded, and the provisions cannot be read in the app yet.",
+      sw: "Ni hati zilizoorodheshwa pekee zilizorekodiwa. Nyingine, kama Sheria ya Vyama vya Siasa na Sheria ya Ardhi, bado hazijapakiwa, na vifungu bado haviwezi kusomwa kwenye programu.",
+    },
+    noBody: { en: "Nothing is recorded under this heading.", sw: "Hakuna kilichorekodiwa chini ya kichwa hiki." },
+  },
   pending: {
     title: { en: "{subject} is not shown for places yet", sw: "{subject} bado haionyeshwi kwa maeneo" },
     text: {
