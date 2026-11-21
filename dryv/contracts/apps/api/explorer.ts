@@ -18,6 +18,7 @@ const props = explorer.properties({
   Accuracy: dryv.property.number.double({ range: { min: 0, max: 100000 } }),
   HexColor: dryv.property.string().length({ min: 7, max: 7 }),
   Share: dryv.property.number.double({ range: { min: 0, max: 1 } }),
+  Amount: dryv.property.number.double({ range: { min: 0, max: 100000000000 } }),
   Degrees: dryv.property.number.double({ range: { min: -180, max: 180 } }),
   SimplifyDegrees: dryv.property.number.double({ range: { min: 0, max: 2 } }),
   BoundaryMode: dryv.property.enum({ Self: "self", Children: "children" }),
@@ -152,6 +153,10 @@ const boundaryShapes = explorer.schemas({
     geometry: dryv.field(p.JsonText),
     /** Western, southern, eastern and northern edges of the shape. */
     bbox: dryv.field(props.Degrees).array(),
+    /** The latest recorded population baseline of the place, to shade a map by; absent when none is recorded. */
+    population: dryv.field(props.Amount).maybe(),
+    /** How many registered places are directly inside it. */
+    childCount: dryv.field(p.NonNegativeInteger),
   }),
 });
 const boundaries = explorer.schema("Boundaries", {
