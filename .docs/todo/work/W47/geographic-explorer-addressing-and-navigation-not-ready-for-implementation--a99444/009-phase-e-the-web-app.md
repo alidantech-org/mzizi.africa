@@ -141,3 +141,15 @@ Slice 1 (location switcher on real places): added src/proxy.ts (x-mzizi-path), l
 ### 2026-11-20T09:08:11.455Z · PETER IRUNGU
 
 Slice 2 (header search): query lives in the URL as ?find=; proxy forwards it, lib/server/places.ts calls explorerSearchExplorerPlaces server-side, search.tsx reads catalogue.found and keeps the same dialog; #demo/_data removed from search.tsx. Verified /ke/nairobi: type 'westl' -> ?find=westl, 2 real results, Enter -> /ke/nairobi/westlands, find cleared, no client API requests, tsc clean. Gaps: institutions no longer searchable (no backend search op for them; placeholder text unchanged); on / search uses the cookie country; voice-command page names still local.
+
+### 2026-11-20T09:28:18.327Z · PETER IRUNGU
+
+Copy layer, contracts step: new @mzizi/copy (source/sdk/copy) with typed en+sw declarations, key descriptors copy.<area>.<path> and params from {placeholders}; explorer contract adds GetCopyBundle (GET /v1/explorer/copy, hash, missing) and drops copy from Bootstrap; Copy.isDevelopmentText removed from contract and dev seed. API contracts doctor/compile pass; database:check fails on pre-existing storage-inventory mismatches (politics, civic, statistics). NOT yet done: regenerate SDK/API/SQL, migration + DB recreate, handler for GetCopyBundle, web CopyProvider/useCopy, moving appbar/sidebar strings.
+
+### 2026-11-20T11:58:29.736Z · PETER IRUNGU
+
+Copy layer round 3: navigation availability from API (GET /v1/explorer/navigation, data-driven, cached 1h), language names + nativeName from reference.language_names, copy keys for location/theme/voice/shared controls, hardcoded availability removed, 19 unused web files removed, dev runner supervises services independently. Media metadata: Media.metadata (JsonText) in filesystem contract; postgres-sql pack now emits jsonb for JSON-format strings (schema.sql regenerated; API/engine generation running). Flag colours: scripts/dev/flags/extract_flag_colors.py measures colours from flag-icons 7.6.0 (cached in ~/.bun/install/cache) and drafts 200 media rows to .dev/proposals/flags/media.csv (not in seed/). Pending owner approval: 11 sw value_labels rows (.dev/proposals/value_labels_geo_sw.csv), flag registration (needs object store up: bun run infra:up). Pending: DB rebuild (jsonb column + copy rows), onboarding rebuild.
+
+### 2026-11-20T13:58:09.326Z · PETER IRUNGU
+
+Round 4 verified in browser (/ke/nairobi?lang=sw, /ke?setup=1&lang=sw): sidebar/appbar/popovers in Swahili with zero marker keys; flag images served from res.alidantech.org (200 image/svg+xml); level labels Nchi/Kaunti/Eneo bunge/Wadi; place kinds localized; setup dialog (country, device-location resolve, search, places, language, look) on real data; html lang follows resolved language via first-paint script + LangSync; translate=no on html. DB mzizi_ui rebuilt (205 countries, 200 flags + colours jsonb). Pending: Swahili names for non-core place kinds (sub county etc. use label rows; only 11 added), flag-colour theme end-to-end check, navigation hardcodes in views/arms removed only for subject availability, overview pages.
