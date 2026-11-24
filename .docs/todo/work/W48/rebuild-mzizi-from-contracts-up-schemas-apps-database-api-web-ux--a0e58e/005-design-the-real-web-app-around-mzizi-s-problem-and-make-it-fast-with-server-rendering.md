@@ -10,7 +10,7 @@ With a clean API and SDK, return to `source/apps/web` and design the real applic
 
 ## Context
 
-Task 5 of 6; starts only when task 4 is completed. The real app lives in `source/apps/web/src/app/(app)`; the `/demo` prototype stays untouched as the reference until the owner says otherwise. Read `.docs/docs/WHY.md`, `.docs/rules/web-navigation.md` and `.docs/rules/loading-states.md`. Every screen paints first and fills in after (skeleton, `loading.tsx`, per-region `Suspense`). Client components only for genuine interaction (map panning, toggles); data comes from server components calling the SDK, using the place-summary read where possible.
+Task 6 of 7; starts only when task 4 is completed. The real app lives in `source/apps/web/src/app/(app)`; the `/demo` prototype stays untouched as the reference until the owner says otherwise. Read `.docs/docs/WHY.md`, `.docs/rules/web-navigation.md` and `.docs/rules/loading-states.md`. Every screen paints first and fills in after (skeleton, `loading.tsx`, per-region `Suspense`). Client components only for genuine interaction (map panning, toggles); data comes from server components calling the SDK, using the place-summary read where possible.
 
 ## Design first
 

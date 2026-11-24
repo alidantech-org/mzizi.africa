@@ -10,7 +10,7 @@ Revisit the whole database design before anything is regenerated. For each schem
 
 ## Context
 
-This is task 1 of 6 in the wave and must be finished before any other. The authored contracts are in `dryv/contracts/schemas/postgres/*.ts`, with shared building blocks in `_base.ts`, `_shared.ts`, `_periods.ts` and `_subjects.ts`. The generated SQL is `source/backend/database/sql/schema.sql`. Read `.docs/docs/DOMAINS.md`, `.docs/design/data/DATABASE_ARCHITECTURE.md`, `.docs/rules/code-columns.md`, `.docs/rules/versioning.md` and the PostgreSQL review in `.docs/_plan/the-new-mzizi/`. The `accountability` schema is analytical and has no persisted tables; confirm that stays true. Identity columns stay `code`, dotted and lowercase. Do not invent version fields. Record each schema's findings in a review note under `.docs/design/data/` and draw its ERD as Mermaid `erDiagram` in the same note.
+This is task 1 of 7 in the wave and must be finished before any other. The authored contracts are in `dryv/contracts/schemas/postgres/*.ts`, with shared building blocks in `_base.ts`, `_shared.ts`, `_periods.ts` and `_subjects.ts`. The generated SQL is `source/backend/database/sql/schema.sql`. Read `.docs/docs/DOMAINS.md`, `.docs/design/data/DATABASE_ARCHITECTURE.md`, `.docs/rules/code-columns.md`, `.docs/rules/versioning.md` and the PostgreSQL review in `.docs/_plan/the-new-mzizi/`. The `accountability` schema is analytical and has no persisted tables; confirm that stays true. Identity columns stay `code`, dotted and lowercase. Do not invent version fields. Record each schema's findings in a review note under `.docs/design/data/` and draw its ERD as Mermaid `erDiagram` in the same note.
 
 For every table the review answers: what it stores, its key and `code` rule, every foreign key and the reason for it, time columns (observed vs valid), provenance and source links, soft delete, expected size, the reads that will hit it and the indexes those need, and whether it should be merged, split, renamed or removed.
 
@@ -284,9 +284,29 @@ For every table the review answers: what it stores, its key and `code` rule, eve
 - [ ] Check every change against the evidence path and historical modelling rules
 - [ ] Record the approved design as a decision in `.docs/decisions/`
 
+## Partitioning plan
+
+Decide, with reasons, which tables need PostgreSQL partitioning, which do not, and how. Partitioning is planned here and built in the database task; it is only adopted where data volume or access patterns justify it, because it constrains global unique keys and foreign keys.
+
+- [ ] Estimate current and expected row counts and growth for every large or append-heavy table (for example `statistics.observations`, `source.captures`, `source.artifacts`, `geography.geometries`, `governance.votes`, `governance.speeches`, `governance.hansards`, `politics.results`, `finance.flows`, `community.views`, `community.notifications`, `community.reactions`, `event.occurrences`)
+- [ ] For each candidate, record the dominant access pattern (by country, by time period, by feature, by source)
+- [ ] Choose the strategy per table: none, range by time, list by country, or hash, and the partition key
+- [ ] Check the impact on primary keys, `code` uniqueness, foreign keys pointing into the table, and soft delete
+- [ ] Plan partition creation, retention and maintenance (new periods, new countries, detach and archive)
+- [ ] Plan how queries must filter on the partition key so pruning works, and list the API reads affected
+- [ ] Record which tables are deliberately not partitioned and why
+- [ ] Write the partitioning plan into the database architecture doc and get owner approval
+
 ## Acceptance checklist
 
+- [ ] The partitioning plan is written, reasoned table by table, and approved
 - [ ] Every table above is checked off
 - [ ] Every schema has a review note and ERD
 - [ ] The owner approved the design changes
 - [ ] `task validate` passes
+
+## Comments
+
+### 2026-11-24T22:56:25.869Z · PETER IRUNGU
+
+Reference schema reviewed with the owner on 2026-11-24/25. Approved foundation direction is in .docs/design/data/FOUNDATION_REDESIGN.md (identity, vocabulary, classification, administrative systems, multilingual rules, product and media schemas). Open items are listed there under Pending discussion.

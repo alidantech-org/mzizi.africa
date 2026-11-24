@@ -1,5 +1,5 @@
 ---
-{id: TSK-7BA66E947A39,name: Rebuild the NestJS API module by module with Redis caching,type: task,status: planned,priority: high,created_at: 2026-11-24T19:53:09.464Z,updated_at: 2026-11-24T19:53:09.464Z,depends_on: [TSK-1265807A54E3],order: 4096}
+{id: TSK-7BA66E947A39,name: Rebuild the NestJS API module by module with Redis caching,type: task,status: planned,priority: high,created_at: 2026-11-24T19:53:09.464Z,updated_at: 2026-11-24T20:02:07.861Z,depends_on: [TSK-6065C44E5476],order: 4096}
 ---
 
 # Rebuild the NestJS API module by module with Redis caching
@@ -10,7 +10,7 @@ Regenerate the API from the redesigned contracts and restructure `source/backend
 
 ## Context
 
-Task 4 of 6; starts only when task 3 is completed. Reference layout: defytickets `backend/src/modules/event` (submodules with use cases, repositories with cache specs, transitions, route constants). The API reads product data and sends named write commands with its own role; it never runs migrations or seeds. Redis is new to Mzizi: add it to the dev stack and root runner, keep it optional enough that the API still starts without it in tests. Today's slow spots found in review: per-request polygon simplification in `explorer/reads/boundaries.ts`, many small `exists` and recursive queries in `navigation()`, whole-country registry loads scanned in memory, and per-process caches only in the explorer.
+Task 5 of 7; starts only when the seed removal task is completed. Reference layout: defytickets `backend/src/modules/event` (submodules with use cases, repositories with cache specs, transitions, route constants). The API reads product data and sends named write commands with its own role; it never runs migrations or seeds. Redis is new to Mzizi: add it to the dev stack and root runner, keep it optional enough that the API still starts without it in tests. Today's slow spots found in review: per-request polygon simplification in `explorer/reads/boundaries.ts`, many small `exists` and recursive queries in `navigation()`, whole-country registry loads scanned in memory, and per-process caches only in the explorer.
 
 ## Foundations
 

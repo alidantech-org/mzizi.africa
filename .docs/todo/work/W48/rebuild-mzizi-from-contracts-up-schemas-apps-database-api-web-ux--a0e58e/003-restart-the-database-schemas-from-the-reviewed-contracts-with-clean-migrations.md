@@ -10,7 +10,7 @@ Apply the approved schema design to the real database layer: regenerate the SQL 
 
 ## Context
 
-Task 3 of 6; starts only when tasks 1 and 2 are completed. The database project is `source/backend/database` (Bun CLI, `sql/schema.sql`, `migrations/0001_init.sql`, `migrations/0002_subject_integrity.sql`). Migrations are immutable once applied anywhere that matters; restarting is allowed only for local dev and scratch databases. Follow `.docs/design/data/DATABASE_ARCHITECTURE.md`, `source/backend/database/migrations/README.md`, and the regenerate-reset-reseed recipe. Keep one `mzizi_test` scratch database and drop any extra test databases created. Never touch production or delete S3 artifacts. Seed files are added only with owner approval.
+Task 3 of 7; starts only when tasks 1 and 2 are completed. The database project is `source/backend/database` (Bun CLI, `sql/schema.sql`, `migrations/0001_init.sql`, `migrations/0002_subject_integrity.sql`). Migrations are immutable once applied anywhere that matters; restarting is allowed only for local dev and scratch databases. Follow `.docs/design/data/DATABASE_ARCHITECTURE.md`, `source/backend/database/migrations/README.md`, and the regenerate-reset-reseed recipe. Keep one `mzizi_test` scratch database and drop any extra test databases created. Never touch production or delete S3 artifacts. Seed files are added only with owner approval.
 
 ## Prepare
 
@@ -53,8 +53,17 @@ Task 3 of 6; starts only when tasks 1 and 2 are completed. The database project 
 - [ ] Run `uv run mzizi-manifest check` and the database checks
 - [ ] Update database docs and links
 
+## Partitioning
+
+- [ ] Declare the approved partitioning in the Dryv schema contracts, or record a Dryv gap if the pack cannot express it yet
+- [ ] Generate the partitioned tables and initial partitions in the baseline migration
+- [ ] Add the operation that creates future partitions (new periods, new countries)
+- [ ] Verify partition pruning with `EXPLAIN` on the designed reads
+- [ ] Document partition maintenance in the database docs
+
 ## Acceptance checklist
 
+- [ ] Approved partitioning is built and pruning is verified
 - [ ] A fresh database builds from the baseline with no errors
 - [ ] Dev data is loaded and the engine and API connect with their roles
 - [ ] Query plans for the designed reads are recorded

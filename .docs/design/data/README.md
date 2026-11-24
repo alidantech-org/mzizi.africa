@@ -20,6 +20,7 @@ Canonical data, evidence, identity, file metadata and place design. These docume
 - [ENTITY_RESOLUTION](ENTITY_RESOLUTION.md) — proposal: scored matching of extracted data to candidates, review loop, biometric limits
 - [PLACES_AND_PRESENCE_ASSESSMENT](PLACES_AND_PRESENCE_ASSESSMENT.md)
 - [DATABASE_ARCHITECTURE](DATABASE_ARCHITECTURE.md) — one PostgreSQL database, Mongo staging, direct engine and API access, Bun CLI, planned ledger and job progress
+- [FOUNDATION_REDESIGN](FOUNDATION_REDESIGN.md) — approved direction (2026-11-25, not implemented): identities and names, vocabulary, classification, administrative systems, multilingual rules, product and media schemas; pending items listed
 - [DRYV_GAPS](DRYV_GAPS.md) — what Dryv does not yet do for this design, with evidence
 - [PUBLIC_BODIES_CLASSIFICATION](PUBLIC_BODIES_CLASSIFICATION.md) — proposal: classification of public bodies by legal basis, function and control levers, with comparison rules
 - [ENGINE_PERSISTENCE](ENGINE_PERSISTENCE.md) — the engine's PostgreSQL, MongoDB and vector persistence: one folder per store, ports for packages, vector as a skeleton

@@ -2,7 +2,7 @@
 {id: GRP-1E8DA9A0E58E,name: "Rebuild Mzizi from contracts up: schemas, apps, database, API, web, UX",type: documentation,extra: {created_at: 2026-11-24T19:52:40.258Z}}
 ---
 
-# Plan: one wave, six large ordered tasks
+# Plan: one wave, seven large ordered tasks
 
 ## Approach
 
@@ -12,10 +12,11 @@ The wave deliberately holds a few very large tasks instead of many small ones. E
 
 1. **Dryv schemas review** (`dryv/contracts/schemas`): schema by schema, table by table, connections and an ERD per schema. Milestone: the owner approves the reviewed design.
 2. **Dryv app contracts** (`dryv/contracts/apps`): every API module, query, input, output and type designed in contracts, including cache rules. Milestone: contracts compile and generate.
-3. **Database and migrations** (`source/backend/database`): regenerate SQL, restart the schemas from a fresh baseline migration, reload dev data, add the indexes the reads need. Milestone: fresh dev database passes checks.
-4. **API work** (`source/backend/api`): regenerate, restructure modules in the defytickets style, add Redis caching, measure. Milestone: every route served from the new modules with timings recorded.
-5. **Frontend design and speed** (`source/apps/web`): design the real app's screens, server-render them through the regenerated SDK, remove client fetches, meet loading-state rules. Milestone: main pages measured faster.
-6. **UI/UX improvements**: usability review and fixes once the app works.
+3. **Database and migrations** (`source/backend/database`): regenerate SQL, restart the schemas from a fresh baseline migration, build the approved partitioning, reload dev data, add the indexes the reads need. Milestone: fresh dev database passes checks.
+4. **Remove seed from the codebase and Git** (blocking gate): root `seed/` and all seed code leave Git; seed work lives only in git-ignored `.dev/seed/`. Nothing after this starts until it is done.
+5. **API work** (`source/backend/api`): regenerate, restructure modules in the defytickets style, add Redis caching, measure. Milestone: every route served from the new modules with timings recorded.
+6. **Frontend design and speed** (`source/apps/web`): design the real app's screens, server-render them through the regenerated SDK, remove client fetches, meet loading-state rules. Milestone: main pages measured faster.
+7. **UI/UX improvements**: usability review and fixes once the app works.
 
 ## Risks and how they are handled
 

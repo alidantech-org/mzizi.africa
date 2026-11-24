@@ -10,7 +10,7 @@ Once the real app works and is fast, review it as people will use it: is it clea
 
 ## Context
 
-Task 6 of 6, the last in the wave; starts only when task 5 is completed. Keep the accessibility rules in the web README (semantic HTML, keyboard focus, contrast, reduced motion) and the navigation rules. Changes are design and usability improvements, not new data features; new data needs go back into contract tasks in a later wave.
+Task 7 of 7, the last in the wave; starts only when task 5 is completed. Keep the accessibility rules in the web README (semantic HTML, keyboard focus, contrast, reduced motion) and the navigation rules. Changes are design and usability improvements, not new data features; new data needs go back into contract tasks in a later wave.
 
 ## Review
 
