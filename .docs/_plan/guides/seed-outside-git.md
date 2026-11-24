@@ -85,4 +85,4 @@ Seed data should not live in the code repository. It lives outside the main code
 ## Related
 - [Global open data expansion, long-term goal](global-open-data-expansion.md)
 - `seed/README.md`
-- [Design references to large seed inputs](../../todo/work/W47/schema-and-manifest-redesign--600e51/011-design-references-to-large-seed-inputs.md)
+- [Design references to large seed inputs](../../todo/_archived/2026/11/2026-11-24-schema-and-manifest-redesign--600e51/011-design-references-to-large-seed-inputs.md)
