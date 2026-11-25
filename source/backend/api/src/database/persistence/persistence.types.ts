@@ -73,10 +73,10 @@ export interface Selection {
   name: string;
   kind: "field" | "related" | "count";
   column: Column | null;
-  path: Step[];
-  select: Selection[];
-  order: Order[];
-  where: Predicate[];
+  path?: Step[];
+  select?: Selection[];
+  order?: Order[];
+  where?: Predicate[];
 }
 export interface Source {
   kind: string;
@@ -91,13 +91,13 @@ export interface Assignment {
 export interface Read {
   root: string;
   parameters: { name: string; source: Source; optional: boolean }[];
-  where: Predicate[];
-  select: Selection[];
-  order: Order[];
+  where?: Predicate[];
+  select?: Selection[];
+  order?: Order[];
   many: boolean;
-  page: { limit: string; offset: string; max_limit: number } | null;
-  envelope: { [key: string]: string } | null;
-  missing: Failure | null;
+  page?: { limit: string; offset: string; max_limit: number } | null;
+  envelope?: { [key: string]: string } | null;
+  missing?: Failure | null;
 }
 export interface Write {
   root: string;
@@ -110,26 +110,26 @@ export interface Write {
 }
 export interface Plan {
   store: string | null;
-  required_runtime_features: string[];
+  required_runtime_features?: string[];
   operation: string;
   schemas: Schema[];
   input: string | null;
-  input_fields: Field[];
+  input_fields?: Field[];
   read: Read | null;
-  write: Write | null;
+  write?: Write | null;
   authenticated: boolean;
-  policies: string[];
-  scope: { field: string; policy: string; name: string }[];
-  checks: Check[];
-  failures: {
+  policies?: string[];
+  scope?: { field: string; policy: string; name: string }[];
+  checks?: Check[];
+  failures?: {
     kind: string;
     failure: Failure;
     field: string | null;
     constraint: string | null;
   }[];
-  transaction: boolean;
-  cache_seconds: number | null;
-  invalidates: string[];
+  transaction?: boolean;
+  cache_seconds?: number | null;
+  invalidates?: string[];
 }
 /** Only the application's policy adapter constructs this context; never bind it from HTTP input. */
 export interface TrustedContext {

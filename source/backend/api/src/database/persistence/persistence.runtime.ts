@@ -357,17 +357,18 @@ class Sql {
             if (!item.column) throw new Error("Missing selected column");
             expression = this.column(root, alias, item.column);
           } else {
-            const target = this.path(root, alias, item.path);
+            const path = item.path ?? [];
+            const target = this.path(root, alias, path);
             const where =
-              [target.where, ...this.predicates(target.root, target.alias, item.where)]
+              [target.where, ...this.predicates(target.root, target.alias, item.where ?? [])]
                 .filter(Boolean)
                 .join(" AND ") || "TRUE";
             if (item.kind === "count")
               expression = `(SELECT count(*) FROM ${target.from} WHERE ${where})`;
             else {
-              const selection = this.shape(target.root, target.alias, item.select);
-              const query = `SELECT ${selection} AS value FROM ${target.from} WHERE ${where}${this.ordering(target.root, target.alias, item.order)}`;
-              expression = item.path.some((step) => step.many)
+              const selection = this.shape(target.root, target.alias, item.select ?? []);
+              const query = `SELECT ${selection} AS value FROM ${target.from} WHERE ${where}${this.ordering(target.root, target.alias, item.order ?? [])}`;
+              expression = path.some((step) => step.many)
                 ? `(SELECT COALESCE(jsonb_agg(n.value),'[]'::jsonb) FROM (${query}) n)`
                 : `(${query})`;
             }
@@ -417,13 +418,14 @@ export class PersistenceRuntime {
     readonly durability?: PersistenceDurability,
   ) {}
   async execute(plan: Plan, value: unknown, context: TrustedContext): Promise<Json> {
+    const requiredFeatures = plan.required_runtime_features ?? [];
     if (
-      plan.required_runtime_features.some(
+      requiredFeatures.some(
         (feature) => !this.durability || !["events", "retry", "idempotency"].includes(feature),
       )
     )
       throw new Error(
-        `This pack requires an explicit runtime adapter for: ${plan.required_runtime_features.join(", ")}`,
+        `This pack requires an explicit runtime adapter for: ${requiredFeatures.join(", ")}`,
       );
     const connection =
       this.connection instanceof StoreConnections
@@ -435,11 +437,11 @@ export class PersistenceRuntime {
             })();
     const input = row(json(value));
     if (plan.authenticated && !context.principal) deny();
-    for (const policy of plan.policies) if (!context.policies.has(policy)) deny();
-    for (const field of plan.input_fields) validate(field, input[field.name]);
+    for (const policy of plan.policies ?? []) if (!context.policies.has(policy)) deny();
+    for (const field of plan.input_fields ?? []) validate(field, input[field.name]);
     for (const name of Object.keys(input))
-      if (!plan.input_fields.some((field) => field.name === name)) invalid(`Unknown input ${name}`);
-    checks(plan.checks, input, {});
+      if (!(plan.input_fields ?? []).some((field) => field.name === name)) invalid(`Unknown input ${name}`);
+    checks(plan.checks ?? [], input, {});
     let cacheKey: string | undefined;
     if (plan.read && plan.cache_seconds && this.cache) {
       const policies: Row = Object.create(null);
@@ -462,11 +464,11 @@ export class PersistenceRuntime {
     let result: Json;
     try {
       result =
-        this.durability && (plan.write || plan.required_runtime_features.length)
+        this.durability && (plan.write || (plan.required_runtime_features ?? []).length)
           ? await this.durability.execute(plan, input, context, (manager) =>
               this.run(manager, plan, input, context),
             )
-          : plan.write || plan.transaction
+          : plan.write || (plan.transaction ?? false)
             ? await connection.transaction((manager) => this.run(manager, plan, input, context))
             : await this.run(connection, plan, input, context);
     } catch (error) {
@@ -474,7 +476,7 @@ export class PersistenceRuntime {
     }
     // Awaiting transaction() above proves commit; rollback never reaches invalidation.
     if (plan.write && this.cache)
-      for (const operation of plan.invalidates) await this.cache.invalidate(operation);
+      for (const operation of plan.invalidates ?? []) await this.cache.invalidate(operation);
     if (cacheKey && plan.cache_seconds && this.cache)
       await this.cache.set(cacheKey, JSON.stringify(result), plan.cache_seconds);
     return result;
@@ -492,7 +494,7 @@ export class PersistenceRuntime {
       };
       const constraint = "constraint" in error ? error.constraint : undefined;
       const column = "column" in error ? error.column : undefined;
-      const binding = plan.failures.find(
+      const binding = (plan.failures ?? []).find(
         (item) =>
           item.kind === kinds[String(code)] &&
           (!item.constraint || item.constraint === constraint) &&
@@ -518,11 +520,11 @@ export class PersistenceRuntime {
   ): Promise<Json> {
     const input = row(json(value));
     if (plan.authenticated && !context.principal) deny();
-    for (const policy of plan.policies) if (!context.policies.has(policy)) deny();
-    for (const field of plan.input_fields) validate(field, input[field.name]);
+    for (const policy of plan.policies ?? []) if (!context.policies.has(policy)) deny();
+    for (const field of plan.input_fields ?? []) validate(field, input[field.name]);
     for (const name of Object.keys(input))
-      if (!plan.input_fields.some((field) => field.name === name)) invalid(`Unknown input ${name}`);
-    checks(plan.checks, input, {});
+      if (!(plan.input_fields ?? []).some((field) => field.name === name)) invalid(`Unknown input ${name}`);
+    checks(plan.checks ?? [], input, {});
     try {
       return await this.run(connection, plan, input, context);
     } catch (error) {
@@ -546,7 +548,7 @@ export class PersistenceRuntime {
     const root = plan.read?.root ?? plan.write?.root;
     if (!root) throw new Error("Operation has no persistence plan");
     const alias = sql.alias();
-    const scopes = plan.scope.map((binding) => {
+    const scopes = (plan.scope ?? []).map((binding) => {
       const value = context.policies.get(binding.policy)?.[binding.name];
       if (value === undefined) return deny();
       return { field: binding.field, value };
@@ -555,7 +557,7 @@ export class PersistenceRuntime {
       const read = plan.read;
       const where =
         [
-          ...sql.predicates(root, alias, read.where),
+          ...sql.predicates(root, alias, read.where ?? []),
           ...scopes.map(
             (item) =>
               `${sql.field(root, item.field, alias)} IS NOT DISTINCT FROM ${sql.bind(item.value)}`,
@@ -573,10 +575,10 @@ export class PersistenceRuntime {
         : 0;
       if (limit !== undefined && (!Number.isSafeInteger(limit) || !Number.isSafeInteger(offset)))
         invalid("Invalid page window");
-      const shape = sql.shape(root, alias, read.select);
+      const shape = sql.shape(root, alias, read.select ?? []);
       const selected = await rows(
         connection,
-        `SELECT ${shape} AS value${from}${sql.ordering(root, alias, read.order)}${limit === undefined ? "" : ` LIMIT ${sql.bind(limit)} OFFSET ${sql.bind(offset)}`}`,
+        `SELECT ${shape} AS value${from}${sql.ordering(root, alias, read.order ?? [])}${limit === undefined ? "" : ` LIMIT ${sql.bind(limit)} OFFSET ${sql.bind(offset)}`}`,
         sql.values,
       );
       if (!read.many && selected.length > 1)
@@ -591,7 +593,7 @@ export class PersistenceRuntime {
       const totalAlias = totalSql.alias();
       const totalWhere =
         [
-          ...totalSql.predicates(root, totalAlias, read.where),
+          ...totalSql.predicates(root, totalAlias, read.where ?? []),
           ...scopes.map(
             (item) =>
               `${totalSql.field(root, item.field, totalAlias)} IS NOT DISTINCT FROM ${totalSql.bind(item.value)}`,
