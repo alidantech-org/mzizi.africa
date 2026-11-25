@@ -352,7 +352,7 @@ Reconcile results/states/aggregation and historical geo unit links; test registe
 5. Where should campaign manifestos and commitment verification reside?
 6. Which official releases can be auto-imported vs require review?
 
-**Links:** [Schema index](../../README.md), [Master record](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [Geography](geography.md), [Statistics](../phase-02/statistical.md).
+**Links:** [Schema index](../../README.md), [Master record](../../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [Geography](geography.md), [Statistics](../phase-02/statistical.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -407,11 +407,11 @@ Connect an election contest to the office(s) it fills, its electoral area/report
 
 Boundaries and reporting areas are dated and need not follow an administrative parent chain. Voter counts belong to a defined registration release/coverage, not a generic current local number. Task 03 supplies interfaces and a contest-to-office-to-holder fixture; task 04 finalizes real tables and full electoral rule/version semantics. No fabricated results or terms from pattern expectations.
 
-Read [the connected foundation](../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+Read [the connected foundation](../../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
 
 ## 2026-11-11 — System-expansion alignment
 
-Electoral owns results and election facts; derived turnout or comparisons belong to Statistical with pinned definitions, source releases and geographic coverage. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Electoral owns results and election facts; derived turnout or comparisons belong to Statistical with pinned definitions, source releases and geographic coverage. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
 
@@ -663,7 +663,7 @@ Preserve existing party and member identifiers, API contracts, source attributio
 5. Whether ideology classification needs its own dedicated table.
 6. Which fields are permitted to change automatically, with review and audit.
 
-**Links:** [Schema redesign index](../../README.md) · [Master record](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Classification/patterns](../../../guides/data-categories-and-patterns.md).
+**Links:** [Schema redesign index](../../README.md) · [Master record](../../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Classification/patterns](../../../../guides/data-categories-and-patterns.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -707,10 +707,10 @@ Parties, coalitions and memberships are actual political/organization-domain rec
 
 Task 03 specifies the political/electoral/governance integration contract; task 04 finalizes political identity, membership, coalition and legal-rule relationships. Cross-border movements and historical organizations must not be forced into single-country ownership or inferred territorial control.
 
-Read [the connected foundation](../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+Read [the connected foundation](../../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
 
 ## 2026-11-11 — System-expansion alignment
 
-Political parties and affiliations remain distinct from History interpretation; historical claims link to dated party facts and evidence without duplicating membership/event systems. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Political parties and affiliations remain distinct from History interpretation; historical claims link to dated party facts and evidence without duplicating membership/event systems. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

@@ -217,7 +217,7 @@ extra: {status: hypothetical, approval: not_approved, implementation: not_author
 
 # Economy — products, markets, prices and production
 
-> **Status: HYPOTHETICAL DOMAIN BRIEF.** Candidate Economy responsibilities and tables are not approved for SQL. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md).
+> **Status: HYPOTHETICAL DOMAIN BRIEF.** Candidate Economy responsibilities and tables are not approved for SQL. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md).
 
 ## 1. Purpose and exploration areas
 

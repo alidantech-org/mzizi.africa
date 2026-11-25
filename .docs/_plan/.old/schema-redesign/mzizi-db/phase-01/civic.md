@@ -250,7 +250,7 @@ extra: {status: hypothetical, approval: approved_contract_scope, implementation:
 
 # Civic — infrastructure, networks and public services
 
-> **Status: HYPOTHETICAL DOMAIN BRIEF.** Candidate responsibilities and tables are under investigation, not approved for SQL. Read alongside [the expansion proposal](../../../guides/advancement-and-system-expansion.md), [governance design](governance.md), and [geography design](geography.md).
+> **Status: HYPOTHETICAL DOMAIN BRIEF.** Candidate responsibilities and tables are under investigation, not approved for SQL. Read alongside [the expansion proposal](../../../../guides/advancement-and-system-expansion.md), [governance design](governance.md), and [geography design](geography.md).
 
 ## 1. Purpose and exploration areas
 
@@ -289,7 +289,7 @@ Prefer real FKs to Geography units/places/boundary representations, Organization
 
 ## 7. Cross-domain relationships
 
-The [system-expansion proposal](../../../guides/advancement-and-system-expansion.md#16-cross-domain-ownership-rules-to-carry-into-detailed-designs) resolves provisional ownership: a road/railway is a Civic network with segments/nodes; its geometry is a geographic representation. A dam is built infrastructure; the reservoir is a geographic water feature. One physical facility identity must not be duplicated in Civic and Geography.
+The [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md#16-cross-domain-ownership-rules-to-carry-into-detailed-designs) resolves provisional ownership: a road/railway is a Civic network with segments/nodes; its geometry is a geographic representation. A dam is built infrastructure; the reservoir is a geographic water feature. One physical facility identity must not be duplicated in Civic and Geography.
 
 ## 8. Geographic responsibilities
 

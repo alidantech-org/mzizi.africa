@@ -204,7 +204,7 @@ extra: {status: hypothetical, approval: not_approved, implementation: not_author
 
 # Heritage — artifacts, collections and cultural custody
 
-> **Status: HYPOTHETICAL DOMAIN BRIEF.** This proposal does not authorize new tables. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md).
+> **Status: HYPOTHETICAL DOMAIN BRIEF.** This proposal does not authorize new tables. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md).
 
 ## 1. Purpose and exploration areas
 

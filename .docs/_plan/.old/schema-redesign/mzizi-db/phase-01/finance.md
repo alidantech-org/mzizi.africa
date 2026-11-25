@@ -352,7 +352,7 @@ Before consolidation, audit which downstream tables and API contracts reference 
 5. Country/fiscal period and geographic delivery vs physical institution location?
 6. Which value corrections can be automated, and which require financial/official publication review?
 
-**References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Schema index](../../README.md) · [Procurement](procurement.md) · [Statistics](../phase-02/statistical.md).
+**References:** [Master register](../../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Schema index](../../README.md) · [Procurement](procurement.md) · [Statistics](../phase-02/statistical.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -401,6 +401,6 @@ Before consolidation, audit which downstream tables and API contracts reference 
 
 ## 2026-11-11 — System-expansion alignment
 
-Finance remains owner of budgets, debt and transactions. Economy's production, prices and trade do not absorb financial accounting; links to projects/contracts require real target FKs. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Finance remains owner of budgets, debt and transactions. Economy's production, prices and trade do not absorb financial accounting; links to projects/contracts require real target FKs. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

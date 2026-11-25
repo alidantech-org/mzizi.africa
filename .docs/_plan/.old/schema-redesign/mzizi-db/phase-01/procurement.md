@@ -283,7 +283,7 @@ Test: Same supplier bidding for contracts in different counties, joint award rec
 5. PPIP/e-GP/OCDS source mapping and institution-vs-budget-unit role separation?
 6. Which automatic matching/correction thresholds and supporting evidence are acceptable?
 
-**References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Organization](official.md) · [Finance](finance.md) · [Geography](geography.md).
+**References:** [Master register](../../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Organization](official.md) · [Finance](finance.md) · [Geography](geography.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -323,6 +323,6 @@ Test: Same supplier bidding for contracts in different counties, joint award rec
 
 ## 2026-11-11 — System-expansion alignment
 
-Procurement remains the purchasing process owner. Economic market/product facts and Civic infrastructure assets may be linked but are not duplicate procurement records. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Procurement remains the purchasing process owner. Economic market/product facts and Civic infrastructure assets may be linked but are not duplicate procurement records. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

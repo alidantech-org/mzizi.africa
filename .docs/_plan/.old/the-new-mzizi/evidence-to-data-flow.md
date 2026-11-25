@@ -88,8 +88,8 @@ If there are two plausible features, the record should **remain unresolved** rat
 
 ## Current references
 
-- [Engine and research HTTP operations](../../../source/backend/engine/README.md)
-- [Existing seed loader](../../../source/backend/engine/src/mzizi_engine/persistence/postgres/seed_loader.py)
-- [Seed format and approval rules](../../../seed/README.md)
-- [Developer portal pilot and remaining work](../../design/architecture/DEVELOPER_PORTAL.md)
-- [Current database architecture](../../design/data/DATABASE_ARCHITECTURE.md)
+- [Engine and research HTTP operations](../../../../source/backend/engine/README.md)
+- [Existing seed loader](../../../../source/backend/engine/src/mzizi_engine/persistence/postgres/seed_loader.py)
+- [Seed format and approval rules](../../../../seed/README.md)
+- [Developer portal pilot and remaining work](../../../design/architecture/DEVELOPER_PORTAL.md)
+- [Current database architecture](../../../design/data/DATABASE_ARCHITECTURE.md)

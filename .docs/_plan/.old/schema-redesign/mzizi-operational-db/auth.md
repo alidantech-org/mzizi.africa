@@ -298,7 +298,7 @@ Migration strategy: preserve account/role/grant IDs and login continuity; map `i
 5. Which public participation roles require authentication versus anonymous submissions?
 6. How to preserve audit identity when an account is retired/deleted?
 
-**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Audit](audit.md) · [Participation](../mzizi-db/phase-01/accountability.md) · [Engine](engine.md).
+**References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Audit](audit.md) · [Participation](../mzizi-db/phase-01/accountability.md) · [Engine](engine.md).
 
 **Status: auth consolidation direction recorded; exact table/column design not approved.**
 
@@ -405,7 +405,7 @@ Return the completed design for user review. No migrations, schema/contract/code
 
 ## 2026-11-11 — System-expansion alignment
 
-Geographic or cultural sensitivity in biodiversity and heritage may require scoped access, but contextual place proximity must not be treated as authorization. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Geographic or cultural sensitivity in biodiversity and heritage may require scoped access, but contextual place proximity must not be treated as authorization. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
 

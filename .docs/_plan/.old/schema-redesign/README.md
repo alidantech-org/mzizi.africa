@@ -8,7 +8,7 @@ extra: {status: operational_approved_six_main_contracts_authored, operational_im
 
 # Schema redesign catalogue
 
-The 12 November 2026 catalogue organizes Operational, Main Phase 01 and deferred Phase 02 designs. The seven Operational schemas and their 45-table/column inventory are approved under [DEC-OPERATIONAL-DATABASE-20261112](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/decisions/DEC-OPERATIONAL-DATABASE-20261112.md). The six Main domain contracts are implemented under [DEC-MAIN-SIX-DOMAIN-CONTRACTS-20261112](../../decisions/DEC-MAIN-SIX-DOMAIN-CONTRACTS-20261112.md); see their current Phase 01 documents. Phase 02 remains deferred. Contract composition and compilation do not authorize SQL generation, migrations, data changes or deployment; documented SQL-pack constraints remain open.
+The 12 November 2026 catalogue organizes Operational, Main Phase 01 and deferred Phase 02 designs. The seven Operational schemas and their 45-table/column inventory are approved under [DEC-OPERATIONAL-DATABASE-20261112](https://github.com/alidantech-org/mzizi.africa/blob/develop/.docs/decisions/DEC-OPERATIONAL-DATABASE-20261112.md). The six Main domain contracts are implemented under [DEC-MAIN-SIX-DOMAIN-CONTRACTS-20261112](../../../decisions/DEC-MAIN-SIX-DOMAIN-CONTRACTS-20261112.md); see their current Phase 01 documents. Phase 02 remains deferred. Contract composition and compilation do not authorize SQL generation, migrations, data changes or deployment; documented SQL-pack constraints remain open.
 
 > **Every schema not assigned to Phase 01 or Operational belongs in Phase 02 now.**
 
@@ -74,7 +74,7 @@ All **35 original schema documents** map below to **33 destination schema docume
 
 ## Preservation and review rules
 
-The [contract-authoring plan](contract-authoring.md) and [schema-authoring rules](../../rules/schema-contract-authoring.md) govern implementation. Operational contracts are approved, and six Main domain contracts are authorized and implemented. Reference and Geography foundations are accepted; their remaining classification and SQL-enforcement details are recorded as open in the owning documents. Existing drafts alone do not imply database enforcement.
+The [contract-authoring plan](contract-authoring.md) and [schema-authoring rules](../../../rules/schema-contract-authoring.md) govern implementation. Operational contracts are approved, and six Main domain contracts are authorized and implemented. Reference and Geography foundations are accepted; their remaining classification and SQL-enforcement details are recorded as open in the owning documents. Existing drafts alone do not imply database enforcement.
 
 Historical table dictionaries remain planning evidence only. Operational approval is limited to the 45-table inventory in its formal decision and owning documents. The six authorized Main domain contracts are implemented in Dryv; older dictionaries remain historical inputs superseded by each owning document. Generated SQL, migrations and live database changes remain unauthorized. Reference is the legal-basis interface for domains; Phase 02 remains deferred.
 

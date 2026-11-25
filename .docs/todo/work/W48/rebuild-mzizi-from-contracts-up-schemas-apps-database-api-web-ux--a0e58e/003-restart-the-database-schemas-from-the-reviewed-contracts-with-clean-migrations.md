@@ -61,6 +61,13 @@ Task 3 of 7; starts only when tasks 1 and 2 are completed. The database project 
 - [ ] Verify partition pruning with `EXPLAIN` on the designed reads
 - [ ] Document partition maintenance in the database docs
 
+## Owner direction (25 November 2026)
+
+- [ ] Create a new, separate database on the local PostgreSQL server for the rebuild (do not reuse or alter the current development databases); record its name and connection settings in the dev environment docs
+- [ ] **Start migrations afresh:** delete the old migration stream and generate one new baseline migration from the redesigned contracts. Do not write migrations that continue from, or acknowledge, the old design
+- [ ] Run the new migrations on the new database, then reseed it from the git-ignored seed inputs
+- [ ] Adopt the Dryv partitioning, SQL comment and integrity capabilities in the SQL pack
+
 ## Acceptance checklist
 
 - [ ] Approved partitioning is built and pruning is verified

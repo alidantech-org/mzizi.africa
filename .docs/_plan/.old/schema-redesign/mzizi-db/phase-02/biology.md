@@ -244,7 +244,7 @@ extra: {status: hypothetical, approval: not_approved, implementation: not_author
 
 # Biology — taxa, biodiversity evidence and distributions
 
-> **Status: HYPOTHETICAL DOMAIN BRIEF.** Candidate Biology structures are under investigation and not approved for SQL. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md).
+> **Status: HYPOTHETICAL DOMAIN BRIEF.** Candidate Biology structures are under investigation and not approved for SQL. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md).
 
 ## 1. Purpose and exploration areas
 

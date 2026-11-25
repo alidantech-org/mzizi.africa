@@ -8,7 +8,7 @@ extra: {status: proposed_for_review, approval: not_approved, recorded_on: 2026-1
 
 # Reference and Geography classification architecture
 
-> **PROPOSED — detailed classification definitions and Reference extensions are not approved.** The nine Geography table names and responsibilities are approved, and the current Reference table inventory is the accepted foundation. This plan reconciles their detailed fields and describes a proposed Reference-owned geographic catalogue. No seed values are loaded by this document. See [Reference](reference.md), [Geography](geography.md), and the [authoring agreement](../../../../rules/schema-contract-authoring.md).
+> **PROPOSED — detailed classification definitions and Reference extensions are not approved.** The nine Geography table names and responsibilities are approved, and the current Reference table inventory is the accepted foundation. This plan reconciles their detailed fields and describes a proposed Reference-owned geographic catalogue. No seed values are loaded by this document. See [Reference](reference.md), [Geography](geography.md), and the [authoring agreement](../../../../../rules/schema-contract-authoring.md).
 
 ## Audit and decision matrix
 

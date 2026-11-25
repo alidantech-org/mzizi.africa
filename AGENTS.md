@@ -79,6 +79,7 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 - Keep exactly the eight overview documents in `.docs/docs/`. Put detailed design in an existing topic under `.docs/design/`, and planning proposals in `.docs/_plan/`.
 - Manifest and seed row codes follow [codes.md](.docs/rules/codes.md). Filesystem registry codes follow [the filesystem code rules](.docs/rules/code-columns.md).
 - Never invent versions: no version folders, file-name suffixes or new version fields unless the owner asks. Read `.docs/rules/versioning.md`.
+- API modules are named after the database schemas they own and never overlap; screen-shaped composition lives in one frontend-mapping module. Follow `.docs/rules/api-modules.md`.
 - Web navigation, scroll position and URL state (place in the path, subject and selections in the query, `#section` in the hash, never lose scroll when switching place) follow `.docs/rules/web-navigation.md`.
 - Every web screen paints first and fills in after: skeleton frame, `loading.tsx`, sized placeholders and per-region `Suspense`. Follow `.docs/rules/loading-states.md`; a feature without it is not finished.
 - Put contributor and agent process in `.docs/rules/`. Do not recreate `.docs/guidance/`.

@@ -353,7 +353,7 @@ Audit `fields` vs `datasets` and `categories` vs `reference.classifications` fir
 6. Which derived calculations can run in SQL procedures vs independent pipeline packages?
 7. How should dashboards display missingness, uncertainty, revisions and confidence?
 
-**References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Reference](../phase-01/reference.md) · [Geography](../phase-01/geography.md) · [Data classification](../../../guides/data-categories-and-patterns.md).
+**References:** [Master register](../../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Reference](../phase-01/reference.md) · [Geography](../phase-01/geography.md) · [Data classification](../../../../guides/data-categories-and-patterns.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -408,10 +408,10 @@ The accepted model preserves shared observations/releases/units/time/provenance 
 
 Unknown boundary coverage remains explicit. No silent summation of overlapping areas/incompatible definitions, no national value copied to counties, no missing-as-zero. Language and community identities differ from distributions and territorial rights. An analytics capability describes supported filters, aggregation and presentation based on actual data; a topic label cannot authorize arbitrary calculations. Task 03 owns foundation contracts and these semantic test cases; task 04 owns the final statistical domain model. Future land/goods/prices/inflation/history work reuses place/time/evidence without being implemented here.
 
-Read [the connected foundation](../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
+Read [the connected foundation](../../../../guides/connected-reference-geography-legal-foundation.md) for the decisions, candidate models, query examples, proof cases and primary research sources. Fresh construction in `mzizi_new` has no legacy database ID/data compatibility requirement; existing S3 evidence remains protected. This update records accepted direction and design deliverables, not final DDL or broad implementation authorization.
 
 ## 2026-11-11 — System-expansion alignment
 
-Statistical owns published comparable series, indices and reproducible derivations. Raw Environment readings, Agriculture harvests, Economy prices, Finance transactions and Electoral results remain owned by their source domains. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Statistical owns published comparable series, indices and reproducible derivations. Raw Environment readings, Agriculture harvests, Economy prices, Finance transactions and Electoral results remain owned by their source domains. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

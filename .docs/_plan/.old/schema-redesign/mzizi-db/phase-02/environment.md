@@ -273,7 +273,7 @@ extra: {status: hypothetical, approval: not_approved, implementation: not_author
 
 # Environment — observations, monitoring and environmental products
 
-> **Status: HYPOTHETICAL DOMAIN BRIEF.** No Environment SQL is approved. This proposal is subordinate to the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md).
+> **Status: HYPOTHETICAL DOMAIN BRIEF.** No Environment SQL is approved. This proposal is subordinate to the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md).
 
 ## 1. Purpose and exploration areas
 

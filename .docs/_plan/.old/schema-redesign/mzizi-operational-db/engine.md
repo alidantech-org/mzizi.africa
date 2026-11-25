@@ -321,7 +321,7 @@ Existing `engine/database/src/claims.ts` only permits narrowly scoped annotation
 - **Option C:** independently deployed microservices with queue/events and more infrastructure.
 - **Option D:** hybrid split by expensive render/AI extraction workloads if real volumes justify it.
 
-See [independent pipelines](../../guides/independent-data-pipelines.md) for flow, code examples and tradeoffs. Database `engine` ownership is not synonymous with where scraper/agent/extractor packages physically run.
+See [independent pipelines](../../../guides/independent-data-pipelines.md) for flow, code examples and tradeoffs. Database `engine` ownership is not synonymous with where scraper/agent/extractor packages physically run.
 
 ## Example queries and design proof cases
 
@@ -347,7 +347,7 @@ See [independent pipelines](../../guides/independent-data-pipelines.md) for flow
 
 Audit all migration-created tables and live rows, TypeORM/engine writer paths and source contracts first. Preserve job/candidate/promotion IDs and history. Implementation tasks, new packages, database moves and tests require **subsequent user direction and approval**.
 
-**References:** [Master register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Pattern classes](../../guides/data-categories-and-patterns.md) · [Pipelines](../../guides/independent-data-pipelines.md) · [Audit](audit.md).
+**References:** [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) · [Pattern classes](../../../guides/data-categories-and-patterns.md) · [Pipelines](../../../guides/independent-data-pipelines.md) · [Audit](audit.md).
 
 **Status: future architecture under discussion, not ready for implementation.**
 
@@ -396,7 +396,7 @@ See [source redesign and adaptive website intelligence](../../source-redesign/RE
 
 **Dependency safety:** a directed acyclic prerequisite graph, bounded fan-out, stable natural keys and input-version hashes, dry-run/preview/diff before apply, non-destructive sync, independent legal/geo applicability tests and transaction-controlled promotion. Source changes trigger re-evaluation of **affected** rows, not a whole-database rescan. The chosen generated-output hard-FK mechanism remains OPEN.
 
-Full discussion: [Data classes and pattern graph](../../guides/data-categories-and-patterns.md). **No tasks or runtime changes authorized.**
+Full discussion: [Data classes and pattern graph](../../../guides/data-categories-and-patterns.md). **No tasks or runtime changes authorized.**
 
 ## Mandatory per-table temporal, rigid-column and deletion review (2026-11-07)
 
@@ -455,7 +455,7 @@ An authorized admin can: (a) propose activity with evidence, (b) request re-veri
 
 ## 2026-11-11 — System-expansion alignment
 
-Spatial/environmental transformations and domain acquisitions remain engine jobs with pinned inputs, methods and outputs; engine execution does not own canonical domain facts. See the [system-expansion proposal](../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Spatial/environmental transformations and domain acquisitions remain engine jobs with pinned inputs, methods and outputs; engine execution does not own canonical domain facts. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>
 

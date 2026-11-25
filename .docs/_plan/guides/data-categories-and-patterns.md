@@ -8,7 +8,7 @@ extra: {status: planning_only}
 
 # Data classes, reusable patterns, generation, lineage and corrections
 
-> **Status — updated 12 November 2026:** Candidate Reference and Geography table lists and jurisdiction-based examples below are historical planning material. The approved current designs are [Reference](../schema-redesign/mzizi-db/phase-01/reference.md) and [Geography](../schema-redesign/mzizi-db/phase-01/geography.md). Reference owns modern countries and reusable pattern identities, releases, applicability and dependencies; Geography owns feature identities and territory. Engine owns execution state.
+> **Status — updated 12 November 2026:** Candidate Reference and Geography table lists and jurisdiction-based examples below are historical planning material. The approved current designs are [Reference](../.old/schema-redesign/mzizi-db/phase-01/reference.md) and [Geography](../.old/schema-redesign/mzizi-db/phase-01/geography.md). Reference owns modern countries and reusable pattern identities, releases, applicability and dependencies; Geography owns feature identities and territory. Engine owns execution state.
 
 
 **PLANNING ONLY — architectural possibilities to review with the user; not a finalized implementation design.**
@@ -91,7 +91,7 @@ Reuse existing `engine.claims`, `staging.candidates`, `engine.match_candidates`,
 
 ## Related source redesign planning
 
-See [source redesign and adaptive website intelligence](../source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+See [source redesign and adaptive website intelligence](../.old/source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
 
 
 ## New user direction, 2026-11-07 — reference-owned pattern graph and real-row fill-in-the-gaps
@@ -199,7 +199,7 @@ The manifest specifies: registered target table and allowed columns; canonical/j
 
 Pattern outputs, domain status and research completeness are **distinct axes**. A pattern version has rule applicability and approval/retirement; a generated office has canonical identity; an office holder has actual term dates; a missing holder is a gap; the deletion/archival status of a draft is neither legal expiry nor a historical termination. Keep temporal metadata **where its meaning genuinely belongs**, using named dates and dated relationship tables rather than blanket precision/status/validity columns.
 
-**Selective `deleted_at`** may make sense for recoverable deletion of user-managed folders or unapproved drafts, but verified canonical rows, immutable evidence and audit generally require correction, retirement, supersession or explicit retention/erasure policy. The database-wide, user-mandated keep/remove/derive field audit is detailed in [schema redesign README](../schema-redesign/README.md) and included in all 18 schema design files. Exact column removals and soft-delete targets are still **OPEN** for human signoff and **not yet approved to implement**.
+**Selective `deleted_at`** may make sense for recoverable deletion of user-managed folders or unapproved drafts, but verified canonical rows, immutable evidence and audit generally require correction, retirement, supersession or explicit retention/erasure policy. The database-wide, user-mandated keep/remove/derive field audit is detailed in [schema redesign README](../.old/schema-redesign/README.md) and included in all 18 schema design files. Exact column removals and soft-delete targets are still **OPEN** for human signoff and **not yet approved to implement**.
 
 
 ## Semantic naming, freshness classes and calendar-dependent pattern activation (2026-11-07)
@@ -220,7 +220,7 @@ The user introduced two further cross-domain requirements: **table-specific mean
 
 The proposed 0–1 entity prominence capability should reuse the current leading candidate: reference-owned reusable office/geography classifications and pattern definitions, executed by the engine. Verified office-holding relationships and geography facts remain in their domain owners; generated expected offices do not prove that a person holds a seat. The engine may derive contextual, time-versioned prominence from those facts without adding a new `pattern` or `prominence` schema by default.
 
-Keep prominence distinct from identity ambiguity, evidence confidence and source credibility. Prominence may guide research breadth and external coverage expectations, but must never make Wikipedia/search results authoritative. See [entity prominence and discoverability](entity-prominence-and-discoverability.md) and [pattern management](../source-redesign/08-pattern-management-cross-domain.md).
+Keep prominence distinct from identity ambiguity, evidence confidence and source credibility. Prominence may guide research breadth and external coverage expectations, but must never make Wikipedia/search results authoritative. See [entity prominence and discoverability](entity-prominence-and-discoverability.md) and [pattern management](../.old/source-redesign/08-pattern-management-cross-domain.md).
 
 ## 2026-11-08 — Root seed convention and folder/file-type design
 

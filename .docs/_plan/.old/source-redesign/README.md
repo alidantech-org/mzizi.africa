@@ -65,12 +65,12 @@ A prospective review record should contain current purpose; all columns and cons
 
 - [Schema redesign/source](../schema-redesign/mzizi-db/phase-01/source.md) — current `source` + `website` audit baseline.
 - [Schema redesign guide](../schema-redesign/README.md) — mandatory human review method.
-- [Master planning register](../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) — broader all-domain context.
-- [Data categories and patterns](../guides/data-categories-and-patterns.md) — four classes and shared pattern lifecycle.
-- [Website Markdown extraction](../guides/site-structure-and-markdown-extraction.md) — current site-structure and semantic hashing proposal.
-- [Independent pipelines](../guides/independent-data-pipelines.md) — shared workers and concurrency.
-- [File manager / S3](../guides/file-management-and-s3.md) — artifact ownership and reuse.
-- [Contract workflow and legacy status](../../../dryv/README.md), [site structure specification](../../design/acquisition/SITE_STRUCTURE_SPEC.md), [website design](../../design/acquisition/WEBSITE_DESIGN.md).
+- [Master planning register](../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md) — broader all-domain context.
+- [Data categories and patterns](../../guides/data-categories-and-patterns.md) — four classes and shared pattern lifecycle.
+- [Website Markdown extraction](../../guides/site-structure-and-markdown-extraction.md) — current site-structure and semantic hashing proposal.
+- [Independent pipelines](../../guides/independent-data-pipelines.md) — shared workers and concurrency.
+- [File manager / S3](../../guides/file-management-and-s3.md) — artifact ownership and reuse.
+- [Contract workflow and legacy status](../../../../dryv/README.md), [site structure specification](../../../design/acquisition/SITE_STRUCTURE_SPEC.md), [website design](../../../design/acquisition/WEBSITE_DESIGN.md).
 
 **Scope:** architectural analysis and documentation only; no migration design is final.
 
@@ -96,8 +96,8 @@ Source/site discovery and readable Markdown extraction should serve the **same s
 
 Website discovery is connected to person identity and research prioritization, but these concerns should not be collapsed into the website schema:
 
-- [Person identity, media enrichment and community-assisted data refinement](../guides/person-identity-media-and-community-refinement.md) records the Mzizi Swipe concept, citizen/local-watcher submissions, verified official attestations, administrator review, reversible person merges/splits, thorough portrait discovery (including CSS background images), existing filesystem/S3 storage, and the separate legal gate for biometric processing.
-- [Cross-domain entity prominence, ambiguity and research discoverability](../guides/entity-prominence-and-discoverability.md) records 0–1 contextual prominence for people and places, office/geography significance derived from reference-owned definitions and generated office patterns, separate ambiguity/evidence/source credibility measures, and how prominence may guide research breadth without making Wikipedia or search results trusted automatically.
+- [Person identity, media enrichment and community-assisted data refinement](../../guides/person-identity-media-and-community-refinement.md) records the Mzizi Swipe concept, citizen/local-watcher submissions, verified official attestations, administrator review, reversible person merges/splits, thorough portrait discovery (including CSS background images), existing filesystem/S3 storage, and the separate legal gate for biometric processing.
+- [Cross-domain entity prominence, ambiguity and research discoverability](../../guides/entity-prominence-and-discoverability.md) records 0–1 contextual prominence for people and places, office/geography significance derived from reference-owned definitions and generated office patterns, separate ambiguity/evidence/source credibility measures, and how prominence may guide research breadth without making Wikipedia or search results trusted automatically.
 
 These are cross-domain improvement proposals, not approval to add a new schema or change the current `person`, `filesystem`, `source`, `website`, `reference`, `governance` or `geography` contracts. The current person design already places portraits in `filesystem.attachments`; review that contract before proposing any extension.
 

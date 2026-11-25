@@ -73,8 +73,8 @@ Do not copy Nairobi's entire identity into Governance, Finance or each UI answer
 
 ## Inspect first
 
-- [Current generated SQL](../../../source/backend/database/sql/schema.sql)
-- [Dryv Postgres contracts](../../../dryv/contracts/schemas/postgres/)
-- [Database design](../../design/data/DATABASE_ARCHITECTURE.md)
-- [Original accepted storage decision](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md)
-- [Ownership design and implementation notes](../../design/data/SOURCE_FILESYSTEM_GEOGRAPHY.md)
+- [Current generated SQL](../../../../source/backend/database/sql/schema.sql)
+- [Dryv Postgres contracts](../../../../dryv/contracts/schemas/postgres/)
+- [Database design](../../../design/data/DATABASE_ARCHITECTURE.md)
+- [Original accepted storage decision](../../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md)
+- [Ownership design and implementation notes](../../../design/data/SOURCE_FILESYSTEM_GEOGRAPHY.md)

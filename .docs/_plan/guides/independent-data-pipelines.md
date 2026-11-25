@@ -161,11 +161,11 @@ A pattern-generator pipeline may produce only *expected* office structures. A le
 
 ## Related source redesign planning
 
-See [source redesign and adaptive website intelligence](../source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
+See [source redesign and adaptive website intelligence](../.old/source-redesign/README.md) for the consolidated planning-only review of unknown-site discovery, link/URL deduplication, optional YAML structures, semantic retrieval/ML, incremental processing, the dedicated vector index alternatives and the shared pattern-schema option. **No source/website collapse, new pattern schema or target table set has been approved.**
 
 ## Research adapter integration (planning)
 
-See [replaceable adapters and one engine-owned scheduling boundary](../source-redesign/11-tool-integration-and-contracts.md), [existing S3 artifact lineage](../source-redesign/12-artifact-lifecycle-and-lineage.md) and [benchmark gates](../source-redesign/13-benchmarks-and-research-questions.md). Do not independently deploy multiple crawler schedulers or refresh loops (current engine, Scrapy, Crawlee, changedetection.io, browser agents) without shared host admission, leases, budgets, dedup and source policy. All tool adoption and Taskcode tasks remain unapproved.
+See [replaceable adapters and one engine-owned scheduling boundary](../.old/source-redesign/11-tool-integration-and-contracts.md), [existing S3 artifact lineage](../.old/source-redesign/12-artifact-lifecycle-and-lineage.md) and [benchmark gates](../.old/source-redesign/13-benchmarks-and-research-questions.md). Do not independently deploy multiple crawler schedulers or refresh loops (current engine, Scrapy, Crawlee, changedetection.io, browser agents) without shared host admission, leases, budgets, dedup and source policy. All tool adoption and Taskcode tasks remain unapproved.
 
 
 ## 2026-11-07 event-driven monitoring and admin/agent refresh execution
@@ -186,7 +186,7 @@ An approved agent may run a registered generic capability such as `discover_offi
 
 **Cross-domain examples**: `electoral` official date/nomination/result updates; `statistical` census data release/vintage; `legal` parliament readings and Acts; `finance` budget timetables/versions; `governance` appointments; `procurement` tender deadline/award. Each action follows schedule → activity/source evidence → engine → candidates/verifications → reviewed domain changes, without duplicating canonical subject identities.
 
-**Still open:** executable manifest grammar, one source of truth for verification status, verification ledger FK target design, scheduler/job reuse, cadence/tier thresholds, agent permissions, administrator form workflow, schedule rules vs real-world event statuses, UI status vocabulary and legal/source constraints. These require user validation and separate implementation/task approval. See [schema-wide freshness rule](../schema-redesign/README.md) and [activity](../schema-redesign/mzizi-db/phase-02/activity.md).
+**Still open:** executable manifest grammar, one source of truth for verification status, verification ledger FK target design, scheduler/job reuse, cadence/tier thresholds, agent permissions, administrator form workflow, schedule rules vs real-world event statuses, UI status vocabulary and legal/source constraints. These require user validation and separate implementation/task approval. See [schema-wide freshness rule](../.old/schema-redesign/README.md) and [activity](../.old/schema-redesign/mzizi-db/phase-02/activity.md).
 
 ## 2026-11-08 — Root seed convention and folder/file-type design
 
@@ -261,4 +261,4 @@ After the restructuring the user directed that the NestJS product API live at `s
 
 ## 2026-11-11 — Two database boundary
 
-Python pipelines may use native disposable vector stores for scraping/NLP/mapping. Durable jobs, runs and candidates belong to Operations via Rust; workers hold no relational credentials. Accepted data and verified evidence publish to Main through typed Rust/Dryv contracts. Preserve idempotency, checkpoints, actor attribution, exact input versions and S3 integrity. Do not hold database locks during network, OCR or ML work. See [two database rules](../knowledge-platform/two-database-rules.md).
+Python pipelines may use native disposable vector stores for scraping/NLP/mapping. Durable jobs, runs and candidates belong to Operations via Rust; workers hold no relational credentials. Accepted data and verified evidence publish to Main through typed Rust/Dryv contracts. Preserve idempotency, checkpoints, actor attribution, exact input versions and S3 integrity. Do not hold database locks during network, OCR or ML work. See [two database rules](../.old/knowledge-platform/two-database-rules.md).

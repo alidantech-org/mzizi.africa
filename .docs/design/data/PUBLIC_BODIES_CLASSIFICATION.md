@@ -7,7 +7,7 @@ tags: [institutions,governance,classification,comparison,proposal]
 
 # Public bodies: classification, control and comparison
 
-**Status: proposal, 15 November 2026. Nothing here is implemented or approved.** It supports the civic accountability pilot in [ROADMAP](../../docs/ROADMAP.md) and is built on the Phase 01 schemas in the [design catalogue](../../_plan/schema-redesign/README.md); it adds no schemas. The delivery plan, risks and open questions are in the [planning proposal](../../_plan/guides/public-accountability-map-and-international-comparison.md). Related: [DATABASE_DESIGN](DATABASE_DESIGN.md), [SOURCING_DESIGN](SOURCING_DESIGN.md), [PEOPLE_DESIGN](PEOPLE_DESIGN.md).
+**Status: proposal, 15 November 2026. Nothing here is implemented or approved.** It supports the civic accountability pilot in [ROADMAP](../../docs/ROADMAP.md) and is built on the Phase 01 schemas in the [design catalogue](../../_plan/.old/schema-redesign/README.md); it adds no schemas. The delivery plan, risks and open questions are in the [planning proposal](../../_plan/guides/public-accountability-map-and-international-comparison.md). Related: [DATABASE_DESIGN](DATABASE_DESIGN.md), [SOURCING_DESIGN](SOURCING_DESIGN.md), [PEOPLE_DESIGN](PEOPLE_DESIGN.md).
 
 ## Goal
 

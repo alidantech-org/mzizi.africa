@@ -196,7 +196,7 @@ extra: {status: hypothetical, approval: not_approved, implementation: not_author
 
 # History — chronology, periods and evidence-backed interpretation
 
-> **Status: HYPOTHETICAL DOMAIN BRIEF.** This extends existing history commitments without approving new SQL. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md).
+> **Status: HYPOTHETICAL DOMAIN BRIEF.** This extends existing history commitments without approving new SQL. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md).
 
 ## 1. Purpose and exploration areas
 

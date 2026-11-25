@@ -107,6 +107,11 @@ Task 5 of 7; starts only when the seed removal task is completed. Reference layo
 - [ ] Remove old hand-written `structure` reads
 - [ ] Test and time `structure` routes against the baseline
 
+## Owner direction (25 November 2026)
+
+- [ ] Regenerate the API from the redesigned contracts in the new clean format using the Dryv `nestjs-persistence` pack (typed reads, writes, transactions, scoped Redis caching)
+- [ ] Generated modules follow `.docs/rules/api-modules.md`: schema-named modules, no overlap, one frontend-mapping module
+
 ## Acceptance checklist
 
 - [ ] Every module above is rebuilt and checked off

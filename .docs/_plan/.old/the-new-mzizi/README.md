@@ -39,6 +39,6 @@ The initial review inspected source code and the generated PostgreSQL snapshot o
 
 ## Relation to existing authority
 
-This folder does not replace [the current roadmap](../../docs/ROADMAP.md), [database architecture](../../design/data/DATABASE_ARCHITECTURE.md), [source/filesystem/geography ownership](../../design/data/SOURCE_FILESYSTEM_GEOGRAPHY.md), [data lifecycle](../../design/architecture/DATA_LIFECYCLE.md) or the existing [single-Postgres decision](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md). Those documents and the current contracts remain the source for existing decisions and implementation until deliberately revised.
+This folder does not replace [the current roadmap](../../../docs/ROADMAP.md), [database architecture](../../../design/data/DATABASE_ARCHITECTURE.md), [source/filesystem/geography ownership](../../../design/data/SOURCE_FILESYSTEM_GEOGRAPHY.md), [data lifecycle](../../../design/architecture/DATA_LIFECYCLE.md) or the existing [single-Postgres decision](../../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md). Those documents and the current contracts remain the source for existing decisions and implementation until deliberately revised.
 
 **First review sequence:** understand both ingestion paths, trace one county from source to API, benchmark the highest-cost Geography and shared reads, then decide whether a read-model or canonical schema change is justified.

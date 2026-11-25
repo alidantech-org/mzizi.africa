@@ -300,7 +300,7 @@ Queries: show all KNBS census PDFs for 2019 and their Markdown/table derivatives
 
 Current Python `.docs/_archives/2026-11-08-rewrite-snapshot/source/backend/engine/data/src/mzizi_data/files.py` uses `LocalDirectoryStore` and defaults created logical files to restricted. Migrate its adapter/access policy **only after inspecting** actual deployed S3 endpoint, bucket namespace, public URL rules, sign URL API, object versions and retention. No new storage service. Audit 10 table's current columns/FKs and clients; preserve all IDs, versions and hashes on backfill.
 
-**OPEN:** exact S3 API/URL configuration; folder multiple placements vs one parent; tag schema; file retention and legal hold; attachment FK model; `formats/uploads/events` ownership; cache and integrity checks; default public/private policy by source classification; UI operations; migration of existing local objects. See [file-management plan](../../../guides/file-management-and-s3.md), [site Markdown plan](../../../guides/site-structure-and-markdown-extraction.md), and [master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md).
+**OPEN:** exact S3 API/URL configuration; folder multiple placements vs one parent; tag schema; file retention and legal hold; attachment FK model; `formats/uploads/events` ownership; cache and integrity checks; default public/private policy by source classification; UI operations; migration of existing local objects. See [file-management plan](../../../../guides/file-management-and-s3.md), [site Markdown plan](../../../../guides/site-structure-and-markdown-extraction.md), and [master register](../../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md).
 
 **Status: proposals, no approved DDL.**
 
@@ -354,6 +354,6 @@ Task `TSK-0F4398B91D38` relocated the real system seeds to root `seed/` (invento
 
 ## 2026-11-11 — System-expansion alignment
 
-The expansion reuses immutable filesystem versions for original/derived spatial and heritage assets; domain identity, access policy, derivation lineage and canonical metadata remain separate concerns. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+The expansion reuses immutable filesystem versions for original/derived spatial and heritage assets; domain identity, access policy, derivation lineage and canonical metadata remain separate concerns. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

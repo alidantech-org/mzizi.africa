@@ -19,7 +19,7 @@ Mzizi connects African heritage, history, geography, language, society and civic
 
 ## Current design scope
 
-The [schema design catalogue](../_plan/schema-redesign/README.md) assigns schemas to Operational, Phase 01 or deferred Phase 02. Phase 01 covers civic accountability, including Geography and geospatial querying. Broader scientific, historical, heritage and statistical proposals remain deferred. These assignments guide design; they do not claim full runtime implementation.
+The [schema design catalogue](../_plan/.old/schema-redesign/README.md) assigns schemas to Operational, Phase 01 or deferred Phase 02. Phase 01 covers civic accountability, including Geography and geospatial querying. Broader scientific, historical, heritage and statistical proposals remain deferred. These assignments guide design; they do not claim full runtime implementation.
 
 ## Detailed domain models
 

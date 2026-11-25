@@ -4,7 +4,7 @@
 
 # Geography model — superseded draft
 
-> **Status — 12 November 2026:** This model describes a former `GeoUnit`/GeoJSON design and paths that are not the current contract proposal. The accepted foundation is Geography's nine table names and responsibilities in [Geography — Phase 01](../../_plan/schema-redesign/mzizi-db/phase-01/geography.md); detailed fields in [`geography.ts`](../../../dryv/contracts/schemas/postgres/geography.ts) remain under review. Use those files for current ownership, proposed country links and generation limits.
+> **Status — 12 November 2026:** This model describes a former `GeoUnit`/GeoJSON design and paths that are not the current contract proposal. The accepted foundation is Geography's nine table names and responsibilities in [Geography — Phase 01](../../_plan/.old/schema-redesign/mzizi-db/phase-01/geography.md); detailed fields in [`geography.ts`](../../../dryv/contracts/schemas/postgres/geography.ts) remain under review. Use those files for current ownership, proposed country links and generation limits.
 
 The accepted architecture uses one canonical identity table (`geography.features`), one-to-one feature specializations (`geography.units` and `geography.places`), and feature-linked names, external identifiers, geometry versions, typed dated relationships, transformation edges and dataset metadata. `reference.countries` owns modern-country identities. Geography does not own a country or legal-basis identity table. Historical and cross-border features may have no country association.
 

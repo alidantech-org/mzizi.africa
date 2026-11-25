@@ -243,7 +243,7 @@ For one county, show actual appointment and inauguration dates with people, offi
 4. Event's multiple actors, legal sources and geographical roles: what must be explicitly FK-enforced?
 5. What public moderation and review are necessary for activity notes or user-submitted corrections?
 
-**Links:** [Schema index](../../README.md), [Master register](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [Site Markdown extraction](../../../guides/site-structure-and-markdown-extraction.md).
+**Links:** [Schema index](../../README.md), [Master register](../../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md), [Site Markdown extraction](../../../../guides/site-structure-and-markdown-extraction.md).
 
 ## Human review — editable user notes and design sign-off
 
@@ -330,6 +330,6 @@ Whether `activity.updates` and `activity.actions` need distinct tables; whether 
 
 ## 2026-11-11 — System-expansion alignment
 
-Activity remains the canonical occurrence/event owner. History may define chronologies and interpretations that point to Activity events through enforceable typed relationships. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Activity remains the canonical occurrence/event owner. History may define chronologies and interpretations that point to Activity events through enforceable typed relationships. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

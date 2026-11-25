@@ -100,7 +100,7 @@ The default outcome for an established entity is now proposed to be a **real inc
 
 Watch manifests are **mostly database-managed**, with approved immutable file versions in `filesystem`. Generic engine logic must not branch on IEBC/KNBS/ORPP/Kenya; resolve jurisdiction/source-specific config and specialized adapters through manifests and a registered capability interface.
 
-See [central pattern/fill-in-the-gaps proposal](../guides/data-categories-and-patterns.md) for DAG dependencies, real-row criteria, physical presence alternatives, watch rules, neutral core and unresolved hard-FK decisions. **No implementation approved.**
+See [central pattern/fill-in-the-gaps proposal](../../guides/data-categories-and-patterns.md) for DAG dependencies, real-row criteria, physical presence alternatives, watch rules, neutral core and unresolved hard-FK decisions. **No implementation approved.**
 
 ## Research-to-design: pattern definitions versus extraction strategies
 
@@ -110,4 +110,4 @@ See [central pattern/fill-in-the-gaps proposal](../guides/data-categories-and-pa
 
 The user's prominence idea fits the leading reference-owned pattern/definition direction: reusable office categories and geographic classifications can supply explainable structural weights, while the engine computes a versioned derived prominence result from verified office-holding and geographic relationships. Patterns may generate expected offices/seats as normal records in their owning domains; an expected seat is not an actual officeholder and must not award a person a role they do not hold.
 
-Keep the definition (reference), execution (engine), actual office/tenure (governance/electoral), geography (geography), source evidence (source) and review (audit/participation candidate) responsibilities distinct. Do not add a dedicated prominence schema or table by default. See [entity prominence and discoverability](../guides/entity-prominence-and-discoverability.md).
+Keep the definition (reference), execution (engine), actual office/tenure (governance/electoral), geography (geography), source evidence (source) and review (audit/participation candidate) responsibilities distinct. Do not add a dedicated prominence schema or table by default. See [entity prominence and discoverability](../../guides/entity-prominence-and-discoverability.md).

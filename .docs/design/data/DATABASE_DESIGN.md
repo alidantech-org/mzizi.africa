@@ -4,7 +4,7 @@
 
 # Database design
 
-> **Currency note — 12 November 2026:** This guide contains pre-rewrite schema names and implementation assumptions. The active schema layout and approval states are in the [schema redesign catalogue](../../_plan/schema-redesign/README.md). Same-database cross-schema foreign keys are allowed by the current schema-authoring rules. The paragraphs below are architecture background where they do not conflict with that catalogue, `AGENTS.md`, or the authored contracts.
+> **Currency note — 12 November 2026:** This guide contains pre-rewrite schema names and implementation assumptions. The active schema layout and approval states are in the [schema redesign catalogue](../../_plan/.old/schema-redesign/README.md). Same-database cross-schema foreign keys are allowed by the current schema-authoring rules. The paragraphs below are architecture background where they do not conflict with that catalogue, `AGENTS.md`, or the authored contracts.
 
 The [database architecture](DATABASE_ARCHITECTURE.md) supersedes the earlier Main and Operations split. PostgreSQL stores canonical domain schemas in one database. Names follow [database naming](../../rules/database-naming.md).
 
@@ -24,7 +24,7 @@ The former `staging`, `engine` and `geography.boundary_shapes` descriptions belo
 
 ## Current schema catalogue
 
-The old 21-schema table inventory formerly shown here is retired. Use the [generated table contracts](../../../source/schema/README.md) for the active catalogue and the [schema redesign catalogue](../../_plan/schema-redesign/README.md) for design history and deferred work. In particular, Reference uses `countries`, `schemes`, `values`, measurement `units`, `topics`, and pattern tables; Geography uses the accepted `features`, `units`, `places`, `names`, `identifiers`, `geometries`, `relationships`, `changes`, and `datasets` inventory. The six authorized Main domain contracts are implemented in Dryv and composed with the foundation groups; Accountability contains no persisted entities. Their owning Phase 01 documents state the current table grains and the remaining SQL-pack gates.
+The old 21-schema table inventory formerly shown here is retired. Use the [generated table contracts](../../../source/schema/README.md) for the active catalogue and the [schema redesign catalogue](../../_plan/.old/schema-redesign/README.md) for design history and deferred work. In particular, Reference uses `countries`, `schemes`, `values`, measurement `units`, `topics`, and pattern tables; Geography uses the accepted `features`, `units`, `places`, `names`, `identifiers`, `geometries`, `relationships`, `changes`, and `datasets` inventory. The six authorized Main domain contracts are implemented in Dryv and composed with the foundation groups; Accountability contains no persisted entities. Their owning Phase 01 documents state the current table grains and the remaining SQL-pack gates.
 
 Reference tables (`reference`) are read constantly and change rarely; `filesystem.events`, `source.attributions` and `audit.*` are the heavy append-only tables.
 

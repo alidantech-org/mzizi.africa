@@ -8,7 +8,7 @@ extra: {status: foundation_accepted_details_under_review, approval: inventory_on
 
 # Reference — Phase 01
 
-> **FOUNDATION INVENTORY ACCEPTED — 12 November 2026; detailed field design remains under review.** Reference tables, including typed Legal mediation, are authored in [`reference.ts`](../../../../../dryv/contracts/schemas/postgres/reference.ts). The base `reference` group is included through the `vocabulary` compatibility export in the active database application; the `referenceLegal` registration group and `referenceProposals` remain outside it. Main review composition passes TypeScript, Dryv doctor and compile; this does not claim faithful Rust SQL generation, migration, live database change, or deployment.
+> **FOUNDATION INVENTORY ACCEPTED — 12 November 2026; detailed field design remains under review.** Reference tables, including typed Legal mediation, are authored in [`reference.ts`](../../../../../../dryv/contracts/schemas/postgres/reference.ts). The base `reference` group is included through the `vocabulary` compatibility export in the active database application; the `referenceLegal` registration group and `referenceProposals` remain outside it. Main review composition passes TypeScript, Dryv doctor and compile; this does not claim faithful Rust SQL generation, migration, live database change, or deployment.
 
 [Phase 01 index](README.md) · [Schema catalogue](../../README.md)
 

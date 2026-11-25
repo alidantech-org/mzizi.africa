@@ -136,6 +136,14 @@ Task 2 of 7; starts only when task 1 is completed. Current contracts: `dryv/cont
 - [ ] Generate the API layer and the TypeScript and Dart SDKs without errors
 - [ ] Record every Dryv gap found as a task note and in the Dryv gap file
 
+## Owner direction (25 November 2026)
+
+- [ ] Update the local Dryv checkout from the source repository before authoring; the capabilities this wave needs (partitioning, SQL comments, integrity checks, typed NestJS reads, writes and transactions, scoped Redis caching, TS/Dart response shapes) are delivered in Dryv (DRYV_GAPS, "Rebuild capabilities delivered")
+- [ ] Author every query, input, output and type in Dryv contracts; nothing API-shaped is hand-written
+- [ ] Name modules after the schemas they own and remove vague modules (`explorer`, `insights`, `experience`, `locality`, `structure`, `ledger`, `interactions`), following `.docs/rules/api-modules.md`
+- [ ] Design one frontend-mapping module that composes data from the schema modules into clean typed shapes, and record its name in the rule
+- [ ] Bind the packs needed for the new API format and plan a clean regeneration
+
 ## Acceptance checklist
 
 - [ ] No API type, DTO or query shape exists only in hand-written code

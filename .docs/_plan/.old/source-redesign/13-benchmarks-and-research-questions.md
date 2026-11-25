@@ -88,4 +88,4 @@ These are proposed evaluation work, not approved collection, biometric experimen
 
 Facial-recognition evaluation is **not authorized by these experiments**. Any proposal to process biometric templates must first pass a separate legal/privacy/security decision, including review of the Kenya Data Protection Act and ODPC biometric/DPIA guidance. The initial benchmark should use non-biometric source context and image-file deduplication only.
 
-Prominence metrics must not reward view manipulation, duplicated/syndicated coverage or popularity at the expense of local discoverability. See [person identity/media/community refinement](../guides/person-identity-media-and-community-refinement.md) and [entity prominence/discoverability](../guides/entity-prominence-and-discoverability.md).
+Prominence metrics must not reward view manipulation, duplicated/syndicated coverage or popularity at the expense of local discoverability. See [person identity/media/community refinement](../../guides/person-identity-media-and-community-refinement.md) and [entity prominence/discoverability](../../guides/entity-prominence-and-discoverability.md).

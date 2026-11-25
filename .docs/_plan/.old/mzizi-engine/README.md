@@ -47,4 +47,4 @@ Live proving is not a test suite and never gates CI. When a live run finds a bug
 
 ## Related
 
-[Source redesign](../source-redesign/README.md) (esp. [07 storage and vector options](../source-redesign/07-storage-and-vector-options.md), [10 build vs reuse](../source-redesign/10-prior-art-and-build-vs-reuse.md), [11 tool integration](../source-redesign/11-tool-integration-and-contracts.md)); [packages map](../../../source/packages/README.md); [engine README](../../../source/backend/engine/README.md).
+[Source redesign](../source-redesign/README.md) (esp. [07 storage and vector options](../source-redesign/07-storage-and-vector-options.md), [10 build vs reuse](../source-redesign/10-prior-art-and-build-vs-reuse.md), [11 tool integration](../source-redesign/11-tool-integration-and-contracts.md)); [packages map](../../../../source/packages/README.md); [engine README](../../../../source/backend/engine/README.md).

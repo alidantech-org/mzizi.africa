@@ -105,7 +105,7 @@ S3 keys remain opaque; URLs and private access links are issued under the **exis
 
 **Reproducibility test:** with network disabled and vector index empty, retrieve a retained capture from existing S3, regenerate its content and candidate with pinned processor versions, reconstruct the provenance chain, and rebuild search points. If this fails, the artifact contract is not finished.
 
-See [existing file-manager plan](../guides/file-management-and-s3.md), [07 storage options](07-storage-and-vector-options.md), [11 adapters](11-tool-integration-and-contracts.md) and [data lifecycle](../../design/architecture/DATA_LIFECYCLE.md). **All physical table/retention decisions remain open.**
+See [existing file-manager plan](../../guides/file-management-and-s3.md), [07 storage options](07-storage-and-vector-options.md), [11 adapters](11-tool-integration-and-contracts.md) and [data lifecycle](../../../design/architecture/DATA_LIFECYCLE.md). **All physical table/retention decisions remain open.**
 
 ## Person-media artifact lineage
 
@@ -125,4 +125,4 @@ source page capture
 
 Retain original and resolved URL, stylesheet/page capture IDs, CSS selector or DOM locator, discovery method, exact byte hash, MIME type, dimensions, rights/licence evidence, retrieval time and file-version reference. Multiple sources may point to the same exact bytes; keep all source sightings while reusing the object. Different photographs of the same person remain separate files. Perceptual hashes are optional duplicate-image hints, never person identity.
 
-Do not persist face embeddings as ordinary image derivatives or general vector payloads. Biometric artifacts, if ever lawfully approved, require a separate documented purpose, access, retention, security and deletion design. See [person identity/media refinement](../guides/person-identity-media-and-community-refinement.md).
+Do not persist face embeddings as ordinary image derivatives or general vector payloads. Biometric artifacts, if ever lawfully approved, require a separate documented purpose, access, retention, security and deletion design. See [person identity/media refinement](../../guides/person-identity-media-and-community-refinement.md).

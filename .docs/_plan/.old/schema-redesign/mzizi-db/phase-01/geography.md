@@ -8,7 +8,7 @@ extra: {status: inventory_approved_details_under_review, approval: table_names_a
 
 # Geography — Phase 01
 
-> **APPROVED INVENTORY — 12 November 2026; detailed field contracts remain proposals.** The nine approved table names and responsibilities are authored in [`geography.ts`](../../../../../dryv/contracts/schemas/postgres/geography.ts). The fields compile in the Main review entrypoint with Reference, Filesystem, Source, Legal and Reference-Legal, but Geography is not activated in the database foundation application. The Rust SQL pack has not been verified to preserve its relations or spatial constraints. No migration, live database change or deployment occurred.
+> **APPROVED INVENTORY — 12 November 2026; detailed field contracts remain proposals.** The nine approved table names and responsibilities are authored in [`geography.ts`](../../../../../../dryv/contracts/schemas/postgres/geography.ts). The fields compile in the Main review entrypoint with Reference, Filesystem, Source, Legal and Reference-Legal, but Geography is not activated in the database foundation application. The Rust SQL pack has not been verified to preserve its relations or spatial constraints. No migration, live database change or deployment occurred.
 
 [Phase 01 index](README.md) · [Schema catalogue](../../README.md)
 

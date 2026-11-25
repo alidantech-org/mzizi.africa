@@ -77,7 +77,7 @@ The candidate improvement must be benchmarked before/after on the same dataset, 
 
 ## Reference
 
-- [Current SQL](../../../source/backend/database/sql/schema.sql)
-- [Explorer queries](../../../source/backend/api/src/modules/explorer/features/explorer/reads/queries.ts)
-- [Geometry reader](../../../source/backend/api/src/modules/explorer/features/explorer/reads/boundaries.ts)
-- [Database migration guidance](../../../source/backend/database/migrations/README.md)
+- [Current SQL](../../../../source/backend/database/sql/schema.sql)
+- [Explorer queries](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/queries.ts)
+- [Geometry reader](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/boundaries.ts)
+- [Database migration guidance](../../../../source/backend/database/migrations/README.md)

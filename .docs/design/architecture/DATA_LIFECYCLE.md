@@ -712,7 +712,7 @@ The NestJS product API serves domain data through its own PostgreSQL role. The P
 
 The expanded proposal adds geospatial and environmental products to the same evidence lifecycle. Keep original spatial artifacts immutable in the existing filesystem/S3 integration; store curated canonical geometry in PostGIS; register derived rasters, vectors, tiles and aggregations with exact input versions and methods; publish only supported map layers with coverage, dates, resolution, license, uncertainty and provenance. A statistical geographic aggregate also pins the boundary edition or crosswalk and allocation method.
 
-Preserve the originating domain for measurements: Environment holds raw sensor readings, Agriculture holds actual harvest quantities, Economy holds individual market price observations, Electoral holds election results, and Finance holds transactions. Statistical holds published comparable series and reproducible derivations, not a duplicate copy of every number. The [system-expansion proposal](../../_plan/schema-redesign/README.md) records candidate formats and unresolved design work.
+Preserve the originating domain for measurements: Environment holds raw sensor readings, Agriculture holds actual harvest quantities, Economy holds individual market price observations, Electoral holds election results, and Finance holds transactions. Statistical holds published comparable series and reproducible derivations, not a duplicate copy of every number. The [system-expansion proposal](../../_plan/.old/schema-redesign/README.md) records candidate formats and unresolved design work.
 
 ## Historical database and pipeline ownership migration — 2026-11-11
 

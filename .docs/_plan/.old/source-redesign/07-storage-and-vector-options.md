@@ -65,7 +65,7 @@ Measure relevant-page recall@K, hybrid search improvement over lexical baseline,
 
 Store original portraits and permitted derivatives through the existing filesystem/S3 boundary, with source capture, URL, hash, licence/rights evidence and person attachment context. Exact/perceptual image hashes used for file deduplication are not facial identity embeddings.
 
-Do not put face embeddings or biometric templates into the general-purpose semantic vector index. The current proposal does not authorize biometric processing. Any future facial verification/identification requires a separate legal/privacy/security assessment and isolated controls; see [person identity, media and community refinement](../guides/person-identity-media-and-community-refinement.md).
+Do not put face embeddings or biometric templates into the general-purpose semantic vector index. The current proposal does not authorize biometric processing. Any future facial verification/identification requires a separate legal/privacy/security assessment and isolated controls; see [person identity, media and community refinement](../../guides/person-identity-media-and-community-refinement.md).
 
 
 ## 2026-11-11 — Python vector ownership

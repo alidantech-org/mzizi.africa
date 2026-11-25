@@ -9,6 +9,24 @@ tags: [dryv,gaps,generation,postgres,mongo,python,typeorm]
 
 **Status: register, 15 November 2026.** This lists what Dryv does not yet do for the one-PostgreSQL, Mongo-staging design in [DATABASE_ARCHITECTURE](DATABASE_ARCHITECTURE.md). Each row says how it was found. "Verified" means observed in this repository or by running a command on 15 November 2026; "reported" means stated in a contract or README comment and not re-tested.
 
+## Rebuild capabilities delivered (25 November 2026)
+
+**Status: reported by the owner on 25 November 2026; not yet adopted in Mzizi.** The Dryv work the rebuild wave needs is implemented on Dryv's `develop` branch and its official packs. Details and proofs are in the Dryv repository at `.tasks/docs/planning/mzizi-rebuild-capabilities.md` (in the local checkout `~/Projects/personal/alidantech-org/codepot/dryv`).
+
+| Capability | State in Dryv | Mzizi gap it closes |
+|---|---|---|
+| Schema-facet partitioning: LIST, RANGE, HASH, composite keys, nested and calendar partitions, safe migrations | Implemented and proven on disposable PostgreSQL | Partitioning plan (FOUNDATION_REDESIGN sections 18, 23, 29, 30) |
+| SQL comments (`COMMENT ON` for schemas, tables, columns, keys, indexes) | Implemented and proven | Section 12 descriptions |
+| Integrity enforcement: enum and conditional checks, composite references, country companions | Implemented and proven | Gaps 8 and 9 in part; country consistency on partitioned tables |
+| Typed NestJS reads, writes and transactions (new `nestjs-persistence` pack, TypeORM) | Implemented and proven | Gap 4 |
+| Scoped Redis caching (keys isolated by user, country, language and store; invalidation after commit) | Implemented and proven | API caching in the rebuild wave |
+| TypeScript and Dart responses: named localization shapes, keyed maps, nested sections, GeoJSON | Implemented and proven | `LocalizedText` and map responses |
+| Route constants, strict calendar-date query parsing, pack pin and stale-file reliability fixes | Implemented and proven | Gaps 7 and 8 in part |
+
+Reported proofs: 488 Engine tests, 191 CLI tests, live PostgreSQL and Redis proofs, SDK and API proofs, and 230 generated NestJS checks; typechecks, imports, docs and Task validation pass.
+
+Still outside Dryv, as agreed: vocabulary scheme checks (Mzizi-owned, FOUNDATION_REDESIGN section 4.4), language fallback policy, and durable event and workflow execution (tracked separately in Dryv). Exclusion constraints are not lowered by migrations. Mzizi must update its local Dryv checkout from the source repository before regenerating.
+
 ## Gaps in order of impact
 
 | # | Gap | Evidence | Effect on Mzizi | Where to fix |

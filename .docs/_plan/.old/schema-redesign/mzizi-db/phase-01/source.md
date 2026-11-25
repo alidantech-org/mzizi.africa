@@ -397,7 +397,7 @@ Locate official sites publishing for Kenya or a county institution; show all doc
 
 Audit all 27 combined source+website entity tables, actual columns, cardinalities, privileges, unique keys, existing source download objects and current source attributions. Map old→new targets and enforce actual cross-schema FKs where meaning is stable. Never delete raw evidence or collapse distinct publisher identities to reduce table count. Existing Dryv website and source contracts, crawlers, importers and legal gates must remain coherent during later migration.
 
-**OPEN:** whether one merged `source` schema is the best result; how many site-family/trait/relation tables to retain; where DNS, site checks and section visits belong; artifact/document/capture identity; stable semantic DOM hashing schema; site Markdown bundle format and derived file metadata; generic attribution hard-FK strategy; original source publication license/public-access review. See [site Markdown plan](../../../guides/site-structure-and-markdown-extraction.md), [file management](../../../guides/file-management-and-s3.md), and [master record](../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md).
+**OPEN:** whether one merged `source` schema is the best result; how many site-family/trait/relation tables to retain; where DNS, site checks and section visits belong; artifact/document/capture identity; stable semantic DOM hashing schema; site Markdown bundle format and derived file metadata; generic attribution hard-FK strategy; original source publication license/public-access review. See [site Markdown plan](../../../../guides/site-structure-and-markdown-extraction.md), [file management](../../../../guides/file-management-and-s3.md), and [master record](../../../../guides/mzizi-data-schema-storage-and-pipelines-redesign.md).
 
 **Status: not approved for schema compression or implementation.**
 
@@ -496,6 +496,6 @@ Status: user-approved architecture/documentation direction. No current source-mo
 
 ## 2026-11-11 — System-expansion alignment
 
-Expanded environmental, biodiversity, agricultural, economic, historical and heritage claims use the existing Source evidence/provenance model; original artifacts remain preserved and AI-derived interpretations attributable. See the [system-expansion proposal](../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
+Expanded environmental, biodiversity, agricultural, economic, historical and heritage claims use the existing Source evidence/provenance model; original artifacts remain preserved and AI-derived interpretations attributable. See the [system-expansion proposal](../../../../guides/advancement-and-system-expansion.md). This alignment note does not approve proposed schemas, tables or implementation.
 
 </details>

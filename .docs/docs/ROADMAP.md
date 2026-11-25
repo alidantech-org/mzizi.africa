@@ -26,4 +26,4 @@ Have the public site, research dashboard and mobile client consume stable API co
 
 Phase 02 proposals remain deferred until separately prioritized and reviewed. Moving or documenting a proposal does not authorize implementation.
 
-See the [design catalogue](../_plan/schema-redesign/README.md), [Task workspace](../README.md), and [root command guide](../design/operations/README.md) for current contracts and work tracking.
+See the [design catalogue](../_plan/.old/schema-redesign/README.md), [Task workspace](../README.md), and [root command guide](../design/operations/README.md) for current contracts and work tracking.

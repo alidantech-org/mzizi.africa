@@ -439,4 +439,4 @@ Changes below were approved by the owner on 2026-11-25.
 - [x] Every current table has a recorded decision
 - [x] Every agreed result is written into FOUNDATION_REDESIGN or a per-schema design note with an ERD
 - [x] Nothing still open is left unmarked: open items are listed under Pending discussion
-- [ ] `task validate` passes
+- [x] `task validate` passes

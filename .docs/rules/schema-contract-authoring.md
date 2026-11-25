@@ -8,7 +8,7 @@ extra: {status: proposed, agreed: false, recorded_on: 2026-11-12}
 
 # Schema contract authoring agreement
 
-**Proposed for discussion.** The folder layout and requirement for explicit schema review come from the user's instruction. The detailed conventions below await agreement. This document does not approve any table, field, index, relation or migration. See the [review plan](../_plan/schema-redesign/contract-authoring.md) and [schema catalogue](../_plan/schema-redesign/README.md).
+**Proposed for discussion.** The folder layout and requirement for explicit schema review come from the user's instruction. The detailed conventions below await agreement. This document does not approve any table, field, index, relation or migration. See the [review plan](../_plan/.old/schema-redesign/contract-authoring.md) and [schema catalogue](../_plan/.old/schema-redesign/README.md).
 
 ## Ownership and layout
 

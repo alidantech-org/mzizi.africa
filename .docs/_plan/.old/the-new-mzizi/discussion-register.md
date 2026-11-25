@@ -22,8 +22,8 @@ This is a **discussion trace**, not a parallel Task backlog or a new decision au
 
 ## Established decisions to preserve unless the owner revises them
 
-- The accepted single-PostgreSQL/Mongo-staging/S3 design: [decision](../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md).
-- The owner-approved Source/Filesystem/Geography separation and evidence ownership: [ownership guide](../../design/data/SOURCE_FILESYSTEM_GEOGRAPHY.md).
+- The accepted single-PostgreSQL/Mongo-staging/S3 design: [decision](../../../decisions/DEC-SINGLE-POSTGRES-MONGO-STAGING-20261115.md).
+- The owner-approved Source/Filesystem/Geography separation and evidence ownership: [ownership guide](../../../design/data/SOURCE_FILESYSTEM_GEOGRAPHY.md).
 - One identity for a real-world geographic thing and separate territorial/governing/activity concerns, subject to checking the latest contracts.
 - Authored contracts in Dryv, generated SQL rather than hand-edited generated tables; no new `.github/**` workflow without permission.
 - Work on `develop`; `main` remains stable.
