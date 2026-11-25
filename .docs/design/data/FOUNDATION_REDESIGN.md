@@ -103,7 +103,7 @@ identity.names (identity_id, kind, language_id, text, name_kind_term, script_ter
                  from_year, to_year, is_default)
 ```
 
-- Name kinds are terms: preferred, official, short, local, alternative, historical, abbreviation, transliteration.
+- Name kinds are terms: preferred, official, short, local, alternative, historical, abbreviation, transliteration, definition (a short definition, used for indicators and similar).
 - Names have valid periods (Zaire before DR Congo; Kenya's provinces before counties).
 - Script is recorded, so Amharic in Ge'ez can sit beside its Latin transliteration and Arabic can be marked right to left.
 - At most one default name per identity, language and period.
@@ -899,6 +899,190 @@ Owner direction, 2026-11-25:
 - **People who post bad content are blocked.**
 - Contributed articles and media use the `media` schema shapes (belonging to identities); contributions stay distinct from curated, sourced knowledge.
 - How `auth.accounts` and `community.actors` divide (sign-in versus public profile), the review and filtering workflow, and blocking are designed when `community` is discussed.
+
+## 28. Approved shape: `community`, and sign-up in `auth`
+
+**Approved by the owner on 2026-11-25.** Column names are in SQL casing (section 24). Base columns and sections 21–24 apply; no table has a citation column (section 23).
+
+### 28.1 Decisions
+
+- **Visitors** can read, save preferences and places, and are counted in views without signing in.
+- **Every contribution needs a signed-in account:** posts, comments, reviews, **reactions**, media and articles.
+- **Nothing is published until it passes human review or automated filtering** (including AI); people who post bad content are blocked.
+- **Members are not identities.** There can be millions of ordinary users; they are not public figures and their usernames are not multilingual names. Their public profile lives on `community.actors`.
+- **Members can write full articles** in `media.articles` (with a `contributor_id` → `community.actors`) and attach media to posts; both go through the same review flow before publishing.
+- **Sign-up is by email or phone with a one-time code (OTP)** and stays simple at the start (28.4).
+
+### 28.2 Usernames
+
+A member's `handle` follows these rules:
+
+- 3 to 30 characters.
+- Lowercase letters `a–z`, digits `0–9`, dot `.` and underscore `_` only.
+- Starts with a letter; does not end with `.` or `_`.
+- No two dots or underscores in a row (`a..b`, `a__b`, `a._b` are refused).
+- Unique ignoring case; stored lowercase.
+- A reserved list (for example `admin`, `mzizi`, `support`, `help`, `api`, `official`, `moderator`) cannot be taken; the list lives in the contracts.
+- `display_name` is free text shown beside the handle.
+
+### 28.3 `community` tables
+
+| Table today | After | Changes |
+|---|---|---|
+| `actors` | kept | `kind` → enum (visitor, member); a member must have `account_id`; adds `handle`, `display_name`, `avatar_id` → `media.assets`; `country_id`, `language_id`, seen times kept |
+| `devices` | kept | `platform` → enum; `fingerprint_hash`, `app_version`, `attestation`, seen times kept |
+| `tokens` | kept | push tokens; `provider` → enum; token stored encrypted |
+| `consents` | kept | `purpose_id` → `purpose_term`; `text_version` → `key_id` → `product.keys` plus a version |
+| `preferences` | kept | `theme` → enum; `home_feature_id` kept |
+| `places` | kept | `suggestion_id` → `suggestion_term`; `label` is the member's own text |
+| `reactions` | kept | sign-in required; subject link → exactly one of `post_id`, `identity_id`, `article_id`; `kind_id` → `kind_term` |
+| `views` | kept | subject link → exactly one of `identity_id`, `article_id`, `post_id`; partitioned by month with limited retention |
+| `proofs` | kept | untyped `signals` → typed columns (`attestation_ok`, `travel_ok`, `header_agrees`); `check` → enum |
+| `posts` | kept, widened | all contributions: `kind_term` (comment, review, report, question); `addressee_feature_id` → `identity_id` (what it is about); adds `rating` for reviews; `parent_interaction_id` → `parent_id`; `state` → enum (draft, pending, published, rejected, removed); partitioned by country |
+| `cases` | kept | moderation of one `post_id`; untyped `filter_results` → `checks`; `decision_id` → `decision_term`; `reason` internal text |
+| `subscriptions` | kept | subject link → `identity_id`; `kind_id` → `kind_term` |
+| `notifications` | kept | `copy_key` → `key_id` → `product.keys`; untyped `payload` → typed optional `identity_id`, `post_id`, `occurrence_id`; partitioned by month |
+| `deliveries` | renamed `dispatches` | avoids the clash with `civic.deliveries`; `state` → enum; partitioned by month |
+| `replies` | kept | official response to a post: `post_id`; `respondent_entity_id` + `respondent_individual_id` → `respondent_id` → identities; `content_id` → `body` with `language_id`; `status_id` → `status_term` |
+| — | `checks` (new) | `case_id`, `checker` (enum: ai, rules, human), `verdict` (enum: pass, flag, fail), `score`, `category_term` (spam, hate, misinformation), `checked_at` |
+| — | `blocks` (new) | `account_id`, `reason_term`, `case_id`, `from_on`, `to_on` (empty means permanent), `decided_by` → accounts |
+| — | `attachments` (new) | `post_id`, `asset_id` → `media.assets` |
+
+The old note that "no email or phone is collected" no longer holds: members sign up with an email or phone (28.4). Visitors remain anonymous, and personal data stays minimised.
+
+```mermaid
+erDiagram
+  accounts ||--o| actors : "member of"
+  actors ||--o{ devices : uses
+  devices ||--o{ tokens : has
+  actors ||--o{ posts : writes
+  posts ||--o{ posts : "replies to"
+  posts ||--o{ attachments : has
+  assets ||--o{ attachments : in
+  identities ||--o{ posts : about
+  posts ||--o{ cases : moderated
+  cases ||--o{ checks : has
+  accounts ||--o{ blocks : blocked
+  posts ||--o{ replies : "official reply"
+  actors ||--o{ reactions : gives
+  actors ||--o{ subscriptions : follows
+  notifications ||--o{ dispatches : sent
+```
+
+### 28.4 Sign-up and sign-in in `auth`
+
+Members sign up and sign in with an **email address or a phone number and a one-time code**. No passwords at the start. `auth` is extended:
+
+| Table | Change |
+|---|---|
+| `auth.logins` | adds `kind` (enum: email, phone, oidc); `value` (email stored lowercase, phone in E.164 such as `+254712345678`); `verified_at`. `issuer` and `subject` stay for `oidc` logins. Unique per kind and value among live logins |
+| `auth.codes` (new) | `login_id` (or the email or phone being verified for a new sign-up), `purpose` (enum: signup, signin, change), `digest` (only a hash of the code is stored), `channel` (enum: email, sms), `expires_at` (short, for example 10 minutes), `attempts` (limited, for example 5), `consumed_at`, `created_at` |
+
+Rules: codes are single use and expire quickly; repeated requests and failed attempts are rate-limited per login, device and network address; a verified login creates or opens the account and its member actor; a blocked account cannot sign in or contribute. Email and SMS sending use providers configured outside the database.
+
+## 29. Approved shape: `statistics`
+
+**Approved by the owner on 2026-11-25.** Column names are in SQL casing (section 24). Base columns and sections 21–24 apply; no table has a citation column (section 23). Every table keeps its `code`. This section is written for the people who will build the database, the API queries and the frontend.
+
+### 29.1 What the design must handle
+
+Breakdowns (sex, age group, residence), revisions (preliminary then final census), several publishers of the same figure (KNBS and the World Bank), status (provisional, estimated, suppressed, missing), uncertainty (survey margins of error), scale (values published in thousands), frequency (decennial census, monthly inflation), boundary reforms (districts before 2013, counties after), derived figures (rates per 1,000) and composite indices.
+
+The model follows the idea of the international **SDMX** standard used by UN agencies, the IMF, the World Bank and national statistics offices: every figure is one **observation** identified by a fixed set of **dimensions**, each taking its values from a **code list** (here, a vocabulary scheme), plus **attributes** such as status and unit.
+
+### 29.2 Decisions
+
+- **Collections** (census 2019, KDHS 2022, World Development Indicators) are a statistics concept, separate from the `source` schema's records of the publications themselves.
+- **Which figure to show is configurable per country** (`statistics.priorities`): for example, Kenya ranks KNBS first, Nigeria ranks NBS first, and the World Bank, which covers all countries, ranks after them.
+- **Calculated totals are stored**, always flagged `basis = aggregated`, and only where the indicator's `aggregation` allows it.
+- **`figures` is a prepared table** refreshed after every load (not a materialized view), so it can be refreshed per country and per indicator.
+- The names `dimensions`, `collections`, `cell` and `figures` are approved.
+
+### 29.3 Tables
+
+| Table | Holds | Columns |
+|---|---|---|
+| `indicators` (kept, identity-backed) | The concept measured ("Population", "Net primary enrolment rate") | `code`, `kind_term` (count, rate, ratio, index, share), `unit_id` → `reference.units`, `decimals`, `frequency` (enum: monthly, quarterly, annual, intercensal, decennial), `topic_term`, `aggregation` (enum: sum, mean, weighted, none), `higher_is_better`, `role_term`, `is_derived` |
+| `dimensions` (new) | Which breakdowns an indicator allows, in order | `indicator_id`, `scheme_id`, `position`, `is_required` |
+| `collections` (new, identity-backed) | The programme that produced figures | `code`, `kind_term` (census, survey, administrative, model, compilation), `steward_id` → identities (KNBS, NBS, World Bank), `from_year`, `to_year` |
+| `priorities` (new) | Per-country order of trust for choosing the figure to show | `country_id`, exactly one of `steward_id` or `collection_id`, `position` |
+| `observations` (kept) | One figure | `indicator_id`, `feature_id`, `subject_id` → identities (optional), `country_id` (partition key), `from_year`, `to_year`, `starts_on`, `ends_on` (optional), `value` (in the indicator's base unit), `lower`, `upper`, `status` (enum: final, provisional, revised, estimated, projected, suppressed, missing), `basis` (enum: measured, estimated, projected, modelled, aggregated), `collection_id`, `revision`, `supersedes_id`, `cell` |
+| `breakdowns` (new) | The categories cutting one observation | `observation_id`, `country_id`, `term_id`, `scheme_id`; at most one term per scheme per observation |
+| `metrics` (kept, identity-backed) | Figures calculated from indicators | `code`, `numerator_id`, `denominator_id`, `per_factor`, `unit_id`, `higher_is_better`, `is_rankable`, `level_term`, `topic_term` |
+| `components` (kept) | Parts of a composite index | `indicator_id`, `component_id`, `weight`, `transform_term`, `position` |
+| `figures` (new, prepared) | The one value to show per indicator or metric, place, subject, period and cell | identifying columns as on observations, `value`, `lower`, `upper`, `status`, `basis`, `observation_id`, `refreshed_at`; partitioned by country |
+
+Changes from today: `indicators.name` and `description` move to `identity.names` (a short definition is a name of kind `definition`) and a methodology article in `media`; `topic_id`, `measure_kind_id`, `role_id` become term columns; `observations.period_from` and `period_to` become years plus optional dates; `estimated` becomes `basis`; `sex_id`, `age_group_id`, `residence_id`, `ethnicity_id` become `breakdowns`; `language_id` becomes `subject_id`; `source_citation_id` is removed everywhere.
+
+```mermaid
+erDiagram
+  identities ||--|| indicators : "is"
+  identities ||--|| metrics : "is"
+  identities ||--|| collections : "is"
+  indicators ||--o{ dimensions : allows
+  schemes ||--o{ dimensions : "cut by"
+  countries ||--o{ priorities : ranks
+  collections ||--o{ priorities : ranked
+  indicators ||--o{ observations : measured
+  collections ||--o{ observations : produced
+  features ||--o{ observations : "for place"
+  identities ||--o{ observations : subject
+  observations ||--o{ breakdowns : "cut by"
+  terms ||--o{ breakdowns : category
+  observations ||--o{ observations : supersedes
+  indicators ||--o{ metrics : "numerator / denominator"
+  indicators ||--o{ components : "made of"
+  observations ||--o{ figures : "chosen for"
+```
+
+### 29.4 How it works
+
+1. **Loading a figure.** "Nairobi, female, aged 15–19, 2019 census: 242,148" becomes one observation (indicator population, feature Nairobi, 2019–2019, value 242148, status final, basis measured, collection ke-census-2019, revision 1, `cell` = fingerprint of `sex.female` and `age.15-19`), two `breakdowns` rows (sex → female, age group → 15–19) and a source link to the census table it came from.
+2. **Breakdowns versus subject.** Breakdowns are **categories** (terms: female, urban, 15–19). The subject is a **thing** (an identity: the Swahili language for "speakers of Swahili").
+3. **Uniqueness.** One row per indicator, place, subject, period, `cell`, collection and revision. `cell` is a fingerprint of the sorted breakdown term codes, so the check is one index lookup; `breakdowns` keep the real foreign keys. An observation with no breakdowns has the empty cell (the total).
+4. **Revisions.** A corrected or final figure is a new row with a higher `revision` and `supersedes_id`; nothing is overwritten.
+5. **Choosing the figure to show.** For each indicator, place, subject, period and cell, `figures` takes the observation from the highest-ranked steward or collection in that country's `priorities`, then the latest revision, then final before provisional. Other observations remain available ("other sources say…").
+6. **Totals.** A national figure is shown when published, or built from lower levels when `aggregation` allows (sum for counts, weighted mean for rates) and stored with `basis = aggregated`. Rates are never summed.
+7. **Boundary reforms.** Figures stay on the place they were published for. Comparing across a reform uses `geography.changes` and `history.occurrences` and is always flagged as re-mapped.
+8. **Comparing countries.** Indicators carry international codes (SDG, World Bank WDI) in `identity.identifiers`; places align by hierarchy level.
+9. **Missing and suppressed.** A figure can exist with no value and status `missing` or `suppressed`, so the UI can say why there is no number.
+
+### 29.5 Rules for queries
+
+- **Screens read `figures`, never raw `observations`.** Raw observations are for "other sources", revision history and evidence views.
+- Every `figures` read filters by `country_id` first (partition pruning), then indicator, place and period; the main index is (country, indicator, feature, period).
+- Metrics are computed when `figures` is refreshed and stored there; no read computes a ratio.
+- Breakdown toggles come from `dimensions` for the indicator, filtered to the schemes that actually have figures for the place.
+- Responses are cached in Redis by country, indicator, place, period, cell **and language**, and invalidated when that country's `figures` are refreshed.
+- One place-page read returns the headline figures for a place in one call (the place summary in the app contracts).
+
+### 29.6 Rules for the frontend
+
+- Show the value with the indicator's `decimals` and unit, formatted for the reader's locale (decimal and thousands separators from `reference.locales`).
+- Show `lower` and `upper` as an uncertainty band or "±" where present.
+- Always show `status` when it is not `final` (provisional, estimated, projected) and say why there is no number when it is `missing` or `suppressed`.
+- Mark aggregated and re-mapped figures as such.
+- Breakdown toggles, legends and chips come from term labels; age bands sort by their ranges.
+- Every displayed text is a `LocalizedText` and a fallback is marked (section 7.3).
+
+### 29.7 Multilingual support for statistics text
+
+Checked on 2026-11-25; every piece of statistics text has a multilingual home:
+
+| Text | Where it lives | Multilingual through |
+|---|---|---|
+| Indicator, metric and collection names | `identity.names` | names per language |
+| Short indicator definitions | `identity.names`, kind `definition` | names per language (the name kinds gain `definition`) |
+| Methodology and notes on an indicator | `media.articles` and `media.texts` for the indicator's identity | texts per language |
+| Dimension names (sex, age group) | `vocabulary.labels` on the scheme | labels per language |
+| Category names (female, 15–19, urban), plural and short forms | `vocabulary.labels` on the term | labels per language |
+| Unit names (person, kilometre) | `identity.names` (units are identity-backed) | names per language; `symbol` stays language-neutral |
+| Place names | `identity.names` | names per language |
+| Footnotes on a figure from its publication | the `source` link, in the publication's language | kept in the original language; a translation is a marked derivative |
+
+**Added logic, because one gap was found: enum values have no labels.** `status`, `basis`, `frequency` and `aggregation` are enums, and enums carry no text. Every enum value that a screen displays gets an interface key in `product.keys`, named `enum.<schema>.<column>.<value>` (for example `enum.statistics.status.provisional`), with its wording in `product.messages` per language. The keys are generated from the contracts, so a new enum value cannot appear without a key, and a missing translation shows up as a gap. This rule applies to every schema's displayed enums, not only statistics.
+
+**Composed text:** chart titles and period labels are composed by the frontend from these parts (indicator name + breakdown labels; "2019", "Q1 2024", "FY 2023/24" from the years, dates and `frequency`) using interface keys, never stored as fixed English strings.
 
 ## Pending discussion
 

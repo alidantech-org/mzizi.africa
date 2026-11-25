@@ -30,9 +30,9 @@ For each table, the discussion decides: keep, move (and where), rename (and to w
 - [ ] politics
 - [ ] civic
 - [ ] finance
-- [ ] statistics
+- [x] statistics: approved 2026-11-25 (FOUNDATION_REDESIGN section 29)
 - [x] event: approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
-- [ ] community
+- [x] community: approved 2026-11-25 (FOUNDATION_REDESIGN section 28)
 - [x] auth: approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
 - [x] history (new): approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
 - [x] accountability: removed 2026-11-25 (FOUNDATION_REDESIGN section 26)
@@ -296,15 +296,21 @@ Budgets, appropriations, funds, flows and debts.
 
 ## Schema `statistics` (4 tables today)
 
-Indicators and observations; fixed dimension columns become breakdowns.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `statistics.components`: keep, move, rename, merge or remove decided
-- [ ] `statistics.indicators`: keep, move, rename, merge or remove decided
-- [ ] `statistics.metrics`: keep, move, rename, merge or remove decided
-- [ ] `statistics.observations`: keep, move, rename, merge or remove decided
-- [ ] `statistics`: term columns, identities, country_id and partitioning decided
-- [ ] `statistics` target shape approved by the owner
-- [ ] `statistics` ERD drawn
+- [x] `statistics.indicators` (existing): kept, identity-backed; names and definitions move to identity and media; term columns; frequency and aggregation
+- [x] `statistics.observations` (existing): kept; years plus dates, status, basis, uncertainty, collection, revision, cell, subject; dimension columns move to breakdowns; partitioned by country
+- [x] `statistics.metrics` (existing): kept, identity-backed
+- [x] `statistics.components` (existing): kept
+- [x] `statistics.dimensions` (new): breakdowns an indicator allows
+- [x] `statistics.collections` (new): census, survey and compilation programmes
+- [x] `statistics.priorities` (new): per-country order of trust (KNBS, NBS, World Bank)
+- [x] `statistics.breakdowns` (new): categories cutting an observation
+- [x] `statistics.figures` (new): prepared table of values to show, partitioned by country
+- [x] Query and frontend rules documented
+- [x] Multilingual check done; enum display keys added in `product.keys`
+- [x] `statistics` changes approved by the owner
+- [x] `statistics` ERD written into the design doc
 
 ## Schema `event` (12 tables today)
 
@@ -327,26 +333,29 @@ Changes below were approved by the owner on 2026-11-25.
 
 ## Schema `community` (15 tables today)
 
-App users' activity: actors, posts, reactions, notifications.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `community.actors`: keep, move, rename, merge or remove decided
-- [ ] `community.cases`: keep, move, rename, merge or remove decided
-- [ ] `community.consents`: keep, move, rename, merge or remove decided
-- [ ] `community.deliveries`: keep, move, rename, merge or remove decided
-- [ ] `community.devices`: keep, move, rename, merge or remove decided
-- [ ] `community.notifications`: keep, move, rename, merge or remove decided
-- [ ] `community.places`: keep, move, rename, merge or remove decided
-- [ ] `community.posts`: keep, move, rename, merge or remove decided
-- [ ] `community.preferences`: keep, move, rename, merge or remove decided
-- [ ] `community.proofs`: keep, move, rename, merge or remove decided
-- [ ] `community.reactions`: keep, move, rename, merge or remove decided
-- [ ] `community.replies`: keep, move, rename, merge or remove decided
-- [ ] `community.subscriptions`: keep, move, rename, merge or remove decided
-- [ ] `community.tokens`: keep, move, rename, merge or remove decided
-- [ ] `community.views`: keep, move, rename, merge or remove decided
-- [ ] `community`: term columns, identities, country_id and partitioning decided
-- [ ] `community` target shape approved by the owner
-- [ ] `community` ERD drawn
+- [x] `community.actors` (existing): kept; visitor or member; handle, display name, avatar
+- [x] `community.devices` (existing): kept
+- [x] `community.tokens` (existing): kept; encrypted
+- [x] `community.consents` (existing): kept; consent wording from `product.keys`
+- [x] `community.preferences` (existing): kept
+- [x] `community.places` (existing): kept
+- [x] `community.reactions` (existing): kept; sign-in required; typed targets
+- [x] `community.views` (existing): kept; typed targets; partitioned by month
+- [x] `community.proofs` (existing): kept; typed signals
+- [x] `community.posts` (existing): kept and widened for all contributions; partitioned by country
+- [x] `community.cases` (existing): kept; checks moved out
+- [x] `community.subscriptions` (existing): kept; `identity_id`
+- [x] `community.notifications` (existing): kept; typed links; partitioned by month
+- [x] `community.deliveries` (existing): renamed `dispatches`
+- [x] `community.replies` (existing): kept; `respondent_id`, body with language
+- [x] `community.checks` (new): automated and human checks
+- [x] `community.blocks` (new): blocked accounts
+- [x] `community.attachments` (new): media on posts
+- [x] Username rules and email or phone OTP sign-up in `auth` (`logins` extended, `codes` new)
+- [x] `community` changes approved by the owner
+- [x] `community` ERD written into the design doc
 
 ## Schema `auth` (11 tables today)
 
