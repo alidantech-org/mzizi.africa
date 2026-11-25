@@ -1,23 +1,34 @@
-# Mzizi Dryv contracts
+# Mzizi Dryv: Backend-Only Contracts
 
-TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv compiles them to Runtime IR and the packs generate the NestJS API in `source/backend/api`, using the same structure and packs as the Alidantech backend. Only the project-owned use cases and service implementations are hand-written.
+TypeScript contracts (`@dryvcode/author`) for the canonical Mzizi model. Dryv compiles them to Runtime IR and the packs generate:
+
+- **NestJS product API** (`source/backend/api`) with TypeScript and Dart SDKs
+- **Python engine API** (`source/backend/engine`) with TypeScript SDK
+- **PostgreSQL schema** (`source/backend/database/sql`) from the single canonical store
+
+Frontend applications are built independently; Dryv generates only backend services and SDK clients.
 
 ## Layout
 
 - `../dryv.yaml`: the Dryv project file. It lives at the repository root because generation destinations may not leave the project root. It pins the engine (`a7b13a30`) and the packs repository (`7fdaa6f0d0d35f0522aabcd2699e48cabf31b46a`).
 - `contracts/schemas/`: the new design — one file per Postgres schema in `postgres/` (no per-database split), Mongo document contracts in `mongo/` (empty until staging contracts are authored), over the `_base.ts` and `_shared.ts` bases; shared by every app.
 - `contracts/schemas/theme.ts`: the shared `brand.Mzizi` theme (colour, radius, type and shadow tokens, fifteen semantic roles including glass surfaces, a dark mode). Colours may be written in any CSS notation (hex, rgb, hsl, hwb, lab, lch, oklab, oklch, `color()`, names): CSS keeps the notation, Flutter receives sRGB `argb` from Dryv. The palette is graded in OKLCH. Its palette comes from the landing page, `source/apps/www/src/app/globals.css`; the `danger` and dark-mode `bark` colours are proposals. Frontend application contracts select it with `.groups(brand)` and `.theme(themes.Mzizi)`; the official Dryv frontend packs render it.
-- `contracts/apps/api/insights.ts`: statistics, leaderboards, elections, parties, motions, leaders, civic delivery, tenders and global search (hand-written use cases; see `.docs/design/data/INSIGHTS.md`). `contracts/apps/engine/explore.ts`: the engine's explorer (files, database, terms, job detail), consumed by the developer portal.
-- `contracts/apps/api/locality.ts`: the screen-shaped place reads (position lookup, search, languages, sources, evidence). Its operations have no generated query; each is a hand-written use case (see `.docs/design/data/LOCALITY_READS.md`).
-- `contracts/apps/{pgsql,api,engine}/`: three applications, each `index.ts` plus one flat file per group (no sub-folders). `pgsql` lists every persisted group and exists only to generate the SQL snapshot; `api` holds the user-facing operations (NestJS); `engine` holds the operations the Python engine offers our API. The persisted groups select their store through storage facets.
-- `contracts/apps/{app,web,dev}/`: the three frontends (the admin contract is deferred and removed, 2026-11-18), one `index.ts` each, each selecting `brand.Mzizi` with one surface and one first destination. `app` (mobile Flutter) and `web` (public Next.js site) use the product API's geography operations; `dev` (Next.js developer portal) uses the engine's capabilities and reaches the engine only through a server-side layer. Each is a `dryv.project(...)` pairing the provider (`api` or `engine`) with the frontend, because a frontend can only consume operations inside one project, and its packs use `operations: consumed`. Next.js frontends serve root-level routes (`/`, `/<view>`) from scaffold-once pages that borrow managed reference pages and `lib/dryv/routes.ts`; Dryv assembles, people lay out and the Flutter app follows the same split: managed `navigation.dart` (root-level `AppRoutes` and the destination list) and reference screens, with the router, the bottom-navigation shell and the home screen scaffolded once. **Dryv generates setup and intent; source code implements:** the apps' headers, footers, sidebar, bottom bar, pages and language switch are hand-built, and Dryv regenerates only the managed parts around them. `app`, `web` and `dev` are wired into `dryv.yaml` and generated into `source/apps/{app,web,dev}`; `admin` is not generated yet. Generate with the provider selected too (Dryv binds a pack only to a pack enabled in the same run): `dryv generate --app api --app web --app dev --app app` with `--pack` for `sdk-ts`, `sdk-dart`, `web-app`, `web-theme`, `dev-app`, `dev-theme`, `app-app` and `app-theme`.
-- `packs/sdk-ts`, `packs/sdk-dart`: project copies of the official `next-api-bridge` and `flutter-api-bridge` packs, generated under the `api` application into `source/sdk/api-ts` and `source/sdk/api-dart`. They use absolute imports (`dependency.path.prefixed`) and group-scoped model names, and the Dart feature and client files write their own `package:` imports.
-- `packs/app-next`, `packs/app-flutter`: project copies of the official Next.js and Flutter app packs. They use absolute imports (`#/` through tsconfig `paths` in the apps; `#sdk/` inside the SDK through its package.json `imports`; `package:` in Dart), import the shared SDKs instead of generating clients, write their own scaffold files and have static code files named `.j2`.
-- `packs/theme-css`, `packs/theme-dart`: render the application's resolved theme (`brand.Mzizi`) as `app/theme.css` (custom properties, roles, light and dark modes, Tailwind v4 `@theme`) for the Next.js apps and `lib/core/theme/mzizi_theme.dart` (`MziziTokens` plus light and dark `ThemeData`) for the Flutter app. The official frontend packs do not read the theme.
+- `contracts/apps/api/`: the user-facing operations on the product API (NestJS); statistics, leaderboards, elections, parties, motions, leaders, civic delivery, tenders, global search (hand-written use cases), place reads and geography (see `.docs/design/data/`).
+- `contracts/apps/engine/`: the operations the Python engine offers to the API and SDK clients — research, staging, system, scripts, explore, runtime management.
+- `contracts/apps/pgsql/`: the database application; lists every persisted group and exists only to generate the SQL snapshot. The persisted groups select their store through storage facets.
+- `packs/sdk-ts`, `packs/sdk-engine-ts`: generate TypeScript SDK clients from the product API and engine API into `source/sdk/api-ts` and `source/sdk/engine-ts`.
 - `packs/type-files`, `packs/use-cases`: project packs that scaffold shared types and per-operation use cases for the NestJS API.
-- `packs/postgres-sql`: the store-scoped database pack; it writes one PostgreSQL schema snapshot to `source/backend/database/sql/schema.sql`. The former Rust packs (`rust-models`, `rust-catalog`) were moved to the Dryv repository examples (`sdk/_examples/packs/mzizi-rust-*`) on 2026-11-15. `database:assignments` audits compiled canonical placement without namespace lists in usage.
+- `packs/postgres-sql`: writes one PostgreSQL schema snapshot to `source/backend/database/sql/schema.sql`. `database:assignments` audits compiled canonical placement without namespace lists in usage.
+- `packs/python-rows`, `packs/python-mongo`, `packs/python-api`: generate Python row models, Mongo models, and FastAPI schemas for the engine.
 
-Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/types/<group>/...`, `src/app.module.ts` and `src/database/`. Do not edit managed files; files marked "Scaffolded by Dryv once" belong to the project.
+Generated output lands in:
+- NestJS API: `source/backend/api/src/modules/<group>/...`, `src/types/<group>/...`, `src/app.module.ts`, `src/database/`
+- Python engine: `source/backend/engine/src/mzizi_engine/api/schemas/<store>/...`, `routes/`, tests
+- TypeScript SDKs: `source/sdk/api-ts/src/...`, `source/sdk/engine-ts/src/...`
+- Database: `source/backend/database/sql/schema.sql`
+- System catalogs: `source/backend/api/src/system/catalog/`, `source/backend/engine/src/mzizi_engine/api/catalog/`
+
+Do not edit managed files; files marked "Scaffolded by Dryv once" belong to the project.
 
 ## Contract rules
 
@@ -28,19 +39,22 @@ Generated output lands in `source/backend/api/src/modules/<group>/...`, `src/typ
 - Strings with a maximum length become `varchar(max)`; leave out the maximum for unbounded text such as GeoJSON.
 - The entity pack names a relation property after its target, so two relations to one entity collide; keep the second reference a plain id.
 
-## Workflow
+## Workflow (backend-only)
 
 ```bash
 cd dryv
 bun install && bun run link          # link the local Dryv checkout (set DRYV_HOME if not in the default place)
 bun run check                        # Main model quality suite
 bun run database:check               # Operational database contracts: typecheck, Biome, doctor, compile
-# start the Dryv API (from the Dryv checkout): uv run --project source/engine/python/api dryv-api serve --port 8750 --template-server source/engine/python/api/dryv.server.yaml
-cd .. && bun $DRYV_HOME/source/apps/cli/bin/dryv.ts --api http://127.0.0.1:8750 generate
+# From repository root, generate all three backend apps:
+bun run dryv:api                     # Start the Dryv engine API (needs DRYV_HOME and local Dryv checkout)
+# In another shell:
+bun "$DRYV_HOME/source/apps/cli/bin/dryv.ts" --api "$DRYV_API" --yes --no-input generate --app pgsql --app api --app engine
+# Verify the generated API
 cd source/backend/api && bun run typecheck && bun run test
 ```
 
-`bun run test` in the API runs the generated specs. The PostgreSQL integration test runs when `TEST_DATABASE_URL` points at a scratch PostGIS database, for example `postgres://postgres:test@localhost:55432/mzizi`.
+Frontend applications are built independently; they consume the generated SDK clients from `source/sdk/{api-ts,engine-ts}`.
 
 ## Contract checks
 
@@ -193,3 +207,68 @@ bun "$DRYV_HOME/source/apps/cli/bin/dryv.ts" --api "$DRYV_API" --yes --no-input 
 ```
 
 The `official` pack source is a `file://` git source pinned to a local commit of the packs repository that declares TypeORM store support and null-safe invariants; switch it back to the GitHub repository once those commits are published. Scaffolded use cases are created once and then belong to the project.
+
+<!-- dryv:begin -->
+# Dryv in this project
+
+Written by `dryv init`. Refresh it with `dryv docs --write`; this file is replaced when you do.
+
+## Files
+
+| File | Purpose |
+| --- | --- |
+| `dryv.yaml` | Project contract: sources, packs, destinations, build behaviour |
+| `dryv/contracts/` | Authored software meaning (TypeScript or Python) |
+| `dryv/packs/` | Local packs, if any |
+| `dryv/ir/` | Compiled Runtime IR (build output) |
+
+## Daily loop
+
+```bash
+dryv validate
+dryv plan
+dryv generate --dry-run
+dryv generate
+dryv why <generated-path>
+```
+
+## Built-in guides
+
+- `dryv docs workflow`: The Dryv loop
+- `dryv docs dryv-yaml`: dryv.yaml
+- `dryv docs pack-yaml`: dryv.pack.yaml and pack development
+- `dryv docs authoring`: Authoring contracts
+- `dryv docs errors`: Errors and what to do
+- `dryv docs agents`: Working with Dryv as an agent
+
+1. **Author** software meaning (schemas, operations, events) in TypeScript or Python.
+2. **Configure** `dryv.yaml`: where the meaning lives, which packs run, where output goes.
+3. **Check** with `dryv validate`, then `dryv plan` (writes nothing).
+4. **Preview** with `dryv generate --dry-run`. Read the diff.
+5. **Generate** with `dryv generate`. Dryv asks before writing.
+6. **Understand** with `dryv status`, `dryv why <path>`, `dryv explain change`.
+7. **Undo** with `dryv undo` if the last apply was wrong.
+
+Rules of thumb:
+
+- Never edit generated files marked as managed. Change the authored meaning or the pack instead.
+- Files with `.sf` before the renderer extension are scaffolds: created once, then yours.
+- In CI use `dryv generate --check --json --no-input`. It exits 2 when output is stale.
+- If a command fails, the JSON `code` tells you why (`dryv docs errors`).
+
+
+## Project configuration
+
+[Open dryv.yaml](../dryv.yaml). Working folder: dryv. Explicit source and destination paths are relative to dryv.yaml; changing workspace.path does not relocate files.
+
+servers.api connects CLI and editor clients. Optional servers.templates entries support explicit doctor/conformance workflows; they do not configure the Engine's renderer connections. Project ignore patterns control client workspace collection. Reusable argv declarations live in the top-level commands list; actions reference their IDs with commands: [id]. Lockfile and default IR/staging/repository checkpoint/migration paths follow workspace.path; machine caches and local state remain outside the project.
+
+See [agent instructions](AGENTS.md), [skills](agents/README.md), and [official documentation](https://dryv.alidantech.org/docs).
+## Configured authoring sources
+
+| Name | Type | Project-relative path | Entrypoint |
+| --- | --- | --- | --- |
+| pgsql | typescript | dryv/contracts | apps/pgsql/index.ts |
+| api | typescript | dryv/contracts | apps/api/index.ts |
+| engine | typescript | dryv/contracts | apps/engine/index.ts |
+<!-- dryv:end -->

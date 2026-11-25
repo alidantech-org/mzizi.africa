@@ -1,5 +1,12 @@
 version: dryv/v1alpha1
 
+# Client setup lives here; explicit project paths below remain unchanged.
+workspace:
+  path: dryv
+servers:
+  api: http://127.0.0.1:8750
+ignore: []
+
 # Dryv project for the Mzizi API. The project root is the repository root so generated output can
 # land in source/backend/api (destinations may not leave the root). Contracts and project packs live
 # in dryv/. Pin: Dryv engine a7b13a30 (canonical applications and stores),
@@ -19,18 +26,6 @@ sources:
       type: typescript
       path: dryv/contracts
       entrypoint: apps/engine/index.ts
-    app:
-      type: typescript
-      path: dryv/contracts
-      entrypoint: apps/app/index.ts
-    web:
-      type: typescript
-      path: dryv/contracts
-      entrypoint: apps/web/index.ts
-    dev:
-      type: typescript
-      path: dryv/contracts
-      entrypoint: apps/dev/index.ts
   packs:
     # The local checkout of the official packs repository, pinned to the commit that declares TypeORM store
     # support; switch back to the GitHub repository once that commit is published.
@@ -39,54 +34,63 @@ sources:
       ref: a5693954038a7916a7436076efcb8f3173d05898
       root: packs
     project: { path: dryv/packs }
+commands:
+  - id: clean-imports
+    # prettier-ignore
+    run: [bun, x, biome, lint, --write, --unsafe, --only=correctness/noUnusedImports, $(files)]
+
+  - id: prettier-ts
+    # prettier-ignore
+    run: [bun, x, prettier, --config, source/backend/api/.prettierrc, --ignore-path, .prettier-none, --write, $(files)]
+
+  - id: format-sql
+    run: [bun, source/backend/database/src/cli.ts, format, $(files)]
+
+  - id: typecheck-ts
+    run: [bun, x, tsc, -p, ../../tsconfig.json]
+
+  - id: lint-python
+    run: [uv, run, ruff, check, --fix, $(files)]
+
+  - id: format-python
+    run: [uv, run, ruff, format, $(files)]
+
+  - id: typecheck-python
+    run: [uv, run, mypy, -p, mzizi_engine.api]
 
 actions:
   imports:
     stage: files
     extensions: [.ts, .tsx]
-    commands:
-      - run: [ bun, x, biome, lint, --write, --unsafe, --only=correctness/noUnusedImports ,$(files) ]
+    commands: [clean-imports]
   # Generated TypeScript is formatted with Prettier defaults, matching the editor.
   format-ts:
     stage: files
     extensions: [.ts, .tsx]
-    commands:
-      - run:
-          [bun, x, prettier, --config, source/backend/api/.prettierrc, --ignore-path, .prettier-none, --write, $(files)]
+    commands: [prettier-ts]
   # Generated SQL is formatted after generation (sql-formatter via the database CLI).
   format-sql:
     stage: files
     extensions: [.sql]
-    commands:
-      - run: [bun, source/backend/database/src/cli.ts, format, $(files)]
+    commands: [format-sql]
   typecheck:
     stage: final
     after: [install]
-    commands:
-      - run: [bun, x, tsc, -p, ../../tsconfig.json]
-  # Generated Dart is formatted with dart format (the default 80-column style Flutter projects use).
-  format-dart:
-    stage: files
-    extensions: [.dart]
-    commands:
-      - run: [dart, format, $(files)]
+    commands: [typecheck-ts]
   # Generated Python is formatted and import-sorted with the repository's ruff settings,
   # then type-checked with the repository's strict mypy settings.
   lint-py:
     stage: files
     extensions: [.py]
-    commands:
-      - run: [uv, run, ruff, check, --fix, $(files)]
+    commands: [lint-python]
   format-py:
     stage: files
     extensions: [.py]
     after: [lint-py]
-    commands:
-      - run: [uv, run, ruff, format, $(files)]
+    commands: [format-python]
   typecheck-py:
     stage: final
-    commands:
-      - run: [uv, run, mypy, -p, mzizi_engine.api]
+    commands: [typecheck-python]
 
 destinations:
   ir:
@@ -100,15 +104,6 @@ destinations:
     engine:
       path: dryv/.dryv/ir/dryv.engine.ir.yaml
       authoring: { $ref: "#/sources/authoring/engine" }
-    app:
-      path: dryv/.dryv/ir/dryv.app.ir.yaml
-      authoring: { $ref: "#/sources/authoring/app" }
-    web:
-      path: dryv/.dryv/ir/dryv.web.ir.yaml
-      authoring: { $ref: "#/sources/authoring/web" }
-    dev:
-      path: dryv/.dryv/ir/dryv.dev.ir.yaml
-      authoring: { $ref: "#/sources/authoring/dev" }
   # Injected NestJS modules: source/backend/api/src/modules/<group>/...
   modules:
     path: source/backend/api/src/modules
@@ -144,25 +139,36 @@ destinations:
     choose: { js.package_manager: bun }
     actions:
       - { $ref: "#/actions/format-ts" }
+  # Engine SDK: source/sdk/engine-ts/src
+  sdk-engine-ts:
+    path: source/sdk/engine-ts
+    imports: { path: source/sdk/engine-ts/src, prefix: "#sdk/" }
+    choose: { js.package_manager: bun }
+    actions:
+      - { $ref: "#/actions/imports" }
+      - { $ref: "#/actions/format-ts" }
   # FastAPI schemas and routes for the engine: source/backend/engine/src/mzizi_engine/api/...
   # Python schemas, one folder per origin: postgres (entities, enums), mongo (enums, models), api (engine contract models).
   engine-schemas-postgres:
     path: source/backend/engine/src/mzizi_engine/api/schemas/postgres
-    imports: { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
+    imports:
+      { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
     actions:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
       - { $ref: "#/actions/typecheck-py" }
   engine-schemas-mongo:
     path: source/backend/engine/src/mzizi_engine/api/schemas/mongo
-    imports: { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
+    imports:
+      { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
     actions:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
       - { $ref: "#/actions/typecheck-py" }
   engine-schemas-api:
     path: source/backend/engine/src/mzizi_engine/api/schemas/api
-    imports: { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
+    imports:
+      { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
     actions:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
@@ -175,31 +181,36 @@ destinations:
       - { $ref: "#/actions/format-py" }
   engine-tests-schemas:
     path: source/backend/engine/tests/api/schemas
-    imports: { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
+    imports:
+      { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
     actions:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
   engine-tests-schemas-api:
     path: source/backend/engine/tests/api/schemas/api
-    imports: { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
+    imports:
+      { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
     actions:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
   engine-tests-schemas-mongo:
     path: source/backend/engine/tests/api/schemas/mongo
-    imports: { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
+    imports:
+      { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
     actions:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
   engine-tests-routes:
     path: source/backend/engine/tests/api/routes
-    imports: { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
+    imports:
+      { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
     actions:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
   engine-routes:
     path: source/backend/engine/src/mzizi_engine/api/routes
-    imports: { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
+    imports:
+      { path: source/backend/engine/src/mzizi_engine, prefix: "mzizi_engine/" }
     actions:
       - { $ref: "#/actions/lint-py" }
       - { $ref: "#/actions/format-py" }
@@ -222,25 +233,14 @@ destinations:
     imports: { path: source/apps/app/lib, prefix: "package:mzizi_app/" }
     actions:
       - { $ref: "#/actions/format-dart" }
-  # Shared client SDKs generated from the product API contract; the frontends import these packages.
+  # Shared client SDKs generated from the product API contract.
   sdk-ts:
     path: source/sdk/api-ts
     imports: { path: source/sdk/api-ts/src, prefix: "#sdk/" }
     actions:
       - { $ref: "#/actions/imports" }
       - { $ref: "#/actions/format-ts" }
-  sdk-engine-ts:
-    path: source/sdk/engine-ts
-    imports: { path: source/sdk/engine-ts/src, prefix: "#sdk/" }
-    actions:
-      - { $ref: "#/actions/imports" }
-      - { $ref: "#/actions/format-ts" }
-  sdk-dart:
-    path: source/sdk/api-dart
-    imports: { path: source/sdk/api-dart/lib, prefix: "package:mzizi_api/" }
-    actions:
-      - { $ref: "#/actions/format-dart" }
-  # Generated system catalogs: one JSON document per application, read by the root pages and the web app.
+  # Generated system catalogs.
   catalog-api:
     path: source/backend/api/src/system/catalog
   catalog-engine:
@@ -277,9 +277,6 @@ packs:
     bind:
       property.enum.types: { $ref: "#/packs/types" }
       property.types: { $ref: "#/packs/types" }
-
-
-
 
   # Typed use cases over the persistence runtime (vendored nestjs-persistence pack): one managed use case per HTTP
   # operation with a declared query; operations without one re-export the project's src/implementations class.
@@ -325,7 +322,6 @@ packs:
       tests-schemas: { $ref: "#/destinations/engine-tests-schemas-api" }
       tests-routes: { $ref: "#/destinations/engine-tests-routes" }
 
-
   table-schemas:
     source: { $ref: "#/sources/packs/project", path: table-schemas }
     store: { $ref: "#/stores/main" }
@@ -338,7 +334,6 @@ packs:
   catalog-engine:
     source: { $ref: "#/sources/packs/project", path: system-catalog }
     destination: { $ref: "#/destinations/catalog-engine" }
-
 
   postgres-sql:
     source: { $ref: "#/sources/packs/project", path: postgres-sql }
@@ -357,60 +352,6 @@ packs:
     destination: { $ref: "#/destinations/sdk-engine-ts" }
     inputs:
       package_name: "@mzizi/engine-client"
-
-  sdk-dart:
-    source: { $ref: "#/sources/packs/project", path: sdk-dart }
-    destination: { $ref: "#/destinations/sdk-dart" }
-    inputs:
-      package_name: mzizi_api
-
-  web-theme:
-    source: { $ref: "#/sources/packs/project", path: theme-css }
-    destination: { $ref: "#/destinations/web-app" }
-    operations: consumed
-
-  web-app:
-    source: { $ref: "#/sources/packs/project", path: app-next }
-    destination: { $ref: "#/destinations/web-app" }
-    operations: consumed
-    inputs:
-      port: "3300"
-      sdk_path: ../../sdk/api-ts
-      workspace_root: ../..
-    bind:
-      operation.client: { $ref: "#/packs/sdk-ts" }
-
-  dev-theme:
-    source: { $ref: "#/sources/packs/project", path: theme-css }
-    destination: { $ref: "#/destinations/dev-app" }
-    operations: consumed
-
-  dev-app:
-    source: { $ref: "#/sources/packs/project", path: app-next }
-    destination: { $ref: "#/destinations/dev-app" }
-    operations: consumed
-    inputs:
-      port: "3400"
-      sdk_path: ../../sdk/api-ts
-      workspace_root: ../..
-    bind:
-      operation.client: { $ref: "#/packs/sdk-ts" }
-
-  app-theme:
-    source: { $ref: "#/sources/packs/project", path: theme-dart }
-    destination: { $ref: "#/destinations/app-app" }
-    operations: consumed
-
-  app-app:
-    source: { $ref: "#/sources/packs/project", path: app-flutter }
-    destination: { $ref: "#/destinations/app-app" }
-    operations: consumed
-    inputs:
-      api_path: ../../sdk/api-dart
-      ui_path: ../../sdk/ui/flutter
-    bind:
-      operation.client: { $ref: "#/packs/sdk-dart" }
-      schema.types: { $ref: "#/packs/sdk-dart" }
 
 applications:
   pgsql:
@@ -438,20 +379,6 @@ applications:
       - { $ref: "#/packs/server" }
       - { $ref: "#/packs/catalog-api" }
       - { $ref: "#/packs/sdk-ts" }
-      - { $ref: "#/packs/sdk-dart" }
-  app:
-    authoring: { $ref: "#/sources/authoring/app" }
-    application: { $ref: "#/applications/mzizi-app" }
-    packs:
-      - { $ref: "#/packs/app-app" }
-      - { $ref: "#/packs/app-theme" }
-  # Web UI is handwritten. Generate its shared SDK through the api activation only.
-  dev:
-    authoring: { $ref: "#/sources/authoring/dev" }
-    application: { $ref: "#/applications/mzizi-dev" }
-    packs:
-      - { $ref: "#/packs/dev-app" }
-      - { $ref: "#/packs/dev-theme" }
 
 stores:
   main:

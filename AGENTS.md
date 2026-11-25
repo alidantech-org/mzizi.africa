@@ -113,3 +113,9 @@ This project manages its work with Task (`taskcode`; `task` and `tc` are aliases
 - Run `task validate` after editing anything inside `.docs/`. Every Markdown file there needs valid frontmatter.
 - Record meaningful decisions in `.docs/decisions/` and agent handoffs in `.docs/handoffs/`.
 <!-- END TASK MANAGED TASK-TOOL -->
+
+<!-- dryv:begin -->
+## Dryv
+
+Read [the project Dryv guide](dryv/README.md), [agent instructions](dryv/AGENTS.md), and [the skills index](dryv/agents/README.md) before changing Dryv inputs or generated output. Configuration lives in dryv.yaml. Official documentation: https://dryv.alidantech.org/docs.
+<!-- dryv:end -->
