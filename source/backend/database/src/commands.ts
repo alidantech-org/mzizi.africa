@@ -1,6 +1,6 @@
 /** Command implementations. Each opens its own short-lived administrative connection. */
 import { SQL } from "bun";
-import { APPLICATION_ROLES, adminUrl, paths, TARGET_NAME } from "./config.ts";
+import { APPLICATION_ROLES, adminUrl, databaseName, maintenanceUrl, paths, TARGET_NAME } from "./config.ts";
 import { applied, applyRelease, ensure, reconcile } from "./ledger.ts";
 import { partitions as addPartitions, REFRESH_TARGETS, type RefreshTarget, refresh as refreshPrepared } from "./maintenance.ts";
 import { assemble as assembleSnapshot, loadReleases } from "./releases.ts";
@@ -135,4 +135,26 @@ export async function refresh(names: readonly string[]): Promise<string[]> {
 /** Adds the missing monthly partitions of month-partitioned tables, through `YYYY-MM` or a year ahead. */
 export async function partitions(through?: string): Promise<string[]> {
   return await withAdmin((sql) => addPartitions(sql, through));
+}
+
+/** The template every Mzizi database is created from (PostGIS and the extensions the baseline needs). */
+const TEMPLATE = "template_postgis";
+
+/**
+ * Drops and recreates the one database (`MZIZI_DB_NAME`), applies the baseline, and provisions the roles. This is the
+ * only way a database is reset: it never targets another name, and it requires `--yes` because all data is lost.
+ * Seed it afterwards (`.dev/seed`) and run `refresh`.
+ */
+export async function reset(confirmed: boolean): Promise<string[]> {
+  const name = databaseName();
+  if (!confirmed) throw new Error(`reset drops and recreates database ${name} and deletes all of its data; run it again with --yes`);
+  const maintenance = new SQL(maintenanceUrl());
+  try {
+    await maintenance`SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = ${name} AND pid <> pg_backend_pid()`;
+    await maintenance.unsafe(`DROP DATABASE IF EXISTS "${name}"`);
+    await maintenance.unsafe(`CREATE DATABASE "${name}" TEMPLATE ${TEMPLATE}`);
+  } finally {
+    await maintenance.close();
+  }
+  return [`recreated ${name} from ${TEMPLATE}`, await migrate(), await roles()];
 }

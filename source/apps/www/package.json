@@ -4,9 +4,9 @@
   "private": true,
   "packageManager": "bun@1.4.2",
   "scripts": {
-    "dev": "bun --bun next dev -p 3200",
-    "build": "bun --bun next build",
-    "start": "bun --bun next start -p 3200",
+    "dev": "bun --bun --env-file=../../../.env next dev -p 3200",
+    "build": "bun --bun --env-file=../../../.env next build",
+    "start": "bun --bun --env-file=../../../.env next start -p 3200",
     "typecheck": "bunx --bun tsc --noEmit"
   },
   "dependencies": {

@@ -9,7 +9,7 @@
  * The command table below is the source of `bun run help`; see scripts/README.md for the full guide.
  */
 import { group, rootStep, stages, step } from "./lib/exec.ts";
-import { root } from "./lib/paths.ts";
+import { localEnv, root } from "./lib/paths.ts";
 import { select } from "./lib/projects.ts";
 import { checkBoundaries } from "./tasks/boundaries.ts";
 import { checkFrontend } from "./tasks/frontend.ts";
@@ -48,6 +48,7 @@ const postgres = (): string => process.env.MZIZI_PG_CONTAINER ?? "postgis";
 const databaseCli = async ({ rest }: Context): Promise<boolean> => {
   const result = await Bun.spawn(["bun", "src/cli.ts", ...rest], {
     cwd: `${root}/source/backend/database`,
+    env: localEnv(),
     stdout: "inherit",
     stderr: "inherit",
     stdin: "inherit",
@@ -212,14 +213,10 @@ export const commands: Record<string, Command> = {
     run: () => group("infra:down", [rootStep("docker compose", ["docker", "compose", "-f", "compose.local.yaml", "down"])]),
   },
   db: {
-    summary: "database CLI: assemble | status | plan | migrate | verify | roles",
+    summary: "database CLI: assemble | status | plan | migrate | verify | roles | refresh | partitions | reset --yes",
     run: databaseCli,
   },
   "db:ts": { summary: "alias for the database CLI", run: databaseCli },
-  "dev:stack": {
-    summary: "run one dev service against the dev database: dev:stack api | engine | web | portal | flutter | smoke | stop",
-    run: ({ rest }) => group("dev:stack", [rootStep("stack", ["bash", "scripts/dev/stack.sh", ...rest])]),
-  },
   manifest: passthrough(
     "mzizi-manifest",
     "manifests: manifest refs | data | columns-report | validate-structure <dir> (root: MZIZI_SEED_ROOT or .dev/seed)",

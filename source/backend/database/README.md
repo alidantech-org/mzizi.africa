@@ -23,11 +23,12 @@ Run from the repository root (`bun run db <command>`) or from this folder.
 | `status` | yes | Shows applied and pending releases |
 | `migrate` | yes | Applies pending releases under an advisory lock, each in one transaction with its ledger row |
 | `verify` | yes | Checks applied releases against recorded checksums and the database identity |
+| `reset --yes` | yes | Drops and recreates `mzizix`, applies the baseline and provisions roles. All data is lost; the only way to restart |
 | `roles` | yes | Provisions the `mzizi_engine` and `mzizi_api` roles and grants (idempotent) |
 | `refresh [outlines\|pieces\|figures…]` | yes | Rebuilds prepared tables: map outlines per zoom band (0–3, coordinates rounded to 5 decimals), "where am I?" pieces (`ST_Subdivide`, 256 vertices) and `statistics.figures` (chosen by `statistics.priorities`, then revision, then final). Run after every data load |
 | `partitions [--through YYYY-MM]` | yes | Adds the missing monthly partitions of every month-partitioned table (default: 12 months ahead). The baseline creates January 2024 to December 2027 plus a DEFAULT partition |
 
-Environment: `MZIZI_DB_ADMIN_URL` (administrative connection, used only here), `MZIZI_DB_ENGINE_PASSWORD` and `MZIZI_DB_API_PASSWORD` (for `roles`), optional `MZIZI_DB_SNAPSHOT` and `MZIZI_DB_MIGRATIONS_DIR`. Application roles can read and write every domain schema, cannot run DDL, and cannot read the ledger tables in `public`.
+Environment (all from the root `.env`): `MZIZI_DB_NAME` (the only allowed database), `MZIZI_DB_ADMIN_URL` (administrative connection, used only here), `MZIZI_DB_ENGINE_PASSWORD` and `MZIZI_DB_API_PASSWORD` (for `roles`), optional `MZIZI_DB_SNAPSHOT` and `MZIZI_DB_MIGRATIONS_DIR`. Application roles can read and write every domain schema, cannot run DDL, and cannot read the ledger tables in `public`.
 
 ## Workflow
 
@@ -39,9 +40,9 @@ bun run db roles
 bun run db refresh               # after loading data
 ```
 
-## The rebuild database
+## The database: `mzizix`
 
-The rebuild run (25 November 2026) created a new, separate database **`mzizi_rebuild`** on the local server (`postgres://postgres@127.0.0.1:5432/mzizi_rebuild`, template `template_postgis`) from the new baseline. The application roles are the usual `mzizi_engine` and `mzizi_api` (passwords from `.env`); point `DATABASE_URL`, `DATABASE_WRITE_URL` and `MZIZI_DB_ADMIN_URL` at `mzizi_rebuild` to use it. Earlier databases (`mzizi`, `mzizix`, `mzizi_ui`, `mzizi_ux`) belong to the old design and are untouched. It is seeded from the git-ignored `.dev/seed/rebuild/` (`export.py` builds the CSV inputs, `load.py` loads them), then `bun run db refresh`.
+The single local database is **`mzizix`** (`MZIZI_DB_NAME` in the root `.env`; template `template_postgis`). Every command in this CLI refuses any other database name. Start over with `bun run db reset --yes`, then load the git-ignored seed (`uv run python .dev/seed/rebuild/load.py`) and run `bun run db refresh`. The application roles are `mzizi_engine` and `mzizi_api` (passwords from `.env`). Rules: [the one local database](../../../.docs/rules/database.md).
 
 Query plans recorded on it (`EXPLAIN (ANALYZE, BUFFERS)`, 25 November 2026): figures for a place 0.10 ms and one indicator across places 0.05 ms (both one hash partition of `statistics.figures`, index scans); names of an identity 0.1 ms (index scan per kind partition; reads that know the kind prune to one); children of a place 0.11 ms; offices of a place 0.07 ms; outline by band 0.04 ms; point lookup in `geography.pieces` 0.17 ms (GiST); place by code 0.04 ms.
 

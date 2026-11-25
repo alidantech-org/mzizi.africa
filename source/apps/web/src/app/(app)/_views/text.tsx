@@ -1,12 +1,15 @@
 /** One displayed text from the API (`LocalizedText`): its language and direction are set, and a fallback is marked. */
+import { Info } from "lucide-react";
 import type { SharedLocalizedText } from "@mzizi/api-client";
 
-export function Text({ value, fallbackNote = "" }: { value: SharedLocalizedText | null | undefined; fallbackNote?: string }) {
+export function Text({ value, showFallbackIcon = false }: { value: SharedLocalizedText | null | undefined; showFallbackIcon?: boolean }) {
   if (!value) return null;
   return (
-    <span lang={value.language} dir={value.direction}>
+    <span lang={value.language} dir={value.direction} className="inline-flex items-center gap-1">
       {value.text}
-      {value.isFallback && fallbackNote && <span className="ml-1 font-mono text-[10px] uppercase tracking-widest text-muted">{fallbackNote}</span>}
+      {value.isFallback && showFallbackIcon && (
+        <Info className="h-3 w-3 text-muted" aria-label="Shown in another language (translated from requested language)" />
+      )}
     </span>
   );
 }

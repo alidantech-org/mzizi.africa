@@ -6,7 +6,7 @@
   "packageManager": "bun@1.4.2",
   "description": "Mzizi database: generated SQL, immutable migration releases and the Bun administration CLI for the single PostgreSQL database.",
   "scripts": {
-    "db": "bun src/cli.ts",
+    "db": "bun --env-file=../../../.env src/cli.ts",
     "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
     "test": "bun test src"
   },

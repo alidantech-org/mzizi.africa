@@ -20,11 +20,38 @@ export function paths(env: NodeJS.ProcessEnv = process.env): Paths {
   };
 }
 
+/** The database name inside a PostgreSQL connection URL. */
+export function databaseOf(url: string): string {
+  return decodeURIComponent(new URL(url).pathname.replace(/^\//, ""));
+}
+
+/**
+ * The one database this checkout may use: `MZIZI_DB_NAME` from the root `.env` (`mzizix` locally). Every command
+ * refuses an administrative URL that names any other database, so no scratch, test or "just for now" database can
+ * be created, migrated or reset by accident.
+ */
+export function databaseName(env: NodeJS.ProcessEnv = process.env): string {
+  const name = env.MZIZI_DB_NAME;
+  if (!name) throw new Error("MZIZI_DB_NAME is required (set it in the root .env)");
+  return name;
+}
+
 /** Administrative connection (DDL, ledger). Read only by the CLI, never by the engine or the API. */
 export function adminUrl(env: NodeJS.ProcessEnv = process.env): string {
   const url = env.MZIZI_DB_ADMIN_URL;
   if (!url) throw new Error("MZIZI_DB_ADMIN_URL is required for this command");
+  const actual = databaseOf(url);
+  if (actual !== databaseName(env)) {
+    throw new Error(`refusing to use database ${JSON.stringify(actual)}: this checkout uses only ${JSON.stringify(databaseName(env))} (MZIZI_DB_NAME)`);
+  }
   return url;
+}
+
+/** The same server's maintenance database, used only to drop and create the one database in `reset`. */
+export function maintenanceUrl(env: NodeJS.ProcessEnv = process.env): string {
+  const url = new URL(adminUrl(env));
+  url.pathname = "/postgres";
+  return url.toString();
 }
 
 /** Roles provisioned for application access, with the environment variable holding each password. */

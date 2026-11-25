@@ -9,6 +9,8 @@ bun run check        # format check, lint, typecheck, structure and tests
 bun run dev          # API, engine, dashboard and public site together
 ```
 
+Every command and service reads the one root `.env`; the only database is `mzizix`.
+
 Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS and other local services), `flutter` (mobile app), `task` (work tracking), a Dryv checkout at `DRYV_HOME` (generation). TypeScript services run with Bun; no Node.js runtime is required. `bun run doctor` reports what is present.
 
 ## Commands
@@ -42,12 +44,11 @@ Requirements: `bun` and `uv`. Optional: `docker` (local PostGIS and other local 
 | `bun run schemas:forget-cache`            | deletes the YAML extension's cached copies of the published schemas; then reload the editor window |
 | `bun run db:up` / `db:down`               | starts or stops the local PostGIS container (`MZIZI_PG_CONTAINER`, default `postgis`)                                                            |
 | `bun run db generate` / `bun run db plan` | regenerates the Dryv persistence catalog and reports table-name coverage against current SQL migrations                                          |
+| `bun run db reset --yes` | drops and recreates the one database (`MZIZI_DB_NAME`, `mzizix`), applies the baseline and roles; then load the seed (`.dev/seed/rebuild/load.py`) and `bun run db refresh`. See `.docs/rules/database.md` |
 | `bun run db status`                       | TypeScript owner: `status`, `migrate`, `verify`, local role provisioning, `seed`, guarded reset, admin bootstrap and pipeline release operations |
 | `bun run infra:up` / `infra:down`         | invokes Docker Compose using `compose.local.yaml`; the file is absent in the current checkout                          |
 | `bun run seed -- check`                   | `mzizi-manifest`: `check`, `lock`, `report`, `validate-structure <dir>`                                                                          |
 | `bun run engine -- check`                 | `mzizi-engine`: `serve`, `capabilities`, `check`                                                                                                 |
-| `bun run dev:data`                        | creates and fills the dev database `mzizi_ux` (migrations, roles, invented dev seed and geoBoundaries outlines from `.dev/`, engine seed loader); safe to repeat |
-| `bun run dev:stack -- api\|engine\|web\|portal\|flutter\|smoke\|stop` | runs one dev service in the background against `mzizi_ux` (API :8700, engine :8800, site :3300, portal :3400, Flutter web :8090); logs in `.dev/logs/`; `smoke` checks the whole running stack |
 | `bun run docs:validate`                   | `task validate` for the `.docs` workspace                                                                                                        |
 
 Arguments after `--` go to the command. `bun scripts/mz.ts <command> [args]` is the same thing without the `--`.

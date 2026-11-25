@@ -6,8 +6,8 @@
   "packageManager": "bun@1.4.2",
   "description": "Mzizi product API (NestJS): serves canonical knowledge, read-mostly. Generated from the Dryv contracts in ../../../dryv.",
   "scripts": {
-    "start": "bun src/main.ts",
-    "dev": "bun --watch src/main.ts",
+    "start": "bun --env-file=../../../.env src/main.ts",
+    "dev": "bun --env-file=../../../.env --watch src/main.ts",
     "typecheck": "bunx --bun tsc --noEmit -p tsconfig.json",
     "test": "vitest run"
   },

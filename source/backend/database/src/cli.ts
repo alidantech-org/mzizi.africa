@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /** `bun run db <command>`: administration of the single Mzizi PostgreSQL database. */
-import { assemble, migrate, partitions, plan, refresh, roles, status, verify } from "./commands.ts";
+import { assemble, migrate, partitions, plan, refresh, reset, roles, status, verify } from "./commands.ts";
 import { paths } from "./config.ts";
 import { formatFile } from "./format.ts";
 
@@ -13,11 +13,13 @@ commands:
   plan      list pending releases and verify checksums without applying anything
   migrate   apply pending releases under an advisory lock
   verify    check applied releases against recorded checksums and the database identity
+  reset     drop and recreate the one database, apply the baseline and roles: reset --yes (all data is lost)
   roles     provision the engine and API roles and their grants (idempotent)
   refresh   rebuild prepared tables: refresh [outlines|pieces|figures...] (default: all)
   partitions  add missing monthly partitions: partitions [--through YYYY-MM] (default: 12 months ahead)
 
 environment:
+  MZIZI_DB_NAME              the only database any command may touch (root .env: mzizix)
   MZIZI_DB_ADMIN_URL         administrative connection (status, plan, migrate, verify, roles)
   MZIZI_DB_ENGINE_PASSWORD   password for the mzizi_engine role (roles)
   MZIZI_DB_API_PASSWORD      password for the mzizi_api role (roles)
@@ -56,6 +58,9 @@ async function main(argv: string[]): Promise<number> {
       return 0;
     case "verify":
       print(await verify());
+      return 0;
+    case "reset":
+      print(await reset(argv.includes("--yes")));
       return 0;
     case "roles":
       print(await roles());

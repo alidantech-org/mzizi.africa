@@ -24,7 +24,6 @@ export default async function PlaceHome({ address, language }: { address: PlaceA
         Check the address, or choose a place from the list.
       </PageHeader>
     );
-  const shown = " (shown in another language)";
   const eyebrow = data.breadcrumb.length ? data.breadcrumb.map((b) => b.name.text).join(" › ") : "Country";
   return (
     <div className="grid gap-6">
@@ -53,7 +52,7 @@ export default async function PlaceHome({ address, language }: { address: PlaceA
               {data.children.map((c) => (
                 <li key={c.code}>
                   <Link href={hrefOf(c.code)} className="hover:underline">
-                    <Text value={c.name} fallbackNote={shown} />
+                    <Text value={c.name} showFallbackIcon={c.name.isFallback} />
                   </Link>
                 </li>
               ))}

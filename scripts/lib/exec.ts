@@ -2,7 +2,7 @@
  * Process execution for the runner: a `Step` is one command in one directory; steps run in bounded
  * parallel groups and every group prints which steps passed and which failed.
  */
-import { label, root } from "./paths.ts";
+import { label, localEnv, root } from "./paths.ts";
 
 /** One command to run. `cwd` is absolute; `env` is merged over the current environment. */
 export type Step = {
@@ -49,7 +49,7 @@ export async function run(item: Step): Promise<Result> {
   try {
     const child = Bun.spawn([...item.args], {
       cwd: item.cwd,
-      env: { ...process.env, ...item.env },
+      env: { ...localEnv(), ...item.env },
       stdin: "inherit",
       stdout: "inherit",
       stderr: "inherit",

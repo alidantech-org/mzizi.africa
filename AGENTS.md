@@ -95,6 +95,10 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 - Run `task validate` after editing `.docs/`. Use `bun run check` for the root quality suite and report any pre-existing failure accurately.
 - Add or change a project in `scripts/lib/projects.ts` when it must participate in root commands.
 
+## The one database
+
+There is exactly one local database, `mzizix` (`MZIZI_DB_NAME` in the root `.env`). Never create, migrate, seed or drop any other database, and never create extra env files: every app, the engine and the database CLI read the root `.env`. When the owner asks to restart or reset the database, run `bun run db reset --yes`, then load the seed and `bun run db refresh`. `bun dev` at the root runs the whole stack on it. Read `.docs/rules/database.md`.
+
 ## Seed inputs
 
 Seed data and seed tooling live only in the git-ignored `.dev/seed/` and are never committed ([decision](.docs/decisions/DEC-SEED-OUTSIDE-GIT-20261125.md)). Code that reads column dictionaries, term lists or engine data takes its root from `MZIZI_SEED_ROOT` (default `.dev/seed`); nothing reads an in-repository seed. **Seed files no longer need owner approval.** Do not delete existing S3 artifacts as part of local database work.
