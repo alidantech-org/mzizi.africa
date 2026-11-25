@@ -4,13 +4,13 @@
  * Redis caching (keys include store, operation, inputs and principal; writes bump the operation generation after commit).
  * No migrations or schema synchronization run here: the database CLI owns the schema.
  */
-import { Global, Injectable, Module, type OnApplicationShutdown } from "@nestjs/common";
+import { Global, Module, type OnApplicationShutdown } from "@nestjs/common";
 import { RedisClient } from "bun";
 import { DataSource } from "typeorm";
 import { PersistencePolicyResolver, PersistenceRuntime, StoreConnections } from "#/database/persistence/persistence.runtime";
-import type { TrustedContext } from "#/database/persistence/persistence.types";
 import { RedisCache, type RedisCommands } from "#/database/persistence/redis-cache";
 import { TypeOrmConnection } from "#/database/persistence/typeorm-connection";
+import { AuthPolicyResolver } from "#/database/auth-policy.resolver";
 
 /** The canonical store name the contracts declare (`dryv.yaml` stores.main). */
 const MAIN_STORE = "main";
@@ -23,14 +23,6 @@ function cachePrefix(): string {
   const env = process.env.NODE_ENV || "dev";
   const store = MAIN_STORE;
   return `mzizi:api:${env}:${store}`;
-}
-
-/** No sign-in is wired yet: requests carry no principal, so operations that require a policy fail closed. */
-@Injectable()
-export class AnonymousPolicyResolver extends PersistencePolicyResolver {
-  async resolve(_operation: string): Promise<TrustedContext> {
-    return { principal: null, policies: new Map() };
-  }
 }
 
 function redisCommands(client: RedisClient): RedisCommands {
@@ -63,7 +55,7 @@ function redisCommands(client: RedisClient): RedisCommands {
         return new PersistenceRuntime(stores, cache);
       },
     },
-    { provide: PersistencePolicyResolver, useClass: AnonymousPolicyResolver },
+    { provide: PersistencePolicyResolver, useClass: AuthPolicyResolver },
   ],
   exports: [DataSource, PersistenceRuntime, PersistencePolicyResolver],
 })
