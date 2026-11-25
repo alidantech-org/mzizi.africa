@@ -183,8 +183,8 @@ function validate(field: Field, value: Json | undefined): void {
   if (field.array) {
     if (!Array.isArray(value)) return invalid(`Expected array ${field.name}`);
     if (
-      (field.min_items !== null && value.length < field.min_items) ||
-      (field.max_items !== null && value.length > field.max_items)
+      (field.min_items != null && value.length < field.min_items) ||
+      (field.max_items != null && value.length > field.max_items)
     )
       invalid(`Array bounds ${field.name}`);
     for (const item of value) validate({ ...field, array: false }, item);
@@ -199,11 +199,11 @@ function validate(field: Field, value: Json | undefined): void {
   if (["string", "uuid", "date", "instant"].includes(field.scalar)) {
     if (typeof value !== "string") return invalid(`Expected string ${field.name}`);
     if (
-      (field.min_length !== null && [...value].length < field.min_length) ||
-      (field.max_length !== null && [...value].length > field.max_length)
+      (field.min_length != null && [...value].length < field.min_length) ||
+      (field.max_length != null && [...value].length > field.max_length)
     )
       invalid(`String bounds ${field.name}`);
-    if (field.patterns.some((pattern) => !new RegExp(pattern).test(value)))
+    if ((field.patterns ?? []).some((pattern) => !new RegExp(pattern).test(value)))
       invalid(`Pattern ${field.name}`);
     if (
       field.scalar === "uuid" &&
@@ -225,13 +225,13 @@ function validate(field: Field, value: Json | undefined): void {
   }
   if (
     typeof value === "number" &&
-    ((field.minimum !== null && value < field.minimum) ||
-      (field.maximum !== null && value > field.maximum) ||
-      (field.multiple_of !== null &&
+    ((field.minimum != null && value < field.minimum) ||
+      (field.maximum != null && value > field.maximum) ||
+      (field.multiple_of != null &&
         Math.abs(value / field.multiple_of - Math.round(value / field.multiple_of)) > 1e-9))
   )
     invalid(`Number bounds ${field.name}`);
-  if (field.values.length && !field.values.some((item) => equal(item, value)))
+  if ((field.values ?? []).length && !(field.values ?? []).some((item) => equal(item, value)))
     invalid(`Enum ${field.name}`);
 }
 class Sql {
