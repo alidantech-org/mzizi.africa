@@ -6,7 +6,15 @@
   "description": "Mzizi Africa Bun monorepo: unified workspace for Dryv contracts, backend API, and web apps. All commands routed through scripts/mz.ts.",
   "workspaces": [
     "dryv",
-    "source"
+    "source/sdk/copy",
+    "source/sdk/api-ts",
+    "source/sdk/engine-ts",
+    "source/apps/web",
+    "source/apps/dev",
+    "source/sdk/ui/web",
+    "source/backend/api",
+    "source/backend/database",
+    "source/apps/www"
   ],
   "scripts": {
     "mz": "bun scripts/mz.ts",
