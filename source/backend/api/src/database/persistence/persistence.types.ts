@@ -26,18 +26,18 @@ export interface Field {
   optional: boolean;
   nullable: boolean;
   array: boolean;
-  geometry: { shape: string; srid: number; dimensions: string | null } | null;
-  schema_id: string | null;
-  default: Json;
-  min_items: number | null;
-  max_items: number | null;
-  min_length: number | null;
-  max_length: number | null;
-  minimum: number | null;
-  maximum: number | null;
-  multiple_of: number | null;
-  patterns: string[];
-  values: Json[];
+  geometry?: { shape: string; srid: number; dimensions: string | null } | null;
+  schema_id?: string | null;
+  default?: Json;
+  min_items?: number | null;
+  max_items?: number | null;
+  min_length?: number | null;
+  max_length?: number | null;
+  minimum?: number | null;
+  maximum?: number | null;
+  multiple_of?: number | null;
+  patterns?: string[];
+  values?: Json[];
 }
 export interface Schema {
   id: string;
