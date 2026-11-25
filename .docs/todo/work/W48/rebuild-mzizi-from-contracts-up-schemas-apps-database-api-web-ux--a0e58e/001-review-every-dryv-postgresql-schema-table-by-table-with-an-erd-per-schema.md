@@ -1,5 +1,5 @@
 ---
-{id: TSK-D0EC3D8B6D47,name: "Review every Dryv PostgreSQL schema table by table, with an ERD per schema",type: task,status: planned,priority: high,created_at: 2026-11-24T19:52:48.881Z,updated_at: 2026-11-24T19:52:48.881Z,order: 1024}
+{id: TSK-D0EC3D8B6D47,name: "Review every Dryv PostgreSQL schema table by table, with an ERD per schema",type: task,status: planned,priority: high,created_at: 2026-11-24T19:52:48.881Z,updated_at: 2026-11-25T00:21:01.183Z,order: 1024,depends_on: [TSK-C61A06DEFCB9]}
 ---
 
 # Review every Dryv PostgreSQL schema table by table, with an ERD per schema

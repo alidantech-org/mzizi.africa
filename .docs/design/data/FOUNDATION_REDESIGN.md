@@ -42,7 +42,7 @@ How languages and vocabulary depend on each other: languages are classified by t
 
 ### 3.1 The rule
 
-Everything gets one language-neutral database identity first, and language-specific text is added after. An identity is a `code` (lowercase, dotted, as in [code rules](../../rules/code-columns.md)) plus a kind. It never carries display text. Text lives in `identity.names` (for identities) or `vocabulary.labels` (for terms).
+Everything gets one language-neutral database identity first (tables keep their own `code` as well; see [section 21](#21-approved-shape-reference-and-identity)), and language-specific text is added after. An identity is a `code` (lowercase, dotted, as in [code rules](../../rules/code-columns.md)) plus a kind. It never carries display text. Text lives in `identity.names` (for identities) or `vocabulary.labels` (for terms).
 
 ### 3.2 `identity.identities`
 
@@ -52,7 +52,7 @@ Identity is its own schema (owner decision 2026-11-25). It was first placed in r
 identity.identities (id, kind, code, created_at, updated_at, deleted_at)
 ```
 
-Only **named things** become identities: things people look up, mention and link to by name. These are countries, languages, geography features, organisations (`official.entities`), people (`official.individuals`), institutions, offices, parties, legal instruments, events, articles, hierarchies and levels. Rows such as votes, observations, budget lines, results and captures are **not** identities.
+Only **named things** become identities: things people look up, mention and link to by name. These are countries, languages, geography features, organisations (`official.entities`), people (`official.individuals`), institutions, offices, parties, legal instruments, events, hierarchies and levels. Articles and media are **not** identities; they belong to identities (section 22). Rows such as votes, observations, budget lines, results and captures are **not** identities.
 
 Each extending table uses the identity id as its own primary key, and its kind is enforced with a fixed kind column plus a composite foreign key:
 
@@ -357,7 +357,7 @@ Interface keys are contracts-first: screens declare their keys, unknown keys are
 
 | Table | Role |
 |---|---|
-| `media.articles` | The article identity: code, category and classification, with no text. Replaces `filesystem.contents`. |
+| `media.articles` | The article record: code, the identity it is for, and category, with no text. Not an identity itself. Replaces `filesystem.contents`. |
 | `media.texts` | One row per language: title, summary, Markdown body, origin (original, human translation, machine translation), translated from, status |
 | `media.assets` | A photo, logo, flag, video, audio or document scan, pointing at a filesystem version. Replaces `filesystem.media`. |
 | `media.captions` | Per language: title, description, alt text |
@@ -490,7 +490,7 @@ A table that needs many reviews per row gets its own table in its own schema (fo
 | `community.posts` | yes | country | Read for one country |
 | Everything else | no | not split | Small or medium; country comes from its place |
 
-**Identity kind is a typed enum, not a scheme.** `identity.identities.kind` (and the kind column copied onto names and identifiers for partitioning) is a fixed database enum (`country`, `language`, `feature`, `entity`, `individual`, `institution`, `office`, `party`, `instrument`, `event`, `article`, …). It is part of the schema design and changes only with a migration, because partitions and kind checks depend on it.
+**Identity kind is a typed enum, not a scheme.** `identity.identities.kind` (and the kind column copied onto names and identifiers for partitioning) is a fixed database enum (`country`, `language`, `feature`, `entity`, `individual`, `institution`, `office`, `party`, `instrument`, `event`, …). It is part of the schema design and changes only with a migration, because partitions and kind checks depend on it.
 
 `geography.geometries` is not partitioned. Map speed is handled as described in [section 20](#20-map-geometry-and-tiles).
 
@@ -527,9 +527,230 @@ A table that needs many reviews per row gets its own table in its own schema (fo
 
 **Files go through the filesystem.** Prepared shapes, TopoJSON files and tile files are stored as `filesystem` files and versions, like any other stored bytes. Geography records which file version holds which prepared output (for example a tile set for a hierarchy level and zoom range, or a TopoJSON for a place), the geometry revisions it was built from, and when it was built. When a source geometry changes, the outputs built from it are marked stale and rebuilt. As everywhere in the filesystem, the caller decides folders, names, access and retention. The exact table for this link is designed during the geography review.
 
+## 21. Approved shape: `reference` and `identity`
+
+**Approved by the owner on 2026-11-25.** Every table also has the usual base columns (`id`, `version`, `created_at`, `updated_at`, `deleted_at`). *Identity-backed* means the row's `id` is also an `identity.identities.id`, so it has names in any language through `identity.names`.
+
+### 21.1 Decisions
+
+- **One identity per real thing.** Kenya is one identity, extended by both `reference.countries` and `geography.features`. Names, addresses and media are never split between two records of the same country. The kind check allows `country` in both tables.
+- **`code` stays on every table that has it today**, as well as on `identity.identities`. Codes join rows in CSV inputs and prepared data, so they are not removed for now.
+- **Currencies, units, timezones, hierarchies and levels are identity-backed**, so their names are multilingual.
+- **Language status:** official, national, recognised and regional status is per country and lives in `reference.locales`. Languages keep only `vitality_term`.
+- **Address namespaces** come from the identity's kind plus an optional `section_term` where they differ (a person shown in a leaders section).
+
+### 21.2 `reference`
+
+**`reference.countries`** (existing; identity-backed)
+
+| Column today | After | Change |
+|---|---|---|
+| `code` | `code` | Kept |
+| `name`, `officialName` | removed | `identity.names` rows (kinds preferred and official) |
+| `isoAlpha2`, `isoAlpha3`, `isoNumeric` | `iso_alpha2`, `iso_alpha3`, `iso_numeric` | Uniqueness skips deleted rows |
+| `callingCode` | `calling_code` | |
+| `continentId`, `subregionId` | removed | `identity.classifications` (UN region scheme) |
+| `currencyId` | `currency_id` → `reference.currencies` | Real table instead of a term |
+| `recognitionStatusId` | `recognition_term` | |
+| `designationId` | `designation_term` | |
+| `establishedOn` | `established_on` | |
+| `defaultLanguageId` | removed | `reference.locales` |
+| `subdomain`, `isServed` | removed | `product.sites`, `product.releases` |
+
+**`reference.languages`** (existing; identity-backed)
+
+| Column today | After | Change |
+|---|---|---|
+| `code` | `code` | Kept |
+| `name` | removed | `identity.names` |
+| `iso6391`, `iso6392`, `iso6393`, `glottocode` | same, snake case | Uniqueness skips deleted rows |
+| `kindId`, `familyId`, `scriptId`, `directionId` | `kind_term`, `family_term`, `script_term`, `direction_term` | |
+| `statusId` | `vitality_term` (living, endangered, extinct) | Per-country status moves to `locales` |
+| `parentId` | `parent_id` | |
+
+**`reference.units`** (existing; identity-backed)
+
+| Column today | After | Change |
+|---|---|---|
+| `code`, `symbol`, `scale`, `offset`, `baseId` | `code`, `symbol`, `scale`, `offset`, `base_id` | |
+| `quantity` (free text) | `quantity_term` | length, mass, currency, count |
+
+**Tables leaving reference:** `language_names` → `identity.names`; `schemes`, `values`, `value_labels`, `value_relations` → `vocabulary.schemes`, `terms`, `labels`, `mappings`; `topics` → a topic scheme; `patterns`, `templates`, `instances` → `governance`; `copy` → `product.keys`, `product.messages`.
+
+**New tables**
+
+| Table | Columns | Notes |
+|---|---|---|
+| `locales` | `country_id`, `language_id`, `status_term` (official, national, recognised, regional), `position`, `from_year`, `to_year` | Dated: language status changes over time |
+| `currencies` | identity-backed; `code`, `iso_code` (KES), `iso_numeric` (404), `minor_units`, `symbol`, `from_year`, `to_year`, `replaced_by_id` | Currencies end and are replaced |
+| `timezones` | identity-backed; `code`, `iana_name` (Africa/Nairobi), `country_id` | Offsets come from IANA rules, not stored |
+| `hierarchies` | identity-backed; `code`, `country_id`, `kind_term` (administrative, electoral, traditional, statistical), `from_year`, `to_year`, `is_routing` | At most one live routing hierarchy per country |
+| `levels` | identity-backed; `code`, `hierarchy_id`, `depth`, `kind_term` | Unique per hierarchy and depth |
+
+```mermaid
+erDiagram
+  identities ||--|| countries : "is"
+  identities ||--|| languages : "is"
+  identities ||--|| currencies : "is"
+  identities ||--|| units : "is"
+  identities ||--|| timezones : "is"
+  identities ||--|| hierarchies : "is"
+  identities ||--|| levels : "is"
+  countries ||--o{ locales : speaks
+  languages ||--o{ locales : in
+  currencies ||--o{ countries : uses
+  currencies ||--o{ currencies : "replaced by"
+  units ||--o{ units : base
+  languages ||--o{ languages : parent
+  countries ||--o{ timezones : has
+  countries ||--o{ hierarchies : divides
+  hierarchies ||--o{ levels : has
+```
+
+### 21.3 `identity`
+
+| Table | Columns | Replaces |
+|---|---|---|
+| `identities` | `id`, `kind` (enum), `code` (unique), timestamps | New anchor |
+| `names` | `identity_id`, `identity_kind` (enum, partition key), `language_id`, `text`, `kind_term` (preferred, official, short, local, alternative, historical, abbreviation, transliteration), `script_term`, `country_id` (optional), `from_year`, `to_year`, `is_default`, `citation_id` | `geography.names`, `official.names`, `legal.names`, `event.names`, `reference.language_names` |
+| `identifiers` | `identity_id`, `identity_kind`, `scheme_term`, `namespace`, `value`, `issuer_id` → identities, `from_year`, `to_year`, `citation_id` | `geography.identifiers`, `official.identifiers` |
+| `addresses` | `identity_id`, `country_id`, `segment`, `section_term` (optional), `parent_id`, `language_id` (optional), `canonical_id`, `from_year`, `to_year` | `source.slugs`, `source.links` |
+| `classifications` | `identity_id`, `class_term`, `scheme_id` (copied for the one-answer check), `from_year`, `to_year`, `citation_id` | `geography.classifications`, `countries.continentId`, `subregionId` |
+| `tags` | `identity_id`, `tag_term` (key is both) | `filesystem.tags`, `taggings`, `content_tags` for identities |
+
+- `names` and `identifiers` are list-partitioned by `identity_kind`; PostgreSQL requires the partition key in every unique key, for example `(identity_kind, scheme_term, namespace, value)`.
+- At most one default name per identity, language and period.
+- Personal identifiers such as national ID numbers are never stored.
+
+```mermaid
+erDiagram
+  identities ||--o{ names : has
+  identities ||--o{ identifiers : has
+  identities ||--o{ addresses : has
+  identities ||--o{ classifications : has
+  identities ||--o{ tags : has
+  identities ||--o{ identifiers : issues
+  addresses ||--o{ addresses : "parent / canonical"
+  languages ||--o{ names : in
+  countries ||--o{ addresses : "address space"
+  terms ||--o{ classifications : answer
+  terms ||--o{ tags : tag
+```
+
+## 22. Approved shape: `geography`, `filesystem`, `vocabulary`, `product` and `media`
+
+**Approved by the owner on 2026-11-25.** Base columns and the rules of section 21 apply. Every table keeps its `code` where it has one.
+
+### 22.1 Decisions
+
+- **Time in geography:** year ranges (`from_year`, `to_year`) are the required period; exact dates (`established_on`, `ended_on`, `starts_on`, `ends_on`) are optional precision, and a rule keeps the two in agreement.
+- **Coordinates:** every geometry is stored in EPSG:4326. The original coordinate system is recorded on the source artifact.
+- **Vocabulary internals are enums:** scheme shape, scheme answers, term status, label kind and mapping kind are fixed enums, not terms, so vocabulary never depends on itself.
+- **Reforms and history:** a reform such as Kenya's 2013 devolution will belong to a **new schema for historical events and activities**, still to be designed (see Pending discussion). `geography.changes` will point at it; it does not point at `event.events`.
+- **Articles and media are not identities.** They are not named things in their own right; they **belong to** identities. A portrait is *for* a person, a skyline photo is *for* Nairobi, an explainer is *for* Parliament. The person, place or institution has the identity; the article or photo points at it. Articles and media therefore have no `identity.names`, classifications or tags of their own: their titles and captions are in `media.texts` and `media.captions`, and their grouping uses their own `category_term`.
+- The product table of languages a release offers is named **`lang`**.
+
+### 22.2 `geography`
+
+| Table today | After | Changes |
+|---|---|---|
+| `features` | kept, identity-backed | `featureTypeId` → `kind_term`; a country's feature shares the country's one identity |
+| `names`, `identifiers`, `classifications` | removed | → `identity.names`, `identity.identifiers`, `identity.classifications` |
+| `levels` | removed | → `reference.hierarchies`, `reference.levels` |
+| `geometries` | kept | `geometryRoleId` → `role_term` (outline, point, centreline); `basisId` → `basis_term` (surveyed, digitised, derived); `minZoom`, `maxZoom` move to `outlines`; `srid` removed (always 4326); adds `citation_id` and a spatial index; full detail never altered |
+| `relationships` | kept | `relationshipKindId` → `kind_term` (inside, borders, part of); `systemId` → `hierarchy_id`; adds `level_id` (the inner place's level) and `citation_id` |
+| `changes` | kept | `changeKindId` → `kind_term` (split, merge, rename, transfer); `transformationId` → a link to the future history schema; free-text `explanation` → optional note with its language, plus `citation_id` |
+| `assets` | kept, widened | `kindId`, `purposeId` → `kind_term`, `purpose_term`; adds `hierarchy_id`, `level_id`, `built_at`, `stale_at` for prepared outputs (tile sets, TopoJSON); `layer`, `band`, `member` kept |
+| — | `outlines` (new) | `feature_id`, `geometry_id`, `band` (zoom band 0–3), `tolerance`, `geometry`, `bbox`, `centroid`, `points`, `built_at`; unique per geometry and band |
+| — | `pieces` (new) | `feature_id`, `geometry_id`, `geometry`: subdivided polygons with a spatial index for "where am I?" lookups |
+
+```mermaid
+erDiagram
+  identities ||--|| features : "is"
+  features ||--o{ geometries : has
+  geometries ||--o{ outlines : "simplified to"
+  geometries ||--o{ pieces : "cut into"
+  features ||--o{ relationships : "inside / borders"
+  hierarchies ||--o{ relationships : in
+  levels ||--o{ relationships : "at level"
+  features ||--o{ changes : "before / after"
+  features ||--o{ assets : has
+  versions ||--o{ assets : stored
+```
+
+### 22.3 `filesystem` (bytes only)
+
+| Table today | After | Changes |
+|---|---|---|
+| `folders` | kept | `roleId` → `role_term` (raw, derived, public); `name` is a technical path segment |
+| `files` | kept | adds `tags text[]` |
+| `file_versions` | renamed `versions` | `fileExtensionId` → `format_id`; other columns kept |
+| `file_extensions` | renamed `formats` | kept |
+| `tags`, `taggings`, `content_tags` | removed | identity tags → `identity.tags`; file tags → the array on `files` |
+| `media` | removed | → `media.assets`, `media.captions`, `media.uses` |
+| `contents` | removed | → `media.articles`, `media.texts` |
+
+### 22.4 `vocabulary`
+
+| Table | Columns | Was |
+|---|---|---|
+| `schemes` | `code`, `shape` (enum: flat, tree, graph), `answers` (enum: one, many), `is_dated`, `is_open`, `country_id` (optional), `steward_id` → identities (optional) | `reference.schemes`; `title` → labels; `ownerSnapshot` → `steward_id` |
+| `scopes` | `scheme_id`, `identity_kind` (enum), unique together | new |
+| `terms` | `code`, `scheme_id`, `parent_id`, `supersedes_id`, `status` (enum: active, deprecated, retired), `position`, `icon_code`, `color_token`, `country_id` (optional), `lower`, `upper`, `unit_id`, `lower_inclusive`, `upper_inclusive` | `reference.values`; `label` removed |
+| `labels` | exactly one of `term_id` or `scheme_id`; `language_id`, `kind` (enum: preferred, plural, short, abbreviation, alternative, definition), `text`, `country_id` (optional) | `reference.value_labels` |
+| `mappings` | `from_id`, `to_id`, `kind` (enum: broader, narrower, exact, close, related), `citation_id`; no loops in broader and narrower | `reference.value_relations` |
+
+```mermaid
+erDiagram
+  schemes ||--o{ terms : has
+  schemes ||--o{ scopes : "applies to"
+  terms ||--o{ terms : "parent / supersedes"
+  terms ||--o{ labels : labelled
+  schemes ||--o{ labels : labelled
+  terms ||--o{ mappings : "from / to"
+  units ||--o{ terms : "range unit"
+```
+
+### 22.5 `product`
+
+| Table | Columns | Was |
+|---|---|---|
+| `apps` | identity-backed; `code` (web, app, dev) | new |
+| `sites` | `code`, `app_id`, `host`, `country_id` (optional), `locale_id` → `reference.locales`, `status` (enum: planned, live, retired) | `countries.subdomain` |
+| `releases` | `app_id`, `country_id`, `status` (enum: preparing, live, paused, withdrawn), `from_on`, `to_on` | `countries.isServed` |
+| `lang` | `release_id`, `language_id`, `position` | new: the languages a release offers, in order |
+| `keys` | `code` (web.home.title), `app_id`, `description` (for translators), `placeholders text[]`, `max_length` | declared in contracts |
+| `messages` | `key_id`, `language_id`, `country_id` (optional), `text`, `origin` (enum: original, human, machine), `status` (enum: draft, reviewed, published), `translator` | `reference.copy` |
+
+### 22.6 `media`
+
+Articles and assets are not identities; each **belongs to** an identity where it is about one.
+
+| Table | Columns | Was |
+|---|---|---|
+| `articles` | `code`, `identity_id` → identities (what it is for; optional for general articles), `category_term`, `author_id` → identities (optional), `published_at` | `filesystem.contents` (its record part) |
+| `texts` | `article_id`, `language_id`, `title`, `summary`, `body` (Markdown), `origin` (enum: original, human, machine), `translated_from_id`, `status` (enum: draft, reviewed, published); exactly one original per article, at most one live text per language | `filesystem.contents` (its text part) |
+| `assets` | `code`, `kind_term` (photo, logo, flag, portrait, video, audio, scan), `version_id` → `filesystem.versions` **or** `external_url` + `platform_term`, `start_second`, `end_second`, `width`, `height`, `duration`, `licence_term`, `citation_id`, `captured_on` | `filesystem.media` (file part); untyped `metadata` → typed columns |
+| `captions` | `asset_id`, `language_id`, `title`, `description`, `alt_text`, `origin` (enum) | `filesystem.media` text columns |
+| `uses` | `asset_id`, `identity_id`, `purpose_term` (portrait, logo, skyline, map), `position`, `from_year`, `to_year` | `filesystem.media` subject link and free-text `purpose` |
+
+Examples: a portrait asset has one `uses` row pointing at the person's identity; the same photo of a parliament sitting can have `uses` rows for Parliament and for the Speaker. The explainer "How a bill becomes law" is an article whose `identity_id` is the National Assembly; a general blog post may have none.
+
+```mermaid
+erDiagram
+  identities ||--o{ articles : "has articles"
+  articles ||--o{ texts : "in languages"
+  texts ||--o{ texts : "translated from"
+  versions ||--o{ assets : stores
+  assets ||--o{ captions : "in languages"
+  assets ||--o{ uses : illustrates
+  identities ||--o{ uses : "shown with"
+```
+
 ## Pending discussion
 
-No open items remain from the reference review. New open items will be added here as other schemas are reviewed.
+1. **History schema (new).** A schema for historical events and activities (reforms such as Kenya's 2013 devolution, independence, boundary changes, wars, treaties), which `geography.changes` and other schemas will point at. Its relation to today's `event` schema (calendars, occurrences, schedules) must be decided.
+2. **Articles for several identities.** `media.articles.identity_id` holds one owner. Whether an article can be for several identities (an explainer about devolution and every county) is to be decided.
 
 ## Related
 
