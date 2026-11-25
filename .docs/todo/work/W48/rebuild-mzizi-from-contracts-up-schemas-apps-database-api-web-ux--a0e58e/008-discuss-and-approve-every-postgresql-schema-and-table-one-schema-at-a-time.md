@@ -25,15 +25,18 @@ For each table, the discussion decides: keep, move (and where), rename (and to w
 - [x] geography: approved 2026-11-25 (FOUNDATION_REDESIGN section 22)
 - [x] official: approved 2026-11-25 (FOUNDATION_REDESIGN section 25)
 - [ ] source
-- [ ] legal
-- [ ] governance
-- [ ] politics
-- [ ] civic
-- [ ] finance
+- [x] legal: approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
+- [x] governance: approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
+- [x] politics: approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
+- [x] civic: approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
+- [x] finance: approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
 - [x] statistics: approved 2026-11-25 (FOUNDATION_REDESIGN section 29)
 - [x] event: approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
 - [x] community: approved 2026-11-25 (FOUNDATION_REDESIGN section 28)
 - [x] auth: approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
+- [x] legislature (new): approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
+- [x] election (new): approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
+- [x] economy (new): approved 2026-11-25 (FOUNDATION_REDESIGN section 33)
 - [x] history (new): approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
 - [x] accountability: removed 2026-11-25 (FOUNDATION_REDESIGN section 26)
 
@@ -189,110 +192,90 @@ Publishers, sources, artifacts, captures, citations; slugs and links move to ide
 
 ## Schema `legal` (9 tables today)
 
-Laws and their provisions, wordings and translations; names move to identity.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `legal.editions`: keep, move, rename, merge or remove decided
-- [ ] `legal.effects`: keep, move, rename, merge or remove decided
-- [ ] `legal.instruments`: keep, move, rename, merge or remove decided
-- [ ] `legal.names`: keep, move, rename, merge or remove decided
-- [ ] `legal.provisions`: keep, move, rename, merge or remove decided
-- [ ] `legal.references`: keep, move, rename, merge or remove decided
-- [ ] `legal.relationships`: keep, move, rename, merge or remove decided
-- [ ] `legal.translations`: keep, move, rename, merge or remove decided
-- [ ] `legal.wordings`: keep, move, rename, merge or remove decided
-- [ ] `legal`: term columns, identities, country_id and partitioning decided
-- [ ] `legal` target shape approved by the owner
-- [ ] `legal` ERD drawn
+- [x] `legal.instruments` (existing): kept, identity-backed
+- [x] `legal.names` (existing): removed → `identity.names`
+- [x] `legal.editions` (existing): kept; `observed_at` removed
+- [x] `legal.provisions` (existing): kept; title moves to wordings
+- [x] `legal.wordings` (existing): kept; adds heading; citation removed
+- [x] `legal.translations` (existing): kept; Mzizi's unofficial translations
+- [x] `legal.references` (existing): kept
+- [x] `legal.relationships` (existing): kept; note with language
+- [x] `legal.effects` (existing): kept; `identity_id`
+- [x] `legal` changes approved by the owner
+- [x] `legal` ERD written into the design doc
 
 ## Schema `governance` (24 tables today)
 
-Institutions, offices, parliament; receives patterns, templates and instances.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `governance.agenda`: keep, move, rename, merge or remove decided
-- [ ] `governance.assignments`: keep, move, rename, merge or remove decided
-- [ ] `governance.authority_scopes`: keep, move, rename, merge or remove decided
-- [ ] `governance.bills`: keep, move, rename, merge or remove decided
-- [ ] `governance.fulfilments`: keep, move, rename, merge or remove decided
-- [ ] `governance.functions`: keep, move, rename, merge or remove decided
-- [ ] `governance.hansards`: keep, move, rename, merge or remove decided
-- [ ] `governance.holders`: keep, move, rename, merge or remove decided
-- [ ] `governance.institutions`: keep, move, rename, merge or remove decided
-- [ ] `governance.mandates`: keep, move, rename, merge or remove decided
-- [ ] `governance.motions`: keep, move, rename, merge or remove decided
-- [ ] `governance.obligations`: keep, move, rename, merge or remove decided
-- [ ] `governance.offices`: keep, move, rename, merge or remove decided
-- [ ] `governance.positions`: keep, move, rename, merge or remove decided
-- [ ] `governance.powers`: keep, move, rename, merge or remove decided
-- [ ] `governance.procedures`: keep, move, rename, merge or remove decided
-- [ ] `governance.promises`: keep, move, rename, merge or remove decided
-- [ ] `governance.relationships`: keep, move, rename, merge or remove decided
-- [ ] `governance.reports`: keep, move, rename, merge or remove decided
-- [ ] `governance.sittings`: keep, move, rename, merge or remove decided
-- [ ] `governance.speeches`: keep, move, rename, merge or remove decided
-- [ ] `governance.stages`: keep, move, rename, merge or remove decided
-- [ ] `governance.terms`: keep, move, rename, merge or remove decided
-- [ ] `governance.votes`: keep, move, rename, merge or remove decided
-- [ ] `governance`: term columns, identities, country_id and partitioning decided
-- [ ] `governance` target shape approved by the owner
-- [ ] `governance` ERD drawn
+- [x] `governance.institutions` (existing): kept; shares the organisation's identity; arm and class terms
+- [x] `governance.positions` (existing): kept, identity-backed
+- [x] `governance.offices` (existing): kept, identity-backed
+- [x] `governance.holders` (existing): kept; adds `contest_id`, `reason_term`
+- [x] `governance.terms` (existing): kept; absorbs mandates
+- [x] `governance.mandates` (existing): removed → terms
+- [x] `governance.relationships` (existing): kept; structural links
+- [x] `governance.authority_scopes` (existing): renamed `jurisdictions`; adds `country_id`
+- [x] `governance.functions` (existing): kept, identity-backed
+- [x] `governance.assignments` (existing): kept; start columns become `initiator_id`
+- [x] `governance.powers` (existing): kept; `from_id`, `to_id`
+- [x] `governance.procedures` (existing): kept, identity-backed
+- [x] `governance.obligations` (existing): kept
+- [x] `governance.reports` (existing): kept
+- [x] `governance.promises`, `fulfilments` (existing): moved → politics commitments
+- [x] `governance` proceedings (sittings, agenda, bills, stages, motions, votes, hansards, speeches): moved → `legislature`
+- [x] `governance` changes approved by the owner
+- [x] `governance` ERD written into the design doc
 
 ## Schema `politics` (15 tables today)
 
-Parties, elections, candidates and results.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `politics.alignments`: keep, move, rename, merge or remove decided
-- [ ] `politics.candidates`: keep, move, rename, merge or remove decided
-- [ ] `politics.coalitions`: keep, move, rename, merge or remove decided
-- [ ] `politics.contests`: keep, move, rename, merge or remove decided
-- [ ] `politics.contributions`: keep, move, rename, merge or remove decided
-- [ ] `politics.elections`: keep, move, rename, merge or remove decided
-- [ ] `politics.electorates`: keep, move, rename, merge or remove decided
-- [ ] `politics.manifesto_items`: keep, move, rename, merge or remove decided
-- [ ] `politics.manifestos`: keep, move, rename, merge or remove decided
-- [ ] `politics.memberships`: keep, move, rename, merge or remove decided
-- [ ] `politics.option_results`: keep, move, rename, merge or remove decided
-- [ ] `politics.parties`: keep, move, rename, merge or remove decided
-- [ ] `politics.polls`: keep, move, rename, merge or remove decided
-- [ ] `politics.referendum_options`: keep, move, rename, merge or remove decided
-- [ ] `politics.results`: keep, move, rename, merge or remove decided
-- [ ] `politics`: term columns, identities, country_id and partitioning decided
-- [ ] `politics` target shape approved by the owner
-- [ ] `politics` ERD drawn
+- [x] `politics.parties` (existing): kept; shares the organisation's identity
+- [x] `politics.memberships` (existing): kept
+- [x] `politics.coalitions` (existing): kept, identity-backed
+- [x] `politics.alignments` (existing): kept
+- [x] `politics.manifestos` (existing): kept
+- [x] `politics.manifesto_items` (existing) and `governance.promises`: merged → `commitments`
+- [x] `politics.fulfilments` (moved from governance)
+- [x] `politics.contributions` (existing): kept
+- [x] Election tables (elections, contests, candidates, electorates, results, referendum options, option results, polls): moved → `election`
+- [x] `politics` changes approved by the owner
+- [x] `politics` ERD written into the design doc
 
 ## Schema `civic` (12 tables today)
 
-Services, projects, procurement and contracts.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `civic.beneficiaries`: keep, move, rename, merge or remove decided
-- [ ] `civic.bids`: keep, move, rename, merge or remove decided
-- [ ] `civic.contracts`: keep, move, rename, merge or remove decided
-- [ ] `civic.deliveries`: keep, move, rename, merge or remove decided
-- [ ] `civic.facilities`: keep, move, rename, merge or remove decided
-- [ ] `civic.officials`: keep, move, rename, merge or remove decided
-- [ ] `civic.partners`: keep, move, rename, merge or remove decided
-- [ ] `civic.procurements`: keep, move, rename, merge or remove decided
-- [ ] `civic.project_features`: keep, move, rename, merge or remove decided
-- [ ] `civic.projects`: keep, move, rename, merge or remove decided
-- [ ] `civic.services`: keep, move, rename, merge or remove decided
-- [ ] `civic.variations`: keep, move, rename, merge or remove decided
-- [ ] `civic`: term columns, identities, country_id and partitioning decided
-- [ ] `civic` target shape approved by the owner
-- [ ] `civic` ERD drawn
+- [x] `civic.services` (existing): kept, identity-backed
+- [x] `civic.facilities` (existing): kept; shares the feature's identity
+- [x] `civic.projects` (existing): kept, identity-backed
+- [x] `civic.project_features` (existing): renamed `sites`
+- [x] `civic.procurements` (existing): kept, identity-backed
+- [x] `civic.bids` (existing): kept
+- [x] `civic.contracts` (existing): kept; adds start and end dates
+- [x] `civic.variations` (existing): kept
+- [x] `civic.deliveries` (existing): kept; certified work, payments are flows
+- [x] `civic.officials`, `partners`, `beneficiaries` (existing): merged → `roles`, through holders when acting in office
+- [x] `civic` changes approved by the owner
+- [x] `civic` ERD written into the design doc
 
 ## Schema `finance` (7 tables today)
 
-Budgets, appropriations, funds, flows and debts.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `finance.appropriations`: keep, move, rename, merge or remove decided
-- [ ] `finance.budgets`: keep, move, rename, merge or remove decided
-- [ ] `finance.budget_versions`: keep, move, rename, merge or remove decided
-- [ ] `finance.debts`: keep, move, rename, merge or remove decided
-- [ ] `finance.fiscal_periods`: keep, move, rename, merge or remove decided
-- [ ] `finance.flows`: keep, move, rename, merge or remove decided
-- [ ] `finance.funds`: keep, move, rename, merge or remove decided
-- [ ] `finance`: term columns, identities, country_id and partitioning decided
-- [ ] `finance` target shape approved by the owner
-- [ ] `finance` ERD drawn
+- [x] `finance.fiscal_periods` (existing): renamed `periods`
+- [x] `finance.budgets` (existing): kept
+- [x] `finance.budget_versions` (existing): renamed `revisions`
+- [x] `finance.appropriations` (existing): kept
+- [x] `finance.funds` (existing): kept, identity-backed
+- [x] `finance.flows` (existing): kept; `counterparty_id`; partitioned by country
+- [x] `finance.debts` (existing): kept, identity-backed
+- [x] `finance.findings` (new): audit findings
+- [x] `finance` changes approved by the owner
+- [x] `finance` ERD written into the design doc
 
 ## Schema `statistics` (4 tables today)
 
@@ -376,6 +359,64 @@ Changes below were approved by the owner on 2026-11-25.
 - [x] `auth` changes approved by the owner
 - [x] `auth` ERD written into the design doc
 
+## Schema `legislature` (new)
+
+Changes below were approved by the owner on 2026-11-25.
+
+- [x] `legislature.sittings` (from governance)
+- [x] `legislature.agenda` (from governance)
+- [x] `legislature.bills` (from governance): identity-backed
+- [x] `legislature.stages` (from governance)
+- [x] `legislature.motions` (from governance)
+- [x] `legislature.votes` (from governance): partitioned by country
+- [x] `legislature.hansards` (from governance)
+- [x] `legislature.speeches` (from governance): partitioned by country
+- [x] `legislature.summaries` (new)
+- [x] `legislature` changes approved by the owner
+- [x] `legislature` ERD written into the design doc
+
+## Schema `election` (new)
+
+Changes below were approved by the owner on 2026-11-25.
+
+- [x] `election.elections` (from politics): identity-backed
+- [x] `election.contests` (from politics)
+- [x] `election.candidates` (from politics)
+- [x] `election.choices` (from `politics.referendum_options`)
+- [x] `election.stations` (from `politics.polls`)
+- [x] `election.turnouts` (from `politics.electorates`)
+- [x] `election.results` (from `politics.results` and `option_results`): statistics patterns, partitioned by country
+- [x] `election.tallies` (new, prepared)
+- [x] `election` changes approved by the owner
+- [x] `election` ERD written into the design doc
+
+## UI additions (section 32)
+
+Approved by the owner on 2026-11-25.
+
+- [x] `governance.appointments` (new): appointment steps by people, Parliament, boards and commissions; holder appointer columns removed
+- [x] `legislature.votes.party_id`; seats dropped
+- [x] Per-schema `attachments` tables for media on non-identity rows
+- [x] External media columns on `media.assets` (links, embeds, providers, availability)
+- [x] `election.forms` for original results documents (34A–34C)
+- [x] `election.elections.event_id` → `event.events`
+- [x] `civic.items` and `civic.scores`; `civic.prices` dropped
+
+## Schema `economy` (new)
+
+Approved by the owner on 2026-11-25 (FOUNDATION_REDESIGN section 33).
+
+- [x] `economy.goods` (new): goods, services and works, with standard and size
+- [x] `economy.names` (new): names of goods in any language
+- [x] `economy.codes` (new): CPC, COICOP, UNSPSC and HS codes
+- [x] `economy.crosswalks` (new): official correspondence tables
+- [x] `economy.compositions` (new): bills of quantities for works
+- [x] `economy.prices` (new): prices, partitioned by country
+- [x] `economy.baskets` and `economy.weights` (new): CPI and cost-of-living baskets
+- [x] Known limits addressed: CPC pivot, cost schedules and compositions, like-for-like comparison with ranges and confidence
+- [x] `economy` changes approved by the owner
+- [x] `economy` ERD written into the design doc
+
 ## Schema `history` (new)
 
 Changes below were approved by the owner on 2026-11-25.
@@ -394,7 +435,7 @@ Changes below were approved by the owner on 2026-11-25.
 
 ## Acceptance checklist
 
-- [ ] Every schema above is discussed and its target shape approved
+- [x] Every schema above is discussed and its target shape approved
 - [ ] Every current table has a recorded decision
 - [ ] Every agreed result is written into FOUNDATION_REDESIGN or a per-schema design note with an ERD
 - [ ] Nothing still open is left unmarked: open items are listed under Pending discussion

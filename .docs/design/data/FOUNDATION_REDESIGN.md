@@ -1084,6 +1084,331 @@ Checked on 2026-11-25; every piece of statistics text has a multilingual home:
 
 **Composed text:** chart titles and period labels are composed by the frontend from these parts (indicator name + breakdown labels; "2019", "Q1 2024", "FY 2023/24" from the years, dates and `frequency`) using interface keys, never stored as fixed English strings.
 
+## 30. Approved shape: `legal`, `governance`, `legislature`, `politics`, `election`, `civic` and `finance`
+
+**Approved by the owner on 2026-11-25.** Column names are in SQL casing (section 24). Base columns and sections 21–24 apply: no citation or `observed_at` columns (provenance and capture time live in `source`), free-text names and titles move to `identity.names` or summaries, two entity/individual columns become one `…_id` → identities, value columns become `_term` columns, years are required and dates optional, every table keeps its `code`, and money is whole minor units plus `currency_id` → `reference.currencies`.
+
+### 30.1 How the five domains fit together
+
+These schemas answer Mzizi's core question: **who holds public power, under what rules, how they got it, what they promised, what money they controlled, and what was delivered.**
+
+```text
+legal        THE RULES       constitution, acts, regulations, by-laws
+   │ creates
+governance   THE STATE       institutions, positions, offices, holders, authority from law
+   │ works through                         │ filled by
+legislature  LAWMAKING        election    THE CONTEST     elections, contests, results
+   │ decide and spend                      politics       parties, coalitions, commitments
+finance      THE MONEY       budgets, appropriations, funds, flows, debt, audit findings
+   │ delivered as
+civic        THE DELIVERY    services, facilities, projects, tenders, contracts, deliveries
+```
+
+Example: the Constitution (legal) creates the office of Governor (governance); an election (election) puts a person in it; the county assembly (legislature) passes a budget (finance); the money buys a hospital through a tender (civic); the result is checked against what was promised (politics commitments).
+
+### 30.2 Decisions
+
+- **`legislature`** is a new schema for proceedings, split from governance.
+- **Commitments:** manifesto items, promises and fulfilments are one concept in `politics`.
+- **Mandates merge into terms.**
+- **`civic.roles`** replaces `civic.officials`, `partners` and `beneficiaries`. When a person acts through a public office (a Chief Officer signing a contract), the row points at `governance.holders`; otherwise at the person's or organisation's identity.
+- **Shared identities:** a facility shares its geography feature's identity; an institution and a party share their organisation's (`official.entities`) identity.
+- **`election`** (singular) is a new schema split from politics; results reuse the statistics patterns (`statistics.collections`, `statistics.priorities`, status, revisions) and a prepared `tallies` table.
+- **`legislature.summaries`** holds titles and summaries of bills, motions, speeches and agenda items in any language.
+- **`jurisdictions` carry `country_id`** as well as the place.
+- **`governance.assignments` keeps its initiator columns** (see 30.4).
+- **`finance.findings`** is added for audit findings.
+
+### 30.3 `legal`
+
+| Table today | After | Changes |
+|---|---|---|
+| `instruments` | kept, identity-backed | `kind_term`, `status_term`; `issuing_unit_id` → `jurisdiction_id`; `issuing_entity_id` → `issuer_id`; years plus `enacted_on`, `published_on` |
+| `names` | removed | → `identity.names` |
+| `editions` | kept | consolidation and commencement dates, `supersedes_id`; `observed_at` removed |
+| `provisions` | kept | tree of articles and sections: `parent_id`, `kind` (enum), `designation`, `position`; `title` moves to `wordings.heading` |
+| `wordings` | kept | official text per edition and language, with `heading`; `citation_id`, `observed_at` removed |
+| `translations` | kept | Mzizi's own unofficial translations: `method` (enum: human, machine), `review` (enum), `reviewed_by` → accounts, `notes`. An official text in another language is a `wording` |
+| `references` | kept | cross-references inside text |
+| `relationships` | kept | amendments and repeals; `kind_term`; `explanation` → note with language |
+| `effects` | kept | what a provision does to a thing: subject link → `identity_id`; `explanation` → note with language |
+
+### 30.4 `governance`
+
+| Table today | After | Changes |
+|---|---|---|
+| `institutions` | kept, shares the organisation's identity | `entity_id` removed; `kind_term`, `class_term` (ministry, department, commission, independent office, court), `arm_term` (executive, legislature, judiciary, independent), `basis_term`, `country_id`, years plus dates |
+| `positions` | kept, identity-backed | the kind of seat law creates: `role_term`, `method_term`, `level_id` → `reference.levels`, `basis_term`, `seat_level_id`, `seat_count`, `term_years`, `term_limit`, `exposure_term`, `provision_id`, `position`; `title_id` → names |
+| `offices` | kept, identity-backed | one concrete seat: `position_id`, `institution_id`, `feature_id`, `seat`, years plus dates |
+| `holders` | kept | a person in an office: `office_id`, `individual_id`, `method_term`, `appointed_by_id`, `nominated_by_id` → identities, `motion_id` → `legislature.motions`, `contest_id` → `election.contests`, `reason_term`, years plus dates |
+| `terms` | kept, absorbs `mandates` | `institution_id` or `office_id`, `kind_term`, `feature_id`, `ordinal`, years plus dates |
+| `mandates` | removed | → `terms` |
+| `relationships` | kept | structural links from law (oversees, accountable to, part of): `from_id`, `to_id`, `kind_term` |
+| `authority_scopes` | renamed `jurisdictions` | exactly one of `institution_id`, `office_id`; `country_id`; `feature_id`; `kind_term` |
+| `functions` | kept, identity-backed | `parent_id`, `topic_term`, `provision_id` |
+| `assignments` | kept | which institution or position carries a function: `share_term` (exclusive, concurrent), `provision_id`; `start_position_id` and `start_institution_id` are kept as **`initiator_id`** → identities: the position or institution that initiates or leads the function, which the power and hierarchy views use (30.10) |
+| `powers` | kept | `from_id`, `to_id` → identities (positions, institutions); `kind_term` (appoint, nominate, dismiss, veto, approve), `procedure_id`, `step`, `threshold_term`, `is_binding`, `provision_id` |
+| `procedures` | kept, identity-backed | `kind_term`, `provision_id`; description → definition name or article |
+| `obligations` | kept | `recipient_id`, `frequency` (enum), `provision_id`; description → definition name |
+| `reports` | kept | `obligation_id`, `reporter_id`, years plus dates, `due_on`, `filed_on`, `status_term`, `artifact_id` (the filed document) |
+| `promises`, `fulfilments` | moved | → `politics.commitments`, `politics.fulfilments` |
+| proceedings tables | moved | → `legislature` |
+
+Committees are institutions linked to their house through `relationships`.
+
+### 30.5 `legislature` (new)
+
+| Table | Was | Columns |
+|---|---|---|
+| `sittings` | governance | `institution_id`, `occurrence_id` → `event.occurrences`, `kind_term`, `term_id`, `session`, `sequence` |
+| `agenda` | governance | `sitting_id`, `position`, `kind_term`, `motion_id` or `bill_id` |
+| `bills` | governance | identity-backed: `institution_id`, `kind_term`, `status_term`, `sponsor_id` → holders, `term_id`, `instrument_id` → the Act it became |
+| `stages` | governance | `bill_id`, `kind_term`, `sitting_id`, `motion_id`, `on_date`, `outcome_term`, `sequence` |
+| `motions` | governance | `sitting_id`, `kind_term`, `outcome_term`, `mover_id` → holders, `bill_id`, `instrument_id`, `provision_id`, `revision_id` → `finance.revisions`, `period_id` → `finance.periods` |
+| `votes` | governance | `motion_id`, `holder_id`, `choice` (enum: yes, no, abstain, absent), `country_id`; partitioned by country |
+| `hansards` | governance | `sitting_id`, `artifact_id`, `language_id`, `published_on`, `reference`, `status` (enum: provisional, final) |
+| `speeches` | governance | `sitting_id`, `holder_id`, `motion_id`, `bill_id`, `hansard_id`, `kind_term`, `position`, `page`, `word_count`, `country_id`; partitioned by country |
+| `summaries` | new | exactly one of `bill_id`, `motion_id`, `speech_id`, `agenda_id`; `language_id`, `text`, `origin` (enum), `status` |
+
+### 30.6 `politics`
+
+| Table today | After | Changes |
+|---|---|---|
+| `parties` | kept, shares the organisation's identity | `entity_id` removed; `kind_term`, years plus dates |
+| `memberships` | kept | `party_id`, `individual_id`, `kind_term`, years plus dates |
+| `coalitions` | kept, identity-backed | `name` → names; `kind_term`, years plus dates |
+| `alignments` | kept | `coalition_id`, `party_id`, `kind_term`, years |
+| `manifestos` | kept | exactly one of `party_id`, `candidate_id`; `election_id`, `artifact_id`, `published_on` |
+| `manifesto_items` + `governance.promises` | merged → `commitments` | `maker_id` → identities; `kind` (enum: manifesto pledge, campaign promise, office pledge); `manifesto_id`, `office_id` (optional); `statement` + `language_id` (original words); `topic_term`; `place_id`; `quantity` + `unit_id`; `made_on`; `due_on` and years; `occurrence_id` or `speech_id`; `status_term` + `status_as_of` |
+| `governance.fulfilments` | moved | `commitment_id`, exactly one of `project_id`, `contract_id`, `appropriation_id`, `bill_id`, `instrument_id`; `kind_term`, `status_term`, `recorded_on` |
+| `contributions` | kept | `donor_id`, `recipient_id` → identities, `election_id` (optional), amount + `currency_id`, `is_in_kind`, `given_on`, `status_term`, `version_id` (disclosure file) |
+
+### 30.7 `election` (new)
+
+| Table | Was | Columns |
+|---|---|---|
+| `elections` | politics | identity-backed: `country_id`, `kind_term`, `status_term`, `held_on` + year, `parent_id`, `term_id`, `authority_id` |
+| `contests` | politics | `election_id`, `office_id`, `feature_id`, `kind_term`, `reason_term`, `previous_holder_id`, `seat_count` |
+| `candidates` | politics | `contest_id`, `individual_id`, `party_id`, `kind_term`, `ballot_order` |
+| `choices` | `referendum_options` | `contest_id`, `text` + `language_id`, `ballot_order` |
+| `stations` | `polls` | `election_id`, `feature_id`, `host_id`, `status_term`, `registered_voters`, `streams`, `opens_at`, `closes_at`; note with language |
+| `turnouts` | `electorates` | `contest_id`, `feature_id`, `registered`, `cast`, `valid`, `rejected`, `spoilt`, `status`, `collection_id`, `revision`, `supersedes_id` |
+| `results` | `results` + `option_results` | exactly one of `candidate_id`, `choice_id`; `feature_id`, `votes`, `status`, `basis`, `collection_id` → `statistics.collections`, `revision`, `supersedes_id`, `country_id`; partitioned by country |
+| `tallies` | new, prepared | the result to show per contest, candidate or choice and place, chosen with `statistics.priorities` (IEBC first); partitioned by country |
+
+### 30.8 `civic`
+
+| Table today | After | Changes |
+|---|---|---|
+| `services` | kept, identity-backed | `name`, `description` → names; `provider_id`, `institution_id`, `kind_term`, `feature_id`, `scope_id`, years plus dates |
+| `facilities` | kept, shares the feature's identity | `feature_id` removed; `class_term`, `country_id`, `operator_id`, `owner_id`, `institution_id`, `ownership_term`, `status_term`, years plus dates |
+| `projects` | kept, identity-backed | `name`, `description` → names; free-text `location` removed; `institution_id`, `sponsor_id`, `implementer_id`, `country_id`, `scope_id`, `status_term`, years plus dates |
+| `project_features` | renamed `sites` | `project_id`, `feature_id`, `kind_term` |
+| `procurements` | kept, identity-backed | `title` → names; tender number → `identity.identifiers`; `project_id`, `category_term`, `nature_term`, `buyer_id`, `country_id`, `procedure_term`, `status_term`, dates, estimated amount + `currency_id`, `bidder_count`, `evaluation_term` |
+| `bids` | kept | `procurement_id`, `bidder_id`, amount + `currency_id`, `outcome_term`, `submitted_on` |
+| `contracts` | kept | `procurement_id`, `project_id`, `nature_term`, `contractor_id`, `buyer_id`, amount + `currency_id`, `status_term`, `signed_on`, new `starts_on`, `ends_on` |
+| `variations` | kept | `contract_id`, `kind_term`, amount change + `currency_id`, `new_end_on`, `signed_on`; reason → note with language |
+| `deliveries` | kept | work delivered and certified: `contract_id`, `kind_term`, certified value + `currency_id`, `delivered_on`, `feature_id`. Payments are `finance.flows` |
+| `officials`, `partners`, `beneficiaries` | merged → `roles` | exactly one of `procurement_id`, `bid_id`, `contract_id`, `project_id`; `holder_id` → `governance.holders` when acting through an office, otherwise `identity_id`; `role_term` (accounting officer, evaluator, signatory, consortium partner, subcontractor, beneficial owner, beneficiary community); `share`; `acted_on` |
+
+### 30.9 `finance`
+
+| Table today | After | Changes |
+|---|---|---|
+| `fiscal_periods` | renamed `periods` | `country_id`, `kind_term`, years plus dates |
+| `budgets` | kept | `government_id`, `country_id`, `period_id`, `kind_term` |
+| `budget_versions` | renamed `revisions` | `budget_id`, `revision`, `status_term`, `released_on` |
+| `appropriations` | kept | `revision_id`, `parent_id`, `recipient_id`, `project_id`, `feature_id`, `class_term`, amount + `currency_id` |
+| `funds` | kept, identity-backed | `kind_term`, `manager_id`, `source_term`, `country_id`, `scope_id` |
+| `flows` | kept | `kind_term` (allocation, transfer, disbursement, payment, receipt), `period_id`, `fund_id`, `appropriation_id`, `contract_id`, `debt_id`, `counterparty_id`, `project_id`, `institution_id`, `feature_id`, `class_term`, `occurred_on`, amount + `currency_id`, `country_id`; partitioned by country |
+| `debts` | kept, identity-backed | `borrower_id`, `lender_id`, `country_id`, `kind_term`, `contracted_on`, `maturity_on`, principal + `currency_id` |
+| `MoneyEntity` | abstract base | not a table |
+| — | `findings` (new) | audit findings: `institution_id`, `period_id`, `kind_term`, questioned amount + `currency_id`, `status_term` (open, resolved, referred), optional `contract_id`, `project_id`, `flow_id` |
+
+
+## 31. What the UI can show, and proposed additions
+
+The owner asked on 2026-11-25 to confirm that the approved design supports these views. **The proposals below were settled in [section 32](#32-approved-additions-for-the-ui); where they differ, section 32 wins.** Each item says what already works and what is **proposed** (not yet approved) to close a gap. Proposed additions are also listed under Pending discussion.
+
+### 31.1 Power, arms and hierarchy
+
+**Works with the approved design:**
+
+- **Arms and kinds of body:** `institutions.arm_term` (executive, legislature, judiciary, independent) and `class_term` (ministry, department, commission, independent office, court).
+- **Hierarchy of institutions:** `governance.relationships` (part of, oversees, accountable to), so ministries sit under the executive, committees under their house, and courts in order (Supreme Court, Court of Appeal, High Court).
+- **Leadership tree:** an institution's offices, ordered by `positions.position` and `role_term`, with their current `holders`.
+- **Who appointed or nominated whom:** `holders.appointed_by_id`, `nominated_by_id`, and `motion_id` (the approving vote).
+- **How power flows:** `governance.powers` (`from_id` → `to_id`: appoint, nominate, dismiss, veto, approve), with `procedure_id`, `threshold_term` and `is_binding`; `assignments.initiator_id` shows who leads each function.
+- **Authorisation by law:** `positions.provision_id`, `powers.provision_id`, `functions.provision_id`, `assignments.provision_id`, and `legal.effects` (a provision creates an office or assigns a function to an identity).
+
+**Proposed:** `holders.appointer_holder_id` → `governance.holders`. `appointed_by_id` points at an identity (the person or institution); this extra column points at **the holder row** of the person in office who made the appointment, so the UI can show "appointed by President X while in office" and draw appointment chains between offices.
+
+### 31.2 Parliament
+
+**Works:**
+
+- **Bills with dates and events:** `stages` (first reading, committee, assent…) on `sittings`, and every sitting points at an `event.occurrences` row, so stages have real dates in the civic calendar.
+- **Who voted what:** `votes` (`motion_id`, `holder_id`, `choice`).
+- **Linked to parties:** through the holder's person and dated `politics.memberships`.
+
+**Proposed:**
+
+- `votes.party_id`: the party the member voted as, recorded at the time of the vote. Without it, every vote view joins dated memberships across millions of rows; with it, party breakdowns are direct and correct even after a member changes party.
+- `legislature.seats` (`term_id`, `holder_id`, `number`, `side_term` (government, opposition, cross-bench), `from_year`, `to_year`) so the UI can draw the chamber as a round table or hemicycle with each member in their seat and side.
+
+### 31.3 Promises, speeches and fulfilments linked to media
+
+**Works:** articles and media belong to identities through `media.articles.identity_id` and `media.uses`; manifestos keep their original document (`politics.manifestos.artifact_id`); commitments point at the speech or event where they were made.
+
+**Gap:** speeches, commitments, fulfilments, votes, sittings, contracts and similar rows are **not identities**, so `media.uses` cannot point at them.
+
+**Proposed:** each schema that needs media gets its own `attachments` table, following `community.attachments`:
+
+```text
+<schema>.attachments  (row_id → that schema's table, asset_id or article_id, purpose_term, position, start_second, end_second)
+  legislature.attachments  → speeches, sittings, bills          (the parliamentary video of a speech)
+  politics.attachments     → commitments, fulfilments, manifestos (the video of a promise, the manifesto PDF)
+  election.attachments     → see 31.4
+  civic.attachments        → projects, contracts, deliveries     (site photos, signed contracts)
+```
+
+This keeps real foreign keys (no subject links outside `source`).
+
+**External content: proposed extension of `media.assets`.** An asset is either **held** (a file in `filesystem`) or **external** (we hold only a link):
+
+| Column | Meaning |
+|---|---|
+| `kind` (enum) | held file, external link, embed |
+| `provider_term` | youtube, x, tiktok, facebook, instagram, vimeo, wikipedia, news site, government site |
+| `external_url` | the canonical address |
+| `external_id` | the provider's id (a YouTube video id) |
+| `embed_url` | the provider's player address, for embeds |
+| `thumbnail_url`, `author`, `published_on` | cached display details (from oEmbed where the provider offers it) |
+| `availability` (enum) + `checked_at` | live, removed, unavailable; re-checked regularly |
+
+Rules: external video is **never re-hosted**; it is shown through the provider's own player and terms. Wikipedia and news articles are external-link assets with a caption per language. A copy kept as evidence (a snapshot of a news page) is a `source` capture, not a media asset.
+
+### 31.4 `election`: original documents
+
+**Works:** stations are geography features; results carry `collection_id` (the form or tally they came from).
+
+**Proposed:** `election.forms` for original results documents such as Kenya's forms 34A, 34B and 34C:
+
+```text
+election.forms  (contest_id, station_id or feature_id, form_term (34A, 34B, 34C, …), asset_id → media.assets,
+                 status (enum: provisional, final), published_on)
+```
+
+The asset can be an image, a PDF or a link to the official portal. Results rows from a form point at it, so a user can open the original form for any station.
+
+### 31.5 Projects, money, cost efficiency and beneficiaries
+
+**Works:**
+
+- **Projects on a map:** `civic.sites` → features with geometry and outlines.
+- **Expenditure:** `finance.appropriations.project_id` (planned), `civic.contracts` (agreed), `civic.deliveries` (certified work) and `finance.flows.project_id` (paid), all comparable in one place.
+- **Who chose whom:** `civic.roles` (accounting officers, evaluators, signatories, through `governance.holders`), with `bids` showing cheaper bids that lost.
+- **Beneficiaries and links:** `civic.roles` (beneficial owners, partners) together with `official.relationships` (kinship and business ties, public figures only).
+- **Amenities near a user:** facilities share their feature's identity, so "near me" is a spatial query on feature points and outlines; government offices with a physical presence are facilities operated by an institution.
+
+**Proposed for cost efficiency:**
+
+| Table | Holds |
+|---|---|
+| `civic.items` (new) | line items of a contract or bid: `contract_id` or `bid_id`, `item_term` (bag of cement, km of tarmac road, classroom), `quantity`, `unit_id`, unit price + `currency_id` |
+| `civic.prices` (new) | reference prices: `item_term`, `country_id`, `feature_id` (region, optional), `period_id` or years, `unit_id`, price + `currency_id`; where each price came from is a `source` link |
+| `civic.scores` (new, prepared) | computed comparisons per contract or project: `contract_id` or `project_id`, `score`, `basis` (enum), `computed_at`, the prices used |
+
+Rules: scores are **model output and reviewable proposals**, never presented as findings or accusations; the UI shows the inputs and prices used. Conflict-of-interest views only show sourced, verified facts (roles and relationships) side by side; they never assert wrongdoing.
+
+### 31.6 Government structure and events for a user
+
+**Works:**
+
+- Government and independent ministries and bodies, how government works, hierarchy, leadership trees and the judiciary: 31.1.
+- **Events concerning a user:** public holidays (`event.events` with recurrence `rules`), parliamentary activity (`legislature.sittings` → `event.occurrences`), and events filtered by the user's home place (`community.preferences.home_feature_id`) and follows (`community.subscriptions`).
+
+**Proposed:** `election.elections.occurrence_id` → `event.occurrences` (polling day), so election countdowns and timetables come from the civic calendar like every other dated event.
+
+
+## 32. Approved additions for the UI
+
+**Approved by the owner on 2026-11-25.** These settle the proposals of section 31.
+
+| Addition | Decision |
+|---|---|
+| **Appointments** | New `governance.appointments` steps table: `holder_id`, `step` (enum: nomination, recommendation, vetting, approval, appointment, swearing-in), `actor_id` → identities (a person, Parliament, a board, a commission), `actor_holder_id` → holders (optional: a person acting in office, "President X while in office"), `motion_id` → `legislature.motions` (optional: when the step was a vote), `on_date`, `from_year`. `holders.appointed_by_id`, `nominated_by_id` and `motion_id` are removed. Appointments by Parliament, boards and commissions are therefore recorded like those by a person. |
+| **Votes** | `legislature.votes.party_id`: the party the member voted as, recorded at the time of the vote |
+| **Seats** | Dropped. Seating data is rarely available; the UI draws a round vote chart from vote counts, choices and parties |
+| **Attachments** | Each schema that needs media on rows that are not identities gets its own `attachments` table (`legislature`, `politics`, `election`, `civic`): the row, `asset_id` or `article_id`, `purpose_term`, `position`, `start_second`, `end_second` |
+| **External media** | `media.assets` gains `kind` (enum: held file, external link, embed), `provider_term` (youtube, x, tiktok, facebook, instagram, vimeo, wikipedia, news site, government site), `external_url`, `external_id`, `embed_url`, `thumbnail_url`, `author`, `published_on`, `availability` (enum: live, removed, unavailable) and `checked_at`. External video is never re-hosted; it is shown through the provider's player. Evidence snapshots are `source` captures |
+| **Forms** | `election.forms` for original results documents (Kenya's 34A, 34B, 34C): `contest_id`, `station_id` or `feature_id`, `form_term`, `asset_id` (image, PDF or link), `status`, `published_on`; results point at the form they came from |
+| **Election events** | `election.elections.event_id` → `event.events`: an election is planned ahead as an event, and its `event.occurrences` hold polling day, reruns and timetable items; countdowns come from the event calendar |
+| **Contract items and scores** | `civic.items` (contract or bid line items, with `good_id` → `economy.goods`) and `civic.scores` (prepared, reviewable comparisons with `score`, `low`, `high`, `comparables`, `confidence`, `basis`) stay in civic. `civic.prices` is dropped: prices belong to `economy` (section 33) |
+
+## 33. Approved shape: `economy`
+
+**Approved by the owner on 2026-11-25.** Goods, services and works, their prices and price baskets have their own schema, so they have a clear home and names, and `statistics` stays focused on published statistics (inflation, CPI, population and so on). Column names are in SQL casing; sections 21–24 apply.
+
+**Table name: `goods`.** Chosen as the plainest single word for the catalogue. In this schema "goods" **includes services and works**, as in the phrase "goods and services"; `kind` says which. `products` was rejected because `source.products` already means a publisher's product, and `items` because `civic.items` means contract line items.
+
+**Goods are not identities.** They are not rows in `identity.identities`; `economy` keeps its own names table with the same shape and the same language-choosing function as `identity.names` (section 7.3), so they are fully multilingual.
+
+### 33.1 Tables
+
+| Table | Holds | Columns |
+|---|---|---|
+| `goods` | The catalogue ("Cement, 50 kg bag, grade 42.5N", "Tarmac road, class C, per km", "Classroom block, standard design") | `code`, `kind` (enum: good, service, works), `parent_id` (tree: construction materials > cement > 50 kg bag > grade), `unit_id` → `reference.units`, `size` + `size_unit_id`, `standard_term` (the specification or grade it meets, such as a national standard), `status` (enum: active, retired) |
+| `names` | Names of goods in any language | `good_id`, `language_id`, `text`, `kind` (enum: preferred, plural, short, alternative), `country_id` (optional, local names) |
+| `codes` | International classification codes of a good | `good_id`, `scheme_term` (CPC, COICOP, UNSPSC, HS), `value` |
+| `crosswalks` | Official correspondence tables between classifications | `from_scheme_term`, `from_value`, `to_scheme_term`, `to_value`, `kind` (enum: exact, partial) |
+| `compositions` | What a works item is made of (a bill of quantities) | `good_id` (the works), `input_id` → goods, `quantity`, `unit_id` |
+| `prices` | One observed, reference or derived price | `good_id`, `feature_id`, `country_id` (partition key), `from_year`, `to_year`, `starts_on`, `ends_on`, `kind` (enum: retail, wholesale, farm-gate, standard cost, contract, modelled), price + `currency_id`, `status`, `basis`, `collection_id` → `statistics.collections`, `revision`, `supersedes_id` |
+| `baskets` | A set of goods with weights (CPI basket, cost-of-living basket) | `code`, `country_id`, `from_year`, `to_year`, `collection_id` |
+| `weights` | A good's weight in a basket | `basket_id`, `good_id`, `weight` |
+
+```mermaid
+erDiagram
+  goods ||--o{ goods : parent
+  goods ||--o{ names : named
+  goods ||--o{ codes : coded
+  goods ||--o{ compositions : "made of"
+  goods ||--o{ prices : priced
+  features ||--o{ prices : "at place"
+  collections ||--o{ prices : "from"
+  baskets ||--o{ weights : has
+  goods ||--o{ weights : weighted
+  goods ||--o{ items : "bought in (civic)"
+```
+
+### 33.2 How it connects
+
+- **Prices** come from price surveys, cost schedules and similar collections; where each came from is a `source` link.
+- **Published inflation and CPI** stay in `statistics` as observations. A cost-of-living figure Mzizi computes from `economy.prices` and `economy.weights` is a statistics observation with `basis = modelled`.
+- **Contracts:** `civic.items.good_id` → `economy.goods`, and `civic.scores` compares contract prices with economy prices (33.3).
+
+### 33.3 How the known limits are addressed
+
+**1. Different classifications (consumer COICOP, procurement UNSPSC, trade HS).**
+
+- The UN **Central Product Classification (CPC)** is the pivot: it covers goods and services, and the UN publishes official correspondence tables from CPC to COICOP, HS and other classifications.
+- Every good carries its codes in each scheme in `codes`.
+- The official correspondence tables are loaded into `crosswalks`, so data published in any one classification can be matched to goods through CPC. A `partial` match is used only with a warning.
+
+**2. Works costs (a kilometre of road, a classroom) are rarely in price surveys.** Three sources, used together:
+
+- **Standard cost schedules:** published unit rates from roads authorities and public works departments become `statistics.collections` of kind cost schedule, and their rates become `prices` of kind `standard cost`.
+- **Bills of quantities:** `compositions` breaks a works item into inputs (cement, sand, steel, labour days). Its estimated cost at a place and month is the sum of input prices there and then, stored as a `modelled` price.
+- **Past contracts:** unit prices in `civic.items` across many contracts for the same good form `contract` prices. A contract can then be compared with its peers (the median and range of similar contracts) as well as with surveys.
+
+**3. Quality and specification differences.**
+
+- **Like with like only:** specifications are separate leaf goods in the tree (cement grade 42.5N and 32.5R are two goods), and `standard_term` records the standard met. A comparison is made only between the same leaf good, never across grades. This avoids a free key-and-value attributes table.
+- **Ranges, not one number:** comparisons use the spread of comparable prices (for example the middle half), not a single price.
+- **Place and time:** the nearest place with data, in the month of signing, adjusted with the CPI from `statistics`.
+- **Confidence:** `civic.scores` records `score`, `low`, `high`, `comparables` (how many prices were compared), `confidence` and `basis`. When there are too few comparable prices it says so instead of giving a score.
+- Scores remain **reviewable proposals** that show their inputs, never findings or accusations.
+
 ## Pending discussion
 
 1. **Source links.** The design of the `source` linking table (section 23): what it records, its partition key, and cleanup when a row is deleted.
