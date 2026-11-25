@@ -23,9 +23,9 @@ export interface Field {
   column: string;
   column_snake: string;
   scalar: string;
-  optional: boolean;
-  nullable: boolean;
-  array: boolean;
+  optional?: boolean;
+  nullable?: boolean;
+  array?: boolean;
   geometry?: { shape: string; srid: number; dimensions: string | null } | null;
   schema_id?: string | null;
   default?: Json;

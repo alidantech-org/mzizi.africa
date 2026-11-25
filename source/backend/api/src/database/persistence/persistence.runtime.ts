@@ -172,15 +172,19 @@ function checks(items: Check[], input: Row, record: Row): void {
     if (evaluate(item.rule, input, record) !== true) throw new PersistenceFailure(item.failure);
 }
 function validate(field: Field, value: Json | undefined): void {
+  const optional = field.optional ?? false;
+  const nullable = field.nullable ?? false;
+  const array = field.array ?? false;
+
   if (value === undefined) {
-    if (!field.optional && field.default === null) invalid(`Missing ${field.name}`);
+    if (!optional && field.default === null) invalid(`Missing ${field.name}`);
     return;
   }
   if (value === null) {
-    if (!field.nullable) invalid(`Null ${field.name}`);
+    if (!nullable) invalid(`Null ${field.name}`);
     return;
   }
-  if (field.array) {
+  if (array) {
     if (!Array.isArray(value)) return invalid(`Expected array ${field.name}`);
     if (
       (field.min_items != null && value.length < field.min_items) ||
