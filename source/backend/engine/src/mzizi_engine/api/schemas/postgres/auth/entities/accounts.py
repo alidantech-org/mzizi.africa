@@ -13,7 +13,7 @@ from mzizi_engine.api.schemas.postgres.auth.enums.auth_actor_kind import AuthAct
 
 
 class AccountsRow(BaseModel):
-    """Login principal for a person or service; identity is separate from the people and institutions it refers to."""
+    """A sign-in principal for a person, service or agent."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -24,6 +24,6 @@ class AccountsRow(BaseModel):
     disabled_at: datetime | None = None
     display_name: Annotated[str, Field(min_length=1, max_length=255)]
     id: UUID
+    individual_id: UUID | None = None
     last_authenticated_at: datetime | None = None
-    person_ref_id: UUID
     status: AccountStatus

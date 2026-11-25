@@ -1,28 +1,24 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
 
-/** A kind of office with its seat rule: how it is filled, how many seats exist and where, the term, the legal basis. Offices are the individual seats of a position; holders are never part of it. */
+/** A kind of seat that law creates (Governor, Member of County Assembly). Its titles are `identity.names`. */
 export interface GovernancePositions {
-  basisProvisionId?: string | null;
+  basisTerm?: string | null;
   code: string;
   createdAt: string;
   deletedAt?: string | null;
-  displayOrder?: number | null;
-  exposureId?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
-  fromYear?: number | null;
+  exposureTerm?: string | null;
   id: string;
-  institutionId: string;
-  jurisdictionLevelId?: string | null;
-  roleId: string;
-  seatBasisId: string;
+  identityKind: SharedIdentityKind;
+  institutionId?: string | null;
+  levelId?: string | null;
+  methodTerm?: string | null;
+  position?: number | null;
+  provisionId?: string | null;
+  roleTerm: string;
   seatCount?: number | null;
-  seatUnitLevelId?: string | null;
-  selectionMethodId: string;
-  sourceCitationId?: string | null;
+  seatLevelId?: string | null;
   termLimit?: number | null;
   termYears?: number | null;
-  titleId: string;
-  toYear?: number | null;
   updatedAt: string;
   version: number;
 }

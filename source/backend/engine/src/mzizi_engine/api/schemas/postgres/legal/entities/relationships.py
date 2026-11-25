@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class LegalRelationshipsRow(BaseModel):
-    """A substantive legal operation or hierarchy link between wordings or instruments. Source derivation is not recorded here."""
+    """An amendment, repeal or replacement between instruments or wordings."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -18,7 +18,6 @@ class LegalRelationshipsRow(BaseModel):
 
     affected_wording_id: UUID | None = None
     authority_wording_id: UUID | None = None
-    citation_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -30,9 +29,10 @@ class LegalRelationshipsRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     effective_on: date | None = None
-    explanation: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
-    kind_id: UUID
+    kind_term: UUID
+    note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    note_language_id: UUID | None = None
     object_instrument_id: UUID | None = None
     resulting_wording_id: UUID | None = None
     subject_instrument_id: UUID | None = None

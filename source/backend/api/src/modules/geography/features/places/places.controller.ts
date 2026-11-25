@@ -1,46 +1,39 @@
 import { Controller, Get, HttpCode, Param, Query } from "@nestjs/common";
 
-import { FeatureCollectionDto } from "#/modules/geography/schema/dto/feature-collection.dto.ts";
-import { FeatureDetailDto } from "#/modules/geography/schema/dto/feature-detail.dto.ts";
-import { FeatureGeometryCollectionDto } from "#/modules/geography/schema/dto/feature-geometry-collection.dto.ts";
-import { FeatureKindCollectionDto } from "#/modules/geography/schema/dto/feature-kind-collection.dto.ts";
+import { ChildCollectionDto } from "#/modules/geography/schema/dto/child-collection.dto.ts";
+import { ChildWindowDto } from "#/modules/geography/schema/dto/child-window.dto.ts";
 import { FeatureWindowDto } from "#/modules/geography/schema/dto/feature-window.dto.ts";
-import { GeometryWindowDto } from "#/modules/geography/schema/dto/geometry-window.dto.ts";
+import { PlaceAtPointDto } from "#/modules/geography/schema/dto/place-at-point.dto.ts";
+import { PlaceCollectionDto } from "#/modules/geography/schema/dto/place-collection.dto.ts";
+import { PlaceDetailDto } from "#/modules/geography/schema/dto/place-detail.dto.ts";
+import { PointQueryDto } from "#/modules/geography/schema/dto/point-query.dto.ts";
 import { GeographyPlacesService } from "./places.service.ts";
 
 @Controller()
 export class GeographyPlacesController {
   constructor(private readonly service: GeographyPlacesService) {}
 
-  @Get("/v1/geography/feature-kinds")
+  @Get("/v1/geography/at")
   @HttpCode(200)
-  browseFeatureKinds(): Promise<FeatureKindCollectionDto> {
-    return this.service.browseFeatureKinds();
+  findPlacesAtPoint(@Query() input: PointQueryDto): Promise<PlaceAtPointDto> {
+    return this.service.findPlacesAtPoint(input);
   }
 
-  @Get("/v1/geography/features")
+  @Get("/v1/geography/children")
   @HttpCode(200)
-  browseFeatures(@Query() input: FeatureWindowDto): Promise<FeatureCollectionDto> {
-    return this.service.browseFeatures(input);
+  listChildren(@Query() input: ChildWindowDto): Promise<ChildCollectionDto> {
+    return this.service.listChildren(input);
   }
 
-  @Get("/v1/geography/geometries")
+  @Get("/v1/geography/places")
   @HttpCode(200)
-  browseGeometries(@Query() input: GeometryWindowDto): Promise<FeatureGeometryCollectionDto> {
-    return this.service.browseGeometries(input);
+  listPlaces(@Query() input: FeatureWindowDto): Promise<PlaceCollectionDto> {
+    return this.service.listPlaces(input);
   }
 
-  @Get("/v1/geography/features/:featureId")
+  @Get("/v1/geography/places/:code")
   @HttpCode(200)
-  getFeature(@Param("featureId") featureId: string): Promise<FeatureDetailDto> {
-    return this.service.getFeature({ featureId });
-  }
-
-  @Get("/v1/geography/features/:featureId/geometries")
-  @HttpCode(200)
-  listFeatureGeometries(
-    @Param("featureId") featureId: string,
-  ): Promise<FeatureGeometryCollectionDto> {
-    return this.service.listFeatureGeometries({ featureId });
+  getPlace(@Param("code") code: string): Promise<PlaceDetailDto> {
+    return this.service.getPlace({ code });
   }
 }

@@ -8,26 +8,24 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
-
 
 class RepliesRow(BaseModel):
-    """A right of reply or correction request from a named person or body about a record, with the identity check and publication state; shown beside any signal about that record."""
+    """An official response to a post."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "community.replies"
 
-    content_id: UUID
+    body: Annotated[str, Field(min_length=1, max_length=20000)]
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
+    language_id: UUID
+    post_country_id: UUID
+    post_id: UUID
     published_at: datetime | None = None
     received_at: datetime
-    respondent_entity_id: UUID | None = None
-    respondent_individual_id: UUID | None = None
-    status_id: UUID
-    subject_id: UUID
-    subject_table: SubjectTable
+    respondent_id: UUID
+    status_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

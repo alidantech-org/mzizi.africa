@@ -1,11 +1,17 @@
-import { IsString, IsUUID } from "class-validator";
-import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import { IsString, Matches, MaxLength, MinLength } from "class-validator";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 
 /**
  * Feature Key
  */
 export class FeatureKeyDto {
   @IsString()
-  @IsUUID()
-  featureId!: Id;
+  @MinLength(1)
+  @MaxLength(255)
+  @Matches(
+    new RegExp(
+      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+    ),
+  )
+  code!: IdentityCode;
 }

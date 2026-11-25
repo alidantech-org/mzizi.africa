@@ -19,10 +19,10 @@
         ["code"]
       ],
       "required": [
-        "calendar_kind_id"
-        ,"code"
+        "code"
         ,"id"
         ,"is_observed"
+        ,"kind_term"
       ],
       "x-seed": {
         "system": [
@@ -33,30 +33,21 @@
           ,"version"
         ],
         "columns": [
-          "calendar_kind_code"
-          ,"code"
+          "code"
           ,"country_code"
-          ,"description"
           ,"is_observed"
-          ,"source_citation_code"
+          ,"kind_term_code"
           ,"year_start_day"
           ,"year_start_month"
         ],
         "required": [
-          "calendar_kind_code"
-          ,"code"
+          "code"
           ,"is_observed"
+          ,"kind_term_code"
         ]
       },
       "properties": {
-        "calendar_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "calendar_kind_code", "scheme": "ref.sch.evt.calendar.kind" }
-        }
-        ,"code": {
+        "code": {
           "type": "string",
           "x-type": "text",
           "maxLength": 255,
@@ -69,7 +60,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -85,12 +76,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"description": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
-        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -103,12 +88,12 @@
           "x-type": "boolean",
           "x-role": "data"
         }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
+        ,"kind_term": {
+          "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.evt.calendar.kind" }
         }
         ,"updated_at": {
           "type": "string",
@@ -142,52 +127,49 @@
       "x-code": "sys.tbl.event.changes",
       "x-id": "#/schemas/event.Changes",
       "x-table": "event.changes",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
       "x-uniqueKeys": [
-        ["code"]
       ],
       "required": [
-        "change_kind_id"
-        ,"code"
-        ,"id"
+        "id"
+        ,"kind_term"
         ,"occurrence_id"
       ],
       "x-seed": {
         "system": [
           "created_at"
           ,"deleted_at"
-          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "authority_entity_code"
+          "authority_code"
           ,"basis_provision_code"
-          ,"change_kind_code"
-          ,"code"
           ,"decided_on"
-          ,"explanation"
           ,"from_on"
+          ,"id"
+          ,"kind_term_code"
+          ,"note"
+          ,"note_language_code"
           ,"occurrence_code"
-          ,"reason_code"
+          ,"reason_term_code"
           ,"replacement_occurrence_code"
-          ,"source_citation_code"
           ,"to_on"
         ],
         "required": [
-          "change_kind_code"
-          ,"code"
+          "id"
+          ,"kind_term_code"
           ,"occurrence_code"
         ]
       },
       "properties": {
-        "authority_entity_id": {
+        "authority_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "authority_entity_code" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "authority_code" }
         }
         ,"basis_provision_id": {
           "type": ["string", "null"],
@@ -195,21 +177,6 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "basis_provision_code" }
-        }
-        ,"change_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "change_kind_code", "scheme": "ref.sch.evt.change.kind" }
-        }
-        ,"code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -231,12 +198,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"explanation": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
-        }
         ,"from_on": {
           "type": ["string", "null"],
           "x-type": "date",
@@ -248,7 +209,28 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "data"
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.evt.change.kind" }
+        }
+        ,"note": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 4000,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"note_language_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "note_language_code" }
         }
         ,"occurrence_id": {
           "type": "string",
@@ -257,12 +239,12 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/event.Occurrences", "column": "id", "alias": "occurrence_code" }
         }
-        ,"reason_id": {
+        ,"reason_term": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "reason_code", "scheme": "ref.sch.evt.change.reason" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "reason_term_code", "scheme": "voc.sch.evt.change.reason" }
         }
         ,"replacement_occurrence_id": {
           "type": ["string", "null"],
@@ -270,13 +252,6 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/event.Occurrences", "column": "id", "alias": "replacement_occurrence_code" }
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
         ,"to_on": {
           "type": ["string", "null"],
@@ -313,8 +288,8 @@
       ],
       "required": [
         "code"
-        ,"event_kind_id"
         ,"id"
+        ,"kind_term"
       ],
       "x-seed": {
         "system": [
@@ -329,15 +304,15 @@
           ,"calendar_code"
           ,"code"
           ,"country_code"
-          ,"event_kind_code"
-          ,"organiser_entity_code"
-          ,"scope_feature_code"
-          ,"scope_level_kind_code"
-          ,"source_citation_code"
+          ,"feature_code"
+          ,"identity_kind"
+          ,"kind_term_code"
+          ,"level_code"
+          ,"organiser_code"
         ],
         "required": [
           "code"
-          ,"event_kind_code"
+          ,"kind_term_code"
         ]
       },
       "properties": {
@@ -368,7 +343,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -384,47 +359,47 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"event_kind_id": {
-          "type": "string",
+        ,"feature_id": {
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "event_kind_code", "scheme": "ref.sch.evt.event.kind" }
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "system",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "id_code" }
         }
-        ,"organiser_entity_id": {
+        ,"identity_kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "x-role": "data"
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.evt.event.kind" }
+        }
+        ,"level_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "organiser_entity_code" }
+          "x-link": { "tableId": "#/schemas/reference.Levels", "column": "id", "alias": "level_code" }
         }
-        ,"scope_feature_id": {
+        ,"organiser_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "scope_feature_code" }
-        }
-        ,"scope_level_kind_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "scope_level_kind_code", "scheme": "ref.sch.geo.feature.kind" }
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "organiser_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -472,6 +447,7 @@
           "counts_working_days"
           ,"event_code"
           ,"note"
+          ,"note_language_code"
           ,"occurrence_code"
           ,"offset_days"
           ,"position"
@@ -522,7 +498,15 @@
           "type": ["string", "null"],
           "x-type": "text",
           "maxLength": 4000,
+          "minLength": 1,
           "x-role": "data"
+        }
+        ,"note_language_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "note_language_code" }
         }
         ,"occurrence_id": {
           "type": ["string", "null"],
@@ -563,109 +547,6 @@
         }
       }
     },
-    "names": {
-      "title": "event.names",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.event.names",
-      "x-id": "#/schemas/event.Names",
-      "x-table": "event.names",
-      "x-primaryKey": ["id"],"x-naturalKey": ["event_code", "language_code", "name"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["event_id", "language_id", "name"]
-      ],
-      "required": [
-        "event_id"
-        ,"id"
-        ,"is_preferred"
-        ,"language_id"
-        ,"name"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "event_code"
-          ,"is_preferred"
-          ,"language_code"
-          ,"name"
-        ],
-        "required": [
-          "event_code"
-          ,"is_preferred"
-          ,"language_code"
-          ,"name"
-        ]
-      },
-      "properties": {
-        "created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"event_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/event.Events", "column": "id", "alias": "event_code" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"is_preferred": {
-          "type": "boolean",
-          "x-type": "boolean",
-          "x-role": "data"
-        }
-        ,"language_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
-        }
-        ,"name": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 300,
-          "minLength": 1,
-          "x-role": "key"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
     "occurrences": {
       "title": "event.occurrences",
       "type": "object",
@@ -683,9 +564,9 @@
         ,"event_id"
         ,"id"
         ,"is_all_day"
-        ,"knowledge_id"
+        ,"knowledge_term"
         ,"planned_starts_on"
-        ,"status_id"
+        ,"status_term"
       ],
       "x-seed": {
         "system": [
@@ -701,26 +582,23 @@
           ,"code"
           ,"continues_occurrence_code"
           ,"event_code"
-          ,"format_code"
+          ,"format_term_code"
           ,"is_all_day"
-          ,"knowledge_code"
-          ,"organiser_entity_code"
+          ,"knowledge_term_code"
+          ,"organiser_code"
           ,"planned_ends_on"
           ,"planned_starts_on"
-          ,"source_citation_code"
           ,"starts_at"
-          ,"status_code"
-          ,"timezone"
-          ,"venue_feature_code"
-          ,"venue_note"
+          ,"status_term_code"
+          ,"timezone_code"
         ],
         "required": [
           "code"
           ,"event_code"
           ,"is_all_day"
-          ,"knowledge_code"
+          ,"knowledge_term_code"
           ,"planned_starts_on"
-          ,"status_code"
+          ,"status_term_code"
         ]
       },
       "properties": {
@@ -772,12 +650,12 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/event.Events", "column": "id", "alias": "event_code" }
         }
-        ,"format_id": {
+        ,"format_term": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "format_code", "scheme": "ref.sch.evt.occurrence.format" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "format_term_code", "scheme": "voc.sch.evt.occurrence.format" }
         }
         ,"id": {
           "type": "string",
@@ -791,19 +669,19 @@
           "x-type": "boolean",
           "x-role": "data"
         }
-        ,"knowledge_id": {
+        ,"knowledge_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "knowledge_code", "scheme": "ref.sch.evt.occurrence.knowledge" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "knowledge_term_code", "scheme": "voc.sch.evt.occurrence.knowledge" }
         }
-        ,"organiser_entity_id": {
+        ,"organiser_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "organiser_entity_code" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "organiser_code" }
         }
         ,"planned_ends_on": {
           "type": ["string", "null"],
@@ -817,32 +695,25 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
         ,"starts_at": {
           "type": ["string", "null"],
           "x-type": "timestamp",
           "format": "date-time",
           "x-role": "data"
         }
-        ,"status_id": {
+        ,"status_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.evt.occurrence.status" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.evt.occurrence.status" }
         }
-        ,"timezone": {
+        ,"timezone_id": {
           "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 100,
-          "minLength": 1,
-          "x-role": "data"
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Timezones", "column": "id", "alias": "timezone_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -850,19 +721,6 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
-        }
-        ,"venue_feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "venue_feature_code" }
-        }
-        ,"venue_note": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -879,33 +737,32 @@
       "x-code": "sys.tbl.event.participants",
       "x-id": "#/schemas/event.Participants",
       "x-table": "event.participants",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["occurrence_code", "identity_code", "role_term_code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["occurrence_id", "identity_id", "role_term"]
       ],
       "required": [
         "id"
+        ,"identity_id"
         ,"occurrence_id"
-        ,"role_id"
+        ,"role_term"
       ],
       "x-seed": {
         "system": [
           "created_at"
           ,"deleted_at"
-          ,"updated_at"
-          ,"version"
+          ,"id"
         ],
         "columns": [
-          "entity_code"
-          ,"id"
-          ,"individual_code"
+          "identity_code"
           ,"occurrence_code"
-          ,"role_code"
+          ,"role_term_code"
         ],
         "required": [
-          "id"
+          "identity_code"
           ,"occurrence_code"
-          ,"role_code"
+          ,"role_term_code"
         ]
       },
       "properties": {
@@ -923,53 +780,33 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"entity_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "entity_code" }
-        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
-        ,"individual_id": {
-          "type": ["string", "null"],
+        ,"identity_id": {
+          "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "individual_code" }
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
         }
         ,"occurrence_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/event.Occurrences", "column": "id", "alias": "occurrence_code" }
         }
-        ,"role_id": {
+        ,"role_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "role_code", "scheme": "ref.sch.evt.participant.role" }
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "role_term_code", "scheme": "voc.sch.evt.participant.role" }
         }
       }
     },
@@ -980,52 +817,50 @@
       "x-code": "sys.tbl.event.rules",
       "x-id": "#/schemas/event.Rules",
       "x-table": "event.rules",
-      "x-primaryKey": ["id"],"x-naturalKey": ["event_code", "rule_kind_code"],
-      "x-seedable": true,
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
       "x-uniqueKeys": [
-        ["event_id", "rule_kind_id"]
       ],
       "required": [
         "event_id"
         ,"id"
-        ,"rule_kind_id"
+        ,"kind_term"
       ],
       "x-seed": {
         "system": [
           "created_at"
           ,"deleted_at"
-          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "adjustment_code"
+          "adjustment_term_code"
           ,"anchor_on"
           ,"day_of_month"
           ,"event_code"
-          ,"from_to_precision"
           ,"from_year"
+          ,"id"
           ,"interval_years"
+          ,"kind_term_code"
           ,"month"
           ,"nth_weekday"
           ,"rrule"
-          ,"rule_kind_code"
-          ,"source_citation_code"
           ,"to_year"
           ,"weekday"
         ],
         "required": [
           "event_code"
-          ,"rule_kind_code"
+          ,"id"
+          ,"kind_term_code"
         ]
       },
       "properties": {
-        "adjustment_id": {
+        "adjustment_term": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "adjustment_code", "scheme": "ref.sch.evt.rule.adjustment" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "adjustment_term_code", "scheme": "voc.sch.evt.rule.adjustment" }
         }
         ,"anchor_on": {
           "type": ["string", "null"],
@@ -1056,14 +891,8 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/event.Events", "column": "id", "alias": "event_code" }
-        }
-        ,"from_to_precision": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
-          "x-role": "data"
         }
         ,"from_year": {
           "type": ["integer", "null"],
@@ -1075,12 +904,19 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "data"
         }
         ,"interval_years": {
           "type": ["integer", "null"],
           "x-type": "integer",
           "x-role": "data"
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.evt.rule.kind" }
         }
         ,"month": {
           "type": ["integer", "null"],
@@ -1098,20 +934,6 @@
           "maxLength": 500,
           "minLength": 1,
           "x-role": "data"
-        }
-        ,"rule_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "rule_kind_code", "scheme": "ref.sch.evt.rule.kind" }
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
         }
         ,"to_year": {
           "type": ["integer", "null"],
@@ -1153,8 +975,8 @@
       "required": [
         "code"
         ,"id"
-        ,"schedule_kind_id"
-        ,"status_id"
+        ,"kind_term"
+        ,"status_term"
       ],
       "x-seed": {
         "system": [
@@ -1170,17 +992,16 @@
           ,"basis_provision_code"
           ,"code"
           ,"country_code"
-          ,"issuer_entity_code"
+          ,"issuer_code"
+          ,"kind_term_code"
           ,"published_on"
-          ,"schedule_kind_code"
-          ,"source_citation_code"
-          ,"status_code"
+          ,"status_term_code"
           ,"supersedes_schedule_code"
         ],
         "required": [
           "code"
-          ,"schedule_kind_code"
-          ,"status_code"
+          ,"kind_term_code"
+          ,"status_term_code"
         ]
       },
       "properties": {
@@ -1217,7 +1038,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -1240,12 +1061,19 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"issuer_entity_id": {
+        ,"issuer_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "issuer_entity_code" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "issuer_code" }
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.evt.schedule.kind" }
         }
         ,"published_on": {
           "type": ["string", "null"],
@@ -1253,26 +1081,12 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"schedule_kind_id": {
+        ,"status_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "schedule_kind_code", "scheme": "ref.sch.evt.schedule.kind" }
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
-        ,"status_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.evt.schedule.status" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.evt.schedule.status" }
         }
         ,"supersedes_schedule_id": {
           "type": ["string", "null"],
@@ -1314,7 +1128,7 @@
         ,"end_month"
         ,"id"
         ,"is_natural"
-        ,"season_kind_id"
+        ,"kind_term"
         ,"start_month"
       ],
       "x-seed": {
@@ -1328,25 +1142,20 @@
         "columns": [
           "code"
           ,"country_code"
-          ,"description"
           ,"end_day"
           ,"end_month"
-          ,"from_to_precision"
-          ,"from_year"
+          ,"feature_code"
           ,"is_natural"
-          ,"scope_feature_code"
-          ,"season_kind_code"
-          ,"source_citation_code"
+          ,"kind_term_code"
           ,"start_day"
           ,"start_month"
-          ,"to_year"
         ],
         "required": [
           "code"
           ,"country_code"
           ,"end_month"
           ,"is_natural"
-          ,"season_kind_code"
+          ,"kind_term_code"
           ,"start_month"
         ]
       },
@@ -1364,7 +1173,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -1380,12 +1189,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"description": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
-        }
         ,"end_day": {
           "type": ["integer", "null"],
           "x-type": "integer",
@@ -1396,16 +1199,12 @@
           "x-type": "integer",
           "x-role": "data"
         }
-        ,"from_to_precision": {
+        ,"feature_id": {
           "type": ["string", "null"],
-          "x-type": "text",
-          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
-          "x-role": "data"
-        }
-        ,"from_year": {
-          "type": ["integer", "null"],
-          "x-type": "integer",
-          "x-role": "data"
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"id": {
           "type": "string",
@@ -1419,26 +1218,12 @@
           "x-type": "boolean",
           "x-role": "data"
         }
-        ,"scope_feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "scope_feature_code" }
-        }
-        ,"season_kind_id": {
+        ,"kind_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "season_kind_code", "scheme": "ref.sch.evt.season.kind" }
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.evt.season.kind" }
         }
         ,"start_day": {
           "type": ["integer", "null"],
@@ -1447,11 +1232,6 @@
         }
         ,"start_month": {
           "type": "integer",
-          "x-type": "integer",
-          "x-role": "data"
-        }
-        ,"to_year": {
-          "type": ["integer", "null"],
           "x-type": "integer",
           "x-role": "data"
         }
@@ -1477,53 +1257,36 @@
       "x-code": "sys.tbl.event.subjects",
       "x-id": "#/schemas/event.Subjects",
       "x-table": "event.subjects",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["event_code", "identity_code", "role_term_code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["code"]
-        ,["event_id", "subject_table", "subject_id", "role_id"]
+        ["event_id", "identity_id", "role_term"]
       ],
       "required": [
-        "code"
-        ,"event_id"
+        "event_id"
         ,"id"
-        ,"role_id"
-        ,"subject_id"
-        ,"subject_table"
+        ,"identity_id"
+        ,"role_term"
       ],
       "x-seed": {
         "system": [
           "created_at"
           ,"deleted_at"
           ,"id"
-          ,"updated_at"
-          ,"version"
         ],
         "columns": [
-          "code"
-          ,"event_code"
-          ,"role_code"
-          ,"subject_id"
-          ,"subject_table"
+          "event_code"
+          ,"identity_code"
+          ,"role_term_code"
         ],
         "required": [
-          "code"
-          ,"event_code"
-          ,"role_code"
-          ,"subject_id"
-          ,"subject_table"
+          "event_code"
+          ,"identity_code"
+          ,"role_term_code"
         ]
       },
       "properties": {
-        "code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"created_at": {
+        "created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -1541,7 +1304,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/event.Events", "column": "id", "alias": "event_code" }
         }
         ,"id": {
@@ -1551,37 +1314,19 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"role_id": {
+        ,"identity_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "role_code", "scheme": "ref.sch.evt.subject.role" }
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
         }
-        ,"subject_id": {
+        ,"role_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
-        }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
-          "x-role": "data"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "role_term_code", "scheme": "voc.sch.evt.subject.role" }
         }
       }
     },
@@ -1592,16 +1337,16 @@
       "x-code": "sys.tbl.event.venues",
       "x-id": "#/schemas/event.Venues",
       "x-table": "event.venues",
-      "x-primaryKey": ["id"],"x-naturalKey": ["occurrence_code", "feature_code", "role_code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["occurrence_code", "feature_code", "role_term_code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["occurrence_id", "feature_id", "role_id"]
+        ["occurrence_id", "feature_id", "role_term"]
       ],
       "required": [
         "feature_id"
         ,"id"
         ,"occurrence_id"
-        ,"role_id"
+        ,"role_term"
       ],
       "x-seed": {
         "system": [
@@ -1614,13 +1359,14 @@
         "columns": [
           "feature_code"
           ,"note"
+          ,"note_language_code"
           ,"occurrence_code"
-          ,"role_code"
+          ,"role_term_code"
         ],
         "required": [
           "feature_code"
           ,"occurrence_code"
-          ,"role_code"
+          ,"role_term_code"
         ]
       },
       "properties": {
@@ -1656,7 +1402,15 @@
           "type": ["string", "null"],
           "x-type": "text",
           "maxLength": 4000,
+          "minLength": 1,
           "x-role": "data"
+        }
+        ,"note_language_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "note_language_code" }
         }
         ,"occurrence_id": {
           "type": "string",
@@ -1665,12 +1419,12 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/event.Occurrences", "column": "id", "alias": "occurrence_code" }
         }
-        ,"role_id": {
+        ,"role_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "role_code", "scheme": "ref.sch.evt.venue.role" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "role_term_code", "scheme": "voc.sch.evt.venue.role" }
         }
         ,"updated_at": {
           "type": "string",

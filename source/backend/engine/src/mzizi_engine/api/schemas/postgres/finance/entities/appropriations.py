@@ -10,15 +10,14 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class AppropriationsRow(BaseModel):
-    """One classified amount authorized in a budget version, optionally nested and assigned to a project or unit."""
+    """A line of a budget revision: money voted to a recipient, programme, project or place."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "finance.appropriations"
 
-    amount_minor_units: Annotated[int, Field(ge=0)]
-    budget_version_id: UUID
-    classification_id: UUID
+    amount: Annotated[int, Field(ge=0)] | None = None
+    class_term: UUID
     code: Annotated[
         str,
         Field(
@@ -28,13 +27,13 @@ class AppropriationsRow(BaseModel):
         ),
     ]
     created_at: datetime
-    currency_id: UUID
+    currency_id: UUID | None = None
     deleted_at: datetime | None = None
+    feature_id: UUID | None = None
     id: UUID
-    parent_appropriation_id: UUID | None = None
+    parent_id: UUID | None = None
     project_id: UUID | None = None
-    recipient_entity_id: UUID | None = None
-    source_citation_id: UUID | None = None
-    unit_feature_id: UUID | None = None
+    recipient_id: UUID | None = None
+    revision_id: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

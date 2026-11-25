@@ -8,15 +8,17 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class FacilitiesRow(BaseModel):
-    """The civic role of a geographic feature: a school, hospital, office, road, market or polling host. Size and capacity are observations on the feature; what it is and its levels are classifications; money reaches it through project links."""
+    """A public facility; it shares its geography feature's identity, so "near me" is a spatial query on the feature."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "civic.facilities"
 
-    closed_on: date | None = None
+    class_term: UUID
     code: Annotated[
         str,
         Field(
@@ -25,18 +27,19 @@ class FacilitiesRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    country_id: UUID | None = None
+    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    facility_class_id: UUID
-    feature_id: UUID
+    ends_on: date | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    opened_on: date | None = None
-    operator_entity_id: UUID | None = None
-    owner_entity_id: UUID | None = None
-    ownership_id: UUID | None = None
-    responsible_institution_id: UUID | None = None
-    source_citation_id: UUID | None = None
-    status_id: UUID
+    identity_kind: IdentityKind
+    institution_id: UUID | None = None
+    operator_id: UUID | None = None
+    owner_id: UUID | None = None
+    ownership_term: UUID | None = None
+    starts_on: date | None = None
+    status_term: UUID | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

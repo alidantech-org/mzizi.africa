@@ -5,7 +5,7 @@ import type { Integer } from "#/modules/shared/schema/type/integer.type.ts";
 /** Feature Window */
 export interface FeatureWindow {
   codePrefix?: IdentityCode;
-  featureTypeId?: Id;
+  kindTerm?: Id;
   limit?: Integer;
   offset?: Integer;
 }

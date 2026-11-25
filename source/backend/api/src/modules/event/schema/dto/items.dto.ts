@@ -7,9 +7,12 @@ import {
   IsUUID,
   MaxLength,
   Min,
+  MinLength,
   ValidateIf,
 } from "class-validator";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import type { Note } from "#/modules/event/schema/type/note.type.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { Integer } from "#/modules/shared/schema/type/integer.type.ts";
@@ -18,7 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One line of a schedule: an event placed at an offset from the anchor, and the occurrence it became. (entity)
+ * One step of a schedule. (entity)
  */
 export class ItemsDto {
   @IsBoolean()
@@ -43,8 +46,18 @@ export class ItemsDto {
   @IsOptional()
   @ValidateIf((object) => object.note !== null)
   @IsString()
+  @MinLength(1)
   @MaxLength(4000)
-  note?: Description | null;
+  @Satisfies<ItemsDto>((object) => object.note == null || object.noteLanguageId != null, {
+    message: "Item Note Has Language",
+  })
+  note?: Note | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.noteLanguageId !== null)
+  @IsString()
+  @IsUUID()
+  noteLanguageId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.occurrenceId !== null)

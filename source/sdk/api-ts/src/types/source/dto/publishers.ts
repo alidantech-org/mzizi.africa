@@ -1,14 +1,15 @@
-/** Accepted publisher; an optional official identity distinguishes the organization from its publication channels. */
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
+
+/** Who publishes; a publisher shares its organisation's identity (`official.entities`). */
 export interface SourcePublishers {
-  classificationId?: string | null;
+  classTerm?: string | null;
   code: string;
   countryId?: string | null;
   createdAt: string;
   deletedAt?: string | null;
   id: string;
-  kindId: string;
-  name: string;
-  officialEntityId?: string | null;
+  identityKind: SharedIdentityKind;
+  kindTerm: string;
   updatedAt: string;
   version: number;
 }

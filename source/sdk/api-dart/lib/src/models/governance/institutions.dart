@@ -1,51 +1,46 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'institutions.g.dart';
 
-/// One government institution specialization of an Official entity.
+/// A public institution; it shares its organisation's identity (`official.entities`). Committees are institutions linked to their house.
 @JsonSerializable(includeIfNull: false)
 class GovernanceInstitutions {
   const GovernanceInstitutions({
-    this.armId,
-    this.classId,
+    this.armTerm,
+    this.basisTerm,
+    this.classTerm,
     required this.code,
     required this.countryId,
     required this.createdAt,
     this.deletedAt,
-    this.dissolvedOn,
-    required this.entityId,
-    this.establishedOn,
-    this.establishmentBasisId,
-    this.fromToPrecision,
+    this.endsOn,
     this.fromYear,
     required this.id,
-    required this.institutionKindId,
-    this.sourceCitationId,
+    required this.identityKind,
+    required this.kindTerm,
+    this.startsOn,
     this.toYear,
     required this.updatedAt,
     required this.version,
   });
-  final String? armId;
-  final String? classId;
+  final String? armTerm;
+  final String? basisTerm;
+  final String? classTerm;
   final String code;
   final String countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final DateTime? dissolvedOn;
-  final String entityId;
-  final DateTime? establishedOn;
-  final String? establishmentBasisId;
-  final SharedDatePrecision? fromToPrecision;
+  final DateTime? endsOn;
   final int? fromYear;
   final String id;
-  final String institutionKindId;
-  final String? sourceCitationId;
+  final SharedIdentityKind identityKind;
+  final String kindTerm;
+  final DateTime? startsOn;
   final int? toYear;
   final DateTime updatedAt;
   final int version;

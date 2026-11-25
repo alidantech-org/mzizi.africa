@@ -2,8 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 /// Subject Table
 enum SharedSubjectTable {
-  @JsonValue('civic.beneficiaries')
-  civicBeneficiaries,
+  @JsonValue('civic.attachments')
+  civicAttachments,
   @JsonValue('civic.bids')
   civicBids,
   @JsonValue('civic.contracts')
@@ -12,30 +12,38 @@ enum SharedSubjectTable {
   civicDeliveries,
   @JsonValue('civic.facilities')
   civicFacilities,
-  @JsonValue('civic.officials')
-  civicOfficials,
-  @JsonValue('civic.partners')
-  civicPartners,
+  @JsonValue('civic.items')
+  civicItems,
   @JsonValue('civic.procurements')
   civicProcurements,
-  @JsonValue('civic.project_features')
-  civicProjectFeatures,
   @JsonValue('civic.projects')
   civicProjects,
+  @JsonValue('civic.roles')
+  civicRoles,
+  @JsonValue('civic.scores')
+  civicScores,
   @JsonValue('civic.services')
   civicServices,
+  @JsonValue('civic.sites')
+  civicSites,
   @JsonValue('civic.variations')
   civicVariations,
   @JsonValue('community.actors')
   communityActors,
+  @JsonValue('community.attachments')
+  communityAttachments,
+  @JsonValue('community.blocks')
+  communityBlocks,
   @JsonValue('community.cases')
   communityCases,
+  @JsonValue('community.checks')
+  communityChecks,
   @JsonValue('community.consents')
   communityConsents,
-  @JsonValue('community.deliveries')
-  communityDeliveries,
   @JsonValue('community.devices')
   communityDevices,
+  @JsonValue('community.dispatches')
+  communityDispatches,
   @JsonValue('community.notifications')
   communityNotifications,
   @JsonValue('community.places')
@@ -56,6 +64,42 @@ enum SharedSubjectTable {
   communityTokens,
   @JsonValue('community.views')
   communityViews,
+  @JsonValue('economy.baskets')
+  economyBaskets,
+  @JsonValue('economy.codes')
+  economyCodes,
+  @JsonValue('economy.compositions')
+  economyCompositions,
+  @JsonValue('economy.crosswalks')
+  economyCrosswalks,
+  @JsonValue('economy.goods')
+  economyGoods,
+  @JsonValue('economy.names')
+  economyNames,
+  @JsonValue('economy.prices')
+  economyPrices,
+  @JsonValue('economy.weights')
+  economyWeights,
+  @JsonValue('election.attachments')
+  electionAttachments,
+  @JsonValue('election.candidates')
+  electionCandidates,
+  @JsonValue('election.choices')
+  electionChoices,
+  @JsonValue('election.contests')
+  electionContests,
+  @JsonValue('election.elections')
+  electionElections,
+  @JsonValue('election.forms')
+  electionForms,
+  @JsonValue('election.results')
+  electionResults,
+  @JsonValue('election.stations')
+  electionStations,
+  @JsonValue('election.tallies')
+  electionTallies,
+  @JsonValue('election.turnouts')
+  electionTurnouts,
   @JsonValue('event.calendars')
   eventCalendars,
   @JsonValue('event.changes')
@@ -64,8 +108,6 @@ enum SharedSubjectTable {
   eventEvents,
   @JsonValue('event.items')
   eventItems,
-  @JsonValue('event.names')
-  eventNames,
   @JsonValue('event.occurrences')
   eventOccurrences,
   @JsonValue('event.participants')
@@ -80,112 +122,104 @@ enum SharedSubjectTable {
   eventSubjects,
   @JsonValue('event.venues')
   eventVenues,
-  @JsonValue('filesystem.content_tags')
-  filesystemContentTags,
-  @JsonValue('filesystem.contents')
-  filesystemContents,
-  @JsonValue('filesystem.file_extensions')
-  filesystemFileExtensions,
-  @JsonValue('filesystem.file_versions')
-  filesystemFileVersions,
   @JsonValue('filesystem.files')
   filesystemFiles,
   @JsonValue('filesystem.folders')
   filesystemFolders,
-  @JsonValue('filesystem.media')
-  filesystemMedia,
-  @JsonValue('filesystem.taggings')
-  filesystemTaggings,
-  @JsonValue('filesystem.tags')
-  filesystemTags,
+  @JsonValue('filesystem.formats')
+  filesystemFormats,
+  @JsonValue('filesystem.versions')
+  filesystemVersions,
   @JsonValue('finance.appropriations')
   financeAppropriations,
-  @JsonValue('finance.budget_versions')
-  financeBudgetVersions,
   @JsonValue('finance.budgets')
   financeBudgets,
   @JsonValue('finance.debts')
   financeDebts,
-  @JsonValue('finance.fiscal_periods')
-  financeFiscalPeriods,
+  @JsonValue('finance.findings')
+  financeFindings,
   @JsonValue('finance.flows')
   financeFlows,
   @JsonValue('finance.funds')
   financeFunds,
+  @JsonValue('finance.periods')
+  financePeriods,
+  @JsonValue('finance.revisions')
+  financeRevisions,
   @JsonValue('geography.assets')
   geographyAssets,
   @JsonValue('geography.changes')
   geographyChanges,
-  @JsonValue('geography.classifications')
-  geographyClassifications,
   @JsonValue('geography.features')
   geographyFeatures,
   @JsonValue('geography.geometries')
   geographyGeometries,
-  @JsonValue('geography.identifiers')
-  geographyIdentifiers,
-  @JsonValue('geography.levels')
-  geographyLevels,
-  @JsonValue('geography.names')
-  geographyNames,
+  @JsonValue('geography.outlines')
+  geographyOutlines,
+  @JsonValue('geography.pieces')
+  geographyPieces,
   @JsonValue('geography.relationships')
   geographyRelationships,
-  @JsonValue('governance.agenda')
-  governanceAgenda,
+  @JsonValue('governance.appointments')
+  governanceAppointments,
   @JsonValue('governance.assignments')
   governanceAssignments,
-  @JsonValue('governance.authority_scopes')
-  governanceAuthorityScopes,
-  @JsonValue('governance.bills')
-  governanceBills,
-  @JsonValue('governance.fulfilments')
-  governanceFulfilments,
   @JsonValue('governance.functions')
   governanceFunctions,
-  @JsonValue('governance.hansards')
-  governanceHansards,
   @JsonValue('governance.holders')
   governanceHolders,
+  @JsonValue('governance.instances')
+  governanceInstances,
   @JsonValue('governance.institutions')
   governanceInstitutions,
-  @JsonValue('governance.mandates')
-  governanceMandates,
-  @JsonValue('governance.motions')
-  governanceMotions,
+  @JsonValue('governance.jurisdictions')
+  governanceJurisdictions,
   @JsonValue('governance.obligations')
   governanceObligations,
   @JsonValue('governance.offices')
   governanceOffices,
+  @JsonValue('governance.patterns')
+  governancePatterns,
   @JsonValue('governance.positions')
   governancePositions,
   @JsonValue('governance.powers')
   governancePowers,
   @JsonValue('governance.procedures')
   governanceProcedures,
-  @JsonValue('governance.promises')
-  governancePromises,
   @JsonValue('governance.relationships')
   governanceRelationships,
   @JsonValue('governance.reports')
   governanceReports,
-  @JsonValue('governance.sittings')
-  governanceSittings,
-  @JsonValue('governance.speeches')
-  governanceSpeeches,
-  @JsonValue('governance.stages')
-  governanceStages,
+  @JsonValue('governance.templates')
+  governanceTemplates,
   @JsonValue('governance.terms')
   governanceTerms,
-  @JsonValue('governance.votes')
-  governanceVotes,
+  @JsonValue('history.eras')
+  historyEras,
+  @JsonValue('history.links')
+  historyLinks,
+  @JsonValue('history.occurrences')
+  historyOccurrences,
+  @JsonValue('history.roles')
+  historyRoles,
+  @JsonValue('identity.addresses')
+  identityAddresses,
+  @JsonValue('identity.classifications')
+  identityClassifications,
+  @JsonValue('identity.identifiers')
+  identityIdentifiers,
+  @JsonValue('identity.identities')
+  identityIdentities,
+  @JsonValue('identity.names')
+  identityNames,
+  @JsonValue('identity.tags')
+  identityTags,
   @JsonValue('legal.editions')
   legalEditions,
   @JsonValue('legal.effects')
   legalEffects,
   @JsonValue('legal.instruments')
   legalInstruments,
-  @JsonValue('legal.names')
-  legalNames,
   @JsonValue('legal.provisions')
   legalProvisions,
   @JsonValue('legal.references')
@@ -196,78 +230,96 @@ enum SharedSubjectTable {
   legalTranslations,
   @JsonValue('legal.wordings')
   legalWordings,
+  @JsonValue('legislature.agenda')
+  legislatureAgenda,
+  @JsonValue('legislature.attachments')
+  legislatureAttachments,
+  @JsonValue('legislature.bills')
+  legislatureBills,
+  @JsonValue('legislature.hansards')
+  legislatureHansards,
+  @JsonValue('legislature.motions')
+  legislatureMotions,
+  @JsonValue('legislature.sittings')
+  legislatureSittings,
+  @JsonValue('legislature.speeches')
+  legislatureSpeeches,
+  @JsonValue('legislature.stages')
+  legislatureStages,
+  @JsonValue('legislature.summaries')
+  legislatureSummaries,
+  @JsonValue('legislature.votes')
+  legislatureVotes,
+  @JsonValue('media.articles')
+  mediaArticles,
+  @JsonValue('media.assets')
+  mediaAssets,
+  @JsonValue('media.captions')
+  mediaCaptions,
+  @JsonValue('media.subjects')
+  mediaSubjects,
+  @JsonValue('media.texts')
+  mediaTexts,
+  @JsonValue('media.uses')
+  mediaUses,
   @JsonValue('official.branding')
   officialBranding,
   @JsonValue('official.contacts')
   officialContacts,
   @JsonValue('official.entities')
   officialEntities,
-  @JsonValue('official.identifiers')
-  officialIdentifiers,
   @JsonValue('official.individuals')
   officialIndividuals,
-  @JsonValue('official.names')
-  officialNames,
+  @JsonValue('official.parts')
+  officialParts,
   @JsonValue('official.relationships')
   officialRelationships,
   @JsonValue('politics.alignments')
   politicsAlignments,
-  @JsonValue('politics.candidates')
-  politicsCandidates,
+  @JsonValue('politics.attachments')
+  politicsAttachments,
   @JsonValue('politics.coalitions')
   politicsCoalitions,
-  @JsonValue('politics.contests')
-  politicsContests,
+  @JsonValue('politics.commitments')
+  politicsCommitments,
   @JsonValue('politics.contributions')
   politicsContributions,
-  @JsonValue('politics.elections')
-  politicsElections,
-  @JsonValue('politics.electorates')
-  politicsElectorates,
-  @JsonValue('politics.manifesto_items')
-  politicsManifestoItems,
+  @JsonValue('politics.fulfilments')
+  politicsFulfilments,
   @JsonValue('politics.manifestos')
   politicsManifestos,
   @JsonValue('politics.memberships')
   politicsMemberships,
-  @JsonValue('politics.option_results')
-  politicsOptionResults,
   @JsonValue('politics.parties')
   politicsParties,
-  @JsonValue('politics.polls')
-  politicsPolls,
-  @JsonValue('politics.referendum_options')
-  politicsReferendumOptions,
-  @JsonValue('politics.results')
-  politicsResults,
-  @JsonValue('reference.copy')
-  referenceCopy,
+  @JsonValue('product.apps')
+  productApps,
+  @JsonValue('product.keys')
+  productKeys,
+  @JsonValue('product.lang')
+  productLang,
+  @JsonValue('product.messages')
+  productMessages,
+  @JsonValue('product.releases')
+  productReleases,
+  @JsonValue('product.sites')
+  productSites,
   @JsonValue('reference.countries')
   referenceCountries,
-  @JsonValue('reference.instances')
-  referenceInstances,
-  @JsonValue('reference.language_names')
-  referenceLanguageNames,
+  @JsonValue('reference.currencies')
+  referenceCurrencies,
+  @JsonValue('reference.hierarchies')
+  referenceHierarchies,
   @JsonValue('reference.languages')
   referenceLanguages,
-  @JsonValue('reference.patterns')
-  referencePatterns,
-  @JsonValue('reference.schemes')
-  referenceSchemes,
-  @JsonValue('reference.templates')
-  referenceTemplates,
-  @JsonValue('reference.topics')
-  referenceTopics,
+  @JsonValue('reference.levels')
+  referenceLevels,
+  @JsonValue('reference.locales')
+  referenceLocales,
+  @JsonValue('reference.timezones')
+  referenceTimezones,
   @JsonValue('reference.units')
   referenceUnits,
-  @JsonValue('reference.value_labels')
-  referenceValueLabels,
-  @JsonValue('reference.value_relations')
-  referenceValueRelations,
-  @JsonValue('reference.values')
-  referenceValues,
-  @JsonValue('source.addresses')
-  sourceAddresses,
   @JsonValue('source.artifacts')
   sourceArtifacts,
   @JsonValue('source.attributions')
@@ -280,6 +332,8 @@ enum SharedSubjectTable {
   sourceContenders,
   @JsonValue('source.coverage')
   sourceCoverage,
+  @JsonValue('source.derivations')
+  sourceDerivations,
   @JsonValue('source.discoveries')
   sourceDiscoveries,
   @JsonValue('source.disputes')
@@ -288,26 +342,44 @@ enum SharedSubjectTable {
   sourceDomains,
   @JsonValue('source.editions')
   sourceEditions,
-  @JsonValue('source.links')
-  sourceLinks,
+  @JsonValue('source.evidence')
+  sourceEvidence,
+  @JsonValue('source.paths')
+  sourcePaths,
   @JsonValue('source.products')
   sourceProducts,
   @JsonValue('source.publishers')
   sourcePublishers,
-  @JsonValue('source.relationships')
-  sourceRelationships,
-  @JsonValue('source.slugs')
-  sourceSlugs,
   @JsonValue('source.sources')
   sourceSources,
   @JsonValue('source.verifications')
   sourceVerifications,
+  @JsonValue('statistics.breakdowns')
+  statisticsBreakdowns,
+  @JsonValue('statistics.collections')
+  statisticsCollections,
   @JsonValue('statistics.components')
   statisticsComponents,
+  @JsonValue('statistics.dimensions')
+  statisticsDimensions,
+  @JsonValue('statistics.figures')
+  statisticsFigures,
   @JsonValue('statistics.indicators')
   statisticsIndicators,
   @JsonValue('statistics.metrics')
   statisticsMetrics,
   @JsonValue('statistics.observations')
   statisticsObservations,
+  @JsonValue('statistics.priorities')
+  statisticsPriorities,
+  @JsonValue('vocabulary.labels')
+  vocabularyLabels,
+  @JsonValue('vocabulary.mappings')
+  vocabularyMappings,
+  @JsonValue('vocabulary.schemes')
+  vocabularySchemes,
+  @JsonValue('vocabulary.scopes')
+  vocabularyScopes,
+  @JsonValue('vocabulary.terms')
+  vocabularyTerms,
 }

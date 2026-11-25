@@ -2,18 +2,16 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { eventsExample } from "@test/modules/event/schema/dto/examples/events.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { periodEntityExample } from "@test/modules/shared/schema/dto/examples/period-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Rules, for generated tests. */
 export const rulesExample: ContractExample = contractExample({
   name: "Rules",
   fields: [
     {
-      name: "adjustmentId",
+      name: "adjustmentTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -34,7 +32,7 @@ export const rulesExample: ContractExample = contractExample({
       name: "dayOfMonth",
       optional: true,
       nullable: true,
-      spec: { kind: "number", integer: true, min: 1 },
+      spec: { kind: "number", integer: true, min: 1, max: 31 },
     },
     {
       name: "deletedAt",
@@ -47,12 +45,6 @@ export const rulesExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "fromToPrecision",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
     },
     {
       name: "fromYear",
@@ -73,34 +65,28 @@ export const rulesExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
     {
+      name: "kindTerm",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "month",
       optional: true,
       nullable: true,
-      spec: { kind: "number", integer: true, min: 1 },
+      spec: { kind: "number", integer: true, min: 1, max: 12 },
     },
     {
       name: "nthWeekday",
       optional: true,
       nullable: true,
-      spec: { kind: "number", integer: true, min: 1 },
+      spec: { kind: "number", integer: true, min: -5, max: 5 },
     },
     {
       name: "rrule",
       optional: true,
       nullable: true,
       spec: { kind: "string", minLength: 1, maxLength: 500 },
-    },
-    {
-      name: "ruleKindId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "toYear",
@@ -124,29 +110,8 @@ export const rulesExample: ContractExample = contractExample({
       name: "weekday",
       optional: true,
       nullable: true,
-      spec: { kind: "number", integer: true, min: 1 },
+      spec: { kind: "number", integer: true, min: 1, max: 7 },
     },
   ],
-  invariants: [
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "fromYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "toYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "fromYear" },
-          operator: "less-than-or-equal",
-          right: { field: "toYear" },
-        },
-      ],
-    },
-  ],
+  invariants: [],
 });

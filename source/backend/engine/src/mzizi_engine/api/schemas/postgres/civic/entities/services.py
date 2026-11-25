@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class ServicesRow(BaseModel):
-    """One provider's service provision at a physical place or geographic coverage unit during a service period."""
+    """A public service. Its names and descriptions are `identity.names`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -26,16 +28,16 @@ class ServicesRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
-    description: Annotated[str, Field(max_length=4000)]
     ends_on: date | None = None
+    feature_id: UUID | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    name: Annotated[str, Field(min_length=1, max_length=300)]
-    place_feature_id: UUID | None = None
-    provider_entity_id: UUID
-    responsible_institution_id: UUID | None = None
-    scope_unit_feature_id: UUID | None = None
-    service_kind_id: UUID
-    source_citation_id: UUID | None = None
+    identity_kind: IdentityKind
+    institution_id: UUID | None = None
+    kind_term: UUID
+    provider_id: UUID | None = None
+    scope_id: UUID | None = None
     starts_on: date | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

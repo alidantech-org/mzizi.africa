@@ -44,7 +44,6 @@ def test_health_and_capabilities_list_the_registered_package_capabilities(make_c
         "extraction.pdf",
         "extraction.csv",
         "scraping.links",
-        "manifest.check_seeds",
         "filesystem.register",
         "source.gate",
         "engine.process_info",

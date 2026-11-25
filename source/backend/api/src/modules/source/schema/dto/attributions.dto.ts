@@ -1,7 +1,6 @@
 import {
   IsInt,
   IsISO8601,
-  IsJSON,
   IsOptional,
   IsString,
   IsUUID,
@@ -15,13 +14,12 @@ import {
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-string1000.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Credit and rights for one artifact and publisher; equal bytes from other places never overwrite it. (entity)
+ * Credit and rights of an artifact. (entity)
  */
 export class AttributionsDto {
   @IsString()
@@ -31,9 +29,11 @@ export class AttributionsDto {
   @IsISO8601({})
   assessedAt!: Instant;
 
+  @IsOptional()
+  @ValidateIf((object) => object.assessorId !== null)
   @IsString()
-  @IsJSON()
-  assessorSnapshot!: JsonText;
+  @IsUUID()
+  assessorId?: Id | null;
 
   @IsString()
   @MinLength(1)
@@ -63,10 +63,10 @@ export class AttributionsDto {
   id!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.licenseValueId !== null)
+  @ValidateIf((object) => object.licenceTerm !== null)
   @IsString()
   @IsUUID()
-  licenseValueId?: Id | null;
+  licenceTerm?: Id | null;
 
   @IsString()
   @IsUUID()
@@ -74,7 +74,7 @@ export class AttributionsDto {
 
   @IsString()
   @MaxLength(4000)
-  rightsStatement!: Description;
+  rights!: Description;
 
   @IsISO8601({})
   updatedAt!: Instant;

@@ -66,7 +66,7 @@ def test_a_site_extending_an_abstract_family_resolves_modules_and_variables():
 
 def test_unknown_transform_and_unknown_mapping_column_are_rejected():
     mapping = read("mappings/example-ministry-publications.yml")
-    transformed = mapping.replace("{ from: slug }", "{ from: slug, transform: shell_exec }")
+    transformed = mapping.replace("{ from: href }", "{ from: href, transform: shell_exec }")
     assert any(
         "unknown transform 'shell_exec'" in e
         for e in validate(mutate("mappings/example-ministry-publications.yml", transformed)).errors

@@ -10,19 +10,16 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
+
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One institutional/country budget identity for a fiscal period and budget classification. (entity)
+ * A government's budget for a fiscal period. (entity)
  */
 export class BudgetsDto {
-  @IsString()
-  @IsUUID()
-  budgetKindId!: Id;
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -33,11 +30,9 @@ export class BudgetsDto {
   )
   code!: IdentityCode;
 
-  @IsOptional()
-  @ValidateIf((object) => object.countryId !== null)
   @IsString()
   @IsUUID()
-  countryId?: Id | null;
+  countryId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;
@@ -49,23 +44,19 @@ export class BudgetsDto {
 
   @IsString()
   @IsUUID()
-  fiscalPeriodId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.governmentEntityId !== null)
-  @IsString()
-  @IsUUID()
-  governmentEntityId?: Id | null;
+  governmentId!: Id;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
+  kindTerm!: Id;
+
+  @IsString()
+  @IsUUID()
+  periodId!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

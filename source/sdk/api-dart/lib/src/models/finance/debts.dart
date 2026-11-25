@@ -1,45 +1,46 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/finance/money_entity.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/reference/currencies.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'debts.g.dart';
 
-/// One public debt instrument between a borrower and optional lender, with contracted amount and maturity facts.
+/// A public debt (a loan or bond).
 @JsonSerializable(includeIfNull: false)
 class FinanceDebts {
   const FinanceDebts({
-    required this.amountMinorUnits,
-    required this.borrowerEntityId,
+    this.amount,
+    required this.borrowerId,
     required this.code,
     this.contractedOn,
-    this.countryId,
+    required this.countryId,
     required this.createdAt,
-    required this.currencyId,
-    required this.debtKindId,
+    this.currencyId,
     this.deletedAt,
     required this.id,
-    this.lenderEntityId,
+    required this.identityKind,
+    required this.kindTerm,
+    required this.lenderId,
     this.maturityOn,
-    this.sourceCitationId,
     required this.updatedAt,
     required this.version,
   });
-  final int amountMinorUnits;
-  final String borrowerEntityId;
+  final int? amount;
+  final String borrowerId;
   final String code;
   final DateTime? contractedOn;
-  final String? countryId;
+  final String countryId;
   final DateTime createdAt;
-  final String currencyId;
-  final String debtKindId;
+  final String? currencyId;
   final DateTime? deletedAt;
   final String id;
-  final String? lenderEntityId;
+  final SharedIdentityKind identityKind;
+  final String kindTerm;
+  final String lenderId;
   final DateTime? maturityOn;
-  final String? sourceCitationId;
   final DateTime updatedAt;
   final int version;
 

@@ -1,45 +1,40 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/legal/review_status.dart';
 import 'package:mzizi_api/src/enums/legal/translation_method.dart';
+import 'package:mzizi_api/src/models/auth/accounts.dart';
 import 'package:mzizi_api/src/models/legal/wordings.dart';
-import 'package:mzizi_api/src/models/reference/language.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
 
 part 'translations.g.dart';
 
-/// A translated representation of one exact wording. Several translations into one language are valid; review never makes a translation legal authority.
+/// Mzizi's own unofficial translation of a wording; never legal authority.
 @JsonSerializable(includeIfNull: false)
 class LegalTranslations {
   const LegalTranslations({
-    required this.code,
     required this.createdAt,
     this.deletedAt,
     required this.id,
     required this.languageId,
     required this.method,
     this.notes,
-    this.producedAt,
-    this.producedBy,
-    required this.reviewStatus,
+    required this.review,
     this.reviewedAt,
-    this.reviewedBySnapshot,
+    this.reviewedById,
     required this.text,
     required this.updatedAt,
     required this.version,
     required this.wordingId,
   });
-  final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String id;
   final String languageId;
   final LegalTranslationMethod method;
   final String? notes;
-  final DateTime? producedAt;
-  final String? producedBy;
-  final LegalReviewStatus reviewStatus;
+  final LegalReviewStatus review;
   final DateTime? reviewedAt;
-  final String? reviewedBySnapshot;
+  final String? reviewedById;
   final String text;
   final DateTime updatedAt;
   final int version;

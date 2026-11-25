@@ -278,33 +278,18 @@ packs:
       property.enum.types: { $ref: "#/packs/types" }
       property.types: { $ref: "#/packs/types" }
 
-  entities:
-    source:
-      { $ref: "#/sources/packs/official", path: inject/persistence/typeorm }
-    store: { $ref: "#/stores/main" }
+
+
+
+  # Typed use cases over the persistence runtime (vendored nestjs-persistence pack): one managed use case per HTTP
+  # operation with a declared query; operations without one re-export the project's src/implementations class.
+  persistence:
+    source: { $ref: "#/sources/packs/project", path: nestjs-persistence }
     destination: { $ref: "#/destinations/modules" }
     destinations:
-      test: { $ref: "#/destinations/modules-test" }
-    bind:
-      property.enum.types: { $ref: "#/packs/types" }
-      property.types: { $ref: "#/packs/types" }
-
-  type-files:
-    source: { $ref: "#/sources/packs/project", path: type-files }
-    destination: { $ref: "#/destinations/modules" }
-    bind:
-      property.enum.types: { $ref: "#/packs/types" }
-
-  use-cases:
-    source: { $ref: "#/sources/packs/project", path: use-cases }
-    destination: { $ref: "#/destinations/modules" }
-    destinations:
-      test: { $ref: "#/destinations/modules-test" }
       app: { $ref: "#/destinations/app" }
     bind:
       schema.validation: { $ref: "#/packs/dtos" }
-      schema.types: { $ref: "#/packs/type-files" }
-      schema.persistence: { $ref: "#/packs/entities" }
 
   server:
     source: { $ref: "#/sources/packs/official", path: inject/backend/nestjs }
@@ -316,10 +301,8 @@ packs:
       package: { $ref: "#/destinations/package" }
     bind:
       schema.validation: { $ref: "#/packs/dtos" }
-      schema.persistence: { $ref: "#/packs/entities" }
       schema.examples: { $ref: "#/packs/dtos" }
-      operation.usecase: { $ref: "#/packs/use-cases" }
-      module.provider: { $ref: "#/packs/use-cases" }
+      operation.usecase: { $ref: "#/packs/persistence" }
 
   python-rows:
     source: { $ref: "#/sources/packs/project", path: python-rows }
@@ -451,9 +434,7 @@ applications:
     packs:
       - { $ref: "#/packs/types" }
       - { $ref: "#/packs/dtos" }
-      - { $ref: "#/packs/entities" }
-      - { $ref: "#/packs/type-files" }
-      - { $ref: "#/packs/use-cases" }
+      - { $ref: "#/packs/persistence" }
       - { $ref: "#/packs/server" }
       - { $ref: "#/packs/catalog-api" }
       - { $ref: "#/packs/sdk-ts" }

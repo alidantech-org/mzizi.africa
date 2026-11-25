@@ -1,6 +1,6 @@
 import { LegalProvisionKind } from "#sdk/types/legal/enums/provision-kind.ts";
 
-/** Stable provision identity within one instrument; hierarchy stays within that instrument. One provision holds one statement. */
+/** The tree of articles and sections of an instrument; headings are on `wordings`. */
 export interface LegalProvisions {
   code: string;
   createdAt: string;
@@ -11,7 +11,6 @@ export interface LegalProvisions {
   kind: LegalProvisionKind;
   parentId?: string | null;
   position: number;
-  title?: string | null;
   updatedAt: string;
   version: number;
 }

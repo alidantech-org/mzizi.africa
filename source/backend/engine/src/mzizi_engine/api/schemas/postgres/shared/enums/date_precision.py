@@ -6,8 +6,8 @@ from enum import StrEnum
 
 
 class DatePrecision(StrEnum):
-    APPROXIMATE = "approximate"
-    END_APPROXIMATE = "end-approximate"
-    EXACT = "exact"
-    START_APPROXIMATE = "start-approximate"
-    UNKNOWN = "unknown"
+    CIRCA = "circa"
+    DAY = "day"
+    DECADE = "decade"
+    MONTH = "month"
+    YEAR = "year"

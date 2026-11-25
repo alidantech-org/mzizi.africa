@@ -1,48 +1,50 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/civic/procurements.dart';
 import 'package:mzizi_api/src/models/civic/projects.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/currencies.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'contracts.g.dart';
 
-/// One executed contract with a contractor, optional procurement/project links and contracted amount.
+/// A signed contract.
 @JsonSerializable(includeIfNull: false)
 class CivicContracts {
   const CivicContracts({
-    required this.amountMinorUnits,
-    this.buyerEntityId,
+    this.amount,
+    required this.buyerId,
     required this.code,
-    required this.contractorEntityId,
+    required this.contractorId,
     required this.createdAt,
-    required this.currencyId,
+    this.currencyId,
     this.deletedAt,
+    this.endsOn,
     required this.id,
-    this.natureId,
+    required this.natureTerm,
     this.procurementId,
     this.projectId,
     this.signedOn,
-    this.sourceCitationId,
-    required this.statusId,
+    this.startsOn,
+    required this.statusTerm,
     required this.updatedAt,
     required this.version,
   });
-  final int amountMinorUnits;
-  final String? buyerEntityId;
+  final int? amount;
+  final String buyerId;
   final String code;
-  final String contractorEntityId;
+  final String contractorId;
   final DateTime createdAt;
-  final String currencyId;
+  final String? currencyId;
   final DateTime? deletedAt;
+  final DateTime? endsOn;
   final String id;
-  final String? natureId;
+  final String natureTerm;
   final String? procurementId;
   final String? projectId;
   final DateTime? signedOn;
-  final String? sourceCitationId;
-  final String statusId;
+  final DateTime? startsOn;
+  final String statusTerm;
   final DateTime updatedAt;
   final int version;
 

@@ -2,28 +2,28 @@
 
 from __future__ import annotations
 
+from mzizi_engine.api.schemas.postgres.identity.entities.identities import IdentitiesRow
+from mzizi_engine.api.schemas.postgres.identity.entities.names import IdentityNamesRow
 from mzizi_engine.api.schemas.postgres.official.entities.branding import BrandingRow
 from mzizi_engine.api.schemas.postgres.official.entities.contacts import ContactsRow
 from mzizi_engine.api.schemas.postgres.official.entities.entities import EntitiesRow
-from mzizi_engine.api.schemas.postgres.official.entities.identifiers import OfficialIdentifiersRow
 from mzizi_engine.api.schemas.postgres.official.entities.individuals import IndividualsRow
-from mzizi_engine.api.schemas.postgres.official.entities.names import OfficialNamesRow
+from mzizi_engine.api.schemas.postgres.official.entities.parts import PartsRow
 from mzizi_engine.api.schemas.postgres.official.entities.relationships import OfficialRelationshipsRow
-from mzizi_engine.api.schemas.postgres.reference.entities.country import CountryRow
-from mzizi_engine.api.schemas.postgres.reference.entities.language import LanguageRow
-from mzizi_engine.api.schemas.postgres.reference.entities.value import ValueRow
-from mzizi_engine.api.schemas.postgres.source.entities.citations import CitationsRow
+from mzizi_engine.api.schemas.postgres.reference.entities.countries import CountriesRow
+from mzizi_engine.api.schemas.postgres.reference.entities.languages import LanguagesRow
+from mzizi_engine.api.schemas.postgres.vocabulary.entities.terms import TermsRow
 
 __all__ = [
     "BrandingRow",
-    "CitationsRow",
     "ContactsRow",
-    "CountryRow",
+    "CountriesRow",
     "EntitiesRow",
+    "IdentitiesRow",
+    "IdentityNamesRow",
     "IndividualsRow",
-    "LanguageRow",
-    "OfficialIdentifiersRow",
-    "OfficialNamesRow",
+    "LanguagesRow",
     "OfficialRelationshipsRow",
-    "ValueRow",
+    "PartsRow",
+    "TermsRow",
 ]

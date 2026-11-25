@@ -13,17 +13,20 @@ from mzizi_engine.api.schemas.postgres.community.enums.actor_status import Actor
 
 
 class ActorsRow(BaseModel):
-    """A visitor identity the server issues: anonymous by default, tied to an account only if one is linked later. No name, email or phone is held."""
+    """A visitor or member; a member's public profile. Members are not identities."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "community.actors"
 
     account_id: UUID | None = None
+    avatar_id: UUID | None = None
     country_id: UUID | None = None
     created_at: datetime
     deleted_at: datetime | None = None
+    display_name: Annotated[str, Field(min_length=1, max_length=100)] | None = None
     first_seen_at: datetime
+    handle: Annotated[str, Field(min_length=3, max_length=30, pattern="^[a-z][a-z0-9]*([._][a-z0-9]+)*$")] | None = None
     id: UUID
     kind: ActorKind
     language_id: UUID | None = None

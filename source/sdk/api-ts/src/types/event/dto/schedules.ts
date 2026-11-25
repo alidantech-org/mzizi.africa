@@ -1,4 +1,4 @@
-/** A published plan of dated items: an election timetable, a school year, a parliamentary calendar. Items are placed by offset from an anchor, so moving the anchor moves the plan. */
+/** A published timetable of steps counted from an anchor (an election timetable). */
 export interface EventSchedules {
   anchorEventId?: string | null;
   anchorOn?: string | null;
@@ -8,11 +8,10 @@ export interface EventSchedules {
   createdAt: string;
   deletedAt?: string | null;
   id: string;
-  issuerEntityId?: string | null;
+  issuerId?: string | null;
+  kindTerm: string;
   publishedOn?: string | null;
-  scheduleKindId: string;
-  sourceCitationId?: string | null;
-  statusId: string;
+  statusTerm: string;
   supersedesScheduleId?: string | null;
   updatedAt: string;
   version: number;

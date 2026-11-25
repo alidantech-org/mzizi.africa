@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 /// Http Method
 enum SourceHttpMethod {
   @JsonValue('GET')
-  get,
+  getValue,
   @JsonValue('HEAD')
   head,
   @JsonValue('POST')

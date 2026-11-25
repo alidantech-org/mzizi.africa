@@ -1,46 +1,24 @@
 import {
-  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
-  Matches,
   Max,
-  MaxLength,
   Min,
-  MinLength,
   ValidateIf,
 } from "class-validator";
-
-import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Who is responsible for a function, how it is shared, where a person starts, and the law that assigns it. (entity)
+ * Which institution or position carries a function, and who leads it. (entity)
+ *
+ * Invariant "AssignmentHasOneCarrier" has no simple form, so it isn't validated here.
  */
 export class AssignmentsDto {
-  @IsOptional()
-  @ValidateIf((object) => object.basisProvisionId !== null)
-  @IsString()
-  @IsUUID()
-  basisProvisionId?: Id | null;
-
-  @IsString()
-  @MinLength(1)
-  @MaxLength(255)
-  @Matches(
-    new RegExp(
-      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-    ),
-  )
-  code!: IdentityCode;
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -50,22 +28,10 @@ export class AssignmentsDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
-
-  @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)
   @IsInt()
   @Min(-10000)
   @Max(3000)
-  @Satisfies<AssignmentsDto>(
-    (object) =>
-      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
-    {
-      message: "Period Years Are Ordered",
-    },
-  )
   fromYear?: Year | null;
 
   @IsString()
@@ -77,44 +43,32 @@ export class AssignmentsDto {
   id!: Id;
 
   @IsOptional()
+  @ValidateIf((object) => object.initiatorId !== null)
+  @IsString()
+  @IsUUID()
+  initiatorId?: Id | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.institutionId !== null)
   @IsString()
   @IsUUID()
-  @Satisfies<AssignmentsDto>(
-    (object) => object.institutionId != null || object.obligorKindId != null,
-    {
-      message: "Has One Responsible Form",
-    },
-  )
   institutionId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.obligorKindId !== null)
+  @ValidateIf((object) => object.positionId !== null)
   @IsString()
   @IsUUID()
-  obligorKindId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  shareId!: Id;
+  positionId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
+  @ValidateIf((object) => object.provisionId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
+  provisionId?: Id | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.startInstitutionId !== null)
   @IsString()
   @IsUUID()
-  startInstitutionId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.startPositionId !== null)
-  @IsString()
-  @IsUUID()
-  startPositionId?: Id | null;
+  shareTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.toYear !== null)

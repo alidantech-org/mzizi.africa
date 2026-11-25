@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/governance/office_detail_holders.dart';
+import 'package:mzizi_api/src/models/governance/office_detail_names.dart';
 
 part 'office_detail.g.dart';
 
@@ -8,18 +9,28 @@ part 'office_detail.g.dart';
 class GovernanceOfficeDetail {
   const GovernanceOfficeDetail({
     required this.code,
+    this.featureId,
     required this.holders,
-    required this.id,
     required this.institutionId,
-    required this.kind,
-    this.unitFeatureId,
+    required this.names,
+    required this.officeId,
+    required this.positionId,
+    required this.roleTerm,
+    this.seat,
+    this.termLimit,
+    this.termYears,
   });
   final String code;
+  final String? featureId;
   final List<GovernanceOfficeDetailHolders> holders;
-  final String id;
   final String institutionId;
-  final String kind;
-  final String? unitFeatureId;
+  final List<GovernanceOfficeDetailNames> names;
+  final String officeId;
+  final String positionId;
+  final String roleTerm;
+  final String? seat;
+  final int? termLimit;
+  final int? termYears;
 
   factory GovernanceOfficeDetail.fromJson(Map<String, dynamic> json) => _$GovernanceOfficeDetailFromJson(json);
 

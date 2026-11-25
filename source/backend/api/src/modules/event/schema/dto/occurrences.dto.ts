@@ -13,17 +13,15 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { NonEmptyString100 } from "#/modules/shared/schema/type/non-empty-string100.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One dated instance of an event with its planned and actual dates, status, how we know the date, venue and format. Planned dates are never overwritten; changes are recorded. (entity)
+ * One happening of an event, with planned and actual dates. (entity)
  */
 export class OccurrencesDto {
   @IsOptional()
@@ -74,10 +72,10 @@ export class OccurrencesDto {
   eventId!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.formatId !== null)
+  @ValidateIf((object) => object.formatTerm !== null)
   @IsString()
   @IsUUID()
-  formatId?: Id | null;
+  formatTerm?: Id | null;
 
   @IsString()
   @IsUUID()
@@ -88,13 +86,13 @@ export class OccurrencesDto {
 
   @IsString()
   @IsUUID()
-  knowledgeId!: Id;
+  knowledgeTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.organiserEntityId !== null)
+  @ValidateIf((object) => object.organiserId !== null)
   @IsString()
   @IsUUID()
-  organiserEntityId?: Id | null;
+  organiserId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.plannedEndsOn !== null)
@@ -114,41 +112,22 @@ export class OccurrencesDto {
   plannedStartsOn!: CalendarDate;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
-
-  @IsOptional()
   @ValidateIf((object) => object.startsAt !== null)
   @IsISO8601({})
   startsAt?: Instant | null;
 
   @IsString()
   @IsUUID()
-  statusId!: Id;
+  statusTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.timezone !== null)
+  @ValidateIf((object) => object.timezoneId !== null)
   @IsString()
-  @MinLength(1)
-  @MaxLength(100)
-  timezone?: NonEmptyString100 | null;
+  @IsUUID()
+  timezoneId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;
-
-  @IsOptional()
-  @ValidateIf((object) => object.venueFeatureId !== null)
-  @IsString()
-  @IsUUID()
-  venueFeatureId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.venueNote !== null)
-  @IsString()
-  @MaxLength(4000)
-  venueNote?: Description | null;
 
   @IsInt()
   @Min(1)

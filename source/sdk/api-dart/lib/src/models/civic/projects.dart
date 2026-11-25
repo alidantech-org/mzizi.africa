@@ -1,53 +1,51 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/geography/features.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/governance/jurisdictions.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'projects.g.dart';
 
-/// One public development or infrastructure project with responsible institution, status, geographic scope and evidence.
+/// A public project. Its names and descriptions are `identity.names`; its places are `civic.sites`.
 @JsonSerializable(includeIfNull: false)
 class CivicProjects {
   const CivicProjects({
     required this.code,
-    this.completedOn,
-    this.countryId,
+    required this.countryId,
     required this.createdAt,
     this.deletedAt,
-    required this.description,
+    this.endsOn,
+    this.fromYear,
     required this.id,
-    this.implementingEntityId,
-    this.location,
-    required this.name,
-    this.responsibleInstitutionId,
-    this.scopeUnitFeatureId,
-    this.sourceCitationId,
-    this.sponsorEntityId,
-    this.startedOn,
-    required this.statusId,
+    required this.identityKind,
+    this.implementerId,
+    this.institutionId,
+    this.scopeId,
+    this.sponsorId,
+    this.startsOn,
+    required this.statusTerm,
+    this.toYear,
     required this.updatedAt,
     required this.version,
   });
   final String code;
-  final DateTime? completedOn;
-  final String? countryId;
+  final String countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String description;
+  final DateTime? endsOn;
+  final int? fromYear;
   final String id;
-  final String? implementingEntityId;
-  final Object? location;
-  final String name;
-  final String? responsibleInstitutionId;
-  final String? scopeUnitFeatureId;
-  final String? sourceCitationId;
-  final String? sponsorEntityId;
-  final DateTime? startedOn;
-  final String statusId;
+  final SharedIdentityKind identityKind;
+  final String? implementerId;
+  final String? institutionId;
+  final String? scopeId;
+  final String? sponsorId;
+  final DateTime? startsOn;
+  final String statusTerm;
+  final int? toYear;
   final DateTime updatedAt;
   final int version;
 

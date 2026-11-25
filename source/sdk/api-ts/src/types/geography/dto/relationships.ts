@@ -1,18 +1,16 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
-
-/** A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems. */
+/** A dated link between places; a parent link in a hierarchy also records the inner place's level. */
 export interface GeographyRelationships {
   createdAt: string;
   deletedAt?: string | null;
   endsOn?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
   fromYear?: number | null;
+  hierarchyId?: string | null;
   id: string;
+  kindTerm: string;
+  levelId?: string | null;
   objectFeatureId: string;
-  relationshipKindId: string;
   startsOn?: string | null;
   subjectFeatureId: string;
-  systemId: string;
   toYear?: number | null;
   updatedAt: string;
   version: number;

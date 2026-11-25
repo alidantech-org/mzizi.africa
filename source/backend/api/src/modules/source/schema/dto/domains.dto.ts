@@ -1,5 +1,4 @@
 import {
-  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -12,9 +11,6 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-
-import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
@@ -24,7 +20,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A host name a source is served from. A host belongs to one source at a time; its validity period records moves. (entity)
+ * A host name a source publishes on. (entity)
  */
 export class DomainsDto {
   @IsString()
@@ -36,6 +32,12 @@ export class DomainsDto {
     ),
   )
   code!: IdentityCode;
+
+  @IsOptional()
+  @ValidateIf((object) => object.contactId !== null)
+  @IsString()
+  @IsUUID()
+  contactId?: Id | null;
 
   @IsISO8601({})
   createdAt!: Instant;
@@ -51,28 +53,10 @@ export class DomainsDto {
   endsOn?: CalendarDate | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.entityId !== null)
-  @IsString()
-  @IsUUID()
-  entityId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
-
-  @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)
   @IsInt()
   @Min(-10000)
   @Max(3000)
-  @Satisfies<DomainsDto>(
-    (object) =>
-      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
-    {
-      message: "Period Years Are Ordered",
-    },
-  )
   fromYear?: Year | null;
 
   @IsString()
@@ -90,10 +74,10 @@ export class DomainsDto {
   lastCheckedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.officialContactId !== null)
+  @ValidateIf((object) => object.ownerId !== null)
   @IsString()
   @IsUUID()
-  officialContactId?: Id | null;
+  ownerId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.sourceId !== null)
@@ -104,20 +88,11 @@ export class DomainsDto {
   @IsOptional()
   @ValidateIf((object) => object.startsOn !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<DomainsDto>(
-    (object) =>
-      object.startsOn == null || object.endsOn == null || object.startsOn <= object.endsOn,
-    {
-      message: "Domains Dates Are Ordered",
-    },
-  )
   startsOn?: CalendarDate | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.statusId !== null)
   @IsString()
   @IsUUID()
-  statusId?: Id | null;
+  statusTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.templateId !== null)

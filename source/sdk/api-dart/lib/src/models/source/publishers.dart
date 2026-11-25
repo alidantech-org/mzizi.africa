@@ -1,36 +1,35 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'publishers.g.dart';
 
-/// Accepted publisher; an optional official identity distinguishes the organization from its publication channels.
+/// Who publishes; a publisher shares its organisation's identity (`official.entities`).
 @JsonSerializable(includeIfNull: false)
 class SourcePublishers {
   const SourcePublishers({
-    this.classificationId,
+    this.classTerm,
     required this.code,
     this.countryId,
     required this.createdAt,
     this.deletedAt,
     required this.id,
-    required this.kindId,
-    required this.name,
-    this.officialEntityId,
+    required this.identityKind,
+    required this.kindTerm,
     required this.updatedAt,
     required this.version,
   });
-  final String? classificationId;
+  final String? classTerm;
   final String code;
   final String? countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String id;
-  final String kindId;
-  final String name;
-  final String? officialEntityId;
+  final SharedIdentityKind identityKind;
+  final String kindTerm;
   final DateTime updatedAt;
   final int version;
 

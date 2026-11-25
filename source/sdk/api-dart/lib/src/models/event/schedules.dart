@@ -1,15 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/event/events.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
 import 'package:mzizi_api/src/models/legal/provisions.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'schedules.g.dart';
 
-/// A published plan of dated items: an election timetable, a school year, a parliamentary calendar. Items are placed by offset from an anchor, so moving the anchor moves the plan.
+/// A published timetable of steps counted from an anchor (an election timetable).
 @JsonSerializable(includeIfNull: false)
 class EventSchedules {
   const EventSchedules({
@@ -21,11 +20,10 @@ class EventSchedules {
     required this.createdAt,
     this.deletedAt,
     required this.id,
-    this.issuerEntityId,
+    this.issuerId,
+    required this.kindTerm,
     this.publishedOn,
-    required this.scheduleKindId,
-    this.sourceCitationId,
-    required this.statusId,
+    required this.statusTerm,
     this.supersedesScheduleId,
     required this.updatedAt,
     required this.version,
@@ -38,11 +36,10 @@ class EventSchedules {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String id;
-  final String? issuerEntityId;
+  final String? issuerId;
+  final String kindTerm;
   final DateTime? publishedOn;
-  final String scheduleKindId;
-  final String? sourceCitationId;
-  final String statusId;
+  final String statusTerm;
   final String? supersedesScheduleId;
   final DateTime updatedAt;
   final int version;

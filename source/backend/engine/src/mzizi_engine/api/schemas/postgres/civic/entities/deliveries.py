@@ -9,14 +9,14 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class CivicDeliveriesRow(BaseModel):
-    """One dated deliverable or milestone under a contract, optionally scoped to a geographic unit."""
+class DeliveriesRow(BaseModel):
+    """Work delivered and certified under a contract."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "civic.deliveries"
 
-    amount_minor_units: Annotated[int, Field(ge=0)] | None = None
+    amount: Annotated[int, Field(ge=0)] | None = None
     code: Annotated[
         str,
         Field(
@@ -30,9 +30,8 @@ class CivicDeliveriesRow(BaseModel):
     currency_id: UUID | None = None
     deleted_at: datetime | None = None
     delivered_on: date | None = None
-    delivery_kind_id: UUID
+    feature_id: UUID | None = None
     id: UUID
-    source_citation_id: UUID | None = None
-    unit_feature_id: UUID | None = None
+    kind_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

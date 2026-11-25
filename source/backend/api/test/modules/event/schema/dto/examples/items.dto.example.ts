@@ -5,6 +5,7 @@ import {
 import { eventsExample } from "@test/modules/event/schema/dto/examples/events.dto.example.ts";
 import { occurrencesExample } from "@test/modules/event/schema/dto/examples/occurrences.dto.example.ts";
 import { schedulesExample } from "@test/modules/event/schema/dto/examples/schedules.dto.example.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
 import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
 
 /** The contract shape of Items, for generated tests. */
@@ -45,7 +46,13 @@ export const itemsExample: ContractExample = contractExample({
       name: "note",
       optional: true,
       nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
+    },
+    {
+      name: "noteLanguageId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "occurrenceId",
@@ -84,5 +91,21 @@ export const itemsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "note" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "noteLanguageId" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+      ],
+    },
+  ],
 });

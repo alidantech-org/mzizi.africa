@@ -2,29 +2,21 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { individualsExample } from "@test/modules/official/schema/dto/examples/individuals.dto.example.ts";
-import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Branding, for generated tests. */
 export const brandingExample: ContractExample = contractExample({
   name: "Branding",
   fields: [
     {
-      name: "code",
-      optional: false,
-      nullable: false,
-      spec: {
-        kind: "string",
-        minLength: 1,
-        maxLength: 255,
-        patterns: [
-          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ],
-      },
+      name: "colors",
+      optional: true,
+      nullable: true,
+      array: {},
+      spec: { kind: "string", patterns: ["^#[0-9a-fA-F]{6}$"] },
     },
     {
       name: "createdAt",
@@ -39,10 +31,10 @@ export const brandingExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "entityId",
+      name: "fromYear",
       optional: true,
       nullable: true,
-      spec: { kind: "string", format: "uuid" },
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "id",
@@ -51,28 +43,34 @@ export const brandingExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "individualId",
-      optional: true,
-      nullable: true,
+      name: "identityId",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "kindId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
       name: "languageId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceCitationId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "text",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 2000 },
+    },
+    {
+      name: "toYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "updatedAt",
@@ -81,17 +79,27 @@ export const brandingExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "value",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", minLength: 1, maxLength: 1000 },
-    },
-    {
       name: "version",
       optional: false,
       nullable: false,
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "text" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "languageId" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+      ],
+    },
+  ],
 });

@@ -3,65 +3,61 @@ import 'package:mzizi_api/src/models/civic/contracts.dart';
 import 'package:mzizi_api/src/models/civic/projects.dart';
 import 'package:mzizi_api/src/models/finance/appropriations.dart';
 import 'package:mzizi_api/src/models/finance/debts.dart';
-import 'package:mzizi_api/src/models/finance/fiscal_periods.dart';
 import 'package:mzizi_api/src/models/finance/funds.dart';
-import 'package:mzizi_api/src/models/finance/money_entity.dart';
+import 'package:mzizi_api/src/models/finance/periods.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/official/individuals.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/reference/currencies.dart';
+import 'package:mzizi_api/src/models/shared/partitioned_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'flows.g.dart';
 
-/// One reported financial flow at its source transaction grain, not a rolled-up aggregate.
+/// A movement of public money: allocation, transfer, disbursement, payment or receipt.
 @JsonSerializable(includeIfNull: false)
 class FinanceFlows {
   const FinanceFlows({
-    required this.amountMinorUnits,
+    this.amount,
     this.appropriationId,
-    required this.code,
+    this.classTerm,
     this.contractId,
-    this.counterpartyEntityId,
-    this.counterpartyIndividualId,
+    this.counterpartyId,
+    required this.countryId,
     required this.createdAt,
-    required this.currencyId,
+    this.currencyId,
     this.debtId,
     this.deletedAt,
-    this.expenditureClassId,
-    this.fiscalPeriodId,
-    required this.flowKindId,
+    this.featureId,
     this.fundId,
     required this.id,
     this.institutionId,
-    required this.occurredOn,
+    required this.kindTerm,
+    this.occurredOn,
+    this.periodId,
     this.projectId,
-    this.scopeUnitFeatureId,
-    this.sourceCitationId,
     required this.updatedAt,
     required this.version,
   });
-  final int amountMinorUnits;
+  final int? amount;
   final String? appropriationId;
-  final String code;
+  final String? classTerm;
   final String? contractId;
-  final String? counterpartyEntityId;
-  final String? counterpartyIndividualId;
+  final String? counterpartyId;
+  final String countryId;
   final DateTime createdAt;
-  final String currencyId;
+  final String? currencyId;
   final String? debtId;
   final DateTime? deletedAt;
-  final String? expenditureClassId;
-  final String? fiscalPeriodId;
-  final String flowKindId;
+  final String? featureId;
   final String? fundId;
   final String id;
   final String? institutionId;
-  final DateTime occurredOn;
+  final String kindTerm;
+  final DateTime? occurredOn;
+  final String? periodId;
   final String? projectId;
-  final String? scopeUnitFeatureId;
-  final String? sourceCitationId;
   final DateTime updatedAt;
   final int version;
 

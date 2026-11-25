@@ -1,15 +1,17 @@
-/** One named public fund with a classification, manager and country. */
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
+
+/** A public fund (NG-CDF). */
 export interface FinanceFunds {
   code: string;
-  countryId?: string | null;
+  countryId: string;
   createdAt: string;
   deletedAt?: string | null;
-  fundKindId: string;
-  fundingSourceId?: string | null;
   id: string;
-  managingEntityId?: string | null;
-  scopeUnitFeatureId?: string | null;
-  sourceCitationId?: string | null;
+  identityKind: SharedIdentityKind;
+  kindTerm: string;
+  managerId?: string | null;
+  scopeId?: string | null;
+  sourceTerm?: string | null;
   updatedAt: string;
   version: number;
 }

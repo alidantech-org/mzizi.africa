@@ -9,8 +9,8 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class RolesRow(BaseModel):
-    """Named permission bundle with a policy version; protected roles cannot be edited away."""
+class AuthRolesRow(BaseModel):
+    """A named permission bundle with a policy version."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -27,7 +27,7 @@ class RolesRow(BaseModel):
     created_at: datetime
     description: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
-    managing_institution_ref_id: UUID | None = None
+    institution_id: UUID | None = None
     policy_version: Annotated[str, Field(min_length=1, max_length=255)]
     protected: bool
     retired_at: datetime | None = None

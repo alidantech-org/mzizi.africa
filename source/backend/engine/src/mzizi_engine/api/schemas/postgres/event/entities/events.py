@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class EventsRow(BaseModel):
-    """One event or a recurring series of events: a public holiday, a national day, an election, a sitting, a government visit. Names, rules and dated occurrences are separate; content and media attach through the subject mechanism."""
+    """A planned or recurring civic happening (Madaraka Day, budget reading). Its names are `identity.names`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -29,11 +31,11 @@ class EventsRow(BaseModel):
     country_id: UUID | None = None
     created_at: datetime
     deleted_at: datetime | None = None
-    event_kind_id: UUID
+    feature_id: UUID | None = None
     id: UUID
-    organiser_entity_id: UUID | None = None
-    scope_feature_id: UUID | None = None
-    scope_level_kind_id: UUID | None = None
-    source_citation_id: UUID | None = None
+    identity_kind: IdentityKind
+    kind_term: UUID
+    level_id: UUID | None = None
+    organiser_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

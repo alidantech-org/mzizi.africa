@@ -2,8 +2,12 @@ import type { GovernanceInstitutionEntryNames } from "#sdk/types/governance/dto/
 
 /** Institution Entry */
 export interface GovernanceInstitutionEntry {
+  armTerm: string | null;
+  classTerm: string | null;
   code: string;
-  id: string;
-  kind: string;
+  fromYear: number | null;
+  institutionId: string;
+  kindTerm: string;
   names: GovernanceInstitutionEntryNames[];
+  toYear: number | null;
 }

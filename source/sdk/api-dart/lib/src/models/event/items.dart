@@ -2,11 +2,12 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/event/events.dart';
 import 'package:mzizi_api/src/models/event/occurrences.dart';
 import 'package:mzizi_api/src/models/event/schedules.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
 import 'package:mzizi_api/src/models/shared/entity.dart';
 
 part 'items.g.dart';
 
-/// One line of a schedule: an event placed at an offset from the anchor, and the occurrence it became.
+/// One step of a schedule.
 @JsonSerializable(includeIfNull: false)
 class EventItems {
   const EventItems({
@@ -16,6 +17,7 @@ class EventItems {
     required this.eventId,
     required this.id,
     this.note,
+    this.noteLanguageId,
     this.occurrenceId,
     this.offsetDays,
     required this.position,
@@ -29,6 +31,7 @@ class EventItems {
   final String eventId;
   final String id;
   final String? note;
+  final String? noteLanguageId;
   final String? occurrenceId;
   final int? offsetDays;
   final int position;

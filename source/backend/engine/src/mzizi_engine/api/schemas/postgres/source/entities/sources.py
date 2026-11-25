@@ -12,13 +12,13 @@ from mzizi_engine.api.schemas.postgres.source.enums.source_kind import SourceKin
 
 
 class SourcesRow(BaseModel):
-    """A publication channel: a real website or a real API, with its classification and credibility."""
+    """A publication channel of a publisher."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "source.sources"
 
-    classification_id: UUID | None = None
+    class_term: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -29,15 +29,13 @@ class SourcesRow(BaseModel):
     ]
     created_at: datetime
     credential_binding: Annotated[str, Field(min_length=1, max_length=255)] | None = None
-    credibility_id: UUID | None = None
+    credibility_term: UUID | None = None
     deleted_at: datetime | None = None
-    description: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
     kind: SourceKind
-    licence_id: UUID | None = None
-    official_entity_id: UUID | None = None
+    label: Annotated[str, Field(min_length=1, max_length=255)]
+    licence_term: UUID | None = None
     publisher_id: UUID
     terms_url: Annotated[str, Field(max_length=2048)] | None = None
-    title: Annotated[str, Field(min_length=1, max_length=300)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -1,15 +1,15 @@
-/** A substantive legal operation or hierarchy link between wordings or instruments. Source derivation is not recorded here. */
+/** An amendment, repeal or replacement between instruments or wordings. */
 export interface LegalRelationships {
   affectedWordingId?: string | null;
   authorityWordingId?: string | null;
-  citationId?: string | null;
   code: string;
   createdAt: string;
   deletedAt?: string | null;
   effectiveOn?: string | null;
-  explanation?: string | null;
   id: string;
-  kindId: string;
+  kindTerm: string;
+  note?: string | null;
+  noteLanguageId?: string | null;
   objectInstrumentId?: string | null;
   resultingWordingId?: string | null;
   subjectInstrumentId?: string | null;

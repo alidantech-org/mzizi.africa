@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import type { AccountCollectionDto } from "#/modules/auth/schema/dto/account-collection.dto.ts";
 import type { AccountReadDto } from "#/modules/auth/schema/dto/account-read.dto.ts";
 import type { AccountWindowDto } from "#/modules/auth/schema/dto/account-window.dto.ts";
-import { GetMyAccountUseCase } from "#/modules/auth/features/accounts/use-cases/get-my-account.usecase.ts";
-import { ListAccountsUseCase } from "#/modules/auth/features/accounts/use-cases/list-accounts.usecase.ts";
+import { GetMyAccountUseCase } from "#/modules/auth/features/accounts/use-cases/get-my-account.repository.ts";
+import { ListAccountsUseCase } from "#/modules/auth/features/accounts/use-cases/list-accounts.repository.ts";
 
 /**
  * The Accounts contract the controller calls, then its implementation: each method

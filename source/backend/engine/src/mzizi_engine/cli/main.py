@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
 from uuid import UUID
 
 from mzizi_engine.runtime.assembly import build_default_runtime
+from mzizi_manifest.shared.paths import SEED_ROOT
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -29,7 +29,10 @@ def main(argv: list[str] | None = None) -> int:
     propose = sub.add_parser("propose-mapping", help="propose how a CSV table's columns map to database columns")
     propose.add_argument("csv", type=Path)
     propose.add_argument(
-        "--seed", type=Path, default=Path("seed"), help="seed folder holding terms/ and columns/ (default: seed)"
+        "--seed",
+        type=Path,
+        default=SEED_ROOT,
+        help="seed folder holding terms/ and columns/ (default: MZIZI_SEED_ROOT or .dev/seed)",
     )
     propose.add_argument(
         "--scopes", default="global,ke", help="comma-separated scopes whose terms apply (default: global,ke)"
@@ -47,14 +50,14 @@ def main(argv: list[str] | None = None) -> int:
         "lookup", help="find the known records a piece of text names (exact, key, trigram, edit distance)"
     )
     lookup.add_argument("text")
-    lookup.add_argument("--seed", type=Path, default=Path("seed"))
+    lookup.add_argument("--seed", type=Path, default=SEED_ROOT)
     lookup.add_argument("--scopes", default="global,ke")
     lookup.add_argument("--table", default="")
     lookup.add_argument("--vector", default="", help="also search this vector collection prefix (for example names)")
     index_sync = sub.add_parser(
         "index-sync", help="make the Qdrant collection match the names in the seed (only changes are embedded)"
     )
-    index_sync.add_argument("--seed", type=Path, default=Path("seed"))
+    index_sync.add_argument("--seed", type=Path, default=SEED_ROOT)
     index_sync.add_argument("--scopes", default="global,ke")
     index_sync.add_argument("--prefix", default="names")
     index_sync.add_argument("--url", default="http://127.0.0.1:6333")
@@ -64,7 +67,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     draft.add_argument("csv", type=Path)
     draft.add_argument("--out", type=Path, required=True)
-    draft.add_argument("--seed", type=Path, default=Path("seed"))
+    draft.add_argument("--seed", type=Path, default=SEED_ROOT)
     draft.add_argument("--scopes", default="global,ke")
     draft.add_argument("--scope", default="ke", help="the country scope the codes are built under")
     draft.add_argument("--prefer", default="")
@@ -103,68 +106,8 @@ def main(argv: list[str] | None = None) -> int:
     publish.add_argument(
         "--prune", action="store_true", help="delete public schema objects no schema file produces any more"
     )
-    seed = sub.add_parser("seed", help="load the seed CSVs into PostgreSQL (a dry run unless --apply)")
-    seed.add_argument("--apply", action="store_true", help="write the changes; without it the run is rolled back")
-    seed.add_argument("--root", type=Path, default=None, help="folder holding data/ (default: seed/)")
-    seed.add_argument(
-        "--context",
-        action="append",
-        type=Path,
-        default=[],
-        help="an earlier batch's folder, read only so links can name its rows (repeatable)",
-    )
-    files = sub.add_parser(
-        "register-files",
-        help="store the downloaded source files and seed CSVs and link their records (dry run unless --apply)",
-    )
-    files.add_argument("--apply", action="store_true", help="write to the object store and the database")
-    files.add_argument("--root", type=Path, default=None, help="folder holding data/ (default: seed/)")
-    media = sub.add_parser(
-        "register-media",
-        help="store the media files of a reviewed drafts folder and write their media rows (dry run unless --apply)",
-    )
-    media.add_argument("--drafts", type=Path, required=True, help="folder holding media.csv")
-    media.add_argument("--files-root", type=Path, required=True, help="folder the file column is relative to")
-    media.add_argument("--folders", default="media/flags", help="store folders, slash separated")
-    media.add_argument("--apply", action="store_true", help="write to the object store and the database")
     args = parser.parse_args(argv)
     config = EngineConfig.load()
-    if args.command == "register-media":
-        from mzizi_engine.runtime.assembly.filesystem_operations import sync_media_files
-
-        outcome = sync_media_files(
-            {
-                "apply": args.apply,
-                "drafts": str(args.drafts),
-                "files_root": str(args.files_root),
-                "folders": args.folders,
-            }
-        )
-        print(json.dumps(outcome, indent=2))
-        return 0 if outcome.get("ok") else 1
-    if args.command == "register-files":
-        from mzizi_engine.runtime.assembly.filesystem_operations import sync_source_files
-
-        outcome = sync_source_files({"apply": args.apply, **({"seed_root": str(args.root)} if args.root else {})})
-        print(json.dumps(outcome, indent=2))
-        return 0 if outcome.get("ok") else 1
-    if args.command == "seed":
-        from mzizi_engine.persistence.postgres.connection import connect
-        from mzizi_engine.persistence.postgres.seed_loader import load_seed, summarise
-        from mzizi_manifest.shared.paths import SEED_ROOT
-
-        with connect(config.require_postgres().url) as conn:
-            seeded = load_seed(conn, args.root or SEED_ROOT, apply=args.apply, context_roots=tuple(args.context))
-        for problem in seeded.problems:
-            print(f"error: {problem}", file=sys.stderr)
-        if seeded.ok:
-            print(summarise(seeded))
-            if args.apply and os.environ.get("ENGINE_VECTOR_URL"):
-                from mzizi_engine.runtime.assembly.index_sync import sync_names
-
-                report = sync_names(args.root or SEED_ROOT, ("global", "ke"), os.environ["ENGINE_VECTOR_URL"])
-                print("vector index:", report.model_dump_json())
-        return 0 if seeded.ok else 1
     if args.command == "publish-schemas":
         from mzizi_engine.runtime.assembly.schemas import publish_schemas
 

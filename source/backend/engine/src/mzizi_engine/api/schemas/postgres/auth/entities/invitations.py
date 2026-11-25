@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class InvitationsRow(BaseModel):
-    """Single-use invitation to an institution; only a digest of the token is stored."""
+    """A single-use invitation to an institution."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -21,7 +21,7 @@ class InvitationsRow(BaseModel):
     created_at: datetime
     expires_at: datetime | None = None
     id: UUID
-    institution_ref_id: UUID
+    institution_id: UUID
     intended_email: str
     invited_by: UUID
     revoked_at: datetime | None = None

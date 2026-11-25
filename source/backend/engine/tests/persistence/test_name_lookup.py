@@ -1,22 +1,20 @@
 import os
-from pathlib import Path
 
 import pytest
 
 from mzizi_engine.persistence.postgres.connection import connect
 from mzizi_engine.persistence.postgres.name_lookup import Stored, candidates_sql, resolve_source, similar
 from mzizi_manifest.features.database.tables import load_tables
-from mzizi_patterns import load_dictionary
+from mzizi_patterns.shared.contracts import LookupSource
 
 URL = os.environ.get("MZIZI_TEST_DATABASE_URL", "")
 
 
-def test_a_dictionary_lookup_resolves_to_stored_tables_and_columns() -> None:
-    dictionary = load_dictionary(Path("seed/columns/global/geography.yml"))
-    source = dictionary.tables["geography.features"].lookup.sources[0]  # type: ignore[union-attr]
+def test_a_lookup_source_resolves_to_stored_tables_and_columns() -> None:
+    source = LookupSource(table="identity.names", text="text", code="identity_code")
     stored = resolve_source(source, load_tables())
-    assert stored.names_table == ("geography", "names") and stored.link_column == "feature_id"
-    assert stored.target_table == ("geography", "features") and stored.kind_column == "feature_type_id"
+    assert stored.names_table == ("identity", "names") and stored.link_column == "identity_id"
+    assert stored.target_table == ("identity", "identities") and stored.kind_column == ""
     assert "unaccent(lower(n." in candidates_sql(stored).as_string()
 
 

@@ -2,10 +2,10 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { provisionsExample } from "@test/modules/legal/schema/dto/examples/provisions.dto.example.ts";
 import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Relationships, for generated tests. */
 export const relationshipsExample: ContractExample = contractExample({
@@ -24,34 +24,46 @@ export const relationshipsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "fromId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "objectInstitutionId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "relationshipKindId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceCitationId",
+      name: "provisionId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "subjectInstitutionId",
+      name: "toId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "toYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "updatedAt",
@@ -71,9 +83,9 @@ export const relationshipsExample: ContractExample = contractExample({
       any: false,
       comparisons: [
         {
-          left: { field: "subjectInstitutionId" },
+          left: { field: "fromId" },
           operator: "not-equal",
-          right: { field: "objectInstitutionId" },
+          right: { field: "toId" },
         },
       ],
     },

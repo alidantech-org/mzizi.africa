@@ -1,5 +1,5 @@
 /**
- * Derives `SubjectTable` (dryv/contracts/schemas/_subjects.ts) and `source/schema/seed/codes.json` from the generated schema.
+ * Derives `SubjectTable` (dryv/contracts/schemas/_subjects.ts) and `source/schema/codes.json` from the generated schema.
  *
  *   bun tools/sync-tables.ts --check   fail when either file disagrees with the generated tables
  *   bun tools/sync-tables.ts           rewrite both files
@@ -13,9 +13,12 @@ import { resolve } from "node:path";
 const repo = resolve(import.meta.dir, "../..");
 const snapshot = await Bun.file(resolve(repo, "source/backend/database/sql/schema.sql")).text();
 const subjectsPath = resolve(repo, "dryv/contracts/schemas/_subjects.ts");
-const codesPath = resolve(repo, "source/schema/seed/codes.json");
+const codesPath = resolve(repo, "source/schema/codes.json");
 
-const tables = [...snapshot.matchAll(/CREATE TABLE "([a-z_]+)"\."([a-z_]+)"/g)].map((m) => `${m[1]}.${m[2]}`).sort();
+// Partitions (`CREATE TABLE ... PARTITION OF ...`) are storage of their parent table, not tables of their own.
+const tables = [...snapshot.matchAll(/CREATE TABLE "([a-z_]+)"\."([a-z_]+)"(?! PARTITION OF)/g)]
+  .map((m) => `${m[1]}.${m[2]}`)
+  .sort();
 const pascal = (text: string): string =>
   text
     .split("_")
@@ -80,7 +83,7 @@ const subjectsText = subjects.replace(
 const currentCodes = await Bun.file(codesPath).text();
 if (process.argv.includes("--check")) {
   const errors: string[] = [];
-  if (currentCodes !== codesText) errors.push("source/schema/seed/codes.json is out of sync with the generated tables");
+  if (currentCodes !== codesText) errors.push("source/schema/codes.json is out of sync with the generated tables");
   if (subjects !== subjectsText) errors.push("SubjectTable in _subjects.ts is out of sync with the generated tables");
   if (errors.length) {
     console.error(`${errors.join("\n")}\nrun \`bun dryv/tools/sync-tables.ts\``);

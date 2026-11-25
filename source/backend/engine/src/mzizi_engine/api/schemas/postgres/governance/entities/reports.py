@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ReportsRow(BaseModel):
-    """One expected or found filing under an obligation, for one reporter and period, with its status and the document when found. Absence is a status, not a missing row."""
+    """One report filed (or not) against an obligation."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -29,12 +29,11 @@ class ReportsRow(BaseModel):
     deleted_at: datetime | None = None
     due_on: date | None = None
     filed_on: date | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     obligation_id: UUID
-    period_from: date | None = None
-    period_until: date | None = None
-    reporter_entity_id: UUID
-    source_citation_id: UUID | None = None
-    status_id: UUID
+    reporter_id: UUID
+    status_term: UUID
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

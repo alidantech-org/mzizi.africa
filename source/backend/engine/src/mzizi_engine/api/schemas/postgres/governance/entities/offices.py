@@ -8,17 +8,16 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
 class OfficesRow(BaseModel):
-    """One established public office, independent of any current holder and optionally scoped to a geographic unit."""
+    """One concrete seat (the Governor of Nairobi, the MCA for Kilimani ward)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "governance.offices"
 
-    abolished_on: date | None = None
     code: Annotated[
         str,
         Field(
@@ -28,16 +27,16 @@ class OfficesRow(BaseModel):
         ),
     ]
     created_at: datetime
-    created_on: date | None = None
     deleted_at: datetime | None = None
-    from_to_precision: DatePrecision | None = None
+    ends_on: date | None = None
+    feature_id: UUID | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
+    identity_kind: IdentityKind
     institution_id: UUID
     position_id: UUID
-    seat_ordinal: Annotated[int, Field(ge=1)] | None = None
-    source_citation_id: UUID | None = None
+    seat: Annotated[str, Field(min_length=1, max_length=100)] | None = None
+    starts_on: date | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
-    unit_feature_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

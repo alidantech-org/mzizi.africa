@@ -8,18 +8,19 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
 class InstitutionsRow(BaseModel):
-    """One government institution specialization of an Official entity."""
+    """A public institution; it shares its organisation's identity (`official.entities`). Committees are institutions linked to their house."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "governance.institutions"
 
-    arm_id: UUID | None = None
-    class_id: UUID | None = None
+    arm_term: UUID | None = None
+    basis_term: UUID | None = None
+    class_term: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -31,15 +32,12 @@ class InstitutionsRow(BaseModel):
     country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    dissolved_on: date | None = None
-    entity_id: UUID
-    established_on: date | None = None
-    establishment_basis_id: UUID | None = None
-    from_to_precision: DatePrecision | None = None
+    ends_on: date | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    institution_kind_id: UUID
-    source_citation_id: UUID | None = None
+    identity_kind: IdentityKind
+    kind_term: UUID
+    starts_on: date | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

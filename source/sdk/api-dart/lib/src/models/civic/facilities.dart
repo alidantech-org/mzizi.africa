@@ -1,51 +1,52 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/geography/features.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'facilities.g.dart';
 
-/// The civic role of a geographic feature: a school, hospital, office, road, market or polling host. Size and capacity are observations on the feature; what it is and its levels are classifications; money reaches it through project links.
+/// A public facility; it shares its geography feature's identity, so "near me" is a spatial query on the feature.
 @JsonSerializable(includeIfNull: false)
 class CivicFacilities {
   const CivicFacilities({
-    this.closedOn,
+    required this.classTerm,
     required this.code,
-    this.countryId,
+    required this.countryId,
     required this.createdAt,
     this.deletedAt,
-    required this.facilityClassId,
-    required this.featureId,
+    this.endsOn,
+    this.fromYear,
     required this.id,
-    this.openedOn,
-    this.operatorEntityId,
-    this.ownerEntityId,
-    this.ownershipId,
-    this.responsibleInstitutionId,
-    this.sourceCitationId,
-    required this.statusId,
+    required this.identityKind,
+    this.institutionId,
+    this.operatorId,
+    this.ownerId,
+    this.ownershipTerm,
+    this.startsOn,
+    this.statusTerm,
+    this.toYear,
     required this.updatedAt,
     required this.version,
   });
-  final DateTime? closedOn;
+  final String classTerm;
   final String code;
-  final String? countryId;
+  final String countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String facilityClassId;
-  final String featureId;
+  final DateTime? endsOn;
+  final int? fromYear;
   final String id;
-  final DateTime? openedOn;
-  final String? operatorEntityId;
-  final String? ownerEntityId;
-  final String? ownershipId;
-  final String? responsibleInstitutionId;
-  final String? sourceCitationId;
-  final String statusId;
+  final SharedIdentityKind identityKind;
+  final String? institutionId;
+  final String? operatorId;
+  final String? ownerId;
+  final String? ownershipTerm;
+  final DateTime? startsOn;
+  final String? statusTerm;
+  final int? toYear;
   final DateTime updatedAt;
   final int version;
 

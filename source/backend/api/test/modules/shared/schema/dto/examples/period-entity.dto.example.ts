@@ -2,7 +2,6 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
 
 /** The contract shape of PeriodEntity, for generated tests. */
@@ -20,12 +19,6 @@ export const periodEntityExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "fromToPrecision",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
     },
     {
       name: "fromYear",

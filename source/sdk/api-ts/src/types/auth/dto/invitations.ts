@@ -1,11 +1,11 @@
-/** Single-use invitation to an institution; only a digest of the token is stored. */
+/** A single-use invitation to an institution. */
 export interface AuthInvitations {
   acceptedAccountId?: string | null;
   acceptedAt?: string | null;
   createdAt: string;
   expiresAt?: string | null;
   id: string;
-  institutionRefId: string;
+  institutionId: string;
   intendedEmail: string;
   invitedBy: string;
   revokedAt?: string | null;

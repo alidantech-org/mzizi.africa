@@ -1,40 +1,40 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/geography/features.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
+import 'package:mzizi_api/src/models/governance/jurisdictions.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'funds.g.dart';
 
-/// One named public fund with a classification, manager and country.
+/// A public fund (NG-CDF).
 @JsonSerializable(includeIfNull: false)
 class FinanceFunds {
   const FinanceFunds({
     required this.code,
-    this.countryId,
+    required this.countryId,
     required this.createdAt,
     this.deletedAt,
-    required this.fundKindId,
-    this.fundingSourceId,
     required this.id,
-    this.managingEntityId,
-    this.scopeUnitFeatureId,
-    this.sourceCitationId,
+    required this.identityKind,
+    required this.kindTerm,
+    this.managerId,
+    this.scopeId,
+    this.sourceTerm,
     required this.updatedAt,
     required this.version,
   });
   final String code;
-  final String? countryId;
+  final String countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String fundKindId;
-  final String? fundingSourceId;
   final String id;
-  final String? managingEntityId;
-  final String? scopeUnitFeatureId;
-  final String? sourceCitationId;
+  final SharedIdentityKind identityKind;
+  final String kindTerm;
+  final String? managerId;
+  final String? scopeId;
+  final String? sourceTerm;
   final DateTime updatedAt;
   final int version;
 

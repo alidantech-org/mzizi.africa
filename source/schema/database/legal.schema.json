@@ -18,14 +18,12 @@
       "x-uniqueKeys": [
         ["code"]
         ,["instrument_id", "designation"]
-        ,["id", "instrument_id"]
       ],
       "required": [
         "code"
         ,"designation"
         ,"id"
         ,"instrument_id"
-        ,"observed_at"
       ],
       "x-seed": {
         "system": [
@@ -42,7 +40,6 @@
           ,"consolidated_on"
           ,"designation"
           ,"instrument_code"
-          ,"observed_at"
           ,"repealed_on"
           ,"supersedes_code"
         ],
@@ -50,7 +47,6 @@
           "code"
           ,"designation"
           ,"instrument_code"
-          ,"observed_at"
         ]
       },
       "properties": {
@@ -115,12 +111,6 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
         }
-        ,"observed_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
         ,"repealed_on": {
           "type": ["string", "null"],
           "x-type": "date",
@@ -160,16 +150,14 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
-        ,["wording_id", "subject_table", "subject_id", "kind_id", "from_year"]
+        ,["wording_id", "identity_id", "kind_term", "from_year"]
       ],
       "required": [
         "code"
         ,"id"
-        ,"kind_id"
-        ,"observed_at"
+        ,"identity_id"
+        ,"kind_term"
         ,"review_status"
-        ,"subject_id"
-        ,"subject_table"
         ,"wording_id"
       ],
       "x-seed": {
@@ -184,24 +172,20 @@
           "code"
           ,"effective_on"
           ,"ended_on"
-          ,"explanation"
-          ,"from_to_precision"
           ,"from_year"
-          ,"kind_code"
-          ,"observed_at"
+          ,"identity_code"
+          ,"kind_term_code"
+          ,"note"
+          ,"note_language_code"
           ,"review_status"
-          ,"subject_id"
-          ,"subject_table"
           ,"to_year"
           ,"wording_code"
         ],
         "required": [
           "code"
-          ,"kind_code"
-          ,"observed_at"
+          ,"identity_code"
+          ,"kind_term_code"
           ,"review_status"
-          ,"subject_id"
-          ,"subject_table"
           ,"wording_code"
         ]
       },
@@ -240,18 +224,6 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"explanation": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
-        }
-        ,"from_to_precision": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
-          "x-role": "data"
-        }
         ,"from_year": {
           "type": ["integer", "null"],
           "x-type": "integer",
@@ -264,35 +236,38 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"kind_id": {
+        ,"identity_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
         }
-        ,"observed_at": {
+        ,"kind_term": {
           "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.leg.effect.kind" }
+        }
+        ,"note": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 4000,
+          "minLength": 1,
           "x-role": "data"
+        }
+        ,"note_language_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "note_language_code" }
         }
         ,"review_status": {
           "type": "string",
           "x-type": "text",
           "enum": ["accepted", "proposed", "rejected", "reviewed"],
-          "x-role": "data"
-        }
-        ,"subject_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "data"
-        }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
           "x-role": "data"
         }
         ,"to_year": {
@@ -337,7 +312,7 @@
       "required": [
         "code"
         ,"id"
-        ,"kind_id"
+        ,"kind_term"
       ],
       "x-seed": {
         "system": [
@@ -350,15 +325,18 @@
         "columns": [
           "code"
           ,"enacted_on"
-          ,"issuing_entity_code"
-          ,"issuing_unit_code"
-          ,"kind_code"
+          ,"from_year"
+          ,"identity_kind"
+          ,"issuer_code"
+          ,"jurisdiction_code"
+          ,"kind_term_code"
           ,"published_on"
-          ,"status_code"
+          ,"status_term_code"
+          ,"to_year"
         ],
         "required": [
           "code"
-          ,"kind_code"
+          ,"kind_term_code"
         ]
       },
       "properties": {
@@ -390,33 +368,45 @@
           "format": "date",
           "x-role": "data"
         }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "system",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "id_code" }
         }
-        ,"issuing_entity_id": {
+        ,"identity_kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "x-role": "data"
+        }
+        ,"issuer_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "issuing_entity_code" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "issuer_code" }
         }
-        ,"issuing_unit_id": {
+        ,"jurisdiction_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "issuing_unit_code" }
+          "x-link": { "tableId": "#/schemas/governance.Jurisdictions", "column": "id", "alias": "jurisdiction_code" }
         }
-        ,"kind_id": {
+        ,"kind_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.leg.instrument.kind" }
         }
         ,"published_on": {
           "type": ["string", "null"],
@@ -424,136 +414,16 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"status_id": {
+        ,"status_term": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.leg.instrument.status" }
         }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
+        ,"to_year": {
+          "type": ["integer", "null"],
           "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "names": {
-      "title": "legal.names",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.legal.names",
-      "x-id": "#/schemas/legal.Names",
-      "x-table": "legal.names",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["code"]
-        ,["instrument_id", "language_id", "kind_id", "name"]
-      ],
-      "required": [
-        "code"
-        ,"id"
-        ,"instrument_id"
-        ,"is_preferred"
-        ,"kind_id"
-        ,"language_id"
-        ,"name"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "code"
-          ,"instrument_code"
-          ,"is_preferred"
-          ,"kind_code"
-          ,"language_code"
-          ,"name"
-        ],
-        "required": [
-          "code"
-          ,"instrument_code"
-          ,"is_preferred"
-          ,"kind_code"
-          ,"language_code"
-          ,"name"
-        ]
-      },
-      "properties": {
-        "code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"instrument_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
-        }
-        ,"is_preferred": {
-          "type": "boolean",
-          "x-type": "boolean",
-          "x-role": "data"
-        }
-        ,"kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code" }
-        }
-        ,"language_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
-        }
-        ,"name": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 300,
-          "minLength": 1,
           "x-role": "data"
         }
         ,"updated_at": {
@@ -582,8 +452,6 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
-        ,["parent_id", "position"]
-        ,["id", "instrument_id"]
       ],
       "required": [
         "code"
@@ -608,7 +476,6 @@
           ,"kind"
           ,"parent_code"
           ,"position"
-          ,"title"
         ],
         "required": [
           "code"
@@ -680,13 +547,6 @@
           "x-type": "integer",
           "x-role": "data"
         }
-        ,"title": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 300,
-          "minLength": 1,
-          "x-role": "data"
-        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
@@ -709,16 +569,12 @@
       "x-code": "sys.tbl.legal.references",
       "x-id": "#/schemas/legal.References",
       "x-table": "legal.references",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
       "x-uniqueKeys": [
-        ["code"]
-        ,["wording_id", "target_provision_id", "span_start"]
-        ,["translation_id", "target_provision_id", "span_start"]
       ],
       "required": [
-        "code"
-        ,"id"
+        "id"
         ,"method"
         ,"relation"
         ,"review_status"
@@ -731,12 +587,11 @@
         "system": [
           "created_at"
           ,"deleted_at"
-          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
-          "code"
+          "id"
           ,"method"
           ,"relation"
           ,"review_status"
@@ -749,7 +604,7 @@
           ,"wording_code"
         ],
         "required": [
-          "code"
+          "id"
           ,"method"
           ,"relation"
           ,"review_status"
@@ -760,15 +615,7 @@
         ]
       },
       "properties": {
-        "code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"created_at": {
+        "created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -787,7 +634,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "data"
         }
         ,"method": {
           "type": "string",
@@ -882,7 +729,7 @@
       "required": [
         "code"
         ,"id"
-        ,"kind_id"
+        ,"kind_term"
       ],
       "x-seed": {
         "system": [
@@ -895,18 +742,18 @@
         "columns": [
           "affected_wording_code"
           ,"authority_wording_code"
-          ,"citation_code"
           ,"code"
           ,"effective_on"
-          ,"explanation"
-          ,"kind_code"
+          ,"kind_term_code"
+          ,"note"
+          ,"note_language_code"
           ,"object_instrument_code"
           ,"resulting_wording_code"
           ,"subject_instrument_code"
         ],
         "required": [
           "code"
-          ,"kind_code"
+          ,"kind_term_code"
         ]
       },
       "properties": {
@@ -923,13 +770,6 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Wordings", "column": "id", "alias": "authority_wording_code" }
-        }
-        ,"citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "citation_code" }
         }
         ,"code": {
           "type": "string",
@@ -959,12 +799,6 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"explanation": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
-        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -972,12 +806,26 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"kind_id": {
+        ,"kind_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.leg.relationship.kind" }
+        }
+        ,"note": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 4000,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"note_language_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "note_language_code" }
         }
         ,"object_instrument_id": {
           "type": ["string", "null"],
@@ -1022,18 +870,16 @@
       "x-code": "sys.tbl.legal.translations",
       "x-id": "#/schemas/legal.Translations",
       "x-table": "legal.translations",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["wording_code", "language_code", "method"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["code"]
-        ,["id", "wording_id"]
+        ["wording_id", "language_id", "method"]
       ],
       "required": [
-        "code"
-        ,"id"
+        "id"
         ,"language_id"
         ,"method"
-        ,"review_status"
+        ,"review"
         ,"text"
         ,"wording_id"
       ],
@@ -1046,37 +892,25 @@
           ,"version"
         ],
         "columns": [
-          "code"
-          ,"language_code"
+          "language_code"
           ,"method"
           ,"notes"
-          ,"produced_at"
-          ,"produced_by"
-          ,"review_status"
+          ,"review"
           ,"reviewed_at"
-          ,"reviewed_by_snapshot"
+          ,"reviewed_by_code"
           ,"text"
           ,"wording_code"
         ],
         "required": [
-          "code"
-          ,"language_code"
+          "language_code"
           ,"method"
-          ,"review_status"
+          ,"review"
           ,"text"
           ,"wording_code"
         ]
       },
       "properties": {
-        "code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"created_at": {
+        "created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -1101,14 +935,14 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "language_code" }
         }
         ,"method": {
           "type": "string",
           "x-type": "text",
-          "enum": ["assisted", "human", "machine"],
-          "x-role": "data"
+          "enum": ["human", "machine"],
+          "x-role": "key"
         }
         ,"notes": {
           "type": ["string", "null"],
@@ -1116,18 +950,7 @@
           "maxLength": 4000,
           "x-role": "data"
         }
-        ,"produced_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"produced_by": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "x-role": "data"
-        }
-        ,"review_status": {
+        ,"review": {
           "type": "string",
           "x-type": "text",
           "enum": ["accepted", "proposed", "rejected", "reviewed"],
@@ -1139,10 +962,12 @@
           "format": "date-time",
           "x-role": "data"
         }
-        ,"reviewed_by_snapshot": {
+        ,"reviewed_by_id": {
           "type": ["string", "null"],
-          "x-type": "text",
-          "x-role": "data"
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "reviewed_by_code" }
         }
         ,"text": {
           "type": "string",
@@ -1167,7 +992,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/legal.Wordings", "column": "id", "alias": "wording_code" }
         }
       }
@@ -1189,9 +1014,7 @@
         "code"
         ,"edition_id"
         ,"id"
-        ,"instrument_id"
         ,"language_id"
-        ,"observed_at"
         ,"provision_id"
         ,"text"
       ],
@@ -1204,40 +1027,26 @@
           ,"version"
         ],
         "columns": [
-          "citation_code"
-          ,"code"
+          "code"
           ,"edition_code"
           ,"ends_on"
-          ,"from_to_precision"
-          ,"from_year"
-          ,"instrument_code"
+          ,"heading"
           ,"language_code"
-          ,"observed_at"
           ,"provision_code"
           ,"starts_on"
           ,"supersedes_code"
           ,"text"
-          ,"to_year"
         ],
         "required": [
           "code"
           ,"edition_code"
-          ,"instrument_code"
           ,"language_code"
-          ,"observed_at"
           ,"provision_code"
           ,"text"
         ]
       },
       "properties": {
-        "citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "citation_code" }
-        }
-        ,"code": {
+        "code": {
           "type": "string",
           "x-type": "text",
           "maxLength": 255,
@@ -1272,15 +1081,11 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"from_to_precision": {
+        ,"heading": {
           "type": ["string", "null"],
           "x-type": "text",
-          "enum": ["approximate", "end-approximate", "exact", "start-approximate", "unknown"],
-          "x-role": "data"
-        }
-        ,"from_year": {
-          "type": ["integer", "null"],
-          "x-type": "integer",
+          "maxLength": 1000,
+          "minLength": 1,
           "x-role": "data"
         }
         ,"id": {
@@ -1290,25 +1095,12 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"instrument_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
-        }
         ,"language_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
-        }
-        ,"observed_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "language_code" }
         }
         ,"provision_id": {
           "type": "string",
@@ -1334,11 +1126,6 @@
           "type": "string",
           "x-type": "text",
           "minLength": 1,
-          "x-role": "data"
-        }
-        ,"to_year": {
-          "type": ["integer", "null"],
-          "x-type": "integer",
           "x-role": "data"
         }
         ,"updated_at": {

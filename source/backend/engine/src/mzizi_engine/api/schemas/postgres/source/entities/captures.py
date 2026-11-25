@@ -10,30 +10,23 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class CapturesRow(BaseModel):
-    """One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other."""
+    """One fetch of a path."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "source.captures"
 
-    address_id: UUID | None = None
     artifact_id: UUID | None = None
-    code: Annotated[
-        str,
-        Field(
-            min_length=1,
-            max_length=255,
-            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ),
-    ]
+    content_type: Annotated[str, Field(min_length=1, max_length=255)] | None = None
     created_at: datetime
-    deleted_at: datetime | None = None
+    discovered_at: datetime | None = None
     discovery_id: UUID | None = None
+    etag: Annotated[str, Field(min_length=1, max_length=1000)] | None = None
     id: UUID
+    last_modified: datetime | None = None
     original_url: Annotated[str, Field(max_length=2048)]
-    response_metadata: str
+    path_id: UUID | None = None
     retrieved_at: datetime
     retrieved_url: Annotated[str, Field(max_length=2048)] | None = None
     source_id: UUID | None = None
-    updated_at: datetime
-    version: Annotated[int, Field(ge=1)]
+    status_code: Annotated[int, Field(ge=100, le=599)] | None = None

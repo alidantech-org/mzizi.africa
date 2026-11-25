@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/enums/shared/subject_table.dart';
 import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
 
@@ -12,7 +11,6 @@ class SharedCodedPeriodSubjectEntity {
     required this.code,
     required this.createdAt,
     this.deletedAt,
-    this.fromToPrecision,
     this.fromYear,
     required this.id,
     required this.subjectId,
@@ -24,7 +22,6 @@ class SharedCodedPeriodSubjectEntity {
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final SharedDatePrecision? fromToPrecision;
   final int? fromYear;
   final String id;
   final String subjectId;

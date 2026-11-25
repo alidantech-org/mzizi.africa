@@ -15,7 +15,7 @@ enum LegalProvisionKind {
   @JsonValue('paragraph')
   paragraph,
   @JsonValue('part')
-  part,
+  partValue,
   @JsonValue('preamble')
   preamble,
   @JsonValue('schedule')

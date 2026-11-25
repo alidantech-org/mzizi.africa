@@ -1,62 +1,57 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
 import 'package:mzizi_api/src/models/civic/projects.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/reference/currencies.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'procurements.g.dart';
 
-/// One public procurement process run by a buyer, optionally linked to a project.
+/// A tender. Its title is an `identity.names` row and its tender number an `identity.identifiers` row.
 @JsonSerializable(includeIfNull: false)
 class CivicProcurements {
   const CivicProcurements({
-    this.awardedOn,
+    this.amount,
     this.bidderCount,
-    required this.buyerEntityId,
-    this.categoryId,
+    required this.buyerId,
+    required this.categoryTerm,
     this.closesOn,
     required this.code,
-    this.countryId,
+    required this.countryId,
     required this.createdAt,
     this.currencyId,
     this.deletedAt,
-    this.estimatedAmountMinorUnits,
-    this.evaluationBasisId,
+    this.evaluationTerm,
     required this.id,
-    this.natureId,
-    required this.procedureKindId,
+    required this.identityKind,
+    this.natureTerm,
+    required this.procedureTerm,
     this.projectId,
     this.publishedOn,
-    this.reference,
-    this.sourceCitationId,
-    this.statusId,
-    this.title,
+    required this.statusTerm,
     required this.updatedAt,
     required this.version,
   });
-  final DateTime? awardedOn;
+  final int? amount;
   final int? bidderCount;
-  final String buyerEntityId;
-  final String? categoryId;
+  final String buyerId;
+  final String categoryTerm;
   final DateTime? closesOn;
   final String code;
-  final String? countryId;
+  final String countryId;
   final DateTime createdAt;
   final String? currencyId;
   final DateTime? deletedAt;
-  final int? estimatedAmountMinorUnits;
-  final String? evaluationBasisId;
+  final String? evaluationTerm;
   final String id;
-  final String? natureId;
-  final String procedureKindId;
+  final SharedIdentityKind identityKind;
+  final String? natureTerm;
+  final String procedureTerm;
   final String? projectId;
   final DateTime? publishedOn;
-  final String? reference;
-  final String? sourceCitationId;
-  final String? statusId;
-  final String? title;
+  final String statusTerm;
   final DateTime updatedAt;
   final int version;
 

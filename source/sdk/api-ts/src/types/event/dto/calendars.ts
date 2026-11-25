@@ -1,14 +1,12 @@
-/** A way of counting time that gives events their dates: the civil calendar, a lunar calendar, a fiscal or school year. */
+/** A civic calendar, such as Kenya's public holidays or the National Assembly calendar. */
 export interface EventCalendars {
-  calendarKindId: string;
   code: string;
   countryId?: string | null;
   createdAt: string;
   deletedAt?: string | null;
-  description?: string | null;
   id: string;
   isObserved: boolean;
-  sourceCitationId?: string | null;
+  kindTerm: string;
   updatedAt: string;
   version: number;
   yearStartDay?: number | null;

@@ -1,18 +1,17 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/reference/language.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 import 'package:mzizi_api/src/models/source/products.dart';
 
 part 'editions.g.dart';
 
-/// A meaningfully distinct release of a product. Another format or scan of the same wording is an artifact, not an edition.
+/// One issue of a product.
 @JsonSerializable(includeIfNull: false)
 class SourceEditions {
   const SourceEditions({
     required this.code,
     required this.createdAt,
     this.deletedAt,
-    this.description,
     required this.designation,
     required this.id,
     this.languageId,
@@ -24,7 +23,6 @@ class SourceEditions {
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String? description;
   final String designation;
   final String id;
   final String? languageId;

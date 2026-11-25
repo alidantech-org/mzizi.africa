@@ -3,6 +3,11 @@ import * as dryv from "@dryvcode/author";
 import { shared, sharedProperties } from "./_shared.ts";
 import { periodFields } from "./_periods.ts";
 import { subjectFields, subjectSchemas } from "./_subjects.ts";
+import { identity as identityLink } from "./postgres/_links.ts";
+
+/** Shared description of every `code` column (`.docs/rules/codes.md`). */
+export const codeDescription =
+  "Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.";
 
 /**
  * Abstract base schemas. A concrete schema declares `.extends(<Base>)` and inherits the base fields,
@@ -17,12 +22,17 @@ import { subjectFields, subjectSchemas } from "./_subjects.ts";
 const EntityBase = dryv
   .schema({
     id: dryv.field(sharedProperties.Id),
-    /** Optimistic-concurrency version; starts at 1 and increases on every update. */
-    version: dryv.field(sharedProperties.PositiveInteger).system(),
+    version: dryv
+      .field(sharedProperties.PositiveInteger)
+      .system()
+      .description("Optimistic-concurrency version; starts at 1 and increases on every update."),
     createdAt: dryv.field(sharedProperties.Instant).system(),
     updatedAt: dryv.field(sharedProperties.Instant).system(),
-    /** Soft delete marker; null while the record is live. */
-    deletedAt: dryv.field(sharedProperties.Instant).maybe().system(),
+    deletedAt: dryv
+      .field(sharedProperties.Instant)
+      .maybe()
+      .system()
+      .description("Soft-delete time; empty while the record is live."),
   })
   .abstract()
   .description("Base for versioned records: id, version, created/updated timestamps and soft delete.")
@@ -39,7 +49,43 @@ const AssociationBase = dryv
   .description("Base for association rows: id, created timestamp and soft delete.")
   .facets({ storage: dryv.storage().primaryKey("id") });
 
-const baseGroup = shared.schemas({ Entity: EntityBase, Association: AssociationBase });
+/**
+ * Versioned record of a partitioned table. PostgreSQL requires the partition key in every primary and unique key, so
+ * this base declares no primary key: the table declares `primaryKey("id", <partition key>)` itself.
+ */
+const PartitionedEntityBase = dryv
+  .schema({
+    id: dryv.field(sharedProperties.Id),
+    version: dryv
+      .field(sharedProperties.PositiveInteger)
+      .system()
+      .description("Optimistic-concurrency version; starts at 1 and increases on every update."),
+    createdAt: dryv.field(sharedProperties.Instant).system(),
+    updatedAt: dryv.field(sharedProperties.Instant).system(),
+    deletedAt: dryv
+      .field(sharedProperties.Instant)
+      .maybe()
+      .system()
+      .description("Soft-delete time; empty while the record is live."),
+  })
+  .abstract()
+  .description("Base for versioned records of partitioned tables: the table declares its own primary key.");
+
+/** Append-only row of a partitioned table: identity and creation time; the table declares its own primary key. */
+const PartitionedRecordBase = dryv
+  .schema({
+    id: dryv.field(sharedProperties.Id),
+    createdAt: dryv.field(sharedProperties.Instant).system(),
+  })
+  .abstract()
+  .description("Base for append-only rows of partitioned tables: the table declares its own primary key.");
+
+const baseGroup = shared.schemas({
+  Entity: EntityBase,
+  Association: AssociationBase,
+  PartitionedEntity: PartitionedEntityBase,
+  PartitionedRecord: PartitionedRecordBase,
+});
 
 /*---------------- Operations bases ----------------*/
 /*
@@ -74,8 +120,7 @@ const CreatedBase = dryv
 /** Identity with a stable, globally unique code. */
 const CodedIdentifiedBase = dryv
   .schema({
-    /** Stable identity code: lowercase, dot-separated, repository-wide unique. */
-    code: dryv.field(sharedProperties.IdentityCode),
+    code: dryv.field(sharedProperties.IdentityCode).description(codeDescription),
   })
   .extends(operationsGroup.Identified)
   .abstract()
@@ -108,8 +153,7 @@ const baseRules = shared.expressions({
 /** Entity that also carries a stable, globally unique identity code. */
 const CodedEntityBase = dryv
   .schema({
-    /** Stable identity code: lowercase, dot-separated, repository-wide unique. */
-    code: dryv.field(sharedProperties.IdentityCode),
+    code: dryv.field(sharedProperties.IdentityCode).description(codeDescription),
   })
   .extends(baseGroup.Entity)
   .abstract()
@@ -117,16 +161,16 @@ const CodedEntityBase = dryv
   .facets({
     storage: dryv
       .storage()
-      // Unique among live rows only, so a soft-deleted record releases its code.
-      .indexes({ fields: ["code"], unique: true, where: baseRules.LiveRecord }),
+      // Codes are never reused (`.docs/rules/codes.md`), so uniqueness covers deleted rows too.
+      .unique("code"),
   });
 
-/** Entity with a plain period: `fromYear`, `toYear` and one `fromToPrecision` for both. */
+/** Entity with a plain period: `fromYear` and `toYear`. */
 const PeriodEntityBase = dryv
   .schema({ ...periodFields })
   .extends(baseGroup.Entity)
   .abstract()
-  .description("Base for versioned records with a period of integer years and one precision for the pair.");
+  .description("Base for versioned records with a period of integer years.");
 
 const periodGroup = shared.schemas({ PeriodEntity: PeriodEntityBase });
 PeriodEntityBase.rule(shared, "PeriodYearsAreOrdered", dryv.rule.ordered("fromYear", "toYear", { allowEqual: true }));
@@ -134,19 +178,45 @@ PeriodEntityBase.rule(shared, "PeriodYearsAreOrdered", dryv.rule.ordered("fromYe
 /** Period entity that also carries a stable, globally unique identity code. */
 const CodedPeriodEntityBase = dryv
   .schema({
-    /** Stable identity code: lowercase, dot-separated, repository-wide unique. */
-    code: dryv.field(sharedProperties.IdentityCode),
+    code: dryv.field(sharedProperties.IdentityCode).description(codeDescription),
   })
   .extends(periodGroup.PeriodEntity)
   .abstract()
   .description("Base for versioned records with a unique identity code and a period of integer years.")
   .facets({
-    storage: dryv.storage().unique("code").where(baseRules.LiveRecord),
+    storage: dryv.storage().unique("code"),
   });
+
+/**
+ * Coded entity whose `id` is also an `identity.identities.id` (FOUNDATION_REDESIGN section 3.2). The `id` is a relation,
+ * so reads can follow a row to its identity and from there to names, identifiers and addresses.
+ */
+const IdentityEntityBase = dryv
+  .schema({
+    id: identityLink("The identity this row extends: the same uuid as `identity.identities.id`."),
+    version: dryv
+      .field(sharedProperties.PositiveInteger)
+      .system()
+      .description("Optimistic-concurrency version; starts at 1 and increases on every update."),
+    createdAt: dryv.field(sharedProperties.Instant).system(),
+    updatedAt: dryv.field(sharedProperties.Instant).system(),
+    deletedAt: dryv
+      .field(sharedProperties.Instant)
+      .maybe()
+      .system()
+      .description("Soft-delete time; empty while the record is live."),
+    code: dryv.field(sharedProperties.IdentityCode).description(codeDescription),
+  })
+  .abstract()
+  .description("Base for identity-backed records: the id is the identity's id; with a unique code.");
+IdentityEntityBase.facets({
+  storage: dryv.storage().primaryKey("id").unique("code"),
+});
 
 const codedGroup = shared.schemas({
   CodedEntity: CodedEntityBase,
   CodedPeriodEntity: CodedPeriodEntityBase,
+  IdentityEntity: IdentityEntityBase,
 });
 
 /** Coded entity that concerns exactly one subject row (shared subjectTable and subjectId). */

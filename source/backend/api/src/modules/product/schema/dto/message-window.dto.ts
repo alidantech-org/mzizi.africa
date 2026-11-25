@@ -1,0 +1,36 @@
+import { IsInt, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
+import type { Integer } from "#/modules/shared/schema/type/integer.type.ts";
+
+/**
+ * Message Window
+ */
+export class MessageWindowDto {
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  @Matches(
+    new RegExp(
+      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+    ),
+  )
+  appCode!: IdentityCode;
+
+  @IsString()
+  @MinLength(1)
+  @MaxLength(255)
+  @Matches(
+    new RegExp(
+      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+    ),
+  )
+  lang!: IdentityCode;
+
+  @IsOptional()
+  @IsInt()
+  limit?: Integer;
+
+  @IsOptional()
+  @IsInt()
+  offset?: Integer;
+}

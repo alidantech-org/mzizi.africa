@@ -1,247 +1,144 @@
 /**
- * The home view of a place: headline figures, a map of the places inside it, who lives there, and the places inside.
- * Each region loads on its own, so the heading and the fast regions paint first.
+ * The overview of a place: what it is, where it sits, its divisions on a map, headline figures, who holds its offices,
+ * projects, upcoming civic events and articles. One server read (`frontend/place`); the map streams in on its own.
  */
-import { BarChart3, MapPin, Ruler, Users, Vote } from "lucide-react";
+import { Building2, CalendarDays, ChartColumn, Hammer, Map as MapIcon, Newspaper, Users } from "lucide-react";
+import Link from "next/link";
 import { Suspense } from "react";
-import { copy } from "@mzizi/copy";
-import type { ExplorerLocation, InsightsPlaceStatistics } from "@mzizi/api-client";
-import { ShareBars } from "#/components/place/share-bars";
-import { ShapeMap } from "#/components/maps/shape-map";
-import { EChart } from "#/components/charts/echart";
-import { Kpi, Panel } from "#/components/ui/panel";
+import { Panel } from "#/components/ui/panel";
 import { PageHeader } from "#/components/ui/page-header";
 import { SkeletonPanel } from "#/components/ui/skeleton";
-import Link from "#/components/navigation/demo-link";
-import { axis, grid, valueAxis } from "#/lib/charts/chart";
-import { stepFor } from "#/lib/charts/scale";
-import { change, compact, int, pct } from "#/lib/formatting/format";
-import { loadLocation, loadMap, loadStatistics, type PlaceAddress, type StatisticsResult } from "#/lib/server/views/place-home";
-import { getCopy } from "#/lib/server/copy";
+import { hrefOf, type PlaceAddress } from "#/lib/server/codes";
+import { loadPlace } from "#/lib/server/views/place-home";
+import PlaceMap from "#/app/(app)/_views/place-map";
+import { formatValue, Text } from "#/app/(app)/_views/text";
 
-type Indicator = InsightsPlaceStatistics["topics"][number]["indicators"][number];
-const byRole = (stats: InsightsPlaceStatistics | null, role: string): Indicator | undefined =>
-  stats?.topics.flatMap((t) => t.indicators).find((i) => i.role === role);
-const year = (period: string) => new Date(period).getUTCFullYear();
+/** Headline figures shown on the overview; the statistics view lists all. */
+const HEADLINE = 8;
 
 export default async function PlaceHome({ address, language }: { address: PlaceAddress; language: string }) {
-  const t = await getCopy(language);
-  // Started together; each region below awaits only what it needs.
-  const location = loadLocation(address, language);
-  const statistics = loadStatistics(address, language);
-  const map = loadMap(address, language);
-  const loc = await location;
-  if (!loc) return <p className="text-sm text-muted">{t(copy.place.empty.unavailable)}</p>;
-  const place = loc.context.place;
-  const eyebrow = place.parentName
-    ? t(copy.place.eyebrow, { kind: place.kind, parent: place.parentName })
-    : t(copy.place.eyebrowCountry, { kind: place.kind });
-
-  return (
-    <>
-      <PageHeader eyebrow={eyebrow} title={place.name} />
-      <Suspense fallback={<SkeletonPanel height={120} />}>
-        <Figures statistics={statistics} language={language} t={t} />
-      </Suspense>
-      <div className="mt-4 grid grid-cols-1 items-start gap-2 sm:gap-4 lg:grid-cols-2">
-        <Suspense fallback={<SkeletonPanel height={420} />}>
-          <MapRegion map={map} loc={loc} language={language} t={t} />
-        </Suspense>
-        <Suspense fallback={<SkeletonPanel height={420} />}>
-          <People statistics={statistics} placeName={place.name} language={language} t={t} />
-        </Suspense>
-      </div>
-      <Inside loc={loc} map={map} language={language} t={t} />
-    </>
-  );
-}
-
-type T = Awaited<ReturnType<typeof getCopy>>;
-
-async function Figures({ statistics, language, t }: { statistics: Promise<StatisticsResult>; language: string; t: T }) {
-  const { data: stats, failed } = await statistics;
-  const tiles = [
-    { role: "population", label: t(copy.place.kpi.population), icon: Users, tone: "c1" as const, text: (v: number) => compact(v, language) },
-    { role: "area", label: t(copy.place.kpi.area), icon: Ruler, tone: "c2" as const, text: (v: number) => `${int(v, language)} km²` },
-    { role: "density", label: t(copy.place.kpi.density), icon: BarChart3, tone: "c3" as const, text: (v: number) => int(v, language) },
-    { role: "registered-voters", label: t(copy.place.kpi.voters), icon: Vote, tone: "c4" as const, text: (v: number) => compact(v, language) },
-  ];
-  const shown = tiles.flatMap((tile) => {
-    const ind = byRole(stats, tile.role);
-    return ind ? [{ tile, ind }] : [];
-  });
-  if (!shown.length)
-    return <p className="rounded-lg border border-dashed border-muted p-3 text-sm text-muted sm:p-6">{failed ? t(copy.place.empty.statisticsFailed) : t(copy.place.empty.statistics)}</p>;
-  return (
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4 xl:grid-cols-4">
-      {shown.map(({ tile, ind }) => {
-        const prev = ind.previous ? year(ind.previous.period) : null;
-        const delta =
-          ind.change != null && prev !== null
-            ? t(copy.place.kpi.since, { change: change(ind.change, language), year: prev })
-            : t(copy.place.kpi.asOf, { year: year(ind.latest.period) });
-        return (
-          <Kpi
-            key={tile.role}
-            label={tile.label}
-            value={tile.text(ind.latest.value)}
-            delta={ind.latest.estimated ? t(copy.place.kpi.estimated, { text: delta }) : delta}
-            tone={tile.tone}
-            icon={tile.icon}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-async function MapRegion({
-  map,
-  loc,
-  language,
-  t,
-}: {
-  map: ReturnType<typeof loadMap>;
-  loc: ExplorerLocation;
-  language: string;
-  t: T;
-}) {
-  const drawn = await map;
-  const place = loc.context.place;
-  if (!drawn) {
+  const { data, failed } = await loadPlace(address, language);
+  if (!data)
     return (
-      <Panel id="map" title={t(copy.place.map.titleSelf, { place: place.name })} icon={MapPin}>
-        <p className="text-sm text-muted">{t(copy.place.map.none)}</p>
-      </Panel>
+      <PageHeader eyebrow="Place" title={failed ? "This place could not be loaded" : "Place not found"}>
+        Check the address, or choose a place from the list.
+      </PageHeader>
     );
-  }
-  const pops = drawn.map.shapes.map((s) => s.population).filter((v): v is number => v !== null);
-  const lo = Math.min(...pops, 0);
-  const hi = Math.max(...pops, 1);
-  const fills: Record<string, string> = {};
-  const titles: Record<string, string> = {};
-  for (const s of drawn.map.shapes) {
-    fills[s.address] = s.population !== null ? stepFor(s.population, lo, hi) : "var(--line)";
-    if (s.population !== null) titles[s.address] = `${compact(s.population, language)} · ${t(copy.place.children.count, { count: s.childCount })}`;
-  }
+  const shown = " (shown in another language)";
+  const eyebrow = data.breadcrumb.length ? data.breadcrumb.map((b) => b.name.text).join(" › ") : "Country";
   return (
-    <Panel
-      id="map"
-      title={drawn.self ? t(copy.place.map.titleSelf, { place: place.name }) : t(copy.place.map.title, { place: place.name })}
-      note={drawn.self || !pops.length ? t(copy.place.map.noteOutline) : t(copy.place.map.noteShaded)}
-      icon={MapPin}
-    >
-      <ShapeMap map={drawn.map} fills={fills} titles={titles} selected={drawn.self ? drawn.map.shapes[0]?.address : undefined} label={t(copy.place.map.group, { place: place.name })} />
-      {!drawn.self && pops.length > 0 && (
-        <div className="mt-3 flex items-center gap-2 text-xs text-muted">
-          <span>{t(copy.place.map.lowest)}</span>
-          <span aria-hidden className="flex h-2.5 flex-1 overflow-hidden rounded-full">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <span key={i} className="flex-1" style={{ background: `var(--scale-${i})` }} />
-            ))}
-          </span>
-          <span>{t(copy.place.map.highest)}</span>
-        </div>
-      )}
-      {drawn.withoutBoundary > 0 && <p className="mt-2 text-xs text-muted">{t(copy.place.map.withoutBoundary, { count: drawn.withoutBoundary })}</p>}
-    </Panel>
-  );
-}
-
-async function People({
-  statistics,
-  placeName,
-  language,
-  t,
-}: {
-  statistics: Promise<StatisticsResult>;
-  placeName: string;
-  language: string;
-  t: T;
-}) {
-  const { data: stats } = await statistics;
-  if (!stats) return null;
-  const b = {
-    age: stats.breakdowns.age ?? [],
-    sex: stats.breakdowns.sex ?? [],
-    residence: stats.breakdowns.residence ?? [],
-    language: stats.breakdowns.language ?? [],
-    community: stats.breakdowns.community ?? [],
-  };
-  const share = (s: number) => pct(s * 100, language);
-  const block = (title: string, rows: { label: string; share: number }[]) =>
-    rows.length ? (
-      <div key={title}>
-        <h3 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted">{title}</h3>
-        <ShareBars rows={rows} format={share} label={t(copy.place.people.chart, { what: title, place: placeName })} />
-      </div>
-    ) : null;
-  const top = (rows: { label: string; share: number }[]) => [...rows].sort((x, y) => y.share - x.share).slice(0, 6);
-  const hasAny = b.age.length || b.sex.length || b.residence.length || b.language.length || b.community.length;
-  if (!hasAny) return null;
-  return (
-    <Panel id="people" title={t(copy.place.people.title)} note={t(copy.place.people.note)} icon={Users}>
-      {b.age.length > 0 && (
-        <div className="mb-5">
-          <h3 className="mb-2 font-mono text-[10px] uppercase tracking-widest text-muted">{t(copy.place.people.age)}</h3>
-          <EChart
-            label={t(copy.place.people.chart, { what: t(copy.place.people.age), place: placeName })}
-            height={220}
-            option={{
-              grid,
-              xAxis: { type: "category", data: b.age.map((a) => a.label), ...axis, axisLabel: { ...axis.axisLabel, interval: 0, rotate: 45, fontSize: 10 } },
-              // Static options only (a cached chart cannot take functions): values are in thousands and the axis says so.
-              yAxis: { ...valueAxis, name: "× 1,000", nameTextStyle: { fontSize: 10 }, splitNumber: 3 },
-              series: [{ type: "bar", barWidth: "60%", data: b.age.map((a) => Math.round(a.value / 1000)) }],
-            }}
-          />
-        </div>
-      )}
-      <div className="space-y-5">
-        {block(t(copy.place.people.sex), b.sex)}
-        {block(t(copy.place.people.residence), b.residence)}
-        {block(t(copy.place.people.languages), top(b.language))}
-        {block(t(copy.place.people.communities), top(b.community))}
-      </div>
-    </Panel>
-  );
-}
-
-async function Inside({ loc, map, language, t }: { loc: ExplorerLocation; map: ReturnType<typeof loadMap>; language: string; t: T }) {
-  const group = loc.groups.at(-1);
-  const children = group?.children ?? [];
-  const drawn = await map;
-  const pop = new Map(drawn?.map.shapes.map((s) => [s.address, s.population]) ?? []);
-  return (
-    <div className="mt-4">
-      <Panel id="inside" title={t(copy.place.children.title)} note={children.length ? t(copy.place.children.count, { count: group?.total ?? children.length }) : undefined} icon={MapPin}>
-        {!children.length ? (
-          <p className="text-sm text-muted">{t(copy.place.children.none)}</p>
-        ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left font-mono text-[10px] uppercase tracking-widest text-muted">
-                <th className="py-2 pr-4 font-normal">{t(copy.place.children.name)}</th>
-                <th className="hidden py-2 pr-4 font-normal sm:table-cell">{t(copy.place.children.kind)}</th>
-                <th className="py-2 text-right font-normal">{t(copy.place.children.population)}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {children.map((c) => (
-                <tr key={c.canonicalPath} className="border-t border-line">
-                  <td className="max-w-0 truncate py-2 pr-4">
-                    <Link href={c.canonicalPath} className="text-accent hover:underline">
-                      {c.name}
-                    </Link>
-                  </td>
-                  <td className="hidden truncate py-2 pr-4 text-muted sm:table-cell">{c.kind}</td>
-                  <td className="py-2 text-right font-mono text-xs">{pop.get(c.canonicalPath) != null ? int(pop.get(c.canonicalPath)!, language) : "—"}</td>
-                </tr>
+    <div className="grid gap-6">
+      <PageHeader eyebrow={eyebrow} title={data.place.name.text}>
+        {data.children.length > 0 ? `${data.children.length} divisions` : "No divisions recorded"} · {data.figures.length} figures ·{" "}
+        {data.leaders.length} offices
+      </PageHeader>
+      <nav aria-label="Breadcrumb" className="flex flex-wrap gap-2 text-sm">
+        {data.breadcrumb.map((b) => (
+          <Link key={b.code} href={hrefOf(b.code)} className="text-accent hover:underline">
+            <Text value={b.name} />
+          </Link>
+        ))}
+      </nav>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Panel id="map" title="Map" icon={MapIcon} note={`${data.children.length} divisions`}>
+          <Suspense fallback={<SkeletonPanel height={320} />}>
+            <PlaceMap parentId={data.place.id} label={`Divisions of ${data.place.name.text}`} />
+          </Suspense>
+        </Panel>
+        <Panel id="divisions" title="Divisions" icon={Building2}>
+          {data.children.length === 0 ? (
+            <p className="text-sm text-muted">No divisions are recorded for this place.</p>
+          ) : (
+            <ul className="grid max-h-80 grid-cols-2 gap-x-4 gap-y-1 overflow-auto text-sm">
+              {data.children.map((c) => (
+                <li key={c.code}>
+                  <Link href={hrefOf(c.code)} className="hover:underline">
+                    <Text value={c.name} fallbackNote={shown} />
+                  </Link>
+                </li>
               ))}
-            </tbody>
-          </table>
+            </ul>
+          )}
+        </Panel>
+      </div>
+      <Panel id="figures" title="Figures" icon={ChartColumn} note="latest published">
+        {data.figures.length === 0 ? (
+          <p className="text-sm text-muted">No figures are recorded for this place yet.</p>
+        ) : (
+          <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {data.figures.slice(0, HEADLINE).map((f) => (
+              <div key={f.indicator} className="rounded-md border border-line p-3">
+                <dt className="truncate font-mono text-[11px] uppercase tracking-widest text-muted">
+                  <Text value={f.label} />
+                </dt>
+                <dd className="mt-2 font-display text-2xl">
+                  {formatValue(f.value, f.decimals, language)}
+                  {f.unit && <span className="ml-1 text-sm text-muted">{f.unit}</span>}
+                </dd>
+                <dd className="text-xs text-muted">
+                  {f.fromYear}
+                  {f.status !== "final" && ` · ${f.status}`}
+                </dd>
+              </div>
+            ))}
+          </dl>
         )}
       </Panel>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Panel id="leaders" title="Leaders" icon={Users} note={`${data.leaders.length} offices`}>
+          {data.leaders.length === 0 ? (
+            <p className="text-sm text-muted">No offices are recorded for this place.</p>
+          ) : (
+            <ul className="grid gap-2 text-sm">
+              {data.leaders.map((l) => (
+                <li key={l.office} className="flex justify-between gap-4">
+                  <Text value={l.officeName} />
+                  <span className="text-muted">{l.personName ? <Text value={l.personName} /> : "vacant or not recorded"}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+        <Panel id="projects" title="Projects" icon={Hammer}>
+          {data.projects.length === 0 ? (
+            <p className="text-sm text-muted">No projects are recorded here yet.</p>
+          ) : (
+            <ul className="grid gap-1 text-sm">
+              {data.projects.map((p) => (
+                <li key={p.code}>
+                  <Text value={p.name} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+        <Panel id="events" title="Coming up" icon={CalendarDays}>
+          {data.events.length === 0 ? (
+            <p className="text-sm text-muted">No civic events are scheduled.</p>
+          ) : (
+            <ul className="grid gap-1 text-sm">
+              {data.events.map((e) => (
+                <li key={`${e.code}-${e.startsOn}`}>
+                  {e.startsOn} · <Text value={e.name} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+        <Panel id="articles" title="Articles" icon={Newspaper}>
+          {data.articles.length === 0 ? (
+            <p className="text-sm text-muted">No articles are written about this place yet.</p>
+          ) : (
+            <ul className="grid gap-1 text-sm">
+              {data.articles.map((a) => (
+                <li key={a.code}>
+                  <Text value={a.title} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </Panel>
+      </div>
     </div>
   );
 }

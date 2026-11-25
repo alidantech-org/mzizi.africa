@@ -9,8 +9,8 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class ItemsRow(BaseModel):
-    """One line of a schedule: an event placed at an offset from the anchor, and the occurrence it became."""
+class EventItemsRow(BaseModel):
+    """One step of a schedule."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -21,7 +21,8 @@ class ItemsRow(BaseModel):
     deleted_at: datetime | None = None
     event_id: UUID
     id: UUID
-    note: Annotated[str, Field(max_length=4000)] | None = None
+    note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    note_language_id: UUID | None = None
     occurrence_id: UUID | None = None
     offset_days: int | None = None
     position: Annotated[int, Field(ge=0)]

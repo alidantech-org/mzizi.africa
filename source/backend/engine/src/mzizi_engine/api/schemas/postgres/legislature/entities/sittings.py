@@ -1,0 +1,37 @@
+"""Sittings: one row of sittings."""
+
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Annotated, ClassVar
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class SittingsRow(BaseModel):
+    """One sitting of a house or committee."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    table: ClassVar[str] = "legislature.sittings"
+
+    code: Annotated[
+        str,
+        Field(
+            min_length=1,
+            max_length=255,
+            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ),
+    ]
+    created_at: datetime
+    deleted_at: datetime | None = None
+    id: UUID
+    institution_id: UUID
+    kind_term: UUID
+    occurrence_id: UUID | None = None
+    sequence: Annotated[int, Field(ge=1)] | None = None
+    session: Annotated[str, Field(min_length=1, max_length=100)] | None = None
+    term_id: UUID | None = None
+    updated_at: datetime
+    version: Annotated[int, Field(ge=1)]

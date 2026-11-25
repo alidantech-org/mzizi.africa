@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class FundsRow(BaseModel):
-    """One named public fund with a classification, manager and country."""
+    """A public fund (NG-CDF)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -24,14 +26,14 @@ class FundsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    country_id: UUID | None = None
+    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    fund_kind_id: UUID
-    funding_source_id: UUID | None = None
     id: UUID
-    managing_entity_id: UUID | None = None
-    scope_unit_feature_id: UUID | None = None
-    source_citation_id: UUID | None = None
+    identity_kind: IdentityKind
+    kind_term: UUID
+    manager_id: UUID | None = None
+    scope_id: UUID | None = None
+    source_term: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import builtins
 from datetime import datetime
 from typing import Annotated, ClassVar
 from uuid import UUID
@@ -12,7 +13,7 @@ from mzizi_engine.api.schemas.postgres.filesystem.enums.retention import Retenti
 
 
 class FilesRow(BaseModel):
-    """Stable logical file identity; equal content hashes may belong to different files."""
+    """A stable logical file; equal content hashes may belong to different files."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -33,5 +34,6 @@ class FilesRow(BaseModel):
     id: UUID
     name: Annotated[str, Field(min_length=1, max_length=300)]
     retention: Retention
+    tags: builtins.list[Annotated[str, Field(min_length=1, max_length=100)]] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

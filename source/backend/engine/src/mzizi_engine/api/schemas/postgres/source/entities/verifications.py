@@ -13,7 +13,7 @@ from mzizi_engine.api.schemas.postgres.source.enums.verification_outcome import 
 
 
 class VerificationsRow(BaseModel):
-    """Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit."""
+    """A review decision about one row, against what and when."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -31,11 +31,12 @@ class VerificationsRow(BaseModel):
     confidence: Annotated[float, Field(ge=0, le=1)] | None = None
     created_at: datetime
     deleted_at: datetime | None = None
-    explanation: Annotated[str, Field(max_length=4000)]
     id: UUID
-    method_id: UUID
+    method_term: UUID
+    note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    note_language_id: UUID | None = None
     outcome: VerificationOutcome
-    reviewer_snapshot: str
+    reviewer_id: UUID | None = None
     subject_id: UUID
     subject_table: SubjectTable
     supersedes_id: UUID | None = None

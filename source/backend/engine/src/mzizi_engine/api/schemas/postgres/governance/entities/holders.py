@@ -8,19 +8,14 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
-
 
 class HoldersRow(BaseModel):
-    """One person's continuous tenure in one office, with appointment kind and effective dates."""
+    """A person in an office for a period. How they got there is `governance.appointments`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "governance.holders"
 
-    appointed_by_entity_id: UUID | None = None
-    appointment_kind_id: UUID
-    appointment_motion_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -29,17 +24,17 @@ class HoldersRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    contest_id: UUID | None = None
     created_at: datetime
     deleted_at: datetime | None = None
-    from_to_precision: DatePrecision | None = None
+    ends_on: date | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     individual_id: UUID
-    left_office_on: date | None = None
-    nominated_by_entity_id: UUID | None = None
+    method_term: UUID
     office_id: UUID
-    source_citation_id: UUID | None = None
+    reason_term: UUID | None = None
+    starts_on: date | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
-    took_office_on: date | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

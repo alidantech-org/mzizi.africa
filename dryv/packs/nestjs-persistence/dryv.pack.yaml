@@ -1,0 +1,34 @@
+version: dryv.pack/v1alpha1
+key: mzizi.nestjs-persistence
+source: templates
+info:
+  title: Mzizi typed NestJS persistence
+  version: 0.1.0
+  description: >-
+    Vendored from Dryv's examples.nestjs-persistence pack (uncommitted in the Dryv checkout on 2026-11-25). Generates a
+    managed use case per HTTP operation with a declared query or mutation, executed through the typed persistence runtime
+    with scoped Redis caching. An operation without a canonical plan re-exports the project's implementation from
+    src/implementations, so people build what Dryv cannot generate.
+plugins: [{ name: jinja, extensions: [.j2] }]
+needs:
+  schema.validation: required
+selections:
+  operations:
+    subject: operation
+    scope: each
+    filter: { all: { facet: http } }
+templates:
+  runtime:
+    output:
+      destination: app
+  repository:
+    $ref: "#/selections/operations"
+    output:
+      name: $(subject.name.kebab)
+      path: [$(group.name.kebab), features, $(feature.name.kebab), use-cases]
+      symbol: $(subject.name.pascal)UseCase
+    imports:
+      - { $ref: "#/templates/runtime" }
+      - { $ref: "#/needs/schema.validation", transitive: true }
+provides:
+  operation.usecase: { $ref: "#/templates/repository" }

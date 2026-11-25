@@ -6,6 +6,5 @@ from enum import StrEnum
 
 
 class TranslationMethod(StrEnum):
-    ASSISTED = "assisted"
     HUMAN = "human"
     MACHINE = "machine"

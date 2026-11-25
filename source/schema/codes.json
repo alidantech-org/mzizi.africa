@@ -1,0 +1,640 @@
+{
+  "description": "Short names for codes (`.docs/rules/codes.md`). A schema or table short is fixed forever; every generated table must have one, unique within its schema. `kind` says how a table's row codes are built: entity (default: a name path), scheme (`<schema short>.<concept>...`, single-word concepts) or member (extends the code of its `parent` link).",
+  "spaces": {
+    "pg": "PostgreSQL: identifies a database row",
+    "sys": "System: identifies something that is not a row (mapping, term list, job, engine data)",
+    "mg": "MongoDB: reserved, not used yet"
+  },
+  "schemas": {
+    "auth": "aut",
+    "civic": "civ",
+    "filesystem": "fil",
+    "finance": "fin",
+    "geography": "geo",
+    "governance": "gov",
+    "legal": "leg",
+    "official": "ofc",
+    "politics": "pol",
+    "reference": "ref",
+    "source": "src",
+    "statistics": "sta",
+    "community": "com",
+    "event": "evt",
+    "economy": "eco",
+    "election": "ele",
+    "history": "his",
+    "identity": "ide",
+    "legislature": "le2",
+    "media": "med",
+    "product": "pro",
+    "vocabulary": "voc"
+  },
+  "tables": {
+    "auth.accounts": {
+      "short": "acc"
+    },
+    "auth.delegations": {
+      "short": "del"
+    },
+    "auth.invitations": {
+      "short": "inv"
+    },
+    "auth.memberships": {
+      "short": "mem"
+    },
+    "auth.permissions": {
+      "short": "prm"
+    },
+    "auth.roles": {
+      "short": "rol"
+    },
+    "auth.scopes": {
+      "short": "scp"
+    },
+    "civic.bids": {
+      "short": "bid"
+    },
+    "civic.contracts": {
+      "short": "con"
+    },
+    "civic.deliveries": {
+      "short": "dlv"
+    },
+    "civic.procurements": {
+      "short": "prc"
+    },
+    "civic.projects": {
+      "short": "prj"
+    },
+    "civic.services": {
+      "short": "svc"
+    },
+    "filesystem.files": {
+      "short": "fle"
+    },
+    "filesystem.folders": {
+      "short": "fld"
+    },
+    "finance.appropriations": {
+      "short": "apr"
+    },
+    "finance.budgets": {
+      "short": "bud"
+    },
+    "finance.debts": {
+      "short": "dbt"
+    },
+    "finance.flows": {
+      "short": "flw"
+    },
+    "finance.funds": {
+      "short": "fnd"
+    },
+    "geography.assets": {
+      "short": "ast"
+    },
+    "geography.changes": {
+      "short": "chg"
+    },
+    "geography.features": {
+      "short": "ftr"
+    },
+    "geography.geometries": {
+      "short": "gmt"
+    },
+    "geography.relationships": {
+      "short": "rel"
+    },
+    "governance.holders": {
+      "short": "hld"
+    },
+    "governance.institutions": {
+      "short": "ins"
+    },
+    "governance.offices": {
+      "short": "ofs"
+    },
+    "governance.relationships": {
+      "short": "rel"
+    },
+    "legal.editions": {
+      "short": "edn"
+    },
+    "legal.effects": {
+      "short": "eff"
+    },
+    "legal.instruments": {
+      "short": "ins"
+    },
+    "legal.provisions": {
+      "short": "prv"
+    },
+    "legal.references": {
+      "short": "ref"
+    },
+    "legal.relationships": {
+      "short": "rel"
+    },
+    "legal.translations": {
+      "short": "trn"
+    },
+    "legal.wordings": {
+      "short": "wrd"
+    },
+    "official.branding": {
+      "short": "brd"
+    },
+    "official.contacts": {
+      "short": "cnt"
+    },
+    "official.entities": {
+      "short": "ent"
+    },
+    "official.individuals": {
+      "short": "ind"
+    },
+    "official.relationships": {
+      "short": "rel"
+    },
+    "politics.alignments": {
+      "short": "aln"
+    },
+    "politics.coalitions": {
+      "short": "coa"
+    },
+    "politics.manifestos": {
+      "short": "man"
+    },
+    "politics.memberships": {
+      "short": "mem"
+    },
+    "politics.parties": {
+      "short": "par"
+    },
+    "reference.countries": {
+      "short": "cty"
+    },
+    "reference.languages": {
+      "short": "lng"
+    },
+    "reference.units": {
+      "short": "unt"
+    },
+    "source.artifacts": {
+      "short": "art"
+    },
+    "source.attributions": {
+      "short": "att"
+    },
+    "source.captures": {
+      "short": "cap"
+    },
+    "source.citations": {
+      "short": "cit"
+    },
+    "source.discoveries": {
+      "short": "dsc"
+    },
+    "source.domains": {
+      "short": "dom"
+    },
+    "source.editions": {
+      "short": "edn"
+    },
+    "source.products": {
+      "short": "prd"
+    },
+    "source.publishers": {
+      "short": "pub"
+    },
+    "source.sources": {
+      "short": "srs"
+    },
+    "source.verifications": {
+      "short": "ver"
+    },
+    "statistics.indicators": {
+      "short": "ind"
+    },
+    "statistics.observations": {
+      "short": "obs"
+    },
+    "civic.facilities": {
+      "short": "fac"
+    },
+    "community.actors": {
+      "short": "act"
+    },
+    "community.consents": {
+      "short": "con"
+    },
+    "community.devices": {
+      "short": "dev"
+    },
+    "community.notifications": {
+      "short": "no2"
+    },
+    "community.preferences": {
+      "short": "pre"
+    },
+    "community.reactions": {
+      "short": "rea"
+    },
+    "community.subscriptions": {
+      "short": "sub"
+    },
+    "community.views": {
+      "short": "vie"
+    },
+    "governance.obligations": {
+      "short": "obl"
+    },
+    "governance.reports": {
+      "short": "rep"
+    },
+    "source.coverage": {
+      "short": "cov"
+    },
+    "statistics.metrics": {
+      "short": "met"
+    },
+    "community.cases": {
+      "short": "cas"
+    },
+    "community.places": {
+      "short": "pla"
+    },
+    "community.posts": {
+      "short": "pos"
+    },
+    "community.proofs": {
+      "short": "pro"
+    },
+    "community.tokens": {
+      "short": "tok"
+    },
+    "governance.terms": {
+      "short": "ter"
+    },
+    "event.calendars": {
+      "short": "cal"
+    },
+    "event.changes": {
+      "short": "cha"
+    },
+    "event.events": {
+      "short": "eve"
+    },
+    "event.items": {
+      "short": "ite"
+    },
+    "event.occurrences": {
+      "short": "occ"
+    },
+    "event.participants": {
+      "short": "par"
+    },
+    "event.rules": {
+      "short": "rul"
+    },
+    "event.schedules": {
+      "short": "sch"
+    },
+    "event.seasons": {
+      "short": "sea"
+    },
+    "event.subjects": {
+      "short": "sub"
+    },
+    "event.venues": {
+      "short": "ven"
+    },
+    "civic.variations": {
+      "short": "var"
+    },
+    "community.replies": {
+      "short": "rep"
+    },
+    "governance.assignments": {
+      "short": "ass"
+    },
+    "governance.functions": {
+      "short": "fun"
+    },
+    "governance.positions": {
+      "short": "pos"
+    },
+    "governance.powers": {
+      "short": "pow"
+    },
+    "governance.procedures": {
+      "short": "pro"
+    },
+    "politics.contributions": {
+      "short": "con"
+    },
+    "source.contenders": {
+      "short": "con"
+    },
+    "source.disputes": {
+      "short": "dis"
+    },
+    "statistics.components": {
+      "short": "com"
+    },
+    "auth.allowances": {
+      "short": "all"
+    },
+    "auth.codes": {
+      "short": "cod"
+    },
+    "auth.grants": {
+      "short": "gra"
+    },
+    "auth.logins": {
+      "short": "log"
+    },
+    "auth.privileges": {
+      "short": "pri"
+    },
+    "civic.attachments": {
+      "short": "att"
+    },
+    "civic.items": {
+      "short": "ite"
+    },
+    "civic.roles": {
+      "short": "rol"
+    },
+    "civic.scores": {
+      "short": "sco"
+    },
+    "civic.sites": {
+      "short": "sit"
+    },
+    "community.attachments": {
+      "short": "att"
+    },
+    "community.blocks": {
+      "short": "blo"
+    },
+    "community.checks": {
+      "short": "che"
+    },
+    "community.dispatches": {
+      "short": "dis"
+    },
+    "economy.baskets": {
+      "short": "bas"
+    },
+    "economy.codes": {
+      "short": "cod"
+    },
+    "economy.compositions": {
+      "short": "com"
+    },
+    "economy.crosswalks": {
+      "short": "cro"
+    },
+    "economy.goods": {
+      "short": "goo"
+    },
+    "economy.names": {
+      "short": "nam"
+    },
+    "economy.prices": {
+      "short": "pri"
+    },
+    "economy.weights": {
+      "short": "wei"
+    },
+    "election.attachments": {
+      "short": "att"
+    },
+    "election.candidates": {
+      "short": "can"
+    },
+    "election.choices": {
+      "short": "cho"
+    },
+    "election.contests": {
+      "short": "con"
+    },
+    "election.elections": {
+      "short": "ele"
+    },
+    "election.forms": {
+      "short": "for"
+    },
+    "election.results": {
+      "short": "res"
+    },
+    "election.stations": {
+      "short": "sta"
+    },
+    "election.tallies": {
+      "short": "tal"
+    },
+    "election.turnouts": {
+      "short": "tur"
+    },
+    "filesystem.formats": {
+      "short": "for"
+    },
+    "filesystem.versions": {
+      "short": "ver"
+    },
+    "finance.findings": {
+      "short": "fin"
+    },
+    "finance.periods": {
+      "short": "per"
+    },
+    "finance.revisions": {
+      "short": "rev"
+    },
+    "geography.outlines": {
+      "short": "out"
+    },
+    "geography.pieces": {
+      "short": "pie"
+    },
+    "governance.appointments": {
+      "short": "app"
+    },
+    "governance.instances": {
+      "short": "in2"
+    },
+    "governance.jurisdictions": {
+      "short": "jur"
+    },
+    "governance.patterns": {
+      "short": "pat"
+    },
+    "governance.templates": {
+      "short": "tem"
+    },
+    "history.eras": {
+      "short": "era"
+    },
+    "history.links": {
+      "short": "lin"
+    },
+    "history.occurrences": {
+      "short": "occ"
+    },
+    "history.roles": {
+      "short": "rol"
+    },
+    "identity.addresses": {
+      "short": "add"
+    },
+    "identity.classifications": {
+      "short": "cla"
+    },
+    "identity.identifiers": {
+      "short": "ide"
+    },
+    "identity.identities": {
+      "short": "id2"
+    },
+    "identity.names": {
+      "short": "nam"
+    },
+    "identity.tags": {
+      "short": "tag"
+    },
+    "legislature.agenda": {
+      "short": "age"
+    },
+    "legislature.attachments": {
+      "short": "att"
+    },
+    "legislature.bills": {
+      "short": "bil"
+    },
+    "legislature.hansards": {
+      "short": "han"
+    },
+    "legislature.motions": {
+      "short": "mot"
+    },
+    "legislature.sittings": {
+      "short": "sit"
+    },
+    "legislature.speeches": {
+      "short": "spe"
+    },
+    "legislature.stages": {
+      "short": "sta"
+    },
+    "legislature.summaries": {
+      "short": "sum"
+    },
+    "legislature.votes": {
+      "short": "vot"
+    },
+    "media.articles": {
+      "short": "art"
+    },
+    "media.assets": {
+      "short": "ass"
+    },
+    "media.captions": {
+      "short": "cap"
+    },
+    "media.subjects": {
+      "short": "sub"
+    },
+    "media.texts": {
+      "short": "tex"
+    },
+    "media.uses": {
+      "short": "use"
+    },
+    "official.parts": {
+      "short": "par"
+    },
+    "politics.attachments": {
+      "short": "att"
+    },
+    "politics.commitments": {
+      "short": "com"
+    },
+    "politics.fulfilments": {
+      "short": "ful"
+    },
+    "product.apps": {
+      "short": "app"
+    },
+    "product.keys": {
+      "short": "key"
+    },
+    "product.lang": {
+      "short": "lan"
+    },
+    "product.messages": {
+      "short": "mes"
+    },
+    "product.releases": {
+      "short": "rel"
+    },
+    "product.sites": {
+      "short": "sit"
+    },
+    "reference.currencies": {
+      "short": "cur"
+    },
+    "reference.hierarchies": {
+      "short": "hie"
+    },
+    "reference.levels": {
+      "short": "lev"
+    },
+    "reference.locales": {
+      "short": "loc"
+    },
+    "reference.timezones": {
+      "short": "tim"
+    },
+    "source.derivations": {
+      "short": "der"
+    },
+    "source.evidence": {
+      "short": "evi"
+    },
+    "source.paths": {
+      "short": "pat"
+    },
+    "statistics.breakdowns": {
+      "short": "bre"
+    },
+    "statistics.collections": {
+      "short": "col"
+    },
+    "statistics.dimensions": {
+      "short": "dim"
+    },
+    "statistics.figures": {
+      "short": "fig"
+    },
+    "statistics.priorities": {
+      "short": "pri"
+    },
+    "vocabulary.labels": {
+      "short": "lab"
+    },
+    "vocabulary.mappings": {
+      "short": "map"
+    },
+    "vocabulary.schemes": {
+      "short": "sch"
+    },
+    "vocabulary.scopes": {
+      "short": "sco"
+    },
+    "vocabulary.terms": {
+      "short": "ter"
+    }
+  }
+}

@@ -1,39 +1,16 @@
 import "server-only";
-/** Reads for the government views: public institutions and legal instruments. Both are country-wide records held for Kenya. */
-import { insightsGetInstitution, insightsListInstitutions, insightsListLaw } from "@mzizi/api-client/actions/insights";
-import type { InsightsInstitutionDetail, InsightsInstitutionList, InsightsLawList } from "@mzizi/api-client";
+/** Screen reads for government: a country's institutions and one institution with its offices and holders. */
+import { frontendGetInstitutionScreen } from "@mzizi/api-client/actions/frontend";
+import { governanceListInstitutions } from "@mzizi/api-client/actions/governance";
+import type { FrontendInstitutionScreen, GovernanceInstitutionCollection } from "@mzizi/api-client";
+import { countryCode, languageCode } from "#/lib/server/codes";
 
-const cache = () => ({ caching: { revalidate: 600, tags: ["government"] } });
 export type Loaded<T> = { data: T | null; failed: boolean };
-/**
- * The generated TypeScript types name fields in camel case, but some contract fields (held_on, moved_by, ...) are
- * written in snake case on the wire, because the Flutter app reads them that way. Until the generator maps names, the
- * keys are converted here, in one place, so the rest of the web app can trust the generated types.
- */
-const camel = (v: unknown): unknown =>
-  Array.isArray(v)
-    ? v.map(camel)
-    : v && typeof v === "object"
-      ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase()), camel(x)]))
-      : v;
-export const pack = <T>(res: { success: boolean; body?: T | null }): Loaded<T> =>
-  res.success && res.body ? { data: camel(res.body) as T, failed: false } : { data: null, failed: true };
+const cache = () => ({ caching: { revalidate: 600, tags: ["governance"] } });
+export const pack = <T>(res: { success: boolean; body?: T | null }): Loaded<T> => ({ data: res.success ? (res.body ?? null) : null, failed: !res.success });
 
-export const loadInstitutions = async (): Promise<Loaded<InsightsInstitutionList>> => pack(await insightsListInstitutions({ options: cache() }));
-export const loadInstitution = async (code: string): Promise<Loaded<InsightsInstitutionDetail>> =>
-  pack(await insightsGetInstitution({ params: { code }, options: cache() }));
-export const loadLaw = async (): Promise<Loaded<InsightsLawList>> => pack(await insightsListLaw({ options: cache() }));
+export const loadInstitutions = async (countryId: string): Promise<Loaded<GovernanceInstitutionCollection>> =>
+  pack(await governanceListInstitutions({ query: { countryId, limit: 200, offset: 0 }, options: cache() }));
 
-import { insightsGetMotion, insightsListElections, insightsListMotions } from "@mzizi/api-client/actions/insights";
-import type { InsightsElectionList, InsightsMotionDetail, InsightsMotionList } from "@mzizi/api-client";
-
-export const loadMotions = async (): Promise<Loaded<InsightsMotionList>> => pack(await insightsListMotions({ query: { limit: 50 }, options: cache() }));
-export const loadMotion = async (code: string): Promise<Loaded<InsightsMotionDetail>> =>
-  pack(await insightsGetMotion({ params: { code }, options: cache() }));
-export const loadElections = async (): Promise<Loaded<InsightsElectionList>> => pack(await insightsListElections({ options: cache() }));
-
-import { insightsGetGovernanceTabs, insightsGetLeaderTree } from "@mzizi/api-client/actions/insights";
-import type { InsightsGovernanceTabs, InsightsLeaderTree } from "@mzizi/api-client";
-
-export const loadLeaders = async (): Promise<Loaded<InsightsLeaderTree>> => pack(await insightsGetLeaderTree({ options: cache() }));
-export const loadArms = async (): Promise<Loaded<InsightsGovernanceTabs>> => pack(await insightsGetGovernanceTabs({ options: cache() }));
+export const loadInstitution = async (country: string, institution: string, language: string): Promise<Loaded<FrontendInstitutionScreen>> =>
+  pack(await frontendGetInstitutionScreen({ query: { country: countryCode(country), institution, lang: languageCode(language) }, options: cache() }));

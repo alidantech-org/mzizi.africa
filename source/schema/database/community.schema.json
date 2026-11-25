@@ -16,6 +16,8 @@
       "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
+        ["handle"]
+        ,["account_id"]
       ],
       "required": [
         "first_seen_at"
@@ -33,8 +35,11 @@
         ],
         "columns": [
           "account_code"
+          ,"avatar_code"
           ,"country_code"
+          ,"display_name"
           ,"first_seen_at"
+          ,"handle"
           ,"id"
           ,"kind"
           ,"language_code"
@@ -57,12 +62,19 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "account_code" }
         }
+        ,"avatar_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/media.Assets", "column": "id", "alias": "avatar_code" }
+        }
         ,"country_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -78,10 +90,25 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"display_name": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 100,
+          "minLength": 1,
+          "x-role": "data"
+        }
         ,"first_seen_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
+          "x-role": "data"
+        }
+        ,"handle": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 30,
+          "minLength": 3,
+          "pattern": "^[a-z][a-z0-9]*([._][a-z0-9]+)*$",
           "x-role": "data"
         }
         ,"id": {
@@ -94,7 +121,7 @@
         ,"kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["account", "device"],
+          "enum": ["member", "visitor"],
           "x-role": "data"
         }
         ,"language_id": {
@@ -102,7 +129,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "language_code" }
         }
         ,"last_seen_at": {
           "type": "string",
@@ -114,6 +141,205 @@
           "type": "string",
           "x-type": "text",
           "enum": ["active", "blocked", "closed"],
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "attachments": {
+      "title": "community.attachments",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.attachments",
+      "x-id": "#/schemas/community.Attachments",
+      "x-table": "community.attachments",
+      "x-primaryKey": ["id"],"x-naturalKey": ["post_code", "asset_code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["post_id", "asset_id"]
+      ],
+      "required": [
+        "asset_id"
+        ,"id"
+        ,"post_country_id"
+        ,"post_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+        ],
+        "columns": [
+          "asset_code"
+          ,"post_country_code"
+          ,"post_code"
+        ],
+        "required": [
+          "asset_code"
+          ,"post_country_code"
+          ,"post_code"
+        ]
+      },
+      "properties": {
+        "asset_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/media.Assets", "column": "id", "alias": "asset_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"post_country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "post_country_code" }
+        }
+        ,"post_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/community.Posts", "column": "id", "alias": "post_code" }
+        }
+      }
+    },
+    "blocks": {
+      "title": "community.blocks",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.blocks",
+      "x-id": "#/schemas/community.Blocks",
+      "x-table": "community.blocks",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "account_id"
+        ,"decided_by"
+        ,"from_on"
+        ,"id"
+        ,"reason_term"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "account_code"
+          ,"case_code"
+          ,"decided_by_code"
+          ,"from_on"
+          ,"id"
+          ,"reason_term_code"
+          ,"to_on"
+        ],
+        "required": [
+          "account_code"
+          ,"decided_by_code"
+          ,"from_on"
+          ,"id"
+          ,"reason_term_code"
+        ]
+      },
+      "properties": {
+        "account_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "account_code" }
+        }
+        ,"case_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Cases", "column": "id", "alias": "case_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"decided_by": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "decided_by_code" }
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"from_on": {
+          "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"reason_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "reason_term_code", "scheme": "voc.sch.com.block.reason" }
+        }
+        ,"to_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
           "x-role": "data"
         }
         ,"updated_at": {
@@ -144,7 +370,8 @@
       ],
       "required": [
         "id"
-        ,"interaction_id"
+        ,"post_country_id"
+        ,"post_id"
         ,"state"
       ],
       "x-seed": {
@@ -155,30 +382,24 @@
           ,"version"
         ],
         "columns": [
-          "appealed_at"
-          ,"decided_at"
-          ,"decision_code"
-          ,"filter_results"
+          "decided_at"
+          ,"decision_term_code"
           ,"id"
-          ,"interaction_code"
+          ,"post_country_code"
+          ,"post_code"
           ,"reason"
           ,"reviewer_account_code"
           ,"state"
         ],
         "required": [
           "id"
-          ,"interaction_code"
+          ,"post_country_code"
+          ,"post_code"
           ,"state"
         ]
       },
       "properties": {
-        "appealed_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"created_at": {
+        "created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
@@ -191,12 +412,12 @@
           "format": "date-time",
           "x-role": "data"
         }
-        ,"decision_id": {
+        ,"decision_term": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "decision_code", "scheme": "ref.sch.com.moderation.decision" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "decision_term_code", "scheme": "voc.sch.com.case.decision" }
         }
         ,"deleted_at": {
           "type": ["string", "null"],
@@ -205,11 +426,6 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"filter_results": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "x-role": "data"
-        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -217,12 +433,19 @@
           "x-primaryKey": true,
           "x-role": "data"
         }
-        ,"interaction_id": {
+        ,"post_country_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Posts", "column": "id", "alias": "interaction_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "post_country_code" }
+        }
+        ,"post_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Posts", "column": "id", "alias": "post_code" }
         }
         ,"reason": {
           "type": ["string", "null"],
@@ -240,7 +463,7 @@
         ,"state": {
           "type": "string",
           "x-type": "text",
-          "enum": ["appealed", "filtered", "held", "pending_review", "published", "received", "rejected", "removed"],
+          "enum": ["draft", "pending", "published", "rejected", "removed"],
           "x-role": "data"
         }
         ,"updated_at": {
@@ -249,6 +472,122 @@
           "format": "date-time",
           "x-managed": true,
           "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "checks": {
+      "title": "community.checks",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.checks",
+      "x-id": "#/schemas/community.Checks",
+      "x-table": "community.checks",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "case_id"
+        ,"checked_at"
+        ,"checker"
+        ,"id"
+        ,"verdict"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "case_code"
+          ,"category_term_code"
+          ,"checked_at"
+          ,"checker"
+          ,"id"
+          ,"score"
+          ,"verdict"
+        ],
+        "required": [
+          "case_code"
+          ,"checked_at"
+          ,"checker"
+          ,"id"
+          ,"verdict"
+        ]
+      },
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Cases", "column": "id", "alias": "case_code" }
+        }
+        ,"category_term": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "category_term_code", "scheme": "voc.sch.com.check.category" }
+        }
+        ,"checked_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"checker": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["ai", "human", "rules"],
+          "x-role": "data"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"score": {
+          "type": ["number", "null"],
+          "x-type": "number",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"verdict": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["fail", "flag", "pass"],
+          "x-role": "data"
         }
         ,"version": {
           "type": "integer",
@@ -273,7 +612,8 @@
         "actor_id"
         ,"given_at"
         ,"id"
-        ,"purpose_id"
+        ,"key_id"
+        ,"purpose_term"
         ,"text_version"
       ],
       "x-seed": {
@@ -288,7 +628,8 @@
           ,"country_code"
           ,"given_at"
           ,"id"
-          ,"purpose_code"
+          ,"key_code"
+          ,"purpose_term_code"
           ,"text_version"
           ,"withdrawn_at"
         ],
@@ -296,7 +637,8 @@
           "actor_code"
           ,"given_at"
           ,"id"
-          ,"purpose_code"
+          ,"key_code"
+          ,"purpose_term_code"
           ,"text_version"
         ]
       },
@@ -313,7 +655,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -342,12 +684,19 @@
           "x-primaryKey": true,
           "x-role": "data"
         }
-        ,"purpose_id": {
+        ,"key_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "purpose_code", "scheme": "ref.sch.com.consent.purpose" }
+          "x-link": { "tableId": "#/schemas/product.Keys", "column": "id", "alias": "key_code" }
+        }
+        ,"purpose_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "purpose_term_code", "scheme": "voc.sch.com.consent.purpose" }
         }
         ,"text_version": {
           "type": "string",
@@ -374,124 +723,6 @@
           "x-type": "timestamp",
           "format": "date-time",
           "x-role": "data"
-        }
-      }
-    },
-    "deliveries": {
-      "title": "community.deliveries",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.community.deliveries",
-      "x-id": "#/schemas/community.Deliveries",
-      "x-table": "community.deliveries",
-      "x-primaryKey": ["id"],"x-naturalKey": ["notification_code", "device_code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["notification_id", "device_id"]
-      ],
-      "required": [
-        "device_id"
-        ,"id"
-        ,"notification_id"
-        ,"state"
-        ,"subscription_id"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "device_code"
-          ,"notification_code"
-          ,"opened_at"
-          ,"sent_at"
-          ,"state"
-          ,"subscription_code"
-        ],
-        "required": [
-          "device_code"
-          ,"notification_code"
-          ,"state"
-          ,"subscription_code"
-        ]
-      },
-      "properties": {
-        "created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"device_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/community.Devices", "column": "id", "alias": "device_code" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"notification_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/community.Notifications", "column": "id", "alias": "notification_code" }
-        }
-        ,"opened_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"sent_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"state": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["failed", "opened", "queued", "sent"],
-          "x-role": "data"
-        }
-        ,"subscription_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Subscriptions", "column": "id", "alias": "subscription_code" }
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
         }
       }
     },
@@ -625,6 +856,111 @@
         }
       }
     },
+    "dispatches": {
+      "title": "community.dispatches",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.community.dispatches",
+      "x-id": "#/schemas/community.Dispatches",
+      "x-table": "community.dispatches",
+      "x-primaryKey": ["id", "created_at"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "device_id"
+        ,"id"
+        ,"notification_created_at"
+        ,"notification_id"
+        ,"state"
+        ,"subscription_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+        ],
+        "columns": [
+          "device_code"
+          ,"id"
+          ,"notification_created_at"
+          ,"notification_code"
+          ,"opened_at"
+          ,"sent_at"
+          ,"state"
+          ,"subscription_code"
+        ],
+        "required": [
+          "device_code"
+          ,"id"
+          ,"notification_created_at"
+          ,"notification_code"
+          ,"state"
+          ,"subscription_code"
+        ]
+      },
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-primaryKey": true,
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"device_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Devices", "column": "id", "alias": "device_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"notification_created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"notification_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Notifications", "column": "id", "alias": "notification_code" }
+        }
+        ,"opened_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"sent_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"state": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["failed", "opened", "queued", "sent"],
+          "x-role": "data"
+        }
+        ,"subscription_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Subscriptions", "column": "id", "alias": "subscription_code" }
+        }
+      }
+    },
     "notifications": {
       "title": "community.notifications",
       "type": "object",
@@ -632,60 +968,40 @@
       "x-code": "sys.tbl.community.notifications",
       "x-id": "#/schemas/community.Notifications",
       "x-table": "community.notifications",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-primaryKey": ["id", "created_at"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
       "required": [
-        "copy_key"
-        ,"id"
-        ,"kind_id"
-        ,"subject_id"
-        ,"subject_table"
+        "id"
+        ,"key_id"
+        ,"kind_term"
       ],
       "x-seed": {
         "system": [
           "created_at"
-          ,"deleted_at"
-          ,"updated_at"
-          ,"version"
         ],
         "columns": [
-          "copy_key"
-          ,"id"
-          ,"kind_code"
-          ,"payload"
-          ,"subject_id"
-          ,"subject_table"
+          "id"
+          ,"identity_code"
+          ,"key_code"
+          ,"kind_term_code"
+          ,"occurrence_code"
+          ,"post_country_code"
+          ,"post_id"
         ],
         "required": [
-          "copy_key"
-          ,"id"
-          ,"kind_code"
-          ,"subject_id"
-          ,"subject_table"
+          "id"
+          ,"key_code"
+          ,"kind_term_code"
         ]
       },
       "properties": {
-        "copy_key": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "data"
-        }
-        ,"created_at": {
+        "created_at": {
           "type": "string",
           "x-type": "timestamp",
           "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
+          "x-primaryKey": true,
           "x-managed": true,
           "x-role": "system"
         }
@@ -696,42 +1012,46 @@
           "x-primaryKey": true,
           "x-role": "data"
         }
-        ,"kind_id": {
+        ,"identity_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
+        }
+        ,"key_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.com.notification.kind" }
+          "x-link": { "tableId": "#/schemas/product.Keys", "column": "id", "alias": "key_code" }
         }
-        ,"payload": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "x-role": "data"
-        }
-        ,"subject_id": {
+        ,"kind_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.com.notification.kind" }
+        }
+        ,"occurrence_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/event.Occurrences", "column": "id", "alias": "occurrence_code" }
+        }
+        ,"post_country_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "post_country_code" }
+        }
+        ,"post_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
           "x-role": "data"
-        }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
-          "x-role": "data"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
         }
       }
     },
@@ -746,7 +1066,6 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["actor_id", "feature_id"]
-        ,["actor_id"]
       ],
       "required": [
         "actor_id"
@@ -769,7 +1088,7 @@
           ,"is_home"
           ,"label"
           ,"position"
-          ,"suggestion_code"
+          ,"suggestion_term_code"
         ],
         "required": [
           "actor_code"
@@ -831,12 +1150,12 @@
           "x-type": "integer",
           "x-role": "data"
         }
-        ,"suggestion_id": {
+        ,"suggestion_term": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "suggestion_code", "scheme": "ref.sch.com.place.label" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "suggestion_term_code", "scheme": "voc.sch.com.place.suggestion" }
         }
         ,"updated_at": {
           "type": "string",
@@ -860,18 +1179,16 @@
       "x-code": "sys.tbl.community.posts",
       "x-id": "#/schemas/community.Posts",
       "x-table": "community.posts",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-primaryKey": ["id", "country_id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
       ],
       "required": [
         "actor_id"
-        ,"device_id"
+        ,"country_id"
         ,"id"
-        ,"kind_id"
+        ,"kind_term"
         ,"state"
-        ,"subject_id"
-        ,"subject_table"
       ],
       "x-seed": {
         "system": [
@@ -882,28 +1199,25 @@
         ],
         "columns": [
           "actor_code"
-          ,"addressee_feature_code"
           ,"body"
           ,"country_code"
           ,"device_code"
           ,"id"
-          ,"kind_code"
+          ,"identity_code"
+          ,"kind_term_code"
           ,"language_code"
-          ,"location_proof_code"
-          ,"parent_interaction_code"
+          ,"parent_code"
+          ,"proof_code"
           ,"published_at"
+          ,"rating"
           ,"state"
-          ,"subject_id"
-          ,"subject_table"
         ],
         "required": [
           "actor_code"
-          ,"device_code"
+          ,"country_code"
           ,"id"
-          ,"kind_code"
+          ,"kind_term_code"
           ,"state"
-          ,"subject_id"
-          ,"subject_table"
         ]
       },
       "properties": {
@@ -914,25 +1228,20 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/community.Actors", "column": "id", "alias": "actor_code" }
         }
-        ,"addressee_feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "addressee_feature_code" }
-        }
         ,"body": {
           "type": ["string", "null"],
           "x-type": "text",
+          "maxLength": 20000,
           "minLength": 1,
           "x-role": "data"
         }
         ,"country_id": {
-          "type": ["string", "null"],
+          "type": "string",
           "x-type": "uuid",
           "format": "uuid",
+          "x-primaryKey": true,
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -949,7 +1258,7 @@
           "x-role": "system"
         }
         ,"device_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
@@ -962,33 +1271,40 @@
           "x-primaryKey": true,
           "x-role": "data"
         }
-        ,"kind_id": {
+        ,"identity_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
+        }
+        ,"kind_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.com.interaction.kind" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.com.post.kind" }
         }
         ,"language_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "language_code" }
         }
-        ,"location_proof_id": {
+        ,"parent_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Proofs", "column": "id", "alias": "location_proof_code" }
+          "x-link": { "tableId": "#/schemas/community.Posts", "column": "id", "alias": "parent_code" }
         }
-        ,"parent_interaction_id": {
+        ,"proof_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/community.Posts", "column": "id", "alias": "parent_interaction_code" }
+          "x-link": { "tableId": "#/schemas/community.Proofs", "column": "id", "alias": "proof_code" }
         }
         ,"published_at": {
           "type": ["string", "null"],
@@ -996,22 +1312,15 @@
           "format": "date-time",
           "x-role": "data"
         }
+        ,"rating": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
         ,"state": {
           "type": "string",
           "x-type": "text",
-          "enum": ["appealed", "filtered", "held", "pending_review", "published", "received", "rejected", "removed"],
-          "x-role": "data"
-        }
-        ,"subject_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "data"
-        }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
+          "enum": ["draft", "pending", "published", "rejected", "removed"],
           "x-role": "data"
         }
         ,"updated_at": {
@@ -1078,7 +1387,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -1113,7 +1422,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Language", "column": "id", "alias": "language_code" }
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "language_code" }
         }
         ,"theme": {
           "type": ["string", "null"],
@@ -1166,14 +1475,16 @@
         "columns": [
           "accuracy_meters"
           ,"actor_code"
+          ,"attestation_ok"
           ,"check"
           ,"coarse_cell"
           ,"device_code"
+          ,"header_agrees"
           ,"id"
           ,"matched_feature_code"
           ,"mock_location_detected"
           ,"recorded_at"
-          ,"signals"
+          ,"travel_ok"
           ,"trust_score"
         ],
         "required": [
@@ -1199,10 +1510,15 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/community.Actors", "column": "id", "alias": "actor_code" }
         }
+        ,"attestation_ok": {
+          "type": ["boolean", "null"],
+          "x-type": "boolean",
+          "x-role": "data"
+        }
         ,"check": {
           "type": "string",
           "x-type": "text",
-          "enum": ["inside", "near", "outside", "suspected_mock", "unavailable"],
+          "enum": ["inside", "near", "outside", "suspected-mock", "unavailable"],
           "x-role": "data"
         }
         ,"coarse_cell": {
@@ -1233,6 +1549,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/community.Devices", "column": "id", "alias": "device_code" }
         }
+        ,"header_agrees": {
+          "type": ["boolean", "null"],
+          "x-type": "boolean",
+          "x-role": "data"
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -1258,9 +1579,9 @@
           "format": "date-time",
           "x-role": "data"
         }
-        ,"signals": {
-          "type": ["string", "null"],
-          "x-type": "text",
+        ,"travel_ok": {
+          "type": ["boolean", "null"],
+          "x-type": "boolean",
           "x-role": "data"
         }
         ,"trust_score": {
@@ -1290,37 +1611,35 @@
       "x-code": "sys.tbl.community.reactions",
       "x-id": "#/schemas/community.Reactions",
       "x-table": "community.reactions",
-      "x-primaryKey": ["id"],"x-naturalKey": ["actor_code", "kind_code", "subject_table", "subject_id"],
-      "x-seedable": true,
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
       "x-uniqueKeys": [
-        ["actor_id", "kind_id", "subject_table", "subject_id"]
       ],
       "required": [
         "actor_id"
         ,"id"
-        ,"kind_id"
-        ,"subject_id"
-        ,"subject_table"
+        ,"kind_term"
       ],
       "x-seed": {
         "system": [
           "created_at"
           ,"deleted_at"
-          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "actor_code"
-          ,"kind_code"
-          ,"subject_id"
-          ,"subject_table"
+          ,"article_code"
+          ,"id"
+          ,"identity_code"
+          ,"kind_term_code"
+          ,"post_country_code"
+          ,"post_id"
         ],
         "required": [
           "actor_code"
-          ,"kind_code"
-          ,"subject_id"
-          ,"subject_table"
+          ,"id"
+          ,"kind_term_code"
         ]
       },
       "properties": {
@@ -1328,8 +1647,15 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/community.Actors", "column": "id", "alias": "actor_code" }
+        }
+        ,"article_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/media.Articles", "column": "id", "alias": "article_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -1350,26 +1676,34 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "data"
         }
-        ,"kind_id": {
+        ,"identity_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
+        }
+        ,"kind_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.com.reaction.kind" }
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.com.reaction.kind" }
         }
-        ,"subject_id": {
-          "type": "string",
+        ,"post_country_id": {
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "post_country_code" }
         }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
-          "x-role": "key"
+        ,"post_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -1398,12 +1732,14 @@
       "x-uniqueKeys": [
       ],
       "required": [
-        "content_id"
+        "body"
         ,"id"
+        ,"language_id"
+        ,"post_country_id"
+        ,"post_id"
         ,"received_at"
-        ,"status_id"
-        ,"subject_id"
-        ,"subject_table"
+        ,"respondent_id"
+        ,"status_term"
       ],
       "x-seed": {
         "system": [
@@ -1413,32 +1749,34 @@
           ,"version"
         ],
         "columns": [
-          "content_code"
+          "body"
           ,"id"
+          ,"language_code"
+          ,"post_country_code"
+          ,"post_code"
           ,"published_at"
           ,"received_at"
-          ,"respondent_entity_code"
-          ,"respondent_individual_code"
-          ,"status_code"
-          ,"subject_id"
-          ,"subject_table"
+          ,"respondent_code"
+          ,"status_term_code"
         ],
         "required": [
-          "content_code"
+          "body"
           ,"id"
+          ,"language_code"
+          ,"post_country_code"
+          ,"post_code"
           ,"received_at"
-          ,"status_code"
-          ,"subject_id"
-          ,"subject_table"
+          ,"respondent_code"
+          ,"status_term_code"
         ]
       },
       "properties": {
-        "content_id": {
+        "body": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/filesystem.Contents", "column": "id", "alias": "content_code" }
+          "x-type": "text",
+          "maxLength": 20000,
+          "minLength": 1,
+          "x-role": "data"
         }
         ,"created_at": {
           "type": "string",
@@ -1461,6 +1799,27 @@
           "x-primaryKey": true,
           "x-role": "data"
         }
+        ,"language_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "language_code" }
+        }
+        ,"post_country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "post_country_code" }
+        }
+        ,"post_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/community.Posts", "column": "id", "alias": "post_code" }
+        }
         ,"published_at": {
           "type": ["string", "null"],
           "x-type": "timestamp",
@@ -1473,38 +1832,19 @@
           "format": "date-time",
           "x-role": "data"
         }
-        ,"respondent_entity_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "respondent_entity_code" }
-        }
-        ,"respondent_individual_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "respondent_individual_code" }
-        }
-        ,"status_id": {
+        ,"respondent_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code", "scheme": "ref.sch.com.reply.status" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "respondent_code" }
         }
-        ,"subject_id": {
+        ,"status_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
-        }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.com.reply.status" }
         }
         ,"updated_at": {
           "type": "string",
@@ -1528,17 +1868,16 @@
       "x-code": "sys.tbl.community.subscriptions",
       "x-id": "#/schemas/community.Subscriptions",
       "x-table": "community.subscriptions",
-      "x-primaryKey": ["id"],"x-naturalKey": ["actor_code", "subject_table", "subject_id", "kind_code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["actor_code", "identity_code", "kind_term_code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["actor_id", "subject_table", "subject_id", "kind_id"]
+        ["actor_id", "identity_id", "kind_term"]
       ],
       "required": [
         "actor_id"
         ,"id"
-        ,"kind_id"
-        ,"subject_id"
-        ,"subject_table"
+        ,"identity_id"
+        ,"kind_term"
       ],
       "x-seed": {
         "system": [
@@ -1550,16 +1889,14 @@
         ],
         "columns": [
           "actor_code"
-          ,"kind_code"
+          ,"identity_code"
+          ,"kind_term_code"
           ,"revoked_at"
-          ,"subject_id"
-          ,"subject_table"
         ],
         "required": [
           "actor_code"
-          ,"kind_code"
-          ,"subject_id"
-          ,"subject_table"
+          ,"identity_code"
+          ,"kind_term_code"
         ]
       },
       "properties": {
@@ -1591,30 +1928,25 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"kind_id": {
+        ,"identity_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "kind_code", "scheme": "ref.sch.com.subscription.kind" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "key",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.com.subscription.kind" }
         }
         ,"revoked_at": {
           "type": ["string", "null"],
           "x-type": "timestamp",
           "format": "date-time",
           "x-role": "data"
-        }
-        ,"subject_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key"
-        }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
-          "x-role": "key"
         }
         ,"updated_at": {
           "type": "string",
@@ -1638,10 +1970,9 @@
       "x-code": "sys.tbl.community.tokens",
       "x-id": "#/schemas/community.Tokens",
       "x-table": "community.tokens",
-      "x-primaryKey": ["id"],"x-naturalKey": ["provider", "token"],
-      "x-seedable": true,
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
       "x-uniqueKeys": [
-        ["provider", "token"]
       ],
       "required": [
         "device_id"
@@ -1654,13 +1985,13 @@
         "system": [
           "created_at"
           ,"deleted_at"
-          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "device_code"
           ,"enabled_at"
+          ,"id"
           ,"provider"
           ,"revoked_at"
           ,"token"
@@ -1668,6 +1999,7 @@
         "required": [
           "device_code"
           ,"enabled_at"
+          ,"id"
           ,"provider"
           ,"token"
         ]
@@ -1705,13 +2037,13 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "data"
         }
         ,"provider": {
           "type": "string",
           "x-type": "text",
           "enum": ["apns", "fcm", "onesignal"],
-          "x-role": "key"
+          "x-role": "data"
         }
         ,"revoked_at": {
           "type": ["string", "null"],
@@ -1724,7 +2056,7 @@
           "x-type": "text",
           "maxLength": 1000,
           "minLength": 1,
-          "x-role": "key"
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -1748,47 +2080,49 @@
       "x-code": "sys.tbl.community.views",
       "x-id": "#/schemas/community.Views",
       "x-table": "community.views",
-      "x-primaryKey": ["id"],"x-naturalKey": ["subject_table", "subject_id", "day", "visitor_hash"],
-      "x-seedable": true,
+      "x-primaryKey": ["id", "day"],"x-naturalKey": [],
+      "x-seedable": false,
       "x-uniqueKeys": [
-        ["subject_table", "subject_id", "day", "visitor_hash"]
       ],
       "required": [
         "day"
         ,"id"
-        ,"subject_id"
-        ,"subject_table"
         ,"visitor_hash"
       ],
       "x-seed": {
         "system": [
           "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
         ],
         "columns": [
-          "country_code"
+          "article_code"
+          ,"country_code"
           ,"day"
-          ,"subject_id"
-          ,"subject_table"
+          ,"id"
+          ,"identity_code"
+          ,"post_country_code"
+          ,"post_id"
           ,"visitor_hash"
         ],
         "required": [
           "day"
-          ,"subject_id"
-          ,"subject_table"
+          ,"id"
           ,"visitor_hash"
         ]
       },
       "properties": {
-        "country_id": {
+        "article_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
+          "x-link": { "tableId": "#/schemas/media.Articles", "column": "id", "alias": "article_code" }
+        }
+        ,"country_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -1801,46 +2135,35 @@
           "type": "string",
           "x-type": "date",
           "format": "date",
-          "x-role": "key"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
+          "x-primaryKey": true,
+          "x-role": "data"
         }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "data"
         }
-        ,"subject_id": {
-          "type": "string",
+        ,"identity_id": {
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
         }
-        ,"subject_table": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["civic.beneficiaries", "civic.bids", "civic.contracts", "civic.deliveries", "civic.facilities", "civic.officials", "civic.partners", "civic.procurements", "civic.project_features", "civic.projects", "civic.services", "civic.variations", "community.actors", "community.cases", "community.consents", "community.deliveries", "community.devices", "community.notifications", "community.places", "community.posts", "community.preferences", "community.proofs", "community.reactions", "community.replies", "community.subscriptions", "community.tokens", "community.views", "event.calendars", "event.changes", "event.events", "event.items", "event.names", "event.occurrences", "event.participants", "event.rules", "event.schedules", "event.seasons", "event.subjects", "event.venues", "filesystem.content_tags", "filesystem.contents", "filesystem.file_extensions", "filesystem.file_versions", "filesystem.files", "filesystem.folders", "filesystem.media", "filesystem.taggings", "filesystem.tags", "finance.appropriations", "finance.budget_versions", "finance.budgets", "finance.debts", "finance.fiscal_periods", "finance.flows", "finance.funds", "geography.assets", "geography.changes", "geography.classifications", "geography.features", "geography.geometries", "geography.identifiers", "geography.levels", "geography.names", "geography.relationships", "governance.agenda", "governance.assignments", "governance.authority_scopes", "governance.bills", "governance.fulfilments", "governance.functions", "governance.hansards", "governance.holders", "governance.institutions", "governance.mandates", "governance.motions", "governance.obligations", "governance.offices", "governance.positions", "governance.powers", "governance.procedures", "governance.promises", "governance.relationships", "governance.reports", "governance.sittings", "governance.speeches", "governance.stages", "governance.terms", "governance.votes", "legal.editions", "legal.effects", "legal.instruments", "legal.names", "legal.provisions", "legal.references", "legal.relationships", "legal.translations", "legal.wordings", "official.branding", "official.contacts", "official.entities", "official.identifiers", "official.individuals", "official.names", "official.relationships", "politics.alignments", "politics.candidates", "politics.coalitions", "politics.contests", "politics.contributions", "politics.elections", "politics.electorates", "politics.manifesto_items", "politics.manifestos", "politics.memberships", "politics.option_results", "politics.parties", "politics.polls", "politics.referendum_options", "politics.results", "reference.copy", "reference.countries", "reference.instances", "reference.language_names", "reference.languages", "reference.patterns", "reference.schemes", "reference.templates", "reference.topics", "reference.units", "reference.value_labels", "reference.value_relations", "reference.values", "source.addresses", "source.artifacts", "source.attributions", "source.captures", "source.citations", "source.contenders", "source.coverage", "source.discoveries", "source.disputes", "source.domains", "source.editions", "source.links", "source.products", "source.publishers", "source.relationships", "source.slugs", "source.sources", "source.verifications", "statistics.components", "statistics.indicators", "statistics.metrics", "statistics.observations"],
-          "x-role": "key"
+        ,"post_country_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "post_country_code" }
         }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
+        ,"post_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "data"
         }
         ,"visitor_hash": {
           "type": "string",
@@ -1848,7 +2171,7 @@
           "minLength": 64,
           "maxLength": 64,
           "pattern": "^[a-f0-9]{64}$",
-          "x-role": "key"
+          "x-role": "data"
         }
       }
     }

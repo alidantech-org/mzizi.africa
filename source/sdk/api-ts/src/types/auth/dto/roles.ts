@@ -1,10 +1,10 @@
-/** Named permission bundle with a policy version; protected roles cannot be edited away. */
+/** A named permission bundle with a policy version. */
 export interface AuthRoles {
   code: string;
   createdAt: string;
   description?: string | null;
   id: string;
-  managingInstitutionRefId?: string | null;
+  institutionId?: string | null;
   policyVersion: string;
   protected: boolean;
   retiredAt?: string | null;

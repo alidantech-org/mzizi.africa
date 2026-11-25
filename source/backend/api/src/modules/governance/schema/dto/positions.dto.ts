@@ -6,7 +6,6 @@ import {
   IsString,
   IsUUID,
   Matches,
-  Max,
   MaxLength,
   Min,
   MinLength,
@@ -14,23 +13,22 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
-import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A kind of office with its seat rule: how it is filled, how many seats exist and where, the term, the legal basis. Offices are the individual seats of a position; holders are never part of it. (entity)
+ * A kind of seat that law creates (Governor, Member of County Assembly). Its titles are `identity.names`. (entity)
  */
 export class PositionsDto {
   @IsOptional()
-  @ValidateIf((object) => object.basisProvisionId !== null)
+  @ValidateIf((object) => object.basisTerm !== null)
   @IsString()
   @IsUUID()
-  basisProvisionId?: Id | null;
+  basisTerm?: Id | null;
 
   @IsString()
   @MinLength(1)
@@ -51,57 +49,54 @@ export class PositionsDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.displayOrder !== null)
-  @IsInt()
-  @Min(0)
-  displayOrder?: NonNegativeInteger | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.exposureId !== null)
+  @ValidateIf((object) => object.exposureTerm !== null)
   @IsString()
   @IsUUID()
-  exposureId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fromYear !== null)
-  @IsInt()
-  @Min(-10000)
-  @Max(3000)
-  @Satisfies<PositionsDto>(
-    (object) =>
-      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
-    {
-      message: "Period Years Are Ordered",
-    },
-  )
-  fromYear?: Year | null;
+  exposureTerm?: Id | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
-  @IsString()
-  @IsUUID()
-  institutionId!: Id;
+  @IsEnum(IdentityKind)
+  @Satisfies<PositionsDto>((object) => object.identityKind === "position", {
+    message: "Position Kind",
+  })
+  identityKind!: IdentityKind;
 
   @IsOptional()
-  @ValidateIf((object) => object.jurisdictionLevelId !== null)
+  @ValidateIf((object) => object.institutionId !== null)
   @IsString()
   @IsUUID()
-  jurisdictionLevelId?: Id | null;
+  institutionId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.levelId !== null)
+  @IsString()
+  @IsUUID()
+  levelId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.methodTerm !== null)
+  @IsString()
+  @IsUUID()
+  methodTerm?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.position !== null)
+  @IsInt()
+  @Min(0)
+  position?: NonNegativeInteger | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.provisionId !== null)
+  @IsString()
+  @IsUUID()
+  provisionId?: Id | null;
 
   @IsString()
   @IsUUID()
-  roleId!: Id;
-
-  @IsString()
-  @IsUUID()
-  seatBasisId!: Id;
+  roleTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.seatCount !== null)
@@ -110,20 +105,10 @@ export class PositionsDto {
   seatCount?: PositiveInteger | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.seatUnitLevelId !== null)
+  @ValidateIf((object) => object.seatLevelId !== null)
   @IsString()
   @IsUUID()
-  seatUnitLevelId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  selectionMethodId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
+  seatLevelId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.termLimit !== null)
@@ -136,17 +121,6 @@ export class PositionsDto {
   @IsInt()
   @Min(1)
   termYears?: PositiveInteger | null;
-
-  @IsString()
-  @IsUUID()
-  titleId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.toYear !== null)
-  @IsInt()
-  @Min(-10000)
-  @Max(3000)
-  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

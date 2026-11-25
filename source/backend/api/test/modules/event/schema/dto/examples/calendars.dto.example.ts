@@ -2,21 +2,14 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { countriesExample } from "@test/modules/reference/schema/dto/examples/countries.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Calendars, for generated tests. */
 export const calendarsExample: ContractExample = contractExample({
   name: "Calendars",
   fields: [
-    {
-      name: "calendarKindId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
     {
       name: "code",
       optional: false,
@@ -49,12 +42,6 @@ export const calendarsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "description",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
-    },
-    {
       name: "id",
       optional: false,
       nullable: false,
@@ -67,9 +54,9 @@ export const calendarsExample: ContractExample = contractExample({
       spec: { kind: "boolean" },
     },
     {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
+      name: "kindTerm",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -88,13 +75,13 @@ export const calendarsExample: ContractExample = contractExample({
       name: "yearStartDay",
       optional: true,
       nullable: true,
-      spec: { kind: "number", integer: true, min: 1 },
+      spec: { kind: "number", integer: true, min: 1, max: 31 },
     },
     {
       name: "yearStartMonth",
       optional: true,
       nullable: true,
-      spec: { kind: "number", integer: true, min: 1 },
+      spec: { kind: "number", integer: true, min: 1, max: 12 },
     },
   ],
   invariants: [],

@@ -8,10 +8,11 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.auth.enums.auth_action import AuthAction
+from mzizi_engine.api.schemas.postgres.auth.enums.resource_type import ResourceType
 
 
 class PermissionsRow(BaseModel):
-    """Named action on a resource type, optionally narrowed to a field group."""
+    """A named action on a resource type, optionally narrowed to a field group."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -30,4 +31,4 @@ class PermissionsRow(BaseModel):
     field_group: Annotated[str, Field(min_length=1, max_length=255)] | None = None
     id: UUID
     is_active: bool
-    resource_type: Annotated[str, Field(min_length=1, max_length=255)]
+    resource_type: ResourceType

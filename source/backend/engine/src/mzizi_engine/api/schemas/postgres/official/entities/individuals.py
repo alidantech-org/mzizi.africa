@@ -8,15 +8,18 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class IndividualsRow(BaseModel):
-    """One real human identity; names, identifiers and contacts are normalized in shared tables."""
+    """A person in public life. Display names are `identity.names`; name parts are `official.parts`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "official.individuals"
 
     birth_date: date | None = None
+    birth_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     code: Annotated[
         str,
         Field(
@@ -27,8 +30,9 @@ class IndividualsRow(BaseModel):
     ]
     created_at: datetime
     death_date: date | None = None
+    death_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     deleted_at: datetime | None = None
     id: UUID
-    source_citation_id: UUID | None = None
+    identity_kind: IdentityKind
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

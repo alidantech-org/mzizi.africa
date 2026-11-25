@@ -8,11 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.jsonvalue import JsonValue
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
 class ProjectsRow(BaseModel):
-    """One public development or infrastructure project with responsible institution, status, geographic scope and evidence."""
+    """A public project. Its names and descriptions are `identity.names`; its places are `civic.sites`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -26,20 +26,19 @@ class ProjectsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    completed_on: date | None = None
-    country_id: UUID | None = None
+    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    description: Annotated[str, Field(max_length=4000)]
+    ends_on: date | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    implementing_entity_id: UUID | None = None
-    location: JsonValue | None = None
-    name: Annotated[str, Field(min_length=1, max_length=300)]
-    responsible_institution_id: UUID | None = None
-    scope_unit_feature_id: UUID | None = None
-    source_citation_id: UUID | None = None
-    sponsor_entity_id: UUID | None = None
-    started_on: date | None = None
-    status_id: UUID
+    identity_kind: IdentityKind
+    implementer_id: UUID | None = None
+    institution_id: UUID | None = None
+    scope_id: UUID | None = None
+    sponsor_id: UUID | None = None
+    starts_on: date | None = None
+    status_term: UUID
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

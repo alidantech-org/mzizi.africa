@@ -6,204 +6,192 @@ export const routes = {
     /** GET /v1/admin/accounts */
     listAccounts: "/v1/admin/accounts",
   },
-  experience: {
-    /** GET /v1/calendar */
-    getCalendar: "/v1/calendar",
-    /** GET /v1/context */
-    getContext: "/v1/context",
-    /** GET /v1/copy */
-    getCopy: "/v1/copy",
-    /** GET /v1/facilities/{code} */
-    getFacility: (params: { code: string }) => `/v1/facilities/${encodeURIComponent(params.code)}`,
-    /** GET /v1/facilities */
-    listFacilities: "/v1/facilities",
-    /** GET /v1/facts */
-    listFacts: "/v1/facts",
+  civic: {
+    /** GET /v1/civic/projects/{code} */
+    getProject: (params: { code: string }) =>
+      `/v1/civic/projects/${encodeURIComponent(params.code)}`,
+    /** GET /v1/civic/tenders/{code} */
+    getTender: (params: { code: string }) => `/v1/civic/tenders/${encodeURIComponent(params.code)}`,
+    /** GET /v1/civic/facilities */
+    listFacilities: "/v1/civic/facilities",
+    /** GET /v1/civic/projects */
+    listPlaceProjects: "/v1/civic/projects",
+    /** GET /v1/civic/tenders */
+    listTenders: "/v1/civic/tenders",
   },
-  explorer: {
-    /** GET /v1/explorer/copy */
-    getCopyBundle: "/v1/explorer/copy",
-    /** GET /v1/explorer/boundaries */
-    getExplorerBoundaries: "/v1/explorer/boundaries",
-    /** GET /v1/explorer/context */
-    getExplorerContext: "/v1/explorer/context",
-    /** GET /v1/explorer/location */
-    getExplorerLocation: "/v1/explorer/location",
-    /** GET /v1/explorer/navigation */
-    getExplorerNavigation: "/v1/explorer/navigation",
-    /** GET /v1/explorer/overview */
-    getExplorerOverview: "/v1/explorer/overview",
-    /** GET /v1/explorer/setup */
-    getSetupBootstrap: "/v1/explorer/setup",
-    /** GET /v1/explorer/children */
-    listExplorerChildren: "/v1/explorer/children",
-    /** POST /v1/explorer/addresses */
-    resolveExplorerAddresses: "/v1/explorer/addresses",
-    /** POST /v1/explorer/resolve */
-    resolveExplorerCoordinates: "/v1/explorer/resolve",
-    /** GET /v1/explorer/search */
-    searchExplorerPlaces: "/v1/explorer/search",
+  community: {
+    /** GET /v1/community/posts */
+    listPosts: "/v1/community/posts",
+    /** POST /v1/community/views */
+    recordView: "/v1/community/views",
+  },
+  election: {
+    /** GET /v1/election/elections/{code} */
+    getElection: (params: { code: string }) =>
+      `/v1/election/elections/${encodeURIComponent(params.code)}`,
+    /** GET /v1/election/elections */
+    listElections: "/v1/election/elections",
+    /** GET /v1/election/tallies */
+    listTallies: "/v1/election/tallies",
+  },
+  event: {
+    /** GET /v1/event/occurrences */
+    listOccurrences: "/v1/event/occurrences",
+  },
+  finance: {
+    /** GET /v1/finance/appropriations */
+    listAppropriations: "/v1/finance/appropriations",
+    /** GET /v1/finance/budgets */
+    listBudgets: "/v1/finance/budgets",
+    /** GET /v1/finance/findings */
+    listFindings: "/v1/finance/findings",
+  },
+  frontend: {
+    /** GET /v1/frontend/copy */
+    getCopyBundle: "/v1/frontend/copy",
+    /** GET /v1/frontend/home */
+    getHomeScreen: "/v1/frontend/home",
+    /** GET /v1/frontend/institution */
+    getInstitutionScreen: "/v1/frontend/institution",
+    /** GET /v1/frontend/place */
+    getPlaceScreen: "/v1/frontend/place",
+    /** GET /v1/frontend/ranking */
+    getRankingScreen: "/v1/frontend/ranking",
+    /** GET /v1/frontend/search */
+    searchScreen: "/v1/frontend/search",
   },
   geography: {
-    /** GET /v1/geography/feature-kinds */
-    browseFeatureKinds: "/v1/geography/feature-kinds",
-    /** GET /v1/geography/features */
-    browseFeatures: "/v1/geography/features",
-    /** GET /v1/geography/geometries */
-    browseGeometries: "/v1/geography/geometries",
-    /** GET /v1/geography/features/{featureId} */
-    getFeature: (params: { featureId: string }) =>
-      `/v1/geography/features/${encodeURIComponent(params.featureId)}`,
-    /** GET /v1/geography/features/{featureId}/geometries */
-    listFeatureGeometries: (params: { featureId: string }) =>
-      `/v1/geography/features/${encodeURIComponent(params.featureId)}/geometries`,
+    /** GET /v1/geography/at */
+    findPlacesAtPoint: "/v1/geography/at",
+    /** GET /v1/geography/outlines */
+    getOutline: "/v1/geography/outlines",
+    /** GET /v1/geography/places/{code} */
+    getPlace: (params: { code: string }) =>
+      `/v1/geography/places/${encodeURIComponent(params.code)}`,
+    /** GET /v1/geography/child-outlines */
+    listChildOutlines: "/v1/geography/child-outlines",
+    /** GET /v1/geography/children */
+    listChildren: "/v1/geography/children",
+    /** GET /v1/geography/places */
+    listPlaces: "/v1/geography/places",
   },
   governance: {
-    /** GET /v1/governance/institutions */
-    browseInstitutions: "/v1/governance/institutions",
-    /** GET /v1/governance/institutions/{institutionId} */
-    getInstitution: (params: { institutionId: string }) =>
-      `/v1/governance/institutions/${encodeURIComponent(params.institutionId)}`,
-    /** GET /v1/governance/offices/{officeId} */
-    getOffice: (params: { officeId: string }) =>
-      `/v1/governance/offices/${encodeURIComponent(params.officeId)}`,
-  },
-  insights: {
-    /** GET /v1/browse */
-    browsePlaces: "/v1/browse",
-    /** GET /v1/compare/options */
-    getCompareOptions: "/v1/compare/options",
-    /** GET /v1/compare/options/at */
-    getCompareOptionsAt: "/v1/compare/options/at",
-    /** GET /v1/compare */
-    getComparison: "/v1/compare",
-    /** GET /v1/compare/at */
-    getComparisonAt: "/v1/compare/at",
-    /** GET /v1/content */
-    getContent: "/v1/content",
-    /** GET /v1/elections/{electionId} */
-    getElection: (params: { electionId: string }) =>
-      `/v1/elections/${encodeURIComponent(params.electionId)}`,
-    /** GET /v1/election-at */
-    getElectionAt: "/v1/election-at",
-    /** GET /v1/governance/tabs */
-    getGovernanceTabs: "/v1/governance/tabs",
-    /** GET /v1/governance/tree */
-    getGovernanceTree: "/v1/governance/tree",
-    /** GET /v1/statistics/indicators/{indicatorCode}/map */
-    getIndicatorMap: (params: { indicatorCode: string }) =>
-      `/v1/statistics/indicators/${encodeURIComponent(params.indicatorCode)}/map`,
-    /** GET /v1/statistics/indicators/{indicatorCode}/series */
-    getIndicatorSeries: (params: { indicatorCode: string }) =>
-      `/v1/statistics/indicators/${encodeURIComponent(params.indicatorCode)}/series`,
-    /** GET /v1/institutions/{code} */
+    /** GET /v1/governance/institutions/{code} */
     getInstitution: (params: { code: string }) =>
-      `/v1/institutions/${encodeURIComponent(params.code)}`,
-    /** GET /v1/leaders/{code} */
-    getLeaderProfile: (params: { code: string }) =>
-      `/v1/leaders/${encodeURIComponent(params.code)}`,
-    /** GET /v1/leaders/tree */
-    getLeaderTree: "/v1/leaders/tree",
-    /** GET /v1/leaderboards/{metricCode} */
-    getLeaderboard: (params: { metricCode: string }) =>
-      `/v1/leaderboards/${encodeURIComponent(params.metricCode)}`,
-    /** GET /v1/legal-basis */
-    getLegalBasis: "/v1/legal-basis",
-    /** GET /v1/motions/{code} */
-    getMotion: (params: { code: string }) => `/v1/motions/${encodeURIComponent(params.code)}`,
-    /** GET /v1/projects/near */
-    getNearbyProjects: "/v1/projects/near",
-    /** GET /v1/parties/{code} */
-    getParty: (params: { code: string }) => `/v1/parties/${encodeURIComponent(params.code)}`,
-    /** GET /v1/civic/places/{featureId} */
-    getPlaceCivic: (params: { featureId: string }) =>
-      `/v1/civic/places/${encodeURIComponent(params.featureId)}`,
-    /** GET /v1/civic/place */
-    getPlaceCivicAt: "/v1/civic/place",
-    /** GET /v1/elections/places/{featureId} */
-    getPlaceElections: (params: { featureId: string }) =>
-      `/v1/elections/places/${encodeURIComponent(params.featureId)}`,
-    /** GET /v1/statistics/places/{featureId} */
-    getPlaceStatistics: (params: { featureId: string }) =>
-      `/v1/statistics/places/${encodeURIComponent(params.featureId)}`,
-    /** GET /v1/statistics/place */
-    getPlaceStatisticsAt: "/v1/statistics/place",
-    /** GET /v1/projects/{code} */
-    getProject: (params: { code: string }) => `/v1/projects/${encodeURIComponent(params.code)}`,
-    /** GET /v1/tender/{code} */
-    getTender: (params: { code: string }) => `/v1/tender/${encodeURIComponent(params.code)}`,
-    /** GET /v1/search */
-    globalSearch: "/v1/search",
-    /** GET /v1/content/list */
-    listContent: "/v1/content/list",
-    /** GET /v1/elections */
-    listElections: "/v1/elections",
-    /** GET /v1/institutions */
-    listInstitutions: "/v1/institutions",
-    /** GET /v1/law */
-    listLaw: "/v1/law",
-    /** GET /v1/leaderboards */
-    listLeaderboardMetrics: "/v1/leaderboards",
-    /** GET /v1/motions */
-    listMotions: "/v1/motions",
-    /** GET /v1/parties */
-    listParties: "/v1/parties",
-    /** GET /v1/tenders */
-    listTenders: "/v1/tenders",
-    /** GET /v1/tenders/at */
-    listTendersAt: "/v1/tenders/at",
+      `/v1/governance/institutions/${encodeURIComponent(params.code)}`,
+    /** GET /v1/governance/offices/{code} */
+    getOffice: (params: { code: string }) =>
+      `/v1/governance/offices/${encodeURIComponent(params.code)}`,
+    /** GET /v1/governance/institutions */
+    listInstitutions: "/v1/governance/institutions",
+    /** GET /v1/governance/members */
+    listMembers: "/v1/governance/members",
+    /** GET /v1/governance/offices */
+    listPlaceOffices: "/v1/governance/offices",
+    /** GET /v1/governance/powers */
+    listPowers: "/v1/governance/powers",
   },
-  interactions: {
-    /** GET /v1/engagement */
-    getEngagement: "/v1/engagement",
-    /** POST /v1/likes */
-    like: "/v1/likes",
-    /** POST /v1/views */
-    recordView: "/v1/views",
-    /** POST /v1/likes/remove */
-    unlike: "/v1/likes/remove",
+  history: {
+    /** GET /v1/history/eras */
+    listEras: "/v1/history/eras",
+    /** GET /v1/history/occurrences */
+    listHistory: "/v1/history/occurrences",
   },
-  ledger: {
-    /** GET /v1/coverage */
-    getCoverage: "/v1/coverage",
-    /** GET /v1/budgets */
-    listBudgets: "/v1/budgets",
-    /** GET /v1/coalitions */
-    listCoalitions: "/v1/coalitions",
-    /** GET /v1/funds */
-    listFunds: "/v1/funds",
-    /** GET /v1/manifestos */
-    listManifestos: "/v1/manifestos",
+  identity: {
+    /** GET /v1/identity/things/{code} */
+    getIdentity: (params: { code: string }) =>
+      `/v1/identity/things/${encodeURIComponent(params.code)}`,
+    /** GET /v1/identity/addresses */
+    resolveAddress: "/v1/identity/addresses",
+    /** GET /v1/identity/search */
+    searchNames: "/v1/identity/search",
   },
-  locality: {
-    /** GET /v1/sources */
-    browseSources: "/v1/sources",
-    /** GET /v1/evidence/{citationId} */
-    getEvidence: (params: { citationId: string }) =>
-      `/v1/evidence/${encodeURIComponent(params.citationId)}`,
-    /** GET /v1/locality/{featureId} */
-    getLocality: (params: { featureId: string }) =>
-      `/v1/locality/${encodeURIComponent(params.featureId)}`,
-    /** GET /v1/languages */
-    listLanguages: "/v1/languages",
-    /** GET /v1/locality/at */
-    resolveLocality: "/v1/locality/at",
-    /** GET /v1/locality/search */
-    searchLocalities: "/v1/locality/search",
+  legal: {
+    /** GET /v1/legal/instruments/{code} */
+    getInstrument: (params: { code: string }) =>
+      `/v1/legal/instruments/${encodeURIComponent(params.code)}`,
+    /** GET /v1/legal/effects */
+    listEffects: "/v1/legal/effects",
+    /** GET /v1/legal/instruments */
+    listInstruments: "/v1/legal/instruments",
+    /** GET /v1/legal/provisions */
+    listProvisions: "/v1/legal/provisions",
+  },
+  legislature: {
+    /** GET /v1/legislature/bills/{code} */
+    getBill: (params: { code: string }) =>
+      `/v1/legislature/bills/${encodeURIComponent(params.code)}`,
+    /** GET /v1/legislature/bills */
+    listBills: "/v1/legislature/bills",
+    /** GET /v1/legislature/votes */
+    listVotes: "/v1/legislature/votes",
+  },
+  media: {
+    /** GET /v1/media/articles/{code} */
+    getArticle: (params: { code: string }) =>
+      `/v1/media/articles/${encodeURIComponent(params.code)}`,
+    /** GET /v1/media/articles */
+    listArticles: "/v1/media/articles",
+    /** GET /v1/media/assets */
+    listAssets: "/v1/media/assets",
+  },
+  politics: {
+    /** GET /v1/politics/parties/{code} */
+    getParty: (params: { code: string }) =>
+      `/v1/politics/parties/${encodeURIComponent(params.code)}`,
+    /** GET /v1/politics/commitments */
+    listCommitments: "/v1/politics/commitments",
+    /** GET /v1/politics/parties */
+    listParties: "/v1/politics/parties",
+  },
+  product: {
+    /** GET /v1/product/site */
+    getSite: "/v1/product/site",
+    /** GET /v1/product/messages */
+    listMessages: "/v1/product/messages",
+    /** GET /v1/product/releases */
+    listReleases: "/v1/product/releases",
   },
   reference: {
-    /** GET /v1/reference/values */
-    browseSchemeMembers: "/v1/reference/values",
-    /** GET /v1/reference/schemes */
-    browseSchemes: "/v1/reference/schemes",
-    /** GET /v1/reference/lookup */
-    lookupMember: "/v1/reference/lookup",
+    /** GET /v1/reference/countries/{code} */
+    getCountry: (params: { code: string }) =>
+      `/v1/reference/countries/${encodeURIComponent(params.code)}`,
+    /** GET /v1/reference/countries */
+    listCountries: "/v1/reference/countries",
+    /** GET /v1/reference/currencies */
+    listCurrencies: "/v1/reference/currencies",
+    /** GET /v1/reference/hierarchies */
+    listHierarchies: "/v1/reference/hierarchies",
+    /** GET /v1/reference/languages */
+    listLanguages: "/v1/reference/languages",
+    /** GET /v1/reference/units */
+    listUnits: "/v1/reference/units",
   },
-  structure: {
-    /** GET /v1/structure/context */
-    getCountryContext: "/v1/structure/context",
-    /** GET /v1/structure */
-    getStructureScreen: "/v1/structure",
+  source: {
+    /** GET /v1/source/evidence */
+    listEvidence: "/v1/source/evidence",
+    /** GET /v1/source/sources */
+    listSources: "/v1/source/sources",
+  },
+  statistics: {
+    /** GET /v1/statistics/indicators/{code} */
+    getIndicator: (params: { code: string }) =>
+      `/v1/statistics/indicators/${encodeURIComponent(params.code)}`,
+    /** GET /v1/statistics/indicator-figures */
+    listIndicatorFigures: "/v1/statistics/indicator-figures",
+    /** GET /v1/statistics/indicators */
+    listIndicators: "/v1/statistics/indicators",
+    /** GET /v1/statistics/observations */
+    listObservations: "/v1/statistics/observations",
+    /** GET /v1/statistics/figures */
+    listPlaceFigures: "/v1/statistics/figures",
+  },
+  vocabulary: {
+    /** GET /v1/vocabulary/schemes/{code} */
+    getScheme: (params: { code: string }) =>
+      `/v1/vocabulary/schemes/${encodeURIComponent(params.code)}`,
+    /** GET /v1/vocabulary/terms */
+    listTerms: "/v1/vocabulary/terms",
   },
 } as const;
 export default routes;

@@ -1,18 +1,15 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/subject_table.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/addresses.dart';
 import 'package:mzizi_api/src/models/source/artifacts.dart';
-import 'package:mzizi_api/src/models/source/captures.dart';
+import 'package:mzizi_api/src/models/source/paths.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'citations.g.dart';
 
-/// Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp.
+/// Exactly where in an artifact or capture a fact is.
 @JsonSerializable(includeIfNull: false)
 class SourceCitations {
   const SourceCitations({
-    this.addressId,
     this.artifactId,
     this.captureId,
     required this.code,
@@ -20,15 +17,14 @@ class SourceCitations {
     this.deletedAt,
     required this.id,
     required this.locator,
-    required this.locatorKindId,
+    required this.locatorTerm,
+    this.pathId,
     this.quotedHash,
     required this.recordedAt,
-    this.subjectId,
-    this.subjectTable,
+    this.retrievedAt,
     required this.updatedAt,
     required this.version,
   });
-  final String? addressId;
   final String? artifactId;
   final String? captureId;
   final String code;
@@ -36,11 +32,11 @@ class SourceCitations {
   final DateTime? deletedAt;
   final String id;
   final String locator;
-  final String locatorKindId;
+  final String locatorTerm;
+  final String? pathId;
   final String? quotedHash;
   final DateTime recordedAt;
-  final String? subjectId;
-  final SharedSubjectTable? subjectTable;
+  final DateTime? retrievedAt;
   final DateTime updatedAt;
   final int version;
 

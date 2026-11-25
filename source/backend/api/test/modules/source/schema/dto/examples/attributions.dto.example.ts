@@ -2,10 +2,11 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { accountsExample } from "@test/modules/auth/schema/dto/examples/accounts.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 import { artifactsExample } from "@test/modules/source/schema/dto/examples/artifacts.dto.example.ts";
 import { publishersExample } from "@test/modules/source/schema/dto/examples/publishers.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Attributions, for generated tests. */
 export const attributionsExample: ContractExample = contractExample({
@@ -24,10 +25,10 @@ export const attributionsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "assessorSnapshot",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "json" },
+      name: "assessorId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "code",
@@ -67,7 +68,7 @@ export const attributionsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "licenseValueId",
+      name: "licenceTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -79,7 +80,7 @@ export const attributionsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "rightsStatement",
+      name: "rights",
       optional: false,
       nullable: false,
       spec: { kind: "string", maxLength: 4000 },

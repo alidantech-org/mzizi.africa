@@ -1,10 +1,12 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -12,14 +14,16 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Stable identity for one organization or legally identified entity; its names are stored in official.names. (entity)
+ * An organisation. Institutions, parties and publishers share their organisation's identity; regional bodies (EAC, AU) are entities with dated memberships. (entity)
  */
 export class EntitiesDto {
   @IsString()
@@ -45,13 +49,33 @@ export class EntitiesDto {
   @IsISO8601({ strict: true })
   dissolvedOn?: CalendarDate | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  @Satisfies<EntitiesDto>(
+    (object) =>
+      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
+    {
+      message: "Entity Period Is Ordered",
+    },
+  )
+  fromYear?: Year | null;
+
   @IsString()
   @IsUUID()
   id!: Id;
 
+  @IsEnum(IdentityKind)
+  @Satisfies<EntitiesDto>((object) => object.identityKind === "entity", {
+    message: "Entity Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsString()
   @IsUUID()
-  kindId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.registeredOn !== null)
@@ -62,7 +86,7 @@ export class EntitiesDto {
       object.dissolvedOn == null ||
       object.registeredOn <= object.dissolvedOn,
     {
-      message: "Registration And Dissolution Are Ordered",
+      message: "Entity Dates Are Ordered",
     },
   )
   registeredOn?: CalendarDate | null;
@@ -74,10 +98,11 @@ export class EntitiesDto {
   registrationCountryId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

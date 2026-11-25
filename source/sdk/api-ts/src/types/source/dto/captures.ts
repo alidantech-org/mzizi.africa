@@ -1,17 +1,17 @@
-/** One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other. */
+/** One fetch of a path. */
 export interface SourceCaptures {
-  addressId?: string | null;
   artifactId?: string | null;
-  code: string;
+  contentType?: string | null;
   createdAt: string;
-  deletedAt?: string | null;
+  discoveredAt?: string | null;
   discoveryId?: string | null;
+  etag?: string | null;
   id: string;
+  lastModified?: string | null;
   originalUrl: string;
-  responseMetadata: string;
+  pathId?: string | null;
   retrievedAt: string;
   retrievedUrl?: string | null;
   sourceId?: string | null;
-  updatedAt: string;
-  version: number;
+  statusCode?: number | null;
 }

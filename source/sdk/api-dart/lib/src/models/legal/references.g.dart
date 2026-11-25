@@ -7,7 +7,6 @@ part of 'references.dart';
 // **************************************************************************
 
 LegalReferences _$LegalReferencesFromJson(Map<String, dynamic> json) => LegalReferences(
-  code: json['code'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   deletedAt: json['deletedAt'] == null ? null : DateTime.parse(json['deletedAt'] as String),
   id: json['id'] as String,
@@ -26,7 +25,6 @@ LegalReferences _$LegalReferencesFromJson(Map<String, dynamic> json) => LegalRef
 );
 
 Map<String, dynamic> _$LegalReferencesToJson(LegalReferences instance) => <String, dynamic>{
-  'code': instance.code,
   'createdAt': instance.createdAt.toIso8601String(),
   'deletedAt': ?instance.deletedAt?.toIso8601String(),
   'id': instance.id,

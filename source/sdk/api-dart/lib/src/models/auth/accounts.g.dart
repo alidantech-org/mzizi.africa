@@ -12,8 +12,8 @@ AuthAccounts _$AuthAccountsFromJson(Map<String, dynamic> json) => AuthAccounts(
   disabledAt: json['disabledAt'] == null ? null : DateTime.parse(json['disabledAt'] as String),
   displayName: json['displayName'] as String,
   id: json['id'] as String,
+  individualId: json['individualId'] as String?,
   lastAuthenticatedAt: json['lastAuthenticatedAt'] == null ? null : DateTime.parse(json['lastAuthenticatedAt'] as String),
-  personRefId: json['personRefId'] as String,
   status: $enumDecode(_$AuthAccountStatusEnumMap, json['status']),
 );
 
@@ -23,12 +23,12 @@ Map<String, dynamic> _$AuthAccountsToJson(AuthAccounts instance) => <String, dyn
   'disabledAt': ?instance.disabledAt?.toIso8601String(),
   'displayName': instance.displayName,
   'id': instance.id,
+  'individualId': ?instance.individualId,
   'lastAuthenticatedAt': ?instance.lastAuthenticatedAt?.toIso8601String(),
-  'personRefId': instance.personRefId,
   'status': _$AuthAccountStatusEnumMap[instance.status]!,
 };
 
-const _$AuthAuthActorKindEnumMap = {AuthAuthActorKind.person: 'person', AuthAuthActorKind.service: 'service'};
+const _$AuthAuthActorKindEnumMap = {AuthAuthActorKind.agent: 'agent', AuthAuthActorKind.person: 'person', AuthAuthActorKind.service: 'service'};
 
 const _$AuthAccountStatusEnumMap = {
   AuthAccountStatus.active: 'active',

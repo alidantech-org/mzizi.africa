@@ -37,7 +37,6 @@ const SECTIONS: readonly {
     title: "Data",
     items: [
       { href: "/database", label: "Database", icon: "chart" },
-      { href: routes.seedTableList, label: "Seed tables", icon: "tree" },
       { href: "/knowledge", label: "Terms & knowledge", icon: "bulb" },
     ],
   },

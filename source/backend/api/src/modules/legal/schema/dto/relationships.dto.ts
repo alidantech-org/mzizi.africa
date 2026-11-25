@@ -12,7 +12,7 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+import type { Note } from "#/modules/legal/schema/type/note.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -20,20 +20,13 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A substantive legal operation or hierarchy link between wordings or instruments. Source derivation is not recorded here. (entity)
- *
- * Invariant "ExactlyOneLevel" has no simple form, so it isn't validated here.
- *
- * Invariant "InstrumentEndsTogether" has no simple form, so it isn't validated here.
+ * An amendment, repeal or replacement between instruments or wordings. (entity)
  */
 export class RelationshipsDto {
   @IsOptional()
   @ValidateIf((object) => object.affectedWordingId !== null)
   @IsString()
   @IsUUID()
-  @Satisfies<RelationshipsDto>((object) => object.affectedWordingId !== object.resultingWordingId, {
-    message: "Wording Must Not Affect Itself",
-  })
   affectedWordingId?: Id | null;
 
   @IsOptional()
@@ -41,12 +34,6 @@ export class RelationshipsDto {
   @IsString()
   @IsUUID()
   authorityWordingId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.citationId !== null)
-  @IsString()
-  @IsUUID()
-  citationId?: Id | null;
 
   @IsString()
   @MinLength(1)
@@ -71,19 +58,29 @@ export class RelationshipsDto {
   @IsISO8601({ strict: true })
   effectiveOn?: CalendarDate | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.explanation !== null)
-  @IsString()
-  @MaxLength(4000)
-  explanation?: Description | null;
-
   @IsString()
   @IsUUID()
   id!: Id;
 
   @IsString()
   @IsUUID()
-  kindId!: Id;
+  kindTerm!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.note !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(4000)
+  @Satisfies<RelationshipsDto>((object) => object.note == null || object.noteLanguageId != null, {
+    message: "Relationship Note Has Language",
+  })
+  note?: Note | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.noteLanguageId !== null)
+  @IsString()
+  @IsUUID()
+  noteLanguageId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.objectInstrumentId !== null)
@@ -101,12 +98,6 @@ export class RelationshipsDto {
   @ValidateIf((object) => object.subjectInstrumentId !== null)
   @IsString()
   @IsUUID()
-  @Satisfies<RelationshipsDto>(
-    (object) => object.subjectInstrumentId !== object.objectInstrumentId,
-    {
-      message: "Instruments Must Differ",
-    },
-  )
   subjectInstrumentId?: Id | null;
 
   @IsISO8601({})

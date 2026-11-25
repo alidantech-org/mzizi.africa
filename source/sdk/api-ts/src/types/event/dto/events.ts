@@ -1,4 +1,6 @@
-/** One event or a recurring series of events: a public holiday, a national day, an election, a sitting, a government visit. Names, rules and dated occurrences are separate; content and media attach through the subject mechanism. */
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
+
+/** A planned or recurring civic happening (Madaraka Day, budget reading). Its names are `identity.names`. */
 export interface EventEvents {
   basisProvisionId?: string | null;
   calendarId?: string | null;
@@ -6,12 +8,12 @@ export interface EventEvents {
   countryId?: string | null;
   createdAt: string;
   deletedAt?: string | null;
-  eventKindId: string;
+  featureId?: string | null;
   id: string;
-  organiserEntityId?: string | null;
-  scopeFeatureId?: string | null;
-  scopeLevelKindId?: string | null;
-  sourceCitationId?: string | null;
+  identityKind: SharedIdentityKind;
+  kindTerm: string;
+  levelId?: string | null;
+  organiserId?: string | null;
   updatedAt: string;
   version: number;
 }

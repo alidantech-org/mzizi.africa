@@ -13,24 +13,23 @@ import {
   ValidateIf,
 } from "class-validator";
 import { SourceKind } from "#/modules/source/schema/enum/source-kind.enum.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Url } from "#/modules/shared/schema/type/url.type.ts";
+import type { Label } from "#/modules/source/schema/type/label.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A publication channel: a real website or a real API, with its classification and credibility. (entity)
+ * A publication channel of a publisher. (entity)
  */
 export class SourcesDto {
   @IsOptional()
-  @ValidateIf((object) => object.classificationId !== null)
+  @ValidateIf((object) => object.classTerm !== null)
   @IsString()
   @IsUUID()
-  classificationId?: Id | null;
+  classTerm?: Id | null;
 
   @IsString()
   @MinLength(1)
@@ -53,21 +52,15 @@ export class SourcesDto {
   credentialBinding?: NonEmptyString255 | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.credibilityId !== null)
+  @ValidateIf((object) => object.credibilityTerm !== null)
   @IsString()
   @IsUUID()
-  credibilityId?: Id | null;
+  credibilityTerm?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.deletedAt !== null)
   @IsISO8601({})
   deletedAt?: Instant | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.description !== null)
-  @IsString()
-  @MaxLength(4000)
-  description?: Description | null;
 
   @IsString()
   @IsUUID()
@@ -76,17 +69,16 @@ export class SourcesDto {
   @IsEnum(SourceKind)
   kind!: SourceKind;
 
-  @IsOptional()
-  @ValidateIf((object) => object.licenceId !== null)
   @IsString()
-  @IsUUID()
-  licenceId?: Id | null;
+  @MinLength(1)
+  @MaxLength(255)
+  label!: Label;
 
   @IsOptional()
-  @ValidateIf((object) => object.officialEntityId !== null)
+  @ValidateIf((object) => object.licenceTerm !== null)
   @IsString()
   @IsUUID()
-  officialEntityId?: Id | null;
+  licenceTerm?: Id | null;
 
   @IsString()
   @IsUUID()
@@ -98,11 +90,6 @@ export class SourcesDto {
   @IsUrl()
   @MaxLength(2048)
   termsUrl?: Url | null;
-
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  title!: Name;
 
   @IsISO8601({})
   updatedAt!: Instant;

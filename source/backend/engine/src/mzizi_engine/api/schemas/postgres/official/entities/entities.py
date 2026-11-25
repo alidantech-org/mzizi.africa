@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class EntitiesRow(BaseModel):
-    """Stable identity for one organization or legally identified entity; its names are stored in official.names."""
+    """An organisation. Institutions, parties and publishers share their organisation's identity; regional bodies (EAC, AU) are entities with dated memberships."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -27,10 +29,12 @@ class EntitiesRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     dissolved_on: date | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    kind_id: UUID
+    identity_kind: IdentityKind
+    kind_term: UUID
     registered_on: date | None = None
     registration_country_id: UUID | None = None
-    source_citation_id: UUID | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -12,7 +12,7 @@ yields:
     table: finance.flows
     key: [occurred_on]
     fields:
-      amount_minor_units: { from: allocation }
+      amount:             { from: allocation }
       occurred_on:        { from: fiscal_year, transform: { fy_start: 7 } }
 provenance: { method: extracted, locator: { page: $page } }
 expect: { min_rows: 1, required_fields: [county, allocation] }

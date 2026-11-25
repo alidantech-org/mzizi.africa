@@ -6,5 +6,5 @@ from enum import StrEnum
 
 
 class ActorKind(StrEnum):
-    ACCOUNT = "account"
-    DEVICE = "device"
+    MEMBER = "member"
+    VISITOR = "visitor"

@@ -8,25 +8,12 @@ import { ReviewStatus } from "#/modules/legal/schema/enum/review-status.enum.ts"
 import { provisionsExample } from "@test/modules/legal/schema/dto/examples/provisions.dto.example.ts";
 import { translationsExample } from "@test/modules/legal/schema/dto/examples/translations.dto.example.ts";
 import { wordingsExample } from "@test/modules/legal/schema/dto/examples/wordings.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
 
 /** The contract shape of References, for generated tests. */
 export const referencesExample: ContractExample = contractExample({
   name: "References",
   fields: [
-    {
-      name: "code",
-      optional: false,
-      nullable: false,
-      spec: {
-        kind: "string",
-        minLength: 1,
-        maxLength: 255,
-        patterns: [
-          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ],
-      },
-    },
     {
       name: "createdAt",
       optional: false,
@@ -120,31 +107,11 @@ export const referencesExample: ContractExample = contractExample({
   ],
   invariants: [
     {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "spanStart" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "spanEnd" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "spanStart" },
-          operator: "less-than",
-          right: { field: "spanEnd" },
-        },
-      ],
-    },
-    {
       any: false,
       comparisons: [
         {
           left: { field: "spanStart" },
-          operator: "not-equal",
+          operator: "less-than",
           right: { field: "spanEnd" },
         },
       ],

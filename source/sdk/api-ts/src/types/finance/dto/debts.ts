@@ -1,18 +1,20 @@
-/** One public debt instrument between a borrower and optional lender, with contracted amount and maturity facts. */
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
+
+/** A public debt (a loan or bond). */
 export interface FinanceDebts {
-  amountMinorUnits: number;
-  borrowerEntityId: string;
+  amount?: number | null;
+  borrowerId: string;
   code: string;
   contractedOn?: string | null;
-  countryId?: string | null;
+  countryId: string;
   createdAt: string;
-  currencyId: string;
-  debtKindId: string;
+  currencyId?: string | null;
   deletedAt?: string | null;
   id: string;
-  lenderEntityId?: string | null;
+  identityKind: SharedIdentityKind;
+  kindTerm: string;
+  lenderId: string;
   maturityOn?: string | null;
-  sourceCitationId?: string | null;
   updatedAt: string;
   version: number;
 }

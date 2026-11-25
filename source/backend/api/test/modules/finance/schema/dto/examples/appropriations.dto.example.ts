@@ -3,31 +3,25 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { projectsExample } from "@test/modules/civic/schema/dto/examples/projects.dto.example.ts";
-import { budgetVersionsExample } from "@test/modules/finance/schema/dto/examples/budget-versions.dto.example.ts";
+import { revisionsExample } from "@test/modules/finance/schema/dto/examples/revisions.dto.example.ts";
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { currenciesExample } from "@test/modules/reference/schema/dto/examples/currencies.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Appropriations, for generated tests. */
 export const appropriationsExample: ContractExample = contractExample({
   name: "Appropriations",
   fields: [
     {
-      name: "amountMinorUnits",
-      optional: false,
-      nullable: false,
+      name: "amount",
+      optional: true,
+      nullable: true,
       spec: { kind: "number", integer: true, min: 0 },
     },
     {
-      name: "budgetVersionId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "classificationId",
+      name: "classTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -53,8 +47,8 @@ export const appropriationsExample: ContractExample = contractExample({
     },
     {
       name: "currencyId",
-      optional: false,
-      nullable: false,
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -64,13 +58,19 @@ export const appropriationsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "featureId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "parentAppropriationId",
+      name: "parentId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -82,21 +82,15 @@ export const appropriationsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "recipientEntityId",
+      name: "recipientId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "unitFeatureId",
-      optional: true,
-      nullable: true,
+      name: "revisionId",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -112,5 +106,31 @@ export const appropriationsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: false,
+      comparisons: [
+        {
+          left: { field: "id" },
+          operator: "not-equal",
+          right: { field: "parentId" },
+        },
+      ],
+    },
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "amount" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "currencyId" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+      ],
+    },
+  ],
 });

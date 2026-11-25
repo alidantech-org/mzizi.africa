@@ -2,10 +2,9 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { addressesExample } from "@test/modules/source/schema/dto/examples/addresses.dto.example.ts";
+import { partitionedRecordExample } from "@test/modules/shared/schema/dto/examples/partitioned-record.dto.example.ts";
 import { artifactsExample } from "@test/modules/source/schema/dto/examples/artifacts.dto.example.ts";
-import { discoveriesExample } from "@test/modules/source/schema/dto/examples/discoveries.dto.example.ts";
+import { pathsExample } from "@test/modules/source/schema/dto/examples/paths.dto.example.ts";
 import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
 
 /** The contract shape of Captures, for generated tests. */
@@ -13,29 +12,16 @@ export const capturesExample: ContractExample = contractExample({
   name: "Captures",
   fields: [
     {
-      name: "addressId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "artifactId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "code",
-      optional: false,
-      nullable: false,
-      spec: {
-        kind: "string",
-        minLength: 1,
-        maxLength: 255,
-        patterns: [
-          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ],
-      },
+      name: "contentType",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 255 },
     },
     {
       name: "createdAt",
@@ -44,7 +30,7 @@ export const capturesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "deletedAt",
+      name: "discoveredAt",
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
@@ -56,10 +42,22 @@ export const capturesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "etag",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 1000 },
+    },
+    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "lastModified",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "instant" },
     },
     {
       name: "originalUrl",
@@ -68,10 +66,10 @@ export const capturesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "url", maxLength: 2048 },
     },
     {
-      name: "responseMetadata",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "json" },
+      name: "pathId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "retrievedAt",
@@ -92,16 +90,10 @@ export const capturesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "updatedAt",
-      optional: false,
-      nullable: false,
-      spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "version",
-      optional: false,
-      nullable: false,
-      spec: { kind: "number", integer: true, min: 1 },
+      name: "statusCode",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: 100, max: 599 },
     },
   ],
   invariants: [],

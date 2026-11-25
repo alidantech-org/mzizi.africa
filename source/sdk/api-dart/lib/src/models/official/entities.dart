@@ -1,12 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'entities.g.dart';
 
-/// Stable identity for one organization or legally identified entity; its names are stored in official.names.
+/// An organisation. Institutions, parties and publishers share their organisation's identity; regional bodies (EAC, AU) are entities with dated memberships.
 @JsonSerializable(includeIfNull: false)
 class OfficialEntities {
   const OfficialEntities({
@@ -14,11 +15,13 @@ class OfficialEntities {
     required this.createdAt,
     this.deletedAt,
     this.dissolvedOn,
+    this.fromYear,
     required this.id,
-    required this.kindId,
+    required this.identityKind,
+    required this.kindTerm,
     this.registeredOn,
     this.registrationCountryId,
-    this.sourceCitationId,
+    this.toYear,
     required this.updatedAt,
     required this.version,
   });
@@ -26,11 +29,13 @@ class OfficialEntities {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? dissolvedOn;
+  final int? fromYear;
   final String id;
-  final String kindId;
+  final SharedIdentityKind identityKind;
+  final String kindTerm;
   final DateTime? registeredOn;
   final String? registrationCountryId;
-  final String? sourceCitationId;
+  final int? toYear;
   final DateTime updatedAt;
   final int version;
 

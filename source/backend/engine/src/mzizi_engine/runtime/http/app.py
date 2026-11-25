@@ -1,6 +1,6 @@
 """The engine's operational API (FastAPI). Local only: called by the NestJS API, repository scripts and agents.
 
-It exposes health, capabilities, jobs, runs, an SSE event stream and manifest/seed operations. It makes no product
+It exposes health, capabilities, jobs, runs, an SSE event stream and manifest operations. It makes no product
 decisions, has no UI and no user accounts, and never writes domain schemas: results flow to NestJS through the outbox.
 """
 
@@ -19,7 +19,6 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from mzizi_engine import __version__
-from mzizi_engine.api.routes.catalog.seed_catalog import build_catalog_seed_catalog_router
 from mzizi_engine.config import EngineConfig, ServerConfig
 from mzizi_engine.config.explore import ExploreConfig
 from mzizi_engine.runtime.assembly import DRAIN_TIMEOUT_SECONDS, build_default_runtime
@@ -40,7 +39,6 @@ from mzizi_engine.runtime.http.explore import explore_router, media_router
 from mzizi_engine.runtime.http.overview import SystemOverview, build_overview
 from mzizi_engine.runtime.http.research import research_router
 from mzizi_engine.runtime.http.scripts import scripts_router
-from mzizi_engine.runtime.http.seed_catalog import RuntimeSeedCatalogService
 from mzizi_engine.runtime.operations import OperationRegistry
 from mzizi_engine.runtime.runs.artifacts import ArtifactReader
 from mzizi_engine.runtime.runtime import EngineRuntime
@@ -146,10 +144,6 @@ def create_app(
     async def capabilities(_: Principal = require("engine.read")) -> dict:
         return {"capabilities": [item.model_dump(mode="json") for item in registry.describe()]}
 
-    app.include_router(
-        build_catalog_seed_catalog_router(RuntimeSeedCatalogService(runtime)), dependencies=[require("engine.read")]
-    )
-
     app.include_router(research_router(reader))
     explore_config = ExploreConfig.load()
     app.include_router(explore_router(explore_config))
@@ -172,7 +166,6 @@ def create_app(
             "extraction.geojson",
             "scraping.links",
             "manifest.validate_structure",
-            "manifest.check_seeds",
         }
         if body.kind not in allowed:
             raise HTTPException(422, "unregistered Temporal capability")
@@ -227,12 +220,6 @@ def create_app(
         if job is None:
             raise HTTPException(404, "no such job")
         return job
-
-    @app.post("/v1/manifests/validate")
-    async def validate_manifests(_: Principal = require("engine.read")) -> dict:
-        from mzizi_engine.runtime.assembly.default_operations import manifest_check_seeds
-
-        return await asyncio.to_thread(manifest_check_seeds, {})
 
     @app.get("/v1/events")
     async def events(

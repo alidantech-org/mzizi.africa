@@ -29,7 +29,7 @@ export class FeatureWindowDto {
   @IsOptional()
   @IsString()
   @IsUUID()
-  featureTypeId?: Id;
+  kindTerm?: Id;
 
   @IsOptional()
   @IsInt()

@@ -3,8 +3,8 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { Retention } from "#/modules/filesystem/schema/enum/retention.enum.ts";
-import { fileVersionsExample } from "@test/modules/filesystem/schema/dto/examples/file-versions.dto.example.ts";
 import { foldersExample } from "@test/modules/filesystem/schema/dto/examples/folders.dto.example.ts";
+import { versionsExample } from "@test/modules/filesystem/schema/dto/examples/versions.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 
 /** The contract shape of Files, for generated tests. */
@@ -65,6 +65,13 @@ export const filesExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "enum", values: Object.values(Retention) },
+    },
+    {
+      name: "tags",
+      optional: true,
+      nullable: true,
+      array: {},
+      spec: { kind: "string", minLength: 1, maxLength: 100 },
     },
     {
       name: "updatedAt",

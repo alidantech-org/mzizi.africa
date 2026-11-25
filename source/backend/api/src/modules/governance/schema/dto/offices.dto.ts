@@ -14,7 +14,8 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
+import type { Seat } from "#/modules/governance/schema/type/seat.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -23,14 +24,9 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One established public office, independent of any current holder and optionally scoped to a geographic unit. (entity)
+ * One concrete seat (the Governor of Nairobi, the MCA for Kilimani ward). (entity)
  */
 export class OfficesDto {
-  @IsOptional()
-  @ValidateIf((object) => object.abolishedOn !== null)
-  @IsISO8601({ strict: true })
-  abolishedOn?: CalendarDate | null;
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -45,28 +41,20 @@ export class OfficesDto {
   createdAt!: Instant;
 
   @IsOptional()
-  @ValidateIf((object) => object.createdOn !== null)
-  @IsISO8601({ strict: true })
-  @Satisfies<OfficesDto>(
-    (object) =>
-      object.createdOn == null ||
-      object.abolishedOn == null ||
-      object.createdOn <= object.abolishedOn,
-    {
-      message: "Offices Dates Are Ordered",
-    },
-  )
-  createdOn?: CalendarDate | null;
-
-  @IsOptional()
   @ValidateIf((object) => object.deletedAt !== null)
   @IsISO8601({})
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
+  @ValidateIf((object) => object.endsOn !== null)
+  @IsISO8601({ strict: true })
+  endsOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.featureId !== null)
+  @IsString()
+  @IsUUID()
+  featureId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)
@@ -77,7 +65,7 @@ export class OfficesDto {
     (object) =>
       object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
     {
-      message: "Period Years Are Ordered",
+      message: "Office Period Is Ordered",
     },
   )
   fromYear?: Year | null;
@@ -85,6 +73,12 @@ export class OfficesDto {
   @IsString()
   @IsUUID()
   id!: Id;
+
+  @IsEnum(IdentityKind)
+  @Satisfies<OfficesDto>((object) => object.identityKind === "office", {
+    message: "Office Kind",
+  })
+  identityKind!: IdentityKind;
 
   @IsString()
   @IsUUID()
@@ -95,16 +89,16 @@ export class OfficesDto {
   positionId!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.seatOrdinal !== null)
-  @IsInt()
-  @Min(1)
-  seatOrdinal?: PositiveInteger | null;
+  @ValidateIf((object) => object.seat !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  seat?: Seat | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
+  @ValidateIf((object) => object.startsOn !== null)
+  @IsISO8601({ strict: true })
+  startsOn?: CalendarDate | null;
 
   @IsOptional()
   @ValidateIf((object) => object.toYear !== null)
@@ -112,12 +106,6 @@ export class OfficesDto {
   @Min(-10000)
   @Max(3000)
   toYear?: Year | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.unitFeatureId !== null)
-  @IsString()
-  @IsUUID()
-  unitFeatureId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

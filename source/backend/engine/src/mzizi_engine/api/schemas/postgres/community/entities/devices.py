@@ -13,7 +13,7 @@ from mzizi_engine.api.schemas.postgres.community.enums.platform import Platform
 
 
 class DevicesRow(BaseModel):
-    """One device or browser seen for an actor, identified only by a salted fingerprint hash."""
+    """A device an actor uses."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

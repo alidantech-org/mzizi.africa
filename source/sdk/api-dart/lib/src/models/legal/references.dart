@@ -5,15 +5,14 @@ import 'package:mzizi_api/src/enums/legal/review_status.dart';
 import 'package:mzizi_api/src/models/legal/provisions.dart';
 import 'package:mzizi_api/src/models/legal/translations.dart';
 import 'package:mzizi_api/src/models/legal/wordings.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
 
 part 'references.g.dart';
 
-/// A textual mention of a provision inside a wording or translation, with the exact span. A mention is not an amendment.
+/// A cross-reference found inside a text ("subject to Article 24").
 @JsonSerializable(includeIfNull: false)
 class LegalReferences {
   const LegalReferences({
-    required this.code,
     required this.createdAt,
     this.deletedAt,
     required this.id,
@@ -30,7 +29,6 @@ class LegalReferences {
     required this.version,
     this.wordingId,
   });
-  final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String id;

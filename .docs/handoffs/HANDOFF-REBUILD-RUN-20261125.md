@@ -86,3 +86,22 @@ following every owner direction in its section 3. Track all progress with the ta
 Do not stop until every task in .dev/run/active is completed; put owner questions in
 .docs/handoffs/REBUILD-OWNER-QUESTIONS.md and keep working.
 ```
+
+## 8. Closing report (25 November 2026)
+
+All six tasks are **completed** in the task CLI; each has comments with commands and results. Nothing is committed: the owner reviews the working tree.
+
+| Task | What was done | Proof |
+|---|---|---|
+| TSK-D0EC3D8B6D47 schemas | 22 schemas / 202 tables authored from FOUNDATION_REDESIGN; identity-backed tables (composite kind FK), `_term` columns with scheme checks on `vocabulary.terms`, 18 partitioned tables (identity kind LIST, country HASH, month RANGE, evidence by subject table), descriptions as SQL comments. Local `postgres-sql` pack extended (partitions, comments, arrays, composite targets). Audit rewritten. | `dryv bun run check` and `database:check` pass; SQL applies with 1 205 column and 203 table comments; kind, FK and scheme checks proven; partition pruning by EXPLAIN |
+| TSK-70669AC571AA app contracts | 19 schema-named API modules plus `frontend`; old vague modules and 37 hand-written `reads/` removed; cache classes; vendored `nestjs-persistence` pack; Python rows and `source/schema` regenerated | API IR 993 records; API typecheck clean; 15 352 API tests pass |
+| TSK-6065C44E5476 seed | Seed data, tooling and seed code out of Git into `.dev/seed/`; engine seed loader and seed catalog removed; configured root `MZIZI_SEED_ROOT` | engine 222 tests pass; decision DEC-SEED-OUTSIDE-GIT-20261125 |
+| TSK-1265807A54E3 database | New database **`mzizi_rebuild`**; old stream deleted; one baseline `0001_init.sql`; roles; `db refresh` and `db partitions` commands; seeded from `.dev/seed/rebuild/` | migrate/verify ok; plans 0.04–0.17 ms (database README) |
+| TSK-7BA66E947A39 API | Regenerated with typed use cases, optional Redis (`REDIS_URL`), project wiring in `database.module.ts`, `src/implementations/` for screens | place page 343 ms (5 calls, old) → 38 ms (one call), 25 ms with Redis; same values |
+| TSK-402D8C6A91DD web | Real app rebuilt as server components on the new SDK; server-drawn map; streamed regions | browser: first byte 8 ms, DOM ready 143 ms, 0 browser API calls |
+
+**Failures and limits, reported as they are.** A browser test in `source/packages/browser` needs `MZIZI_USER_AGENT` (environment). The old web could not be rebuilt outside the repo for a browser baseline (hoisted dependencies); the before figure is the old API's five place-page reads. Law, parliament, elections, finance and source tables have no rows in the rebuilt database yet. Outlines are simplified per place, not as one shared topology. Sign-in is not wired (policy routes fail closed). Dryv gaps and one neutral Dryv engine change (`url` format in persistence validation, uncommitted in the Dryv checkout) are in DRYV_GAPS.
+
+**Open owner questions:** Q1–Q11 in [REBUILD-OWNER-QUESTIONS](REBUILD-OWNER-QUESTIONS.md).
+
+**Where things run (started by the run; stop by pid when done):** database `mzizi_rebuild` on `127.0.0.1:5432`; rebuilt API on `:8711` (pid in `.dev/run/api-8711.pid`, Redis-backed); web production build on `:3311` (pid in `.dev/run/web-3311.pid`); Redis container `mzizi-rebuild-redis` on `127.0.0.1:6390`. The owner's own instances and databases were not touched. Helper scripts: `.dev/run/gen.sh`, `plan.sh`, `api.sh`, `bench.py`, `sqltest.sh`.

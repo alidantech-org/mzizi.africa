@@ -1,19 +1,18 @@
-/** One reschedule, postponement, adjournment, cancellation or confirmation of an occurrence, with the reason, who decided it and under which law. History is the list of changes. */
+/** A postponement, cancellation or move of an occurrence. */
 export interface EventChanges {
-  authorityEntityId?: string | null;
+  authorityId?: string | null;
   basisProvisionId?: string | null;
-  changeKindId: string;
-  code: string;
   createdAt: string;
   decidedOn?: string | null;
   deletedAt?: string | null;
-  explanation?: string | null;
   fromOn?: string | null;
   id: string;
+  kindTerm: string;
+  note?: string | null;
+  noteLanguageId?: string | null;
   occurrenceId: string;
-  reasonId?: string | null;
+  reasonTerm?: string | null;
   replacementOccurrenceId?: string | null;
-  sourceCitationId?: string | null;
   toOn?: string | null;
   updatedAt: string;
   version: number;

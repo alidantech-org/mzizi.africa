@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.community.enums.push_provider import Push
 
 
 class TokensRow(BaseModel):
-    """A push address for a mobile device, kept only while the visitor has notifications enabled."""
+    """A push notification token of a device."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

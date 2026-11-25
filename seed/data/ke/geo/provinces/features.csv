@@ -1,9 +1,0 @@
-code,feature_type_code,ended_on,to_year,from_to_precision
-ke.nairobi-province,geo.feature.kind.province,2013-03-04,2013,exact
-ke.central-province,geo.feature.kind.province,2013-03-04,2013,exact
-ke.coast-province,geo.feature.kind.province,2013-03-04,2013,exact
-ke.eastern-province,geo.feature.kind.province,2013-03-04,2013,exact
-ke.north-eastern-province,geo.feature.kind.province,2013-03-04,2013,exact
-ke.nyanza-province,geo.feature.kind.province,2013-03-04,2013,exact
-ke.rift-valley-province,geo.feature.kind.province,2013-03-04,2013,exact
-ke.western-province,geo.feature.kind.province,2013-03-04,2013,exact

@@ -1,19 +1,15 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
 
-/** A public function that a constitution or law assigns to a level of government. Its name and plain wording are copy keyed by code. */
+/** A government function (county health services) from law, possibly under a broader one. */
 export interface GovernanceFunctions {
-  basisProvisionId?: string | null;
   code: string;
-  countryId: string;
   createdAt: string;
   deletedAt?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
-  fromYear?: number | null;
   id: string;
-  parentFunctionId?: string | null;
-  sourceCitationId?: string | null;
-  toYear?: number | null;
-  topicId?: string | null;
+  identityKind: SharedIdentityKind;
+  parentId?: string | null;
+  provisionId?: string | null;
+  topicTerm: string;
   updatedAt: string;
   version: number;
 }

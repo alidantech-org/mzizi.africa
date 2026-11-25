@@ -1,18 +1,21 @@
-/** A stored GIS file used for a feature or for one of its geometries. One file can serve many features and a feature can have many files. Photographs and video are filesystem media; acquisition and provenance belong to Source. */
+/** A stored GIS file or prepared map output (tile set, TopoJSON) for a feature, through filesystem versions. */
 export interface GeographyAssets {
   band?: number | null;
+  builtAt?: string | null;
   code: string;
   createdAt: string;
   deletedAt?: string | null;
-  description?: string | null;
   featureId: string;
-  fileVersionId: string;
   geometryId?: string | null;
+  hierarchyId?: string | null;
   id: string;
-  kindId: string;
+  kindTerm: string;
   layer?: string | null;
+  levelId?: string | null;
   member?: string | null;
-  purposeId: string;
+  purposeTerm: string;
+  staleAt?: string | null;
   updatedAt: string;
   version: number;
+  versionId: string;
 }

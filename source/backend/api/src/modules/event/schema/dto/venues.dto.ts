@@ -6,16 +6,18 @@ import {
   IsUUID,
   MaxLength,
   Min,
+  MinLength,
   ValidateIf,
 } from "class-validator";
 
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import type { Note } from "#/modules/event/schema/type/note.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One place an occurrence happens at. An occurrence can have many: a national election covers every county and polling place. (entity)
+ * Where an occurrence takes place. (entity)
  */
 export class VenuesDto {
   @IsISO8601({})
@@ -37,8 +39,18 @@ export class VenuesDto {
   @IsOptional()
   @ValidateIf((object) => object.note !== null)
   @IsString()
+  @MinLength(1)
   @MaxLength(4000)
-  note?: Description | null;
+  @Satisfies<VenuesDto>((object) => object.note == null || object.noteLanguageId != null, {
+    message: "Venue Note Has Language",
+  })
+  note?: Note | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.noteLanguageId !== null)
+  @IsString()
+  @IsUUID()
+  noteLanguageId?: Id | null;
 
   @IsString()
   @IsUUID()
@@ -46,7 +58,7 @@ export class VenuesDto {
 
   @IsString()
   @IsUUID()
-  roleId!: Id;
+  roleTerm!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

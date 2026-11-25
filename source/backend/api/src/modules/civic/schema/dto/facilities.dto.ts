@@ -1,10 +1,12 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -12,20 +14,21 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * The civic role of a geographic feature: a school, hospital, office, road, market or polling host. Size and capacity are observations on the feature; what it is and its levels are classifications; money reaches it through project links. (entity)
+ * A public facility; it shares its geography feature's identity, so "near me" is a spatial query on the feature. (entity)
  */
 export class FacilitiesDto {
-  @IsOptional()
-  @ValidateIf((object) => object.closedOn !== null)
-  @IsISO8601({ strict: true })
-  closedOn?: CalendarDate | null;
+  @IsString()
+  @IsUUID()
+  classTerm!: Id;
 
   @IsString()
   @MinLength(1)
@@ -37,11 +40,9 @@ export class FacilitiesDto {
   )
   code!: IdentityCode;
 
-  @IsOptional()
-  @ValidateIf((object) => object.countryId !== null)
   @IsString()
   @IsUUID()
-  countryId?: Id | null;
+  countryId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;
@@ -51,63 +52,69 @@ export class FacilitiesDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
-  @IsString()
-  @IsUUID()
-  facilityClassId!: Id;
+  @IsOptional()
+  @ValidateIf((object) => object.endsOn !== null)
+  @IsISO8601({ strict: true })
+  endsOn?: CalendarDate | null;
 
-  @IsString()
-  @IsUUID()
-  featureId!: Id;
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear?: Year | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
+  @IsEnum(IdentityKind)
+  @Satisfies<FacilitiesDto>((object) => object.identityKind === "feature", {
+    message: "Facility Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsOptional()
-  @ValidateIf((object) => object.openedOn !== null)
+  @ValidateIf((object) => object.institutionId !== null)
+  @IsString()
+  @IsUUID()
+  institutionId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.operatorId !== null)
+  @IsString()
+  @IsUUID()
+  operatorId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.ownerId !== null)
+  @IsString()
+  @IsUUID()
+  ownerId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.ownershipTerm !== null)
+  @IsString()
+  @IsUUID()
+  ownershipTerm?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.startsOn !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<FacilitiesDto>(
-    (object) =>
-      object.openedOn == null || object.closedOn == null || object.openedOn <= object.closedOn,
-    {
-      message: "Facility Dates Are Ordered",
-    },
-  )
-  openedOn?: CalendarDate | null;
+  startsOn?: CalendarDate | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.operatorEntityId !== null)
+  @ValidateIf((object) => object.statusTerm !== null)
   @IsString()
   @IsUUID()
-  operatorEntityId?: Id | null;
+  statusTerm?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.ownerEntityId !== null)
-  @IsString()
-  @IsUUID()
-  ownerEntityId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.ownershipId !== null)
-  @IsString()
-  @IsUUID()
-  ownershipId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.responsibleInstitutionId !== null)
-  @IsString()
-  @IsUUID()
-  responsibleInstitutionId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  statusId!: Id;
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

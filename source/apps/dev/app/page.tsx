@@ -76,12 +76,7 @@ export default function OverviewPage() {
             title: "Capabilities",
             body: "Everything the engine can run, by package.",
           },
-          { href: routes.jobList, title: "Jobs", body: "Recent runs and their status." },
-          {
-            href: routes.seedTableList,
-            title: "Seed tables",
-            body: "Tables that seed CSVs can feed, with their keys.",
-          },
+          { href: routes.jobList, title: "Jobs", body: "Recent runs and their status." }, 
         ].map((card) => (
           <Link
             key={card.href}

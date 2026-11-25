@@ -1,6 +1,0 @@
-code,name,iso6391,iso6392,iso6393,glottocode,kind_code,family_code,script_code,direction_code,status_code,parent_code
-und,Undetermined,,und,und,,ref.language.kind.special,,,,,
-mul,Multiple languages,,mul,mul,,ref.language.kind.special,,,,,
-zxx,No linguistic content,,zxx,zxx,,ref.language.kind.special,,,,,
-en,English,en,eng,eng,stan1293,ref.language.kind.language,ref.language.family.indo-european,ref.script.latn,ref.text.direction.ltr,ref.language.status.living,
-sw,Swahili,sw,swa,swa,swah1253,ref.language.kind.macrolanguage,ref.language.family.niger-congo,ref.script.latn,ref.text.direction.ltr,ref.language.status.living,

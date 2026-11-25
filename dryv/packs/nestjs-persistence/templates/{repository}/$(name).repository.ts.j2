@@ -1,0 +1,75 @@
+{%- macro symbol(value) -%}
+{%- if value is not none and value.is.schema -%}
+{%- for dependency in file.dependencies if dependency.slot == 'schema.validation' and dependency.target.id == value.schema.id -%}{{ dependency.symbol }}{%- endfor -%}
+{%- elif value is not none and value.is.primitive -%}{{ value.property.primitive.type }}
+{%- elif value is not none and value.is.temporal -%}string
+{%- elif value is not none and value.is.enum -%}{% for member in value.property.enum.values %}{{ member.value | tojson }}{% if not loop.last %} | {% endif %}{% endfor %}
+{%- else -%}Json
+{%- endif -%}
+{%- endmacro -%}
+{%- macro input_type() -%}
+{%- if operation.input and operation.input.kind == 'schema' -%}{{ symbol(operation.input.value) }}
+{%- elif operation.input -%}{ {% for field in operation.input.fields %}{{ field.name.raw }}{% if field.optional %}?{% endif %}: {{ symbol(field.value) }}{% if field.array is not none %}[]{% endif %}; {% endfor %} }
+{%- else -%}{ [key: string]: never }
+{%- endif -%}
+{%- endmacro -%}
+{%- macro result_type() -%}
+{%- if operation.output -%}{{ symbol(operation.output.value) }}{% if operation.output.array is not none %}[]{% endif %}
+{%- else -%}void
+{%- endif -%}
+{%- endmacro -%}
+import { Injectable, HttpException, Optional } from '@nestjs/common';
+import { plainToInstance, instanceToPlain } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
+import { PersistenceRuntime, PersistenceFailure, PersistencePolicyResolver } from '#/database/persistence/persistence.runtime';
+import type { Json, Plan, TrustedContext } from '#/database/persistence/persistence.types';
+{%- for dependency in file.dependencies if dependency.slot == 'schema.validation' %}
+import { {{ dependency.symbol }} } from '{{ (dependency.path.prefixed or ("#root/" ~ dependency.path.workspace)) | replace(".ts", "") }}';
+{%- endfor %}
+
+{%- if operation.persistence is not none %}
+const plan = {{ operation.persistence.document }} satisfies Plan;
+/** Named typed repository function; all SQL and transaction handling live in the runtime. */
+export async function {{ operation.name.camel }}Repository(runtime: PersistenceRuntime, input: {{ input_type() }}, context: TrustedContext): Promise<{{ result_type() }}> {
+  try {
+    const result = await runtime.execute(plan, instanceToPlain(input), context);
+{%- if operation.output and operation.output.value.is.schema %}
+{%- if operation.output.array is not none %}
+    if (!Array.isArray(result)) throw new Error('Expected response array');
+    const output = result.map(item => plainToInstance({{ symbol(operation.output.value) }}, item));
+    await Promise.all(output.map(item => validateOrReject(item)));
+{%- else %}
+    if (result === null || typeof result !== 'object' || Array.isArray(result)) throw new Error('Expected response object');
+    const output = plainToInstance({{ symbol(operation.output.value) }}, result);
+    await validateOrReject(output);
+{%- endif %}
+    return output;
+{%- elif operation.output %}
+    throw new Error('Scalar output needs an explicit project decoder');
+{%- else %}
+    return;
+{%- endif %}
+  } catch (error) {
+    if (error instanceof PersistenceFailure) throw new HttpException({code: error.failure.code, message: error.message}, error.failure.status);
+    throw error;
+  }
+}
+
+/** The application policy resolver supplies trusted context separately from request input. */
+@Injectable()
+export class {{ file.symbol }} {
+  /** Optional so HTTP specs can mock the service without a database; the application registers both globally. */
+  constructor(@Optional() private readonly runtime?: PersistenceRuntime, @Optional() private readonly policyResolver?: PersistencePolicyResolver) {}
+  async execute(input: {{ input_type() }}{% if operation.input is none %} = {}{% endif %}, context?: TrustedContext): Promise<{{ result_type() }}> {
+    if (!this.runtime || !this.policyResolver) throw new Error('PersistenceRuntime and PersistencePolicyResolver must be registered');
+    return {{ operation.name.camel }}Repository(this.runtime, input, context ?? await this.policyResolver.resolve(plan.operation));
+  }
+}
+{%- else %}
+/**
+ * No canonical persistence plan: the project implements this operation in
+ * src/implementations/{{ operation.name.kebab }}.ts, exporting
+ * `{{ file.symbol }}` with `execute(input: {{ input_type() }}): Promise<{{ result_type() }}>`.
+ */
+export { {{ file.symbol }} } from '#/implementations/{{ operation.name.kebab }}';
+{%- endif %}

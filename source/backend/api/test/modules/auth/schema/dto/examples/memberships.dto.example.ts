@@ -4,6 +4,7 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { MembershipStatus } from "#/modules/auth/schema/enum/membership-status.enum.ts";
 import { accountsExample } from "@test/modules/auth/schema/dto/examples/accounts.dto.example.ts";
+import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
 import { identifiedExample } from "@test/modules/shared/schema/dto/examples/identified.dto.example.ts";
 
 /** The contract shape of Memberships, for generated tests. */
@@ -29,7 +30,7 @@ export const membershipsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "institutionRefId",
+      name: "institutionId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },

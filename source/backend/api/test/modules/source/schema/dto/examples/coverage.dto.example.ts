@@ -3,12 +3,14 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { countriesExample } from "@test/modules/reference/schema/dto/examples/countries.dto.example.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
+import { levelsExample } from "@test/modules/reference/schema/dto/examples/levels.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 import { productsExample } from "@test/modules/source/schema/dto/examples/products.dto.example.ts";
+import { publishersExample } from "@test/modules/source/schema/dto/examples/publishers.dto.example.ts";
 import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Coverage, for generated tests. */
 export const coverageExample: ContractExample = contractExample({
@@ -16,8 +18,8 @@ export const coverageExample: ContractExample = contractExample({
   fields: [
     {
       name: "checkedOn",
-      optional: false,
-      nullable: false,
+      optional: true,
+      nullable: true,
       spec: { kind: "temporal", temporal: "date" },
     },
     {
@@ -40,12 +42,6 @@ export const coverageExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "coverageSubjectId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "createdAt",
       optional: false,
       nullable: false,
@@ -58,10 +54,22 @@ export const coverageExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "expectedPublicationUrl",
+      name: "expectedUrl",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "url", maxLength: 2048 },
+    },
+    {
+      name: "featureId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "id",
@@ -71,27 +79,21 @@ export const coverageExample: ContractExample = contractExample({
     },
     {
       name: "levelId",
-      optional: false,
-      nullable: false,
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
       name: "note",
       optional: true,
       nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
     },
     {
-      name: "periodFrom",
+      name: "noteLanguageId",
       optional: true,
       nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "periodUntil",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "productId",
@@ -100,13 +102,7 @@ export const coverageExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "publisherEntityId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "scopeUnitFeatureId",
+      name: "publisherId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -116,6 +112,18 @@ export const coverageExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "subjectTerm",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "toYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "updatedAt",
@@ -130,41 +138,5 @@ export const coverageExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "sourceId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "productId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-      ],
-    },
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "periodFrom" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "periodUntil" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "periodFrom" },
-          operator: "less-than-or-equal",
-          right: { field: "periodUntil" },
-        },
-      ],
-    },
-  ],
+  invariants: [],
 });

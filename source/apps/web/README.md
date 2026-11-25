@@ -5,37 +5,36 @@ Two independent handwritten Next.js applications share this web project: a perma
 ## Source layout
 
 ```text
-src/components/                   copied demo UI: layout, popovers, settings and reusable components
-src/lib/                          copied helpers; independent real-app URL/cookie adapter
+src/components/                   shell UI (sidebar, appbar, popovers, settings), shared with the demo look
+src/lib/server/                   server-only reads through the generated SDK (@mzizi/api-client)
+  codes.ts                        web address <-> row codes (/ke/nairobi = geo.ftr.ke.nairobi; ref.cty.ke; ref.lng.sw)
+  copy.ts, places.ts              interface copy and the shell's place catalogue
+  views/                          screen loaders (place, ranking, map, government, money)
+  parse/geojson.ts                the one parser for geometry in responses (DRYV_GAPS)
 src/app/
-  (app)/
-    layout.tsx                    independent real document layout
-    page.tsx                      real entry skeleton (/)
-    _views/home.tsx               placeholder content; no migrated product screens
-    [country]/page.tsx             country root skeleton
-    [country]/[...place]/page.tsx   deeper real explorer skeleton
-  demo/
-    layout.tsx                    demo document, fonts and theme setup
-    page.tsx                      demo welcome (/demo)
-    demo.css                      demo-only styles
-    manifest.webmanifest/route.ts
-    [country]/[[...place]]/page.tsx
-    help/page.tsx
-    me/page.tsx
-    me/saved/page.tsx
-    api/locate/route.ts
-    _components/                  brand, ui, layout, navigation, preferences,
-                                  accessibility, visualization, media
-    _lib/                         grouped helpers and authored install manifest
-    _view/                        subject screens and private components
-    _data/                        ignored local content and prepared/demo data
-public/
-  icons/                          shared brand identity assets
-  demo/                           demo worker, offline page and ignored content
-  sw.js                           retirement of the old root-scoped worker
+  (app)/                          the real application: server components only, one SDK call per screen where possible
+    _views/home.tsx               countries (frontend/home)
+    _views/place-*.tsx            overview, statistics, government, money, sources for /<country>/<place…>?view=
+    _views/place-map.tsx          divisions drawn as SVG on the server from prepared outlines
+  demo/                           the permanent prototype (unchanged)
 ```
 
-`#/*` resolves to `src/*`; `#demo/*` resolves to `src/app/demo/*`. Demo views use explicit imports rather than broad server/client barrel exports. No real route imports the demo. `(app)` is an organisational route group and does not appear in URLs; `demo` is an actual URL prefix. There is no shared top-level root layout: switching between the two document roots reloads the document and keeps demo styles and setup isolated.
+## The real application (rebuilt 25 November 2026)
+
+Every screen renders on the server through the generated SDK; the browser fetches no product data (the only client read is the device-location lookup after the browser's permission prompt). Screens and reads:
+
+| Address | Screen | Reads |
+|---|---|---|
+| `/` | Countries | `frontend/home` |
+| `/<country>[/<place…>]` | Place overview: breadcrumb, map, divisions, figures, leaders, projects, events, articles | `frontend/place` + `geography/child-outlines` (streamed) |
+| `?view=statistics` | All figures; at country level a ranking of first-level places (`view.indicator`) | `frontend/place`, `frontend/ranking` (streamed) |
+| `?view=leaders` | Offices and current holders | `frontend/place` |
+| `?view=institutions[&view.id=]` | Institutions; one institution's offices | `governance/institutions`, `frontend/institution` |
+| `?view=finance`, `suppliers` | Projects and tenders | `civic/projects`, `civic/tenders` |
+| `?view=sources` | Sources | `source/sources` |
+| `?view=law`, `parliament`, `elections`, `power` | Served by the API but not yet loaded in the rebuilt database: the page says so | none |
+
+Run against the rebuilt API: `SERVER_URL=http://127.0.0.1:8711 bun --bun next build && SERVER_URL=… bun --bun next start -p 3311`. Measured in the browser (25 November 2026, production build, Redis-backed API): first byte 8 ms, DOM ready 143 ms; full HTML per page 94–159 ms server time; 0 API requests from the browser. Before, the same place page needed five API reads totalling 343 ms before rendering.
 
 ## Run and verify
 

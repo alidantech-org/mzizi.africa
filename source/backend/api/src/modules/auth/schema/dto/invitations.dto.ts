@@ -8,13 +8,14 @@ import {
   Matches,
   ValidateIf,
 } from "class-validator";
+
 import type { Email } from "#/modules/shared/schema/type/email.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Single-use invitation to an institution; only a digest of the token is stored. (entity)
+ * A single-use invitation to an institution. (entity)
  */
 export class InvitationsDto {
   @IsOptional()
@@ -42,7 +43,7 @@ export class InvitationsDto {
 
   @IsString()
   @IsUUID()
-  institutionRefId!: Id;
+  institutionId!: Id;
 
   @IsString()
   @IsEmail()

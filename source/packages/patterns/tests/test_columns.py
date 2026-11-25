@@ -105,21 +105,21 @@ def dictionary() -> tuple[Dictionary, ...]:
             {
                 "code": "sys.col.global.finance",
                 "columns": {
-                    "finance.flows.amount_minor_units": {
+                    "finance.flows.amount": {
                         "shape": "money",
                         "terms": [
                             {"list": "sys.trm.global.money", "key": "amount-generic", "role": "heading"},
                             {"list": "sys.trm.global.money", "key": "currency-units", "role": "unit"},
                         ],
                     },
-                    "civic.bids.amount_minor_units": {
+                    "civic.bids.amount": {
                         "shape": "money",
                         "terms": [
                             {"list": "sys.trm.global.money", "key": "amount-bid", "role": "heading"},
                             {"list": "sys.trm.global.headings", "key": "row-numbers", "role": "exclude"},
                         ],
                     },
-                    "official.names.name": {
+                    "identity.names.text": {
                         "terms": [
                             {
                                 "list": "sys.trm.global.headings",
@@ -146,7 +146,7 @@ def test_a_heading_with_its_unit_in_brackets_is_read_as_a_base_and_a_unit() -> N
     probe = ColumnProbe(header="Amount (usd)", samples=("1,200,000", "950,000"))
     (proposal,) = propose_columns((probe,), world(), dictionary(), ("global",))
     assert proposal.heading is not None and proposal.heading.base == "Amount" and proposal.unit == "usd"
-    assert proposal.chosen is not None and proposal.chosen.target == "finance.flows.amount_minor_units"
+    assert proposal.chosen is not None and proposal.chosen.target == "finance.flows.amount"
 
 
 def test_a_row_counter_is_an_index_and_a_bid_number_is_not_an_amount() -> None:

@@ -1,12 +1,14 @@
-/** One dated, typed relationship between two government institutions. */
+/** A structural link from law: a ministry part of the executive, a committee part of its house. */
 export interface GovernanceRelationships {
   createdAt: string;
   deletedAt?: string | null;
+  fromId: string;
+  fromYear?: number | null;
   id: string;
-  objectInstitutionId: string;
-  relationshipKindId: string;
-  sourceCitationId?: string | null;
-  subjectInstitutionId: string;
+  kindTerm: string;
+  provisionId?: string | null;
+  toId: string;
+  toYear?: number | null;
   updatedAt: string;
   version: number;
 }

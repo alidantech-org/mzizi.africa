@@ -1,12 +1,22 @@
-import { IsInt, IsISO8601, IsOptional, IsString, IsUUID, Min, ValidateIf } from "class-validator";
+import {
+  IsInt,
+  IsISO8601,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  Min,
+  ValidateIf,
+} from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One dated, typed relationship between two government institutions. (entity)
+ * A structural link from law: a ministry part of the executive, a committee part of its house. (entity)
  */
 export class RelationshipsDto {
   @IsISO8601({})
@@ -19,31 +29,42 @@ export class RelationshipsDto {
 
   @IsString()
   @IsUUID()
+  @Satisfies<RelationshipsDto>((object) => object.fromId !== object.toId, {
+    message: "Governance Relationship Is Not Self",
+  })
+  fromId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear?: Year | null;
+
+  @IsString()
+  @IsUUID()
   id!: Id;
 
   @IsString()
   @IsUUID()
-  objectInstitutionId!: Id;
-
-  @IsString()
-  @IsUUID()
-  relationshipKindId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
+  @ValidateIf((object) => object.provisionId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
+  provisionId?: Id | null;
 
   @IsString()
   @IsUUID()
-  @Satisfies<RelationshipsDto>(
-    (object) => object.subjectInstitutionId !== object.objectInstitutionId,
-    {
-      message: "Relationship Is Not Self Referential",
-    },
-  )
-  subjectInstitutionId!: Id;
+  toId!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

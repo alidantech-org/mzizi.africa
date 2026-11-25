@@ -16,7 +16,6 @@ LegalProvisions _$LegalProvisionsFromJson(Map<String, dynamic> json) => LegalPro
   kind: $enumDecode(_$LegalProvisionKindEnumMap, json['kind']),
   parentId: json['parentId'] as String?,
   position: (json['position'] as num).toInt(),
-  title: json['title'] as String?,
   updatedAt: DateTime.parse(json['updatedAt'] as String),
   version: (json['version'] as num).toInt(),
 );
@@ -31,7 +30,6 @@ Map<String, dynamic> _$LegalProvisionsToJson(LegalProvisions instance) => <Strin
   'kind': _$LegalProvisionKindEnumMap[instance.kind]!,
   'parentId': ?instance.parentId,
   'position': instance.position,
-  'title': ?instance.title,
   'updatedAt': instance.updatedAt.toIso8601String(),
   'version': instance.version,
 };
@@ -43,7 +41,7 @@ const _$LegalProvisionKindEnumMap = {
   LegalProvisionKind.definition: 'definition',
   LegalProvisionKind.item: 'item',
   LegalProvisionKind.paragraph: 'paragraph',
-  LegalProvisionKind.part: 'part',
+  LegalProvisionKind.partValue: 'part',
   LegalProvisionKind.preamble: 'preamble',
   LegalProvisionKind.schedule: 'schedule',
   LegalProvisionKind.subparagraph: 'subparagraph',

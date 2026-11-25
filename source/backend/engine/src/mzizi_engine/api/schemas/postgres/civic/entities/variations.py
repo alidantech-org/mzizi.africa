@@ -10,13 +10,13 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class VariationsRow(BaseModel):
-    """One change to an executed contract: a variation of price or scope, an extension, a renewal or a termination."""
+    """A change to a contract's price, period or scope."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "civic.variations"
 
-    amount_delta_minor_units: int | None = None
+    amount_change: int | None = None
     code: Annotated[
         str,
         Field(
@@ -30,10 +30,10 @@ class VariationsRow(BaseModel):
     currency_id: UUID | None = None
     deleted_at: datetime | None = None
     id: UUID
-    kind_id: UUID
+    kind_term: UUID
     new_end_on: date | None = None
-    reason: Annotated[str, Field(max_length=4000)] | None = None
+    note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    note_language_id: UUID | None = None
     signed_on: date | None = None
-    source_citation_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

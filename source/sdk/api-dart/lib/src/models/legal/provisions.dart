@@ -5,7 +5,7 @@ import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 
 part 'provisions.g.dart';
 
-/// Stable provision identity within one instrument; hierarchy stays within that instrument. One provision holds one statement.
+/// The tree of articles and sections of an instrument; headings are on `wordings`.
 @JsonSerializable(includeIfNull: false)
 class LegalProvisions {
   const LegalProvisions({
@@ -18,7 +18,6 @@ class LegalProvisions {
     required this.kind,
     this.parentId,
     required this.position,
-    this.title,
     required this.updatedAt,
     required this.version,
   });
@@ -31,7 +30,6 @@ class LegalProvisions {
   final LegalProvisionKind kind;
   final String? parentId;
   final int position;
-  final String? title;
   final DateTime updatedAt;
   final int version;
 

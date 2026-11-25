@@ -68,8 +68,8 @@ Do not split the database or add a cache service solely because a query crosses 
 
 ## Relevant code
 
-- [Explorer composed readers](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/explorer.ts)
-- [Explorer SQL CTEs](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/queries.ts)
-- [Insights shared reads](../../../../source/backend/api/src/modules/insights/features/insights/reads/shared.ts)
+- `Explorer composed readers` (removed in the 2026-11-25 rebuild)
+- `Explorer SQL CTEs` (removed in the 2026-11-25 rebuild)
+- `Insights shared reads` (removed in the 2026-11-25 rebuild)
 - [Web place catalogue](../../../../source/apps/web/src/lib/server/places.ts)
 - [Web place overview reads](../../../../source/apps/web/src/lib/server/views/place-home.ts)

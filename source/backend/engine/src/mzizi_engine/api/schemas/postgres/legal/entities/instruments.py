@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class InstrumentsRow(BaseModel):
-    """Stable instrument identity, independent of its names, editions, downloads and languages."""
+    """A legal instrument (the Constitution of Kenya 2010, an Act). Its titles are `identity.names`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -27,11 +29,14 @@ class InstrumentsRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     enacted_on: date | None = None
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    issuing_entity_id: UUID | None = None
-    issuing_unit_id: UUID | None = None
-    kind_id: UUID
+    identity_kind: IdentityKind
+    issuer_id: UUID | None = None
+    jurisdiction_id: UUID | None = None
+    kind_term: UUID
     published_on: date | None = None
-    status_id: UUID | None = None
+    status_term: UUID | None = None
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

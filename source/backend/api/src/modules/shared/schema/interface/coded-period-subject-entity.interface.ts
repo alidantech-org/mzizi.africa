@@ -1,4 +1,3 @@
-import type { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -11,7 +10,6 @@ export interface CodedPeriodSubjectEntity {
   code: IdentityCode;
   createdAt: Instant;
   deletedAt?: Instant | null;
-  fromToPrecision?: DatePrecision | null;
   fromYear?: Year | null;
   id: Id;
   subjectId: Id;

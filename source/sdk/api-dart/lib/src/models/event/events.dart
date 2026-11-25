@@ -1,16 +1,17 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
 import 'package:mzizi_api/src/models/event/calendars.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
 import 'package:mzizi_api/src/models/legal/provisions.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/reference/levels.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'events.g.dart';
 
-/// One event or a recurring series of events: a public holiday, a national day, an election, a sitting, a government visit. Names, rules and dated occurrences are separate; content and media attach through the subject mechanism.
+/// A planned or recurring civic happening (Madaraka Day, budget reading). Its names are `identity.names`.
 @JsonSerializable(includeIfNull: false)
 class EventEvents {
   const EventEvents({
@@ -20,12 +21,12 @@ class EventEvents {
     this.countryId,
     required this.createdAt,
     this.deletedAt,
-    required this.eventKindId,
+    this.featureId,
     required this.id,
-    this.organiserEntityId,
-    this.scopeFeatureId,
-    this.scopeLevelKindId,
-    this.sourceCitationId,
+    required this.identityKind,
+    required this.kindTerm,
+    this.levelId,
+    this.organiserId,
     required this.updatedAt,
     required this.version,
   });
@@ -35,12 +36,12 @@ class EventEvents {
   final String? countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String eventKindId;
+  final String? featureId;
   final String id;
-  final String? organiserEntityId;
-  final String? scopeFeatureId;
-  final String? scopeLevelKindId;
-  final String? sourceCitationId;
+  final SharedIdentityKind identityKind;
+  final String kindTerm;
+  final String? levelId;
+  final String? organiserId;
   final DateTime updatedAt;
   final int version;
 

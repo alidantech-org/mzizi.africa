@@ -1,4 +1,4 @@
-/** One expected or found filing under an obligation, for one reporter and period, with its status and the document when found. Absence is a status, not a missing row. */
+/** One report filed (or not) against an obligation. */
 export interface GovernanceReports {
   artifactId?: string | null;
   code: string;
@@ -6,13 +6,12 @@ export interface GovernanceReports {
   deletedAt?: string | null;
   dueOn?: string | null;
   filedOn?: string | null;
+  fromYear?: number | null;
   id: string;
   obligationId: string;
-  periodFrom?: string | null;
-  periodUntil?: string | null;
-  reporterEntityId: string;
-  sourceCitationId?: string | null;
-  statusId: string;
+  reporterId: string;
+  statusTerm: string;
+  toYear?: number | null;
   updatedAt: string;
   version: number;
 }

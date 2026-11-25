@@ -26,7 +26,7 @@ source/backend/database            Bun CLI, generated SQL and immutable migratio
 source/backend/engine               Python runtime: EngineRuntime, its HTTP front door and executor, persistence adapters, Dryv-generated code
 source/backend/agent                README-only proposal for a future assistive AI application
 source/packages/{browser,cli,crawler,extraction,fetch,filesystem,manifest,search}
-source/schema/{database,engine,seed,sources}
+source/schema/{database,engine,sources} and codes.json
 ```
 
 Read the local maps for current ownership and commands: `source/backend/README.md`, `source/packages/README.md`, `source/schema/README.md`, `source/apps/www/README.md`, and `scripts/README.md`.
@@ -40,7 +40,7 @@ The responsibilities are distinct even when they share a runtime:
 - `source/backend/database/` owns the Bun CLI, SQL migrations and named database operations.
 - `source/backend/engine/` is the Python runtime, not the product API: `runtime/` (the `EngineRuntime`, its operations registry, `assembly/` composition root, `policy/` collection gate, HTTP front door and executor), `persistence/` (PostgreSQL adapters, the MongoDB activity store and a vector-store skeleton), `cli/` (`mzizi-engine`) and Dryv-generated `api/`. Every capability lives in a package under `source/packages/` with one orchestrator; the engine root holds only folders.
 - `source/packages/` contains reusable Python libraries, not separate services. `source/backend/agent/` is a README-only proposal; no intelligence service or agent package currently exists. Packages must not know a database exists, but may own network and browser adapters behind ports. The engine runtime and several capability packages are in place. The target adds generated repositories and organizes each capability package around one orchestrator and `features/<capability>/` (see `.docs/design/architecture/ENGINE_RUNTIME_AND_PACKAGES.md`).
-- `source/schema/` contains machine-readable input and exchange schemas. Authored API/database contracts remain in `dryv/`; prepared inputs remain in root `seed/`.
+- `source/schema/` contains machine-readable input and exchange schemas. Authored API/database contracts remain in `dryv/`; prepared seed inputs live only in the git-ignored `.dev/seed/`.
 
 `uv sync --all-packages` resolves and runs from a clean checkout. There is no database service: the engine and the NestJS API connect to PostgreSQL directly with their own roles, and `source/backend/database` holds only the SQL, migrations and Bun CLI (see `.docs/design/data/DATABASE_ARCHITECTURE.md`). The engine's PostgreSQL access lives in `source/backend/engine/src/mzizi_engine/persistence/` (adapters over the Dryv-generated row models; Dryv does not generate Python repositories yet). The filesystem is the `mzizi-filesystem` package (one `FilesystemOrchestrator`, no database knowledge); the engine only wires it and registers the `filesystem.*` operations on its runtime, and placement (folders, names, access, retention) is always decided by the caller of an operation, never hard-coded.
 
@@ -97,9 +97,8 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 
 ## Seed inputs
 
-Seed data is leaving the codebase (owner decision, 25 November 2026). All seed preparation, inputs and tooling live in the git-ignored `.dev/seed/` and are never committed; the root `seed/` folder and in-repository seed code are being removed by task TSK-6065C44E5476, and engine and Python code must not depend on in-repository seeds. **Seed files no longer need owner approval.** Do not delete existing S3 artifacts as part of local database work.
+Seed data and seed tooling live only in the git-ignored `.dev/seed/` and are never committed ([decision](.docs/decisions/DEC-SEED-OUTSIDE-GIT-20261125.md)). Code that reads column dictionaries, term lists or engine data takes its root from `MZIZI_SEED_ROOT` (default `.dev/seed`); nothing reads an in-repository seed. **Seed files no longer need owner approval.** Do not delete existing S3 artifacts as part of local database work.
 
-<!-- BEGIN TASK MANAGED TASK-TOOL -->
 ## Task workspace
 
 This project manages its work with Task (`taskcode`; `task` and `tc` are aliases). Task records, documents, decisions and handoffs live in `.docs/` as Markdown files with YAML frontmatter. Read `.docs/README.md` for how the tool works.

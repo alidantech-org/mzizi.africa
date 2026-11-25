@@ -1,364 +1,244 @@
 /**
  * Schema: event | Database: mzizi
- * Only things with actual dates: events and recurring series (public holidays, national days, elections, visits,
- * commemorations), their rules and calendars, dated occurrences with planned and actual dates, reschedules and
- * adjournments, published schedules and timetables with offsets from an anchor, and natural seasons.
- * Parliamentary sittings are occurrences here; the legislative record lives in governance.
+ * Design: .docs/design/data/FOUNDATION_REDESIGN.md section 27.3 (approved 2026-11-25).
+ * Contract authors: the civic calendar of planned and recurring happenings (holidays, sittings, deadlines, election
+ * timetables) with exact dates and times. Historical significance is in `history`. No partitioning.
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { belongsTo, identity, identityKindField, identityReference, term } from "./_links.ts";
 import { Features } from "./geography.ts";
 import { Provisions } from "./legal.ts";
-import { Entities, Individuals } from "./official.ts";
-import { Country, Language, Value } from "./reference.ts";
-import { Citations } from "./source.ts";
-
-const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
+import { Countries, Languages, Levels, Timezones } from "./reference.ts";
 
 export const event = dryv
   .group({ name: "event" })
-  .description("Events with actual dates: series, rules, calendars, occurrences, changes, schedules and seasons.")
+  .description(
+    "The civic calendar: calendars, events, recurrence rules, occurrences, changes, schedules, seasons and venues.",
+  )
   .facets({ storage: { namespace: "event", store: "main" } });
+
+const eventProperties = event.properties({
+  Month: dryv.property.number.integer({ range: { min: 1, max: 12 } }),
+  Day: dryv.property.number.integer({ range: { min: 1, max: 31 } }),
+  Weekday: dryv.property.number.integer({ range: { min: 1, max: 7 } }),
+  Nth: dryv.property.number.integer({ range: { min: -5, max: 5 } }),
+  Note: dryv.property.string().length({ min: 1, max: 4000 }),
+});
+
+/** An optional note with its language (section 27.3: free-text explanations become notes with a language). */
+const note = {
+  note: dryv.field(eventProperties.Note).maybe().description("Optional note, written in `note_language_id`."),
+  noteLanguageId: belongsTo(() => Languages).maybe(),
+};
 
 /*---------------- event.calendars ----------------*/
 export const Calendars = event
   .schema("Calendars", {
-    countryId: belongsTo(() => Country).maybe(),
-    /** Scheme evt.calendar.kind: Gregorian, Islamic lunar, fiscal year, school year, parliamentary year, agricultural year. */
-    calendarKindId: belongsTo(() => Value).tags("scheme:ref.sch.evt.calendar.kind"),
-    /** The month and day a year of this calendar begins (a fiscal year starting on 1 July). */
-    yearStartMonth: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    yearStartDay: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    /** True when dates depend on observation (a lunar month sighted by an authority) and are announced, not computed. */
-    isObserved: dryv.field(sharedProperties.Flag),
-    description: dryv.field(sharedProperties.Description).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    countryId: belongsTo(() => Countries).maybe(),
+    kindTerm: term("evt.calendar.kind", "public holidays, parliamentary, fiscal, electoral, school."),
+    yearStartMonth: dryv.field(eventProperties.Month).maybe().description("Month the calendar's year starts (7 for July)."),
+    yearStartDay: dryv.field(eventProperties.Day).maybe(),
+    isObserved: dryv.field(sharedProperties.Flag).description("True when the calendar is in force."),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "A way of counting time that gives events their dates: the civil calendar, a lunar calendar, a fiscal or school year.",
-  )
+  .description("A civic calendar, such as Kenya's public holidays or the National Assembly calendar.")
   .role("entity")
-  .facets({ storage: dryv.storage("calendars").index("countryId").index("calendarKindId").index("sourceCitationId") });
+  .facets({ storage: dryv.storage("calendars").index("countryId", "kindTerm") });
 
 /*---------------- event.events ----------------*/
 export const Events = event
   .schema("Events", {
-    countryId: belongsTo(() => Country).maybe(),
-    /** The calendar the event's dates are counted in. */
+    identityKind: identityKindField("event"),
+    countryId: belongsTo(() => Countries).maybe(),
     calendarId: belongsTo(() => Calendars).maybe(),
-    /** Scheme evt.event.kind: public holiday, national day, general election, election milestone, sitting, visit, deadline, commemoration, court date, other. */
-    eventKindId: belongsTo(() => Value).tags("scheme:ref.sch.evt.event.kind"),
-    /** The place level the event is for (national, county, constituency, ward); a feature kind value. */
-    scopeLevelKindId: belongsTo(() => Value)
+    kindTerm: term("evt.event.kind", "holiday, sitting, deadline, election, observance."),
+    levelId: belongsTo(() => Levels)
       .maybe()
-      .tags("scheme:ref.sch.geo.feature.kind"),
-    /** The one place it concerns when it is not national. */
-    scopeFeatureId: belongsTo(() => Features).maybe(),
-    /** The body that organises it. */
-    organiserEntityId: belongsTo(() => Entities).maybe(),
-    /** The law that sets or recognises it (for example the provision fixing a holiday or an election date). */
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+      .description("The level of government the event concerns."),
+    featureId: belongsTo(() => Features)
+      .maybe()
+      .description("The place the event concerns."),
+    organiserId: identity("The organisation or office that organises it.").maybe(),
+    basisProvisionId: belongsTo(() => Provisions)
+      .maybe()
+      .description("The legal provision that requires the event."),
   })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "One event or a recurring series of events: a public holiday, a national day, an election, a sitting, a government visit. Names, rules and dated occurrences are separate; content and media attach through the subject mechanism.",
-  )
+  .extends(baseSchemas.IdentityEntity)
+  .rule("EventKind", (v) => v.identityKind.eq("event"))
+  .description("A planned or recurring civic happening (Madaraka Day, budget reading). Its names are `identity.names`.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("events")
-      .index("countryId", "eventKindId")
-      .index("scopeFeatureId")
-      .index("organiserEntityId")
-      .index("basisProvisionId")
-      .index("sourceCitationId"),
+      .index("countryId", "kindTerm")
+      .index("calendarId")
+      .index("featureId")
+      .references("EventIsIdentity", identityReference),
   });
 
-/*---------------- event.event_names ----------------*/
-export const Names = event
-  .schema("Names", {
-    eventId: belongsTo(() => Events),
-    languageId: belongsTo(() => Language),
-    name: dryv.field(sharedProperties.Name),
-    isPreferred: dryv.field(sharedProperties.Flag),
-  })
-  .extends(baseSchemas.Entity)
-  .description("The name of an event in one language; at most one preferred name per event and language.")
-  .role("entity");
-
-const preferredName = event.expression(
-  "PreferredName",
-  Names.check((v) => v.isPreferred.eq(true)),
-);
-
-Names.facets({
-  storage: dryv
-    .storage("names")
-    .unique("eventId", "languageId", "name")
-    .unique("eventId", "languageId")
-    .where(preferredName)
-    .index("languageId"),
-});
-
-/*---------------- event.event_rules ----------------*/
+/*---------------- event.rules ----------------*/
 export const Rules = event
   .schema("Rules", {
-    eventId: belongsTo(() => Events),
-    /** Scheme evt.rule.kind: fixed date, nth weekday of a month, every n years from an anchor, once. */
-    ruleKindId: belongsTo(() => Value).tags("scheme:ref.sch.evt.rule.kind"),
-    month: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    dayOfMonth: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    /** 1 (Monday) to 7 (Sunday) for a weekday rule. */
-    weekday: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    /** Which weekday of the month: 1 first, 2 second, and so on. */
-    nthWeekday: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    intervalYears: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    /** The same rule as an iCalendar RRULE (FREQ=YEARLY;BYMONTH=8;BYDAY=2TU), kept so calendars can be exported and imported. */
-    rrule: dryv.field(sharedProperties.NonEmptyString500).maybe(),
-    /** The first occurrence a repeating rule counts from. */
-    anchorOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    /** Scheme evt.rule.adjustment: none, next weekday when on a rest day, previous weekday, next Monday when on a Sunday. */
-    adjustmentId: belongsTo(() => Value)
+    eventId: belongsTo(() => Events, { onDelete: "cascade" }),
+    kindTerm: term("evt.rule.kind", "fixed date, nth weekday, interval, rrule."),
+    month: dryv.field(eventProperties.Month).maybe(),
+    dayOfMonth: dryv.field(eventProperties.Day).maybe(),
+    weekday: dryv.field(eventProperties.Weekday).maybe().description("ISO weekday, 1 is Monday."),
+    nthWeekday: dryv
+      .field(eventProperties.Nth)
       .maybe()
-      .tags("scheme:ref.sch.evt.rule.adjustment"),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+      .description("Which weekday of the month; negative counts from the end."),
+    intervalYears: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    rrule: dryv.field(sharedProperties.NonEmptyString500).maybe().description("An RFC 5545 recurrence rule."),
+    anchorOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    adjustmentTerm: term("evt.rule.adjustment", "What happens when the date falls on a weekend.").maybe(),
+    ...periodFields,
   })
-  .extends(baseSchemas.PeriodEntity)
-  .description(
-    "How the dates of an event are produced, with the adjustment the law applies when a date falls on a rest day. Occurrences generated from a rule are projected until announced.",
-  )
+  .extends(baseSchemas.Entity)
+  .description("When an event recurs.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("rules")
-      .unique("eventId", "ruleKindId")
-      .index("eventId")
-      .index("ruleKindId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("rules").index("eventId") });
 
 /*---------------- event.occurrences ----------------*/
 export const Occurrences = event
   .schema("Occurrences", {
-    eventId: belongsTo(() => Events),
+    eventId: belongsTo(() => Events, { onDelete: "cascade" }),
     plannedStartsOn: dryv.field(sharedProperties.CalendarDate),
     plannedEndsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     actualStartsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     actualEndsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    /** Time of day when known; the dates above are the calendar days. */
-    startsAt: dryv.field(sharedProperties.Instant).maybe(),
-    /** IANA time zone the times are read in (Africa/Nairobi). */
-    timezone: dryv.field(sharedProperties.NonEmptyString100).maybe(),
+    startsAt: dryv.field(sharedProperties.Instant).maybe().description("Exact start time, when known."),
+    timezoneId: belongsTo(() => Timezones).maybe(),
     isAllDay: dryv.field(sharedProperties.Flag),
-    /** Scheme evt.occurrence.status: scheduled, rescheduled, postponed, adjourned, cancelled, held. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.evt.occurrence.status"),
-    /** Scheme evt.occurrence.knowledge: projected from a rule, announced, confirmed. How we know the date. */
-    knowledgeId: belongsTo(() => Value).tags("scheme:ref.sch.evt.occurrence.knowledge"),
-    /** Where it happens, as a place (a stadium, a hall, a town). */
-    venueFeatureId: belongsTo(() => Features).maybe(),
-    venueNote: dryv.field(sharedProperties.Description).maybe(),
-    /** Scheme evt.occurrence.format: in person, online, hybrid, broadcast. How it happens. */
-    formatId: belongsTo(() => Value)
+    statusTerm: term("evt.occurrence.status", "scheduled, held, postponed, cancelled."),
+    knowledgeTerm: term("evt.occurrence.knowledge", "How the date is known: announced, gazetted, estimated."),
+    formatTerm: term("evt.occurrence.format", "in person, online or hybrid.").maybe(),
+    organiserId: identity("The organiser of this occurrence when it differs from the event's.").maybe(),
+    continuesOccurrenceId: belongsTo(dryv.self)
       .maybe()
-      .tags("scheme:ref.sch.evt.occurrence.format"),
-    organiserEntityId: belongsTo(() => Entities).maybe(),
-    /** The occurrence this continues after an adjournment. */
-    continuesOccurrenceId: belongsTo(() => Occurrences).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+      .description("The occurrence this one continues (a resumed sitting)."),
   })
   .extends(baseSchemas.CodedEntity)
   .rule("PlannedDatesAreOrdered", rule.ordered("plannedStartsOn", "plannedEndsOn", { allowEqual: true }))
   .rule("ActualDatesAreOrdered", rule.ordered("actualStartsOn", "actualEndsOn", { allowEqual: true }))
-  .description(
-    "One dated instance of an event with its planned and actual dates, status, how we know the date, venue and format. Planned dates are never overwritten; changes are recorded.",
-  )
+  .description("One happening of an event, with planned and actual dates.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("occurrences")
-      .index("eventId", "plannedStartsOn")
-      .index("statusId")
-      .index("knowledgeId")
-      .index("venueFeatureId")
-      .index("organiserEntityId")
-      .index("continuesOccurrenceId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("occurrences").index("eventId", "plannedStartsOn").index("plannedStartsOn") });
 
-/*---------------- event.occurrence_changes ----------------*/
+/*---------------- event.changes ----------------*/
 export const Changes = event
   .schema("Changes", {
-    occurrenceId: belongsTo(() => Occurrences),
-    /** Scheme evt.change.kind: reschedule, postpone, adjourn, cancel, confirm, move venue. */
-    changeKindId: belongsTo(() => Value).tags("scheme:ref.sch.evt.change.kind"),
-    /** Scheme evt.change.reason: falls on a rest day, court order, emergency, declared by authority, security, weather, legal requirement. */
-    reasonId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.evt.change.reason"),
+    occurrenceId: belongsTo(() => Occurrences, { onDelete: "cascade" }),
+    kindTerm: term("evt.change.kind", "postponed, brought forward, cancelled, moved."),
+    reasonTerm: term("evt.change.reason", "Why it changed.").maybe(),
     fromOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     toOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     decidedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    authorityEntityId: belongsTo(() => Entities).maybe(),
+    authorityId: identity("Who decided the change.").maybe(),
     basisProvisionId: belongsTo(() => Provisions).maybe(),
-    /** The occurrence that replaces this one, when the change creates a new one. */
     replacementOccurrenceId: belongsTo(() => Occurrences).maybe(),
-    explanation: dryv.field(sharedProperties.Description).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "One reschedule, postponement, adjournment, cancellation or confirmation of an occurrence, with the reason, who decided it and under which law. History is the list of changes.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("changes")
-      .index("occurrenceId", "decidedOn")
-      .index("changeKindId")
-      .index("reasonId")
-      .index("authorityEntityId")
-      .index("basisProvisionId")
-      .index("replacementOccurrenceId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- event.event_subjects ----------------*/
-export const Subjects = event
-  .schema("Subjects", {
-    eventId: belongsTo(() => Events),
-    /** Scheme evt.subject.role: about, milestone of, venue for, concerns. How the event relates to the subject. */
-    roleId: belongsTo(() => Value).tags("scheme:ref.sch.evt.subject.role"),
-  })
-  .extends(baseSchemas.CodedSubjectEntity)
-  .description(
-    "What an event is about or belongs to: an election, an institution, a person, a facility, a bill. An election's registration and nomination dates are events attached to it here.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("subjects")
-      .unique("eventId", "subjectTable", "subjectId", "roleId")
-      .index("subjectTable", "subjectId"),
-  });
-
-/*---------------- event.event_participants ----------------*/
-export const Participants = event
-  .schema("Participants", {
-    occurrenceId: belongsTo(() => Occurrences),
-    entityId: belongsTo(() => Entities).maybe(),
-    individualId: belongsTo(() => Individuals).maybe(),
-    /** Scheme evt.participant.role: organiser, host, guest of honour, attendee, observer, speaker. */
-    roleId: belongsTo(() => Value).tags("scheme:ref.sch.evt.participant.role"),
+    ...note,
   })
   .extends(baseSchemas.Entity)
-  .rule("ExactlyOneParticipant", rule.exactlyOne("entityId", "individualId"))
-  .description("One organisation or person taking part in one occurrence in a role.")
+  .rule("ChangeNoteHasLanguage", (v) => v.note.isNull().or(v.noteLanguageId.isNotNull()))
+  .description("A postponement, cancellation or move of an occurrence.")
   .role("entity")
-  .facets({
-    storage: dryv.storage("participants").index("occurrenceId").index("entityId").index("individualId").index("roleId"),
-  });
+  .facets({ storage: dryv.storage("changes").index("occurrenceId") });
+
+/*---------------- event.subjects ----------------*/
+export const Subjects = event
+  .schema("Subjects", {
+    eventId: belongsTo(() => Events, { onDelete: "cascade" }),
+    identityId: identity("A named thing the event is about."),
+    roleTerm: term("evt.subject.role", "What part the thing plays (commemorated, decided on)."),
+  })
+  .extends(baseSchemas.Association)
+  .description("What an event is about.")
+  .role("entity")
+  .facets({ storage: dryv.storage("subjects").unique("eventId", "identityId", "roleTerm").index("identityId") });
+
+/*---------------- event.participants ----------------*/
+export const Participants = event
+  .schema("Participants", {
+    occurrenceId: belongsTo(() => Occurrences, { onDelete: "cascade" }),
+    identityId: identity("The person or organisation taking part."),
+    roleTerm: term("evt.participant.role", "host, speaker, guest."),
+  })
+  .extends(baseSchemas.Association)
+  .description("Who took part in an occurrence.")
+  .role("entity")
+  .facets({ storage: dryv.storage("participants").unique("occurrenceId", "identityId", "roleTerm").index("identityId") });
 
 /*---------------- event.schedules ----------------*/
 export const Schedules = event
   .schema("Schedules", {
-    countryId: belongsTo(() => Country).maybe(),
-    /** Scheme evt.schedule.kind: election timetable, school calendar, parliamentary calendar, budget calendar, public holidays of a year. */
-    scheduleKindId: belongsTo(() => Value).tags("scheme:ref.sch.evt.schedule.kind"),
-    /** The event the offsets count from (the polling day of an election timetable). */
-    anchorEventId: belongsTo(() => Events).maybe(),
+    countryId: belongsTo(() => Countries).maybe(),
+    kindTerm: term("evt.schedule.kind", "election timetable, budget calendar."),
+    anchorEventId: belongsTo(() => Events)
+      .maybe()
+      .description("The event the schedule counts from."),
     anchorOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    issuerEntityId: belongsTo(() => Entities).maybe(),
+    issuerId: identity("The body that issued the schedule.").maybe(),
     basisProvisionId: belongsTo(() => Provisions).maybe(),
-    /** Scheme evt.schedule.status: draft, published, amended, superseded, withdrawn. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.evt.schedule.status"),
-    /** The schedule this one replaces or amends. */
-    supersedesScheduleId: belongsTo(() => Schedules).maybe(),
+    statusTerm: term("evt.schedule.status", "draft, published, superseded."),
+    supersedesScheduleId: belongsTo(dryv.self).maybe(),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "A published plan of dated items: an election timetable, a school year, a parliamentary calendar. Items are placed by offset from an anchor, so moving the anchor moves the plan.",
-  )
+  .description("A published timetable of steps counted from an anchor (an election timetable).")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("schedules")
-      .index("countryId", "scheduleKindId")
-      .index("anchorEventId")
-      .index("issuerEntityId")
-      .index("statusId")
-      .index("supersedesScheduleId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("schedules").index("countryId", "kindTerm").index("anchorEventId") });
 
 /*---------------- event.items ----------------*/
 export const Items = event
   .schema("Items", {
-    scheduleId: belongsTo(() => Schedules),
-    /** The event this item is a dated instance of (nominations close, registration opens). */
+    scheduleId: belongsTo(() => Schedules, { onDelete: "cascade" }),
     eventId: belongsTo(() => Events),
-    /** The occurrence produced once the plan is dated. */
     occurrenceId: belongsTo(() => Occurrences).maybe(),
-    /** Days from the anchor: negative before it, zero on it, positive after it. */
-    offsetDays: dryv.field(sharedProperties.Integer).maybe(),
-    /** True when the offset counts working days. */
+    offsetDays: dryv.field(sharedProperties.Integer).maybe().description("Days from the anchor; negative before it."),
     countsWorkingDays: dryv.field(sharedProperties.Flag),
     position: dryv.field(sharedProperties.NonNegativeInteger),
-    note: dryv.field(sharedProperties.Description).maybe(),
+    ...note,
   })
   .extends(baseSchemas.Entity)
-  .description("One line of a schedule: an event placed at an offset from the anchor, and the occurrence it became.")
+  .rule("ItemNoteHasLanguage", (v) => v.note.isNull().or(v.noteLanguageId.isNotNull()))
+  .description("One step of a schedule.")
   .role("entity")
-  .facets({ storage: dryv.storage("items").unique("scheduleId", "position").index("eventId").index("occurrenceId") });
+  .facets({ storage: dryv.storage("items").unique("scheduleId", "position").index("eventId") });
 
 /*---------------- event.seasons ----------------*/
 export const Seasons = event
   .schema("Seasons", {
-    countryId: belongsTo(() => Country),
-    /** The place the season applies to; absent for the whole country. */
-    scopeFeatureId: belongsTo(() => Features).maybe(),
-    /** Scheme evt.season.kind: long rains, short rains, dry season, harvest, planting, flood risk, cold season, school term. */
-    seasonKindId: belongsTo(() => Value).tags("scheme:ref.sch.evt.season.kind"),
-    /** The yearly window; the end may be earlier in the calendar than the start when the season crosses the year end. */
-    startMonth: dryv.field(sharedProperties.PositiveInteger),
-    startDay: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    endMonth: dryv.field(sharedProperties.PositiveInteger),
-    endDay: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    /** True for natural cycles (rains, drought risk), false for human calendars (school terms). */
-    isNatural: dryv.field(sharedProperties.Flag),
-    description: dryv.field(sharedProperties.Description).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    countryId: belongsTo(() => Countries),
+    featureId: belongsTo(() => Features)
+      .maybe()
+      .description("The region the season applies to."),
+    kindTerm: term("evt.season.kind", "long rains, short rains, school term, harvest."),
+    startMonth: dryv.field(eventProperties.Month),
+    startDay: dryv.field(eventProperties.Day).maybe(),
+    endMonth: dryv.field(eventProperties.Month),
+    endDay: dryv.field(eventProperties.Day).maybe(),
+    isNatural: dryv.field(sharedProperties.Flag).description("True for a natural season, false for an institutional one."),
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .description(
-    "A recurring yearly window, natural or human: the long rains, a planting season, a school term, for a country or a place. Gives the calendar its seasonal context and explains recurring patterns in data.",
-  )
+  .extends(baseSchemas.CodedEntity)
+  .description("A recurring season of a country or region.")
   .role("entity")
-  .facets({
-    storage: dryv.storage("seasons").index("countryId", "seasonKindId").index("scopeFeatureId").index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("seasons").index("countryId", "kindTerm").index("featureId") });
 
 /*---------------- event.venues ----------------*/
 export const Venues = event
   .schema("Venues", {
-    occurrenceId: belongsTo(() => Occurrences),
-    /** A place where it happens: a stadium, a town, a county, or one of thousands of polling places. */
+    occurrenceId: belongsTo(() => Occurrences, { onDelete: "cascade" }),
     featureId: belongsTo(() => Features),
-    /** Scheme evt.venue.role: main venue, additional venue, area covered, broadcast point. */
-    roleId: belongsTo(() => Value).tags("scheme:ref.sch.evt.venue.role"),
-    /** How the place is used (the stand, the hall, the ward polling for the whole election). */
-    note: dryv.field(sharedProperties.Description).maybe(),
+    roleTerm: term("evt.venue.role", "main venue, satellite, route."),
+    ...note,
   })
   .extends(baseSchemas.Entity)
-  .description(
-    "One place an occurrence happens at. An occurrence can have many: a national election covers every county and polling place.",
-  )
+  .rule("VenueNoteHasLanguage", (v) => v.note.isNull().or(v.noteLanguageId.isNotNull()))
+  .description("Where an occurrence takes place.")
   .role("entity")
-  .facets({
-    storage: dryv.storage("venues").unique("occurrenceId", "featureId", "roleId").index("featureId").index("roleId"),
-  });
+  .facets({ storage: dryv.storage("venues").unique("occurrenceId", "featureId", "roleTerm").index("featureId") });

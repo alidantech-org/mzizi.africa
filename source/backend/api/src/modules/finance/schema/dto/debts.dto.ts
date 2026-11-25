@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -11,6 +12,8 @@ import {
   ValidateIf,
 } from "class-validator";
 
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { AmountMinorUnits } from "#/modules/shared/schema/type/amount-minor-units.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -19,16 +22,21 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One public debt instrument between a borrower and optional lender, with contracted amount and maturity facts. (entity)
+ * A public debt (a loan or bond). (entity)
  */
 export class DebtsDto {
+  @IsOptional()
+  @ValidateIf((object) => object.amount !== null)
   @IsInt()
   @Min(0)
-  amountMinorUnits!: AmountMinorUnits;
+  @Satisfies<DebtsDto>((object) => object.amount == null || object.currencyId != null, {
+    message: "Debt Amount Has Currency",
+  })
+  amount?: AmountMinorUnits | null;
 
   @IsString()
   @IsUUID()
-  borrowerEntityId!: Id;
+  borrowerId!: Id;
 
   @IsString()
   @MinLength(1)
@@ -45,22 +53,18 @@ export class DebtsDto {
   @IsISO8601({ strict: true })
   contractedOn?: CalendarDate | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.countryId !== null)
   @IsString()
   @IsUUID()
-  countryId?: Id | null;
+  countryId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;
 
+  @IsOptional()
+  @ValidateIf((object) => object.currencyId !== null)
   @IsString()
   @IsUUID()
-  currencyId!: Id;
-
-  @IsString()
-  @IsUUID()
-  debtKindId!: Id;
+  currencyId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.deletedAt !== null)
@@ -71,22 +75,24 @@ export class DebtsDto {
   @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.lenderEntityId !== null)
+  @IsEnum(IdentityKind)
+  @Satisfies<DebtsDto>((object) => object.identityKind === "debt", {
+    message: "Debt Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsString()
   @IsUUID()
-  lenderEntityId?: Id | null;
+  kindTerm!: Id;
+
+  @IsString()
+  @IsUUID()
+  lenderId!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.maturityOn !== null)
   @IsISO8601({ strict: true })
   maturityOn?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

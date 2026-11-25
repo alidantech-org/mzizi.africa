@@ -17,23 +17,23 @@ import type { Sha256 } from "#/modules/shared/schema/type/sha256.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Deduplicated access scope: global, or narrowed by country, geographic unit, dataset or field group. (entity)
+ * A deduplicated access scope: global, or narrowed by institution, country, place or field group. (entity)
  */
 export class ScopesDto {
   @IsOptional()
-  @ValidateIf((object) => object.countryRefId !== null)
+  @ValidateIf((object) => object.countryId !== null)
   @IsString()
   @IsUUID()
-  countryRefId?: Id | null;
+  countryId?: Id | null;
 
   @IsISO8601({})
   createdAt!: Instant;
 
   @IsOptional()
-  @ValidateIf((object) => object.datasetRefId !== null)
+  @ValidateIf((object) => object.featureId !== null)
   @IsString()
   @IsUUID()
-  datasetRefId?: Id | null;
+  featureId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fieldGroup !== null)
@@ -42,12 +42,6 @@ export class ScopesDto {
   @MaxLength(255)
   fieldGroup?: NonEmptyString255 | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.geographicUnitRefId !== null)
-  @IsString()
-  @IsUUID()
-  geographicUnitRefId?: Id | null;
-
   @IsString()
   @IsUUID()
   id!: Id;
@@ -55,9 +49,11 @@ export class ScopesDto {
   @IsBoolean()
   includeDescendants!: Flag;
 
+  @IsOptional()
+  @ValidateIf((object) => object.institutionId !== null)
   @IsString()
   @IsUUID()
-  institutionRefId!: Id;
+  institutionId?: Id | null;
 
   @IsBoolean()
   isGlobal!: Flag;

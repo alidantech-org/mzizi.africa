@@ -1,49 +1,47 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/event/occurrences.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
 import 'package:mzizi_api/src/models/legal/provisions.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'changes.g.dart';
 
-/// One reschedule, postponement, adjournment, cancellation or confirmation of an occurrence, with the reason, who decided it and under which law. History is the list of changes.
+/// A postponement, cancellation or move of an occurrence.
 @JsonSerializable(includeIfNull: false)
 class EventChanges {
   const EventChanges({
-    this.authorityEntityId,
+    this.authorityId,
     this.basisProvisionId,
-    required this.changeKindId,
-    required this.code,
     required this.createdAt,
     this.decidedOn,
     this.deletedAt,
-    this.explanation,
     this.fromOn,
     required this.id,
+    required this.kindTerm,
+    this.note,
+    this.noteLanguageId,
     required this.occurrenceId,
-    this.reasonId,
+    this.reasonTerm,
     this.replacementOccurrenceId,
-    this.sourceCitationId,
     this.toOn,
     required this.updatedAt,
     required this.version,
   });
-  final String? authorityEntityId;
+  final String? authorityId;
   final String? basisProvisionId;
-  final String changeKindId;
-  final String code;
   final DateTime createdAt;
   final DateTime? decidedOn;
   final DateTime? deletedAt;
-  final String? explanation;
   final DateTime? fromOn;
   final String id;
+  final String kindTerm;
+  final String? note;
+  final String? noteLanguageId;
   final String occurrenceId;
-  final String? reasonId;
+  final String? reasonTerm;
   final String? replacementOccurrenceId;
-  final String? sourceCitationId;
   final DateTime? toOn;
   final DateTime updatedAt;
   final int version;

@@ -10,20 +10,21 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class GeographyChangesRow(BaseModel):
-    """An edge in a geographic transformation; multiple rows sharing transformation_id represent splits, mergers, creation or dissolution without overwriting predecessor identities."""
+    """One edge of a boundary change: splits, merges, creation or dissolution, without overwriting the places."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "geography.changes"
 
-    change_kind_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
     effective_on: date | None = None
-    explanation: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
+    kind_term: UUID
+    note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    note_language_id: UUID | None = None
+    occurrence_id: UUID | None = None
     predecessor_feature_id: UUID | None = None
     successor_feature_id: UUID | None = None
-    transformation_id: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

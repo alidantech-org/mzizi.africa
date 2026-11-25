@@ -1,54 +1,45 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
-import 'package:mzizi_api/src/models/governance/motions.dart';
+import 'package:mzizi_api/src/models/election/contests.dart';
 import 'package:mzizi_api/src/models/governance/offices.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
 import 'package:mzizi_api/src/models/official/individuals.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'holders.g.dart';
 
-/// One person's continuous tenure in one office, with appointment kind and effective dates.
+/// A person in an office for a period. How they got there is `governance.appointments`.
 @JsonSerializable(includeIfNull: false)
 class GovernanceHolders {
   const GovernanceHolders({
-    this.appointedByEntityId,
-    required this.appointmentKindId,
-    this.appointmentMotionId,
     required this.code,
+    this.contestId,
     required this.createdAt,
     this.deletedAt,
-    this.fromToPrecision,
+    this.endsOn,
     this.fromYear,
     required this.id,
     required this.individualId,
-    this.leftOfficeOn,
-    this.nominatedByEntityId,
+    required this.methodTerm,
     required this.officeId,
-    this.sourceCitationId,
+    this.reasonTerm,
+    this.startsOn,
     this.toYear,
-    this.tookOfficeOn,
     required this.updatedAt,
     required this.version,
   });
-  final String? appointedByEntityId;
-  final String appointmentKindId;
-  final String? appointmentMotionId;
   final String code;
+  final String? contestId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final SharedDatePrecision? fromToPrecision;
+  final DateTime? endsOn;
   final int? fromYear;
   final String id;
   final String individualId;
-  final DateTime? leftOfficeOn;
-  final String? nominatedByEntityId;
+  final String methodTerm;
   final String officeId;
-  final String? sourceCitationId;
+  final String? reasonTerm;
+  final DateTime? startsOn;
   final int? toYear;
-  final DateTime? tookOfficeOn;
   final DateTime updatedAt;
   final int version;
 

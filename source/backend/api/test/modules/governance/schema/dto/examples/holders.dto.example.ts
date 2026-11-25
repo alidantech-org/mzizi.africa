@@ -2,37 +2,16 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
-import { motionsExample } from "@test/modules/governance/schema/dto/examples/motions.dto.example.ts";
+import { contestsExample } from "@test/modules/election/schema/dto/examples/contests.dto.example.ts";
 import { officesExample } from "@test/modules/governance/schema/dto/examples/offices.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
 import { individualsExample } from "@test/modules/official/schema/dto/examples/individuals.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Holders, for generated tests. */
 export const holdersExample: ContractExample = contractExample({
   name: "Holders",
   fields: [
-    {
-      name: "appointedByEntityId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "appointmentKindId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "appointmentMotionId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
     {
       name: "code",
       optional: false,
@@ -47,6 +26,12 @@ export const holdersExample: ContractExample = contractExample({
       },
     },
     {
+      name: "contestId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "createdAt",
       optional: false,
       nullable: false,
@@ -59,10 +44,10 @@ export const holdersExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "fromToPrecision",
+      name: "endsOn",
       optional: true,
       nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
+      spec: { kind: "temporal", temporal: "date" },
     },
     {
       name: "fromYear",
@@ -83,15 +68,9 @@ export const holdersExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "leftOfficeOn",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "nominatedByEntityId",
-      optional: true,
-      nullable: true,
+      name: "methodTerm",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -101,22 +80,22 @@ export const holdersExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "sourceCitationId",
+      name: "reasonTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "startsOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
     },
     {
       name: "toYear",
       optional: true,
       nullable: true,
       spec: { kind: "number", integer: true, min: -10000, max: 3000 },
-    },
-    {
-      name: "tookOfficeOn",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
     },
     {
       name: "updatedAt",
@@ -156,19 +135,19 @@ export const holdersExample: ContractExample = contractExample({
       any: true,
       comparisons: [
         {
-          left: { field: "tookOfficeOn" },
+          left: { field: "startsOn" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "leftOfficeOn" },
+          left: { field: "endsOn" },
           operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "tookOfficeOn" },
+          left: { field: "startsOn" },
           operator: "less-than-or-equal",
-          right: { field: "leftOfficeOn" },
+          right: { field: "endsOn" },
         },
       ],
     },

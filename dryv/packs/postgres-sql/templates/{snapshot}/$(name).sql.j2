@@ -36,10 +36,11 @@
 {%- endmacro -%}
 
 {#- PostgreSQL type of a stored field. -#}
-{%- macro sql_type(schema, field) -%}
+{%- macro sql_type(schema, field) -%}{{ element_type(schema, field) | trim }}{% if field.array is not none %}[]{% endif %}{%- endmacro -%}
+
+{%- macro element_type(schema, field) -%}
 {%- set value = field.value -%}
-{%- if field.array is not none -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': array fields have no relational mapping yet'] }}
-{%- elif value.is.geometry -%}
+{%- if value.is.geometry -%}
   {%- set spatial = value.geometry -%}
   geometry({{ 'geometry' if spatial.shape == 'any' else spatial.shape }}{{ (spatial.dimensions | string)[2:] }}, {{ spatial.srid }})
 {%- elif not value.is.property -%}{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': nested schema values have no relational mapping; model a relation instead'] }}
@@ -94,6 +95,30 @@
 {%- elif value is number -%}{{ value }}
 {%- else -%}{{ {}['structured literal requires an explicit PostgreSQL mapping'] }}
 {%- endif -%}
+{%- endmacro -%}
+
+{%- macro partition_literal(value) -%}
+{%- if value.kind == 'string' -%}'{{ value.text | replace("'", "''") }}'
+{%- elif value.kind == 'null' -%}NULL
+{%- elif value.kind == 'minvalue' -%}MINVALUE
+{%- elif value.kind == 'maxvalue' -%}MAXVALUE
+{%- elif value.kind == 'boolean' -%}{{ 'TRUE' if value.text == 'True' or value.text == 'true' else 'FALSE' }}
+{%- else -%}{{ value.text }}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro comment_text(text) -%}E'{{ text | replace('\\', '\\\\') | replace("'", "''") }}'{%- endmacro -%}
+
+{#- A relation that is also part of a composite reference to the same target is enforced by that composite key
+    (required where the target is partitioned and its key includes the partition key). -#}
+{%- macro covered_by_composite(schema, field) -%}
+{%- set hit = namespace(found=false) -%}
+{%- for constraint in schema.facets.storage.constraints -%}
+{%- if constraint.kind == 'references' and constraint.target.id == field.relation.target.schema.id -%}
+{%- for item in constraint.fields -%}{%- if item.raw == field.name.raw -%}{%- set hit.found = true -%}{%- endif -%}{%- endfor -%}
+{%- endif -%}
+{%- endfor -%}
+{{- 'yes' if hit.found else '' -}}
 {%- endmacro -%}
 
 {%- macro spatial_function(name) -%}
@@ -245,14 +270,20 @@ CREATE TABLE "{{ ns }}"."{{ table_of(schema) }}" (
     CONSTRAINT "chk_{{ table_of(schema) }}_{{ field.name.snake }}_enum" CHECK ("{{ field.name.snake }}" IN ({% for item in field.value.property.enum.values %}{{ sql_literal(item.value) }}{% if not loop.last %}, {% endif %}{% endfor %})),
 {%- endif %}{% endfor %}
     PRIMARY KEY ({% for key in storage.primary_key %}"{{ key.snake }}"{% if not loop.last %}, {% endif %}{% endfor %})
-);
+){% if storage.partitioning is not none %} PARTITION BY {{ storage.partitioning.strategy | upper }} ({% for key in storage.partitioning.keys %}"{{ key.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}){% endif %};
+{%- if storage.partitioning is not none %}
+{%- for part in storage.partitioning.partitions %}
+CREATE TABLE "{{ ns }}"."{{ part.name }}" PARTITION OF "{{ ns }}"."{{ part.parent }}" {% if part.bound.kind == 'default' %}DEFAULT{% elif part.bound.kind == 'list' %}FOR VALUES IN ({% for value in part.bound['values'] %}{{ partition_literal(value) }}{% if not loop.last %}, {% endif %}{% endfor %}){% elif part.bound.kind == 'range' %}FOR VALUES FROM ({% for value in part.bound.lower %}{{ partition_literal(value) }}{% if not loop.last %}, {% endif %}{% endfor %}) TO ({% for value in part.bound.upper %}{{ partition_literal(value) }}{% if not loop.last %}, {% endif %}{% endfor %}){% elif part.bound.kind == 'hash' %}FOR VALUES WITH (MODULUS {{ part.bound.modulus }}, REMAINDER {{ part.bound.remainder }}){% endif %}{% if part.strategy %} PARTITION BY {{ part.strategy | upper }} ({% for key in part['keys'] %}"{{ key.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}){% endif %};
+{%- endfor %}
+{%- endif %}
 {%- endif %}{% endfor %}
 {%- endfor %}
 
 {#- Foreign keys and indexes come after every table so declaration order never matters. -#}
+{%- set emitted = namespace(keys=[]) -%}
 {%- for ns in own %}
 {%- for schema in schemas %}{% if namespace_of(schema) == ns %}
-{%- for field in schema.fields %}{% if field.relation is not none and field.relation.enforcement == 'foreign-key' and field.related is none and field.value is not none and not field.value.is.unknown %}
+{%- for field in schema.fields %}{% if field.relation is not none and field.relation.enforcement == 'foreign-key' and field.related is none and field.value is not none and not field.value.is.unknown and not covered_by_composite(schema, field) %}
 ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(schema) }}_{{ field.name.snake }}" FOREIGN KEY ("{{ field.name.snake }}") REFERENCES {{ lookup_table(field.relation.target.schema.id) }} ("{{ field.relation.target.field.snake }}") ON DELETE {{ lifecycle(field.relation.on_delete) }} ON UPDATE {{ lifecycle(field.relation.on_update) }};
 {%- endif %}{% endfor %}
 {%- for index in schema.facets.storage.indexes %}
@@ -284,7 +315,12 @@ $fn$;
 CREATE TRIGGER "tr_{{ table_of(schema) }}__{{ constraint.name.snake }}" BEFORE INSERT OR UPDATE OF "{{ constraint.field.snake }}" ON "{{ ns }}"."{{ table_of(schema) }}" FOR EACH ROW EXECUTE FUNCTION "{{ ns }}"."{{ table_of(schema) }}__{{ constraint.name.snake }}"();
 {%- elif constraint.kind == 'references' %}
 {%- for candidate in schemas %}{% if candidate.id == constraint.target.id %}
-ALTER TABLE {{ lookup_table(candidate.id) }} ADD CONSTRAINT "uq_{{ table_of(candidate) }}__{{ constraint.name.snake }}_target" UNIQUE ({% for item in constraint.target_fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %});
+{%- set tcols = namespace(items=[]) -%}{%- for item in constraint.target_fields %}{% set tcols.items = tcols.items + [item.snake] %}{% endfor -%}
+{%- set target_key = ("uq_" ~ table_of(candidate) ~ "__" ~ (tcols.items | join("_")) ~ "_key")[:63] -%}
+{%- if (namespace_of(candidate) ~ '.' ~ target_key) not in emitted.keys %}
+{%- set emitted.keys = emitted.keys + [namespace_of(candidate) ~ '.' ~ target_key] %}
+ALTER TABLE {{ lookup_table(candidate.id) }} ADD CONSTRAINT "{{ target_key }}" UNIQUE ({% for item in constraint.target_fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %});
+{%- endif %}
 ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(schema) }}__{{ constraint.name.snake }}" FOREIGN KEY ({% for item in constraint.fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}) REFERENCES {{ lookup_table(candidate.id) }} ({% for item in constraint.target_fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %});
 {%- endif %}{% endfor %}
 {%- elif constraint.kind == 'same-as' %}
@@ -317,8 +353,8 @@ ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "ex_{{ table_of(s
 {%- if code %}
 {%- if field.relation is none or field.relation.enforcement != 'foreign-key' %}
 {{ {}[schema.id ~ '.' ~ field.name.raw ~ ': scheme tags require a foreign key'] }}
-{%- elif field.relation.target.schema.name.raw != 'Value' or lookup_namespace(field.relation.target.schema.id) != 'reference' %}
-{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': scheme tags require a link to reference.Value'] }}
+{%- elif field.relation.target.schema.name.raw != 'Terms' or lookup_namespace(field.relation.target.schema.id) != 'vocabulary' %}
+{{ {}[schema.id ~ '.' ~ field.name.raw ~ ': scheme tags require a link to vocabulary.Terms'] }}
 {%- endif %}
 {%- set source_table = '"' ~ ns ~ '"."' ~ table_of(schema) ~ '"' %}
 {%- set value_table = lookup_table(field.relation.target.schema.id) %}
@@ -329,7 +365,7 @@ BEGIN
   IF NEW."{{ field.name.snake }}" IS NOT NULL AND NOT EXISTS (
     SELECT 1
     FROM {{ value_table }} v
-    JOIN "reference"."schemes" s ON s."id" = v."scheme_id"
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
     WHERE v."{{ key }}" = NEW."{{ field.name.snake }}" AND s."code" = {{ sql_literal(code) }}
     FOR SHARE OF v, s
   ) THEN
@@ -365,7 +401,7 @@ BEGIN
 END;
 $scheme$;
 CREATE TRIGGER "{{ ns }}_{{ trigger }}_code" BEFORE UPDATE OF "code"
-ON "reference"."schemes" FOR EACH ROW EXECUTE FUNCTION "{{ ns }}"."{{ trigger }}_code"();
+ON "vocabulary"."schemes" FOR EACH ROW EXECUTE FUNCTION "{{ ns }}"."{{ trigger }}_code"();
 {%- endif %}
 {%- endfor %}
 {%- for view in schema.views %}
@@ -373,4 +409,15 @@ CREATE{% if view.materialized %} MATERIALIZED{% endif %} VIEW "{{ view.namespace
 SELECT {% for column in view.columns %}"{{ column.field.snake }}" AS "{{ column.name.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}
 FROM "{{ ns }}"."{{ table_of(schema) }}"{% if view.where %} WHERE "{{ view.where.field.snake }}" IS {% if not view.where.is_null %}NOT {% endif %}NULL{% endif %};
 {%- endfor %}
+{%- endfor %}
+
+{#- Descriptions become SQL comments: tables and columns of every selected entity. -#}
+{%- for schema in schemas %}
+{%- set ns = namespace_of(schema) %}
+{%- if schema.description %}
+COMMENT ON TABLE "{{ ns }}"."{{ table_of(schema) }}" IS {{ comment_text(schema.description) }};
+{%- endif %}
+{%- for field in schema.fields %}{% if field.related is none and field.value is not none and not field.value.is.unknown and field.description %}
+COMMENT ON COLUMN "{{ ns }}"."{{ table_of(schema) }}"."{{ field.name.snake }}" IS {{ comment_text(field.description) }};
+{%- endif %}{% endfor %}
 {%- endfor %}

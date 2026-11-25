@@ -10,13 +10,12 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class BudgetsRow(BaseModel):
-    """One institutional/country budget identity for a fiscal period and budget classification."""
+    """A government's budget for a fiscal period."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "finance.budgets"
 
-    budget_kind_id: UUID
     code: Annotated[
         str,
         Field(
@@ -25,12 +24,12 @@ class BudgetsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    country_id: UUID | None = None
+    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    fiscal_period_id: UUID
-    government_entity_id: UUID | None = None
+    government_id: UUID
     id: UUID
-    source_citation_id: UUID | None = None
+    kind_term: UUID
+    period_id: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -2,38 +2,18 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { functionsExample } from "@test/modules/governance/schema/dto/examples/functions.dto.example.ts";
 import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
 import { positionsExample } from "@test/modules/governance/schema/dto/examples/positions.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
 import { provisionsExample } from "@test/modules/legal/schema/dto/examples/provisions.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Assignments, for generated tests. */
 export const assignmentsExample: ContractExample = contractExample({
   name: "Assignments",
   fields: [
-    {
-      name: "basisProvisionId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "code",
-      optional: false,
-      nullable: false,
-      spec: {
-        kind: "string",
-        minLength: 1,
-        maxLength: 255,
-        patterns: [
-          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ],
-      },
-    },
     {
       name: "createdAt",
       optional: false,
@@ -45,12 +25,6 @@ export const assignmentsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "fromToPrecision",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
     },
     {
       name: "fromYear",
@@ -71,39 +45,33 @@ export const assignmentsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "initiatorId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "institutionId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "obligorKindId",
+      name: "positionId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "shareId",
+      name: "provisionId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "shareTerm",
       optional: false,
       nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "startInstitutionId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "startPositionId",
-      optional: true,
-      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -125,41 +93,5 @@ export const assignmentsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "fromYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "toYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "fromYear" },
-          operator: "less-than-or-equal",
-          right: { field: "toYear" },
-        },
-      ],
-    },
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "institutionId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "obligorKindId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-      ],
-    },
-  ],
+  invariants: [],
 });

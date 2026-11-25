@@ -6,9 +6,9 @@ part 'feature_window.g.dart';
 /// Feature Window
 @JsonSerializable(includeIfNull: false)
 class GeographyFeatureWindow {
-  const GeographyFeatureWindow({this.codePrefix, this.featureTypeId, this.limit, this.offset});
+  const GeographyFeatureWindow({this.codePrefix, this.kindTerm, this.limit, this.offset});
   final String? codePrefix;
-  final String? featureTypeId;
+  final String? kindTerm;
   final int? limit;
   final int? offset;
 

@@ -9,7 +9,6 @@
 import { dryv } from "@dryvcode/author";
 import { runLedger } from "#/schemas/mongo/run-ledger.ts";
 import { shared } from "#/schemas/_shared.ts";
-import { catalogApi } from "./catalog.ts";
 import { engineApi } from "./engine.ts";
 import { exploreApi } from "./explore.ts";
 import { researchApi } from "./research.ts";
@@ -22,7 +21,6 @@ export default dryv
   .app({ name: "mzizi-engine" })
   .info({ title: "Mzizi engine", version: "0.1.0" })
   .provides(
-    catalogApi.GetSeedCatalog,
     researchApi.InspectArtifact,
     scriptApi.SubmitScript,
     scriptApi.GetScript,
@@ -58,7 +56,6 @@ export default dryv
   )
   .groups(
     shared,
-    catalogApi.catalog,
     engineApi.engine,
     researchApi.research,
     scriptApi.scripts,

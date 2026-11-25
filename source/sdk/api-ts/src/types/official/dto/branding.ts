@@ -1,15 +1,15 @@
-/** How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person. */
+/** Words and colours of a named thing (slogan, motto, party colours); images are `media`. */
 export interface OfficialBranding {
-  code: string;
+  colors?: string[] | null;
   createdAt: string;
   deletedAt?: string | null;
-  entityId?: string | null;
+  fromYear?: number | null;
   id: string;
-  individualId?: string | null;
-  kindId: string;
-  languageId: string;
-  sourceCitationId?: string | null;
+  identityId: string;
+  kindTerm: string;
+  languageId?: string | null;
+  text?: string | null;
+  toYear?: number | null;
   updatedAt: string;
-  value?: string | null;
   version: number;
 }

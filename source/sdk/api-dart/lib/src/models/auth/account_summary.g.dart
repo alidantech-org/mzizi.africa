@@ -20,7 +20,7 @@ Map<String, dynamic> _$AuthAccountSummaryToJson(AuthAccountSummary instance) => 
   'status': _$AuthAccountStatusEnumMap[instance.status]!,
 };
 
-const _$AuthAuthActorKindEnumMap = {AuthAuthActorKind.person: 'person', AuthAuthActorKind.service: 'service'};
+const _$AuthAuthActorKindEnumMap = {AuthAuthActorKind.agent: 'agent', AuthAuthActorKind.person: 'person', AuthAuthActorKind.service: 'service'};
 
 const _$AuthAccountStatusEnumMap = {
   AuthAccountStatus.active: 'active',

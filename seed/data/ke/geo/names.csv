@@ -1,4 +1,0 @@
-feature_code,name,name_kind_code,language_code,is_default
-ke,Republic of Kenya,geo.name.kind.official,en,true
-ke,Kenya,geo.name.kind.short,en,false
-ke,Jamhuri ya Kenya,geo.name.kind.official,sw,true

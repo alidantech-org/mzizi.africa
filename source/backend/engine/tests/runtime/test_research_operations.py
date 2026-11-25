@@ -34,25 +34,6 @@ def _replay(client: TestClient, suite: str) -> Payload:
     pytest.fail("Replay did not finish")
 
 
-def test_generated_seed_catalog_is_filterable_and_authenticated() -> None:
-    with TestClient(create_app(ServerConfig(auth="service", service_token="test-engine-key"))) as client:
-        url = "/v1/catalog/seed-tables"
-        assert client.get(url).status_code == 401
-        index = client.get(url, headers=TOKEN)
-        detail = client.get(url, headers=TOKEN, params={"table": "civic.projects"})
-        assert detail.status_code == index.status_code == 200
-        assert detail.json()["sha256"] == index.json()["sha256"]
-        (table,) = detail.json()["tables"]
-        assert table["name"] == "civic.projects"
-        assert table["naturalKey"] == ["code"]
-        columns = {column["name"]: column for column in table["columns"]}
-        assert columns["name"]["required"]
-        assert columns["scope_unit_feature_code"]["targetTable"] == "geography.features"
-        assert "id" not in columns
-        assert client.get(url, headers=TOKEN, params={"table": "missing.table"}).status_code == 404
-        assert client.get(url, headers=TOKEN, params={"table": ""}).status_code == 422
-
-
 def test_replay_returns_a_report_and_rejects_workspace_escape(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     workspace = tmp_path / "workspace"
     workspace.mkdir()

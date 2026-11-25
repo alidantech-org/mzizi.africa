@@ -1,0 +1,10 @@
+{
+  "name": "dryv-nestjs-persistence-proof",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "^1",
+    "typeorm": "^0.3.31",
+    "pg": "^8"
+  }
+}

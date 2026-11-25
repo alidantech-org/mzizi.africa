@@ -3,10 +3,9 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 from io import StringIO
 
-from mzizi_engine.runtime.assembly.seed_catalog import project_seed_catalog
-from mzizi_engine.runtime.contracts.seed_catalog import SeedCatalogRequest
 from mzizi_engine.runtime.contracts.table_draft import (
     DraftIssue,
     DraftLookup,
@@ -21,7 +20,13 @@ from mzizi_extraction.document.models import DocumentOutput, TableBlock
 from mzizi_extraction.document.positioned_tables import extract_positioned_tables
 from mzizi_manifest.features.codes.grammar import segments_problem
 from mzizi_manifest.features.data.check import seed_value_problem
-from mzizi_manifest.features.database.tables import load_tables
+from mzizi_manifest.features.database.tables import Table, load_tables
+
+
+def _catalog_digest(tables: dict[str, Table]) -> str:
+    """SHA-256 of the table contracts the draft was checked against: every table with its sorted column names."""
+    text = "\n".join(f"{name}:{','.join(sorted(table.columns))}" for name, table in sorted(tables.items()))
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
 def _reference_codes(data: bytes, lookup: DraftLookup) -> dict[str, set[str]]:
@@ -162,7 +167,7 @@ def table_draft(reader: ArtifactReader, access: ArtifactAccess, request: TableDr
     return TableDraftReport(
         source=source,
         reference=reference,
-        catalog_sha256=project_seed_catalog(tables, SeedCatalogRequest()).sha256,
+        catalog_sha256=_catalog_digest(tables),
         target_table=table.qualified_name,
         extraction_status=document.status,
         diagnostics=document.diagnostics,

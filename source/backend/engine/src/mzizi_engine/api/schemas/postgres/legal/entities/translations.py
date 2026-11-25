@@ -13,31 +13,21 @@ from mzizi_engine.api.schemas.postgres.legal.enums.translation_method import Tra
 
 
 class TranslationsRow(BaseModel):
-    """A translated representation of one exact wording. Several translations into one language are valid; review never makes a translation legal authority."""
+    """Mzizi's own unofficial translation of a wording; never legal authority."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "legal.translations"
 
-    code: Annotated[
-        str,
-        Field(
-            min_length=1,
-            max_length=255,
-            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ),
-    ]
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
     language_id: UUID
     method: TranslationMethod
     notes: Annotated[str, Field(max_length=4000)] | None = None
-    produced_at: datetime | None = None
-    produced_by: str | None = None
-    review_status: ReviewStatus
+    review: ReviewStatus
     reviewed_at: datetime | None = None
-    reviewed_by_snapshot: str | None = None
+    reviewed_by_id: UUID | None = None
     text: Annotated[str, Field(min_length=1)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

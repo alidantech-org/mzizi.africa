@@ -2,6 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
 import { codedCreatedExample } from "@test/modules/shared/schema/dto/examples/coded-created.dto.example.ts";
 
 /** The contract shape of Roles, for generated tests. */
@@ -40,7 +41,7 @@ export const rolesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "managingInstitutionRefId",
+      name: "institutionId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },

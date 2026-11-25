@@ -8,16 +8,18 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class DebtsRow(BaseModel):
-    """One public debt instrument between a borrower and optional lender, with contracted amount and maturity facts."""
+    """A public debt (a loan or bond)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "finance.debts"
 
-    amount_minor_units: Annotated[int, Field(ge=0)]
-    borrower_entity_id: UUID
+    amount: Annotated[int, Field(ge=0)] | None = None
+    borrower_id: UUID
     code: Annotated[
         str,
         Field(
@@ -27,14 +29,14 @@ class DebtsRow(BaseModel):
         ),
     ]
     contracted_on: date | None = None
-    country_id: UUID | None = None
+    country_id: UUID
     created_at: datetime
-    currency_id: UUID
-    debt_kind_id: UUID
+    currency_id: UUID | None = None
     deleted_at: datetime | None = None
     id: UUID
-    lender_entity_id: UUID | None = None
+    identity_kind: IdentityKind
+    kind_term: UUID
+    lender_id: UUID
     maturity_on: date | None = None
-    source_citation_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

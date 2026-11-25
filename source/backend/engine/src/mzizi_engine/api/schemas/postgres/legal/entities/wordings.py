@@ -8,17 +8,14 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
-
 
 class WordingsRow(BaseModel):
-    """Exact authority-bearing text of one provision in one edition and language. Translations are separate rows."""
+    """The official text of a provision in one edition and language."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "legal.wordings"
 
-    citation_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -31,16 +28,12 @@ class WordingsRow(BaseModel):
     deleted_at: datetime | None = None
     edition_id: UUID
     ends_on: date | None = None
-    from_to_precision: DatePrecision | None = None
-    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
+    heading: Annotated[str, Field(min_length=1, max_length=1000)] | None = None
     id: UUID
-    instrument_id: UUID
     language_id: UUID
-    observed_at: datetime
     provision_id: UUID
     starts_on: date | None = None
     supersedes_id: UUID | None = None
     text: Annotated[str, Field(min_length=1)]
-    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

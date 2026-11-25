@@ -1,151 +1,266 @@
 /**
  * Schema: statistics | Database: mzizi
- * Published statistics (census, surveys, administrative counts) attached to any geographic feature, from the whole
- * country down to a village, with optional demographic breakdowns. Indicators are described with reference topics
- * and units; breakdown categories are reference values (labels in any language through reference.value_labels).
+ * Design: .docs/design/data/FOUNDATION_REDESIGN.md section 29 (approved 2026-11-25), following SDMX.
+ * Contract authors: screens read `figures`, never raw `observations`. `observations`, `breakdowns` and `figures` are
+ * hash-partitioned by `country_id`; every read filters by country first and every link into them carries it.
  */
 import * as dryv from "@dryvcode/author";
+import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { belongsTo, byCountry, identity, identityKindField, identityReference, term } from "./_links.ts";
+import { measureProperties } from "./_measures.ts";
 import { Features } from "./geography.ts";
-import { Language, Topic, Unit, Value } from "./reference.ts";
-import { Citations } from "./source.ts";
-
-const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
+import { Countries, Units } from "./reference.ts";
+import { Schemes, Terms } from "./vocabulary.ts";
 
 export const statistics = dryv
   .group({ name: "statistics" })
-  .description("Statistical indicators and their observations by place, period and demographic breakdown.")
+  .description(
+    "Published statistics: indicators, their dimensions, collections, priorities, observations, breakdowns, metrics and prepared figures.",
+  )
   .facets({ storage: { namespace: "statistics", store: "main" } });
+
+const statisticsProperties = statistics.properties({
+  Frequency: dryv.property.enum({
+    Monthly: "monthly",
+    Quarterly: "quarterly",
+    Annual: "annual",
+    Intercensal: "intercensal",
+    Decennial: "decennial",
+  }),
+  Aggregation: dryv.property.enum({ Sum: "sum", Mean: "mean", Weighted: "weighted", None: "none" }),
+  Decimals: dryv.property.number.integer({ range: { min: 0, max: 10 } }),
+});
+
+const figureFields = {
+  indicatorId: belongsTo(() => Indicators)
+    .maybe()
+    .description("The indicator measured; exactly one of indicator and metric on figures."),
+  featureId: belongsTo(() => Features).description("The place the figure describes."),
+  subjectId: identity("A thing the figure is about (the Swahili language for speakers of Swahili).").maybe(),
+  countryId: belongsTo(() => Countries).description("Partition key; every read filters by it first."),
+  ...periodFields,
+  startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+  endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+  value: dryv
+    .field(sharedProperties.Number)
+    .maybe()
+    .description("In the indicator's base unit; empty when missing or suppressed."),
+  lower: dryv.field(sharedProperties.Number).maybe().description("Lower bound of the uncertainty interval."),
+  upper: dryv.field(sharedProperties.Number).maybe().description("Upper bound of the uncertainty interval."),
+  status: dryv.field(measureProperties.FigureStatus),
+  basis: dryv.field(measureProperties.FigureBasis),
+  cell: dryv
+    .field(measureProperties.Cell)
+    .description("Fingerprint of the sorted breakdown term codes; the empty string is the total."),
+};
 
 /*---------------- statistics.indicators ----------------*/
 export const Indicators = statistics
   .schema("Indicators", {
-    name: dryv.field(sharedProperties.Name),
-    description: dryv.field(sharedProperties.Description),
-    /** Discovery topic, for example population, health, education, economy, audit and transparency. */
-    topicId: belongsTo(() => Topic),
-    unitId: belongsTo(() => Unit).maybe(),
-    /** Scheme sta.measure.kind: count, rate, ratio, share, index, amount, density. */
-    measureKindId: belongsTo(() => Value),
-    /** True when a larger figure is the better outcome (ranking direction); empty when neither is better. */
+    identityKind: identityKindField("indicator"),
+    kindTerm: term("sta.indicator.kind", "count, rate, ratio, index, share."),
+    unitId: belongsTo(() => Units).maybe(),
+    decimals: dryv.field(statisticsProperties.Decimals).maybe().description("Decimals to show."),
+    frequency: dryv.field(statisticsProperties.Frequency).maybe(),
+    topicTerm: term("topic", "The topic (Demographics)."),
+    aggregation: dryv
+      .field(statisticsProperties.Aggregation)
+      .description("How lower levels may build a total; rates are never summed."),
     higherIsBetter: dryv.field(sharedProperties.Flag).maybe(),
-    /** Scheme sta.indicator.role: the part an indicator plays on the screens (population, density, area); empty for the rest. */
-    roleId: belongsTo(() => Value).maybe(),
-    /** True when the indicator is computed from others (statistics.components) and not published as a count. */
-    isDerived: dryv.field(sharedProperties.Flag),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    roleTerm: term("sta.indicator.role", "The part it plays on screens (population, density, area).").maybe(),
+    isDerived: dryv.field(sharedProperties.Flag).description("True when computed from components."),
   })
-  .extends(baseSchemas.CodedEntity)
-  .description("One measured quantity, for example total population, registered voters or audit opinion score.")
+  .extends(baseSchemas.IdentityEntity)
+  .rule("IndicatorKind", (v) => v.identityKind.eq("indicator"))
+  .description("The concept measured (Population). Its names and short definitions are `identity.names`.")
   .role("entity")
   .facets({
-    storage: dryv.storage("indicators").index("topicId").index("measureKindId").index("roleId").index("sourceCitationId"),
+    storage: dryv
+      .storage("indicators")
+      .index("topicTerm")
+      .index("roleTerm")
+      .references("IndicatorIsIdentity", identityReference),
   });
+
+/*---------------- statistics.dimensions ----------------*/
+export const Dimensions = statistics
+  .schema("Dimensions", {
+    indicatorId: belongsTo(() => Indicators, { onDelete: "cascade" }),
+    schemeId: belongsTo(() => Schemes).description("The breakdown scheme (sex, age group, residence)."),
+    position: dryv.field(sharedProperties.NonNegativeInteger),
+    isRequired: dryv.field(sharedProperties.Flag),
+  })
+  .extends(baseSchemas.Association)
+  .description("Which breakdowns an indicator allows, in order.")
+  .role("entity")
+  .facets({ storage: dryv.storage("dimensions").unique("indicatorId", "schemeId").index("schemeId") });
+
+/*---------------- statistics.collections ----------------*/
+export const Collections = statistics
+  .schema("Collections", {
+    identityKind: identityKindField("collection"),
+    kindTerm: term("sta.collection.kind", "census, survey, administrative, model, compilation, cost schedule."),
+    stewardId: identity("The producer (KNBS, NBS, the World Bank, IEBC).").maybe(),
+    ...periodFields,
+  })
+  .extends(baseSchemas.IdentityEntity)
+  .rule("CollectionKind", (v) => v.identityKind.eq("collection"))
+  .description("The programme that produced figures (census 2019, KDHS 2022, WDI).")
+  .role("entity")
+  .facets({ storage: dryv.storage("collections").index("stewardId").references("CollectionIsIdentity", identityReference) });
+
+/*---------------- statistics.priorities ----------------*/
+export const Priorities = statistics
+  .schema("Priorities", {
+    countryId: belongsTo(() => Countries),
+    stewardId: identity("A producer ranked for this country.").maybe(),
+    collectionId: belongsTo(() => Collections).maybe(),
+    position: dryv.field(sharedProperties.NonNegativeInteger).description("Rank; 0 is trusted first."),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("PriorityHasOneSource", rule.exactlyOne("stewardId", "collectionId"))
+  .description("Per-country order of trust for choosing the figure to show (Kenya ranks KNBS first).")
+  .role("entity")
+  .facets({ storage: dryv.storage("priorities").unique("countryId", "position").index("collectionId") });
 
 /*---------------- statistics.observations ----------------*/
 export const Observations = statistics
   .schema("Observations", {
+    ...figureFields,
     indicatorId: belongsTo(() => Indicators),
-    /** The place or area the figure describes: country, county, constituency, ward, town or village. */
-    featureId: belongsTo(() => Features),
-    /** First day the figure covers (a census day or the start of a year). */
-    periodFrom: dryv.field(sharedProperties.CalendarDate),
-    periodTo: dryv.field(sharedProperties.CalendarDate).maybe(),
-    value: dryv.field(sharedProperties.Number),
-    /** Scheme sta.dimension.sex, stat.dimension.age-group, stat.dimension.residence, stat.dimension.ethnicity. */
-    sexId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.sta.dimension.sex"),
-    ageGroupId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.sta.dimension.agegroup"),
-    residenceId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.sta.dimension.residence"),
-    ethnicityId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.sta.dimension.ethnicity"),
-    languageId: belongsTo(() => Language).maybe(),
-    /** True when the figure is a projection or estimate rather than a count. */
-    estimated: dryv.field(sharedProperties.Flag).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    collectionId: belongsTo(() => Collections).maybe(),
+    revision: dryv
+      .field(sharedProperties.PositiveInteger)
+      .description("1 first; a correction is a new row with a higher revision."),
+    supersedesId: belongsTo(dryv.self).maybe().description("The earlier figure this revision replaces."),
   })
-  .extends(baseSchemas.CodedEntity)
+  .extends(baseSchemas.PartitionedEntity)
+  .rule("ObservationPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
+  .rule("BoundsAreOrdered", rule.ordered("lower", "upper", { allowEqual: true }))
   .description(
-    "One figure of one indicator for one place and period, optionally broken down by sex, age, residence, ethnicity or language.",
+    "One published figure for an indicator, place, subject, period and breakdown cell, by collection and revision.",
   )
   .role("entity")
   .facets({
     storage: dryv
       .storage("observations")
-      .index("indicatorId", "featureId", "periodFrom")
-      .index("featureId")
-      .index("sexId")
-      .index("ageGroupId")
-      .index("ethnicityId")
-      .index("languageId")
-      .index("sourceCitationId"),
+      .partitioning(byCountry("observations"))
+      .primaryKey("id", "countryId")
+      .unique("countryId", "indicatorId", "featureId", "subjectId", "fromYear", "toYear", "cell", "collectionId", "revision")
+      .index("countryId", "featureId")
+      .index("collectionId")
+      .references("ObservationSupersedes", {
+        fields: ["supersedesId", "countryId"],
+        target: () => Observations,
+        targetFields: ["id", "countryId"],
+      }),
+  });
+
+/*---------------- statistics.breakdowns ----------------*/
+export const Breakdowns = statistics
+  .schema("Breakdowns", {
+    observationId: belongsTo(() => Observations).description(
+      "The observation cut; with `country_id` a composite foreign key.",
+    ),
+    countryId: belongsTo(() => Countries).description("Partition key, the observation's country."),
+    termId: belongsTo(() => Terms).description("The category (female, 15–19, urban)."),
+    schemeId: dryv
+      .field(sharedProperties.Id)
+      .description("The term's scheme (the dimension), copied so one term per scheme is a unique key."),
+  })
+  .extends(baseSchemas.PartitionedRecord)
+  .description("The categories that cut one observation: at most one term per dimension.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("breakdowns")
+      .partitioning(byCountry("breakdowns"))
+      .primaryKey("id", "countryId")
+      .unique("countryId", "observationId", "schemeId")
+      .index("termId")
+      .references("BreakdownOfObservation", {
+        fields: ["observationId", "countryId"],
+        target: () => Observations,
+        targetFields: ["id", "countryId"],
+      })
+      .references("BreakdownTermInScheme", {
+        fields: ["termId", "schemeId"],
+        target: () => Terms,
+        targetFields: ["id", "schemeId"],
+      }),
   });
 
 /*---------------- statistics.metrics ----------------*/
 export const Metrics = statistics
   .schema("Metrics", {
-    topicId: belongsTo(() => Topic),
-    /** The measure ranked or compared: an indicator, or the numerator of a ratio. */
-    numeratorIndicatorId: belongsTo(() => Indicators),
-    /** The indicator it is divided by (population for a per-person figure); absent for a plain indicator. */
-    denominatorIndicatorId: belongsTo(() => Indicators).maybe(),
-    /** The factor applied after dividing: 1, 1000 or 100000 for "per 100,000 people". */
-    perFactor: dryv.field(sharedProperties.Number).maybe(),
-    unitId: belongsTo(() => Unit).maybe(),
+    identityKind: identityKindField("metric"),
+    numeratorId: belongsTo(() => Indicators),
+    denominatorId: belongsTo(() => Indicators).maybe(),
+    perFactor: dryv.field(sharedProperties.Number).maybe().description("Factor after dividing (1000 for per 1,000 people)."),
+    unitId: belongsTo(() => Units).maybe(),
     higherIsBetter: dryv.field(sharedProperties.Flag).maybe(),
-    /** The place level shown first, a feature kind value; the country's ladder says which levels exist. */
-    defaultLevelKindId: belongsTo(() => Value)
-      .tags("scheme:ref.sch.geo.feature.kind")
-      .maybe(),
-    /** True when the metric appears in ranking lists. */
     isRankable: dryv.field(sharedProperties.Flag),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    levelTerm: term("geo.level.kind", "The level shown first.").maybe(),
+    topicTerm: term("topic", "The topic."),
   })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "A ranking or comparison measure defined as data: an indicator, or one indicator over another with a factor. Titles and descriptions per language are copy; no metric is coded in a read.",
-  )
+  .extends(baseSchemas.IdentityEntity)
+  .rule("MetricKind", (v) => v.identityKind.eq("metric"))
+  .description("A figure calculated from indicators (a rate per 1,000); computed when `figures` is refreshed.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("metrics")
-      .index("topicId")
-      .index("numeratorIndicatorId")
-      .index("denominatorIndicatorId")
-      .index("sourceCitationId"),
+      .index("numeratorId")
+      .index("denominatorId")
+      .index("topicTerm")
+      .references("MetricIsIdentity", identityReference),
   });
 
 /*---------------- statistics.components ----------------*/
 export const Components = statistics
   .schema("Components", {
-    /** The derived indicator (an index or ranking measure). */
-    indicatorId: belongsTo(() => Indicators),
-    /** One indicator it is made from. */
-    componentIndicatorId: belongsTo(() => Indicators),
-    /** The positive weight of this component in the derived figure. */
+    indicatorId: belongsTo(() => Indicators, { onDelete: "cascade" }).description("The composite index."),
+    componentId: belongsTo(() => Indicators).description("One indicator it is made from."),
     weight: dryv.field(sharedProperties.Number),
-    /** Scheme sta.component.transform: as is, normalised, inverted. */
-    transformId: belongsTo(() => Value).tags("scheme:ref.sch.sta.component.transform"),
+    transformTerm: term("sta.component.transform", "as is, normalised, inverted."),
     position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
   })
   .extends(baseSchemas.Association)
-  .rule("ComponentIsNotItself", (v) => v.indicatorId.ne(v.componentIndicatorId))
+  .rule("ComponentIsNotItself", (v) => v.indicatorId.ne(v.componentId))
   .rule("WeightIsPositive", (v) => v.weight.gt(0))
+  .description("One part of a composite index, with its weight and transform.")
+  .role("entity")
+  .facets({ storage: dryv.storage("components").unique("indicatorId", "componentId").index("componentId") });
+
+/*---------------- statistics.figures ----------------*/
+export const Figures = statistics
+  .schema("Figures", {
+    ...figureFields,
+    metricId: belongsTo(() => Metrics).maybe(),
+    observationId: belongsTo(() => Observations)
+      .maybe()
+      .description("The observation chosen; empty for a computed metric."),
+    refreshedAt: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.PartitionedRecord)
+  .rule("FigureHasOneMeasure", rule.exactlyOne("indicatorId", "metricId"))
   .description(
-    "One input to a derived indicator with its weight and transform. The method citation sits on the derived indicator; its observations are computed and stored as estimated.",
+    "Prepared: the one value to show per indicator or metric, place, subject, period and cell; refreshed after every load.",
   )
   .role("entity")
   .facets({
     storage: dryv
-      .storage("components")
-      .unique("indicatorId", "componentIndicatorId")
-      .index("indicatorId")
-      .index("componentIndicatorId"),
+      .storage("figures")
+      .partitioning(byCountry("figures"))
+      .primaryKey("id", "countryId")
+      .index("countryId", "indicatorId", "featureId", "fromYear")
+      .index("countryId", "metricId", "featureId", "fromYear")
+      .references("FigureOfObservation", {
+        fields: ["observationId", "countryId"],
+        target: () => Observations,
+        targetFields: ["id", "countryId"],
+      }),
   });

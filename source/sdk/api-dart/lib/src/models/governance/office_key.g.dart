@@ -6,6 +6,6 @@ part of 'office_key.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-GovernanceOfficeKey _$GovernanceOfficeKeyFromJson(Map<String, dynamic> json) => GovernanceOfficeKey(officeId: json['officeId'] as String);
+GovernanceOfficeKey _$GovernanceOfficeKeyFromJson(Map<String, dynamic> json) => GovernanceOfficeKey(code: json['code'] as String);
 
-Map<String, dynamic> _$GovernanceOfficeKeyToJson(GovernanceOfficeKey instance) => <String, dynamic>{'officeId': instance.officeId};
+Map<String, dynamic> _$GovernanceOfficeKeyToJson(GovernanceOfficeKey instance) => <String, dynamic>{'code': instance.code};

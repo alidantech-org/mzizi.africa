@@ -2,28 +2,9 @@ import "reflect-metadata";
 
 import { Global, type INestApplication, Module } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { getDataSourceToken } from "@nestjs/typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { AppModule } from "#/app.module.ts";
-import { DatabaseModule } from "#/database/database.module.ts";
-
-// Stands in for the project's DatabaseModule: repositories resolve without a database.
-@Global()
-@Module({
-  providers: [
-    {
-      provide: getDataSourceToken(),
-      useValue: {
-        options: { type: "postgres" },
-        entityMetadatas: [],
-        getRepository: () => ({}),
-      },
-    },
-  ],
-  exports: [getDataSourceToken()],
-})
-class InMemoryDatabaseModule {}
 
 /**
  * Managed by Dryv: the assembled application (AppModule -> group modules -> feature modules ->
@@ -33,173 +14,89 @@ class InMemoryDatabaseModule {}
 const routes: Array<[method: string, path: string]> = [
   ["GET", "/v1/account"],
   ["GET", "/v1/admin/accounts"],
-  ["GET", "/v1/calendar"],
-  ["GET", "/v1/context"],
-  ["GET", "/v1/copy"],
-  ["GET", "/v1/facilities/{code}".replace("{code}", encodeURIComponent(String("value")))],
-  ["GET", "/v1/facilities"],
-  ["GET", "/v1/facts"],
-  ["GET", "/v1/explorer/copy"],
-  ["GET", "/v1/explorer/boundaries"],
-  ["GET", "/v1/explorer/context"],
-  ["GET", "/v1/explorer/location"],
-  ["GET", "/v1/explorer/navigation"],
-  ["GET", "/v1/explorer/overview"],
-  ["GET", "/v1/explorer/setup"],
-  ["GET", "/v1/explorer/children"],
-  ["POST", "/v1/explorer/addresses"],
-  ["POST", "/v1/explorer/resolve"],
-  ["GET", "/v1/explorer/search"],
-  ["GET", "/v1/geography/feature-kinds"],
-  ["GET", "/v1/geography/features"],
-  ["GET", "/v1/geography/geometries"],
+  ["GET", "/v1/civic/projects/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/civic/tenders/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/civic/facilities"],
+  ["GET", "/v1/civic/projects"],
+  ["GET", "/v1/civic/tenders"],
+  ["GET", "/v1/community/posts"],
+  ["POST", "/v1/community/views"],
+  ["GET", "/v1/election/elections/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/election/elections"],
+  ["GET", "/v1/election/tallies"],
+  ["GET", "/v1/event/occurrences"],
+  ["GET", "/v1/finance/appropriations"],
+  ["GET", "/v1/finance/budgets"],
+  ["GET", "/v1/finance/findings"],
+  ["GET", "/v1/frontend/copy"],
+  ["GET", "/v1/frontend/home"],
+  ["GET", "/v1/frontend/institution"],
+  ["GET", "/v1/frontend/place"],
+  ["GET", "/v1/frontend/ranking"],
+  ["GET", "/v1/frontend/search"],
+  ["GET", "/v1/geography/at"],
+  ["GET", "/v1/geography/outlines"],
+  ["GET", "/v1/geography/places/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/geography/child-outlines"],
+  ["GET", "/v1/geography/children"],
+  ["GET", "/v1/geography/places"],
   [
     "GET",
-    "/v1/geography/features/{featureId}".replace(
-      "{featureId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
+    "/v1/governance/institutions/{code}".replace("{code}", encodeURIComponent(String("value"))),
   ],
-  [
-    "GET",
-    "/v1/geography/features/{featureId}/geometries".replace(
-      "{featureId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
+  ["GET", "/v1/governance/offices/{code}".replace("{code}", encodeURIComponent(String("value")))],
   ["GET", "/v1/governance/institutions"],
+  ["GET", "/v1/governance/members"],
+  ["GET", "/v1/governance/offices"],
+  ["GET", "/v1/governance/powers"],
+  ["GET", "/v1/history/eras"],
+  ["GET", "/v1/history/occurrences"],
+  ["GET", "/v1/identity/things/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/identity/addresses"],
+  ["GET", "/v1/identity/search"],
+  ["GET", "/v1/legal/instruments/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/legal/effects"],
+  ["GET", "/v1/legal/instruments"],
+  ["GET", "/v1/legal/provisions"],
+  ["GET", "/v1/legislature/bills/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/legislature/bills"],
+  ["GET", "/v1/legislature/votes"],
+  ["GET", "/v1/media/articles/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/media/articles"],
+  ["GET", "/v1/media/assets"],
+  ["GET", "/v1/politics/parties/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/politics/commitments"],
+  ["GET", "/v1/politics/parties"],
+  ["GET", "/v1/product/site"],
+  ["GET", "/v1/product/messages"],
+  ["GET", "/v1/product/releases"],
+  ["GET", "/v1/reference/countries/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/reference/countries"],
+  ["GET", "/v1/reference/currencies"],
+  ["GET", "/v1/reference/hierarchies"],
+  ["GET", "/v1/reference/languages"],
+  ["GET", "/v1/reference/units"],
+  ["GET", "/v1/source/evidence"],
+  ["GET", "/v1/source/sources"],
   [
     "GET",
-    "/v1/governance/institutions/{institutionId}".replace(
-      "{institutionId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
+    "/v1/statistics/indicators/{code}".replace("{code}", encodeURIComponent(String("value"))),
   ],
-  [
-    "GET",
-    "/v1/governance/offices/{officeId}".replace(
-      "{officeId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
-  ["GET", "/v1/browse"],
-  ["GET", "/v1/compare/options"],
-  ["GET", "/v1/compare/options/at"],
-  ["GET", "/v1/compare"],
-  ["GET", "/v1/compare/at"],
-  ["GET", "/v1/content"],
-  [
-    "GET",
-    "/v1/elections/{electionId}".replace(
-      "{electionId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
-  ["GET", "/v1/election-at"],
-  ["GET", "/v1/governance/tabs"],
-  ["GET", "/v1/governance/tree"],
-  [
-    "GET",
-    "/v1/statistics/indicators/{indicatorCode}/map".replace(
-      "{indicatorCode}",
-      encodeURIComponent(String("value")),
-    ),
-  ],
-  [
-    "GET",
-    "/v1/statistics/indicators/{indicatorCode}/series".replace(
-      "{indicatorCode}",
-      encodeURIComponent(String("value")),
-    ),
-  ],
-  ["GET", "/v1/institutions/{code}".replace("{code}", encodeURIComponent(String("value")))],
-  ["GET", "/v1/leaders/{code}".replace("{code}", encodeURIComponent(String("value")))],
-  ["GET", "/v1/leaders/tree"],
-  [
-    "GET",
-    "/v1/leaderboards/{metricCode}".replace("{metricCode}", encodeURIComponent(String("value"))),
-  ],
-  ["GET", "/v1/legal-basis"],
-  ["GET", "/v1/motions/{code}".replace("{code}", encodeURIComponent(String("value")))],
-  ["GET", "/v1/projects/near"],
-  ["GET", "/v1/parties/{code}".replace("{code}", encodeURIComponent(String("value")))],
-  [
-    "GET",
-    "/v1/civic/places/{featureId}".replace(
-      "{featureId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
-  ["GET", "/v1/civic/place"],
-  [
-    "GET",
-    "/v1/elections/places/{featureId}".replace(
-      "{featureId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
-  [
-    "GET",
-    "/v1/statistics/places/{featureId}".replace(
-      "{featureId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
-  ["GET", "/v1/statistics/place"],
-  ["GET", "/v1/projects/{code}".replace("{code}", encodeURIComponent(String("value")))],
-  ["GET", "/v1/tender/{code}".replace("{code}", encodeURIComponent(String("value")))],
-  ["GET", "/v1/search"],
-  ["GET", "/v1/content/list"],
-  ["GET", "/v1/elections"],
-  ["GET", "/v1/institutions"],
-  ["GET", "/v1/law"],
-  ["GET", "/v1/leaderboards"],
-  ["GET", "/v1/motions"],
-  ["GET", "/v1/parties"],
-  ["GET", "/v1/tenders"],
-  ["GET", "/v1/tenders/at"],
-  ["GET", "/v1/engagement"],
-  ["POST", "/v1/likes"],
-  ["POST", "/v1/views"],
-  ["POST", "/v1/likes/remove"],
-  ["GET", "/v1/coverage"],
-  ["GET", "/v1/budgets"],
-  ["GET", "/v1/coalitions"],
-  ["GET", "/v1/funds"],
-  ["GET", "/v1/manifestos"],
-  ["GET", "/v1/sources"],
-  [
-    "GET",
-    "/v1/evidence/{citationId}".replace(
-      "{citationId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
-  [
-    "GET",
-    "/v1/locality/{featureId}".replace(
-      "{featureId}",
-      encodeURIComponent(String("7f1c1f52-2f58-4a4e-9b43-0c1a3c1b0a11")),
-    ),
-  ],
-  ["GET", "/v1/languages"],
-  ["GET", "/v1/locality/at"],
-  ["GET", "/v1/locality/search"],
-  ["GET", "/v1/reference/values"],
-  ["GET", "/v1/reference/schemes"],
-  ["GET", "/v1/reference/lookup"],
-  ["GET", "/v1/structure/context"],
-  ["GET", "/v1/structure"],
+  ["GET", "/v1/statistics/indicator-figures"],
+  ["GET", "/v1/statistics/indicators"],
+  ["GET", "/v1/statistics/observations"],
+  ["GET", "/v1/statistics/figures"],
+  ["GET", "/v1/vocabulary/schemes/{code}".replace("{code}", encodeURIComponent(String("value")))],
+  ["GET", "/v1/vocabulary/terms"],
 ];
 
 let app: INestApplication;
 let base: string;
 
 beforeAll(async () => {
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
-    .overrideModule(DatabaseModule)
-    .useModule(InMemoryDatabaseModule)
-    .compile();
+  const moduleRef = await Test.createTestingModule({
+    imports: [AppModule],
+  }).compile();
   app = moduleRef.createNestApplication();
   await app.listen(0);
   base = (await app.getUrl()).replace("[::1]", "localhost");

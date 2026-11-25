@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ConsentsRow(BaseModel):
-    """One consent given or withdrawn by an actor for one purpose, with the wording version shown."""
+    """A consent an actor gave or withdrew, with the exact text version."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -22,7 +22,8 @@ class ConsentsRow(BaseModel):
     deleted_at: datetime | None = None
     given_at: datetime
     id: UUID
-    purpose_id: UUID
+    key_id: UUID
+    purpose_term: UUID
     text_version: Annotated[str, Field(min_length=1, max_length=100)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

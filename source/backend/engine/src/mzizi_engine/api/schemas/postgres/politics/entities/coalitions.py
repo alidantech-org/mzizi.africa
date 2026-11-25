@@ -8,17 +8,16 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
 class CoalitionsRow(BaseModel):
-    """One political coalition identity over an optional effective period."""
+    """A coalition of parties (Azimio, Kenya Kwanza)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "politics.coalitions"
 
-    coalition_kind_id: UUID
     code: Annotated[
         str,
         Field(
@@ -27,15 +26,15 @@ class CoalitionsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    dissolved_on: date | None = None
-    formed_on: date | None = None
-    from_to_precision: DatePrecision | None = None
+    ends_on: date | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    name: Annotated[str, Field(min_length=1, max_length=300)]
-    source_citation_id: UUID | None = None
+    identity_kind: IdentityKind
+    kind_term: UUID
+    starts_on: date | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

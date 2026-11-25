@@ -1,794 +1,507 @@
 /**
  * Schema: governance | Database: mzizi
- * Approved implementation scope: institutions, offices, holders, mandates, relationships, authority_scopes.
- * Country membership is expressed through Reference and geographic scope through Geography units.
- * SQL generation remains gated on pack support for CHECK semantics and composite/partial uniqueness.
+ * Design: .docs/design/data/FOUNDATION_REDESIGN.md sections 10, 30.4 and 32 (approved 2026-11-25).
+ * Contract authors: the state as law creates it: institutions, positions (kinds of seat), offices (concrete seats),
+ * holders and the steps that put them there, structural relationships, jurisdictions, functions and powers, and the
+ * generation patterns moved from reference. Proceedings are in `legislature`; promises in `politics`.
  */
 import * as dryv from "@dryvcode/author";
-import { applyOfficeIdentity } from "./governance-office-integrity.ts";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { Features, Levels } from "./geography.ts";
-import { Entities, Individuals } from "./official.ts";
-import { Country, Language, Topic, Unit, Value } from "./reference.ts";
-import { Occurrences } from "./event.ts";
-import { Appropriations, BudgetVersions, FiscalPeriods } from "./finance.ts";
-import { Contracts, Projects } from "./civic.ts";
-import { Instruments, Provisions } from "./legal.ts";
-import { Artifacts, Citations } from "./source.ts";
-
-const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
+import { belongsTo, identity, identityKindField, identityReference, term } from "./_links.ts";
+import { Contests } from "./election.ts";
+import { Versions } from "./filesystem.ts";
+import { Features } from "./geography.ts";
+import { Provisions } from "./legal.ts";
+import { Motions } from "./legislature.ts";
+import { Contacts, Individuals } from "./official.ts";
+import { Countries, Levels } from "./reference.ts";
+import { Domains } from "./source.ts";
 
 export const governance = dryv
   .group({ name: "governance" })
-  .description("Public institutions, offices, mandates, office holders and dated authority scopes.")
+  .description(
+    "The state as law creates it: institutions, positions, offices, holders, appointments, terms, relationships, jurisdictions, functions, powers, procedures, obligations, reports and generation patterns.",
+  )
   .facets({ storage: { namespace: "governance", store: "main" } });
+
+const governanceProperties = governance.properties({
+  AppointmentStep: dryv.property.enum({
+    Nomination: "nomination",
+    Recommendation: "recommendation",
+    Vetting: "vetting",
+    Approval: "approval",
+    Appointment: "appointment",
+    SwearingIn: "swearing-in",
+  }),
+  Frequency: dryv.property.enum({
+    Monthly: "monthly",
+    Quarterly: "quarterly",
+    Annual: "annual",
+    PerTerm: "per-term",
+    OnEvent: "on-event",
+  }),
+  TemplateProduct: dryv.property.enum({
+    Institution: "institution",
+    Position: "position",
+    Office: "office",
+    Domain: "domain",
+    Contact: "contact",
+    EventRule: "event-rule",
+  }),
+  Seat: dryv.property.string().length({ min: 1, max: 100 }),
+});
+
+const dates = {
+  startsOn: dryv.field(sharedProperties.CalendarDate).maybe().description("Exact start date, when known."),
+  endsOn: dryv.field(sharedProperties.CalendarDate).maybe().description("Exact end date, when known."),
+};
+
 /*---------------- governance.institutions ----------------*/
 export const Institutions = governance
   .schema("Institutions", {
-    entityId: belongsTo(() => Entities),
-    /** The country this institution belongs to (a body of one state, never inferred from its name). */
-    countryId: belongsTo(() => Country),
-    institutionKindId: belongsTo(() => Value),
-    /** Scheme gov.institution.class: constitutional commission, service commission, regulator, security service, court, house of legislature, and so on. */
-    classId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.gov.institution.class"),
-    /** Scheme gov.arm: the arm of government or kind of body this belongs to (executive, legislature, judiciary, ...). */
-    armId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.gov.arm"),
-    /** Scheme gov.establishment.basis: what created it (the Constitution, an Act, an executive order, a county law). */
-    establishmentBasisId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.gov.establishment.basis"),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-    establishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    dissolvedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    identityKind: identityKindField("entity"),
+    kindTerm: term("gov.institution.kind", "government, assembly, ministry, committee, court, commission."),
+    classTerm: term("gov.institution.class", "ministry, department, commission, independent office, court.").maybe(),
+    armTerm: term("gov.arm", "executive, legislature, judiciary or independent.").maybe(),
+    basisTerm: term("gov.institution.basis", "constitutional, statutory, administrative.").maybe(),
+    countryId: belongsTo(() => Countries),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("InstitutionsDatesAreOrdered", rule.ordered("establishedOn", "dissolvedOn", { allowEqual: true }))
-  .description("One government institution specialization of an Official entity.")
+  .extends(baseSchemas.IdentityEntity)
+  .rule("InstitutionKind", (v) => v.identityKind.eq("entity"))
+  .rule("InstitutionPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
+  .description(
+    "A public institution; it shares its organisation's identity (`official.entities`). Committees are institutions linked to their house.",
+  )
   .role("entity")
   .facets({
     storage: dryv
       .storage("institutions")
-      .index("entityId")
-      .index("countryId")
-      .index("classId")
-      .index("armId")
-      .index("sourceCitationId"),
+      .index("countryId", "kindTerm")
+      .index("armTerm")
+      .references("InstitutionIsIdentity", identityReference),
+  });
+
+/*---------------- governance.positions ----------------*/
+export const Positions = governance
+  .schema("Positions", {
+    identityKind: identityKindField("position"),
+    institutionId: belongsTo(() => Institutions)
+      .maybe()
+      .description("The institution the seat belongs to."),
+    roleTerm: term("gov.position.role", "The kind of seat (president, governor, member of county assembly, chair)."),
+    methodTerm: term("gov.selection.method", "How holders are chosen: elected, nominated, appointed.").maybe(),
+    levelId: belongsTo(() => Levels)
+      .maybe()
+      .description("The level of government the position exists at."),
+    basisTerm: term("gov.seat.basis", "The grounds of the seat (ward seat, special interest seat).").maybe(),
+    seatLevelId: belongsTo(() => Levels)
+      .maybe()
+      .description("The level whose places each have one seat (ward for MCAs)."),
+    seatCount: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    termYears: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    termLimit: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    exposureTerm: term("gov.position.exposure", "How public the role is, for privacy rules.").maybe(),
+    provisionId: belongsTo(() => Provisions)
+      .maybe()
+      .description("The provision that creates the position."),
+    position: dryv.field(sharedProperties.NonNegativeInteger).maybe().description("Order in leadership trees."),
+  })
+  .extends(baseSchemas.IdentityEntity)
+  .rule("PositionKind", (v) => v.identityKind.eq("position"))
+  .description("A kind of seat that law creates (Governor, Member of County Assembly). Its titles are `identity.names`.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("positions")
+      .index("institutionId")
+      .index("roleTerm")
+      .index("levelId")
+      .references("PositionIsIdentity", identityReference),
   });
 
 /*---------------- governance.offices ----------------*/
 export const Offices = governance
   .schema("Offices", {
-    /** The kind of position this seat belongs to; role, selection method and seat rule live there. */
+    identityKind: identityKindField("office"),
     positionId: belongsTo(() => Positions),
     institutionId: belongsTo(() => Institutions),
-    unitFeatureId: belongsTo(() => Features).maybe(),
-    /** The number of the seat among the position's seats that belong to no unit (nominated or special seats). */
-    seatOrdinal: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-    createdOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    abolishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    featureId: belongsTo(() => Features)
+      .maybe()
+      .description("The place the seat represents (a ward)."),
+    seat: dryv
+      .field(governanceProperties.Seat)
+      .maybe()
+      .description("The seat's number or label where one place has several."),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("OfficesDatesAreOrdered", rule.ordered("createdOn", "abolishedOn", { allowEqual: true }))
-  .description(
-    "One established public office, independent of any current holder and optionally scoped to a geographic unit.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("offices")
-      .index("positionId")
-      .index("institutionId")
-      .index("unitFeatureId")
-      .index("sourceCitationId"),
-  });
+  .extends(baseSchemas.IdentityEntity)
+  .rule("OfficeKind", (v) => v.identityKind.eq("office"))
+  .rule("OfficePeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
+  .description("One concrete seat (the Governor of Nairobi, the MCA for Kilimani ward).")
+  .role("entity");
+
+const liveOffice = (withFeature: boolean, withSeat: boolean) =>
+  governance.expression(
+    `LiveOffice${withFeature ? "Placed" : "Unplaced"}${withSeat ? "Numbered" : "Single"}`,
+    Offices.check((v) =>
+      v.deletedAt
+        .isNull()
+        .and(
+          v.toYear.isNull(),
+          withFeature ? v.featureId.isNotNull() : v.featureId.isNull(),
+          withSeat ? v.seat.isNotNull() : v.seat.isNull(),
+        ),
+    ),
+  );
+Offices.facets({
+  storage: dryv
+    .storage("offices")
+    .indexes(
+      {
+        description: "One current seat per position and place.",
+        fields: ["positionId", "featureId"],
+        unique: true,
+        where: liveOffice(true, false),
+      },
+      {
+        description: "One current numbered seat per position, place and number.",
+        fields: ["positionId", "featureId", "seat"],
+        unique: true,
+        where: liveOffice(true, true),
+      },
+      {
+        description: "One current numbered seat per position and number.",
+        fields: ["positionId", "seat"],
+        unique: true,
+        where: liveOffice(false, true),
+      },
+      {
+        description: "One current single seat per position.",
+        fields: ["positionId"],
+        unique: true,
+        where: liveOffice(false, false),
+      },
+    )
+    .index("institutionId")
+    .index("featureId")
+    .references("OfficeIsIdentity", identityReference),
+});
 
 /*---------------- governance.holders ----------------*/
 export const Holders = governance
   .schema("Holders", {
     officeId: belongsTo(() => Offices),
     individualId: belongsTo(() => Individuals),
-    /** Scheme gov.selection.method: how this person actually came to hold the seat. */
-    appointmentKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.selection.method"),
-    appointedByEntityId: belongsTo(() => Entities).maybe(),
-    /** The body that nominated this person, when the procedure has a nomination step. */
-    nominatedByEntityId: belongsTo(() => Entities).maybe(),
-    /** The motion (and so the vote) that approved the appointment. */
-    appointmentMotionId: belongsTo(() => Motions).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-    tookOfficeOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    leftOfficeOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    methodTerm: term("gov.selection.method", "How the holder got the seat: elected, nominated, appointed, acting."),
+    contestId: belongsTo(() => Contests)
+      .maybe()
+      .description("The election contest that put the holder in office."),
+    reasonTerm: term("gov.holder.reason", "Why the tenure ended (term end, resignation, death, removal).").maybe(),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("HoldersDatesAreOrdered", rule.ordered("tookOfficeOn", "leftOfficeOn", { allowEqual: true }))
-  .description("One person's continuous tenure in one office, with appointment kind and effective dates.")
+  .extends(baseSchemas.CodedEntity)
+  .rule("HolderPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
+  .rule("HolderDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
+  .description("A person in an office for a period. How they got there is `governance.appointments`.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("holders")
-      .index("officeId", "fromYear", "toYear")
-      .index("individualId")
-      .index("nominatedByEntityId")
-      .index("appointmentMotionId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("holders").index("officeId", "fromYear").index("individualId").index("contestId") });
 
-/*---------------- governance.mandates ----------------*/
-export const Mandates = governance
-  .schema("Mandates", {
+/*---------------- governance.appointments ----------------*/
+export const Appointments = governance
+  .schema("Appointments", {
+    holderId: belongsTo(() => Holders, { onDelete: "cascade" }),
+    step: dryv
+      .field(governanceProperties.AppointmentStep)
+      .description("nomination, recommendation, vetting, approval, appointment or swearing-in."),
+    actorId: identity("Who took the step: a person, Parliament, a board or a commission."),
+    actorHolderId: belongsTo(() => Holders)
+      .maybe()
+      .description("The person acting in office (President X while in office)."),
+    motionId: belongsTo(() => Motions)
+      .maybe()
+      .description("The vote, when the step was a vote."),
+    onDate: dryv.field(sharedProperties.CalendarDate).maybe(),
+    fromYear: periodFields.fromYear,
+  })
+  .extends(baseSchemas.Entity)
+  .description(
+    "One step that put a holder in office; appointments by Parliament or a board are recorded like those by a person.",
+  )
+  .role("entity")
+  .facets({ storage: dryv.storage("appointments").index("holderId", "step").index("actorId").index("actorHolderId") });
+
+/*---------------- governance.terms ----------------*/
+export const GovernanceTerms = governance
+  .schema("OfficeTerms", {
     institutionId: belongsTo(() => Institutions).maybe(),
     officeId: belongsTo(() => Offices).maybe(),
-    mandateKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.mandate.kind"),
-    description: dryv.field(sharedProperties.Description),
-    /** The term a mandate belongs to, when it runs with one. */
-    termId: belongsTo(() => Terms).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-    startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    kindTerm: term("gov.term.kind", "parliamentary term, mandate, session period."),
+    featureId: belongsTo(() => Features).maybe(),
+    ordinal: dryv.field(sharedProperties.PositiveInteger).maybe().description("The term's number (13th Parliament)."),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.PeriodEntity)
-  .rule("MandatesDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
-  .description("One responsibility or authority assignment for an institution or office.")
+  .extends(baseSchemas.CodedEntity)
+  .rule("TermHasOneOwner", rule.exactlyOne("institutionId", "officeId"))
+  .rule("TermPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
+  .description("A numbered term or mandate of an institution or office (absorbs the former mandates).")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("mandates")
-      .unique("institutionId", "officeId", "mandateKindId", "description")
-      .index("institutionId")
-      .index("officeId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("terms").index("institutionId", "ordinal").index("officeId") });
 
 /*---------------- governance.relationships ----------------*/
 export const Relationships = governance
   .schema("Relationships", {
-    subjectInstitutionId: belongsTo(() => Institutions),
-    objectInstitutionId: belongsTo(() => Institutions),
-    /** Scheme gov.relationship.kind: part of, answers to, reports to. Rights over appointments live in governance.powers. */
-    relationshipKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.relationship.kind"),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    fromId: identity("The institution, position or office the link starts from."),
+    toId: identity("The one it points at."),
+    kindTerm: term("gov.relationship.kind", "oversees, accountable to, part of."),
+    provisionId: belongsTo(() => Provisions).maybe(),
+    ...periodFields,
   })
   .extends(baseSchemas.Entity)
-  .description("One dated, typed relationship between two government institutions.")
+  .rule("GovernanceRelationshipIsNotSelf", rule.differs("fromId", "toId"))
+  .description("A structural link from law: a ministry part of the executive, a committee part of its house.")
   .role("entity")
-  .rule("RelationshipIsNotSelfReferential", rule.differs("subjectInstitutionId", "objectInstitutionId"))
-  .facets({
-    storage: dryv
-      .storage("relationships")
-      .unique("subjectInstitutionId", "objectInstitutionId", "relationshipKindId")
-      .index("subjectInstitutionId", "relationshipKindId")
-      .index("objectInstitutionId", "relationshipKindId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("relationships").index("fromId", "kindTerm").index("toId", "kindTerm") });
 
-/*---------------- governance.authority_scopes ----------------*/
-export const AuthorityScopes = governance
-  .schema("AuthorityScopes", {
+/*---------------- governance.jurisdictions ----------------*/
+export const Jurisdictions = governance
+  .schema("Jurisdictions", {
     institutionId: belongsTo(() => Institutions).maybe(),
     officeId: belongsTo(() => Offices).maybe(),
-    countryId: belongsTo(() => Country).maybe(),
-    unitFeatureId: belongsTo(() => Features),
-    authorityKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.authority.kind"),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .description("One institution or office authority over a required Geography unit for an effective period.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("authority_scopes")
-      .unique("institutionId", "officeId", "authorityKindId", "unitFeatureId")
-      .index("institutionId")
-      .index("officeId")
-      .index("unitFeatureId")
-      .index("countryId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.obligations ----------------*/
-export const Obligations = governance
-  .schema("Obligations", {
-    countryId: belongsTo(() => Country),
-    /** Scheme gov.obligation.kind: publish a procurement plan, publish award notices, publish a budget, report quarterly spending, respond to an audit query, publish results, deliver a contract report. */
-    obligationKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.obligation.kind"),
-    /** The one body that owes it, when it is one body; otherwise the kind of body below. */
-    obligorInstitutionId: belongsTo(() => Institutions).maybe(),
-    /** The kind of body that owes it (every county government, every procuring entity); scheme gov.obligor.kind. */
-    obligorKindId: belongsTo(() => Value)
+    countryId: belongsTo(() => Countries),
+    featureId: belongsTo(() => Features)
       .maybe()
-      .tags("scheme:ref.sch.gov.obligor.kind"),
-    /** Whom it is owed to (a regulator, the public, a legislature). */
-    recipientEntityId: belongsTo(() => Entities).maybe(),
-    /** Scheme gov.obligation.frequency: once, per event, monthly, quarterly, annual. */
-    frequencyId: belongsTo(() => Value).tags("scheme:ref.sch.gov.obligation.frequency"),
-    /** The legal provision that creates the duty. */
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
-    description: dryv.field(sharedProperties.Description),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("OneObligorForm", rule.atLeastOne("obligorInstitutionId", "obligorKindId"))
-  .description(
-    "A duty to report or publish, with who owes it, to whom, how often and the law that creates it. Each filing found is a report.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("obligations")
-      .index("countryId")
-      .index("obligationKindId")
-      .index("obligorInstitutionId")
-      .index("obligorKindId")
-      .index("basisProvisionId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.reports ----------------*/
-export const Reports = governance
-  .schema("Reports", {
-    obligationId: belongsTo(() => Obligations),
-    /** The body that was expected to report or that did. */
-    reporterEntityId: belongsTo(() => Entities),
-    periodFrom: dryv.field(sharedProperties.CalendarDate).maybe(),
-    periodUntil: dryv.field(sharedProperties.CalendarDate).maybe(),
-    dueOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    filedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    /** Scheme gov.report.status: due, on time, late, missing, found elsewhere, not applicable. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.gov.report.status"),
-    /** The filed document, when found. */
-    artifactId: belongsTo(() => Artifacts).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+      .description("The area authority covers; empty for the whole country."),
+    kindTerm: term("gov.jurisdiction.kind", "territorial, subject matter, appellate."),
+    ...periodFields,
   })
   .extends(baseSchemas.CodedEntity)
-  .rule("ReportPeriodIsOrdered", rule.ordered("periodFrom", "periodUntil", { allowEqual: true }))
-  .description(
-    "One expected or found filing under an obligation, for one reporter and period, with its status and the document when found. Absence is a status, not a missing row.",
-  )
+  .rule("JurisdictionHasOneHolder", rule.exactlyOne("institutionId", "officeId"))
+  .description("Where an institution or office has authority.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("reports")
-      .index("obligationId", "periodFrom")
-      .index("reporterEntityId")
-      .index("statusId")
-      .index("artifactId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.terms ----------------*/
-export const Terms = governance
-  .schema("Terms", {
-    countryId: belongsTo(() => Country),
-    /** Scheme gov.term.kind: presidential, parliamentary, county assembly, ward, and other bodies' terms. */
-    termKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.term.kind"),
-    /** The body whose term it is (a house of parliament, a county assembly). */
-    institutionId: belongsTo(() => Institutions).maybe(),
-    /** The place the term is for, when it is not the whole country. */
-    unitFeatureId: belongsTo(() => Features).maybe(),
-    /** The number of the term (the 13th Parliament). */
-    ordinal: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    startsOn: dryv.field(sharedProperties.CalendarDate),
-    endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .rule("TermDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
-  .description(
-    "A fixed period for which offices are filled: a presidential term, a parliament, a county assembly. Elections, by-elections, mandates and sittings belong to a term.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("terms")
-      .index("countryId", "startsOn")
-      .index("termKindId")
-      .index("institutionId")
-      .index("unitFeatureId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.sittings ----------------*/
-export const Sittings = governance
-  .schema("Sittings", {
-    institutionId: belongsTo(() => Institutions),
-    /** The dated meeting: its actual date, time, venue and any reschedule or adjournment live in the occurrence. */
-    occurrenceId: belongsTo(() => Occurrences),
-    /** Scheme gov.sitting.kind: plenary, committee, cabinet meeting, bench, county assembly sitting, joint sitting. */
-    sittingKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.sitting.kind"),
-    termId: belongsTo(() => Terms).maybe(),
-    /** The session within the term ("Fifth Session"). */
-    sessionLabel: dryv.field(sharedProperties.NonEmptyString100).maybe(),
-    /** The running number of the sitting in the session. */
-    sequenceNumber: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    title: dryv.field(sharedProperties.Name),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "The legislative or deliberative record of one meeting of a public body. When and where it happened is the linked occurrence; this holds the house, term, session and what was considered.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("sittings")
-      .unique("occurrenceId")
-      .index("institutionId")
-      .index("sittingKindId")
-      .index("termId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.bills ----------------*/
-export const Bills = governance
-  .schema("Bills", {
-    countryId: belongsTo(() => Country),
-    /** The house or body where it was introduced. */
-    institutionId: belongsTo(() => Institutions),
-    /** Scheme gov.bill.kind: public, private member's, money, constitutional amendment, county, treaty. */
-    billKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.bill.kind"),
-    /** Scheme gov.bill.status: drafted, introduced, in committee, passed, assented, gazetted, in force, withdrawn, lapsed, rejected. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.gov.bill.status"),
-    title: dryv.field(sharedProperties.Name),
-    summary: dryv.field(sharedProperties.Description).maybe(),
-    sponsorHolderId: belongsTo(() => Holders).maybe(),
-    termId: belongsTo(() => Terms).maybe(),
-    /** The law this bill became, when enacted. */
-    instrumentId: belongsTo(() => Instruments).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "A proposed law from introduction to enactment. Stages record each reading, committee, assent and publication; the enacted law is a legal instrument.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("bills")
-      .index("countryId")
-      .index("institutionId")
-      .index("billKindId")
-      .index("statusId")
-      .index("sponsorHolderId")
-      .index("termId")
-      .index("instrumentId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.motions ----------------*/
-export const Motions = governance
-  .schema("Motions", {
-    sittingId: belongsTo(() => Sittings),
-    /** Scheme gov.motion.kind: motion, budget estimate, appointment, resolution, report, judgment, executive decision, amendment. */
-    motionKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.motion.kind"),
-    /** Scheme gov.motion.outcome: passed, rejected, withdrawn, deferred, pending. */
-    outcomeId: belongsTo(() => Value).tags("scheme:ref.sch.gov.motion.outcome"),
-    title: dryv.field(sharedProperties.Name),
-    summary: dryv.field(sharedProperties.Description).maybe(),
-    movedByHolderId: belongsTo(() => Holders).maybe(),
-    billId: belongsTo(() => Bills).maybe(),
-    instrumentId: belongsTo(() => Instruments).maybe(),
-    provisionId: belongsTo(() => Provisions).maybe(),
-    budgetVersionId: belongsTo(() => BudgetVersions).maybe(),
-    fiscalPeriodId: belongsTo(() => FiscalPeriods).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description("One matter put to a sitting, with its outcome, tied to the bill, law provision or budget it concerns.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("motions")
-      .index("sittingId")
-      .index("motionKindId")
-      .index("outcomeId")
-      .index("movedByHolderId")
-      .index("billId")
-      .index("instrumentId")
-      .index("provisionId")
-      .index("budgetVersionId")
-      .index("fiscalPeriodId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.stages ----------------*/
-export const Stages = governance
-  .schema("Stages", {
-    billId: belongsTo(() => Bills),
-    /** Scheme gov.stage.kind: first reading, committee, public participation, second reading, third reading, other house, mediation, assent, publication, commencement. */
-    stageKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.stage.kind"),
-    /** The sitting where the stage happened; absent for assent, publication and commencement. */
-    sittingId: belongsTo(() => Sittings).maybe(),
-    /** The motion that carried it, when there was a vote. */
-    motionId: belongsTo(() => Motions).maybe(),
-    /** The date for a stage outside a sitting (the date of assent, of the gazette notice). */
-    onDate: dryv.field(sharedProperties.CalendarDate).maybe(),
-    outcomeId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.gov.motion.outcome"),
-    sequenceNumber: dryv.field(sharedProperties.PositiveInteger),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .rule("StageHasSittingOrDate", rule.atLeastOne("sittingId", "onDate"))
-  .description(
-    "One step of a bill's passage in order: a reading, a committee, a vote in the other house, assent, publication.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("stages")
-      .unique("billId", "sequenceNumber")
-      .index("stageKindId")
-      .index("sittingId")
-      .index("motionId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.votes ----------------*/
-export const Votes = governance
-  .schema("Votes", {
-    motionId: belongsTo(() => Motions),
-    holderId: belongsTo(() => Holders),
-    /** Scheme gov.vote.position: yes, no, abstain, absent. */
-    positionId: belongsTo(() => Value).tags("scheme:ref.sch.gov.vote.position"),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .description("One office holder's recorded position on one motion (a division), including being absent.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("votes")
-      .unique("motionId", "holderId")
-      .index("holderId")
-      .index("positionId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.hansards ----------------*/
-export const Hansards = governance
-  .schema("Hansards", {
-    sittingId: belongsTo(() => Sittings),
-    /** The published official report: the stored document of the verbatim record. */
-    artifactId: belongsTo(() => Artifacts),
-    languageId: belongsTo(() => Language),
-    publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    /** Volume, part or page range as printed ("Vol. 12, pp. 1-48"). */
-    reference: dryv.field(sharedProperties.NonEmptyString255).maybe(),
-    /** True for a draft or unrevised report, false for the corrected official one. */
-    isProvisional: dryv.field(sharedProperties.Flag),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "The official verbatim record (Hansard) of one sitting as a published document. Speeches and divisions are extracted from it and cite its pages.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv.storage("hansards").index("sittingId").index("artifactId").index("languageId").index("sourceCitationId"),
-  });
-
-/*---------------- governance.speeches ----------------*/
-export const Speeches = governance
-  .schema("Speeches", {
-    sittingId: belongsTo(() => Sittings),
-    holderId: belongsTo(() => Holders),
-    motionId: belongsTo(() => Motions).maybe(),
-    billId: belongsTo(() => Bills).maybe(),
-    hansardId: belongsTo(() => Hansards).maybe(),
-    /** Scheme gov.speech.kind: speech, question, answer, statement, petition, point of order, ruling. */
-    speechKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.speech.kind"),
-    /** Order within the sitting. */
-    position: dryv.field(sharedProperties.PositiveInteger),
-    /** The page or column the speech starts on in the printed record. */
-    pageReference: dryv.field(sharedProperties.NonEmptyString100).maybe(),
-    summary: dryv.field(sharedProperties.Description).maybe(),
-    wordCount: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "One member's contribution at a sitting as recorded in the Hansard: a speech, question, answer, statement or ruling. The full text, when stored, is a content row about this speech.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("speeches")
-      .unique("sittingId", "position")
-      .index("holderId")
-      .index("motionId")
-      .index("billId")
-      .index("hansardId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.agenda ----------------*/
-export const Agenda = governance
-  .schema("Agenda", {
-    sittingId: belongsTo(() => Sittings),
-    position: dryv.field(sharedProperties.PositiveInteger),
-    /** Scheme gov.agenda.kind: prayers, communication from the chair, petitions, questions, statements, bills, motions, adjournment. */
-    agendaKindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.agenda.kind"),
-    title: dryv.field(sharedProperties.Name),
-    motionId: belongsTo(() => Motions).maybe(),
-    billId: belongsTo(() => Bills).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .description("One item of a sitting's order paper, in order, with the bill or motion it is about.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("agenda")
-      .unique("sittingId", "position")
-      .index("agendaKindId")
-      .index("motionId")
-      .index("billId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.positions ----------------*/
-export const Positions = governance
-  .schema("Positions", {
-    institutionId: belongsTo(() => Institutions),
-    /** Scheme gov.position.title: the name a person holds the position under (Governor, Member of Parliament); labels in every language are value labels. */
-    titleId: belongsTo(() => Value).tags("scheme:ref.sch.gov.position.title"),
-    /** Scheme gov.position.role: head, deputy, presiding officer, member, administrator, adjudicator. */
-    roleId: belongsTo(() => Value).tags("scheme:ref.sch.gov.position.role"),
-    /** Scheme gov.selection.method: elected (direct, indirect, party list), nominated, appointed, ex officio, customary. */
-    selectionMethodId: belongsTo(() => Value).tags("scheme:ref.sch.gov.selection.method"),
-    /** The country level the position serves (national, county, ward); the ladder is data. */
-    jurisdictionLevelId: belongsTo(() => Levels).maybe(),
-    /** Scheme gov.seat.basis: fixed number, one per unit, set by formula, variable. */
-    seatBasisId: belongsTo(() => Value).tags("scheme:ref.sch.gov.seat.basis"),
-    /** For a per-unit basis: the level that gets one seat each (one per county, one per ward). */
-    seatUnitLevelId: belongsTo(() => Levels).maybe(),
-    /** For a fixed basis: how many seats there are. */
-    seatCount: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    termYears: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    termLimit: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    /** Scheme gov.exposure.level: how the position counts as a person with power for conflict-of-interest signals. */
-    exposureId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.gov.exposure.level"),
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
-    displayOrder: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .description(
-    "A kind of office with its seat rule: how it is filled, how many seats exist and where, the term, the legal basis. Offices are the individual seats of a position; holders are never part of it.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("positions")
-      .index("institutionId")
-      .index("titleId")
-      .index("roleId")
-      .index("selectionMethodId")
-      .index("jurisdictionLevelId")
-      .index("seatUnitLevelId")
-      .index("exposureId")
-      .index("basisProvisionId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.procedures ----------------*/
-export const Procedures = governance
-  .schema("Procedures", {
-    countryId: belongsTo(() => Country),
-    /** Scheme gov.procedure.kind: appointment, removal, legislation, budget, election. */
-    kindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.procedure.kind"),
-    description: dryv.field(sharedProperties.Description),
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .description("A named sequence of rights, such as appointing a judge or removing a governor; its steps are powers.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("procedures")
-      .index("countryId")
-      .index("kindId")
-      .index("basisProvisionId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- governance.powers ----------------*/
-export const Powers = governance
-  .schema("Powers", {
-    /** Who holds the right: a position or a body (the electorate is a body). Exactly one. */
-    holderPositionId: belongsTo(() => Positions).maybe(),
-    holderInstitutionId: belongsTo(() => Institutions).maybe(),
-    /** Over whom or what: a position or a body. Exactly one. */
-    targetPositionId: belongsTo(() => Positions).maybe(),
-    targetInstitutionId: belongsTo(() => Institutions).maybe(),
-    /** Scheme gov.power.kind: initiate, nominate, vet, approve, appoint, confirm, remove, veto, assent, dissolve, fund, audit, oversee, summon, elect. */
-    kindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.power.kind"),
-    procedureId: belongsTo(() => Procedures).maybe(),
-    /** The place of this right within its procedure. */
-    stepOrder: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    /** Scheme gov.power.threshold: simple majority, two thirds, unanimous, and so on. */
-    thresholdId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.gov.power.threshold"),
-    /** True when the holder must act on it; false when the holder may. */
-    isBinding: dryv.field(sharedProperties.Flag),
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("HasExactlyOneHolder", rule.exactlyOne("holderPositionId", "holderInstitutionId"))
-  .rule("HasExactlyOneTarget", rule.exactlyOne("targetPositionId", "targetInstitutionId"))
-  .description(
-    "One right held in law by a position or body over another, with its place in a procedure, the threshold and the provision that creates it. Influence is computed from these rows, never stored.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("powers")
-      .unique(
-        "holderPositionId",
-        "holderInstitutionId",
-        "targetPositionId",
-        "targetInstitutionId",
-        "kindId",
-        "procedureId",
-        "stepOrder",
-      )
-      .index("holderPositionId", "kindId")
-      .index("holderInstitutionId", "kindId")
-      .index("targetPositionId", "kindId")
-      .index("targetInstitutionId", "kindId")
-      .index("procedureId", "stepOrder")
-      .index("basisProvisionId")
-      .index("sourceCitationId"),
+    storage: dryv.storage("jurisdictions").index("countryId", "featureId").index("institutionId").index("officeId"),
   });
 
 /*---------------- governance.functions ----------------*/
 export const Functions = governance
   .schema("Functions", {
-    countryId: belongsTo(() => Country),
-    parentFunctionId: belongsTo(dryv.self).maybe(),
-    topicId: belongsTo(() => Topic).maybe(),
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    identityKind: identityKindField("function"),
+    parentId: belongsTo(dryv.self).maybe(),
+    topicTerm: term("topic", "The policy area (health, roads, agriculture)."),
+    provisionId: belongsTo(() => Provisions)
+      .maybe()
+      .description("The provision that assigns the function."),
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("FunctionDoesNotParentItself", (v) => v.id.ne(v.parentFunctionId))
-  .description(
-    "A public function that a constitution or law assigns to a level of government. Its name and plain wording are copy keyed by code.",
-  )
+  .extends(baseSchemas.IdentityEntity)
+  .rule("FunctionKind", (v) => v.identityKind.eq("function"))
+  .description("A government function (county health services) from law, possibly under a broader one.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("functions")
-      .acyclic("FunctionParentAcyclic", { field: "parentFunctionId" })
-      .index("countryId")
-      .index("parentFunctionId")
-      .index("topicId")
-      .index("basisProvisionId")
-      .index("sourceCitationId"),
+      .index("parentId")
+      .index("topicTerm")
+      .acyclic("FunctionParentsHaveNoCycle", { field: "parentId" })
+      .references("FunctionIsIdentity", identityReference),
   });
 
 /*---------------- governance.assignments ----------------*/
 export const Assignments = governance
   .schema("Assignments", {
-    functionId: belongsTo(() => Functions),
-    /** The one body responsible, when it is one body. */
+    functionId: belongsTo(() => Functions, { onDelete: "cascade" }),
     institutionId: belongsTo(() => Institutions).maybe(),
-    /** The class of body responsible (every county government); scheme gov.obligor.kind. */
-    obligorKindId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.gov.obligor.kind"),
-    /** Scheme gov.responsibility.share: exclusive, shared, concurrent. */
-    shareId: belongsTo(() => Value).tags("scheme:ref.sch.gov.responsibility.share"),
-    /** Where a person starts for this function: the office or the body. */
-    startPositionId: belongsTo(() => Positions).maybe(),
-    startInstitutionId: belongsTo(() => Institutions).maybe(),
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    positionId: belongsTo(() => Positions).maybe(),
+    shareTerm: term("gov.assignment.share", "exclusive or concurrent."),
+    initiatorId: identity("The position or institution that initiates or leads the function.").maybe(),
+    provisionId: belongsTo(() => Provisions).maybe(),
+    ...periodFields,
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("HasOneResponsibleForm", rule.atLeastOne("institutionId", "obligorKindId"))
-  .description("Who is responsible for a function, how it is shared, where a person starts, and the law that assigns it.")
+  .extends(baseSchemas.Entity)
+  .rule("AssignmentHasOneCarrier", rule.exactlyOne("institutionId", "positionId"))
+  .description("Which institution or position carries a function, and who leads it.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("assignments")
-      .index("functionId")
-      .index("institutionId")
-      .index("obligorKindId")
-      .index("startPositionId")
-      .index("startInstitutionId")
-      .index("basisProvisionId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("assignments").index("functionId").index("institutionId").index("positionId") });
 
-/*---------------- governance.promises ----------------*/
-export const Promises = governance
-  .schema("Promises", {
-    makerHolderId: belongsTo(() => Holders).maybe(),
-    makerIndividualId: belongsTo(() => Individuals).maybe(),
-    /** The office held when it was said. */
-    officeId: belongsTo(() => Offices).maybe(),
-    /** The words, short. The recording, long text, posts and news are filesystem media and contents about this promise. */
-    statement: dryv.field(sharedProperties.Description),
-    madeOn: dryv.field(sharedProperties.CalendarDate),
-    placeFeatureId: belongsTo(() => Features).maybe(),
-    topicId: belongsTo(() => Topic).maybe(),
-    quantity: dryv.field(sharedProperties.Number).maybe(),
-    unitId: belongsTo(() => Unit).maybe(),
-    dueOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    occurrenceId: belongsTo(() => Occurrences).maybe(),
-    sittingId: belongsTo(() => Sittings).maybe(),
-    speechId: belongsTo(() => Speeches).maybe(),
-    /** Scheme gov.promise.status: made, in progress, delivered, broken, withdrawn, no record found. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.gov.promise.status"),
-    /** The date the status was last checked against the sources. */
-    statusAsOf: dryv.field(sharedProperties.CalendarDate),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+/*---------------- governance.procedures ----------------*/
+export const Procedures = governance
+  .schema("Procedures", {
+    identityKind: identityKindField("procedure"),
+    kindTerm: term("gov.procedure.kind", "appointment, impeachment, budget approval."),
+    provisionId: belongsTo(() => Provisions).maybe(),
+  })
+  .extends(baseSchemas.IdentityEntity)
+  .rule("ProcedureKind", (v) => v.identityKind.eq("procedure"))
+  .description("A procedure law sets out; its explanation is a definition name or a media article.")
+  .role("entity")
+  .facets({ storage: dryv.storage("procedures").index("kindTerm").references("ProcedureIsIdentity", identityReference) });
+
+/*---------------- governance.powers ----------------*/
+export const Powers = governance
+  .schema("Powers", {
+    fromId: identity("The position or institution that holds the power."),
+    toId: identity("The position or institution it acts on."),
+    kindTerm: term("gov.power.kind", "appoint, nominate, dismiss, veto, approve."),
+    procedureId: belongsTo(() => Procedures).maybe(),
+    step: dryv.field(sharedProperties.PositiveInteger).maybe().description("Order within the procedure."),
+    thresholdTerm: term("gov.power.threshold", "simple majority, two-thirds.").maybe(),
+    isBinding: dryv.field(sharedProperties.Flag),
+    provisionId: belongsTo(() => Provisions).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("PowerIsNotSelf", rule.differs("fromId", "toId"))
+  .description("How power flows between positions and institutions, by procedure and threshold.")
+  .role("entity")
+  .facets({ storage: dryv.storage("powers").index("fromId", "kindTerm").index("toId", "kindTerm").index("procedureId") });
+
+/*---------------- governance.obligations ----------------*/
+export const Obligations = governance
+  .schema("Obligations", {
+    holderId: identity("The institution or position that must report."),
+    recipientId: identity("Who receives the report."),
+    kindTerm: term("gov.obligation.kind", "annual report, audit submission, budget estimates."),
+    frequency: dryv.field(governanceProperties.Frequency),
+    provisionId: belongsTo(() => Provisions).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .rule("HasExactlyOneMaker", rule.exactlyOne("makerHolderId", "makerIndividualId"))
+  .description("A duty to report that law sets; its explanation is a definition name.")
+  .role("entity")
+  .facets({ storage: dryv.storage("obligations").index("holderId").index("recipientId") });
+
+/*---------------- governance.reports ----------------*/
+export const Reports = governance
+  .schema("Reports", {
+    obligationId: belongsTo(() => Obligations),
+    reporterId: identity("Who filed the report."),
+    ...periodFields,
+    dueOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    filedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    statusTerm: term("gov.report.status", "due, filed, late, missing."),
+    artifactId: belongsTo(() => Versions)
+      .maybe()
+      .description("The filed document's stored version."),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .description("One report filed (or not) against an obligation.")
+  .role("entity")
+  .facets({ storage: dryv.storage("reports").index("obligationId", "fromYear").index("reporterId") });
+
+/*---------------- governance.patterns ----------------*/
+export const Patterns = governance
+  .schema("Patterns", {
+    title: dryv.field(sharedProperties.Name).description("Internal English label for people curating patterns."),
+    kindTerm: term("gov.pattern.kind", "institution set, position set, site set, calendar set.").maybe(),
+    countryId: belongsTo(() => Countries)
+      .maybe()
+      .description("The country the pattern belongs to; empty for any country."),
+  })
+  .extends(baseSchemas.CodedEntity)
   .description(
-    "Something a leader said they would do, with where and when, what was promised and its checked status. 'No record found' is a status backed by source coverage, never an empty cell.",
+    "A reviewed rule for generating expected records (institutions, positions, offices, sites) before real ones are found.",
+  )
+  .role("entity")
+  .facets({ storage: dryv.storage("patterns").index("kindTerm").index("countryId") });
+
+/*---------------- governance.templates ----------------*/
+export const Templates = governance
+  .schema("Templates", {
+    patternId: belongsTo(() => Patterns, { onDelete: "cascade" }),
+    produces: dryv.field(governanceProperties.TemplateProduct).description("What the template produces."),
+    fanOutLevelId: belongsTo(() => Levels)
+      .maybe()
+      .description("The level it fans out over (one product per place)."),
+    parentTemplateId: belongsTo(dryv.self).maybe(),
+    nameTemplate: dryv.field(sharedProperties.NonEmptyString500).description("Name with named tokens."),
+    codeTemplate: dryv.field(sharedProperties.NonEmptyString500).description("Code with named tokens."),
+    kindTerm: term("gov.institution.kind", "Institution kind of the product.").maybe(),
+    armTerm: term("gov.arm", "Arm of the product.").maybe(),
+    classTerm: term("gov.institution.class", "Institution class of the product.").maybe(),
+    roleTerm: term("gov.position.role", "Position role of the product.").maybe(),
+    methodTerm: term("gov.selection.method", "Selection method of the product.").maybe(),
+    basisTerm: term("gov.seat.basis", "Seat basis of the product.").maybe(),
+    seatCount: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    termYears: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    termLimit: dryv.field(sharedProperties.PositiveInteger).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule("PositionAttributesNeedPositionProduct", (v) =>
+    v.produces
+      .eq("position")
+      .or(
+        v.produces.eq("office"),
+        v.roleTerm
+          .isNull()
+          .and(
+            v.methodTerm.isNull(),
+            v.basisTerm.isNull(),
+            v.seatCount.isNull(),
+            v.termYears.isNull(),
+            v.termLimit.isNull(),
+          ),
+      ),
+  )
+  .rule("InstitutionAttributesNeedInstitutionProduct", (v) =>
+    v.produces.eq("institution").or(v.kindTerm.isNull().and(v.armTerm.isNull(), v.classTerm.isNull())),
+  )
+  .description(
+    "One thing a pattern produces, how many, how it is named and coded. Templates generate structure only, never people.",
   )
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("promises")
-      .index("makerHolderId")
-      .index("makerIndividualId")
-      .index("officeId")
-      .index("placeFeatureId")
-      .index("topicId")
-      .index("occurrenceId")
-      .index("sittingId")
-      .index("speechId")
-      .index("statusId")
-      .index("sourceCitationId"),
+    storage: dryv.storage("templates").unique("patternId", "code").index("fanOutLevelId").index("parentTemplateId"),
   });
 
-/*---------------- governance.fulfilments ----------------*/
-export const Fulfilments = governance
-  .schema("Fulfilments", {
-    promiseId: belongsTo(() => Promises),
-    projectId: belongsTo(() => Projects).maybe(),
-    contractId: belongsTo(() => Contracts).maybe(),
-    appropriationId: belongsTo(() => Appropriations).maybe(),
-    billId: belongsTo(() => Bills).maybe(),
-    instrumentId: belongsTo(() => Instruments).maybe(),
-    /** Scheme gov.fulfilment.kind: stated by an official source, matched on place and topic, proposed by a model. */
-    kindId: belongsTo(() => Value).tags("scheme:ref.sch.gov.fulfilment.kind"),
-    /** Scheme ref.evidence.status. A model-proposed link stays proposed until reviewed. */
-    evidenceStatusId: belongsTo(() => Value).tags("scheme:ref.sch.ref.evidence.status"),
-    recordedOn: dryv.field(sharedProperties.CalendarDate),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+/*---------------- governance.instances ----------------*/
+export const Instances = governance
+  .schema("Instances", {
+    templateId: belongsTo(() => Templates),
+    unitFeatureId: belongsTo(() => Features)
+      .maybe()
+      .description("The place the product was generated for."),
+    institutionId: belongsTo(() => Institutions).maybe(),
+    positionId: belongsTo(() => Positions).maybe(),
+    officeId: belongsTo(() => Offices).maybe(),
+    domainId: belongsTo(() => Domains).maybe(),
+    contactId: belongsTo(() => Contacts).maybe(),
+    statusTerm: term("gov.instance.status", "expected, sourced, verified, not found, disputed."),
+    generatedAt: dryv.field(sharedProperties.Instant),
   })
   .extends(baseSchemas.Entity)
-  .rule("LinksSomething", rule.atLeastOne("projectId", "contractId", "appropriationId", "billId", "instrumentId"))
-  .description("A recorded link from a promise to what delivered it, with how the link was made and whether it is reviewed.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("fulfilments")
-      .index("promiseId")
-      .index("projectId")
-      .index("contractId")
-      .index("appropriationId")
-      .index("billId")
-      .index("instrumentId")
-      .index("evidenceStatusId")
-      .index("sourceCitationId"),
-  });
+  .rule("InstanceHasOneProduct", rule.exactlyOne("institutionId", "positionId", "officeId", "domainId", "contactId"))
+  .description("Which template produced which record, for which place, and whether it is only expected or has been found.")
+  .role("entity");
 
-applyOfficeIdentity();
+Instances.facets({
+  storage: dryv
+    .storage("instances")
+    .indexes(
+      {
+        fields: ["templateId", "unitFeatureId"],
+        unique: true,
+        where: governance.expression(
+          "PlacedInstance",
+          Instances.check((v) => v.unitFeatureId.isNotNull()),
+        ),
+      },
+      {
+        description: "A template that does not fan out produces one instance.",
+        fields: ["templateId"],
+        unique: true,
+        where: governance.expression(
+          "UnplacedInstance",
+          Instances.check((v) => v.unitFeatureId.isNull()),
+        ),
+      },
+    )
+    .index("unitFeatureId")
+    .index("institutionId")
+    .index("positionId")
+    .index("officeId"),
+});

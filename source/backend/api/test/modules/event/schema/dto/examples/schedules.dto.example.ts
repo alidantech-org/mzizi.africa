@@ -3,12 +3,11 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { eventsExample } from "@test/modules/event/schema/dto/examples/events.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
 import { provisionsExample } from "@test/modules/legal/schema/dto/examples/provisions.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { countriesExample } from "@test/modules/reference/schema/dto/examples/countries.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Schedules, for generated tests. */
 export const schedulesExample: ContractExample = contractExample({
@@ -70,9 +69,15 @@ export const schedulesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "issuerEntityId",
+      name: "issuerId",
       optional: true,
       nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "kindTerm",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -82,19 +87,7 @@ export const schedulesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "scheduleKindId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "statusId",
+      name: "statusTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },

@@ -2,10 +2,11 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { periodEntityExample } from "@test/modules/shared/schema/dto/examples/period-entity.dto.example.ts";
+import { hierarchiesExample } from "@test/modules/reference/schema/dto/examples/hierarchies.dto.example.ts";
+import { levelsExample } from "@test/modules/reference/schema/dto/examples/levels.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Relationships, for generated tests. */
 export const relationshipsExample: ContractExample = contractExample({
@@ -30,16 +31,16 @@ export const relationshipsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "fromToPrecision",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
-    },
-    {
       name: "fromYear",
       optional: true,
       nullable: true,
       spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
+      name: "hierarchyId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "id",
@@ -48,13 +49,19 @@ export const relationshipsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "objectFeatureId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "relationshipKindId",
+      name: "levelId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "objectFeatureId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -67,12 +74,6 @@ export const relationshipsExample: ContractExample = contractExample({
     },
     {
       name: "subjectFeatureId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "systemId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -144,6 +145,21 @@ export const relationshipsExample: ContractExample = contractExample({
           left: { field: "subjectFeatureId" },
           operator: "not-equal",
           right: { field: "objectFeatureId" },
+        },
+      ],
+    },
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "levelId" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "hierarchyId" },
+          operator: "not-equal",
+          right: { literal: null },
         },
       ],
     },

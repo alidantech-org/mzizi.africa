@@ -11,6 +11,7 @@ import {
   ValidateIf,
 } from "class-validator";
 
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { AmountMinorUnits } from "#/modules/shared/schema/type/amount-minor-units.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -19,18 +20,21 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One supplier submission to one procurement process, with the reported amount and outcome where known. (entity)
+ * A bid on a tender, including cheaper bids that lost. (entity)
  */
 export class BidsDto {
   @IsOptional()
-  @ValidateIf((object) => object.amountMinorUnits !== null)
+  @ValidateIf((object) => object.amount !== null)
   @IsInt()
   @Min(0)
-  amountMinorUnits?: AmountMinorUnits | null;
+  @Satisfies<BidsDto>((object) => object.amount == null || object.currencyId != null, {
+    message: "Bid Amount Has Currency",
+  })
+  amount?: AmountMinorUnits | null;
 
   @IsString()
   @IsUUID()
-  bidderEntityId!: Id;
+  bidderId!: Id;
 
   @IsString()
   @MinLength(1)
@@ -62,17 +66,11 @@ export class BidsDto {
 
   @IsString()
   @IsUUID()
-  outcomeId!: Id;
+  outcomeTerm!: Id;
 
   @IsString()
   @IsUUID()
   procurementId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.submittedOn !== null)

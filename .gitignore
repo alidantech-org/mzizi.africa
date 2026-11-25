@@ -21,3 +21,6 @@ knbs-ca-bundle.pem
 target/
 .dart_tool/
 *problems-report.html
+# Seed data and seed tooling live only in .dev/seed/ (never committed; DEC-SEED-OUTSIDE-GIT-20261125).
+/seed/
+**/seed-dev/

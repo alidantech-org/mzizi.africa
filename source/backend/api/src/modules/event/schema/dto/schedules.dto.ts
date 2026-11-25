@@ -17,7 +17,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A published plan of dated items: an election timetable, a school year, a parliamentary calendar. Items are placed by offset from an anchor, so moving the anchor moves the plan. (entity)
+ * A published timetable of steps counted from an anchor (an election timetable). (entity)
  */
 export class SchedulesDto {
   @IsOptional()
@@ -66,10 +66,14 @@ export class SchedulesDto {
   id!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.issuerEntityId !== null)
+  @ValidateIf((object) => object.issuerId !== null)
   @IsString()
   @IsUUID()
-  issuerEntityId?: Id | null;
+  issuerId?: Id | null;
+
+  @IsString()
+  @IsUUID()
+  kindTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.publishedOn !== null)
@@ -78,17 +82,7 @@ export class SchedulesDto {
 
   @IsString()
   @IsUUID()
-  scheduleKindId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  statusId!: Id;
+  statusTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.supersedesScheduleId !== null)

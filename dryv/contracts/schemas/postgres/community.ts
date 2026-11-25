@@ -1,360 +1,434 @@
 /**
  * Schema: community | Database: mzizi
- * What visitors do: an anonymous device actor (or an account), consent, preferences and saved places, likes and
- * deduplicated views, mobile-only posts with location proof and moderation, subscriptions and push delivery.
- * Design: .docs/design/architecture/USER_INTERACTIONS_AND_TRUST.md (proposal; legal review required before launch).
- * Personal data is minimised: fingerprints are salted hashes, positions are matched to a place and kept coarse,
- * and no email or phone is collected.
+ * Design: .docs/design/data/FOUNDATION_REDESIGN.md sections 27.5 and 28 (approved 2026-11-25).
+ * Contract authors: visitors read anonymously; every contribution (posts, reactions, media, articles) needs a signed-in
+ * account and is published only after human review or automated filtering. Members are not identities. `posts` is
+ * hash-partitioned by country; `views`, `notifications` and `dispatches` are range-partitioned by month, so links into
+ * them carry their partition key.
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
-import { subjectFields } from "#/schemas/_subjects.ts";
+import { belongsTo, byCountry, byMonth, identity, term } from "./_links.ts";
 import { Accounts } from "./auth.ts";
-import { Contents } from "./filesystem.ts";
+import { Occurrences } from "./event.ts";
 import { Features } from "./geography.ts";
-import { Entities, Individuals } from "./official.ts";
-import { Country, Language, Value } from "./reference.ts";
-
-const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
+import { Articles, Assets } from "./media.ts";
+import { Keys } from "./product.ts";
+import { Countries, Languages } from "./reference.ts";
 
 export const community = dryv
   .group({ name: "community" })
   .description(
-    "Visitors as device actors: consent, preferences, saved places, reactions, posts, moderation, subscriptions and push.",
+    "Visitors and members, their devices, consents, preferences and places, contributions and their moderation, follows and notifications.",
   )
   .facets({ storage: { namespace: "community", store: "main" } });
 
 export const communityEnums = community.properties({
-  ActorKind: dryv.property.enum(["device", "account"]),
+  ActorKind: dryv.property.enum(["visitor", "member"]),
   ActorStatus: dryv.property.enum(["active", "blocked", "closed"]),
   Platform: dryv.property.enum(["web", "android", "ios"]),
   AttestationStatus: dryv.property.enum(["none", "passed", "failed", "unavailable"]),
   PushProvider: dryv.property.enum(["fcm", "apns", "onesignal"]),
   ThemeChoice: dryv.property.enum(["system", "light", "dark"]),
-  ModerationState: dryv.property.enum([
-    "received",
-    "filtered",
-    "pending_review",
-    "published",
-    "held",
-    "rejected",
-    "removed",
-    "appealed",
-  ]),
-  LocationCheck: dryv.property.enum(["inside", "near", "outside", "unavailable", "suspected_mock"]),
-  DeliveryState: dryv.property.enum(["queued", "sent", "failed", "opened"]),
+  PostState: dryv.property.enum(["draft", "pending", "published", "rejected", "removed"]),
+  LocationCheck: dryv.property.enum(["inside", "near", "outside", "unavailable", "suspected-mock"]),
+  DispatchState: dryv.property.enum(["queued", "sent", "failed", "opened"]),
+  Checker: dryv.property.enum(["ai", "rules", "human"]),
+  Verdict: dryv.property.enum(["pass", "flag", "fail"]),
+  Handle: dryv.property
+    .string()
+    .length({ min: 3, max: 30 })
+    .pattern({ match: ["^[a-z][a-z0-9]*([._][a-z0-9]+)*$"] }),
+  Rating: dryv.property.number.integer({ range: { min: 1, max: 5 } }),
+  Body: dryv.property.string().length({ min: 1, max: 20000 }),
+  TextVersion: dryv.property.string().length({ min: 1, max: 100 }),
 });
 
 /*---------------- community.actors ----------------*/
 export const Actors = community
   .schema("Actors", {
-    kind: dryv.field(communityEnums.ActorKind),
+    kind: dryv.field(communityEnums.ActorKind).description("visitor (anonymous) or member (signed in)."),
     status: dryv.field(communityEnums.ActorStatus),
-    /** Set only when an account is linked; absent for anonymous device actors. */
-    accountId: belongsTo(() => Accounts).maybe(),
-    countryId: belongsTo(() => Country).maybe(),
-    languageId: belongsTo(() => Language).maybe(),
+    accountId: belongsTo(() => Accounts)
+      .maybe()
+      .description("The sign-in account; required for a member."),
+    handle: dryv
+      .field(communityEnums.Handle)
+      .maybe()
+      .description(
+        "Public username: 3–30 of a–z, 0–9, . and _, starting with a letter, no doubled separators, stored lowercase, reserved names refused.",
+      ),
+    displayName: dryv.field(sharedProperties.NonEmptyString100).maybe().description("Free text shown beside the handle."),
+    avatarId: belongsTo(() => Assets).maybe(),
+    countryId: belongsTo(() => Countries).maybe(),
+    languageId: belongsTo(() => Languages).maybe(),
     firstSeenAt: dryv.field(sharedProperties.Instant),
     lastSeenAt: dryv.field(sharedProperties.Instant),
   })
   .extends(baseSchemas.Entity)
-  .description(
-    "A visitor identity the server issues: anonymous by default, tied to an account only if one is linked later. No name, email or phone is held.",
-  )
+  .rule("MemberHasAccount", (v) => v.kind.ne("member").or(v.accountId.isNotNull()))
+  .rule("HandleIsForMembers", (v) => v.handle.isNull().or(v.kind.eq("member")))
+  .description("A visitor or member; a member's public profile. Members are not identities.")
   .role("entity")
-  .facets({ storage: dryv.storage("actors").index("accountId").index("countryId").index("lastSeenAt") });
+  .facets({ storage: dryv.storage("actors").unique("handle").unique("accountId").index("countryId") });
 
 /*---------------- community.devices ----------------*/
 export const Devices = community
   .schema("Devices", {
-    actorId: belongsTo(() => Actors),
+    actorId: belongsTo(() => Actors, { onDelete: "cascade" }),
     platform: dryv.field(communityEnums.Platform),
-    /** Salted one-way hash of the device fingerprint; used to deduplicate and rate-limit, never to identify a person. */
-    fingerprintHash: dryv.field(sharedProperties.Sha256),
+    fingerprintHash: dryv
+      .field(sharedProperties.Sha256)
+      .description("Hash of the device fingerprint; the fingerprint is not stored."),
     appVersion: dryv.field(sharedProperties.NonEmptyString100).maybe(),
     attestation: dryv.field(communityEnums.AttestationStatus),
     firstSeenAt: dryv.field(sharedProperties.Instant),
     lastSeenAt: dryv.field(sharedProperties.Instant),
   })
   .extends(baseSchemas.Entity)
-  .description("One device or browser seen for an actor, identified only by a salted fingerprint hash.")
+  .description("A device an actor uses.")
   .role("entity")
-  .facets({ storage: dryv.storage("devices").unique("actorId", "fingerprintHash").index("fingerprintHash") });
+  .facets({ storage: dryv.storage("devices").unique("actorId", "fingerprintHash") });
 
-/*---------------- community.push_tokens ----------------*/
+/*---------------- community.tokens ----------------*/
 export const Tokens = community
   .schema("Tokens", {
-    deviceId: belongsTo(() => Devices),
+    deviceId: belongsTo(() => Devices, { onDelete: "cascade" }),
     provider: dryv.field(communityEnums.PushProvider),
-    token: dryv.field(sharedProperties.NonEmptyString1000),
+    token: dryv.field(sharedProperties.NonEmptyString1000).sensitive().description("Push token, stored encrypted."),
     enabledAt: dryv.field(sharedProperties.Instant),
     revokedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .description("A push address for a mobile device, kept only while the visitor has notifications enabled.")
+  .description("A push notification token of a device.")
   .role("entity")
-  .facets({ storage: dryv.storage("tokens").unique("provider", "token").index("deviceId") });
+  .facets({ storage: dryv.storage("tokens").index("deviceId") });
 
 /*---------------- community.consents ----------------*/
 export const Consents = community
   .schema("Consents", {
-    actorId: belongsTo(() => Actors),
-    /** Scheme com.consent.purpose: device identity for likes, analytics, location for posting, push notifications, personalisation. */
-    purposeId: belongsTo(() => Value).tags("scheme:ref.sch.com.consent.purpose"),
-    countryId: belongsTo(() => Country).maybe(),
-    /** The version of the wording shown, so what was agreed to can be shown again. */
-    textVersion: dryv.field(sharedProperties.NonEmptyString100),
+    actorId: belongsTo(() => Actors, { onDelete: "cascade" }),
+    purposeTerm: term("com.consent.purpose", "analytics, notifications, location."),
+    countryId: belongsTo(() => Countries).maybe(),
+    keyId: belongsTo(() => Keys).description("The interface key of the consent text shown."),
+    textVersion: dryv.field(communityEnums.TextVersion).description("Version of the consent text shown."),
     givenAt: dryv.field(sharedProperties.Instant),
     withdrawnAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .description("One consent given or withdrawn by an actor for one purpose, with the wording version shown.")
+  .description("A consent an actor gave or withdrew, with the exact text version.")
   .role("entity")
-  .facets({ storage: dryv.storage("consents").index("actorId", "purposeId").index("countryId") });
+  .facets({ storage: dryv.storage("consents").index("actorId", "purposeTerm") });
 
 /*---------------- community.preferences ----------------*/
 export const Preferences = community
   .schema("Preferences", {
-    actorId: belongsTo(() => Actors),
-    countryId: belongsTo(() => Country).maybe(),
-    languageId: belongsTo(() => Language).maybe(),
+    actorId: belongsTo(() => Actors, { onDelete: "cascade" }),
+    countryId: belongsTo(() => Countries).maybe(),
+    languageId: belongsTo(() => Languages).maybe(),
     theme: dryv.field(communityEnums.ThemeChoice).maybe(),
-    /** The place the home page opens on; the saved place marked as home keeps it in step. */
-    homeFeatureId: belongsTo(() => Features).maybe(),
+    homeFeatureId: belongsTo(() => Features)
+      .maybe()
+      .description("The place the actor calls home; drives local events and figures."),
   })
   .extends(baseSchemas.Entity)
-  .description("What an actor chose: country, language, theme and home place. The server renders pages in these.")
+  .description("An actor's saved country, language, theme and home place.")
   .role("entity")
-  .facets({ storage: dryv.storage("preferences").unique("actorId").index("homeFeatureId") });
+  .facets({ storage: dryv.storage("preferences").unique("actorId") });
 
-/*---------------- community.saved_places ----------------*/
+/*---------------- community.places ----------------*/
 export const Places = community
   .schema("Places", {
-    actorId: belongsTo(() => Actors),
+    actorId: belongsTo(() => Actors, { onDelete: "cascade" }),
     featureId: belongsTo(() => Features),
-    /** The visitor's own text (Home, Work, Mama's farm), prefilled from the suggestion and editable. */
-    label: dryv.field(sharedProperties.NonEmptyString100),
-    /** Scheme com.place.label: the suggestion the label started from, in suggestion order. */
-    suggestionId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.com.place.label"),
+    label: dryv.field(sharedProperties.NonEmptyString100).description("The member's own name for the place (home, work)."),
+    suggestionTerm: term("com.place.suggestion", "home, work, family.").maybe(),
     isHome: dryv.field(sharedProperties.Flag),
     position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .description(
-    "A place an actor keeps, with a free-text label. The place unit is stored, never GPS coordinates. At most one is the home place.",
-  )
-  .role("entity");
+  .description("A place an actor saved.")
+  .role("entity")
+  .facets({ storage: dryv.storage("places").unique("actorId", "featureId").index("featureId") });
 
-const homePlace = community.expression(
-  "HomePlace",
-  Places.check((v) => v.isHome.eq(true)),
-);
+/*---------------- community.proofs ----------------*/
+export const Proofs = community
+  .schema("Proofs", {
+    actorId: belongsTo(() => Actors, { onDelete: "cascade" }),
+    deviceId: belongsTo(() => Devices),
+    matchedFeatureId: belongsTo(() => Features).maybe(),
+    check: dryv.field(communityEnums.LocationCheck),
+    accuracyMeters: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+    coarseCell: dryv
+      .field(sharedProperties.NonEmptyString100)
+      .maybe()
+      .description("A coarse grid cell; exact coordinates are not kept."),
+    mockLocationDetected: dryv.field(sharedProperties.Flag),
+    attestationOk: dryv.field(sharedProperties.Flag).maybe(),
+    travelOk: dryv
+      .field(sharedProperties.Flag)
+      .maybe()
+      .description("True when the movement since the last proof is plausible."),
+    headerAgrees: dryv
+      .field(sharedProperties.Flag)
+      .maybe()
+      .description("True when network location agrees with the device."),
+    trustScore: dryv.field(sharedProperties.Percentage),
+    recordedAt: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.Entity)
+  .description("A location check that a contribution was made from where it claims.")
+  .role("entity")
+  .facets({ storage: dryv.storage("proofs").index("actorId").index("matchedFeatureId") });
 
-Places.facets({
-  storage: dryv.storage("places").unique("actorId", "featureId").unique("actorId").where(homePlace).index("featureId"),
+/*---------------- community.posts ----------------*/
+export const Posts = community
+  .schema("Posts", {
+    actorId: belongsTo(() => Actors),
+    deviceId: belongsTo(() => Devices).maybe(),
+    kindTerm: term("com.post.kind", "comment, review, report, question."),
+    body: dryv.field(communityEnums.Body).maybe(),
+    languageId: belongsTo(() => Languages).maybe(),
+    countryId: belongsTo(() => Countries).description("Partition key."),
+    parentId: belongsTo(dryv.self).maybe().description("The post this one replies to, in the same country."),
+    proofId: belongsTo(() => Proofs).maybe(),
+    identityId: identity("The named thing the post is about.").maybe(),
+    rating: dryv.field(communityEnums.Rating).maybe().description("1–5 for a review."),
+    state: dryv.field(communityEnums.PostState).description("Nothing is published until reviewed or filtered."),
+    publishedAt: dryv.field(sharedProperties.Instant).maybe(),
+  })
+  .extends(baseSchemas.PartitionedEntity)
+  .rule("PublishedPostHasTime", (v) => v.state.ne("published").or(v.publishedAt.isNotNull()))
+  .description("Every contribution: comments, reviews, reports and questions from signed-in members.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("posts")
+      .partitioning(byCountry("posts"))
+      .primaryKey("id", "countryId")
+      .index("countryId", "identityId", "state")
+      .index("countryId", "actorId")
+      .index("countryId", "parentId")
+      .references("PostReplyOf", {
+        fields: ["parentId", "countryId"],
+        target: () => Posts,
+        targetFields: ["id", "countryId"],
+      }),
+  });
+
+/** A link into a post carries the post's country, the partition key of `posts`. */
+const postLink = (meaning: string) => ({
+  postId: dryv.field(sharedProperties.Id).maybe().description(meaning),
+  postCountryId: belongsTo(() => Countries)
+    .maybe()
+    .description("The post's country, with `post_id` a composite foreign key."),
 });
+const postReference = () => ({
+  fields: ["postId", "postCountryId"] as const,
+  target: () => Posts,
+  targetFields: ["id", "countryId"],
+});
+
+/*---------------- community.attachments ----------------*/
+export const Attachments = community
+  .schema("Attachments", {
+    postId: belongsTo(() => Posts),
+    postCountryId: belongsTo(() => Countries),
+    assetId: belongsTo(() => Assets),
+  })
+  .extends(baseSchemas.Association)
+  .description("Media attached to a post; reviewed with the post.")
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("attachments")
+      .unique("postId", "assetId")
+      .index("assetId")
+      .references("AttachmentOfPost", postReference()),
+  });
 
 /*---------------- community.reactions ----------------*/
 export const Reactions = community
   .schema("Reactions", {
-    actorId: belongsTo(() => Actors),
-    /** Scheme com.reaction.kind: like. More kinds can be added as values. */
-    kindId: belongsTo(() => Value).tags("scheme:ref.sch.com.reaction.kind"),
-    ...subjectFields,
+    actorId: belongsTo(() => Actors, { onDelete: "cascade" }).description("A signed-in member; reactions need an account."),
+    ...postLink("The post reacted to."),
+    identityId: identity("The named thing reacted to.").maybe(),
+    articleId: belongsTo(() => Articles).maybe(),
+    kindTerm: term("com.reaction.kind", "like, helpful, agree."),
   })
   .extends(baseSchemas.Entity)
-  .description("One reaction (a like) by one actor to one subject; one per actor, kind and subject, reversible.")
+  .rule("ReactionHasOneSubject", rule.exactlyOne("postId", "identityId", "articleId"))
+  .description("A member's reaction to a post, named thing or article.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("reactions")
-      .unique("actorId", "kindId", "subjectTable", "subjectId")
-      .index("subjectTable", "subjectId"),
+      .index("actorId")
+      .index("postId")
+      .index("identityId")
+      .index("articleId")
+      .references("ReactionToPost", postReference()),
   });
 
 /*---------------- community.views ----------------*/
 export const Views = community
   .schema("Views", {
-    ...subjectFields,
-    day: dryv.field(sharedProperties.CalendarDate),
-    /** Salted hash of network address and browser for that day only; no cookie and no stable identifier. */
-    visitorHash: dryv.field(sharedProperties.Sha256),
-    countryId: belongsTo(() => Country).maybe(),
+    day: dryv.field(sharedProperties.CalendarDate).description("Partition key: the day of the view."),
+    visitorHash: dryv.field(sharedProperties.Sha256).description("Daily-salted hash; visitors are counted, not identified."),
+    countryId: belongsTo(() => Countries)
+      .maybe()
+      .description("The viewer's country."),
+    identityId: identity("The named thing viewed.").maybe(),
+    articleId: belongsTo(() => Articles).maybe(),
+    ...postLink("The post viewed."),
   })
-  .extends(baseSchemas.Entity)
-  .description(
-    "One visitor-day of viewing one subject, deduplicated by a daily-rotating hash. Counts are derived from these rows.",
-  )
-  .role("entity")
-  .facets({ storage: dryv.storage("views").unique("subjectTable", "subjectId", "day", "visitorHash").index("day") });
-
-/*---------------- community.location_proofs ----------------*/
-export const Proofs = community
-  .schema("Proofs", {
-    actorId: belongsTo(() => Actors),
-    deviceId: belongsTo(() => Devices),
-    /** The place the position fell in or near; the raw position is not kept by default. */
-    matchedFeatureId: belongsTo(() => Features).maybe(),
-    check: dryv.field(communityEnums.LocationCheck),
-    accuracyMeters: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
-    /** A rounded grid cell code, coarser than the position, for review. */
-    coarseCell: dryv.field(sharedProperties.NonEmptyString100).maybe(),
-    mockLocationDetected: dryv.field(sharedProperties.Flag),
-    /** 0 to 100: how far the signals support the claim of being there. Not proof. */
-    trustScore: dryv.field(sharedProperties.Percentage),
-    /** The signals behind the score (attestation, travel plausibility, country header agreement). */
-    signals: dryv.field(sharedProperties.JsonText).maybe(),
-    recordedAt: dryv.field(sharedProperties.Instant),
-  })
-  .extends(baseSchemas.Entity)
-  .description(
-    "The evidence that a poster was in or near the place they posted about, with a trust score. A signal, never proof.",
-  )
-  .role("entity")
-  .facets({ storage: dryv.storage("proofs").index("actorId").index("deviceId").index("matchedFeatureId") });
-
-/*---------------- community.interactions ----------------*/
-export const Posts = community
-  .schema("Posts", {
-    actorId: belongsTo(() => Actors),
-    deviceId: belongsTo(() => Devices),
-    ...subjectFields,
-    /** Scheme com.interaction.kind: comment, opinion, evidence, image, ground-truth report, error report, data request, classification correction. */
-    kindId: belongsTo(() => Value).tags("scheme:ref.sch.com.interaction.kind"),
-    body: dryv.field(sharedProperties.NonEmptyString).maybe(),
-    languageId: belongsTo(() => Language).maybe(),
-    countryId: belongsTo(() => Country).maybe(),
-    parentInteractionId: belongsTo(() => Posts).maybe(),
-    locationProofId: belongsTo(() => Proofs).maybe(),
-    /** The office asked, for a data request. */
-    addresseeFeatureId: belongsTo(() => Features).maybe(),
-    state: dryv.field(communityEnums.ModerationState),
-    publishedAt: dryv.field(sharedProperties.Instant).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .description(
-    "One thing an actor posted about a subject: a comment, evidence, an opinion, a photo, a ground-truth report, a correction or a data request. Never canonical data until reviewed; media attach to it as to any subject.",
-  )
+  .extends(baseSchemas.PartitionedRecord)
+  .rule("ViewHasOneSubject", rule.exactlyOne("identityId", "articleId", "postId"))
+  .description("A counted view, kept for a limited time.")
   .role("entity")
   .facets({
     storage: dryv
-      .storage("posts")
-      .index("subjectTable", "subjectId")
-      .index("actorId")
-      .index("deviceId")
-      .index("kindId")
-      .index("state")
-      .index("parentInteractionId")
-      .index("locationProofId"),
+      .storage("views")
+      .partitioning(byMonth("views", "day"))
+      .primaryKey("id", "day")
+      .index("day", "identityId")
+      .index("day", "articleId")
+      .references("ViewOfPost", postReference()),
   });
 
-/*---------------- community.moderation_cases ----------------*/
+/*---------------- community.cases ----------------*/
 export const Cases = community
   .schema("Cases", {
-    interactionId: belongsTo(() => Posts),
-    /** Results of the automatic filters (abuse, personal data, spam, image checks); a proposal, not a decision. */
-    filterResults: dryv.field(sharedProperties.JsonText).maybe(),
-    state: dryv.field(communityEnums.ModerationState),
+    postId: belongsTo(() => Posts),
+    postCountryId: belongsTo(() => Countries),
+    state: dryv.field(communityEnums.PostState),
     reviewerAccountId: belongsTo(() => Accounts).maybe(),
-    /** Scheme com.moderation.decision: publish, hold, reject, remove, legal takedown. */
-    decisionId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.com.moderation.decision"),
-    reason: dryv.field(sharedProperties.Description).maybe(),
+    decisionTerm: term("com.case.decision", "approve, reject, remove, escalate.").maybe(),
+    reason: dryv.field(sharedProperties.Description).maybe().description("Internal moderation note."),
     decidedAt: dryv.field(sharedProperties.Instant).maybe(),
-    appealedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .description("The moderation record of one interaction: filter results, the reviewer, the decision and any appeal.")
+  .description("The moderation of one post.")
   .role("entity")
-  .facets({ storage: dryv.storage("cases").index("interactionId").index("state").index("reviewerAccountId") });
+  .facets({
+    storage: dryv
+      .storage("cases")
+      .index("postId")
+      .index("state")
+      .index("reviewerAccountId")
+      .references("CaseOfPost", postReference()),
+  });
+
+/*---------------- community.checks ----------------*/
+export const Checks = community
+  .schema("Checks", {
+    caseId: belongsTo(() => Cases, { onDelete: "cascade" }),
+    checker: dryv.field(communityEnums.Checker).description("ai, rules or human."),
+    verdict: dryv.field(communityEnums.Verdict).description("pass, flag or fail."),
+    score: dryv.field(sharedProperties.Confidence).maybe(),
+    categoryTerm: term("com.check.category", "spam, hate, misinformation.").maybe(),
+    checkedAt: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.Entity)
+  .description("One automated or human check of a moderation case.")
+  .role("entity")
+  .facets({ storage: dryv.storage("checks").index("caseId") });
+
+/*---------------- community.blocks ----------------*/
+export const Blocks = community
+  .schema("Blocks", {
+    accountId: belongsTo(() => Accounts),
+    reasonTerm: term("com.block.reason", "spam, abuse, repeated misinformation."),
+    caseId: belongsTo(() => Cases).maybe(),
+    fromOn: dryv.field(sharedProperties.CalendarDate),
+    toOn: dryv.field(sharedProperties.CalendarDate).maybe().description("Empty means permanent."),
+    decidedBy: belongsTo(() => Accounts),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("BlockDatesAreOrdered", rule.ordered("fromOn", "toOn", { allowEqual: true }))
+  .description("A block on an account that posted bad content; a blocked account cannot sign in or contribute.")
+  .role("entity")
+  .facets({ storage: dryv.storage("blocks").index("accountId", "fromOn") });
 
 /*---------------- community.subscriptions ----------------*/
 export const Subscriptions = community
   .schema("Subscriptions", {
-    actorId: belongsTo(() => Actors),
-    ...subjectFields,
-    /** Scheme com.subscription.kind: updates, events, results, new tenders, rescheduling. */
-    kindId: belongsTo(() => Value).tags("scheme:ref.sch.com.subscription.kind"),
+    actorId: belongsTo(() => Actors, { onDelete: "cascade" }),
+    identityId: identity("The named thing followed."),
+    kindTerm: term("com.subscription.kind", "follow, alerts."),
     revokedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .description(
-    "An actor following one subject (a place, leader, project, election, tender, institution, supplier, event) for one kind of update.",
-  )
+  .description("A named thing an actor follows.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("subscriptions")
-      .unique("actorId", "subjectTable", "subjectId", "kindId")
-      .index("subjectTable", "subjectId"),
-  });
+  .facets({ storage: dryv.storage("subscriptions").unique("actorId", "identityId", "kindTerm").index("identityId") });
 
 /*---------------- community.notifications ----------------*/
 export const Notifications = community
   .schema("Notifications", {
-    ...subjectFields,
-    /** Scheme com.notification.kind: new content, result declared, event rescheduled, tender published, contract awarded. */
-    kindId: belongsTo(() => Value).tags("scheme:ref.sch.com.notification.kind"),
-    /** The copy key and the values filled in, so each recipient reads it in their language. */
-    copyKey: dryv.field(sharedProperties.IdentityCode),
-    payload: dryv.field(sharedProperties.JsonText).maybe(),
+    kindTerm: term("com.notification.kind", "new figure, event reminder, reply."),
+    keyId: belongsTo(() => Keys).description("The interface key whose message is shown."),
+    identityId: identity("The named thing the notification is about.").maybe(),
+    ...postLink("The post the notification is about."),
+    occurrenceId: belongsTo(() => Occurrences).maybe(),
   })
-  .extends(baseSchemas.Entity)
-  .description(
-    "Something that happened to a subject and may be sent to followers; the wording is copy, filled per recipient.",
-  )
+  .extends(baseSchemas.PartitionedRecord)
+  .description("A notification to send; partitioned by month of creation.")
   .role("entity")
-  .facets({ storage: dryv.storage("notifications").index("subjectTable", "subjectId").index("kindId") });
+  .facets({
+    storage: dryv
+      .storage("notifications")
+      .partitioning(byMonth("notifications", "createdAt"))
+      .primaryKey("id", "createdAt")
+      .index("identityId")
+      .references("NotificationOfPost", postReference()),
+  });
 
-/*---------------- community.notification_deliveries ----------------*/
-export const Deliveries = community
-  .schema("Deliveries", {
+/*---------------- community.dispatches ----------------*/
+export const Dispatches = community
+  .schema("Dispatches", {
     notificationId: belongsTo(() => Notifications),
+    notificationCreatedAt: dryv.field(sharedProperties.Instant).description("The notification's partition key."),
     subscriptionId: belongsTo(() => Subscriptions),
     deviceId: belongsTo(() => Devices),
-    state: dryv.field(communityEnums.DeliveryState),
+    state: dryv.field(communityEnums.DispatchState),
     sentAt: dryv.field(sharedProperties.Instant).maybe(),
     openedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
-  .extends(baseSchemas.Entity)
-  .rule("DeliverySentBeforeOpened", rule.ordered("sentAt", "openedAt", { allowEqual: true }))
-  .description("The delivery of one notification to one device for one subscription.")
+  .extends(baseSchemas.PartitionedRecord)
+  .description("One sending of a notification to one device; partitioned by month.")
   .role("entity")
   .facets({
-    storage: dryv.storage("deliveries").unique("notificationId", "deviceId").index("subscriptionId").index("state"),
+    storage: dryv
+      .storage("dispatches")
+      .partitioning(byMonth("dispatches", "createdAt"))
+      .primaryKey("id", "createdAt")
+      .index("deviceId")
+      .index("subscriptionId")
+      .references("DispatchOfNotification", {
+        fields: ["notificationId", "notificationCreatedAt"],
+        target: () => Notifications,
+        targetFields: ["id", "createdAt"],
+      }),
   });
 
 /*---------------- community.replies ----------------*/
 export const Replies = community
   .schema("Replies", {
-    /** The record the reply or correction concerns: any table, so the subject reference is the right link. */
-    ...subjectFields,
-    respondentEntityId: belongsTo(() => Entities).maybe(),
-    respondentIndividualId: belongsTo(() => Individuals).maybe(),
-    /** The text of the reply, kept as filesystem content so long text and media stay out of this table. */
-    contentId: belongsTo(() => Contents),
-    /** Scheme com.reply.status: received, identity verified, published, declined. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.com.reply.status"),
+    postId: belongsTo(() => Posts),
+    postCountryId: belongsTo(() => Countries),
+    respondentId: identity("The office, institution or person replying officially."),
+    body: dryv.field(communityEnums.Body),
+    languageId: belongsTo(() => Languages),
+    statusTerm: term("com.reply.status", "received, published, withdrawn."),
     receivedAt: dryv.field(sharedProperties.Instant),
     publishedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .rule("HasExactlyOneRespondent", rule.exactlyOne("respondentEntityId", "respondentIndividualId"))
-  .description(
-    "A right of reply or correction request from a named person or body about a record, with the identity check and publication state; shown beside any signal about that record.",
-  )
+  .description("An official response to a post.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("replies")
-      .index("subjectTable", "subjectId")
-      .index("respondentEntityId")
-      .index("respondentIndividualId")
-      .index("contentId")
-      .index("statusId"),
+    storage: dryv.storage("replies").index("postId").index("respondentId").references("ReplyToPost", postReference()),
   });

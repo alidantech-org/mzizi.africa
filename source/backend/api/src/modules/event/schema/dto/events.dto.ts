@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -11,13 +12,15 @@ import {
   ValidateIf,
 } from "class-validator";
 
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One event or a recurring series of events: a public holiday, a national day, an election, a sitting, a government visit. Names, rules and dated occurrences are separate; content and media attach through the subject mechanism. (entity)
+ * A planned or recurring civic happening (Madaraka Day, budget reading). Its names are `identity.names`. (entity)
  */
 export class EventsDto {
   @IsOptional()
@@ -56,37 +59,37 @@ export class EventsDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.featureId !== null)
   @IsString()
   @IsUUID()
-  eventKindId!: Id;
+  featureId?: Id | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.organiserEntityId !== null)
+  @IsEnum(IdentityKind)
+  @Satisfies<EventsDto>((object) => object.identityKind === "event", {
+    message: "Event Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsString()
   @IsUUID()
-  organiserEntityId?: Id | null;
+  kindTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.scopeFeatureId !== null)
+  @ValidateIf((object) => object.levelId !== null)
   @IsString()
   @IsUUID()
-  scopeFeatureId?: Id | null;
+  levelId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.scopeLevelKindId !== null)
+  @ValidateIf((object) => object.organiserId !== null)
   @IsString()
   @IsUUID()
-  scopeLevelKindId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
+  organiserId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

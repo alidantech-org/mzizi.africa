@@ -12,9 +12,9 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from uuid import UUID, uuid4
 
-from mzizi_engine.api.schemas.postgres.filesystem.entities.file_versions import FileVersionsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.files import FilesRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.folders import FoldersRow
+from mzizi_engine.api.schemas.postgres.filesystem.entities.versions import VersionsRow
 from mzizi_engine.persistence.postgres.connection import Connection
 from mzizi_filesystem.shared.contracts import (
     Access,
@@ -46,7 +46,7 @@ def _folder(row: FoldersRow) -> FolderRecord:
         name=row.name,
         access=Access(row.access.value),
         authorization=_authorization_out(row.authorization),
-        role_id=str(row.role_id),
+        role_id=str(row.role_term),
     )
 
 
@@ -61,7 +61,7 @@ def _file(row: FilesRow) -> FileRecord:
     )
 
 
-def _version(row: FileVersionsRow) -> VersionRecord:
+def _version(row: VersionsRow) -> VersionRecord:
     return VersionRecord(
         id=str(row.id),
         file_id=str(row.file_id),
@@ -119,7 +119,7 @@ class PostgresRegistry:
 
     def create_folder(self, folder: NewFolder) -> FolderRecord:
         row = self._conn.execute(
-            'INSERT INTO filesystem.folders (id, created_at, updated_at, version, parent_id, code, name, access, "authorization", role_id) '
+            'INSERT INTO filesystem.folders (id, created_at, updated_at, version, parent_id, code, name, access, "authorization", role_term) '
             "VALUES (%s, now(), now(), 1, %s, %s, %s, %s, %s, %s) RETURNING *",
             (
                 uuid4(),
@@ -209,7 +209,7 @@ class PostgresRegistry:
     # ---- versions --------------------------------------------------------------------------------------
     def add_version(self, version: NewVersion) -> VersionRecord:
         row = self._conn.execute(
-            "INSERT INTO filesystem.file_versions (id, created_at, updated_at, version, file_id, revision, s3_key, sha256, "
+            "INSERT INTO filesystem.versions (id, created_at, updated_at, version, file_id, revision, s3_key, sha256, "
             "size_bytes, content_type, original_filename, access, provenance, pinned, created_by_snapshot, verified_at) "
             "VALUES (%s, now(), now(), 1, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, now()) RETURNING *",
             (
@@ -227,24 +227,24 @@ class PostgresRegistry:
                 json.dumps(version.created_by, sort_keys=True),
             ),
         ).fetchone()
-        return _version(FileVersionsRow.model_validate(row))
+        return _version(VersionsRow.model_validate(row))
 
     def get_version(self, version_id: str) -> VersionRecord | None:
         row = self._conn.execute(
-            "SELECT * FROM filesystem.file_versions WHERE id = %s AND deleted_at IS NULL", (UUID(version_id),)
+            "SELECT * FROM filesystem.versions WHERE id = %s AND deleted_at IS NULL", (UUID(version_id),)
         ).fetchone()
-        return _version(FileVersionsRow.model_validate(row)) if row else None
+        return _version(VersionsRow.model_validate(row)) if row else None
 
     def list_versions(self, file_id: str) -> tuple[VersionRecord, ...]:
         rows = self._conn.execute(
-            "SELECT * FROM filesystem.file_versions WHERE file_id = %s AND deleted_at IS NULL ORDER BY revision",
+            "SELECT * FROM filesystem.versions WHERE file_id = %s AND deleted_at IS NULL ORDER BY revision",
             (UUID(file_id),),
         ).fetchall()
-        return tuple(_version(FileVersionsRow.model_validate(row)) for row in rows)
+        return tuple(_version(VersionsRow.model_validate(row)) for row in rows)
 
     def next_revision(self, file_id: str) -> int:
         row = self._conn.execute(
-            "SELECT coalesce(max(revision), 0) + 1 AS next FROM filesystem.file_versions WHERE file_id = %s",
+            "SELECT coalesce(max(revision), 0) + 1 AS next FROM filesystem.versions WHERE file_id = %s",
             (UUID(file_id),),
         ).fetchone()
         assert row is not None
@@ -252,23 +252,23 @@ class PostgresRegistry:
 
     def repoint_version(self, version_id: str, s3_key: str) -> VersionRecord:
         row = self._conn.execute(
-            "UPDATE filesystem.file_versions SET s3_key = %s, updated_at = now(), version = version + 1 "
+            "UPDATE filesystem.versions SET s3_key = %s, updated_at = now(), version = version + 1 "
             "WHERE id = %s AND deleted_at IS NULL RETURNING *",
             (s3_key, UUID(version_id)),
         ).fetchone()
-        return _version(FileVersionsRow.model_validate(row))
+        return _version(VersionsRow.model_validate(row))
 
     def update_version(self, version_id: str, s3_key: str, access: Access) -> VersionRecord:
         row = self._conn.execute(
-            "UPDATE filesystem.file_versions SET s3_key = %s, access = %s, updated_at = now(), version = version + 1 "
+            "UPDATE filesystem.versions SET s3_key = %s, access = %s, updated_at = now(), version = version + 1 "
             "WHERE id = %s AND deleted_at IS NULL RETURNING *",
             (s3_key, access.value, UUID(version_id)),
         ).fetchone()
-        return _version(FileVersionsRow.model_validate(row))
+        return _version(VersionsRow.model_validate(row))
 
     def retire_version(self, version_id: str) -> None:
         self._conn.execute(
-            "UPDATE filesystem.file_versions SET deleted_at = now(), updated_at = now(), version = version + 1 "
+            "UPDATE filesystem.versions SET deleted_at = now(), updated_at = now(), version = version + 1 "
             "WHERE id = %s AND pinned = false AND deleted_at IS NULL",
             (UUID(version_id),),
         )
@@ -277,15 +277,15 @@ class PostgresRegistry:
         self, access: Access, sha256: str, size_bytes: int, excluding_file_id: str | None
     ) -> VersionRecord | None:
         row = self._conn.execute(
-            "SELECT * FROM filesystem.file_versions WHERE access = %s AND sha256 = %s AND size_bytes = %s "
+            "SELECT * FROM filesystem.versions WHERE access = %s AND sha256 = %s AND size_bytes = %s "
             "AND deleted_at IS NULL AND file_id IS DISTINCT FROM %s ORDER BY created_at LIMIT 1",
             (access.value, sha256, size_bytes, UUID(excluding_file_id) if excluding_file_id else None),
         ).fetchone()
-        return _version(FileVersionsRow.model_validate(row)) if row else None
+        return _version(VersionsRow.model_validate(row)) if row else None
 
     def key_referenced(self, s3_key: str) -> bool:
         row = self._conn.execute(
-            "SELECT 1 AS found FROM filesystem.file_versions WHERE s3_key = %s AND deleted_at IS NULL LIMIT 1",
+            "SELECT 1 AS found FROM filesystem.versions WHERE s3_key = %s AND deleted_at IS NULL LIMIT 1",
             (s3_key,),
         ).fetchone()
         return row is not None

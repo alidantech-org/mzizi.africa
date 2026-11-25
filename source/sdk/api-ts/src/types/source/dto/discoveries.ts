@@ -1,15 +1,12 @@
-/** An observation that an address exists: where it was found, as what text and when. Retrieval is a separate capture. */
+/** A link found while crawling. */
 export interface SourceDiscoveries {
-  addressId?: string | null;
   anchorText?: string | null;
   context?: string | null;
   createdAt: string;
-  deletedAt?: string | null;
   discoveredAt: string;
-  foundOnAddressId?: string | null;
+  foundOnId?: string | null;
   id: string;
   observedUrl: string;
+  pathId?: string | null;
   sourceId?: string | null;
-  updatedAt: string;
-  version: number;
 }

@@ -1,11 +1,12 @@
 import {
-  Allow,
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -13,16 +14,16 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One public development or infrastructure project with responsible institution, status, geographic scope and evidence. (entity)
+ * A public project. Its names and descriptions are `identity.names`; its places are `civic.sites`. (entity)
  */
 export class ProjectsDto {
   @IsString()
@@ -35,16 +36,9 @@ export class ProjectsDto {
   )
   code!: IdentityCode;
 
-  @IsOptional()
-  @ValidateIf((object) => object.completedOn !== null)
-  @IsISO8601({ strict: true })
-  completedOn?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.countryId !== null)
   @IsString()
   @IsUUID()
-  countryId?: Id | null;
+  countryId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;
@@ -54,71 +48,67 @@ export class ProjectsDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
-  @IsString()
-  @MaxLength(4000)
-  description!: Description;
+  @IsOptional()
+  @ValidateIf((object) => object.endsOn !== null)
+  @IsISO8601({ strict: true })
+  endsOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear?: Year | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
+  @IsEnum(IdentityKind)
+  @Satisfies<ProjectsDto>((object) => object.identityKind === "project", {
+    message: "Project Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsOptional()
-  @ValidateIf((object) => object.implementingEntityId !== null)
+  @ValidateIf((object) => object.implementerId !== null)
   @IsString()
   @IsUUID()
-  implementingEntityId?: Id | null;
+  implementerId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.location !== null)
-  @Allow()
-  location?: unknown | null;
-
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  name!: Name;
-
-  @IsOptional()
-  @ValidateIf((object) => object.responsibleInstitutionId !== null)
+  @ValidateIf((object) => object.institutionId !== null)
   @IsString()
   @IsUUID()
-  responsibleInstitutionId?: Id | null;
+  institutionId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.scopeUnitFeatureId !== null)
+  @ValidateIf((object) => object.scopeId !== null)
   @IsString()
   @IsUUID()
-  scopeUnitFeatureId?: Id | null;
+  scopeId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
+  @ValidateIf((object) => object.sponsorId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
+  sponsorId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sponsorEntityId !== null)
-  @IsString()
-  @IsUUID()
-  sponsorEntityId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.startedOn !== null)
+  @ValidateIf((object) => object.startsOn !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<ProjectsDto>(
-    (object) =>
-      object.startedOn == null ||
-      object.completedOn == null ||
-      object.startedOn <= object.completedOn,
-    {
-      message: "Project Dates Are Ordered",
-    },
-  )
-  startedOn?: CalendarDate | null;
+  startsOn?: CalendarDate | null;
 
   @IsString()
   @IsUUID()
-  statusId!: Id;
+  statusTerm!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

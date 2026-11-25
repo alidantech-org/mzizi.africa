@@ -9,12 +9,10 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.legal.enums.review_status import ReviewStatus
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
-from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
 
 
 class EffectsRow(BaseModel):
-    """A reviewed assertion of what a wording establishes, governs, limits or changes for one subject record. Never mutates the subject."""
+    """What a provision does to a named thing; a reviewed assertion that never changes the thing itself."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -32,15 +30,13 @@ class EffectsRow(BaseModel):
     deleted_at: datetime | None = None
     effective_on: date | None = None
     ended_on: date | None = None
-    explanation: Annotated[str, Field(max_length=4000)] | None = None
-    from_to_precision: DatePrecision | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    kind_id: UUID
-    observed_at: datetime
+    identity_id: UUID
+    kind_term: UUID
+    note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    note_language_id: UUID | None = None
     review_status: ReviewStatus
-    subject_id: UUID
-    subject_table: SubjectTable
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

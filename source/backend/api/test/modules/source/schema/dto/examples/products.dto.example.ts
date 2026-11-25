@@ -2,9 +2,11 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { identityEntityExample } from "@test/modules/shared/schema/dto/examples/identity-entity.dto.example.ts";
 import { publishersExample } from "@test/modules/source/schema/dto/examples/publishers.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Products, for generated tests. */
 export const productsExample: ContractExample = contractExample({
@@ -36,19 +38,19 @@ export const productsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "description",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
-    },
-    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "kindId",
+      name: "identityKind",
+      optional: false,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(IdentityKind) },
+    },
+    {
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -58,12 +60,6 @@ export const productsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "title",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", minLength: 1, maxLength: 300 },
     },
     {
       name: "updatedAt",
@@ -78,5 +74,16 @@ export const productsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: false,
+      comparisons: [
+        {
+          left: { field: "identityKind" },
+          operator: "equal",
+          right: { literal: "product" },
+        },
+      ],
+    },
+  ],
 });

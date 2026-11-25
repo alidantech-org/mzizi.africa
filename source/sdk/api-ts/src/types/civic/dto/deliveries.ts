@@ -1,16 +1,15 @@
-/** One dated deliverable or milestone under a contract, optionally scoped to a geographic unit. */
+/** Work delivered and certified under a contract. */
 export interface CivicDeliveries {
-  amountMinorUnits?: number | null;
+  amount?: number | null;
   code: string;
   contractId: string;
   createdAt: string;
   currencyId?: string | null;
   deletedAt?: string | null;
   deliveredOn?: string | null;
-  deliveryKindId: string;
+  featureId?: string | null;
   id: string;
-  sourceCitationId?: string | null;
-  unitFeatureId?: string | null;
+  kindTerm: string;
   updatedAt: string;
   version: number;
 }

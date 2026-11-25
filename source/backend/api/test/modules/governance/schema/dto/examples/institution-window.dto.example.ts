@@ -9,17 +9,16 @@ export const institutionWindowExample: ContractExample = contractExample({
   name: "InstitutionWindow",
   fields: [
     {
-      name: "codePrefix",
+      name: "armTerm",
       optional: true,
       nullable: false,
-      spec: {
-        kind: "string",
-        minLength: 1,
-        maxLength: 255,
-        patterns: [
-          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ],
-      },
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "countryId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "limit",

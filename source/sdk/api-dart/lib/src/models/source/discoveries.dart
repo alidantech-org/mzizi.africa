@@ -1,39 +1,33 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/shared/entity.dart';
-import 'package:mzizi_api/src/models/source/addresses.dart';
+import 'package:mzizi_api/src/models/shared/partitioned_record.dart';
+import 'package:mzizi_api/src/models/source/paths.dart';
 import 'package:mzizi_api/src/models/source/sources.dart';
 
 part 'discoveries.g.dart';
 
-/// An observation that an address exists: where it was found, as what text and when. Retrieval is a separate capture.
+/// A link found while crawling.
 @JsonSerializable(includeIfNull: false)
 class SourceDiscoveries {
   const SourceDiscoveries({
-    this.addressId,
     this.anchorText,
     this.context,
     required this.createdAt,
-    this.deletedAt,
     required this.discoveredAt,
-    this.foundOnAddressId,
+    this.foundOnId,
     required this.id,
     required this.observedUrl,
+    this.pathId,
     this.sourceId,
-    required this.updatedAt,
-    required this.version,
   });
-  final String? addressId;
   final String? anchorText;
   final String? context;
   final DateTime createdAt;
-  final DateTime? deletedAt;
   final DateTime discoveredAt;
-  final String? foundOnAddressId;
+  final String? foundOnId;
   final String id;
   final String observedUrl;
+  final String? pathId;
   final String? sourceId;
-  final DateTime updatedAt;
-  final int version;
 
   factory SourceDiscoveries.fromJson(Map<String, dynamic> json) => _$SourceDiscoveriesFromJson(json);
 

@@ -2,29 +2,19 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { individualsExample } from "@test/modules/official/schema/dto/examples/individuals.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Relationships, for generated tests. */
 export const relationshipsExample: ContractExample = contractExample({
   name: "Relationships",
   fields: [
     {
-      name: "code",
+      name: "basisTerm",
       optional: false,
       nullable: false,
-      spec: {
-        kind: "string",
-        minLength: 1,
-        maxLength: 255,
-        patterns: [
-          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ],
-      },
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "confidence",
@@ -51,34 +41,10 @@ export const relationshipsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "evidenceBasisId",
-      optional: true,
-      nullable: true,
+      name: "fromId",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "evidenceStatusId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "fromEntityId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "fromIndividualId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "fromToPrecision",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
     },
     {
       name: "fromYear",
@@ -93,7 +59,7 @@ export const relationshipsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "kindId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -105,27 +71,21 @@ export const relationshipsExample: ContractExample = contractExample({
       spec: { kind: "number", min: 0, max: 100 },
     },
     {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "startsOn",
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "toEntityId",
-      optional: true,
-      nullable: true,
+      name: "statusTerm",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "toIndividualId",
-      optional: true,
-      nullable: true,
+      name: "toId",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -149,22 +109,12 @@ export const relationshipsExample: ContractExample = contractExample({
   ],
   invariants: [
     {
-      any: true,
+      any: false,
       comparisons: [
         {
-          left: { field: "fromYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "toYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "fromYear" },
-          operator: "less-than-or-equal",
-          right: { field: "toYear" },
+          left: { field: "fromId" },
+          operator: "not-equal",
+          right: { field: "toId" },
         },
       ],
     },
@@ -185,21 +135,6 @@ export const relationshipsExample: ContractExample = contractExample({
           left: { field: "startsOn" },
           operator: "less-than-or-equal",
           right: { field: "endsOn" },
-        },
-      ],
-    },
-    {
-      any: false,
-      comparisons: [
-        {
-          left: { field: "fromEntityId" },
-          operator: "not-equal",
-          right: { field: "toEntityId" },
-        },
-        {
-          left: { field: "fromIndividualId" },
-          operator: "not-equal",
-          right: { field: "toIndividualId" },
         },
       ],
     },

@@ -1,22 +1,20 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
 
-/** One government institution specialization of an Official entity. */
+/** A public institution; it shares its organisation's identity (`official.entities`). Committees are institutions linked to their house. */
 export interface GovernanceInstitutions {
-  armId?: string | null;
-  classId?: string | null;
+  armTerm?: string | null;
+  basisTerm?: string | null;
+  classTerm?: string | null;
   code: string;
   countryId: string;
   createdAt: string;
   deletedAt?: string | null;
-  dissolvedOn?: string | null;
-  entityId: string;
-  establishedOn?: string | null;
-  establishmentBasisId?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
+  endsOn?: string | null;
   fromYear?: number | null;
   id: string;
-  institutionKindId: string;
-  sourceCitationId?: string | null;
+  identityKind: SharedIdentityKind;
+  kindTerm: string;
+  startsOn?: string | null;
   toYear?: number | null;
   updatedAt: string;
   version: number;

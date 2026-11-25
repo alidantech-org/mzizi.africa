@@ -19,12 +19,10 @@
         ["code"]
       ],
       "required": [
-        "amount_minor_units"
-        ,"budget_version_id"
-        ,"classification_id"
+        "class_term"
         ,"code"
-        ,"currency_id"
         ,"id"
+        ,"revision_id"
       ],
       "x-seed": {
         "system": [
@@ -35,44 +33,34 @@
           ,"version"
         ],
         "columns": [
-          "amount_minor_units"
-          ,"budget_version_code"
-          ,"classification_code"
+          "amount"
+          ,"class_term_code"
           ,"code"
           ,"currency_code"
-          ,"parent_appropriation_code"
+          ,"feature_code"
+          ,"parent_code"
           ,"project_code"
-          ,"recipient_entity_code"
-          ,"source_citation_code"
-          ,"unit_feature_code"
+          ,"recipient_code"
+          ,"revision_code"
         ],
         "required": [
-          "amount_minor_units"
-          ,"budget_version_code"
-          ,"classification_code"
+          "class_term_code"
           ,"code"
-          ,"currency_code"
+          ,"revision_code"
         ]
       },
       "properties": {
-        "amount_minor_units": {
-          "type": "integer",
+        "amount": {
+          "type": ["integer", "null"],
           "x-type": "integer",
           "x-role": "data"
         }
-        ,"budget_version_id": {
+        ,"class_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/finance.BudgetVersions", "column": "id", "alias": "budget_version_code" }
-        }
-        ,"classification_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "classification_code" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "class_term_code", "scheme": "voc.sch.fin.classification" }
         }
         ,"code": {
           "type": "string",
@@ -90,11 +78,11 @@
           "x-role": "system"
         }
         ,"currency_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "currency_code" }
+          "x-link": { "tableId": "#/schemas/reference.Currencies", "column": "id", "alias": "currency_code" }
         }
         ,"deleted_at": {
           "type": ["string", "null"],
@@ -103,6 +91,13 @@
           "x-managed": true,
           "x-role": "system"
         }
+        ,"feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
+        }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
@@ -110,12 +105,12 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"parent_appropriation_id": {
+        ,"parent_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/finance.Appropriations", "column": "id", "alias": "parent_appropriation_code" }
+          "x-link": { "tableId": "#/schemas/finance.Appropriations", "column": "id", "alias": "parent_code" }
         }
         ,"project_id": {
           "type": ["string", "null"],
@@ -124,26 +119,19 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/civic.Projects", "column": "id", "alias": "project_code" }
         }
-        ,"recipient_entity_id": {
+        ,"recipient_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "recipient_entity_code" }
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "recipient_code" }
         }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
+        ,"revision_id": {
+          "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
-        ,"unit_feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "unit_feature_code" }
+          "x-link": { "tableId": "#/schemas/finance.Revisions", "column": "id", "alias": "revision_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -160,23 +148,897 @@
         }
       }
     },
-    "budget_versions": {
-      "title": "finance.budget_versions",
+    "budgets": {
+      "title": "finance.budgets",
       "type": "object",
       "additionalProperties": false,
-      "x-code": "sys.tbl.finance.budget-versions",
-      "x-id": "#/schemas/finance.BudgetVersions",
-      "x-table": "finance.budget_versions",
-      "x-primaryKey": ["id"],"x-naturalKey": ["budget_code", "revision"],
+      "x-code": "sys.tbl.finance.budgets",
+      "x-id": "#/schemas/finance.Budgets",
+      "x-table": "finance.budgets",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["budget_id", "revision"]
+        ["code"]
+        ,["government_id", "period_id", "kind_term"]
+      ],
+      "required": [
+        "code"
+        ,"country_id"
+        ,"government_id"
+        ,"id"
+        ,"kind_term"
+        ,"period_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"country_code"
+          ,"government_code"
+          ,"kind_term_code"
+          ,"period_code"
+        ],
+        "required": [
+          "code"
+          ,"country_code"
+          ,"government_code"
+          ,"kind_term_code"
+          ,"period_code"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"government_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "government_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.fin.budget.kind" }
+        }
+        ,"period_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/finance.Periods", "column": "id", "alias": "period_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "debts": {
+      "title": "finance.debts",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.finance.debts",
+      "x-id": "#/schemas/finance.Debts",
+      "x-table": "finance.debts",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "borrower_id"
+        ,"code"
+        ,"country_id"
+        ,"id"
+        ,"kind_term"
+        ,"lender_id"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "amount"
+          ,"borrower_code"
+          ,"code"
+          ,"contracted_on"
+          ,"country_code"
+          ,"currency_code"
+          ,"identity_kind"
+          ,"kind_term_code"
+          ,"lender_code"
+          ,"maturity_on"
+        ],
+        "required": [
+          "borrower_code"
+          ,"code"
+          ,"country_code"
+          ,"kind_term_code"
+          ,"lender_code"
+        ]
+      },
+      "properties": {
+        "amount": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"borrower_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "borrower_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"contracted_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"currency_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Currencies", "column": "id", "alias": "currency_code" }
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "id_code" }
+        }
+        ,"identity_kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "x-role": "data"
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.fin.debt.kind" }
+        }
+        ,"lender_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "lender_code" }
+        }
+        ,"maturity_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "findings": {
+      "title": "finance.findings",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.finance.findings",
+      "x-id": "#/schemas/finance.Findings",
+      "x-table": "finance.findings",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"id"
+        ,"institution_id"
+        ,"kind_term"
+        ,"period_id"
+        ,"status_term"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "amount"
+          ,"code"
+          ,"contract_code"
+          ,"currency_code"
+          ,"flow_country_code"
+          ,"flow_id"
+          ,"institution_code"
+          ,"kind_term_code"
+          ,"period_code"
+          ,"project_code"
+          ,"status_term_code"
+        ],
+        "required": [
+          "code"
+          ,"institution_code"
+          ,"kind_term_code"
+          ,"period_code"
+          ,"status_term_code"
+        ]
+      },
+      "properties": {
+        "amount": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"contract_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/civic.Contracts", "column": "id", "alias": "contract_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"currency_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Currencies", "column": "id", "alias": "currency_code" }
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"flow_country_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "flow_country_code" }
+        }
+        ,"flow_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"institution_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.fin.finding.kind" }
+        }
+        ,"period_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/finance.Periods", "column": "id", "alias": "period_code" }
+        }
+        ,"project_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/civic.Projects", "column": "id", "alias": "project_code" }
+        }
+        ,"status_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.fin.finding.status" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "flows": {
+      "title": "finance.flows",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.finance.flows",
+      "x-id": "#/schemas/finance.Flows",
+      "x-table": "finance.flows",
+      "x-primaryKey": ["id", "country_id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "country_id"
+        ,"id"
+        ,"kind_term"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "amount"
+          ,"appropriation_code"
+          ,"class_term_code"
+          ,"contract_code"
+          ,"counterparty_code"
+          ,"country_code"
+          ,"currency_code"
+          ,"debt_code"
+          ,"feature_code"
+          ,"fund_code"
+          ,"id"
+          ,"institution_code"
+          ,"kind_term_code"
+          ,"occurred_on"
+          ,"period_code"
+          ,"project_code"
+        ],
+        "required": [
+          "country_code"
+          ,"id"
+          ,"kind_term_code"
+        ]
+      },
+      "properties": {
+        "amount": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"appropriation_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/finance.Appropriations", "column": "id", "alias": "appropriation_code" }
+        }
+        ,"class_term": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "class_term_code", "scheme": "voc.sch.fin.classification" }
+        }
+        ,"contract_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/civic.Contracts", "column": "id", "alias": "contract_code" }
+        }
+        ,"counterparty_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "counterparty_code" }
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"currency_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Currencies", "column": "id", "alias": "currency_code" }
+        }
+        ,"debt_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/finance.Debts", "column": "id", "alias": "debt_code" }
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
+        }
+        ,"fund_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/finance.Funds", "column": "id", "alias": "fund_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"institution_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.fin.flow.kind" }
+        }
+        ,"occurred_on": {
+          "type": ["string", "null"],
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"period_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/finance.Periods", "column": "id", "alias": "period_code" }
+        }
+        ,"project_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/civic.Projects", "column": "id", "alias": "project_code" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "funds": {
+      "title": "finance.funds",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.finance.funds",
+      "x-id": "#/schemas/finance.Funds",
+      "x-table": "finance.funds",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "code"
+        ,"country_id"
+        ,"id"
+        ,"kind_term"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"country_code"
+          ,"identity_kind"
+          ,"kind_term_code"
+          ,"manager_code"
+          ,"scope_code"
+          ,"source_term_code"
+        ],
+        "required": [
+          "code"
+          ,"country_code"
+          ,"kind_term_code"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "id_code" }
+        }
+        ,"identity_kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "x-role": "data"
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.fin.fund.kind" }
+        }
+        ,"manager_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "manager_code" }
+        }
+        ,"scope_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Jurisdictions", "column": "id", "alias": "scope_code" }
+        }
+        ,"source_term": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "source_term_code", "scheme": "voc.sch.fin.fund.source" }
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "periods": {
+      "title": "finance.periods",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.finance.periods",
+      "x-id": "#/schemas/finance.Periods",
+      "x-table": "finance.periods",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["country_id", "kind_term", "starts_on"]
+      ],
+      "required": [
+        "code"
+        ,"country_id"
+        ,"ends_on"
+        ,"id"
+        ,"kind_term"
+        ,"starts_on"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"country_code"
+          ,"ends_on"
+          ,"from_year"
+          ,"kind_term_code"
+          ,"starts_on"
+          ,"to_year"
+        ],
+        "required": [
+          "code"
+          ,"country_code"
+          ,"ends_on"
+          ,"kind_term_code"
+          ,"starts_on"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"country_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"ends_on": {
+          "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.fin.period.kind" }
+        }
+        ,"starts_on": {
+          "type": "string",
+          "x-type": "date",
+          "format": "date",
+          "x-role": "data"
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
+        }
+      }
+    },
+    "revisions": {
+      "title": "finance.revisions",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.finance.revisions",
+      "x-id": "#/schemas/finance.Revisions",
+      "x-table": "finance.revisions",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["budget_id", "revision"]
       ],
       "required": [
         "budget_id"
+        ,"code"
         ,"id"
         ,"revision"
-        ,"status_id"
+        ,"status_term"
       ],
       "x-seed": {
         "system": [
@@ -188,15 +1050,16 @@
         ],
         "columns": [
           "budget_code"
+          ,"code"
           ,"released_on"
           ,"revision"
-          ,"source_citation_code"
-          ,"status_code"
+          ,"status_term_code"
         ],
         "required": [
           "budget_code"
+          ,"code"
           ,"revision"
-          ,"status_code"
+          ,"status_term_code"
         ]
       },
       "properties": {
@@ -204,8 +1067,16 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/finance.Budgets", "column": "id", "alias": "budget_code" }
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
         }
         ,"created_at": {
           "type": "string",
@@ -237,748 +1108,14 @@
         ,"revision": {
           "type": "integer",
           "x-type": "integer",
-          "x-role": "key"
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
-        ,"status_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "status_code" }
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "budgets": {
-      "title": "finance.budgets",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.finance.budgets",
-      "x-id": "#/schemas/finance.Budgets",
-      "x-table": "finance.budgets",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["code"]
-      ],
-      "required": [
-        "budget_kind_id"
-        ,"code"
-        ,"fiscal_period_id"
-        ,"id"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "budget_kind_code"
-          ,"code"
-          ,"country_code"
-          ,"fiscal_period_code"
-          ,"government_entity_code"
-          ,"source_citation_code"
-        ],
-        "required": [
-          "budget_kind_code"
-          ,"code"
-          ,"fiscal_period_code"
-        ]
-      },
-      "properties": {
-        "budget_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "budget_kind_code" }
-        }
-        ,"code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"country_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"fiscal_period_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/finance.FiscalPeriods", "column": "id", "alias": "fiscal_period_code" }
-        }
-        ,"government_entity_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "government_entity_code" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "debts": {
-      "title": "finance.debts",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.finance.debts",
-      "x-id": "#/schemas/finance.Debts",
-      "x-table": "finance.debts",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["code"]
-      ],
-      "required": [
-        "amount_minor_units"
-        ,"borrower_entity_id"
-        ,"code"
-        ,"currency_id"
-        ,"debt_kind_id"
-        ,"id"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "amount_minor_units"
-          ,"borrower_entity_code"
-          ,"code"
-          ,"contracted_on"
-          ,"country_code"
-          ,"currency_code"
-          ,"debt_kind_code"
-          ,"lender_entity_code"
-          ,"maturity_on"
-          ,"source_citation_code"
-        ],
-        "required": [
-          "amount_minor_units"
-          ,"borrower_entity_code"
-          ,"code"
-          ,"currency_code"
-          ,"debt_kind_code"
-        ]
-      },
-      "properties": {
-        "amount_minor_units": {
-          "type": "integer",
-          "x-type": "integer",
           "x-role": "data"
         }
-        ,"borrower_entity_id": {
+        ,"status_term": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "borrower_entity_code" }
-        }
-        ,"code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"contracted_on": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"country_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"currency_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "currency_code" }
-        }
-        ,"debt_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "debt_kind_code" }
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"lender_entity_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "lender_entity_code" }
-        }
-        ,"maturity_on": {
-          "type": ["string", "null"],
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "fiscal_periods": {
-      "title": "finance.fiscal_periods",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.finance.fiscal-periods",
-      "x-id": "#/schemas/finance.FiscalPeriods",
-      "x-table": "finance.fiscal_periods",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["code"]
-      ],
-      "required": [
-        "code"
-        ,"ends_on"
-        ,"id"
-        ,"period_kind_id"
-        ,"starts_on"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "code"
-          ,"country_code"
-          ,"ends_on"
-          ,"period_kind_code"
-          ,"source_citation_code"
-          ,"starts_on"
-        ],
-        "required": [
-          "code"
-          ,"ends_on"
-          ,"period_kind_code"
-          ,"starts_on"
-        ]
-      },
-      "properties": {
-        "code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"country_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"ends_on": {
-          "type": "string",
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"period_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "period_kind_code" }
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
-        ,"starts_on": {
-          "type": "string",
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "flows": {
-      "title": "finance.flows",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.finance.flows",
-      "x-id": "#/schemas/finance.Flows",
-      "x-table": "finance.flows",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["code"]
-      ],
-      "required": [
-        "amount_minor_units"
-        ,"code"
-        ,"currency_id"
-        ,"flow_kind_id"
-        ,"id"
-        ,"occurred_on"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "amount_minor_units"
-          ,"appropriation_code"
-          ,"code"
-          ,"contract_code"
-          ,"counterparty_entity_code"
-          ,"counterparty_individual_code"
-          ,"currency_code"
-          ,"debt_code"
-          ,"expenditure_class_code"
-          ,"fiscal_period_code"
-          ,"flow_kind_code"
-          ,"fund_code"
-          ,"institution_code"
-          ,"occurred_on"
-          ,"project_code"
-          ,"scope_unit_feature_code"
-          ,"source_citation_code"
-        ],
-        "required": [
-          "amount_minor_units"
-          ,"code"
-          ,"currency_code"
-          ,"flow_kind_code"
-          ,"occurred_on"
-        ]
-      },
-      "properties": {
-        "amount_minor_units": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-role": "data"
-        }
-        ,"appropriation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/finance.Appropriations", "column": "id", "alias": "appropriation_code" }
-        }
-        ,"code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"contract_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/civic.Contracts", "column": "id", "alias": "contract_code" }
-        }
-        ,"counterparty_entity_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "counterparty_entity_code" }
-        }
-        ,"counterparty_individual_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "counterparty_individual_code" }
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"currency_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "currency_code" }
-        }
-        ,"debt_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/finance.Debts", "column": "id", "alias": "debt_code" }
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"expenditure_class_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "expenditure_class_code", "scheme": "ref.sch.fin.expenditure.class" }
-        }
-        ,"fiscal_period_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/finance.FiscalPeriods", "column": "id", "alias": "fiscal_period_code" }
-        }
-        ,"flow_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "flow_kind_code" }
-        }
-        ,"fund_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/finance.Funds", "column": "id", "alias": "fund_code" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"institution_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
-        }
-        ,"occurred_on": {
-          "type": "string",
-          "x-type": "date",
-          "format": "date",
-          "x-role": "data"
-        }
-        ,"project_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/civic.Projects", "column": "id", "alias": "project_code" }
-        }
-        ,"scope_unit_feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "scope_unit_feature_code" }
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
-        }
-        ,"updated_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"version": {
-          "type": "integer",
-          "x-type": "integer",
-          "x-managed": true,
-          "x-role": "system"
-        }
-      }
-    },
-    "funds": {
-      "title": "finance.funds",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.finance.funds",
-      "x-id": "#/schemas/finance.Funds",
-      "x-table": "finance.funds",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["code"]
-      ],
-      "required": [
-        "code"
-        ,"fund_kind_id"
-        ,"id"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-          ,"deleted_at"
-          ,"id"
-          ,"updated_at"
-          ,"version"
-        ],
-        "columns": [
-          "code"
-          ,"country_code"
-          ,"fund_kind_code"
-          ,"funding_source_code"
-          ,"managing_entity_code"
-          ,"scope_unit_feature_code"
-          ,"source_citation_code"
-        ],
-        "required": [
-          "code"
-          ,"fund_kind_code"
-        ]
-      },
-      "properties": {
-        "code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"country_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Country", "column": "id", "alias": "country_code" }
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"deleted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"fund_kind_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "fund_kind_code" }
-        }
-        ,"funding_source_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/reference.Value", "column": "id", "alias": "funding_source_code", "scheme": "ref.sch.fin.fund.source" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"managing_entity_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "managing_entity_code" }
-        }
-        ,"scope_unit_feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "scope_unit_feature_code" }
-        }
-        ,"source_citation_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/source.Citations", "column": "id", "alias": "source_citation_code" }
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.fin.revision.status" }
         }
         ,"updated_at": {
           "type": "string",

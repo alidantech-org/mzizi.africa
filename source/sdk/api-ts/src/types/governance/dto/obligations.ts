@@ -1,23 +1,16 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
+import { GovernanceFrequency } from "#sdk/types/governance/enums/frequency.ts";
 
-/** A duty to report or publish, with who owes it, to whom, how often and the law that creates it. Each filing found is a report. */
+/** A duty to report that law sets; its explanation is a definition name. */
 export interface GovernanceObligations {
-  basisProvisionId?: string | null;
   code: string;
-  countryId: string;
   createdAt: string;
   deletedAt?: string | null;
-  description: string;
-  frequencyId: string;
-  fromToPrecision?: SharedDatePrecision | null;
-  fromYear?: number | null;
+  frequency: GovernanceFrequency;
+  holderId: string;
   id: string;
-  obligationKindId: string;
-  obligorInstitutionId?: string | null;
-  obligorKindId?: string | null;
-  recipientEntityId?: string | null;
-  sourceCitationId?: string | null;
-  toYear?: number | null;
+  kindTerm: string;
+  provisionId?: string | null;
+  recipientId: string;
   updatedAt: string;
   version: number;
 }

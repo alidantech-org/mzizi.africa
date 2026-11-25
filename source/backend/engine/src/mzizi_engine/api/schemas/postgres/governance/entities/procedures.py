@@ -8,17 +8,16 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
 class ProceduresRow(BaseModel):
-    """A named sequence of rights, such as appointing a judge or removing a governor; its steps are powers."""
+    """A procedure law sets out; its explanation is a definition name or a media article."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "governance.procedures"
 
-    basis_provision_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -27,15 +26,11 @@ class ProceduresRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    description: Annotated[str, Field(max_length=4000)]
-    from_to_precision: DatePrecision | None = None
-    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    kind_id: UUID
-    source_citation_id: UUID | None = None
-    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
+    identity_kind: IdentityKind
+    kind_term: UUID
+    provision_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

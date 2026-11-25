@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ManifestosRow(BaseModel):
-    """One published party or candidate manifesto associated with its election and source document."""
+    """A party's or candidate's manifesto for an election."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -32,6 +32,5 @@ class ManifestosRow(BaseModel):
     id: UUID
     party_id: UUID | None = None
     published_on: date | None = None
-    source_citation_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

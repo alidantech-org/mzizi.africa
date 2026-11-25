@@ -1,0 +1,145 @@
+version: dryv.ir/v1alpha1
+key: query-test
+info:
+  title: Query test
+  version: '1'
+stores: {}
+groups:
+  reference:
+    policies: []
+properties:
+  primitives:
+    reference.Code:
+      group:
+        $ref: '#/groups/reference'
+      examples: []
+      removed: false
+      type: string
+      kind: text
+  enums: {}
+  composites: {}
+  literals: {}
+  unions: {}
+  records: {}
+  tuples: {}
+  generics: {}
+  temporal: {}
+schemas:
+  reference.Scheme:
+    group:
+      $ref: '#/groups/reference'
+    fields:
+      code:
+        kind: property
+        $ref: '#/properties/primitives/reference.Code'
+    facets:
+      storage:
+        name: schemes
+        kind: persistent
+        primary_key:
+        - code
+        namespace: repository_proof
+  reference.SchemeRow:
+    group:
+      $ref: '#/groups/reference'
+    from_query:
+      query:
+        $ref: '#/queries/reference.Schemes'
+      selection_path: []
+    fields: {}
+queries:
+  reference.Schemes:
+    group:
+      $ref: '#/groups/reference'
+    root:
+      $ref: '#/schemas/reference.Scheme'
+    parameters:
+      prefix:
+        value:
+          $ref: '#/properties/primitives/reference.Code'
+        optional: false
+    where:
+    - kind: comparison
+      column:
+        path: []
+        field:
+          $ref: '#/schemas/reference.Scheme'
+          field: code
+      operator: prefix
+      parameter: prefix
+    select:
+      schemeCode:
+        kind: field
+        column:
+          path: []
+          field:
+            $ref: '#/schemas/reference.Scheme'
+            field: code
+    cardinality: many
+    order: []
+expressions: {}
+policies: {}
+failures: {}
+events: {}
+operations:
+  reference.List:
+    group:
+      $ref: '#/groups/reference'
+    input:
+      fields:
+      - name: prefix
+        value:
+          $ref: '#/properties/primitives/reference.Code'
+    output:
+      value:
+        $ref: '#/schemas/reference.SchemeRow'
+      array: {}
+    failures: []
+    emits: []
+    access:
+      authenticated: false
+      policies: []
+    query:
+      query:
+        $ref: '#/queries/reference.Schemes'
+      parameters:
+        prefix:
+          kind: input
+          port:
+            $ref: '#/operations/reference.List'
+            direction: input
+            field: prefix
+    checks: []
+    database_failures: []
+    execution:
+      mode: sync
+      invalidates: []
+    facets:
+      http:
+        method: GET
+        path: /schemes
+        inputs:
+        - port:
+            $ref: '#/operations/reference.List'
+            direction: input
+            field: prefix
+          source:
+            kind: query
+            name: prefix
+        outputs:
+        - port:
+            $ref: '#/operations/reference.List'
+            direction: output
+          response:
+            status: 200
+    feature:
+      $ref: '#/features/reference.Catalog'
+views: {}
+workflows: {}
+surfaces: {}
+themes: {}
+features:
+  reference.Catalog:
+    group:
+      $ref: '#/groups/reference'
+applications: {}

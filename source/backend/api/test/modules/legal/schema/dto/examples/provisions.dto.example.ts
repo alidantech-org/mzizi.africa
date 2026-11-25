@@ -72,12 +72,6 @@ export const provisionsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
     {
-      name: "title",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", minLength: 1, maxLength: 300 },
-    },
-    {
       name: "updatedAt",
       optional: false,
       nullable: false,
@@ -90,5 +84,16 @@ export const provisionsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: false,
+      comparisons: [
+        {
+          left: { field: "id" },
+          operator: "not-equal",
+          right: { field: "parentId" },
+        },
+      ],
+    },
+  ],
 });

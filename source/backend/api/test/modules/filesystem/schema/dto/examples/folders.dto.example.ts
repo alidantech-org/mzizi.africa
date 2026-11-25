@@ -3,8 +3,8 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { Access } from "#/modules/filesystem/schema/enum/access.enum.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Folders, for generated tests. */
 export const foldersExample: ContractExample = contractExample({
@@ -20,7 +20,7 @@ export const foldersExample: ContractExample = contractExample({
       name: "authorization",
       optional: true,
       nullable: true,
-      spec: { kind: "string", format: "json" },
+      spec: { kind: "string" },
     },
     {
       name: "code",
@@ -66,7 +66,7 @@ export const foldersExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "roleId",
+      name: "roleTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },

@@ -3,16 +3,17 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { contractsExample } from "@test/modules/civic/schema/dto/examples/contracts.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { currenciesExample } from "@test/modules/reference/schema/dto/examples/currencies.dto.example.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Variations, for generated tests. */
 export const variationsExample: ContractExample = contractExample({
   name: "Variations",
   fields: [
     {
-      name: "amountDeltaMinorUnits",
+      name: "amountChange",
       optional: true,
       nullable: true,
       spec: { kind: "number", integer: true },
@@ -61,7 +62,7 @@ export const variationsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "kindId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -73,22 +74,22 @@ export const variationsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "reason",
+      name: "note",
       optional: true,
       nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
+    },
+    {
+      name: "noteLanguageId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "signedOn",
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "updatedAt",
@@ -103,5 +104,36 @@ export const variationsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "amountChange" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "currencyId" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+      ],
+    },
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "note" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "noteLanguageId" },
+          operator: "not-equal",
+          right: { literal: null },
+        },
+      ],
+    },
+  ],
 });

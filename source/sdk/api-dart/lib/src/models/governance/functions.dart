@@ -1,44 +1,35 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
 import 'package:mzizi_api/src/models/legal/provisions.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/topic.dart';
-import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'functions.g.dart';
 
-/// A public function that a constitution or law assigns to a level of government. Its name and plain wording are copy keyed by code.
+/// A government function (county health services) from law, possibly under a broader one.
 @JsonSerializable(includeIfNull: false)
 class GovernanceFunctions {
   const GovernanceFunctions({
-    this.basisProvisionId,
     required this.code,
-    required this.countryId,
     required this.createdAt,
     this.deletedAt,
-    this.fromToPrecision,
-    this.fromYear,
     required this.id,
-    this.parentFunctionId,
-    this.sourceCitationId,
-    this.toYear,
-    this.topicId,
+    required this.identityKind,
+    this.parentId,
+    this.provisionId,
+    required this.topicTerm,
     required this.updatedAt,
     required this.version,
   });
-  final String? basisProvisionId;
   final String code;
-  final String countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final SharedDatePrecision? fromToPrecision;
-  final int? fromYear;
   final String id;
-  final String? parentFunctionId;
-  final String? sourceCitationId;
-  final int? toYear;
-  final String? topicId;
+  final SharedIdentityKind identityKind;
+  final String? parentId;
+  final String? provisionId;
+  final String topicTerm;
   final DateTime updatedAt;
   final int version;
 

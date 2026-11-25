@@ -5,9 +5,8 @@ inputs: [title, href, slug, published]
 yields:
   - as: capture
     table: source.captures
-    key: [code]
+    key: [original_url]
     fields:
-      code:         { from: slug }
       original_url: { from: href }
 provenance: { method: extracted, locator: { page: $page, item: $item_index } }
-expect: { min_rows: 3, required_fields: [code, original_url] }
+expect: { min_rows: 3, required_fields: [original_url] }

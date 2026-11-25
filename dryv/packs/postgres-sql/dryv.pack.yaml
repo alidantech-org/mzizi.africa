@@ -9,7 +9,7 @@ info:
   languages: [sql]
   tags: [sql, postgresql, database]
 plugins: [{ name: jinja, extensions: [.j2] }]
-capabilities: { persistence: true, stores: true, references: true }
+capabilities: { persistence: true, stores: true, references: true, partitioning: true }
 selections:
   entities:
     {

@@ -13,15 +13,15 @@ import {
 } from "class-validator";
 
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Note } from "#/modules/source/schema/type/note.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A recorded disagreement between sources about one record. Both claims are kept with their citations and shown side by side; nothing is overwritten. (entity)
+ * Conflicting claims about one row. (entity)
  */
 export class DisputesDto {
   @IsString()
@@ -48,13 +48,26 @@ export class DisputesDto {
 
   @IsString()
   @IsUUID()
-  kindId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.resolutionCitationId !== null)
+  @ValidateIf((object) => object.note !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(4000)
+  note?: Note | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.noteLanguageId !== null)
   @IsString()
   @IsUUID()
-  resolutionCitationId?: Id | null;
+  noteLanguageId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.resolutionId !== null)
+  @IsString()
+  @IsUUID()
+  resolutionId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.resolvedOn !== null)
@@ -63,7 +76,7 @@ export class DisputesDto {
 
   @IsString()
   @IsUUID()
-  statusId!: Id;
+  statusTerm!: Id;
 
   @IsString()
   @IsUUID()
@@ -71,10 +84,6 @@ export class DisputesDto {
 
   @IsEnum(SubjectTable)
   subjectTable!: SubjectTable;
-
-  @IsString()
-  @MaxLength(4000)
-  summary!: Description;
 
   @IsISO8601({})
   updatedAt!: Instant;

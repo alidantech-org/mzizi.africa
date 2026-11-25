@@ -1,5 +1,4 @@
 import {
-  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -11,7 +10,6 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Year } from "#/modules/shared/schema/type/year.type.ts";
@@ -19,7 +17,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems. (entity)
+ * A dated link between places; a parent link in a hierarchy also records the inner place's level. (entity)
  */
 export class RelationshipsDto {
   @IsISO8601({})
@@ -36,11 +34,6 @@ export class RelationshipsDto {
   endsOn?: CalendarDate | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
-
-  @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)
   @IsInt()
   @Min(-10000)
@@ -49,10 +42,16 @@ export class RelationshipsDto {
     (object) =>
       object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
     {
-      message: "Period Years Are Ordered",
+      message: "Relationship Period Is Ordered",
     },
   )
   fromYear?: Year | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.hierarchyId !== null)
+  @IsString()
+  @IsUUID()
+  hierarchyId?: Id | null;
 
   @IsString()
   @IsUUID()
@@ -60,11 +59,20 @@ export class RelationshipsDto {
 
   @IsString()
   @IsUUID()
-  objectFeatureId!: Id;
+  kindTerm!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.levelId !== null)
+  @IsString()
+  @IsUUID()
+  @Satisfies<RelationshipsDto>((object) => object.levelId == null || object.hierarchyId != null, {
+    message: "Level Needs Hierarchy",
+  })
+  levelId?: Id | null;
 
   @IsString()
   @IsUUID()
-  relationshipKindId!: Id;
+  objectFeatureId!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.startsOn !== null)
@@ -73,7 +81,7 @@ export class RelationshipsDto {
     (object) =>
       object.startsOn == null || object.endsOn == null || object.startsOn <= object.endsOn,
     {
-      message: "Relationships Dates Are Ordered",
+      message: "Relationship Dates Are Ordered",
     },
   )
   startsOn?: CalendarDate | null;
@@ -81,13 +89,9 @@ export class RelationshipsDto {
   @IsString()
   @IsUUID()
   @Satisfies<RelationshipsDto>((object) => object.subjectFeatureId !== object.objectFeatureId, {
-    message: "Relationship Must Not Be Self Referential",
+    message: "Relationship Is Not Self",
   })
   subjectFeatureId!: Id;
-
-  @IsString()
-  @IsUUID()
-  systemId!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.toYear !== null)

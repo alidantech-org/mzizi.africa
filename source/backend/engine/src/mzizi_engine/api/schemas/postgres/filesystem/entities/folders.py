@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.filesystem.enums.access import Access
 
 
 class FoldersRow(BaseModel):
-    """Logical hierarchy; access escalation requires recorded authorization, independent of object keys."""
+    """Logical folder hierarchy; access escalation needs a recorded authorization, independent of object keys."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -33,6 +33,6 @@ class FoldersRow(BaseModel):
     id: UUID
     name: Annotated[str, Field(min_length=1, max_length=300)]
     parent_id: UUID | None = None
-    role_id: UUID
+    role_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

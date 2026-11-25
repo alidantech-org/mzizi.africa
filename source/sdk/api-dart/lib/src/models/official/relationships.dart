@@ -1,57 +1,44 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/official/individuals.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'relationships.g.dart';
 
-/// One directed typed relationship between exactly two Official identities, optionally with an ownership share.
+/// A kinship, business or political tie between public figures and organisations, always with a source link.
 @JsonSerializable(includeIfNull: false)
 class OfficialRelationships {
   const OfficialRelationships({
-    required this.code,
+    required this.basisTerm,
     this.confidence,
     required this.createdAt,
     this.deletedAt,
     this.endsOn,
-    this.evidenceBasisId,
-    this.evidenceStatusId,
-    this.fromEntityId,
-    this.fromIndividualId,
-    this.fromToPrecision,
+    required this.fromId,
     this.fromYear,
     required this.id,
-    required this.kindId,
+    required this.kindTerm,
     this.sharePercentage,
-    this.sourceCitationId,
     this.startsOn,
-    this.toEntityId,
-    this.toIndividualId,
+    required this.statusTerm,
+    required this.toId,
     this.toYear,
     required this.updatedAt,
     required this.version,
   });
-  final String code;
+  final String basisTerm;
   final double? confidence;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? endsOn;
-  final String? evidenceBasisId;
-  final String? evidenceStatusId;
-  final String? fromEntityId;
-  final String? fromIndividualId;
-  final SharedDatePrecision? fromToPrecision;
+  final String fromId;
   final int? fromYear;
   final String id;
-  final String kindId;
+  final String kindTerm;
   final double? sharePercentage;
-  final String? sourceCitationId;
   final DateTime? startsOn;
-  final String? toEntityId;
-  final String? toIndividualId;
+  final String statusTerm;
+  final String toId;
   final int? toYear;
   final DateTime updatedAt;
   final int version;

@@ -15,6 +15,7 @@ FilesystemFiles _$FilesystemFilesFromJson(Map<String, dynamic> json) => Filesyst
   id: json['id'] as String,
   name: json['name'] as String,
   retention: $enumDecode(_$FilesystemRetentionEnumMap, json['retention']),
+  tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
   updatedAt: DateTime.parse(json['updatedAt'] as String),
   version: (json['version'] as num).toInt(),
 );
@@ -28,6 +29,7 @@ Map<String, dynamic> _$FilesystemFilesToJson(FilesystemFiles instance) => <Strin
   'id': instance.id,
   'name': instance.name,
   'retention': _$FilesystemRetentionEnumMap[instance.retention]!,
+  'tags': ?instance.tags,
   'updatedAt': instance.updatedAt.toIso8601String(),
   'version': instance.version,
 };

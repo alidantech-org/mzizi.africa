@@ -6,13 +6,14 @@ import {
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
   ValidateIf,
 } from "class-validator";
-
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+import type { Day } from "#/modules/event/schema/type/day.type.ts";
+import type { Month } from "#/modules/event/schema/type/month.type.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -20,13 +21,9 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A way of counting time that gives events their dates: the civil calendar, a lunar calendar, a fiscal or school year. (entity)
+ * A civic calendar, such as Kenya's public holidays or the National Assembly calendar. (entity)
  */
 export class CalendarsDto {
-  @IsString()
-  @IsUUID()
-  calendarKindId!: Id;
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -51,12 +48,6 @@ export class CalendarsDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.description !== null)
-  @IsString()
-  @MaxLength(4000)
-  description?: Description | null;
-
   @IsString()
   @IsUUID()
   id!: Id;
@@ -64,11 +55,9 @@ export class CalendarsDto {
   @IsBoolean()
   isObserved!: Flag;
 
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
+  kindTerm!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;
@@ -81,11 +70,13 @@ export class CalendarsDto {
   @ValidateIf((object) => object.yearStartDay !== null)
   @IsInt()
   @Min(1)
-  yearStartDay?: PositiveInteger | null;
+  @Max(31)
+  yearStartDay?: Day | null;
 
   @IsOptional()
   @ValidateIf((object) => object.yearStartMonth !== null)
   @IsInt()
   @Min(1)
-  yearStartMonth?: PositiveInteger | null;
+  @Max(12)
+  yearStartMonth?: Month | null;
 }

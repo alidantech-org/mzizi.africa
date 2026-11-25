@@ -1,18 +1,17 @@
-/** One classified amount authorized in a budget version, optionally nested and assigned to a project or unit. */
+/** A line of a budget revision: money voted to a recipient, programme, project or place. */
 export interface FinanceAppropriations {
-  amountMinorUnits: number;
-  budgetVersionId: string;
-  classificationId: string;
+  amount?: number | null;
+  classTerm: string;
   code: string;
   createdAt: string;
-  currencyId: string;
+  currencyId?: string | null;
   deletedAt?: string | null;
+  featureId?: string | null;
   id: string;
-  parentAppropriationId?: string | null;
+  parentId?: string | null;
   projectId?: string | null;
-  recipientEntityId?: string | null;
-  sourceCitationId?: string | null;
-  unitFeatureId?: string | null;
+  recipientId?: string | null;
+  revisionId: string;
   updatedAt: string;
   version: number;
 }

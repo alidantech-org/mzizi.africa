@@ -1,14 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/legal/review_status.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
-import 'package:mzizi_api/src/enums/shared/subject_table.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
 import 'package:mzizi_api/src/models/legal/wordings.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_period_subject_entity.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'effects.g.dart';
 
-/// A reviewed assertion of what a wording establishes, governs, limits or changes for one subject record. Never mutates the subject.
+/// What a provision does to a named thing; a reviewed assertion that never changes the thing itself.
 @JsonSerializable(includeIfNull: false)
 class LegalEffects {
   const LegalEffects({
@@ -17,15 +17,13 @@ class LegalEffects {
     this.deletedAt,
     this.effectiveOn,
     this.endedOn,
-    this.explanation,
-    this.fromToPrecision,
     this.fromYear,
     required this.id,
-    required this.kindId,
-    required this.observedAt,
+    required this.identityId,
+    required this.kindTerm,
+    this.note,
+    this.noteLanguageId,
     required this.reviewStatus,
-    required this.subjectId,
-    required this.subjectTable,
     this.toYear,
     required this.updatedAt,
     required this.version,
@@ -36,15 +34,13 @@ class LegalEffects {
   final DateTime? deletedAt;
   final DateTime? effectiveOn;
   final DateTime? endedOn;
-  final String? explanation;
-  final SharedDatePrecision? fromToPrecision;
   final int? fromYear;
   final String id;
-  final String kindId;
-  final DateTime observedAt;
+  final String identityId;
+  final String kindTerm;
+  final String? note;
+  final String? noteLanguageId;
   final LegalReviewStatus reviewStatus;
-  final String subjectId;
-  final SharedSubjectTable subjectTable;
   final int? toYear;
   final DateTime updatedAt;
   final int version;

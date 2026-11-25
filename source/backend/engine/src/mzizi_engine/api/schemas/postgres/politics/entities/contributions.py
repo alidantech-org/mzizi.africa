@@ -10,13 +10,13 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ContributionsRow(BaseModel):
-    """Money or goods given to a party or candidate, by whom, when, for which election and where it was disclosed. A recorded gift is a fact about a gift, never a claim about intent."""
+    """A political donation or in-kind contribution as disclosed."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "politics.contributions"
 
-    amount_minor_units: Annotated[int, Field(ge=0)]
+    amount: Annotated[int, Field(ge=0)] | None = None
     code: Annotated[
         str,
         Field(
@@ -26,18 +26,15 @@ class ContributionsRow(BaseModel):
         ),
     ]
     created_at: datetime
-    currency_id: UUID
+    currency_id: UUID | None = None
     deleted_at: datetime | None = None
-    disclosure_file_version_id: UUID | None = None
-    donor_entity_id: UUID | None = None
-    donor_individual_id: UUID | None = None
+    donor_id: UUID
     election_id: UUID | None = None
-    evidence_status_id: UUID
-    given_on: date
+    given_on: date | None = None
     id: UUID
     is_in_kind: bool
-    recipient_candidate_id: UUID | None = None
-    recipient_party_id: UUID | None = None
-    source_citation_id: UUID | None = None
+    recipient_id: UUID
+    status_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]
+    version_id: UUID | None = None

@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.legal.enums.provision_kind import Provisi
 
 
 class ProvisionsRow(BaseModel):
-    """Stable provision identity within one instrument; hierarchy stays within that instrument. One provision holds one statement."""
+    """The tree of articles and sections of an instrument; headings are on `wordings`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -34,6 +34,5 @@ class ProvisionsRow(BaseModel):
     kind: ProvisionKind
     parent_id: UUID | None = None
     position: Annotated[int, Field(ge=1)]
-    title: Annotated[str, Field(min_length=1, max_length=300)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -2,23 +2,16 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { fiscalPeriodsExample } from "@test/modules/finance/schema/dto/examples/fiscal-periods.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { periodsExample } from "@test/modules/finance/schema/dto/examples/periods.dto.example.ts";
+import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
+import { countriesExample } from "@test/modules/reference/schema/dto/examples/countries.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Budgets, for generated tests. */
 export const budgetsExample: ContractExample = contractExample({
   name: "Budgets",
   fields: [
-    {
-      name: "budgetKindId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
     {
       name: "code",
       optional: false,
@@ -34,8 +27,8 @@ export const budgetsExample: ContractExample = contractExample({
     },
     {
       name: "countryId",
-      optional: true,
-      nullable: true,
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -51,15 +44,9 @@ export const budgetsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "fiscalPeriodId",
+      name: "governmentId",
       optional: false,
       nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "governmentEntityId",
-      optional: true,
-      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -69,9 +56,15 @@ export const budgetsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
+      name: "kindTerm",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "periodId",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {

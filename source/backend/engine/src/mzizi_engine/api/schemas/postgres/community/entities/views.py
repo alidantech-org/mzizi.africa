@@ -8,23 +8,20 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
-
 
 class ViewsRow(BaseModel):
-    """One visitor-day of viewing one subject, deduplicated by a daily-rotating hash. Counts are derived from these rows."""
+    """A counted view, kept for a limited time."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "community.views"
 
+    article_id: UUID | None = None
     country_id: UUID | None = None
     created_at: datetime
     day: date
-    deleted_at: datetime | None = None
     id: UUID
-    subject_id: UUID
-    subject_table: SubjectTable
-    updated_at: datetime
-    version: Annotated[int, Field(ge=1)]
+    identity_id: UUID | None = None
+    post_country_id: UUID | None = None
+    post_id: UUID | None = None
     visitor_hash: Annotated[str, Field(min_length=64, max_length=64, pattern="^[a-f0-9]{64}$")]

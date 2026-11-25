@@ -4,25 +4,25 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { procurementsExample } from "@test/modules/civic/schema/dto/examples/procurements.dto.example.ts";
 import { projectsExample } from "@test/modules/civic/schema/dto/examples/projects.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { currenciesExample } from "@test/modules/reference/schema/dto/examples/currencies.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Contracts, for generated tests. */
 export const contractsExample: ContractExample = contractExample({
   name: "Contracts",
   fields: [
     {
-      name: "amountMinorUnits",
-      optional: false,
-      nullable: false,
+      name: "amount",
+      optional: true,
+      nullable: true,
       spec: { kind: "number", integer: true, min: 0 },
     },
     {
-      name: "buyerEntityId",
-      optional: true,
-      nullable: true,
+      name: "buyerId",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -39,7 +39,7 @@ export const contractsExample: ContractExample = contractExample({
       },
     },
     {
-      name: "contractorEntityId",
+      name: "contractorId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -52,8 +52,8 @@ export const contractsExample: ContractExample = contractExample({
     },
     {
       name: "currencyId",
-      optional: false,
-      nullable: false,
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -63,15 +63,21 @@ export const contractsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
+      name: "endsOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
+    },
+    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "natureId",
-      optional: true,
-      nullable: true,
+      name: "natureTerm",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -93,13 +99,13 @@ export const contractsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "sourceCitationId",
+      name: "startsOn",
       optional: true,
       nullable: true,
-      spec: { kind: "string", format: "uuid" },
+      spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "statusId",
+      name: "statusTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -122,14 +128,34 @@ export const contractsExample: ContractExample = contractExample({
       any: true,
       comparisons: [
         {
-          left: { field: "procurementId" },
-          operator: "not-equal",
+          left: { field: "amount" },
+          operator: "equal",
           right: { literal: null },
         },
         {
-          left: { field: "buyerEntityId" },
+          left: { field: "currencyId" },
           operator: "not-equal",
           right: { literal: null },
+        },
+      ],
+    },
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "startsOn" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "endsOn" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "startsOn" },
+          operator: "less-than-or-equal",
+          right: { field: "endsOn" },
         },
       ],
     },

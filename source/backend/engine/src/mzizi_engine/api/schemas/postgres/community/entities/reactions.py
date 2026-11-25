@@ -8,22 +8,22 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
-
 
 class ReactionsRow(BaseModel):
-    """One reaction (a like) by one actor to one subject; one per actor, kind and subject, reversible."""
+    """A member's reaction to a post, named thing or article."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "community.reactions"
 
     actor_id: UUID
+    article_id: UUID | None = None
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
-    kind_id: UUID
-    subject_id: UUID
-    subject_table: SubjectTable
+    identity_id: UUID | None = None
+    kind_term: UUID
+    post_country_id: UUID | None = None
+    post_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

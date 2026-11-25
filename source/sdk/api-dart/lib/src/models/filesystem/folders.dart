@@ -1,11 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/filesystem/access.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'folders.g.dart';
 
-/// Logical hierarchy; access escalation requires recorded authorization, independent of object keys.
+/// Logical folder hierarchy; access escalation needs a recorded authorization, independent of object keys.
 @JsonSerializable(includeIfNull: false)
 class FilesystemFolders {
   const FilesystemFolders({
@@ -17,7 +17,7 @@ class FilesystemFolders {
     required this.id,
     required this.name,
     this.parentId,
-    required this.roleId,
+    required this.roleTerm,
     required this.updatedAt,
     required this.version,
   });
@@ -29,7 +29,7 @@ class FilesystemFolders {
   final String id;
   final String name;
   final String? parentId;
-  final String roleId;
+  final String roleTerm;
   final DateTime updatedAt;
   final int version;
 

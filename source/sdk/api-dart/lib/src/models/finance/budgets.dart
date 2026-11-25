@@ -1,38 +1,35 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/finance/fiscal_periods.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/finance/periods.dart';
+import 'package:mzizi_api/src/models/governance/institutions.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'budgets.g.dart';
 
-/// One institutional/country budget identity for a fiscal period and budget classification.
+/// A government's budget for a fiscal period.
 @JsonSerializable(includeIfNull: false)
 class FinanceBudgets {
   const FinanceBudgets({
-    required this.budgetKindId,
     required this.code,
-    this.countryId,
+    required this.countryId,
     required this.createdAt,
     this.deletedAt,
-    required this.fiscalPeriodId,
-    this.governmentEntityId,
+    required this.governmentId,
     required this.id,
-    this.sourceCitationId,
+    required this.kindTerm,
+    required this.periodId,
     required this.updatedAt,
     required this.version,
   });
-  final String budgetKindId;
   final String code;
-  final String? countryId;
+  final String countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String fiscalPeriodId;
-  final String? governmentEntityId;
+  final String governmentId;
   final String id;
-  final String? sourceCitationId;
+  final String kindTerm;
+  final String periodId;
   final DateTime updatedAt;
   final int version;
 

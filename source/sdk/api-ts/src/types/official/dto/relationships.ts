@@ -1,25 +1,18 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
-
-/** One directed typed relationship between exactly two Official identities, optionally with an ownership share. */
+/** A kinship, business or political tie between public figures and organisations, always with a source link. */
 export interface OfficialRelationships {
-  code: string;
+  basisTerm: string;
   confidence?: number | null;
   createdAt: string;
   deletedAt?: string | null;
   endsOn?: string | null;
-  evidenceBasisId?: string | null;
-  evidenceStatusId?: string | null;
-  fromEntityId?: string | null;
-  fromIndividualId?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
+  fromId: string;
   fromYear?: number | null;
   id: string;
-  kindId: string;
+  kindTerm: string;
   sharePercentage?: number | null;
-  sourceCitationId?: string | null;
   startsOn?: string | null;
-  toEntityId?: string | null;
-  toIndividualId?: string | null;
+  statusTerm: string;
+  toId: string;
   toYear?: number | null;
   updatedAt: string;
   version: number;

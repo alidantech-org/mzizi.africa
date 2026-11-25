@@ -4,11 +4,14 @@ name: Seed outside Git, dev seed workflow and move plan
 type: planning-proposal
 tags: [seed, dev-seed, portability, storage, migration-plan, long-term-goal]
 extra:
-  status: planning_only
-  approval: not_approved
-  implementation: not_authorized
+  status: implemented
+  approval: approved
+  implementation: done
   recorded_on: 2026-11-20
 ---
+
+> **Implemented on 2026-11-25** ([decision](../../decisions/DEC-SEED-OUTSIDE-GIT-20261125.md)). This proposal is kept as history; the decision is authoritative.
+
 
 # Seed outside Git: the dev seed workflow and the plan to move it
 

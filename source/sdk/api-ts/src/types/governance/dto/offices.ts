@@ -1,21 +1,20 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
 
-/** One established public office, independent of any current holder and optionally scoped to a geographic unit. */
+/** One concrete seat (the Governor of Nairobi, the MCA for Kilimani ward). */
 export interface GovernanceOffices {
-  abolishedOn?: string | null;
   code: string;
   createdAt: string;
-  createdOn?: string | null;
   deletedAt?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
+  endsOn?: string | null;
+  featureId?: string | null;
   fromYear?: number | null;
   id: string;
+  identityKind: SharedIdentityKind;
   institutionId: string;
   positionId: string;
-  seatOrdinal?: number | null;
-  sourceCitationId?: string | null;
+  seat?: string | null;
+  startsOn?: string | null;
   toYear?: number | null;
-  unitFeatureId?: string | null;
   updatedAt: string;
   version: number;
 }

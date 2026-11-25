@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class ProductsRow(BaseModel):
-    """One logical document or dataset, independent of who served it, in what format or how many times it was downloaded."""
+    """A publisher's series (the Economic Survey). Its titles are `identity.names`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -26,10 +28,9 @@ class ProductsRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
-    description: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
-    kind_id: UUID
+    identity_kind: IdentityKind
+    kind_term: UUID
     publisher_id: UUID | None = None
-    title: Annotated[str, Field(min_length=1, max_length=300)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

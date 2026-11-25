@@ -56,8 +56,8 @@ def test_accents_and_case_do_not_matter() -> None:
 
 
 def test_a_code_follows_its_recipe_and_gaps_are_named() -> None:
-    recipe = CodeRecipe(parts=(CodePart(scope=True), CodePart(name_slug="official.names.name")))
-    values = {"official.names.name": "Kiambu County"}
+    recipe = CodeRecipe(parts=(CodePart(scope=True), CodePart(name_slug="identity.names.text")))
+    values = {"identity.names.text": "Kiambu County"}
     assert build_code(recipe, values, "ke", frozenset({"county"})) == "ke.kiambu"
     assert build_code(recipe, values, "ke") == "ke.kiambu-county"
     with pytest.raises(RecipeGap):

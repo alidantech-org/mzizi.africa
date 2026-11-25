@@ -1,14 +1,15 @@
-/** An edge in a geographic transformation; multiple rows sharing transformation_id represent splits, mergers, creation or dissolution without overwriting predecessor identities. */
+/** One edge of a boundary change: splits, merges, creation or dissolution, without overwriting the places. */
 export interface GeographyChanges {
-  changeKindId: string;
   createdAt: string;
   deletedAt?: string | null;
   effectiveOn?: string | null;
-  explanation?: string | null;
   id: string;
+  kindTerm: string;
+  note?: string | null;
+  noteLanguageId?: string | null;
+  occurrenceId?: string | null;
   predecessorFeatureId?: string | null;
   successorFeatureId?: string | null;
-  transformationId: string;
   updatedAt: string;
   version: number;
 }

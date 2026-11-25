@@ -2,23 +2,22 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { countryExample } from "@test/modules/reference/schema/dto/examples/country.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { countriesExample } from "@test/modules/reference/schema/dto/examples/countries.dto.example.ts";
+import { identityEntityExample } from "@test/modules/shared/schema/dto/examples/identity-entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Facilities, for generated tests. */
 export const facilitiesExample: ContractExample = contractExample({
   name: "Facilities",
   fields: [
     {
-      name: "closedOn",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "date" },
+      name: "classTerm",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "code",
@@ -35,8 +34,8 @@ export const facilitiesExample: ContractExample = contractExample({
     },
     {
       name: "countryId",
-      optional: true,
-      nullable: true,
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -52,16 +51,16 @@ export const facilitiesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "facilityClassId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
+      name: "endsOn",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "featureId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "id",
@@ -70,46 +69,52 @@ export const facilitiesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "openedOn",
+      name: "identityKind",
+      optional: false,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(IdentityKind) },
+    },
+    {
+      name: "institutionId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "operatorId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "ownerId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "ownershipTerm",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "startsOn",
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "operatorEntityId",
+      name: "statusTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "ownerEntityId",
+      name: "toYear",
       optional: true,
       nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "ownershipId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "responsibleInstitutionId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "statusId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "updatedAt",
@@ -126,22 +131,12 @@ export const facilitiesExample: ContractExample = contractExample({
   ],
   invariants: [
     {
-      any: true,
+      any: false,
       comparisons: [
         {
-          left: { field: "openedOn" },
+          left: { field: "identityKind" },
           operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "closedOn" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "openedOn" },
-          operator: "less-than-or-equal",
-          right: { field: "closedOn" },
+          right: { literal: "feature" },
         },
       ],
     },

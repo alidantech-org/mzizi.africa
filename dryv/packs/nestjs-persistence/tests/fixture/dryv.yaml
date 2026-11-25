@@ -1,0 +1,36 @@
+version: dryv/v1alpha1
+sources:
+  authoring:
+    main:
+      type: ir
+      path: dryv.ir.yaml
+  packs:
+    local:
+      path: packs
+destinations:
+  models:
+    path: out/models
+  repository:
+    path: out/repository
+    imports:
+      path: out/repository
+      prefix: '#runtime/'
+authoring:
+  source:
+    $ref: '#/sources/authoring/main'
+packs:
+  models:
+    source:
+      $ref: '#/sources/packs/local'
+      path: class-validator
+    destination:
+      $ref: '#/destinations/models'
+  repository:
+    source:
+      $ref: '#/sources/packs/local'
+      path: nestjs-persistence
+    destination:
+      $ref: '#/destinations/repository'
+    bind:
+      schema.validation:
+        $ref: '#/packs/models'

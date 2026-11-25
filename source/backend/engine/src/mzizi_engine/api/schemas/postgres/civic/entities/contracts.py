@@ -10,14 +10,14 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class ContractsRow(BaseModel):
-    """One executed contract with a contractor, optional procurement/project links and contracted amount."""
+    """A signed contract."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "civic.contracts"
 
-    amount_minor_units: Annotated[int, Field(ge=0)]
-    buyer_entity_id: UUID | None = None
+    amount: Annotated[int, Field(ge=0)] | None = None
+    buyer_id: UUID
     code: Annotated[
         str,
         Field(
@@ -26,16 +26,17 @@ class ContractsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    contractor_entity_id: UUID
+    contractor_id: UUID
     created_at: datetime
-    currency_id: UUID
+    currency_id: UUID | None = None
     deleted_at: datetime | None = None
+    ends_on: date | None = None
     id: UUID
-    nature_id: UUID | None = None
+    nature_term: UUID
     procurement_id: UUID | None = None
     project_id: UUID | None = None
     signed_on: date | None = None
-    source_citation_id: UUID | None = None
-    status_id: UUID
+    starts_on: date | None = None
+    status_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -1,5 +1,4 @@
 import {
-  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -11,14 +10,13 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Base for versioned records with a period of integer years and one precision for the pair.
+ * Base for versioned records with a period of integer years.
  */
 export class PeriodEntityDto {
   @IsISO8601({})
@@ -28,11 +26,6 @@ export class PeriodEntityDto {
   @ValidateIf((object) => object.deletedAt !== null)
   @IsISO8601({})
   deletedAt?: Instant | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)

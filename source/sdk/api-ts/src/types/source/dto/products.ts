@@ -1,13 +1,14 @@
-/** One logical document or dataset, independent of who served it, in what format or how many times it was downloaded. */
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
+
+/** A publisher's series (the Economic Survey). Its titles are `identity.names`. */
 export interface SourceProducts {
   code: string;
   createdAt: string;
   deletedAt?: string | null;
-  description?: string | null;
   id: string;
-  kindId: string;
+  identityKind: SharedIdentityKind;
+  kindTerm: string;
   publisherId?: string | null;
-  title: string;
   updatedAt: string;
   version: number;
 }

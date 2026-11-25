@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class GovernanceRelationshipsRow(BaseModel):
-    """One dated, typed relationship between two government institutions."""
+    """A structural link from law: a ministry part of the executive, a committee part of its house."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -18,10 +18,12 @@ class GovernanceRelationshipsRow(BaseModel):
 
     created_at: datetime
     deleted_at: datetime | None = None
+    from_id: UUID
+    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    object_institution_id: UUID
-    relationship_kind_id: UUID
-    source_citation_id: UUID | None = None
-    subject_institution_id: UUID
+    kind_term: UUID
+    provision_id: UUID | None = None
+    to_id: UUID
+    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

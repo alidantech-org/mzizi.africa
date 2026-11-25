@@ -11,7 +11,6 @@ import {
   ValidateIf,
 } from "class-validator";
 
-import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
@@ -20,7 +19,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A meaningful legal content state of an instrument. Not a download and not a Source publication edition. (entity)
+ * One edition of an instrument with its consolidation and commencement dates. (entity)
  */
 export class EditionsDto {
   @IsOptional()
@@ -63,17 +62,11 @@ export class EditionsDto {
 
   @IsString()
   @IsUUID()
-  @Satisfies<EditionsDto>((object) => object.id !== object.supersedesId, {
-    message: "Edition Must Not Supersede Itself",
-  })
   id!: Id;
 
   @IsString()
   @IsUUID()
   instrumentId!: Id;
-
-  @IsISO8601({})
-  observedAt!: Instant;
 
   @IsOptional()
   @ValidateIf((object) => object.repealedOn !== null)

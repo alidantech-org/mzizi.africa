@@ -1,14 +1,13 @@
-/** One institutional/country budget identity for a fiscal period and budget classification. */
+/** A government's budget for a fiscal period. */
 export interface FinanceBudgets {
-  budgetKindId: string;
   code: string;
-  countryId?: string | null;
+  countryId: string;
   createdAt: string;
   deletedAt?: string | null;
-  fiscalPeriodId: string;
-  governmentEntityId?: string | null;
+  governmentId: string;
   id: string;
-  sourceCitationId?: string | null;
+  kindTerm: string;
+  periodId: string;
   updatedAt: string;
   version: number;
 }

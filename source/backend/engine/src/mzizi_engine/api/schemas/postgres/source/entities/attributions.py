@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class AttributionsRow(BaseModel):
-    """Credit and rights for one artifact and publisher; equal bytes from other places never overwrite it."""
+    """Credit and rights of an artifact."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -18,7 +18,7 @@ class AttributionsRow(BaseModel):
 
     artifact_id: UUID
     assessed_at: datetime
-    assessor_snapshot: str
+    assessor_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -31,8 +31,8 @@ class AttributionsRow(BaseModel):
     credit: Annotated[str, Field(min_length=1, max_length=1000)]
     deleted_at: datetime | None = None
     id: UUID
-    license_value_id: UUID | None = None
+    licence_term: UUID | None = None
     publisher_id: UUID
-    rights_statement: Annotated[str, Field(max_length=4000)]
+    rights: Annotated[str, Field(max_length=4000)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

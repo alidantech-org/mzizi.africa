@@ -21,7 +21,7 @@ class ExploreConfig(BaseModel):
     @classmethod
     def from_env(cls, env: Mapping[str, str], repository: Path, runs: Path) -> ExploreConfig:
         folders = {
-            "seed": repository / "seed",
+            "seed": Path(os.environ.get("MZIZI_SEED_ROOT") or repository / ".dev" / "seed"),
             "dev": repository / ".dev",
             "runs": runs,
             "docs": repository / ".docs",
@@ -41,7 +41,11 @@ class ExploreConfig(BaseModel):
         from mzizi_engine.runtime.assembly.run_operations import local_run_root
 
         repository = next(
-            (p for p in Path(__file__).resolve().parents if (p / "seed").is_dir() and (p / "pyproject.toml").is_file()),
+            (
+                p
+                for p in Path(__file__).resolve().parents
+                if (p / "dryv.yaml").is_file() and (p / "pyproject.toml").is_file()
+            ),
             Path.cwd(),
         )
         return cls.from_env(os.environ, repository, local_run_root(EngineConfig.load()))

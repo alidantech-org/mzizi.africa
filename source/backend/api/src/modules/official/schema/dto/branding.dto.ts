@@ -1,36 +1,36 @@
 import {
+  IsArray,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
   ValidateIf,
 } from "class-validator";
+
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import type { BrandText } from "#/modules/official/schema/type/brand-text.type.ts";
+import type { HexColor } from "#/modules/official/schema/type/hex-color.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { NonEmptyString1000 } from "#/modules/shared/schema/type/non-empty-string1000.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person. (entity)
- *
- * Invariant "HasExactlyOneIdentityOwner" has no simple form, so it isn't validated here.
+ * Words and colours of a named thing (slogan, motto, party colours); images are `media`. (entity)
  */
 export class BrandingDto {
-  @IsString()
-  @MinLength(1)
-  @MaxLength(255)
-  @Matches(
-    new RegExp(
-      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-    ),
-  )
-  code!: IdentityCode;
+  @IsOptional()
+  @ValidateIf((object) => object.colors !== null)
+  @IsArray()
+  @IsString({ each: true })
+  @Matches(new RegExp("^#[0-9a-fA-F]{6}$"), { each: true })
+  colors?: HexColor[] | null;
 
   @IsISO8601({})
   createdAt!: Instant;
@@ -41,44 +41,49 @@ export class BrandingDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.entityId !== null)
-  @IsString()
-  @IsUUID()
-  entityId?: Id | null;
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear?: Year | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.individualId !== null)
   @IsString()
   @IsUUID()
-  individualId?: Id | null;
+  identityId!: Id;
 
   @IsString()
   @IsUUID()
-  kindId!: Id;
-
-  @IsString()
-  @IsUUID()
-  languageId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
+  @ValidateIf((object) => object.languageId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
+  languageId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.text !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(2000)
+  @Satisfies<BrandingDto>((object) => object.text == null || object.languageId != null, {
+    message: "Brand Text Has Language",
+  })
+  text?: BrandText | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;
-
-  @IsOptional()
-  @ValidateIf((object) => object.value !== null)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(1000)
-  value?: NonEmptyString1000 | null;
 
   @IsInt()
   @Min(1)

@@ -8,26 +8,25 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.community.enums.moderation_state import ModerationState
+from mzizi_engine.api.schemas.postgres.community.enums.post_state import PostState
 
 
 class CasesRow(BaseModel):
-    """The moderation record of one interaction: filter results, the reviewer, the decision and any appeal."""
+    """The moderation of one post."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "community.cases"
 
-    appealed_at: datetime | None = None
     created_at: datetime
     decided_at: datetime | None = None
-    decision_id: UUID | None = None
+    decision_term: UUID | None = None
     deleted_at: datetime | None = None
-    filter_results: str | None = None
     id: UUID
-    interaction_id: UUID
+    post_country_id: UUID
+    post_id: UUID
     reason: Annotated[str, Field(max_length=4000)] | None = None
     reviewer_account_id: UUID | None = None
-    state: ModerationState
+    state: PostState
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -1,47 +1,45 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/civic/projects.dart';
-import 'package:mzizi_api/src/models/finance/budget_versions.dart';
+import 'package:mzizi_api/src/models/finance/revisions.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/currencies.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'appropriations.g.dart';
 
-/// One classified amount authorized in a budget version, optionally nested and assigned to a project or unit.
+/// A line of a budget revision: money voted to a recipient, programme, project or place.
 @JsonSerializable(includeIfNull: false)
 class FinanceAppropriations {
   const FinanceAppropriations({
-    required this.amountMinorUnits,
-    required this.budgetVersionId,
-    required this.classificationId,
+    this.amount,
+    required this.classTerm,
     required this.code,
     required this.createdAt,
-    required this.currencyId,
+    this.currencyId,
     this.deletedAt,
+    this.featureId,
     required this.id,
-    this.parentAppropriationId,
+    this.parentId,
     this.projectId,
-    this.recipientEntityId,
-    this.sourceCitationId,
-    this.unitFeatureId,
+    this.recipientId,
+    required this.revisionId,
     required this.updatedAt,
     required this.version,
   });
-  final int amountMinorUnits;
-  final String budgetVersionId;
-  final String classificationId;
+  final int? amount;
+  final String classTerm;
   final String code;
   final DateTime createdAt;
-  final String currencyId;
+  final String? currencyId;
   final DateTime? deletedAt;
+  final String? featureId;
   final String id;
-  final String? parentAppropriationId;
+  final String? parentId;
   final String? projectId;
-  final String? recipientEntityId;
-  final String? sourceCitationId;
-  final String? unitFeatureId;
+  final String? recipientId;
+  final String revisionId;
   final DateTime updatedAt;
   final int version;
 

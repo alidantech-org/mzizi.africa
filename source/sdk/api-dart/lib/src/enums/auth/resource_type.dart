@@ -1,0 +1,49 @@
+import 'package:json_annotation/json_annotation.dart';
+
+/// Resource Type
+enum AuthResourceType {
+  @JsonValue('auth')
+  auth,
+  @JsonValue('civic')
+  civic,
+  @JsonValue('community')
+  community,
+  @JsonValue('economy')
+  economy,
+  @JsonValue('election')
+  election,
+  @JsonValue('event')
+  event,
+  @JsonValue('filesystem')
+  filesystem,
+  @JsonValue('finance')
+  finance,
+  @JsonValue('geography')
+  geography,
+  @JsonValue('governance')
+  governance,
+  @JsonValue('history')
+  history,
+  @JsonValue('identity')
+  identity,
+  @JsonValue('legal')
+  legal,
+  @JsonValue('legislature')
+  legislature,
+  @JsonValue('media')
+  media,
+  @JsonValue('official')
+  official,
+  @JsonValue('politics')
+  politics,
+  @JsonValue('product')
+  product,
+  @JsonValue('reference')
+  reference,
+  @JsonValue('source')
+  source,
+  @JsonValue('statistics')
+  statistics,
+  @JsonValue('vocabulary')
+  vocabulary,
+}

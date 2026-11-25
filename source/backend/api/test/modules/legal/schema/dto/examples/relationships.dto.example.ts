@@ -4,9 +4,9 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { instrumentsExample } from "@test/modules/legal/schema/dto/examples/instruments.dto.example.ts";
 import { wordingsExample } from "@test/modules/legal/schema/dto/examples/wordings.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Relationships, for generated tests. */
 export const relationshipsExample: ContractExample = contractExample({
@@ -20,12 +20,6 @@ export const relationshipsExample: ContractExample = contractExample({
     },
     {
       name: "authorityWordingId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "citationId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -62,21 +56,27 @@ export const relationshipsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "explanation",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
-    },
-    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "kindId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "note",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
+    },
+    {
+      name: "noteLanguageId",
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -112,22 +112,17 @@ export const relationshipsExample: ContractExample = contractExample({
   ],
   invariants: [
     {
-      any: false,
+      any: true,
       comparisons: [
         {
-          left: { field: "subjectInstrumentId" },
-          operator: "not-equal",
-          right: { field: "objectInstrumentId" },
+          left: { field: "note" },
+          operator: "equal",
+          right: { literal: null },
         },
-      ],
-    },
-    {
-      any: false,
-      comparisons: [
         {
-          left: { field: "affectedWordingId" },
+          left: { field: "noteLanguageId" },
           operator: "not-equal",
-          right: { field: "resultingWordingId" },
+          right: { literal: null },
         },
       ],
     },

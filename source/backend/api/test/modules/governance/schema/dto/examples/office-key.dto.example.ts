@@ -8,10 +8,17 @@ export const officeKeyExample: ContractExample = contractExample({
   name: "OfficeKey",
   fields: [
     {
-      name: "officeId",
+      name: "code",
       optional: false,
       nullable: false,
-      spec: { kind: "string", format: "uuid" },
+      spec: {
+        kind: "string",
+        minLength: 1,
+        maxLength: 255,
+        patterns: [
+          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ],
+      },
     },
   ],
   invariants: [],

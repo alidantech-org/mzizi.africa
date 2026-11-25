@@ -10,14 +10,14 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class BidsRow(BaseModel):
-    """One supplier submission to one procurement process, with the reported amount and outcome where known."""
+    """A bid on a tender, including cheaper bids that lost."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "civic.bids"
 
-    amount_minor_units: Annotated[int, Field(ge=0)] | None = None
-    bidder_entity_id: UUID
+    amount: Annotated[int, Field(ge=0)] | None = None
+    bidder_id: UUID
     code: Annotated[
         str,
         Field(
@@ -30,9 +30,8 @@ class BidsRow(BaseModel):
     currency_id: UUID | None = None
     deleted_at: datetime | None = None
     id: UUID
-    outcome_id: UUID
+    outcome_term: UUID
     procurement_id: UUID
-    source_citation_id: UUID | None = None
     submitted_on: date | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

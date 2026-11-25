@@ -1,12 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/shared/subject_table.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'disputes.g.dart';
 
-/// A recorded disagreement between sources about one record. Both claims are kept with their citations and shown side by side; nothing is overwritten.
+/// Conflicting claims about one row.
 @JsonSerializable(includeIfNull: false)
 class SourceDisputes {
   const SourceDisputes({
@@ -14,13 +14,14 @@ class SourceDisputes {
     required this.createdAt,
     this.deletedAt,
     required this.id,
-    required this.kindId,
-    this.resolutionCitationId,
+    required this.kindTerm,
+    this.note,
+    this.noteLanguageId,
+    this.resolutionId,
     this.resolvedOn,
-    required this.statusId,
+    required this.statusTerm,
     required this.subjectId,
     required this.subjectTable,
-    required this.summary,
     required this.updatedAt,
     required this.version,
   });
@@ -28,13 +29,14 @@ class SourceDisputes {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final String id;
-  final String kindId;
-  final String? resolutionCitationId;
+  final String kindTerm;
+  final String? note;
+  final String? noteLanguageId;
+  final String? resolutionId;
   final DateTime? resolvedOn;
-  final String statusId;
+  final String statusTerm;
   final String subjectId;
   final SharedSubjectTable subjectTable;
-  final String summary;
   final DateTime updatedAt;
   final int version;
 

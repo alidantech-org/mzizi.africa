@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.auth.enums.membership_status import Membe
 
 
 class AuthMembershipsRow(BaseModel):
-    """Account membership of an institution, verified and revocable with attribution."""
+    """An account's membership of an institution, verified and revocable with attribution."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -21,7 +21,7 @@ class AuthMembershipsRow(BaseModel):
     account_id: UUID
     ends_at: datetime | None = None
     id: UUID
-    institution_ref_id: UUID
+    institution_id: UUID
     revoked_at: datetime | None = None
     revoked_by: UUID | None = None
     starts_at: datetime | None = None

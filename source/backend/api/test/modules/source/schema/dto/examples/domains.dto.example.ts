@@ -2,13 +2,12 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { templatesExample } from "@test/modules/governance/schema/dto/examples/templates.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
 import { contactsExample } from "@test/modules/official/schema/dto/examples/contacts.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { templateExample } from "@test/modules/reference/schema/dto/examples/template.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 import { sourcesExample } from "@test/modules/source/schema/dto/examples/sources.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Domains, for generated tests. */
 export const domainsExample: ContractExample = contractExample({
@@ -28,6 +27,12 @@ export const domainsExample: ContractExample = contractExample({
       },
     },
     {
+      name: "contactId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "createdAt",
       optional: false,
       nullable: false,
@@ -44,18 +49,6 @@ export const domainsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
-    },
-    {
-      name: "entityId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "fromToPrecision",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
     },
     {
       name: "fromYear",
@@ -82,7 +75,7 @@ export const domainsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "officialContactId",
+      name: "ownerId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -100,9 +93,9 @@ export const domainsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "statusId",
-      optional: true,
-      nullable: true,
+      name: "statusTerm",
+      optional: false,
+      nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -130,46 +123,5 @@ export const domainsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "fromYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "toYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "fromYear" },
-          operator: "less-than-or-equal",
-          right: { field: "toYear" },
-        },
-      ],
-    },
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "startsOn" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "endsOn" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "startsOn" },
-          operator: "less-than-or-equal",
-          right: { field: "endsOn" },
-        },
-      ],
-    },
-  ],
+  invariants: [],
 });

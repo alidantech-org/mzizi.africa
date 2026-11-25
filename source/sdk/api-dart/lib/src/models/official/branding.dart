@@ -1,41 +1,39 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/official/individuals.dart';
-import 'package:mzizi_api/src/models/reference/language.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'branding.g.dart';
 
-/// How an entity or person presents itself: slogan, colours, a symbol or logo, a portrait. Words go in `value`; images and recordings are filesystem media that mention the entity or person.
+/// Words and colours of a named thing (slogan, motto, party colours); images are `media`.
 @JsonSerializable(includeIfNull: false)
 class OfficialBranding {
   const OfficialBranding({
-    required this.code,
+    this.colors,
     required this.createdAt,
     this.deletedAt,
-    this.entityId,
+    this.fromYear,
     required this.id,
-    this.individualId,
-    required this.kindId,
-    required this.languageId,
-    this.sourceCitationId,
+    required this.identityId,
+    required this.kindTerm,
+    this.languageId,
+    this.text,
+    this.toYear,
     required this.updatedAt,
-    this.value,
     required this.version,
   });
-  final String code;
+  final List<String>? colors;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String? entityId;
+  final int? fromYear;
   final String id;
-  final String? individualId;
-  final String kindId;
-  final String languageId;
-  final String? sourceCitationId;
+  final String identityId;
+  final String kindTerm;
+  final String? languageId;
+  final String? text;
+  final int? toYear;
   final DateTime updatedAt;
-  final String? value;
   final int version;
 
   factory OfficialBranding.fromJson(Map<String, dynamic> json) => _$OfficialBrandingFromJson(json);

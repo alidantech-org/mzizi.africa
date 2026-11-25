@@ -3,11 +3,10 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { eventsExample } from "@test/modules/event/schema/dto/examples/events.dto.example.ts";
-import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { timezonesExample } from "@test/modules/reference/schema/dto/examples/timezones.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Occurrences, for generated tests. */
 export const occurrencesExample: ContractExample = contractExample({
@@ -63,7 +62,7 @@ export const occurrencesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "formatId",
+      name: "formatTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -81,13 +80,13 @@ export const occurrencesExample: ContractExample = contractExample({
       spec: { kind: "boolean" },
     },
     {
-      name: "knowledgeId",
+      name: "knowledgeTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "organiserEntityId",
+      name: "organiserId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -105,46 +104,28 @@ export const occurrencesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "sourceCitationId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "startsAt",
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "statusId",
+      name: "statusTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "timezone",
+      name: "timezoneId",
       optional: true,
       nullable: true,
-      spec: { kind: "string", minLength: 1, maxLength: 100 },
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "updatedAt",
       optional: false,
       nullable: false,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "venueFeatureId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "venueNote",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
     },
     {
       name: "version",

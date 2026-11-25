@@ -1,0 +1,102 @@
+import {
+  type ContractExample,
+  contractExample,
+} from "@test/modules/common/schema/dto/testing/examples.ts";
+import { HttpMethod } from "#/modules/source/schema/enum/http-method.enum.ts";
+import { PathKind } from "#/modules/source/schema/enum/path-kind.enum.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { domainsExample } from "@test/modules/source/schema/dto/examples/domains.dto.example.ts";
+
+/** The contract shape of Paths, for generated tests. */
+export const pathsExample: ContractExample = contractExample({
+  name: "Paths",
+  fields: [
+    {
+      name: "code",
+      optional: false,
+      nullable: false,
+      spec: {
+        kind: "string",
+        minLength: 1,
+        maxLength: 255,
+        patterns: [
+          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ],
+      },
+    },
+    {
+      name: "createdAt",
+      optional: false,
+      nullable: false,
+      spec: { kind: "temporal", temporal: "instant" },
+    },
+    {
+      name: "deletedAt",
+      optional: true,
+      nullable: true,
+      spec: { kind: "temporal", temporal: "instant" },
+    },
+    {
+      name: "domainId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "id",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "kind",
+      optional: false,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(PathKind) },
+    },
+    {
+      name: "method",
+      optional: false,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(HttpMethod) },
+    },
+    {
+      name: "note",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
+    },
+    {
+      name: "noteLanguageId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "path",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", minLength: 1, maxLength: 1000 },
+    },
+    {
+      name: "query",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 1000 },
+    },
+    {
+      name: "updatedAt",
+      optional: false,
+      nullable: false,
+      spec: { kind: "temporal", temporal: "instant" },
+    },
+    {
+      name: "version",
+      optional: false,
+      nullable: false,
+      spec: { kind: "number", integer: true, min: 1 },
+    },
+  ],
+  invariants: [],
+});

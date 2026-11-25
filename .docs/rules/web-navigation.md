@@ -62,11 +62,9 @@ Internal demo links and navigation stay under `/demo`; `#demo/*` resolves only t
 Crossing between the two root layouts performs a full document navigation, keeping the demo's fonts, theme scripts and CSS out of the real document. Migration means intentionally reimplementing a supported screen against generated backend clients and typed data, while preserving the working demo for comparison. A screen's existence in the demo is not proof that its data or rules are ready for production.
 
 
-## Current real shell checkpoint
+## Current real application
 
-At the owner's request, the real UI now copies the demo components/helpers and design before API adaptation. Reusable copies live in `src/components` and `src/lib`; route content stays in `(app)/_views`. There are no `(app)/_components` or `(app)/_lib` duplicates. The copied root URL adapter removes the `/demo` prefix while the original demo remains unchanged. Copied preferences use independent `mzizi-app-*` cookies at `/` and matching storage/event names. The real layout does not register the demo PWA.
-
-The sidebar, appbar, popovers and settings retain prototype behavior and their existing labels/data dependencies. All real country/place routes currently show the home placeholder; subject and utility screens have not been migrated. Generated API integration and complete translated copy are deferred for planning. Do not describe this copied prototype shell as backend-connected. Future server SDK imports use `@mzizi/api-client/actions/explorer` and generated group-prefixed operation names.
+Since the rebuild (25 November 2026) the real application is backend-connected: its screens are server components that read through `@mzizi/api-client` (frontend and schema-module actions; see the [web README](../../source/apps/web/README.md)). The shell keeps the prototype's sidebar, appbar, popovers and `mzizi-app-*` cookies. Subject state stays in `view` and `view.*` query keys (`view.id`, `view.indicator`).
 
 ## Demo-only files and verification
 

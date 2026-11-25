@@ -8,14 +8,14 @@ part of 'feature_window.dart';
 
 GeographyFeatureWindow _$GeographyFeatureWindowFromJson(Map<String, dynamic> json) => GeographyFeatureWindow(
   codePrefix: json['codePrefix'] as String?,
-  featureTypeId: json['featureTypeId'] as String?,
+  kindTerm: json['kindTerm'] as String?,
   limit: (json['limit'] as num?)?.toInt(),
   offset: (json['offset'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$GeographyFeatureWindowToJson(GeographyFeatureWindow instance) => <String, dynamic>{
   'codePrefix': ?instance.codePrefix,
-  'featureTypeId': ?instance.featureTypeId,
+  'kindTerm': ?instance.kindTerm,
   'limit': ?instance.limit,
   'offset': ?instance.offset,
 };

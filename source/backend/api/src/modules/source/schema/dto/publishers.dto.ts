@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -10,21 +11,23 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
+
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Accepted publisher; an optional official identity distinguishes the organization from its publication channels. (entity)
+ * Who publishes; a publisher shares its organisation's identity (`official.entities`). (entity)
  */
 export class PublishersDto {
   @IsOptional()
-  @ValidateIf((object) => object.classificationId !== null)
+  @ValidateIf((object) => object.classTerm !== null)
   @IsString()
   @IsUUID()
-  classificationId?: Id | null;
+  classTerm?: Id | null;
 
   @IsString()
   @MinLength(1)
@@ -54,20 +57,15 @@ export class PublishersDto {
   @IsUUID()
   id!: Id;
 
-  @IsString()
-  @IsUUID()
-  kindId!: Id;
+  @IsEnum(IdentityKind)
+  @Satisfies<PublishersDto>((object) => object.identityKind === "entity", {
+    message: "Publisher Kind",
+  })
+  identityKind!: IdentityKind;
 
   @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  name!: Name;
-
-  @IsOptional()
-  @ValidateIf((object) => object.officialEntityId !== null)
-  @IsString()
   @IsUUID()
-  officialEntityId?: Id | null;
+  kindTerm!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

@@ -1,26 +1,25 @@
-/** One public procurement process run by a buyer, optionally linked to a project. */
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
+
+/** A tender. Its title is an `identity.names` row and its tender number an `identity.identifiers` row. */
 export interface CivicProcurements {
-  awardedOn?: string | null;
+  amount?: number | null;
   bidderCount?: number | null;
-  buyerEntityId: string;
-  categoryId?: string | null;
+  buyerId: string;
+  categoryTerm: string;
   closesOn?: string | null;
   code: string;
-  countryId?: string | null;
+  countryId: string;
   createdAt: string;
   currencyId?: string | null;
   deletedAt?: string | null;
-  estimatedAmountMinorUnits?: number | null;
-  evaluationBasisId?: string | null;
+  evaluationTerm?: string | null;
   id: string;
-  natureId?: string | null;
-  procedureKindId: string;
+  identityKind: SharedIdentityKind;
+  natureTerm?: string | null;
+  procedureTerm: string;
   projectId?: string | null;
   publishedOn?: string | null;
-  reference?: string | null;
-  sourceCitationId?: string | null;
-  statusId?: string | null;
-  title?: string | null;
+  statusTerm: string;
   updatedAt: string;
   version: number;
 }

@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import Subject
 
 
 class DisputesRow(BaseModel):
-    """A recorded disagreement between sources about one record. Both claims are kept with their citations and shown side by side; nothing is overwritten."""
+    """Conflicting claims about one row."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -29,12 +29,13 @@ class DisputesRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
-    kind_id: UUID
-    resolution_citation_id: UUID | None = None
+    kind_term: UUID
+    note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    note_language_id: UUID | None = None
+    resolution_id: UUID | None = None
     resolved_on: date | None = None
-    status_id: UUID
+    status_term: UUID
     subject_id: UUID
     subject_table: SubjectTable
-    summary: Annotated[str, Field(max_length=4000)]
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

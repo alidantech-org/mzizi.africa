@@ -1,64 +1,36 @@
 import "server-only";
-/**
- * Reads for the home view of a place. The address goes to the backend as the readable slugs of the URL; the backend
- * resolves it. Each read is started at once and handed to its own region of the page, so the heading and the fast
- * regions appear first.
- */
-import { explorerGetExplorerBoundaries, explorerGetExplorerLocation } from "@mzizi/api-client/actions/explorer";
-import { insightsGetPlaceStatisticsAt } from "@mzizi/api-client/actions/insights";
-import { ExplorerBoundaryMode, type ExplorerBoundaries, type ExplorerLocation } from "@mzizi/api-client";
-import type { InsightsPlaceStatistics } from "@mzizi/api-client";
-import { project, type MapCanvas } from "#/lib/maps/project";
+/** Screen reads for a place: one call to the frontend place screen and the map outlines of its divisions. */
+import { frontendGetPlaceScreen, frontendGetRankingScreen } from "@mzizi/api-client/actions/frontend";
+import { geographyListChildOutlines } from "@mzizi/api-client/actions/geography";
+import type { FrontendPlaceScreen, FrontendRankingScreen } from "@mzizi/api-client";
+import { countryCode, languageCode, placeCode, type PlaceAddress } from "#/lib/server/codes";
+import { readArea, type Area } from "#/lib/server/parse/geojson";
 
-export type PlaceAddress = { country: string; trail: string[] };
-const cache = () => ({ caching: { revalidate: 600, tags: ["places"] } });
+export type { PlaceAddress } from "#/lib/server/codes";
+export type Loaded<T> = { data: T | null; failed: boolean };
+const placeCache = () => ({ caching: { revalidate: 600, tags: ["places"] } });
 
-const query = (a: PlaceAddress, languageCode: string) => ({
-  countryCode: a.country.toUpperCase(),
-  path: a.trail.length ? a.trail.join("/") : undefined,
-  languageCode,
-});
+export async function loadPlace(a: PlaceAddress, language: string): Promise<Loaded<FrontendPlaceScreen>> {
+  const res = await frontendGetPlaceScreen({
+    query: { country: countryCode(a.country), place: a.trail.length ? placeCode(a) : undefined, lang: languageCode(language) },
+    options: placeCache(),
+  });
+  return { data: res.success ? (res.body ?? null) : null, failed: !res.success };
+}
 
-export const loadLocation = async (a: PlaceAddress, languageCode: string): Promise<ExplorerLocation | null> => {
-  const res = await explorerGetExplorerLocation({ query: { ...query(a, languageCode), page: 1, limit: 25 }, options: cache() });
-  return res.success && res.body ? res.body : null;
-};
+export async function loadRanking(country: string, indicator: string, language: string): Promise<Loaded<FrontendRankingScreen>> {
+  const res = await frontendGetRankingScreen({ query: { country: countryCode(country), indicator, lang: languageCode(language) }, options: placeCache() });
+  return { data: res.success ? (res.body ?? null) : null, failed: !res.success };
+}
 
-/** What a statistics read found. `failed` means the read itself did not work, which is not the same as nothing being recorded. */
-export type StatisticsResult = { data: InsightsPlaceStatistics | null; failed: boolean };
-
-/** `scope` sizes the answer to the screen: `headline` for the home view, `topics` for the topic list, `topic` for one topic's indicators. */
-export const loadStatistics = async (
-  a: PlaceAddress,
-  languageCode: string,
-  scope: "headline" | "topics" | "topic" = "headline",
-  topic?: string,
-): Promise<StatisticsResult> => {
-  const res = await insightsGetPlaceStatisticsAt({ query: { ...query(a, languageCode), scope, topic }, options: cache() });
-  return res.success && res.body ? { data: res.body, failed: false } : { data: null, failed: true };
-};
-
-/** The places inside this one drawn as one map; a place with no outlined children is drawn itself. */
-export async function loadMap(
-  a: PlaceAddress,
-  languageCode: string,
-): Promise<{ map: MapCanvas; self: boolean; withoutBoundary: number } | null> {
-  const ask = async (mode: ExplorerBoundaryMode): Promise<ExplorerBoundaries | null> => {
-    const res = await explorerGetExplorerBoundaries({ query: { ...query(a, languageCode), mode }, options: cache() });
-    return res.success && res.body ? res.body : null;
-  };
-  let body = await ask(ExplorerBoundaryMode.CHILDREN);
-  let self = false;
-  if (!body || !body.shapes.length) {
-    body = await ask(ExplorerBoundaryMode.SELF);
-    self = true;
-  }
-  if (!body || !body.shapes.length) return null;
-  // Children of one place can be of several kinds (constituencies and sub-counties overlap); draw the kind with most outlines.
-  const byKind = new Map<string, number>();
-  for (const s of body.shapes) byKind.set(s.kindCode, (byKind.get(s.kindCode) ?? 0) + 1);
-  const kind = [...byKind.entries()].sort((x, y) => y[1] - x[1])[0]![0];
-  const shapes = self ? body.shapes : body.shapes.filter((s) => s.kindCode === kind);
-  const box = body.bbox.length === 4 && !self ? body.bbox : [Math.min(...shapes.map((s) => s.bbox[0]!)), Math.min(...shapes.map((s) => s.bbox[1]!)), Math.max(...shapes.map((s) => s.bbox[2]!)), Math.max(...shapes.map((s) => s.bbox[3]!))];
-  return { map: project(shapes, box), self, withoutBoundary: body.withoutBoundary };
+/** Outlines of the divisions inside a place for one zoom band (0 coarse to 3 fine), as GeoJSON geometries. */
+export async function loadMap(parentId: string, band: number) {
+  const res = await geographyListChildOutlines({ query: { parentId, limit: 200, offset: 0 }, options: placeCache() });
+  if (!res.success || !res.body) return null;
+  const unique = [...new Map(res.body.children.map((c) => [c.code, c])).values()];
+  return unique.flatMap((c): { code: string; area: Area }[] => {
+    const outline = c.outlines.find((o) => o.band === band) ?? c.outlines[0];
+    const area = outline ? readArea(outline) : null;
+    return area ? [{ code: c.code, area }] : [];
+  });
 }

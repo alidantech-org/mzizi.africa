@@ -2,10 +2,11 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
+import { jurisdictionsExample } from "@test/modules/governance/schema/dto/examples/jurisdictions.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { identityEntityExample } from "@test/modules/shared/schema/dto/examples/identity-entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Instruments, for generated tests. */
 export const instrumentsExample: ContractExample = contractExample({
@@ -43,25 +44,37 @@ export const instrumentsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "issuingEntityId",
+      name: "identityKind",
+      optional: false,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(IdentityKind) },
+    },
+    {
+      name: "issuerId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "issuingUnitId",
+      name: "jurisdictionId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "kindId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -73,10 +86,16 @@ export const instrumentsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "statusId",
+      name: "statusTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "toYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "updatedAt",
@@ -91,5 +110,36 @@ export const instrumentsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [],
+  invariants: [
+    {
+      any: false,
+      comparisons: [
+        {
+          left: { field: "identityKind" },
+          operator: "equal",
+          right: { literal: "instrument" },
+        },
+      ],
+    },
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "fromYear" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "toYear" },
+          operator: "equal",
+          right: { literal: null },
+        },
+        {
+          left: { field: "fromYear" },
+          operator: "less-than-or-equal",
+          right: { field: "toYear" },
+        },
+      ],
+    },
+  ],
 });

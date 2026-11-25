@@ -1,7 +1,7 @@
 /**
  * Auth: who the caller is, and (for administrators) who else exists.
  *
- * Policies are deliberately simple stubs. A policy names an access rule and the trusted values it
+ * Module `auth`. Policies are deliberately simple stubs. A policy names an access rule and the trusted values it
  * provides (here the caller's account id). Dryv wires the guard; the project decides how the rule holds.
  */
 import * as dryv from "@dryvcode/author";

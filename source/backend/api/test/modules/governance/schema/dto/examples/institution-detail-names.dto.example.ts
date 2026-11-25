@@ -8,22 +8,53 @@ export const institutionDetailNamesExample: ContractExample = contractExample({
   name: "InstitutionDetailNames",
   fields: [
     {
-      name: "isPreferred",
+      name: "fromYear",
+      optional: false,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
+    },
+    {
+      name: "isDefault",
       optional: false,
       nullable: false,
       spec: { kind: "boolean" },
     },
     {
-      name: "languageId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "name",
+      name: "languageCode",
       optional: false,
       nullable: false,
-      spec: { kind: "string", minLength: 1, maxLength: 300 },
+      spec: {
+        kind: "string",
+        minLength: 1,
+        maxLength: 255,
+        patterns: [
+          "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+        ],
+      },
+    },
+    {
+      name: "languageIso",
+      optional: false,
+      nullable: true,
+      spec: { kind: "string", exactLength: 2, patterns: ["^[a-z]{2}$"] },
+    },
+    {
+      name: "text",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", minLength: 1, maxLength: 1000 },
+    },
+    {
+      name: "toYear",
+      optional: false,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
   ],
   invariants: [],

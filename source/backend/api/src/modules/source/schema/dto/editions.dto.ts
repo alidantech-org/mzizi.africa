@@ -11,7 +11,6 @@ import {
   ValidateIf,
 } from "class-validator";
 
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
@@ -20,7 +19,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A meaningfully distinct release of a product. Another format or scan of the same wording is an artifact, not an edition. (entity)
+ * One issue of a product. (entity)
  */
 export class EditionsDto {
   @IsString()
@@ -40,12 +39,6 @@ export class EditionsDto {
   @ValidateIf((object) => object.deletedAt !== null)
   @IsISO8601({})
   deletedAt?: Instant | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.description !== null)
-  @IsString()
-  @MaxLength(4000)
-  description?: Description | null;
 
   @IsString()
   @MinLength(1)

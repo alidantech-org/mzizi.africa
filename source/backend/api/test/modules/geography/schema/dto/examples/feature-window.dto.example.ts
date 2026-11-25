@@ -22,7 +22,7 @@ export const featureWindowExample: ContractExample = contractExample({
       },
     },
     {
-      name: "featureTypeId",
+      name: "kindTerm",
       optional: true,
       nullable: false,
       spec: { kind: "string", format: "uuid" },

@@ -3,9 +3,9 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Disputes, for generated tests. */
 export const disputesExample: ContractExample = contractExample({
@@ -43,13 +43,25 @@ export const disputesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "kindId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "resolutionCitationId",
+      name: "note",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
+    },
+    {
+      name: "noteLanguageId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "resolutionId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -61,7 +73,7 @@ export const disputesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "statusId",
+      name: "statusTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -77,12 +89,6 @@ export const disputesExample: ContractExample = contractExample({
       optional: false,
       nullable: false,
       spec: { kind: "enum", values: Object.values(SubjectTable) },
-    },
-    {
-      name: "summary",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", maxLength: 4000 },
     },
     {
       name: "updatedAt",

@@ -7,18 +7,22 @@
 import "reflect-metadata";
 
 import { NestFactory } from "@nestjs/core";
-import { DataSource } from "typeorm";
+
+import { Module } from "@nestjs/common";
 
 import { AppModule } from "./app.module.ts";
+import { DatabaseModule } from "./database/database.module.ts";
 import { httpLogger } from "./http-logger.ts";
-import { PlacePathsInterceptor } from "./server/place-paths.interceptor.ts";
 
 const DEFAULT_PORT = 8700;
 
+/** The generated AppModule plus the project-owned persistence wiring. */
+@Module({ imports: [DatabaseModule, AppModule] })
+class RootModule {}
+
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(RootModule);
   app.use(httpLogger());
-  app.useGlobalInterceptors(new PlacePathsInterceptor(app.get(DataSource)));
   // Browser apps (the Flutter app on the web) may call the API only from the origins listed here; none by default.
   const origins = (process.env.CORS_ORIGINS ?? "")
     .split(",")

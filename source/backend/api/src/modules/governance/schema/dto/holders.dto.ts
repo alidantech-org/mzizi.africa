@@ -1,5 +1,4 @@
 import {
-  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -14,7 +13,6 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -23,25 +21,9 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One person's continuous tenure in one office, with appointment kind and effective dates. (entity)
+ * A person in an office for a period. How they got there is `governance.appointments`. (entity)
  */
 export class HoldersDto {
-  @IsOptional()
-  @ValidateIf((object) => object.appointedByEntityId !== null)
-  @IsString()
-  @IsUUID()
-  appointedByEntityId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  appointmentKindId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.appointmentMotionId !== null)
-  @IsString()
-  @IsUUID()
-  appointmentMotionId?: Id | null;
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -52,6 +34,12 @@ export class HoldersDto {
   )
   code!: IdentityCode;
 
+  @IsOptional()
+  @ValidateIf((object) => object.contestId !== null)
+  @IsString()
+  @IsUUID()
+  contestId?: Id | null;
+
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -61,9 +49,9 @@ export class HoldersDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
+  @ValidateIf((object) => object.endsOn !== null)
+  @IsISO8601({ strict: true })
+  endsOn?: CalendarDate | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)
@@ -74,7 +62,7 @@ export class HoldersDto {
     (object) =>
       object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
     {
-      message: "Period Years Are Ordered",
+      message: "Holder Period Is Ordered",
     },
   )
   fromYear?: Year | null;
@@ -87,26 +75,31 @@ export class HoldersDto {
   @IsUUID()
   individualId!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.leftOfficeOn !== null)
-  @IsISO8601({ strict: true })
-  leftOfficeOn?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.nominatedByEntityId !== null)
   @IsString()
   @IsUUID()
-  nominatedByEntityId?: Id | null;
+  methodTerm!: Id;
 
   @IsString()
   @IsUUID()
   officeId!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
+  @ValidateIf((object) => object.reasonTerm !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
+  reasonTerm?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.startsOn !== null)
+  @IsISO8601({ strict: true })
+  @Satisfies<HoldersDto>(
+    (object) =>
+      object.startsOn == null || object.endsOn == null || object.startsOn <= object.endsOn,
+    {
+      message: "Holder Dates Are Ordered",
+    },
+  )
+  startsOn?: CalendarDate | null;
 
   @IsOptional()
   @ValidateIf((object) => object.toYear !== null)
@@ -114,20 +107,6 @@ export class HoldersDto {
   @Min(-10000)
   @Max(3000)
   toYear?: Year | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.tookOfficeOn !== null)
-  @IsISO8601({ strict: true })
-  @Satisfies<HoldersDto>(
-    (object) =>
-      object.tookOfficeOn == null ||
-      object.leftOfficeOn == null ||
-      object.tookOfficeOn <= object.leftOfficeOn,
-    {
-      message: "Holders Dates Are Ordered",
-    },
-  )
-  tookOfficeOn?: CalendarDate | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

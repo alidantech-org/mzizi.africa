@@ -2,7 +2,7 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { languageExample } from "@test/modules/reference/schema/dto/examples/language.dto.example.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 import { productsExample } from "@test/modules/source/schema/dto/examples/products.dto.example.ts";
 
@@ -34,12 +34,6 @@ export const editionsExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "description",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
     },
     {
       name: "designation",

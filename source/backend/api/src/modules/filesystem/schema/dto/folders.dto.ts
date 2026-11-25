@@ -2,7 +2,6 @@ import {
   IsEnum,
   IsInt,
   IsISO8601,
-  IsJSON,
   IsOptional,
   IsString,
   IsUUID,
@@ -17,13 +16,13 @@ import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import { Access } from "#/modules/filesystem/schema/enum/access.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { String } from "#/modules/shared/schema/type/string.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Logical hierarchy; access escalation requires recorded authorization, independent of object keys. (entity)
+ * Logical folder hierarchy; access escalation needs a recorded authorization, independent of object keys. (entity)
  */
 export class FoldersDto {
   @IsEnum(Access)
@@ -32,8 +31,7 @@ export class FoldersDto {
   @IsOptional()
   @ValidateIf((object) => object.authorization !== null)
   @IsString()
-  @IsJSON()
-  authorization?: JsonText | null;
+  authorization?: String | null;
 
   @IsString()
   @MinLength(1)
@@ -56,7 +54,7 @@ export class FoldersDto {
   @IsString()
   @IsUUID()
   @Satisfies<FoldersDto>((object) => object.id !== object.parentId, {
-    message: "Folder Must Not Parent Itself",
+    message: "Folder Is Not Its Own Parent",
   })
   id!: Id;
 
@@ -73,7 +71,7 @@ export class FoldersDto {
 
   @IsString()
   @IsUUID()
-  roleId!: Id;
+  roleTerm!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

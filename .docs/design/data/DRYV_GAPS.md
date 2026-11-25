@@ -122,3 +122,23 @@ On 15 November 2026 Dryv compiled the single-store application (251 runtime IR r
 | 75 | **Conditional rules were not authored or are not generated.** A fixed seat basis requires a seat count, a per-unit basis requires a seat unit level, and a template's attributes must fit what it produces. These are "when X then Y" rules across columns | Reported: DRYV_GAPS 8 and the intended rules in `governance.ts` Positions and `reference.ts` Template; not generated | The rules are enforced by seed validation and review, not by the database | Dryv: conditional CHECK lowering; then author the rules |
 | 76 | **No uniqueness for one office per position and unit.** Two offices for one position and unit were accepted | Verified 19 Nov 2026 | A duplicate seat is possible | Mzizi: decide a partial unique key (position, unit, seat ordinal) after review |
 | 77 | **Cross-country consistency is not enforceable.** An instance can pair a template of one country with a unit of another | Reported | Review and engine checks keep patterns inside their country | Dryv: cross-table same-value constraints |
+
+## Adopted in the rebuild run (25 November 2026)
+
+The rebuild run adopted the delivered capabilities through Mzizi's local packs, not by changing Dryv.
+
+- **Local `postgres-sql` snapshot pack** (`dryv/packs/postgres-sql`) now renders schema-facet partitioning (LIST, RANGE with calendar series, HASH, nested and DEFAULT partitions), `COMMENT ON TABLE` and `COMMENT ON COLUMN` from contract descriptions, `text[]` array columns, one shared target key per composite reference, and scheme checks against `vocabulary.terms` and `vocabulary.schemes`. It declares `partitioning: true`; so do the local `python-rows` and `table-schemas` packs, which ignore the layout.
+- `dryv/tools/sync-tables.ts` skips `PARTITION OF` tables, so partitions are not treated as tables.
+
+### Gaps still open
+
+| Gap | Effect | Workaround in Mzizi |
+|---|---|---|
+| No `NULLS NOT DISTINCT` option on unique indexes | Nullable columns in a unique key do not block duplicates | Pairs of partial unique indexes (with and without the nullable column); Mzizi write code for `statistics.observations` |
+| No date-part function in expressions | "A date's year agrees with `from_year`" cannot be a CHECK | Checked by Mzizi's write code |
+| No operator classes on indexes (for example `gin_trgm_ops`) | Trigram name search cannot be declared | Plain btree on `identity.names.text`; trigram index to be added when supported |
+| Group descriptions are not projected to the SQL pack | No `COMMENT ON SCHEMA` | Table and column comments only |
+| No `json` string format in the persistence pack validation | JSON text columns block API generation | `filesystem` technical records stored as `text` |
+| Persistence validation rejected `url` strings | API generation failed on every URL column | **Fixed in Dryv** (neutral): `url` accepted with a scheme-and-path pattern in `source/engine/python/engine/src/dryv/modules/generation/persistence/schemas.py` (rebuild run, uncommitted in the Dryv checkout) |
+| Persistence validation rejects exact decimals | `reference.units.scale` and `offset` could not be served | Stored as double precision in Mzizi until Dryv maps decimals in TypeScript |
+| Query-derived response schemas drop geometry columns | Generated DTOs and SDK types omit `geometry`, `bbox` and `centroid` of outline reads, although the API sends them | The web reads them through one parser (`source/apps/web/src/lib/server/parse/geojson.ts`); the local `sdk-ts` pack maps geometry fields to `GeoJsonGeometry` once Dryv carries them |

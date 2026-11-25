@@ -1,63 +1,55 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
-import 'package:mzizi_api/src/models/geography/levels.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
 import 'package:mzizi_api/src/models/legal/provisions.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/reference/levels.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'positions.g.dart';
 
-/// A kind of office with its seat rule: how it is filled, how many seats exist and where, the term, the legal basis. Offices are the individual seats of a position; holders are never part of it.
+/// A kind of seat that law creates (Governor, Member of County Assembly). Its titles are `identity.names`.
 @JsonSerializable(includeIfNull: false)
 class GovernancePositions {
   const GovernancePositions({
-    this.basisProvisionId,
+    this.basisTerm,
     required this.code,
     required this.createdAt,
     this.deletedAt,
-    this.displayOrder,
-    this.exposureId,
-    this.fromToPrecision,
-    this.fromYear,
+    this.exposureTerm,
     required this.id,
-    required this.institutionId,
-    this.jurisdictionLevelId,
-    required this.roleId,
-    required this.seatBasisId,
+    required this.identityKind,
+    this.institutionId,
+    this.levelId,
+    this.methodTerm,
+    this.position,
+    this.provisionId,
+    required this.roleTerm,
     this.seatCount,
-    this.seatUnitLevelId,
-    required this.selectionMethodId,
-    this.sourceCitationId,
+    this.seatLevelId,
     this.termLimit,
     this.termYears,
-    required this.titleId,
-    this.toYear,
     required this.updatedAt,
     required this.version,
   });
-  final String? basisProvisionId;
+  final String? basisTerm;
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final int? displayOrder;
-  final String? exposureId;
-  final SharedDatePrecision? fromToPrecision;
-  final int? fromYear;
+  final String? exposureTerm;
   final String id;
-  final String institutionId;
-  final String? jurisdictionLevelId;
-  final String roleId;
-  final String seatBasisId;
+  final SharedIdentityKind identityKind;
+  final String? institutionId;
+  final String? levelId;
+  final String? methodTerm;
+  final int? position;
+  final String? provisionId;
+  final String roleTerm;
   final int? seatCount;
-  final String? seatUnitLevelId;
-  final String selectionMethodId;
-  final String? sourceCitationId;
+  final String? seatLevelId;
   final int? termLimit;
   final int? termYears;
-  final String titleId;
-  final int? toYear;
   final DateTime updatedAt;
   final int version;
 

@@ -2,7 +2,6 @@ import {
   IsEnum,
   IsInt,
   IsISO8601,
-  IsJSON,
   IsNumber,
   IsOptional,
   IsString,
@@ -14,19 +13,17 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import { VerificationOutcome } from "#/modules/source/schema/enum/verification-outcome.enum.ts";
 import type { Confidence } from "#/modules/shared/schema/type/confidence.type.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Note } from "#/modules/source/schema/type/note.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit. (entity)
+ * A review decision about one row, against what and when. (entity)
  */
 export class VerificationsDto {
   @IsISO8601({})
@@ -58,23 +55,34 @@ export class VerificationsDto {
   deletedAt?: Instant | null;
 
   @IsString()
-  @MaxLength(4000)
-  explanation!: Description;
-
-  @IsString()
   @IsUUID()
   id!: Id;
 
   @IsString()
   @IsUUID()
-  methodId!: Id;
+  methodTerm!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.note !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(4000)
+  note?: Note | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.noteLanguageId !== null)
+  @IsString()
+  @IsUUID()
+  noteLanguageId?: Id | null;
 
   @IsEnum(VerificationOutcome)
   outcome!: VerificationOutcome;
 
+  @IsOptional()
+  @ValidateIf((object) => object.reviewerId !== null)
   @IsString()
-  @IsJSON()
-  reviewerSnapshot!: JsonText;
+  @IsUUID()
+  reviewerId?: Id | null;
 
   @IsString()
   @IsUUID()

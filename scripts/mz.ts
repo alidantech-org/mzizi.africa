@@ -122,13 +122,12 @@ export const commands: Record<string, Command> = {
     },
   },
   "check:all": {
-    summary: "check, plus Dryv contract checks, seed registry, docs validation and builds",
+    summary: "check, plus Dryv contract checks, docs validation and builds",
     run: async ({ only }) => {
       const structure = checkStructure();
       const boundaries = checkBoundaries(true);
       const extra: [string, ReturnType<typeof qualitySteps>][] = [
         ["dryv:check", dryv.checkSteps()],
-        ["seed", [rootStep("Seed registry", ["uv", "run", "mzizi-manifest", "check"])]],
         ["docs", [rootStep("Task workspace", ["task", "validate"])]],
         ["build", qualitySteps("build", select(only))],
       ];
@@ -217,15 +216,14 @@ export const commands: Record<string, Command> = {
     run: databaseCli,
   },
   "db:ts": { summary: "alias for the database CLI", run: databaseCli },
-  "dev:data": {
-    summary: "create and fill the dev database (mzizi_ux): migrations, roles, invented dev seed and geoBoundaries outlines",
-    run: () => group("dev:data", [rootStep("dev data", ["bash", "scripts/dev/dev-data.sh"])]),
-  },
   "dev:stack": {
     summary: "run one dev service against the dev database: dev:stack api | engine | web | portal | flutter | smoke | stop",
     run: ({ rest }) => group("dev:stack", [rootStep("stack", ["bash", "scripts/dev/stack.sh", ...rest])]),
   },
-  seed: passthrough("mzizi-manifest", "seed registry: seed check | lock | report | validate-structure <dir>"),
+  manifest: passthrough(
+    "mzizi-manifest",
+    "manifests: manifest refs | data | columns-report | validate-structure <dir> (root: MZIZI_SEED_ROOT or .dev/seed)",
+  ),
   engine: passthrough("mzizi-engine", "engine: engine serve | capabilities | check"),
   "docs:validate": {
     summary: "validate the Task workspace in .docs",

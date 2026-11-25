@@ -1,33 +1,33 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
 import 'package:mzizi_api/src/models/source/publishers.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'products.g.dart';
 
-/// One logical document or dataset, independent of who served it, in what format or how many times it was downloaded.
+/// A publisher's series (the Economic Survey). Its titles are `identity.names`.
 @JsonSerializable(includeIfNull: false)
 class SourceProducts {
   const SourceProducts({
     required this.code,
     required this.createdAt,
     this.deletedAt,
-    this.description,
     required this.id,
-    required this.kindId,
+    required this.identityKind,
+    required this.kindTerm,
     this.publisherId,
-    required this.title,
     required this.updatedAt,
     required this.version,
   });
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String? description;
   final String id;
-  final String kindId;
+  final SharedIdentityKind identityKind;
+  final String kindTerm;
   final String? publisherId;
-  final String title;
   final DateTime updatedAt;
   final int version;
 

@@ -1,12 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/shared/subject_table.dart';
 import 'package:mzizi_api/src/enums/source/verification_outcome.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_subject_entity.dart';
+import 'package:mzizi_api/src/models/auth/accounts.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'verifications.g.dart';
 
-/// Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit.
+/// A review decision about one row, against what and when.
 @JsonSerializable(includeIfNull: false)
 class SourceVerifications {
   const SourceVerifications({
@@ -15,11 +17,12 @@ class SourceVerifications {
     this.confidence,
     required this.createdAt,
     this.deletedAt,
-    required this.explanation,
     required this.id,
-    required this.methodId,
+    required this.methodTerm,
+    this.note,
+    this.noteLanguageId,
     required this.outcome,
-    required this.reviewerSnapshot,
+    this.reviewerId,
     required this.subjectId,
     required this.subjectTable,
     this.supersedesId,
@@ -31,11 +34,12 @@ class SourceVerifications {
   final double? confidence;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String explanation;
   final String id;
-  final String methodId;
+  final String methodTerm;
+  final String? note;
+  final String? noteLanguageId;
   final SourceVerificationOutcome outcome;
-  final String reviewerSnapshot;
+  final String? reviewerId;
   final String subjectId;
   final SharedSubjectTable subjectTable;
   final String? supersedesId;

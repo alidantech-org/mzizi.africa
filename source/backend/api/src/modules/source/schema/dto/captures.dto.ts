@@ -1,57 +1,48 @@
 import {
   IsInt,
   IsISO8601,
-  IsJSON,
   IsOptional,
   IsString,
   IsUrl,
   IsUUID,
-  Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
   ValidateIf,
 } from "class-validator";
+
+import type { HttpStatus } from "#/modules/shared/schema/type/http-status.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { JsonText } from "#/modules/shared/schema/type/json-text.type.ts";
-import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { Url } from "#/modules/shared/schema/type/url.type.ts";
+import type { Etag } from "#/modules/source/schema/type/etag.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other. (entity)
+ * One fetch of a path. (entity)
  */
 export class CapturesDto {
-  @IsOptional()
-  @ValidateIf((object) => object.addressId !== null)
-  @IsString()
-  @IsUUID()
-  addressId?: Id | null;
-
   @IsOptional()
   @ValidateIf((object) => object.artifactId !== null)
   @IsString()
   @IsUUID()
   artifactId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.contentType !== null)
   @IsString()
   @MinLength(1)
   @MaxLength(255)
-  @Matches(
-    new RegExp(
-      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-    ),
-  )
-  code!: IdentityCode;
+  contentType?: NonEmptyString255 | null;
 
   @IsISO8601({})
   createdAt!: Instant;
 
   @IsOptional()
-  @ValidateIf((object) => object.deletedAt !== null)
+  @ValidateIf((object) => object.discoveredAt !== null)
   @IsISO8601({})
-  deletedAt?: Instant | null;
+  discoveredAt?: Instant | null;
 
   @IsOptional()
   @ValidateIf((object) => object.discoveryId !== null)
@@ -59,18 +50,32 @@ export class CapturesDto {
   @IsUUID()
   discoveryId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.etag !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(1000)
+  etag?: Etag | null;
+
   @IsString()
   @IsUUID()
   id!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.lastModified !== null)
+  @IsISO8601({})
+  lastModified?: Instant | null;
 
   @IsString()
   @IsUrl()
   @MaxLength(2048)
   originalUrl!: Url;
 
+  @IsOptional()
+  @ValidateIf((object) => object.pathId !== null)
   @IsString()
-  @IsJSON()
-  responseMetadata!: JsonText;
+  @IsUUID()
+  pathId?: Id | null;
 
   @IsISO8601({})
   retrievedAt!: Instant;
@@ -88,10 +93,10 @@ export class CapturesDto {
   @IsUUID()
   sourceId?: Id | null;
 
-  @IsISO8601({})
-  updatedAt!: Instant;
-
+  @IsOptional()
+  @ValidateIf((object) => object.statusCode !== null)
   @IsInt()
-  @Min(1)
-  version!: PositiveInteger;
+  @Min(100)
+  @Max(599)
+  statusCode?: HttpStatus | null;
 }

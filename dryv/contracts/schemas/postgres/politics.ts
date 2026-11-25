@@ -1,219 +1,110 @@
 /**
  * Schema: politics | Database: mzizi
- * Approved contract: parties, historical affiliations, elections, contests, outcomes and manifestos.
- * Results and electorates are geographically scoped; referendum choices have their own row types.
- * SQL generation remains gated on faithful CHECK and code-shape enforcement in the Rust pack.
+ * Design: .docs/design/data/FOUNDATION_REDESIGN.md sections 30.6 and 32 (approved 2026-11-25).
+ * Contract authors: parties, coalitions and memberships, manifestos, commitments (manifesto pledges, campaign promises
+ * and office pledges are one concept) with their fulfilments, and political contributions. Contests are in `election`.
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { belongsTo, identity, identityKindField, identityReference, term } from "./_links.ts";
+import { Contracts, Projects } from "./civic.ts";
+import { Candidates, Elections } from "./election.ts";
+import { Occurrences } from "./event.ts";
+import { Appropriations } from "./finance.ts";
+import { Versions } from "./filesystem.ts";
 import { Features } from "./geography.ts";
-import { Holders, Offices, Terms } from "./governance.ts";
-import { Entities, Individuals } from "./official.ts";
-import { Country, Topic, Value } from "./reference.ts";
-import { FileVersions } from "./filesystem.ts";
-import { Artifacts, Citations } from "./source.ts";
-
-const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
+import { Offices } from "./governance.ts";
+import { Instruments } from "./legal.ts";
+import { Bills, Speeches } from "./legislature.ts";
+import { Articles, Assets } from "./media.ts";
+import { Individuals } from "./official.ts";
+import { Countries, Currencies, Languages, Units } from "./reference.ts";
 
 export const politics = dryv
   .group({ name: "politics" })
-  .description("Parties, elections, candidates, results and attributed political commitments.")
+  .description(
+    "Parties, coalitions, memberships, manifestos, commitments and their fulfilments, and political contributions.",
+  )
   .facets({ storage: { namespace: "politics", store: "main" } });
+
+const politicsProperties = politics.properties({
+  CommitmentKind: dryv.property.enum({
+    ManifestoPledge: "manifesto-pledge",
+    CampaignPromise: "campaign-promise",
+    OfficePledge: "office-pledge",
+  }),
+  Statement: dryv.property.string().length({ min: 1, max: 8000 }),
+  Seconds: dryv.property.number().range({ min: 0 }),
+});
+
+const dates = {
+  startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+  endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+};
 
 /*---------------- politics.parties ----------------*/
 export const Parties = politics
   .schema("Parties", {
-    entityId: belongsTo(() => Entities),
-    partyKindId: belongsTo(() => Value),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-    registeredOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    deregisteredOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    identityKind: identityKindField("entity"),
+    kindTerm: term("pol.party.kind", "national party, regional party, independent grouping."),
+    countryId: belongsTo(() => Countries),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("PartiesDatesAreOrdered", rule.ordered("registeredOn", "deregisteredOn", { allowEqual: true }))
-  .description("One political-party specialization of an Official entity over an optional effective period.")
+  .extends(baseSchemas.IdentityEntity)
+  .rule("PartyKind", (v) => v.identityKind.eq("entity"))
+  .rule("PartyPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
+  .description("A political party; it shares its organisation's identity (`official.entities`).")
   .role("entity")
-  .facets({ storage: dryv.storage("parties").index("entityId").index("sourceCitationId") });
+  .facets({
+    storage: dryv.storage("parties").index("countryId", "kindTerm").references("PartyIsIdentity", identityReference),
+  });
 
 /*---------------- politics.memberships ----------------*/
 export const Memberships = politics
   .schema("Memberships", {
     partyId: belongsTo(() => Parties),
     individualId: belongsTo(() => Individuals),
-    membershipKindId: belongsTo(() => Value),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-    joinedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    leftOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    kindTerm: term("pol.membership.kind", "member, leader, official, nominee."),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("MembershipsDatesAreOrdered", rule.ordered("joinedOn", "leftOn", { allowEqual: true }))
-  .description("One individual's dated membership in one political party.")
+  .extends(baseSchemas.Entity)
+  .rule("MembershipPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
+  .description("A person's dated membership of a party.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("memberships")
-      .index("partyId", "fromYear")
-      .index("individualId", "fromYear")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("memberships").index("partyId", "fromYear").index("individualId") });
 
 /*---------------- politics.coalitions ----------------*/
 export const Coalitions = politics
   .schema("Coalitions", {
-    name: dryv.field(sharedProperties.Name),
-    coalitionKindId: belongsTo(() => Value),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-    formedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    dissolvedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    identityKind: identityKindField("coalition"),
+    kindTerm: term("pol.coalition.kind", "pre-election coalition, government coalition."),
+    countryId: belongsTo(() => Countries),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .rule("CoalitionsDatesAreOrdered", rule.ordered("formedOn", "dissolvedOn", { allowEqual: true }))
-  .description("One political coalition identity over an optional effective period.")
+  .extends(baseSchemas.IdentityEntity)
+  .rule("CoalitionKind", (v) => v.identityKind.eq("coalition"))
+  .description("A coalition of parties (Azimio, Kenya Kwanza).")
   .role("entity")
-  .facets({ storage: dryv.storage("coalitions").index("sourceCitationId") });
+  .facets({ storage: dryv.storage("coalitions").index("countryId").references("CoalitionIsIdentity", identityReference) });
 
 /*---------------- politics.alignments ----------------*/
 export const Alignments = politics
   .schema("Alignments", {
-    coalitionId: belongsTo(() => Coalitions),
+    coalitionId: belongsTo(() => Coalitions, { onDelete: "cascade" }),
     partyId: belongsTo(() => Parties),
-    alignmentKindId: belongsTo(() => Value),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedPeriodEntity)
-  .description("One party's dated alignment with one coalition.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("alignments")
-      .index("coalitionId", "fromYear")
-      .index("partyId", "fromYear")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- politics.elections ----------------*/
-export const Elections = politics
-  .schema("Elections", {
-    countryId: belongsTo(() => Country).maybe(),
-    /** Scheme pol.election.kind: general, by-election, referendum, runoff, repeat, primary. */
-    electionKindId: belongsTo(() => Value).tags("scheme:ref.sch.pol.election.kind"),
-    /** Scheme pol.election.status: planned, announced, nominations open, voting, counting, declared, certified, disputed, annulled, repeated, cancelled, postponed. */
-    statusId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.pol.election.status"),
-    heldOn: dryv.field(sharedProperties.CalendarDate),
-    /** The election this one repeats, follows (a runoff) or replaces; absent for an ordinary election. */
-    parentElectionId: belongsTo(() => Elections).maybe(),
-    /** The term this election fills or begins; a by-election belongs to the term of the seat it fills. */
-    termId: belongsTo(() => Terms).maybe(),
-    /** The body that runs it (an electoral commission). */
-    authorityEntityId: belongsTo(() => Entities).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "One electoral event in a country with its kind, status, date, running body, term and source citation. Milestones such as registration and nominations are events attached to it.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("elections")
-      .index("heldOn")
-      .index("electionKindId")
-      .index("statusId")
-      .index("parentElectionId")
-      .index("termId")
-      .index("authorityEntityId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- politics.contests ----------------*/
-export const Contests = politics
-  .schema("Contests", {
-    electionId: belongsTo(() => Elections),
-    officeId: belongsTo(() => Offices).maybe(),
-    unitFeatureId: belongsTo(() => Features),
-    contestKindId: belongsTo(() => Value),
-    /** Scheme pol.vacancy.reason: death, resignation, nullification, recall, removal, disqualification. Set for a by-election. */
-    vacancyReasonId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.pol.vacancy.reason"),
-    /** The holder whose seat became vacant, for a by-election. */
-    previousHolderId: belongsTo(() => Holders).maybe(),
-    /** How many seats this contest fills; one unless the contest is multi-member. */
-    seatCount: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description("One office or electoral question contested in an election and one geographic unit.")
-  .role("entity")
-  .facets({ storage: dryv.storage("contests").index("unitFeatureId").index("sourceCitationId") });
-
-/*---------------- politics.candidates ----------------*/
-export const Candidates = politics
-  .schema("Candidates", {
-    contestId: belongsTo(() => Contests),
-    individualId: belongsTo(() => Individuals),
-    partyIdAtElection: belongsTo(() => Parties).maybe(),
-    candidateKindId: belongsTo(() => Value),
-    ballotOrder: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description("One person's candidature in one contest, retaining party affiliation at election time.")
-  .role("entity")
-  .facets({
-    storage: dryv.storage("candidates").index("contestId", "ballotOrder").index("individualId").index("sourceCitationId"),
-  });
-
-/*---------------- politics.electorates ----------------*/
-export const Electorates = politics
-  .schema("Electorates", {
-    contestId: belongsTo(() => Contests),
-    unitFeatureId: belongsTo(() => Features),
-    registeredVoters: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
-    ballotsCast: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
-    validBallots: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
-    rejectedBallots: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
-    spoiltBallots: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
-    /** Scheme pol.result.status: provisional, tallied, declared, final. A provisional and a final total can both be held. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.pol.result.status"),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    kindTerm: term("pol.alignment.kind", "founding member, affiliate, observer."),
+    ...periodFields,
   })
   .extends(baseSchemas.Entity)
-  .description(
-    "One set of electorate and ballot totals reported for one contest and geographic unit (a polling station, ward, constituency, county or the nation) at one stage of reporting.",
-  )
+  .description("A party's dated place in a coalition.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("electorates")
-      .unique("contestId", "unitFeatureId", "statusId")
-      .index("unitFeatureId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- politics.results ----------------*/
-export const Results = politics
-  .schema("Results", {
-    candidateId: belongsTo(() => Candidates),
-    unitFeatureId: belongsTo(() => Features),
-    votes: dryv.field(sharedProperties.NonNegativeInt64),
-    statusId: belongsTo(() => Value),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .description("One candidate's published vote result for one geographic unit.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("results")
-      .unique("candidateId", "unitFeatureId", "statusId")
-      .index("unitFeatureId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("alignments").unique("coalitionId", "partyId", "fromYear").index("partyId") });
 
 /*---------------- politics.manifestos ----------------*/
 export const Manifestos = politics
@@ -221,134 +112,120 @@ export const Manifestos = politics
     partyId: belongsTo(() => Parties).maybe(),
     candidateId: belongsTo(() => Candidates).maybe(),
     electionId: belongsTo(() => Elections).maybe(),
-    artifactId: belongsTo(() => Artifacts).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    artifactId: belongsTo(() => Versions)
+      .maybe()
+      .description("The original manifesto document."),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("One published party or candidate manifesto associated with its election and source document.")
+  .rule("ManifestoHasOneAuthor", rule.exactlyOne("partyId", "candidateId"))
+  .description("A party's or candidate's manifesto for an election.")
   .role("entity")
-  .facets({ storage: dryv.storage("manifestos").index("partyId").index("candidateId").index("sourceCitationId") });
+  .facets({ storage: dryv.storage("manifestos").index("partyId").index("candidateId").index("electionId") });
 
-/*---------------- politics.manifesto_items ----------------*/
-export const ManifestoItems = politics
-  .schema("ManifestoItems", {
-    manifestoId: belongsTo(() => Manifestos),
-    topicId: belongsTo(() => Topic).maybe(),
-    title: dryv.field(sharedProperties.Name),
-    description: dryv.field(sharedProperties.Description),
-    position: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+/*---------------- politics.commitments ----------------*/
+export const Commitments = politics
+  .schema("Commitments", {
+    makerId: identity("Who made the commitment: a person, party or office."),
+    kind: dryv.field(politicsProperties.CommitmentKind).description("manifesto pledge, campaign promise or office pledge."),
+    manifestoId: belongsTo(() => Manifestos).maybe(),
+    officeId: belongsTo(() => Offices).maybe(),
+    statement: dryv.field(politicsProperties.Statement).description("The original words, in `language_id`."),
+    languageId: belongsTo(() => Languages),
+    topicTerm: term("topic", "The policy area.").maybe(),
+    placeId: belongsTo(() => Features)
+      .maybe()
+      .description("The place the commitment concerns."),
+    quantity: dryv.field(sharedProperties.Number).maybe().description("Promised amount (10 000 classrooms), in `unit_id`."),
+    unitId: belongsTo(() => Units).maybe(),
+    madeOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    dueOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    ...periodFields,
+    occurrenceId: belongsTo(() => Occurrences)
+      .maybe()
+      .description("The event where it was made."),
+    speechId: dryv.field(sharedProperties.Id).maybe().description("The speech where it was made."),
+    countryId: belongsTo(() => Countries)
+      .maybe()
+      .description("With `speech_id`, the speech's partition key."),
+    statusTerm: term("pol.commitment.status", "not started, in progress, fulfilled, broken."),
+    statusAsOf: dryv.field(sharedProperties.CalendarDate).maybe().description("Date the status was last assessed."),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("One policy commitment or promise within a manifesto, optionally linked to a Reference topic.")
+  .rule("QuantityHasUnit", (v) => v.quantity.isNull().or(v.unitId.isNotNull()))
+  .rule("SpeechCommitmentHasCountry", (v) => v.speechId.isNull().or(v.countryId.isNotNull()))
+  .description("A promise someone with public power made, in their original words, with its status.")
   .role("entity")
   .facets({
-    storage: dryv.storage("manifesto_items").index("manifestoId", "position").index("topicId").index("sourceCitationId"),
+    storage: dryv
+      .storage("commitments")
+      .index("makerId")
+      .index("manifestoId")
+      .index("officeId")
+      .index("statusTerm")
+      .references("CommitmentInSpeech", {
+        fields: ["speechId", "countryId"],
+        target: () => Speeches,
+        targetFields: ["id", "countryId"],
+      }),
   });
 
-/*---------------- politics.referendum_options ----------------*/
-export const ReferendumOptions = politics
-  .schema("ReferendumOptions", {
-    contestId: belongsTo(() => Contests),
-    label: dryv.field(sharedProperties.Name),
-    ballotOrder: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description("One ballot option for one referendum contest; options are not modeled as candidates.")
-  .role("entity")
-  .facets({ storage: dryv.storage("referendum_options").index("contestId", "ballotOrder").index("sourceCitationId") });
-
-/*---------------- politics.option_results ----------------*/
-export const OptionResults = politics
-  .schema("OptionResults", {
-    optionId: belongsTo(() => ReferendumOptions),
-    unitFeatureId: belongsTo(() => Features),
-    votes: dryv.field(sharedProperties.NonNegativeInt64),
-    statusId: belongsTo(() => Value),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+/*---------------- politics.fulfilments ----------------*/
+export const Fulfilments = politics
+  .schema("Fulfilments", {
+    commitmentId: belongsTo(() => Commitments, { onDelete: "cascade" }),
+    projectId: belongsTo(() => Projects).maybe(),
+    contractId: belongsTo(() => Contracts).maybe(),
+    appropriationId: belongsTo(() => Appropriations).maybe(),
+    billId: belongsTo(() => Bills).maybe(),
+    instrumentId: belongsTo(() => Instruments).maybe(),
+    kindTerm: term("pol.fulfilment.kind", "delivers, partly delivers, contradicts."),
+    statusTerm: term("pol.fulfilment.status", "claimed, verified, disputed."),
+    recordedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .description("One reported vote result for one referendum option and geographic unit.")
+  .rule("FulfilmentHasOneTarget", rule.exactlyOne("projectId", "contractId", "appropriationId", "billId", "instrumentId"))
+  .description("What delivered (or contradicts) a commitment: a project, contract, appropriation, bill or law.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("option_results")
-      .unique("optionId", "unitFeatureId")
-      .index("unitFeatureId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- politics.polls ----------------*/
-export const Polls = politics
-  .schema("Polls", {
-    electionId: belongsTo(() => Elections),
-    /** The polling place, registration centre or tallying centre as a geographic feature (which is also a civic facility of an electoral class). */
-    stationFeatureId: belongsTo(() => Features),
-    /** The facility feature that hosted it for this election (the school or hall), when different from the station's usual host. */
-    hostFeatureId: belongsTo(() => Features).maybe(),
-    /** Scheme pol.poll.status: operated, relocated, merged, split, cancelled, failed. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.pol.poll.status"),
-    registeredVoters: dryv.field(sharedProperties.NonNegativeInt64).maybe(),
-    streamCount: dryv.field(sharedProperties.PositiveInteger).maybe(),
-    opensAt: dryv.field(sharedProperties.Instant).maybe(),
-    closesAt: dryv.field(sharedProperties.Instant).maybe(),
-    note: dryv.field(sharedProperties.Description).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .rule("PollTimesAreOrdered", rule.ordered("opensAt", "closesAt", { allowEqual: true }))
-  .description(
-    "One station's operation in one election: its host that day, its registered voters, streams and opening times, and whether it operated. The station itself is a feature and a civic facility; its code is a geography identifier; votes are electorates and results with the station feature as the unit.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("polls")
-      .unique("electionId", "stationFeatureId")
-      .index("stationFeatureId")
-      .index("hostFeatureId")
-      .index("statusId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("fulfilments").index("commitmentId").index("projectId").index("contractId") });
 
 /*---------------- politics.contributions ----------------*/
 export const Contributions = politics
   .schema("Contributions", {
-    donorEntityId: belongsTo(() => Entities).maybe(),
-    donorIndividualId: belongsTo(() => Individuals).maybe(),
-    recipientPartyId: belongsTo(() => Parties).maybe(),
-    recipientCandidateId: belongsTo(() => Candidates).maybe(),
+    donorId: identity("Who gave."),
+    recipientId: identity("Who received: a party or candidate."),
     electionId: belongsTo(() => Elections).maybe(),
-    amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),
-    currencyId: belongsTo(() => Value),
-    /** True for goods or services given instead of money. */
+    amount: dryv.field(sharedProperties.AmountMinorUnits).maybe().description("Whole minor units of `currency_id`."),
+    currencyId: belongsTo(() => Currencies).maybe(),
     isInKind: dryv.field(sharedProperties.Flag),
-    givenOn: dryv.field(sharedProperties.CalendarDate),
-    /** Scheme ref.evidence.status. */
-    evidenceStatusId: belongsTo(() => Value).tags("scheme:ref.sch.ref.evidence.status"),
-    /** The filed disclosure the gift was found in. */
-    disclosureFileVersionId: belongsTo(() => FileVersions).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    givenOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    statusTerm: term("pol.contribution.status", "declared, reported, disputed."),
+    versionId: belongsTo(() => Versions)
+      .maybe()
+      .description("The disclosure file."),
   })
   .extends(baseSchemas.CodedEntity)
-  .rule("HasExactlyOneDonor", rule.exactlyOne("donorEntityId", "donorIndividualId"))
-  .rule("HasExactlyOneRecipient", rule.exactlyOne("recipientPartyId", "recipientCandidateId"))
-  .description(
-    "Money or goods given to a party or candidate, by whom, when, for which election and where it was disclosed. A recorded gift is a fact about a gift, never a claim about intent.",
-  )
+  .rule("AmountHasCurrency", (v) => v.amount.isNull().or(v.currencyId.isNotNull()))
+  .description("A political donation or in-kind contribution as disclosed.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("contributions")
-      .index("donorEntityId")
-      .index("donorIndividualId")
-      .index("recipientPartyId")
-      .index("recipientCandidateId")
-      .index("electionId")
-      .index("givenOn")
-      .index("evidenceStatusId")
-      .index("disclosureFileVersionId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("contributions").index("donorId").index("recipientId").index("electionId") });
+
+/*---------------- politics.attachments ----------------*/
+export const Attachments = politics
+  .schema("Attachments", {
+    commitmentId: belongsTo(() => Commitments, { onDelete: "cascade" }).maybe(),
+    fulfilmentId: belongsTo(() => Fulfilments, { onDelete: "cascade" }).maybe(),
+    manifestoId: belongsTo(() => Manifestos, { onDelete: "cascade" }).maybe(),
+    assetId: belongsTo(() => Assets).maybe(),
+    articleId: belongsTo(() => Articles).maybe(),
+    purposeTerm: term("med.attachment.purpose", "video, document, photo, transcript."),
+    position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+    startSecond: dryv.field(politicsProperties.Seconds).maybe(),
+    endSecond: dryv.field(politicsProperties.Seconds).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("AttachmentHasOneRow", rule.exactlyOne("commitmentId", "fulfilmentId", "manifestoId"))
+  .rule("AttachmentHasOneMedia", rule.exactlyOne("assetId", "articleId"))
+  .description("Media on commitments, fulfilments and manifestos (the video of a promise).")
+  .role("entity")
+  .facets({ storage: dryv.storage("attachments").index("commitmentId").index("fulfilmentId").index("manifestoId") });

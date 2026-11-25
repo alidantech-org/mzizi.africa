@@ -43,7 +43,7 @@ NAMES: dict[str, tuple[int, int, int]] = {
 
 
 def nearest_name(rgb: tuple[int, int, int]) -> str:
-    return min(NAMES, key=lambda n: sum((a - b) ** 2 for a, b in zip(rgb, NAMES[n])))
+    return min(NAMES, key=lambda n: sum((a - b) ** 2 for a, b in zip(rgb, NAMES[n], strict=False)))
 
 
 def rasterise(svg: Path) -> Image.Image:
@@ -66,7 +66,7 @@ def swatches(image: Image.Image) -> list[dict[str, object]]:
     total = sum(sum(c.values()) for c in buckets.values()) or 1
     found = sorted(((c.most_common(1)[0][0], sum(c.values()) / total) for c in buckets.values()), key=lambda x: -x[1])
     return [
-        {"label": nearest_name(rgb), "hex": "#%02x%02x%02x" % rgb, "share": round(share, 4)}
+        {"label": nearest_name(rgb), "hex": "#{:02x}{:02x}{:02x}".format(*rgb), "share": round(share, 4)}
         for rgb, share in found
         if share >= SHARE_MIN
     ]

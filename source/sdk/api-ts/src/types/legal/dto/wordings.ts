@@ -1,24 +1,17 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
-
-/** Exact authority-bearing text of one provision in one edition and language. Translations are separate rows. */
+/** The official text of a provision in one edition and language. */
 export interface LegalWordings {
-  citationId?: string | null;
   code: string;
   createdAt: string;
   deletedAt?: string | null;
   editionId: string;
   endsOn?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
-  fromYear?: number | null;
+  heading?: string | null;
   id: string;
-  instrumentId: string;
   languageId: string;
-  observedAt: string;
   provisionId: string;
   startsOn?: string | null;
   supersedesId?: string | null;
   text: string;
-  toYear?: number | null;
   updatedAt: string;
   version: number;
 }

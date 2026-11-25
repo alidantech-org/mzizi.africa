@@ -6,5 +6,6 @@ from enum import StrEnum
 
 
 class AuthActorKind(StrEnum):
+    AGENT = "agent"
     PERSON = "person"
     SERVICE = "service"

@@ -1,4 +1,3 @@
-export * from "./catalog";
 export * from "./engine";
 export * from "./explore";
 export * from "./research";

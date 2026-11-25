@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class SchedulesRow(BaseModel):
-    """A published plan of dated items: an election timetable, a school year, a parliamentary calendar. Items are placed by offset from an anchor, so moving the anchor moves the plan."""
+    """A published timetable of steps counted from an anchor (an election timetable)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -31,11 +31,10 @@ class SchedulesRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
-    issuer_entity_id: UUID | None = None
+    issuer_id: UUID | None = None
+    kind_term: UUID
     published_on: date | None = None
-    schedule_kind_id: UUID
-    source_citation_id: UUID | None = None
-    status_id: UUID
+    status_term: UUID
     supersedes_schedule_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

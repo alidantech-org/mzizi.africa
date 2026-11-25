@@ -12,16 +12,16 @@ import {
   ValidateIf,
 } from "class-validator";
 
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import { ProvisionKind } from "#/modules/legal/schema/enum/provision-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Stable provision identity within one instrument; hierarchy stays within that instrument. One provision holds one statement. (entity)
+ * The tree of articles and sections of an instrument; headings are on `wordings`. (entity)
  */
 export class ProvisionsDto {
   @IsString()
@@ -49,6 +49,9 @@ export class ProvisionsDto {
 
   @IsString()
   @IsUUID()
+  @Satisfies<ProvisionsDto>((object) => object.id !== object.parentId, {
+    message: "Provision Is Not Its Own Parent",
+  })
   id!: Id;
 
   @IsString()
@@ -67,13 +70,6 @@ export class ProvisionsDto {
   @IsInt()
   @Min(1)
   position!: PositiveInteger;
-
-  @IsOptional()
-  @ValidateIf((object) => object.title !== null)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  title?: Name | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

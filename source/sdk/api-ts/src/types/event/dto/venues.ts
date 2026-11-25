@@ -1,12 +1,13 @@
-/** One place an occurrence happens at. An occurrence can have many: a national election covers every county and polling place. */
+/** Where an occurrence takes place. */
 export interface EventVenues {
   createdAt: string;
   deletedAt?: string | null;
   featureId: string;
   id: string;
   note?: string | null;
+  noteLanguageId?: string | null;
   occurrenceId: string;
-  roleId: string;
+  roleTerm: string;
   updatedAt: string;
   version: number;
 }

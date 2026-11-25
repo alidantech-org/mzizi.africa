@@ -10,21 +10,18 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class DiscoveriesRow(BaseModel):
-    """An observation that an address exists: where it was found, as what text and when. Retrieval is a separate capture."""
+    """A link found while crawling."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "source.discoveries"
 
-    address_id: UUID | None = None
     anchor_text: Annotated[str, Field(max_length=1000)] | None = None
     context: Annotated[str, Field(max_length=4000)] | None = None
     created_at: datetime
-    deleted_at: datetime | None = None
     discovered_at: datetime
-    found_on_address_id: UUID | None = None
+    found_on_id: UUID | None = None
     id: UUID
     observed_url: Annotated[str, Field(max_length=2048)]
+    path_id: UUID | None = None
     source_id: UUID | None = None
-    updated_at: datetime
-    version: Annotated[int, Field(ge=1)]

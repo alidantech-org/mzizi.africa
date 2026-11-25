@@ -1,23 +1,18 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
-
-/** One person's continuous tenure in one office, with appointment kind and effective dates. */
+/** A person in an office for a period. How they got there is `governance.appointments`. */
 export interface GovernanceHolders {
-  appointedByEntityId?: string | null;
-  appointmentKindId: string;
-  appointmentMotionId?: string | null;
   code: string;
+  contestId?: string | null;
   createdAt: string;
   deletedAt?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
+  endsOn?: string | null;
   fromYear?: number | null;
   id: string;
   individualId: string;
-  leftOfficeOn?: string | null;
-  nominatedByEntityId?: string | null;
+  methodTerm: string;
   officeId: string;
-  sourceCitationId?: string | null;
+  reasonTerm?: string | null;
+  startsOn?: string | null;
   toYear?: number | null;
-  tookOfficeOn?: string | null;
   updatedAt: string;
   version: number;
 }

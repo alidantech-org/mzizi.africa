@@ -8,17 +8,17 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
 class PositionsRow(BaseModel):
-    """A kind of office with its seat rule: how it is filled, how many seats exist and where, the term, the legal basis. Offices are the individual seats of a position; holders are never part of it."""
+    """A kind of seat that law creates (Governor, Member of County Assembly). Its titles are `identity.names`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "governance.positions"
 
-    basis_provision_id: UUID | None = None
+    basis_term: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -29,22 +29,18 @@ class PositionsRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
-    display_order: Annotated[int, Field(ge=0)] | None = None
-    exposure_id: UUID | None = None
-    from_to_precision: DatePrecision | None = None
-    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
+    exposure_term: UUID | None = None
     id: UUID
-    institution_id: UUID
-    jurisdiction_level_id: UUID | None = None
-    role_id: UUID
-    seat_basis_id: UUID
+    identity_kind: IdentityKind
+    institution_id: UUID | None = None
+    level_id: UUID | None = None
+    method_term: UUID | None = None
+    position: Annotated[int, Field(ge=0)] | None = None
+    provision_id: UUID | None = None
+    role_term: UUID
     seat_count: Annotated[int, Field(ge=1)] | None = None
-    seat_unit_level_id: UUID | None = None
-    selection_method_id: UUID
-    source_citation_id: UUID | None = None
+    seat_level_id: UUID | None = None
     term_limit: Annotated[int, Field(ge=1)] | None = None
     term_years: Annotated[int, Field(ge=1)] | None = None
-    title_id: UUID
-    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -1,32 +1,24 @@
-import {
-  IsInt,
-  IsISO8601,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Matches,
-  MaxLength,
-  Min,
-  MinLength,
-  ValidateIf,
-} from "class-validator";
+import { IsInt, IsISO8601, IsOptional, IsString, IsUUID, Min, ValidateIf } from "class-validator";
 
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { AmountMinorUnits } from "#/modules/shared/schema/type/amount-minor-units.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One reported financial flow at its source transaction grain, not a rolled-up aggregate. (entity)
- *
- * Invariant "AtMostOneCounterparty" has no simple form, so it isn't validated here.
+ * A movement of public money: allocation, transfer, disbursement, payment or receipt. (entity)
  */
 export class FlowsDto {
+  @IsOptional()
+  @ValidateIf((object) => object.amount !== null)
   @IsInt()
   @Min(0)
-  amountMinorUnits!: AmountMinorUnits;
+  @Satisfies<FlowsDto>((object) => object.amount == null || object.currencyId != null, {
+    message: "Flow Amount Has Currency",
+  })
+  amount?: AmountMinorUnits | null;
 
   @IsOptional()
   @ValidateIf((object) => object.appropriationId !== null)
@@ -34,15 +26,11 @@ export class FlowsDto {
   @IsUUID()
   appropriationId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.classTerm !== null)
   @IsString()
-  @MinLength(1)
-  @MaxLength(255)
-  @Matches(
-    new RegExp(
-      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-    ),
-  )
-  code!: IdentityCode;
+  @IsUUID()
+  classTerm?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.contractId !== null)
@@ -51,23 +39,23 @@ export class FlowsDto {
   contractId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.counterpartyEntityId !== null)
+  @ValidateIf((object) => object.counterpartyId !== null)
   @IsString()
   @IsUUID()
-  counterpartyEntityId?: Id | null;
+  counterpartyId?: Id | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.counterpartyIndividualId !== null)
   @IsString()
   @IsUUID()
-  counterpartyIndividualId?: Id | null;
+  countryId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;
 
+  @IsOptional()
+  @ValidateIf((object) => object.currencyId !== null)
   @IsString()
   @IsUUID()
-  currencyId!: Id;
+  currencyId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.debtId !== null)
@@ -81,20 +69,10 @@ export class FlowsDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.expenditureClassId !== null)
+  @ValidateIf((object) => object.featureId !== null)
   @IsString()
   @IsUUID()
-  expenditureClassId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fiscalPeriodId !== null)
-  @IsString()
-  @IsUUID()
-  fiscalPeriodId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  flowKindId!: Id;
+  featureId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fundId !== null)
@@ -112,26 +90,26 @@ export class FlowsDto {
   @IsUUID()
   institutionId?: Id | null;
 
+  @IsString()
+  @IsUUID()
+  kindTerm!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.occurredOn !== null)
   @IsISO8601({ strict: true })
-  occurredOn!: CalendarDate;
+  occurredOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.periodId !== null)
+  @IsString()
+  @IsUUID()
+  periodId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.projectId !== null)
   @IsString()
   @IsUUID()
   projectId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.scopeUnitFeatureId !== null)
-  @IsString()
-  @IsUUID()
-  scopeUnitFeatureId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

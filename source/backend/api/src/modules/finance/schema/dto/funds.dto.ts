@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -10,13 +11,16 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
+
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One named public fund with a classification, manager and country. (entity)
+ * A public fund (NG-CDF). (entity)
  */
 export class FundsDto {
   @IsString()
@@ -29,11 +33,9 @@ export class FundsDto {
   )
   code!: IdentityCode;
 
-  @IsOptional()
-  @ValidateIf((object) => object.countryId !== null)
   @IsString()
   @IsUUID()
-  countryId?: Id | null;
+  countryId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;
@@ -45,35 +47,35 @@ export class FundsDto {
 
   @IsString()
   @IsUUID()
-  fundKindId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fundingSourceId !== null)
-  @IsString()
-  @IsUUID()
-  fundingSourceId?: Id | null;
-
-  @IsString()
-  @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.managingEntityId !== null)
+  @IsEnum(IdentityKind)
+  @Satisfies<FundsDto>((object) => object.identityKind === "fund", {
+    message: "Fund Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsString()
   @IsUUID()
-  managingEntityId?: Id | null;
+  kindTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.scopeUnitFeatureId !== null)
+  @ValidateIf((object) => object.managerId !== null)
   @IsString()
   @IsUUID()
-  scopeUnitFeatureId?: Id | null;
+  managerId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
+  @ValidateIf((object) => object.scopeId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
+  scopeId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.sourceTerm !== null)
+  @IsString()
+  @IsUUID()
+  sourceTerm?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

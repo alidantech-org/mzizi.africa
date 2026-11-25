@@ -1,42 +1,43 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/civic/contracts.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/reference/currencies.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'variations.g.dart';
 
-/// One change to an executed contract: a variation of price or scope, an extension, a renewal or a termination.
+/// A change to a contract's price, period or scope.
 @JsonSerializable(includeIfNull: false)
 class CivicVariations {
   const CivicVariations({
-    this.amountDeltaMinorUnits,
+    this.amountChange,
     required this.code,
     required this.contractId,
     required this.createdAt,
     this.currencyId,
     this.deletedAt,
     required this.id,
-    required this.kindId,
+    required this.kindTerm,
     this.newEndOn,
-    this.reason,
+    this.note,
+    this.noteLanguageId,
     this.signedOn,
-    this.sourceCitationId,
     required this.updatedAt,
     required this.version,
   });
-  final int? amountDeltaMinorUnits;
+  final int? amountChange;
   final String code;
   final String contractId;
   final DateTime createdAt;
   final String? currencyId;
   final DateTime? deletedAt;
   final String id;
-  final String kindId;
+  final String kindTerm;
   final DateTime? newEndOn;
-  final String? reason;
+  final String? note;
+  final String? noteLanguageId;
   final DateTime? signedOn;
-  final String? sourceCitationId;
   final DateTime updatedAt;
   final int version;
 

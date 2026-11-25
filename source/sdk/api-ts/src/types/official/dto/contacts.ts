@@ -1,15 +1,14 @@
-/** One sourced contact channel for exactly one identity; visibility class governs handling of private values. */
+/** A public or official-business contact of a named thing. */
 export interface OfficialContacts {
-  code: string;
   createdAt: string;
   deletedAt?: string | null;
-  entityId?: string | null;
+  fromYear?: number | null;
   id: string;
-  individualId?: string | null;
-  kindId: string;
-  sourceCitationId?: string | null;
+  identityId: string;
+  kindTerm: string;
+  toYear?: number | null;
   updatedAt: string;
   value: string;
   version: number;
-  visibilityId: string;
+  visibilityTerm: string;
 }

@@ -1,6 +1,6 @@
-import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 
 /** Feature Key */
 export interface FeatureKey {
-  featureId: Id;
+  code: IdentityCode;
 }

@@ -5,8 +5,8 @@ part 'institution_key.g.dart';
 /// Institution Key
 @JsonSerializable(includeIfNull: false)
 class GovernanceInstitutionKey {
-  const GovernanceInstitutionKey({required this.institutionId});
-  final String institutionId;
+  const GovernanceInstitutionKey({required this.code});
+  final String code;
 
   factory GovernanceInstitutionKey.fromJson(Map<String, dynamic> json) => _$GovernanceInstitutionKeyFromJson(json);
 

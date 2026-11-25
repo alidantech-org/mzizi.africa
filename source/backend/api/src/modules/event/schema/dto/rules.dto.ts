@@ -1,5 +1,4 @@
 import {
-  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -12,8 +11,10 @@ import {
   ValidateIf,
 } from "class-validator";
 
-import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import type { Day } from "#/modules/event/schema/type/day.type.ts";
+import type { Month } from "#/modules/event/schema/type/month.type.ts";
+import type { Nth } from "#/modules/event/schema/type/nth.type.ts";
+import type { Weekday } from "#/modules/event/schema/type/weekday.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -22,14 +23,14 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * How the dates of an event are produced, with the adjustment the law applies when a date falls on a rest day. Occurrences generated from a rule are projected until announced. (entity)
+ * When an event recurs. (entity)
  */
 export class RulesDto {
   @IsOptional()
-  @ValidateIf((object) => object.adjustmentId !== null)
+  @ValidateIf((object) => object.adjustmentTerm !== null)
   @IsString()
   @IsUUID()
-  adjustmentId?: Id | null;
+  adjustmentTerm?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.anchorOn !== null)
@@ -43,7 +44,8 @@ export class RulesDto {
   @ValidateIf((object) => object.dayOfMonth !== null)
   @IsInt()
   @Min(1)
-  dayOfMonth?: PositiveInteger | null;
+  @Max(31)
+  dayOfMonth?: Day | null;
 
   @IsOptional()
   @ValidateIf((object) => object.deletedAt !== null)
@@ -55,22 +57,10 @@ export class RulesDto {
   eventId!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
-
-  @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)
   @IsInt()
   @Min(-10000)
   @Max(3000)
-  @Satisfies<RulesDto>(
-    (object) =>
-      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
-    {
-      message: "Period Years Are Ordered",
-    },
-  )
   fromYear?: Year | null;
 
   @IsString()
@@ -83,17 +73,23 @@ export class RulesDto {
   @Min(1)
   intervalYears?: PositiveInteger | null;
 
+  @IsString()
+  @IsUUID()
+  kindTerm!: Id;
+
   @IsOptional()
   @ValidateIf((object) => object.month !== null)
   @IsInt()
   @Min(1)
-  month?: PositiveInteger | null;
+  @Max(12)
+  month?: Month | null;
 
   @IsOptional()
   @ValidateIf((object) => object.nthWeekday !== null)
   @IsInt()
-  @Min(1)
-  nthWeekday?: PositiveInteger | null;
+  @Min(-5)
+  @Max(5)
+  nthWeekday?: Nth | null;
 
   @IsOptional()
   @ValidateIf((object) => object.rrule !== null)
@@ -101,16 +97,6 @@ export class RulesDto {
   @MinLength(1)
   @MaxLength(500)
   rrule?: NonEmptyString500 | null;
-
-  @IsString()
-  @IsUUID()
-  ruleKindId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.toYear !== null)
@@ -130,5 +116,6 @@ export class RulesDto {
   @ValidateIf((object) => object.weekday !== null)
   @IsInt()
   @Min(1)
-  weekday?: PositiveInteger | null;
+  @Max(7)
+  weekday?: Weekday | null;
 }

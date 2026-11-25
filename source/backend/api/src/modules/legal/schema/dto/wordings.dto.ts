@@ -1,12 +1,10 @@
 import {
-  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
-  Max,
   MaxLength,
   Min,
   MinLength,
@@ -14,25 +12,18 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import type { Heading } from "#/modules/legal/schema/type/heading.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString } from "#/modules/shared/schema/type/non-empty-string.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
-import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Exact authority-bearing text of one provision in one edition and language. Translations are separate rows. (entity)
+ * The official text of a provision in one edition and language. (entity)
  */
 export class WordingsDto {
-  @IsOptional()
-  @ValidateIf((object) => object.citationId !== null)
-  @IsString()
-  @IsUUID()
-  citationId?: Id | null;
-
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -61,23 +52,11 @@ export class WordingsDto {
   endsOn?: CalendarDate | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fromYear !== null)
-  @IsInt()
-  @Min(-10000)
-  @Max(3000)
-  @Satisfies<WordingsDto>(
-    (object) =>
-      object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
-    {
-      message: "Period Years Are Ordered",
-    },
-  )
-  fromYear?: Year | null;
+  @ValidateIf((object) => object.heading !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(1000)
+  heading?: Heading | null;
 
   @IsString()
   @IsUUID()
@@ -85,14 +64,7 @@ export class WordingsDto {
 
   @IsString()
   @IsUUID()
-  instrumentId!: Id;
-
-  @IsString()
-  @IsUUID()
   languageId!: Id;
-
-  @IsISO8601({})
-  observedAt!: Instant;
 
   @IsString()
   @IsUUID()
@@ -105,7 +77,7 @@ export class WordingsDto {
     (object) =>
       object.startsOn == null || object.endsOn == null || object.startsOn <= object.endsOn,
     {
-      message: "Wordings Dates Are Ordered",
+      message: "Wording Dates Are Ordered",
     },
   )
   startsOn?: CalendarDate | null;
@@ -119,13 +91,6 @@ export class WordingsDto {
   @IsString()
   @MinLength(1)
   text!: NonEmptyString;
-
-  @IsOptional()
-  @ValidateIf((object) => object.toYear !== null)
-  @IsInt()
-  @Min(-10000)
-  @Max(3000)
-  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

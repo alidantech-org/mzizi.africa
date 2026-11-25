@@ -14,7 +14,7 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -23,7 +23,7 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here. (entity)
+ * The one identity of every place, natural or administrative. A country's feature shares the country's identity; parents and ranks are dated relationships, never columns here. (entity)
  */
 export class FeaturesDto {
   @IsString()
@@ -58,19 +58,10 @@ export class FeaturesDto {
       object.endedOn == null ||
       object.establishedOn <= object.endedOn,
     {
-      message: "Features Dates Are Ordered",
+      message: "Feature Dates Are Ordered",
     },
   )
   establishedOn?: CalendarDate | null;
-
-  @IsString()
-  @IsUUID()
-  featureTypeId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)
@@ -81,7 +72,7 @@ export class FeaturesDto {
     (object) =>
       object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
     {
-      message: "Period Years Are Ordered",
+      message: "Feature Period Is Ordered",
     },
   )
   fromYear?: Year | null;
@@ -89,6 +80,19 @@ export class FeaturesDto {
   @IsString()
   @IsUUID()
   id!: Id;
+
+  @IsEnum(IdentityKind)
+  @Satisfies<FeaturesDto>(
+    (object) => object.identityKind === "feature" || object.identityKind === "country",
+    {
+      message: "Feature Kind",
+    },
+  )
+  identityKind!: IdentityKind;
+
+  @IsString()
+  @IsUUID()
+  kindTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.toYear !== null)

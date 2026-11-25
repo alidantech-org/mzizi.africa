@@ -10,22 +10,27 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import type { Note } from "#/modules/civic/schema/type/note.type.ts";
+import type { SignedAmount } from "#/modules/civic/schema/type/signed-amount.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { Integer } from "#/modules/shared/schema/type/integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One change to an executed contract: a variation of price or scope, an extension, a renewal or a termination. (entity)
+ * A change to a contract's price, period or scope. (entity)
  */
 export class VariationsDto {
   @IsOptional()
-  @ValidateIf((object) => object.amountDeltaMinorUnits !== null)
+  @ValidateIf((object) => object.amountChange !== null)
   @IsInt()
-  amountDeltaMinorUnits?: Integer | null;
+  @Satisfies<VariationsDto>((object) => object.amountChange == null || object.currencyId != null, {
+    message: "Variation Amount Has Currency",
+  })
+  amountChange?: SignedAmount | null;
 
   @IsString()
   @MinLength(1)
@@ -61,7 +66,7 @@ export class VariationsDto {
 
   @IsString()
   @IsUUID()
-  kindId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.newEndOn !== null)
@@ -69,21 +74,25 @@ export class VariationsDto {
   newEndOn?: CalendarDate | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.reason !== null)
+  @ValidateIf((object) => object.note !== null)
   @IsString()
+  @MinLength(1)
   @MaxLength(4000)
-  reason?: Description | null;
+  @Satisfies<VariationsDto>((object) => object.note == null || object.noteLanguageId != null, {
+    message: "Variation Note Has Language",
+  })
+  note?: Note | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.noteLanguageId !== null)
+  @IsString()
+  @IsUUID()
+  noteLanguageId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.signedOn !== null)
   @IsISO8601({ strict: true })
   signedOn?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

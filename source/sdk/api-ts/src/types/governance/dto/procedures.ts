@@ -1,19 +1,14 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
 
-/** A named sequence of rights, such as appointing a judge or removing a governor; its steps are powers. */
+/** A procedure law sets out; its explanation is a definition name or a media article. */
 export interface GovernanceProcedures {
-  basisProvisionId?: string | null;
   code: string;
-  countryId: string;
   createdAt: string;
   deletedAt?: string | null;
-  description: string;
-  fromToPrecision?: SharedDatePrecision | null;
-  fromYear?: number | null;
   id: string;
-  kindId: string;
-  sourceCitationId?: string | null;
-  toYear?: number | null;
+  identityKind: SharedIdentityKind;
+  kindTerm: string;
+  provisionId?: string | null;
   updatedAt: string;
   version: number;
 }

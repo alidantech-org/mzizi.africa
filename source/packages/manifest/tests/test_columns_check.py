@@ -26,7 +26,7 @@ def test_a_column_dictionary_is_its_own_kind() -> None:
 
 
 def test_a_dictionary_with_real_keys_and_columns_has_no_problems(tmp_path: Path) -> None:
-    root = tree(tmp_path, dictionary("amount-bid", "civic.bids.amount_minor_units"))
+    root = tree(tmp_path, dictionary("amount-bid", "civic.bids.amount"))
     assert scan(root).problems == []
 
 
@@ -40,14 +40,14 @@ def test_an_unknown_key_and_an_unknown_column_are_reported(tmp_path: Path) -> No
 def test_a_dictionary_must_use_code_columns_never_ids(tmp_path: Path) -> None:
     root = tree(tmp_path, dictionary("amount-bid", "civic.bids.bidder_entity_id"))
     assert any("use the _code column, never an id" in p for p in scan(root).problems)
-    ok = tree(tmp_path / "ok", dictionary("amount-bid", "civic.bids.bidder_entity_code"))
+    ok = tree(tmp_path / "ok", dictionary("amount-bid", "civic.bids.bidder_code"))
     assert scan(ok).problems == []
 
 
 def test_a_code_recipe_and_a_lookup_must_use_real_seed_columns(tmp_path: Path) -> None:
     bad = (
         "code: sys.col.global.entities\ntables:\n  official.entities:\n    code:\n      parts:\n        - {scope: true}\n"
-        "        - {name_slug: official.names.no_such_column}\n  official.names:\n    code:\n      parts: [{scope: true}]\n"
+        "        - {name_slug: identity.names.no_such_column}\n  identity.names:\n    code:\n      parts: [{scope: true}]\n"
     )
     problems = scan(tree(tmp_path, bad)).problems
     assert any("not a seed column" in p for p in problems)

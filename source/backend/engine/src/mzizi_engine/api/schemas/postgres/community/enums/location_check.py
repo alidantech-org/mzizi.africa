@@ -9,5 +9,5 @@ class LocationCheck(StrEnum):
     INSIDE = "inside"
     NEAR = "near"
     OUTSIDE = "outside"
-    SUSPECTED_MOCK = "suspected_mock"
+    SUSPECTED_MOCK = "suspected-mock"
     UNAVAILABLE = "unavailable"

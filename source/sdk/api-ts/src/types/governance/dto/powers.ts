@@ -1,25 +1,16 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
-
-/** One right held in law by a position or body over another, with its place in a procedure, the threshold and the provision that creates it. Influence is computed from these rows, never stored. */
+/** How power flows between positions and institutions, by procedure and threshold. */
 export interface GovernancePowers {
-  basisProvisionId?: string | null;
-  code: string;
   createdAt: string;
   deletedAt?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
-  fromYear?: number | null;
-  holderInstitutionId?: string | null;
-  holderPositionId?: string | null;
+  fromId: string;
   id: string;
   isBinding: boolean;
-  kindId: string;
+  kindTerm: string;
   procedureId?: string | null;
-  sourceCitationId?: string | null;
-  stepOrder?: number | null;
-  targetInstitutionId?: string | null;
-  targetPositionId?: string | null;
-  thresholdId?: string | null;
-  toYear?: number | null;
+  provisionId?: string | null;
+  step?: number | null;
+  thresholdTerm?: string | null;
+  toId: string;
   updatedAt: string;
   version: number;
 }

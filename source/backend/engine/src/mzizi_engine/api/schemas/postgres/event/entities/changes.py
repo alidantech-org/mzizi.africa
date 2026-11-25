@@ -10,33 +10,25 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class EventChangesRow(BaseModel):
-    """One reschedule, postponement, adjournment, cancellation or confirmation of an occurrence, with the reason, who decided it and under which law. History is the list of changes."""
+    """A postponement, cancellation or move of an occurrence."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "event.changes"
 
-    authority_entity_id: UUID | None = None
+    authority_id: UUID | None = None
     basis_provision_id: UUID | None = None
-    change_kind_id: UUID
-    code: Annotated[
-        str,
-        Field(
-            min_length=1,
-            max_length=255,
-            pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-        ),
-    ]
     created_at: datetime
     decided_on: date | None = None
     deleted_at: datetime | None = None
-    explanation: Annotated[str, Field(max_length=4000)] | None = None
     from_on: date | None = None
     id: UUID
+    kind_term: UUID
+    note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
+    note_language_id: UUID | None = None
     occurrence_id: UUID
-    reason_id: UUID | None = None
+    reason_term: UUID | None = None
     replacement_occurrence_id: UUID | None = None
-    source_citation_id: UUID | None = None
     to_on: date | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

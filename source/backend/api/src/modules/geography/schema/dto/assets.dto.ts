@@ -10,17 +10,15 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-
 import type { Layer } from "#/modules/geography/schema/type/layer.type.ts";
 import type { Member } from "#/modules/geography/schema/type/member.type.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A stored GIS file used for a feature or for one of its geometries. One file can serve many features and a feature can have many files. Photographs and video are filesystem media; acquisition and provenance belong to Source. (entity)
+ * A stored GIS file or prepared map output (tile set, TopoJSON) for a feature, through filesystem versions. (entity)
  */
 export class AssetsDto {
   @IsOptional()
@@ -28,6 +26,11 @@ export class AssetsDto {
   @IsInt()
   @Min(1)
   band?: PositiveInteger | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.builtAt !== null)
+  @IsISO8601({})
+  builtAt?: Instant | null;
 
   @IsString()
   @MinLength(1)
@@ -47,19 +50,9 @@ export class AssetsDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.description !== null)
-  @IsString()
-  @MaxLength(4000)
-  description?: Description | null;
-
   @IsString()
   @IsUUID()
   featureId!: Id;
-
-  @IsString()
-  @IsUUID()
-  fileVersionId!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.geometryId !== null)
@@ -67,13 +60,19 @@ export class AssetsDto {
   @IsUUID()
   geometryId?: Id | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.hierarchyId !== null)
+  @IsString()
+  @IsUUID()
+  hierarchyId?: Id | null;
+
   @IsString()
   @IsUUID()
   id!: Id;
 
   @IsString()
   @IsUUID()
-  kindId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.layer !== null)
@@ -81,6 +80,12 @@ export class AssetsDto {
   @MinLength(1)
   @MaxLength(255)
   layer?: Layer | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.levelId !== null)
+  @IsString()
+  @IsUUID()
+  levelId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.member !== null)
@@ -91,7 +96,12 @@ export class AssetsDto {
 
   @IsString()
   @IsUUID()
-  purposeId!: Id;
+  purposeTerm!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.staleAt !== null)
+  @IsISO8601({})
+  staleAt?: Instant | null;
 
   @IsISO8601({})
   updatedAt!: Instant;
@@ -99,4 +109,8 @@ export class AssetsDto {
   @IsInt()
   @Min(1)
   version!: PositiveInteger;
+
+  @IsString()
+  @IsUUID()
+  versionId!: Id;
 }

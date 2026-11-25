@@ -12,8 +12,9 @@ EventVenues _$EventVenuesFromJson(Map<String, dynamic> json) => EventVenues(
   featureId: json['featureId'] as String,
   id: json['id'] as String,
   note: json['note'] as String?,
+  noteLanguageId: json['noteLanguageId'] as String?,
   occurrenceId: json['occurrenceId'] as String,
-  roleId: json['roleId'] as String,
+  roleTerm: json['roleTerm'] as String,
   updatedAt: DateTime.parse(json['updatedAt'] as String),
   version: (json['version'] as num).toInt(),
 );
@@ -24,8 +25,9 @@ Map<String, dynamic> _$EventVenuesToJson(EventVenues instance) => <String, dynam
   'featureId': instance.featureId,
   'id': instance.id,
   'note': ?instance.note,
+  'noteLanguageId': ?instance.noteLanguageId,
   'occurrenceId': instance.occurrenceId,
-  'roleId': instance.roleId,
+  'roleTerm': instance.roleTerm,
   'updatedAt': instance.updatedAt.toIso8601String(),
   'version': instance.version,
 };

@@ -1,31 +1,32 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/geography/features.dart';
+import 'package:mzizi_api/src/models/governance/institutions.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
 import 'package:mzizi_api/src/models/shared/created.dart';
 
 part 'scopes.g.dart';
 
-/// Deduplicated access scope: global, or narrowed by country, geographic unit, dataset or field group.
+/// A deduplicated access scope: global, or narrowed by institution, country, place or field group.
 @JsonSerializable(includeIfNull: false)
 class AuthScopes {
   const AuthScopes({
-    this.countryRefId,
+    this.countryId,
     required this.createdAt,
-    this.datasetRefId,
+    this.featureId,
     this.fieldGroup,
-    this.geographicUnitRefId,
     required this.id,
     required this.includeDescendants,
-    required this.institutionRefId,
+    this.institutionId,
     required this.isGlobal,
     required this.scopeHash,
   });
-  final String? countryRefId;
+  final String? countryId;
   final DateTime createdAt;
-  final String? datasetRefId;
+  final String? featureId;
   final String? fieldGroup;
-  final String? geographicUnitRefId;
   final String id;
   final bool includeDescendants;
-  final String institutionRefId;
+  final String? institutionId;
   final bool isGlobal;
   final String scopeHash;
 

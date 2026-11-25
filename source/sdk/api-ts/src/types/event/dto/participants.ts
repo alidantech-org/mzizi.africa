@@ -1,12 +1,9 @@
-/** One organisation or person taking part in one occurrence in a role. */
+/** Who took part in an occurrence. */
 export interface EventParticipants {
   createdAt: string;
   deletedAt?: string | null;
-  entityId?: string | null;
   id: string;
-  individualId?: string | null;
+  identityId: string;
   occurrenceId: string;
-  roleId: string;
-  updatedAt: string;
-  version: number;
+  roleTerm: string;
 }

@@ -99,7 +99,9 @@ export async function serve(mode: Mode, names: readonly string[]): Promise<numbe
           [service.portEnv]: port,
           FORCE_COLOR: "1",
           // The API accepts browser calls only from the browser apps running alongside it.
-          ...(service.name === "api" && base.CORS_ORIGINS === undefined ? { CORS_ORIGINS: browserOrigins(chosen, base) } : {}),
+          ...(service.name === "api" && base.CORS_ORIGINS === undefined
+            ? { CORS_ORIGINS: browserOrigins(chosen, base) }
+            : {}),
         },
         stdin: "ignore",
         stdout: "pipe",
@@ -112,7 +114,9 @@ export async function serve(mode: Mode, names: readonly string[]): Promise<numbe
       if (stopping) return false;
       failures = Date.now() - startedAt >= HEALTHY_MS ? 1 : failures + 1;
       if (failures >= MAX_QUICK_FAILURES) {
-        console.error(`✖ ${service.name} exited with code ${code} ${failures} times in a row; left stopped, the others keep running`);
+        console.error(
+          `✖ ${service.name} exited with code ${code} ${failures} times in a row; left stopped, the others keep running`,
+        );
         return true;
       }
       const wait = restartDelay(failures - 1);

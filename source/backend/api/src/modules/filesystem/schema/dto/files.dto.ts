@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsEnum,
   IsInt,
   IsISO8601,
@@ -11,8 +12,8 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
-
 import { Retention } from "#/modules/filesystem/schema/enum/retention.enum.ts";
+import type { FileTag } from "#/modules/filesystem/schema/type/file-tag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { Name } from "#/modules/shared/schema/type/name.type.ts";
@@ -20,7 +21,7 @@ import type { PositiveInteger } from "#/modules/shared/schema/type/positive-inte
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Stable logical file identity; equal content hashes may belong to different files. (entity)
+ * A stable logical file; equal content hashes may belong to different files. (entity)
  */
 export class FilesDto {
   @IsString()
@@ -62,6 +63,14 @@ export class FilesDto {
 
   @IsEnum(Retention)
   retention!: Retention;
+
+  @IsOptional()
+  @ValidateIf((object) => object.tags !== null)
+  @IsArray()
+  @IsString({ each: true })
+  @MinLength(1, { each: true })
+  @MaxLength(100, { each: true })
+  tags?: FileTag[] | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

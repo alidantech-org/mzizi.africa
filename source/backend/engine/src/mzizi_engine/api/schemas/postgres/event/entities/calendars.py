@@ -10,13 +10,12 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class CalendarsRow(BaseModel):
-    """A way of counting time that gives events their dates: the civil calendar, a lunar calendar, a fiscal or school year."""
+    """A civic calendar, such as Kenya's public holidays or the National Assembly calendar."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "event.calendars"
 
-    calendar_kind_id: UUID
     code: Annotated[
         str,
         Field(
@@ -28,11 +27,10 @@ class CalendarsRow(BaseModel):
     country_id: UUID | None = None
     created_at: datetime
     deleted_at: datetime | None = None
-    description: Annotated[str, Field(max_length=4000)] | None = None
     id: UUID
     is_observed: bool
-    source_citation_id: UUID | None = None
+    kind_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]
-    year_start_day: Annotated[int, Field(ge=1)] | None = None
-    year_start_month: Annotated[int, Field(ge=1)] | None = None
+    year_start_day: Annotated[int, Field(ge=1, le=31)] | None = None
+    year_start_month: Annotated[int, Field(ge=1, le=12)] | None = None

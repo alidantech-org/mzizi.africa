@@ -1,8 +1,5 @@
-import { SharedSubjectTable } from "#sdk/types/shared/enums/subject-table.ts";
-
-/** Exact locator in one artifact: PDF page or paragraph, JSON path, CSV line and column, region or timestamp. */
+/** Exactly where in an artifact or capture a fact is. */
 export interface SourceCitations {
-  addressId?: string | null;
   artifactId?: string | null;
   captureId?: string | null;
   code: string;
@@ -10,11 +7,11 @@ export interface SourceCitations {
   deletedAt?: string | null;
   id: string;
   locator: string;
-  locatorKindId: string;
+  locatorTerm: string;
+  pathId?: string | null;
   quotedHash?: string | null;
   recordedAt: string;
-  subjectId?: string | null;
-  subjectTable?: SharedSubjectTable | null;
+  retrievedAt?: string | null;
   updatedAt: string;
   version: number;
 }

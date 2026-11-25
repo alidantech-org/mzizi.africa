@@ -1,25 +1,20 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
+import type { GeoJsonGeometry } from "#sdk/helpers/geojson.ts";
 
-/** One drawing of a feature: a revision with a role, a basis, a confidence, a zoom range, a validity period and the stored file it came from. A feature has many; the current one has no end date. */
+/** One full-detail drawing of a feature with its role, basis and revision. The current drawing has no end year. */
 export interface GeographyGeometries {
   area: number;
-  basisId: string;
-  centroid: unknown;
+  basisTerm: string;
+  centroid: GeoJsonGeometry;
   confidence?: number | null;
   createdAt: string;
   deletedAt?: string | null;
-  envelope: unknown;
+  envelope: GeoJsonGeometry;
   featureId: string;
-  fromToPrecision?: SharedDatePrecision | null;
   fromYear?: number | null;
-  geometry: unknown;
-  geometryRoleId: string;
+  geometry: GeoJsonGeometry;
   id: string;
-  maxZoom?: number | null;
-  minZoom?: number | null;
-  observedAt?: string | null;
   revision: number;
-  srid: number;
+  roleTerm: string;
   supersedesId?: string | null;
   toYear?: number | null;
   updatedAt: string;

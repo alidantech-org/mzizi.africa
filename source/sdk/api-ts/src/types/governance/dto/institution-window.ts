@@ -1,6 +1,7 @@
 /** Institution Window */
 export interface GovernanceInstitutionWindow {
-  codePrefix?: string;
+  armTerm?: string;
+  countryId: string;
   limit?: number;
   offset?: number;
 }

@@ -1,48 +1,49 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/governance/jurisdictions.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'services.g.dart';
 
-/// One provider's service provision at a physical place or geographic coverage unit during a service period.
+/// A public service. Its names and descriptions are `identity.names`.
 @JsonSerializable(includeIfNull: false)
 class CivicServices {
   const CivicServices({
     required this.code,
     required this.createdAt,
     this.deletedAt,
-    required this.description,
     this.endsOn,
+    this.featureId,
+    this.fromYear,
     required this.id,
-    required this.name,
-    this.placeFeatureId,
-    required this.providerEntityId,
-    this.responsibleInstitutionId,
-    this.scopeUnitFeatureId,
-    required this.serviceKindId,
-    this.sourceCitationId,
+    required this.identityKind,
+    this.institutionId,
+    required this.kindTerm,
+    this.providerId,
+    this.scopeId,
     this.startsOn,
+    this.toYear,
     required this.updatedAt,
     required this.version,
   });
   final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String description;
   final DateTime? endsOn;
+  final String? featureId;
+  final int? fromYear;
   final String id;
-  final String name;
-  final String? placeFeatureId;
-  final String providerEntityId;
-  final String? responsibleInstitutionId;
-  final String? scopeUnitFeatureId;
-  final String serviceKindId;
-  final String? sourceCitationId;
+  final SharedIdentityKind identityKind;
+  final String? institutionId;
+  final String kindTerm;
+  final String? providerId;
+  final String? scopeId;
   final DateTime? startsOn;
+  final int? toYear;
   final DateTime updatedAt;
   final int version;
 

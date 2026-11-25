@@ -1,45 +1,44 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/addresses.dart';
+import 'package:mzizi_api/src/models/shared/partitioned_record.dart';
 import 'package:mzizi_api/src/models/source/artifacts.dart';
-import 'package:mzizi_api/src/models/source/discoveries.dart';
+import 'package:mzizi_api/src/models/source/paths.dart';
 import 'package:mzizi_api/src/models/source/sources.dart';
 
 part 'captures.g.dart';
 
-/// One retrieval of an address: when, from which link, with what response. Repeated captures never overwrite each other.
+/// One fetch of a path.
 @JsonSerializable(includeIfNull: false)
 class SourceCaptures {
   const SourceCaptures({
-    this.addressId,
     this.artifactId,
-    required this.code,
+    this.contentType,
     required this.createdAt,
-    this.deletedAt,
+    this.discoveredAt,
     this.discoveryId,
+    this.etag,
     required this.id,
+    this.lastModified,
     required this.originalUrl,
-    required this.responseMetadata,
+    this.pathId,
     required this.retrievedAt,
     this.retrievedUrl,
     this.sourceId,
-    required this.updatedAt,
-    required this.version,
+    this.statusCode,
   });
-  final String? addressId;
   final String? artifactId;
-  final String code;
+  final String? contentType;
   final DateTime createdAt;
-  final DateTime? deletedAt;
+  final DateTime? discoveredAt;
   final String? discoveryId;
+  final String? etag;
   final String id;
+  final DateTime? lastModified;
   final String originalUrl;
-  final String responseMetadata;
+  final String? pathId;
   final DateTime retrievedAt;
   final String? retrievedUrl;
   final String? sourceId;
-  final DateTime updatedAt;
-  final int version;
+  final int? statusCode;
 
   factory SourceCaptures.fromJson(Map<String, dynamic> json) => _$SourceCapturesFromJson(json);
 

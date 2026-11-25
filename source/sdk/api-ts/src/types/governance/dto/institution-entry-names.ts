@@ -1,6 +1,10 @@
 /** Institution Entry Names */
 export interface GovernanceInstitutionEntryNames {
-  isPreferred: boolean;
-  languageId: string;
-  name: string;
+  fromYear: number | null;
+  isDefault: boolean;
+  kindTerm: string;
+  languageCode: string;
+  languageIso: string | null;
+  text: string;
+  toYear: number | null;
 }

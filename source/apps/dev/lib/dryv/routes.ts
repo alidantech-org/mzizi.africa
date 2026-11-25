@@ -8,8 +8,6 @@ export const routes = {
   capabilityList: "/capability-list",
   /** Recent engine jobs, newest first. */
   jobList: "/job-list",
-  /** The tables the engine can seed, with their natural keys. */
-  seedTableList: "/seed-table-list",
 } as const;
 
 export type RouteName = keyof typeof routes;
@@ -28,5 +26,4 @@ export const navigation: readonly {
 }[] = [
   { name: "capabilityList", label: "Capability List", href: "/capability-list" },
   { name: "jobList", label: "Job List", href: "/job-list" },
-  { name: "seedTableList", label: "Seed Table List", href: "/seed-table-list" },
 ];

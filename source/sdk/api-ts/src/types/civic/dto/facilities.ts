@@ -1,20 +1,23 @@
-/** The civic role of a geographic feature: a school, hospital, office, road, market or polling host. Size and capacity are observations on the feature; what it is and its levels are classifications; money reaches it through project links. */
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
+
+/** A public facility; it shares its geography feature's identity, so "near me" is a spatial query on the feature. */
 export interface CivicFacilities {
-  closedOn?: string | null;
+  classTerm: string;
   code: string;
-  countryId?: string | null;
+  countryId: string;
   createdAt: string;
   deletedAt?: string | null;
-  facilityClassId: string;
-  featureId: string;
+  endsOn?: string | null;
+  fromYear?: number | null;
   id: string;
-  openedOn?: string | null;
-  operatorEntityId?: string | null;
-  ownerEntityId?: string | null;
-  ownershipId?: string | null;
-  responsibleInstitutionId?: string | null;
-  sourceCitationId?: string | null;
-  statusId: string;
+  identityKind: SharedIdentityKind;
+  institutionId?: string | null;
+  operatorId?: string | null;
+  ownerId?: string | null;
+  ownershipTerm?: string | null;
+  startsOn?: string | null;
+  statusTerm?: string | null;
+  toYear?: number | null;
   updatedAt: string;
   version: number;
 }

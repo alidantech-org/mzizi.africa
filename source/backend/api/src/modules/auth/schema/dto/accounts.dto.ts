@@ -15,7 +15,7 @@ import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-s
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Login principal for a person or service; identity is separate from the people and institutions it refers to. (entity)
+ * A sign-in principal for a person, service or agent. (entity)
  */
 export class AccountsDto {
   @IsEnum(AuthActorKind)
@@ -39,13 +39,15 @@ export class AccountsDto {
   id!: Id;
 
   @IsOptional()
+  @ValidateIf((object) => object.individualId !== null)
+  @IsString()
+  @IsUUID()
+  individualId?: Id | null;
+
+  @IsOptional()
   @ValidateIf((object) => object.lastAuthenticatedAt !== null)
   @IsISO8601({})
   lastAuthenticatedAt?: Instant | null;
-
-  @IsString()
-  @IsUUID()
-  personRefId!: Id;
 
   @IsEnum(AccountStatus)
   status!: AccountStatus;

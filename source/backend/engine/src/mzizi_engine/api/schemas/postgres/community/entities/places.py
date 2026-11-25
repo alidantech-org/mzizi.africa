@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class PlacesRow(BaseModel):
-    """A place an actor keeps, with a free-text label. The place unit is stored, never GPS coordinates. At most one is the home place."""
+    """A place an actor saved."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -24,6 +24,6 @@ class PlacesRow(BaseModel):
     is_home: bool
     label: Annotated[str, Field(min_length=1, max_length=100)]
     position: Annotated[int, Field(ge=0)] | None = None
-    suggestion_id: UUID | None = None
+    suggestion_term: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

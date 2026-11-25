@@ -6,27 +6,30 @@ import {
   IsUrl,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
   ValidateIf,
 } from "class-validator";
 
-import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Url } from "#/modules/shared/schema/type/url.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
+import type { Note } from "#/modules/source/schema/type/note.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * What a source or product covers, for which place, years and kind of record, how completely, and when that was checked. It makes every 'none recorded' honest: the page says which sources were checked, and a gap is never read as zero. (entity)
+ * Expected coverage, for acquisition planning. (entity)
  */
 export class CoverageDto {
+  @IsOptional()
+  @ValidateIf((object) => object.checkedOn !== null)
   @IsISO8601({ strict: true })
-  checkedOn!: CalendarDate;
+  checkedOn?: CalendarDate | null;
 
   @IsString()
   @MinLength(1)
@@ -42,10 +45,6 @@ export class CoverageDto {
   @IsUUID()
   countryId!: Id;
 
-  @IsString()
-  @IsUUID()
-  coverageSubjectId!: Id;
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -55,44 +54,47 @@ export class CoverageDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.expectedPublicationUrl !== null)
+  @ValidateIf((object) => object.expectedUrl !== null)
   @IsString()
   @IsUrl()
   @MaxLength(2048)
-  expectedPublicationUrl?: Url | null;
+  expectedUrl?: Url | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.featureId !== null)
+  @IsString()
+  @IsUUID()
+  featureId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear?: Year | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
+  @IsOptional()
+  @ValidateIf((object) => object.levelId !== null)
   @IsString()
   @IsUUID()
-  levelId!: Id;
+  levelId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.note !== null)
   @IsString()
+  @MinLength(1)
   @MaxLength(4000)
-  note?: Description | null;
+  note?: Note | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.periodFrom !== null)
-  @IsISO8601({ strict: true })
-  @Satisfies<CoverageDto>(
-    (object) =>
-      object.periodFrom == null ||
-      object.periodUntil == null ||
-      object.periodFrom <= object.periodUntil,
-    {
-      message: "Coverage Period Is Ordered",
-    },
-  )
-  periodFrom?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.periodUntil !== null)
-  @IsISO8601({ strict: true })
-  periodUntil?: CalendarDate | null;
+  @ValidateIf((object) => object.noteLanguageId !== null)
+  @IsString()
+  @IsUUID()
+  noteLanguageId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.productId !== null)
@@ -101,25 +103,27 @@ export class CoverageDto {
   productId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.publisherEntityId !== null)
+  @ValidateIf((object) => object.publisherId !== null)
   @IsString()
   @IsUUID()
-  publisherEntityId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.scopeUnitFeatureId !== null)
-  @IsString()
-  @IsUUID()
-  scopeUnitFeatureId?: Id | null;
+  publisherId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.sourceId !== null)
   @IsString()
   @IsUUID()
-  @Satisfies<CoverageDto>((object) => object.sourceId != null || object.productId != null, {
-    message: "Source Or Product Named",
-  })
   sourceId?: Id | null;
+
+  @IsString()
+  @IsUUID()
+  subjectTerm!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

@@ -2,23 +2,15 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { addressesExample } from "@test/modules/source/schema/dto/examples/addresses.dto.example.ts";
 import { artifactsExample } from "@test/modules/source/schema/dto/examples/artifacts.dto.example.ts";
-import { capturesExample } from "@test/modules/source/schema/dto/examples/captures.dto.example.ts";
+import { pathsExample } from "@test/modules/source/schema/dto/examples/paths.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Citations, for generated tests. */
 export const citationsExample: ContractExample = contractExample({
   name: "Citations",
   fields: [
-    {
-      name: "addressId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
     {
       name: "artifactId",
       optional: true,
@@ -66,12 +58,18 @@ export const citationsExample: ContractExample = contractExample({
       name: "locator",
       optional: false,
       nullable: false,
-      spec: { kind: "string", format: "json" },
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
     },
     {
-      name: "locatorKindId",
+      name: "locatorTerm",
       optional: false,
       nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "pathId",
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -87,16 +85,10 @@ export const citationsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "subjectId",
+      name: "retrievedAt",
       optional: true,
       nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "subjectTable",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(SubjectTable) },
+      spec: { kind: "temporal", temporal: "instant" },
     },
     {
       name: "updatedAt",
@@ -111,26 +103,5 @@ export const citationsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "artifactId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "captureId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "addressId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-      ],
-    },
-  ],
+  invariants: [],
 });

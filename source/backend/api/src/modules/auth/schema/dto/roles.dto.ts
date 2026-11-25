@@ -9,6 +9,7 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
+
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -17,7 +18,7 @@ import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-s
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * Named permission bundle with a policy version; protected roles cannot be edited away. (entity)
+ * A named permission bundle with a policy version. (entity)
  */
 export class RolesDto {
   @IsString()
@@ -44,10 +45,10 @@ export class RolesDto {
   id!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.managingInstitutionRefId !== null)
+  @ValidateIf((object) => object.institutionId !== null)
   @IsString()
   @IsUUID()
-  managingInstitutionRefId?: Id | null;
+  institutionId?: Id | null;
 
   @IsString()
   @MinLength(1)

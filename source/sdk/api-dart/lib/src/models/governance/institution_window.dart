@@ -6,8 +6,9 @@ part 'institution_window.g.dart';
 /// Institution Window
 @JsonSerializable(includeIfNull: false)
 class GovernanceInstitutionWindow {
-  const GovernanceInstitutionWindow({this.codePrefix, this.limit, this.offset});
-  final String? codePrefix;
+  const GovernanceInstitutionWindow({this.armTerm, required this.countryId, this.limit, this.offset});
+  final String? armTerm;
+  final String countryId;
   final int? limit;
   final int? offset;
 

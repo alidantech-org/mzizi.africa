@@ -1,19 +1,20 @@
-/** One executed contract with a contractor, optional procurement/project links and contracted amount. */
+/** A signed contract. */
 export interface CivicContracts {
-  amountMinorUnits: number;
-  buyerEntityId?: string | null;
+  amount?: number | null;
+  buyerId: string;
   code: string;
-  contractorEntityId: string;
+  contractorId: string;
   createdAt: string;
-  currencyId: string;
+  currencyId?: string | null;
   deletedAt?: string | null;
+  endsOn?: string | null;
   id: string;
-  natureId?: string | null;
+  natureTerm: string;
   procurementId?: string | null;
   projectId?: string | null;
   signedOn?: string | null;
-  sourceCitationId?: string | null;
-  statusId: string;
+  startsOn?: string | null;
+  statusTerm: string;
   updatedAt: string;
   version: number;
 }

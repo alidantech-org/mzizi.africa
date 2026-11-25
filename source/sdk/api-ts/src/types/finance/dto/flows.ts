@@ -1,25 +1,23 @@
-/** One reported financial flow at its source transaction grain, not a rolled-up aggregate. */
+/** A movement of public money: allocation, transfer, disbursement, payment or receipt. */
 export interface FinanceFlows {
-  amountMinorUnits: number;
+  amount?: number | null;
   appropriationId?: string | null;
-  code: string;
+  classTerm?: string | null;
   contractId?: string | null;
-  counterpartyEntityId?: string | null;
-  counterpartyIndividualId?: string | null;
+  counterpartyId?: string | null;
+  countryId: string;
   createdAt: string;
-  currencyId: string;
+  currencyId?: string | null;
   debtId?: string | null;
   deletedAt?: string | null;
-  expenditureClassId?: string | null;
-  fiscalPeriodId?: string | null;
-  flowKindId: string;
+  featureId?: string | null;
   fundId?: string | null;
   id: string;
   institutionId?: string | null;
-  occurredOn: string;
+  kindTerm: string;
+  occurredOn?: string | null;
+  periodId?: string | null;
   projectId?: string | null;
-  scopeUnitFeatureId?: string | null;
-  sourceCitationId?: string | null;
   updatedAt: string;
   version: number;
 }

@@ -1,4 +1,4 @@
-/** A meaningful legal content state of an instrument. Not a download and not a Source publication edition. */
+/** One edition of an instrument with its consolidation and commencement dates. */
 export interface LegalEditions {
   ceasedOn?: string | null;
   code: string;
@@ -9,7 +9,6 @@ export interface LegalEditions {
   designation: string;
   id: string;
   instrumentId: string;
-  observedAt: string;
   repealedOn?: string | null;
   supersedesId?: string | null;
   updatedAt: string;

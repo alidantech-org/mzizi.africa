@@ -1,10 +1,12 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
@@ -12,16 +14,16 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One provider's service provision at a physical place or geographic coverage unit during a service period. (entity)
+ * A public service. Its names and descriptions are `identity.names`. (entity)
  */
 export class ServicesDto {
   @IsString()
@@ -42,73 +44,67 @@ export class ServicesDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
-  @IsString()
-  @MaxLength(4000)
-  description!: Description;
-
   @IsOptional()
   @ValidateIf((object) => object.endsOn !== null)
   @IsISO8601({ strict: true })
   endsOn?: CalendarDate | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.featureId !== null)
+  @IsString()
+  @IsUUID()
+  featureId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear?: Year | null;
+
   @IsString()
   @IsUUID()
   id!: Id;
 
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  name!: Name;
+  @IsEnum(IdentityKind)
+  @Satisfies<ServicesDto>((object) => object.identityKind === "service", {
+    message: "Service Kind",
+  })
+  identityKind!: IdentityKind;
 
   @IsOptional()
-  @ValidateIf((object) => object.placeFeatureId !== null)
+  @ValidateIf((object) => object.institutionId !== null)
   @IsString()
   @IsUUID()
-  @Satisfies<ServicesDto>(
-    (object) => object.placeFeatureId != null || object.scopeUnitFeatureId != null,
-    {
-      message: "Has Place Or Coverage",
-    },
-  )
-  placeFeatureId?: Id | null;
+  institutionId?: Id | null;
 
   @IsString()
   @IsUUID()
-  providerEntityId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.responsibleInstitutionId !== null)
+  @ValidateIf((object) => object.providerId !== null)
   @IsString()
   @IsUUID()
-  responsibleInstitutionId?: Id | null;
+  providerId?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.scopeUnitFeatureId !== null)
+  @ValidateIf((object) => object.scopeId !== null)
   @IsString()
   @IsUUID()
-  scopeUnitFeatureId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  serviceKindId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
+  scopeId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.startsOn !== null)
   @IsISO8601({ strict: true })
-  @Satisfies<ServicesDto>(
-    (object) =>
-      object.startsOn == null || object.endsOn == null || object.startsOn <= object.endsOn,
-    {
-      message: "Service Dates Are Ordered",
-    },
-  )
   startsOn?: CalendarDate | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

@@ -1,14 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
-import 'package:mzizi_api/src/models/reference/country.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/reference/countries.dart';
+import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'seasons.g.dart';
 
-/// A recurring yearly window, natural or human: the long rains, a planting season, a school term, for a country or a place. Gives the calendar its seasonal context and explains recurring patterns in data.
+/// A recurring season of a country or region.
 @JsonSerializable(includeIfNull: false)
 class EventSeasons {
   const EventSeasons({
@@ -16,19 +14,14 @@ class EventSeasons {
     required this.countryId,
     required this.createdAt,
     this.deletedAt,
-    this.description,
     this.endDay,
     required this.endMonth,
-    this.fromToPrecision,
-    this.fromYear,
+    this.featureId,
     required this.id,
     required this.isNatural,
-    this.scopeFeatureId,
-    required this.seasonKindId,
-    this.sourceCitationId,
+    required this.kindTerm,
     this.startDay,
     required this.startMonth,
-    this.toYear,
     required this.updatedAt,
     required this.version,
   });
@@ -36,19 +29,14 @@ class EventSeasons {
   final String countryId;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String? description;
   final int? endDay;
   final int endMonth;
-  final SharedDatePrecision? fromToPrecision;
-  final int? fromYear;
+  final String? featureId;
   final String id;
   final bool isNatural;
-  final String? scopeFeatureId;
-  final String seasonKindId;
-  final String? sourceCitationId;
+  final String kindTerm;
   final int? startDay;
   final int startMonth;
-  final int? toYear;
   final DateTime updatedAt;
   final int version;
 

@@ -1,22 +1,37 @@
 import { Type } from "class-transformer";
 import {
   IsArray,
+  IsInt,
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
+  Min,
   MinLength,
   IsDefined,
+  ValidateIf,
   ValidateNested,
 } from "class-validator";
 import { InstitutionEntryNamesDto } from "#/modules/governance/schema/dto/institution-entry-names.dto.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 
 /**
  * Institution Entry
  */
 export class InstitutionEntryDto {
+  @ValidateIf((object) => object.armTerm !== null)
+  @IsString()
+  @IsUUID()
+  armTerm!: Id | null;
+
+  @ValidateIf((object) => object.classTerm !== null)
+  @IsString()
+  @IsUUID()
+  classTerm!: Id | null;
+
   @IsString()
   @MinLength(1)
   @MaxLength(255)
@@ -27,23 +42,29 @@ export class InstitutionEntryDto {
   )
   code!: IdentityCode;
 
-  @IsString()
-  @IsUUID()
-  id!: Id;
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear!: Year | null;
 
   @IsString()
-  @MinLength(1)
-  @MaxLength(255)
-  @Matches(
-    new RegExp(
-      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-    ),
-  )
-  kind!: IdentityCode;
+  @IsUUID()
+  institutionId!: Id;
+
+  @IsString()
+  @IsUUID()
+  kindTerm!: Id;
 
   @IsArray()
   @IsDefined()
   @ValidateNested({ each: true })
   @Type(() => InstitutionEntryNamesDto)
   names!: InstitutionEntryNamesDto[];
+
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear!: Year | null;
 }

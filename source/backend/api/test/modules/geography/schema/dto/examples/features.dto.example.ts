@@ -2,9 +2,10 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedPeriodEntityExample } from "@test/modules/shared/schema/dto/examples/coded-period-entity.dto.example.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { identityEntityExample } from "@test/modules/shared/schema/dto/examples/identity-entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Features, for generated tests. */
 export const featuresExample: ContractExample = contractExample({
@@ -48,18 +49,6 @@ export const featuresExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "date" },
     },
     {
-      name: "featureTypeId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "fromToPrecision",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
-    },
-    {
       name: "fromYear",
       optional: true,
       nullable: true,
@@ -67,6 +56,18 @@ export const featuresExample: ContractExample = contractExample({
     },
     {
       name: "id",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "identityKind",
+      optional: false,
+      nullable: false,
+      spec: { kind: "enum", values: Object.values(IdentityKind) },
+    },
+    {
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -91,6 +92,21 @@ export const featuresExample: ContractExample = contractExample({
     },
   ],
   invariants: [
+    {
+      any: true,
+      comparisons: [
+        {
+          left: { field: "identityKind" },
+          operator: "equal",
+          right: { literal: "feature" },
+        },
+        {
+          left: { field: "identityKind" },
+          operator: "equal",
+          right: { literal: "country" },
+        },
+      ],
+    },
     {
       any: true,
       comparisons: [

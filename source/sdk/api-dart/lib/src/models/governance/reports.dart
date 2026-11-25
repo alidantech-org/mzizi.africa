@@ -1,14 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/filesystem/versions.dart';
 import 'package:mzizi_api/src/models/governance/obligations.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/artifacts.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'reports.g.dart';
 
-/// One expected or found filing under an obligation, for one reporter and period, with its status and the document when found. Absence is a status, not a missing row.
+/// One report filed (or not) against an obligation.
 @JsonSerializable(includeIfNull: false)
 class GovernanceReports {
   const GovernanceReports({
@@ -18,13 +17,12 @@ class GovernanceReports {
     this.deletedAt,
     this.dueOn,
     this.filedOn,
+    this.fromYear,
     required this.id,
     required this.obligationId,
-    this.periodFrom,
-    this.periodUntil,
-    required this.reporterEntityId,
-    this.sourceCitationId,
-    required this.statusId,
+    required this.reporterId,
+    required this.statusTerm,
+    this.toYear,
     required this.updatedAt,
     required this.version,
   });
@@ -34,13 +32,12 @@ class GovernanceReports {
   final DateTime? deletedAt;
   final DateTime? dueOn;
   final DateTime? filedOn;
+  final int? fromYear;
   final String id;
   final String obligationId;
-  final DateTime? periodFrom;
-  final DateTime? periodUntil;
-  final String reporterEntityId;
-  final String? sourceCitationId;
-  final String statusId;
+  final String reporterId;
+  final String statusTerm;
+  final int? toYear;
   final DateTime updatedAt;
   final int version;
 

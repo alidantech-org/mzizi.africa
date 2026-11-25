@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["bun"],
+    "typeRoots": ["../../../../../source/apps/cli/node_modules/@types"],
+    "paths": {
+      "#runtime/*": ["../templates/{runtime}/*"],
+      "typeorm": ["./node_modules/typeorm"]
+    }
+  },
+  "include": ["*.ts", "../templates/{runtime}/*.ts"]
+}

@@ -2,12 +2,13 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
 import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
+import { jurisdictionsExample } from "@test/modules/governance/schema/dto/examples/jurisdictions.dto.example.ts";
+import { identitiesExample } from "@test/modules/identity/schema/dto/examples/identities.dto.example.ts";
+import { identityEntityExample } from "@test/modules/shared/schema/dto/examples/identity-entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Services, for generated tests. */
 export const servicesExample: ContractExample = contractExample({
@@ -39,16 +40,22 @@ export const servicesExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "description",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", maxLength: 4000 },
-    },
-    {
       name: "endsOn",
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "featureId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "fromYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "id",
@@ -57,43 +64,31 @@ export const servicesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "name",
+      name: "identityKind",
       optional: false,
       nullable: false,
-      spec: { kind: "string", minLength: 1, maxLength: 300 },
+      spec: { kind: "enum", values: Object.values(IdentityKind) },
     },
     {
-      name: "placeFeatureId",
+      name: "institutionId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "providerEntityId",
+      name: "kindTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "responsibleInstitutionId",
+      name: "providerId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "scopeUnitFeatureId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "serviceKindId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "sourceCitationId",
+      name: "scopeId",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -103,6 +98,12 @@ export const servicesExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "date" },
+    },
+    {
+      name: "toYear",
+      optional: true,
+      nullable: true,
+      spec: { kind: "number", integer: true, min: -10000, max: 3000 },
     },
     {
       name: "updatedAt",
@@ -119,37 +120,12 @@ export const servicesExample: ContractExample = contractExample({
   ],
   invariants: [
     {
-      any: true,
+      any: false,
       comparisons: [
         {
-          left: { field: "placeFeatureId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "scopeUnitFeatureId" },
-          operator: "not-equal",
-          right: { literal: null },
-        },
-      ],
-    },
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "startsOn" },
+          left: { field: "identityKind" },
           operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "endsOn" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "startsOn" },
-          operator: "less-than-or-equal",
-          right: { field: "endsOn" },
+          right: { literal: "service" },
         },
       ],
     },

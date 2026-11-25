@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.community.enums.theme_choice import Theme
 
 
 class PreferencesRow(BaseModel):
-    """What an actor chose: country, language, theme and home place. The server renders pages in these."""
+    """An actor's saved country, language, theme and home place."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 

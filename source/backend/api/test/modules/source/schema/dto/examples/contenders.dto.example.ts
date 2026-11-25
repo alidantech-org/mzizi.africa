@@ -2,8 +2,8 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
 import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
-import { citationsExample } from "@test/modules/source/schema/dto/examples/citations.dto.example.ts";
 import { disputesExample } from "@test/modules/source/schema/dto/examples/disputes.dto.example.ts";
 
 /** The contract shape of Contenders, for generated tests. */
@@ -11,16 +11,10 @@ export const contendersExample: ContractExample = contractExample({
   name: "Contenders",
   fields: [
     {
-      name: "citationId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "claim",
       optional: false,
       nullable: false,
-      spec: { kind: "string", maxLength: 4000 },
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
     },
     {
       name: "createdAt",
@@ -41,6 +35,12 @@ export const contendersExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
+      name: "evidenceId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
       name: "id",
       optional: false,
       nullable: false,
@@ -53,10 +53,10 @@ export const contendersExample: ContractExample = contractExample({
       spec: { kind: "boolean" },
     },
     {
-      name: "position",
-      optional: true,
-      nullable: true,
-      spec: { kind: "number", integer: true, min: 0 },
+      name: "languageId",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "updatedAt",

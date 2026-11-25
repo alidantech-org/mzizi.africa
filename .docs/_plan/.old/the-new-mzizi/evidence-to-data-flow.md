@@ -89,7 +89,7 @@ If there are two plausible features, the record should **remain unresolved** rat
 ## Current references
 
 - [Engine and research HTTP operations](../../../../source/backend/engine/README.md)
-- [Existing seed loader](../../../../source/backend/engine/src/mzizi_engine/persistence/postgres/seed_loader.py)
-- [Seed format and approval rules](../../../../seed/README.md)
+- `Existing seed loader` (removed with the in-repository seed)
+- Seed format and approval rules (seed now lives in the git-ignored `.dev/seed/`, [decision](../../../decisions/DEC-SEED-OUTSIDE-GIT-20261125.md))
 - [Developer portal pilot and remaining work](../../../design/architecture/DEVELOPER_PORTAL.md)
 - [Current database architecture](../../../design/data/DATABASE_ARCHITECTURE.md)

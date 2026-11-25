@@ -1,11 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/auth/account_status.dart';
 import 'package:mzizi_api/src/enums/auth/auth_actor_kind.dart';
+import 'package:mzizi_api/src/models/official/individuals.dart';
 import 'package:mzizi_api/src/models/shared/created.dart';
 
 part 'accounts.g.dart';
 
-/// Login principal for a person or service; identity is separate from the people and institutions it refers to.
+/// A sign-in principal for a person, service or agent.
 @JsonSerializable(includeIfNull: false)
 class AuthAccounts {
   const AuthAccounts({
@@ -14,8 +15,8 @@ class AuthAccounts {
     this.disabledAt,
     required this.displayName,
     required this.id,
+    this.individualId,
     this.lastAuthenticatedAt,
-    required this.personRefId,
     required this.status,
   });
   final AuthAuthActorKind actorKind;
@@ -23,8 +24,8 @@ class AuthAccounts {
   final DateTime? disabledAt;
   final String displayName;
   final String id;
+  final String? individualId;
   final DateTime? lastAuthenticatedAt;
-  final String personRefId;
   final AuthAccountStatus status;
 
   factory AuthAccounts.fromJson(Map<String, dynamic> json) => _$AuthAccountsFromJson(json);

@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mzizi_api/src/models/governance/institutions.dart';
 import 'package:mzizi_api/src/models/shared/coded_created.dart';
 
 part 'roles.g.dart';
 
-/// Named permission bundle with a policy version; protected roles cannot be edited away.
+/// A named permission bundle with a policy version.
 @JsonSerializable(includeIfNull: false)
 class AuthRoles {
   const AuthRoles({
@@ -11,7 +12,7 @@ class AuthRoles {
     required this.createdAt,
     this.description,
     required this.id,
-    this.managingInstitutionRefId,
+    this.institutionId,
     required this.policyVersion,
     required this.protected,
     this.retiredAt,
@@ -21,7 +22,7 @@ class AuthRoles {
   final DateTime createdAt;
   final String? description;
   final String id;
-  final String? managingInstitutionRefId;
+  final String? institutionId;
   final String policyVersion;
   final bool protected;
   final DateTime? retiredAt;

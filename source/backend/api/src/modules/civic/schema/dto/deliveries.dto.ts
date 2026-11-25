@@ -11,6 +11,7 @@ import {
   ValidateIf,
 } from "class-validator";
 
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { AmountMinorUnits } from "#/modules/shared/schema/type/amount-minor-units.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
@@ -19,14 +20,17 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One dated deliverable or milestone under a contract, optionally scoped to a geographic unit. (entity)
+ * Work delivered and certified under a contract. (entity)
  */
 export class DeliveriesDto {
   @IsOptional()
-  @ValidateIf((object) => object.amountMinorUnits !== null)
+  @ValidateIf((object) => object.amount !== null)
   @IsInt()
   @Min(0)
-  amountMinorUnits?: AmountMinorUnits | null;
+  @Satisfies<DeliveriesDto>((object) => object.amount == null || object.currencyId != null, {
+    message: "Delivery Amount Has Currency",
+  })
+  amount?: AmountMinorUnits | null;
 
   @IsString()
   @MinLength(1)
@@ -61,25 +65,19 @@ export class DeliveriesDto {
   @IsISO8601({ strict: true })
   deliveredOn?: CalendarDate | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.featureId !== null)
   @IsString()
   @IsUUID()
-  deliveryKindId!: Id;
+  featureId?: Id | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.unitFeatureId !== null)
-  @IsString()
-  @IsUUID()
-  unitFeatureId?: Id | null;
+  kindTerm!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

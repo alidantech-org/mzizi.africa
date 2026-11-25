@@ -26,7 +26,7 @@ The database stores a row's code without `pg.`; the repository writes it with. `
 
 ## Short names
 
-Schemas and tables have fixed short names in `source/schema/seed/codes.json` (`reference` is `ref`, `geography` is `geo`, `legal` is `leg`, `official` is `ofc`, `governance` is `gov`, `politics` is `pol`, `civic` is `civ`, `finance` is `fin`, `source` is `src`, `filesystem` is `fil`, `auth` is `aut`, `audit` is `aud`; tables such as `countries` are `cty`, `values` are `val`, `schemes` are `sch`, `websites` are `wbs`). A short is unique within its level and never changes. A test fails when a generated table has no short.
+Schemas and tables have fixed short names in `source/schema/codes.json` (`reference` is `ref`, `geography` is `geo`, `legal` is `leg`, `official` is `ofc`, `governance` is `gov`, `politics` is `pol`, `civic` is `civ`, `finance` is `fin`, `source` is `src`, `filesystem` is `fil`, `auth` is `aut`, `audit` is `aud`; tables such as `countries` are `cty`, `values` are `val`, `schemes` are `sch`, `websites` are `wbs`). A short is unique within its level and never changes. A test fails when a generated table has no short.
 
 ## Database rows
 
@@ -42,18 +42,18 @@ pg.<schema short>.<table short>.<identity path>      qualified (repository)
 
 ## Seed files hold the short form
 
-In a seed CSV (`data/<scope>/<domain>/<table>.csv`, or a folder named for the table holding `<label>.<table>.csv` parts) the file and the link column already say which table, so the `code` cell and every link cell hold the **identity path alone**: `ke`, `geo.continent.africa`. A seed row never carries `id` or the system columns (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the table and the code (`mzizi_manifest.features.seeds.ids.stable_id`). Links are written as the target's code (`continent_code`), never an id. Manifests, logs and the API use the full code.
+In a seed CSV (kept in the git-ignored `.dev/seed/`: `data/<scope>/<domain>/<table>.csv`, or a folder named for the table holding `<label>.<table>.csv` parts) the file and the link column already say which table, so the `code` cell and every link cell hold the **identity path alone**: `ke`, `geo.continent.africa`. A seed row never carries `id` or the system columns (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the table and the code (`mzizi_manifest.features.data.ids.stable_id`). Links are written as the target's code (`continent_code`), never an id. Manifests, logs and the API use the full code.
 
 ## System things
 
 | Thing | Code | Lives at |
 |---|---|---|
-| Source (website, API) | `pg.src.srs.<scope>.<name>` (a source is a row) | `seed/sources/srs/<scope>/<name>/manifest.yml` |
-| Mapping | `sys.map.<schema short>.<table short>.<scope>.<name>`, named after the table it writes first | `seed/mappings/<schema short>/<table short>/<scope>/<name>.yml` |
-| Term list | `sys.trm.<scope>.<domain>` | `seed/terms/<scope>/<domain>.yml` |
-| Column dictionary | `sys.col.<scope>.<domain>` | `seed/columns/<scope>/<domain>.yml` |
-| Job spec | `sys.eng.job.<scope>.<name>` | `seed/engine/job/<scope>/<name>.json` |
-| Engine data | `sys.eng.<name path>`, for example `sys.eng.web.classification` | `seed/engine/web/classification.yaml` |
+| Source (website, API) | `pg.src.srs.<scope>.<name>` (a source is a row) | `.dev/seed/sources/srs/<scope>/<name>/manifest.yml` |
+| Mapping | `sys.map.<schema short>.<table short>.<scope>.<name>`, named after the table it writes first | `.dev/seed/mappings/<schema short>/<table short>/<scope>/<name>.yml` |
+| Term list | `sys.trm.<scope>.<domain>` | `.dev/seed/terms/<scope>/<domain>.yml` |
+| Column dictionary | `sys.col.<scope>.<domain>` | `.dev/seed/columns/<scope>/<domain>.yml` |
+| Job spec | `sys.eng.job.<scope>.<name>` | `.dev/seed/engine/job/<scope>/<name>.json` |
+| Engine data | `sys.eng.<name path>`, for example `sys.eng.web.classification` | `.dev/seed/engine/web/classification.yaml` |
 
 `<scope>` is `global` or a country code. For term lists it says where the meaning is true, not where a word was found (county, governor and president are `global`; a Kenya-only office is `ke`), and a language is never a scope: each term and alias carries a language code. A term list holds words, patterns and heading rules for one domain (people, address, money, procurement, ...) and never names a table; a column dictionary links database columns to those terms by list code and key. A manifest may use items of its own scope or `global`, never another country; `global` uses only `global`. A file's folder path mirrors its code without the first two segments. Expected table columns are not a manifest: they are the object form of a mapping's `inputs`.
 

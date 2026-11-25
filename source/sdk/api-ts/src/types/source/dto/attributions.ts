@@ -1,16 +1,16 @@
-/** Credit and rights for one artifact and publisher; equal bytes from other places never overwrite it. */
+/** Credit and rights of an artifact. */
 export interface SourceAttributions {
   artifactId: string;
   assessedAt: string;
-  assessorSnapshot: string;
+  assessorId?: string | null;
   code: string;
   createdAt: string;
   credit: string;
   deletedAt?: string | null;
   id: string;
-  licenseValueId?: string | null;
+  licenceTerm?: string | null;
   publisherId: string;
-  rightsStatement: string;
+  rights: string;
   updatedAt: string;
   version: number;
 }

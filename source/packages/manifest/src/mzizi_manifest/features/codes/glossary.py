@@ -1,4 +1,4 @@
-"""The short names that codes are built from: spaces, schema shorts and table shorts (`source/schema/seed/codes.json`).
+"""The short names that codes are built from: spaces, schema shorts and table shorts (`source/schema/codes.json`).
 
 A schema or table short is fixed forever. A table's `kind` says how its row codes are built: `entity` (a name path, the
 default), `scheme` (`<schema short>.<concept>...`, single-word concepts) or `member` (extends the code in its `parent` link).
@@ -42,7 +42,7 @@ class Glossary:
 
 
 def load_glossary(schema_root: Path = SCHEMA_ROOT) -> Glossary:
-    document = json.loads((schema_root / "seed" / "codes.json").read_text(encoding="utf-8"))
+    document = json.loads((schema_root / "codes.json").read_text(encoding="utf-8"))
     schemas: dict[str, str] = document["schemas"]
     tables = {
         name: TableCode(

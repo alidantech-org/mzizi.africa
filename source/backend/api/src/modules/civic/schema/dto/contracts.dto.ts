@@ -20,18 +20,21 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One executed contract with a contractor, optional procurement/project links and contracted amount. (entity)
+ * A signed contract. (entity)
  */
 export class ContractsDto {
+  @IsOptional()
+  @ValidateIf((object) => object.amount !== null)
   @IsInt()
   @Min(0)
-  amountMinorUnits!: AmountMinorUnits;
+  @Satisfies<ContractsDto>((object) => object.amount == null || object.currencyId != null, {
+    message: "Contract Amount Has Currency",
+  })
+  amount?: AmountMinorUnits | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.buyerEntityId !== null)
   @IsString()
   @IsUUID()
-  buyerEntityId?: Id | null;
+  buyerId!: Id;
 
   @IsString()
   @MinLength(1)
@@ -45,40 +48,39 @@ export class ContractsDto {
 
   @IsString()
   @IsUUID()
-  contractorEntityId!: Id;
+  contractorId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;
 
+  @IsOptional()
+  @ValidateIf((object) => object.currencyId !== null)
   @IsString()
   @IsUUID()
-  currencyId!: Id;
+  currencyId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.deletedAt !== null)
   @IsISO8601({})
   deletedAt?: Instant | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.endsOn !== null)
+  @IsISO8601({ strict: true })
+  endsOn?: CalendarDate | null;
+
   @IsString()
   @IsUUID()
   id!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.natureId !== null)
   @IsString()
   @IsUUID()
-  natureId?: Id | null;
+  natureTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.procurementId !== null)
   @IsString()
   @IsUUID()
-  @Satisfies<ContractsDto>(
-    (object) => object.procurementId != null || object.buyerEntityId != null,
-    {
-      message: "Has Procurement Or Buyer",
-    },
-  )
   procurementId?: Id | null;
 
   @IsOptional()
@@ -93,14 +95,20 @@ export class ContractsDto {
   signedOn?: CalendarDate | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
+  @ValidateIf((object) => object.startsOn !== null)
+  @IsISO8601({ strict: true })
+  @Satisfies<ContractsDto>(
+    (object) =>
+      object.startsOn == null || object.endsOn == null || object.startsOn <= object.endsOn,
+    {
+      message: "Contract Dates Are Ordered",
+    },
+  )
+  startsOn?: CalendarDate | null;
 
   @IsString()
   @IsUUID()
-  statusId!: Id;
+  statusTerm!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

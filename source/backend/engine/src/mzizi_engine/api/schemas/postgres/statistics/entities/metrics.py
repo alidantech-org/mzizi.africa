@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class MetricsRow(BaseModel):
-    """A ranking or comparison measure defined as data: an indicator, or one indicator over another with a factor. Titles and descriptions per language are copy; no metric is coded in a read."""
+    """A figure calculated from indicators (a rate per 1,000); computed when `figures` is refreshed."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -25,16 +27,16 @@ class MetricsRow(BaseModel):
         ),
     ]
     created_at: datetime
-    default_level_kind_id: UUID | None = None
     deleted_at: datetime | None = None
-    denominator_indicator_id: UUID | None = None
+    denominator_id: UUID | None = None
     higher_is_better: bool | None = None
     id: UUID
+    identity_kind: IdentityKind
     is_rankable: bool
-    numerator_indicator_id: UUID
+    level_term: UUID | None = None
+    numerator_id: UUID
     per_factor: float | None = None
-    source_citation_id: UUID | None = None
-    topic_id: UUID
+    topic_term: UUID
     unit_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -14,7 +14,7 @@ import {
 } from "class-validator";
 
 import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
@@ -23,20 +23,26 @@ import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.ty
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One government institution specialization of an Official entity. (entity)
+ * A public institution; it shares its organisation's identity (`official.entities`). Committees are institutions linked to their house. (entity)
  */
 export class InstitutionsDto {
   @IsOptional()
-  @ValidateIf((object) => object.armId !== null)
+  @ValidateIf((object) => object.armTerm !== null)
   @IsString()
   @IsUUID()
-  armId?: Id | null;
+  armTerm?: Id | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.classId !== null)
+  @ValidateIf((object) => object.basisTerm !== null)
   @IsString()
   @IsUUID()
-  classId?: Id | null;
+  basisTerm?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.classTerm !== null)
+  @IsString()
+  @IsUUID()
+  classTerm?: Id | null;
 
   @IsString()
   @MinLength(1)
@@ -61,38 +67,9 @@ export class InstitutionsDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.dissolvedOn !== null)
+  @ValidateIf((object) => object.endsOn !== null)
   @IsISO8601({ strict: true })
-  dissolvedOn?: CalendarDate | null;
-
-  @IsString()
-  @IsUUID()
-  entityId!: Id;
-
-  @IsOptional()
-  @ValidateIf((object) => object.establishedOn !== null)
-  @IsISO8601({ strict: true })
-  @Satisfies<InstitutionsDto>(
-    (object) =>
-      object.establishedOn == null ||
-      object.dissolvedOn == null ||
-      object.establishedOn <= object.dissolvedOn,
-    {
-      message: "Institutions Dates Are Ordered",
-    },
-  )
-  establishedOn?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.establishmentBasisId !== null)
-  @IsString()
-  @IsUUID()
-  establishmentBasisId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.fromToPrecision !== null)
-  @IsEnum(DatePrecision)
-  fromToPrecision?: DatePrecision | null;
+  endsOn?: CalendarDate | null;
 
   @IsOptional()
   @ValidateIf((object) => object.fromYear !== null)
@@ -103,7 +80,7 @@ export class InstitutionsDto {
     (object) =>
       object.fromYear == null || object.toYear == null || object.fromYear <= object.toYear,
     {
-      message: "Period Years Are Ordered",
+      message: "Institution Period Is Ordered",
     },
   )
   fromYear?: Year | null;
@@ -112,15 +89,20 @@ export class InstitutionsDto {
   @IsUUID()
   id!: Id;
 
+  @IsEnum(IdentityKind)
+  @Satisfies<InstitutionsDto>((object) => object.identityKind === "entity", {
+    message: "Institution Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsString()
   @IsUUID()
-  institutionKindId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
+  @ValidateIf((object) => object.startsOn !== null)
+  @IsISO8601({ strict: true })
+  startsOn?: CalendarDate | null;
 
   @IsOptional()
   @ValidateIf((object) => object.toYear !== null)

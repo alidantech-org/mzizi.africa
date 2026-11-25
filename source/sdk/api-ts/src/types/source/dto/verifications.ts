@@ -1,18 +1,19 @@
 import { SharedSubjectTable } from "#sdk/types/shared/enums/subject-table.ts";
 import { SourceVerificationOutcome } from "#sdk/types/source/enums/verification-outcome.ts";
 
-/** Append-only attributable assessment of one reviewed subject (a claim row or a relationship); disagreement stays explicit. */
+/** A review decision about one row, against what and when. */
 export interface SourceVerifications {
   assessedAt: string;
   code: string;
   confidence?: number | null;
   createdAt: string;
   deletedAt?: string | null;
-  explanation: string;
   id: string;
-  methodId: string;
+  methodTerm: string;
+  note?: string | null;
+  noteLanguageId?: string | null;
   outcome: SourceVerificationOutcome;
-  reviewerSnapshot: string;
+  reviewerId?: string | null;
   subjectId: string;
   subjectTable: SharedSubjectTable;
   supersedesId?: string | null;

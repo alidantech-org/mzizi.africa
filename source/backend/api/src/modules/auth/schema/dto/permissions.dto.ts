@@ -10,6 +10,7 @@ import {
   ValidateIf,
 } from "class-validator";
 import { AuthAction } from "#/modules/auth/schema/enum/auth-action.enum.ts";
+import { ResourceType } from "#/modules/auth/schema/enum/resource-type.enum.ts";
 import type { Description } from "#/modules/shared/schema/type/description.type.ts";
 import type { Flag } from "#/modules/shared/schema/type/flag.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
@@ -17,7 +18,7 @@ import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.ty
 import type { NonEmptyString255 } from "#/modules/shared/schema/type/non-empty-string255.type.ts";
 
 /**
- * Named action on a resource type, optionally narrowed to a field group. (entity)
+ * A named action on a resource type, optionally narrowed to a field group. (entity)
  */
 export class PermissionsDto {
   @IsEnum(AuthAction)
@@ -53,8 +54,6 @@ export class PermissionsDto {
   @IsBoolean()
   isActive!: Flag;
 
-  @IsString()
-  @MinLength(1)
-  @MaxLength(255)
-  resourceType!: NonEmptyString255;
+  @IsEnum(ResourceType)
+  resourceType!: ResourceType;
 }

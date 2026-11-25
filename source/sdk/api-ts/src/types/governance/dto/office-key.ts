@@ -1,4 +1,4 @@
 /** Office Key */
 export interface GovernanceOfficeKey {
-  officeId: string;
+  code: string;
 }

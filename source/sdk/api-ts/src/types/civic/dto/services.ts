@@ -1,19 +1,21 @@
-/** One provider's service provision at a physical place or geographic coverage unit during a service period. */
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
+
+/** A public service. Its names and descriptions are `identity.names`. */
 export interface CivicServices {
   code: string;
   createdAt: string;
   deletedAt?: string | null;
-  description: string;
   endsOn?: string | null;
+  featureId?: string | null;
+  fromYear?: number | null;
   id: string;
-  name: string;
-  placeFeatureId?: string | null;
-  providerEntityId: string;
-  responsibleInstitutionId?: string | null;
-  scopeUnitFeatureId?: string | null;
-  serviceKindId: string;
-  sourceCitationId?: string | null;
+  identityKind: SharedIdentityKind;
+  institutionId?: string | null;
+  kindTerm: string;
+  providerId?: string | null;
+  scopeId?: string | null;
   startsOn?: string | null;
+  toYear?: number | null;
   updatedAt: string;
   version: number;
 }

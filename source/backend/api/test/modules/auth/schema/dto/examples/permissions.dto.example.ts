@@ -3,6 +3,7 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { AuthAction } from "#/modules/auth/schema/enum/auth-action.enum.ts";
+import { ResourceType } from "#/modules/auth/schema/enum/resource-type.enum.ts";
 import { codedIdentifiedExample } from "@test/modules/shared/schema/dto/examples/coded-identified.dto.example.ts";
 
 /** The contract shape of Permissions, for generated tests. */
@@ -56,7 +57,7 @@ export const permissionsExample: ContractExample = contractExample({
       name: "resourceType",
       optional: false,
       nullable: false,
-      spec: { kind: "string", minLength: 1, maxLength: 255 },
+      spec: { kind: "enum", values: Object.values(ResourceType) },
     },
   ],
   invariants: [],

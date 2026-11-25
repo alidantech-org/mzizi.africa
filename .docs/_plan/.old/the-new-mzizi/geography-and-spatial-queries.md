@@ -73,8 +73,8 @@ Compare cold vs warm `/v1/explorer/location` and `/boundaries` for a country roo
 ## Code references
 
 - [PostGIS-generated schema](../../../../source/backend/database/sql/schema.sql)
-- [Place registry](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/registry.ts)
-- [Routing SQL](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/queries.ts)
-- [Boundary query](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/boundaries.ts)
-- [Locality resolution and search](../../../../source/backend/api/src/modules/locality/features/places/reads/places.ts)
+- `Place registry` (removed in the 2026-11-25 rebuild)
+- `Routing SQL` (removed in the 2026-11-25 rebuild)
+- `Boundary query` (removed in the 2026-11-25 rebuild)
+- `Locality resolution and search` (removed in the 2026-11-25 rebuild)
 - [Web map projection](../../../../source/apps/web/src/lib/maps/project.ts)

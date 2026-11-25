@@ -1,359 +1,342 @@
 /**
  * Schema: civic | Database: mzizi
- * Approved contract: services, projects, procurement, bids, contracts and delivery records.
- * Geography owns physical features, places and spatial representations.
- * SQL generation remains gated on faithful CHECK, code-shape and access-policy enforcement.
+ * Design: .docs/design/data/FOUNDATION_REDESIGN.md sections 30.8 and 32 (approved 2026-11-25).
+ * Contract authors: delivery of public money: services, facilities, projects and their sites, procurement, bids,
+ * contracts, variations, deliveries, line items, prepared scores and the people and firms involved. Scores are
+ * reviewable model output, never findings. Payments are `finance.flows`.
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { belongsTo, identity, identityKindField, identityReference, term } from "./_links.ts";
+import { Goods } from "./economy.ts";
 import { Features } from "./geography.ts";
-import { Institutions, Offices } from "./governance.ts";
-import { Entities, Individuals } from "./official.ts";
-import { Country, Value } from "./reference.ts";
-import { Citations } from "./source.ts";
-
-const belongsTo = dryv.belongsToUsing(sharedProperties.Id);
-const point = dryv.geometry({ shape: "point", srid: 4326 });
+import { Holders, Institutions, Jurisdictions } from "./governance.ts";
+import { Articles, Assets } from "./media.ts";
+import { Countries, Currencies, Languages, Units } from "./reference.ts";
 
 export const civic = dryv
   .group({ name: "civic" })
-  .description("Public services, projects, procurement processes, contracts and delivery evidence.")
+  .description(
+    "The delivery of public money: services, facilities, projects, procurement, contracts, deliveries, line items, scores and roles.",
+  )
   .facets({ storage: { namespace: "civic", store: "main" } });
+
+const civicProperties = civic.properties({
+  ScoreBasis: dryv.property.enum({
+    Survey: "survey",
+    StandardCost: "standard-cost",
+    Contracts: "contracts",
+    Modelled: "modelled",
+  }),
+  Note: dryv.property.string().length({ min: 1, max: 4000 }),
+  Seconds: dryv.property.number().range({ min: 0 }),
+  SignedAmount: dryv.property.number.int64(),
+});
+
+const dates = {
+  startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+  endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+};
+const money = (meaning: string) => ({
+  amount: dryv
+    .field(sharedProperties.AmountMinorUnits)
+    .maybe()
+    .description(`${meaning}, in whole minor units of \`currency_id\`.`),
+  currencyId: belongsTo(() => Currencies).maybe(),
+});
 
 /*---------------- civic.services ----------------*/
 export const Services = civic
   .schema("Services", {
-    providerEntityId: belongsTo(() => Entities),
-    responsibleInstitutionId: belongsTo(() => Institutions).maybe(),
-    serviceKindId: belongsTo(() => Value),
-    name: dryv.field(sharedProperties.Name),
-    description: dryv.field(sharedProperties.Description),
-    placeFeatureId: belongsTo(() => Features).maybe(),
-    scopeUnitFeatureId: belongsTo(() => Features).maybe(),
-    startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    identityKind: identityKindField("service"),
+    providerId: identity("The organisation that provides the service.").maybe(),
+    institutionId: belongsTo(() => Institutions)
+      .maybe()
+      .description("The responsible public institution."),
+    kindTerm: term("civ.service.kind", "health, water, registration, licensing."),
+    featureId: belongsTo(() => Features).maybe(),
+    scopeId: belongsTo(() => Jurisdictions)
+      .maybe()
+      .description("The jurisdiction the service is offered under."),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.CodedEntity)
-  .description("One provider's service provision at a physical place or geographic coverage unit during a service period.")
+  .extends(baseSchemas.IdentityEntity)
+  .rule("ServiceKind", (v) => v.identityKind.eq("service"))
+  .description("A public service. Its names and descriptions are `identity.names`.")
   .role("entity")
-  .rule("HasPlaceOrCoverage", rule.atLeastOne("placeFeatureId", "scopeUnitFeatureId"))
-  .rule("ServiceDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .facets({
     storage: dryv
       .storage("services")
-      .index("providerEntityId")
-      .index("responsibleInstitutionId")
-      .index("placeFeatureId")
-      .index("scopeUnitFeatureId")
-      .index("sourceCitationId"),
+      .index("institutionId")
+      .index("kindTerm")
+      .references("ServiceIsIdentity", identityReference),
+  });
+
+/*---------------- civic.facilities ----------------*/
+export const Facilities = civic
+  .schema("Facilities", {
+    identityKind: identityKindField("feature"),
+    classTerm: term("civ.facility.class", "hospital, school, police station, government office."),
+    countryId: belongsTo(() => Countries),
+    operatorId: identity("Who runs it.").maybe(),
+    ownerId: identity("Who owns it.").maybe(),
+    institutionId: belongsTo(() => Institutions).maybe(),
+    ownershipTerm: term("civ.facility.ownership", "public, private, faith-based, community.").maybe(),
+    statusTerm: term("civ.facility.status", "operational, under construction, closed.").maybe(),
+    ...periodFields,
+    ...dates,
+  })
+  .extends(baseSchemas.IdentityEntity)
+  .rule("FacilityKind", (v) => v.identityKind.eq("feature"))
+  .description(
+    'A public facility; it shares its geography feature\'s identity, so "near me" is a spatial query on the feature.',
+  )
+  .role("entity")
+  .facets({
+    storage: dryv
+      .storage("facilities")
+      .index("countryId", "classTerm")
+      .index("institutionId")
+      .references("FacilityIsIdentity", identityReference),
   });
 
 /*---------------- civic.projects ----------------*/
 export const Projects = civic
   .schema("Projects", {
-    name: dryv.field(sharedProperties.Name),
-    description: dryv.field(sharedProperties.Description),
-    responsibleInstitutionId: belongsTo(() => Institutions).maybe(),
-    sponsorEntityId: belongsTo(() => Entities).maybe(),
-    implementingEntityId: belongsTo(() => Entities).maybe(),
-    countryId: belongsTo(() => Country).maybe(),
-    scopeUnitFeatureId: belongsTo(() => Features).maybe(),
-    statusId: belongsTo(() => Value),
-    startedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    completedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    /** Where the works are, when a single point describes it; the area is scopeUnitFeatureId. */
-    location: dryv.field(point).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    identityKind: identityKindField("project"),
+    institutionId: belongsTo(() => Institutions).maybe(),
+    sponsorId: identity("Who funds the project.").maybe(),
+    implementerId: identity("Who implements it.").maybe(),
+    countryId: belongsTo(() => Countries),
+    scopeId: belongsTo(() => Jurisdictions).maybe(),
+    statusTerm: term("civ.project.status", "planned, ongoing, complete, stalled, abandoned."),
+    ...periodFields,
+    ...dates,
   })
-  .extends(baseSchemas.CodedEntity)
-  .description(
-    "One public development or infrastructure project with responsible institution, status, geographic scope and evidence.",
-  )
+  .extends(baseSchemas.IdentityEntity)
+  .rule("ProjectKind", (v) => v.identityKind.eq("project"))
+  .description("A public project. Its names and descriptions are `identity.names`; its places are `civic.sites`.")
   .role("entity")
-  .rule("ProjectDatesAreOrdered", rule.ordered("startedOn", "completedOn", { allowEqual: true }))
   .facets({
     storage: dryv
       .storage("projects")
-      .index("statusId")
-      .index("responsibleInstitutionId")
-      .index("scopeUnitFeatureId")
-      .index("sourceCitationId"),
+      .index("countryId", "statusTerm")
+      .index("institutionId")
+      .references("ProjectIsIdentity", identityReference),
   });
 
-/*---------------- civic.project_features ----------------*/
-export const ProjectFeatures = civic
-  .schema("ProjectFeatures", {
-    projectId: belongsTo(() => Projects),
+/*---------------- civic.sites ----------------*/
+export const Sites = civic
+  .schema("Sites", {
+    projectId: belongsTo(() => Projects, { onDelete: "cascade" }),
     featureId: belongsTo(() => Features),
-    featureKindId: belongsTo(() => Value),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    kindTerm: term("civ.site.kind", "location, beneficiary area, route."),
   })
   .extends(baseSchemas.Entity)
-  .description("One typed relationship between a Civic project and one Geography feature.")
+  .description("A place a project touches.")
   .role("entity")
-  .facets({
-    storage: dryv
-      .storage("project_features")
-      .unique("projectId", "featureId", "featureKindId")
-      .index("featureId")
-      .index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("sites").unique("projectId", "featureId", "kindTerm").index("featureId") });
 
 /*---------------- civic.procurements ----------------*/
 export const Procurements = civic
   .schema("Procurements", {
+    identityKind: identityKindField("procurement"),
     projectId: belongsTo(() => Projects).maybe(),
-    /** Scheme civ.procurement.category: works, goods, services, consultancy, non-consulting services. */
-    categoryId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.civ.procurement.category"),
-    /** Scheme civ.contract.nature: what the supplier is expected to do (build, rehabilitate, maintain, supply, deliver a service, consult, supervise, train). */
-    natureId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.civ.contract.nature"),
-    buyerEntityId: belongsTo(() => Entities),
-    countryId: belongsTo(() => Country).maybe(),
-    procedureKindId: belongsTo(() => Value),
-    /** The notice title and the buyer's own reference, as advertised. */
-    title: dryv.field(sharedProperties.Name).maybe(),
-    reference: dryv.field(sharedProperties.Name).maybe(),
-    /** Scheme civ.procurement.status: open, closed, evaluation, awarded, cancelled, complete. */
-    statusId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.civ.procurement.status"),
+    categoryTerm: term("civ.procurement.category", "goods, works, services, consultancy."),
+    natureTerm: term("civ.procurement.nature", "new, framework, renewal.").maybe(),
+    buyerId: identity("The procuring entity."),
+    countryId: belongsTo(() => Countries),
+    procedureTerm: term("civ.procurement.procedure", "open tender, restricted, direct, request for quotation."),
+    statusTerm: term("civ.procurement.status", "planned, open, evaluation, awarded, cancelled."),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     closesOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    awardedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    /** The buyer's estimate or budget for the work, so an award can be compared with it. */
-    estimatedAmountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits).maybe(),
-    currencyId: belongsTo(() => Value).maybe(),
-    /** How many bids were received as published; may be known when the bids themselves are not listed. */
+    ...money("Estimated value"),
     bidderCount: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
-    /** Scheme civ.evaluation.basis: lowest price, quality and cost, quality only, fixed budget. */
-    evaluationBasisId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.civ.evaluation.basis"),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    evaluationTerm: term("civ.procurement.evaluation", "lowest price, quality and cost, quality only.").maybe(),
   })
-  .extends(baseSchemas.CodedEntity)
-  .description("One public procurement process run by a buyer, optionally linked to a project.")
+  .extends(baseSchemas.IdentityEntity)
+  .rule("ProcurementKind", (v) => v.identityKind.eq("procurement"))
+  .rule("ProcurementAmountHasCurrency", (v) => v.amount.isNull().or(v.currencyId.isNotNull()))
+  .description("A tender. Its title is an `identity.names` row and its tender number an `identity.identifiers` row.")
   .role("entity")
-  .facets({ storage: dryv.storage("procurements").index("buyerEntityId").index("sourceCitationId") });
+  .facets({
+    storage: dryv
+      .storage("procurements")
+      .index("countryId", "statusTerm")
+      .index("buyerId")
+      .index("projectId")
+      .references("ProcurementIsIdentity", identityReference),
+  });
 
 /*---------------- civic.bids ----------------*/
 export const Bids = civic
   .schema("Bids", {
-    procurementId: belongsTo(() => Procurements),
-    bidderEntityId: belongsTo(() => Entities),
-    amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits).maybe(),
-    currencyId: belongsTo(() => Value).maybe(),
-    outcomeId: belongsTo(() => Value),
+    procurementId: belongsTo(() => Procurements, { onDelete: "cascade" }),
+    bidderId: identity("The bidding organisation or person."),
+    ...money("Bid price"),
+    outcomeTerm: term("civ.bid.outcome", "won, lost, disqualified, withdrawn."),
     submittedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("One supplier submission to one procurement process, with the reported amount and outcome where known.")
+  .rule("BidAmountHasCurrency", (v) => v.amount.isNull().or(v.currencyId.isNotNull()))
+  .description("A bid on a tender, including cheaper bids that lost.")
   .role("entity")
-  .facets({ storage: dryv.storage("bids").index("procurementId").index("bidderEntityId").index("sourceCitationId") });
+  .facets({ storage: dryv.storage("bids").index("procurementId").index("bidderId") });
 
 /*---------------- civic.contracts ----------------*/
 export const Contracts = civic
   .schema("Contracts", {
     procurementId: belongsTo(() => Procurements).maybe(),
     projectId: belongsTo(() => Projects).maybe(),
-    /** Scheme civ.contract.nature: what the contractor is expected to do. */
-    natureId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.civ.contract.nature"),
-    contractorEntityId: belongsTo(() => Entities),
-    /** The body that signed as buyer; needed when a contract has no procurement (a direct award). */
-    buyerEntityId: belongsTo(() => Entities).maybe(),
-    amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits),
-    currencyId: belongsTo(() => Value),
-    statusId: belongsTo(() => Value),
+    natureTerm: term("civ.contract.nature", "supply, works, services, framework."),
+    contractorId: identity("The contractor."),
+    buyerId: identity("The buyer."),
+    ...money("Contract value"),
+    statusTerm: term("civ.contract.status", "signed, ongoing, completed, terminated."),
     signedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    ...dates,
   })
   .extends(baseSchemas.CodedEntity)
-  .rule("HasProcurementOrBuyer", rule.atLeastOne("procurementId", "buyerEntityId"))
-  .description("One executed contract with a contractor, optional procurement/project links and contracted amount.")
+  .rule("ContractAmountHasCurrency", (v) => v.amount.isNull().or(v.currencyId.isNotNull()))
+  .rule("ContractDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
+  .description("A signed contract.")
   .role("entity")
   .facets({
-    storage: dryv
-      .storage("contracts")
-      .index("procurementId")
-      .index("projectId")
-      .index("buyerEntityId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- civic.deliveries ----------------*/
-export const Deliveries = civic
-  .schema("Deliveries", {
-    contractId: belongsTo(() => Contracts),
-    deliveryKindId: belongsTo(() => Value),
-    amountMinorUnits: dryv.field(sharedProperties.AmountMinorUnits).maybe(),
-    currencyId: belongsTo(() => Value).maybe(),
-    deliveredOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    unitFeatureId: belongsTo(() => Features).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .description("One dated deliverable or milestone under a contract, optionally scoped to a geographic unit.")
-  .role("entity")
-  .facets({
-    storage: dryv.storage("deliveries").index("contractId", "deliveredOn").index("unitFeatureId").index("sourceCitationId"),
-  });
-
-/*---------------- civic.facilities ----------------*/
-export const Facilities = civic
-  .schema("Facilities", {
-    /** The geographic feature that is this facility (a point, line or area); one facility per feature. */
-    featureId: belongsTo(() => Features),
-    /** Scheme civ.facility.class: a hierarchy from the super class (government office, education, health, security and justice, water, transport, markets, electoral) down to type and level. */
-    facilityClassId: belongsTo(() => Value).tags("scheme:ref.sch.civ.facility.class"),
-    countryId: belongsTo(() => Country).maybe(),
-    /** The body that runs it day to day (a county health department, a school board). */
-    operatorEntityId: belongsTo(() => Entities).maybe(),
-    /** The body that owns the land or asset when different from the operator. */
-    ownerEntityId: belongsTo(() => Entities).maybe(),
-    /** The institution accountable for it (the ministry or county department). */
-    responsibleInstitutionId: belongsTo(() => Institutions).maybe(),
-    /** Scheme civ.facility.ownership: public, private, faith-based, community, public-private. */
-    ownershipId: belongsTo(() => Value)
-      .maybe()
-      .tags("scheme:ref.sch.civ.facility.ownership"),
-    /** Scheme civ.facility.status: planned, under construction, operational, partly operational, closed, abandoned. */
-    statusId: belongsTo(() => Value).tags("scheme:ref.sch.civ.facility.status"),
-    openedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    closedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedEntity)
-  .rule("FacilityDatesAreOrdered", rule.ordered("openedOn", "closedOn", { allowEqual: true }))
-  .description(
-    "The civic role of a geographic feature: a school, hospital, office, road, market or polling host. Size and capacity are observations on the feature; what it is and its levels are classifications; money reaches it through project links.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("facilities")
-      .unique("featureId")
-      .index("facilityClassId")
-      .index("operatorEntityId")
-      .index("ownerEntityId")
-      .index("responsibleInstitutionId")
-      .index("statusId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- civic.beneficiaries ----------------*/
-export const Beneficiaries = civic
-  .schema("Beneficiaries", {
-    /** Scheme civ.benefit.kind: infrastructure, works, equipment and supplies, services, empowerment, education support, environment, health, relief, capacity building. */
-    benefitKindId: belongsTo(() => Value).tags("scheme:ref.sch.civ.benefit.kind"),
-    projectId: belongsTo(() => Projects).maybe(),
-    procurementId: belongsTo(() => Procurements).maybe(),
-    contractId: belongsTo(() => Contracts).maybe(),
-    /** Optional share of the amount that benefits this subject, as a percentage. */
-    sharePercent: dryv.field(sharedProperties.Percentage).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.CodedSubjectEntity)
-  .rule("ExactlyOneSpendingRecord", rule.exactlyOne("projectId", "procurementId", "contractId"))
-  .description(
-    "Who or what benefits from one project, procurement or contract: a facility, a place, an organisation or a population group, with the kind of benefit. The buyer and the supplier are not beneficiaries; they are separate roles.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("beneficiaries")
-      .index("subjectTable", "subjectId")
-      .index("projectId")
-      .index("procurementId")
-      .index("contractId")
-      .index("benefitKindId")
-      .index("sourceCitationId"),
-  });
-
-/*---------------- civic.partners ----------------*/
-export const Partners = civic
-  .schema("Partners", {
-    contractId: belongsTo(() => Contracts).maybe(),
-    bidId: belongsTo(() => Bids).maybe(),
-    partnerEntityId: belongsTo(() => Entities),
-    /** Scheme civ.partner.role: lead, member, subcontractor, guarantor, supervisor. */
-    roleId: belongsTo(() => Value).tags("scheme:ref.sch.civ.partner.role"),
-    sharePercentage: dryv.field(sharedProperties.Percentage).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
-  })
-  .extends(baseSchemas.Entity)
-  .rule("HasExactlyOneDeal", rule.exactlyOne("contractId", "bidId"))
-  .description(
-    "A party that shares one contract or one bid with the main bidder or contractor: a joint-venture member, a subcontractor or a guarantor.",
-  )
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("partners")
-      .index("contractId")
-      .index("bidId")
-      .index("partnerEntityId")
-      .index("roleId")
-      .index("sourceCitationId"),
+    storage: dryv.storage("contracts").index("procurementId").index("projectId").index("contractorId").index("buyerId"),
   });
 
 /*---------------- civic.variations ----------------*/
 export const Variations = civic
   .schema("Variations", {
-    contractId: belongsTo(() => Contracts),
-    /** Scheme civ.variation.kind: variation, extension, termination, renewal. */
-    kindId: belongsTo(() => Value).tags("scheme:ref.sch.civ.variation.kind"),
-    amountDeltaMinorUnits: dryv.field(sharedProperties.Integer).maybe(),
-    currencyId: belongsTo(() => Value).maybe(),
+    contractId: belongsTo(() => Contracts, { onDelete: "cascade" }),
+    kindTerm: term("civ.variation.kind", "price change, extension, scope change."),
+    amountChange: dryv
+      .field(civicProperties.SignedAmount)
+      .maybe()
+      .description("Change in value, in whole minor units; negative for a reduction."),
+    currencyId: belongsTo(() => Currencies).maybe(),
     newEndOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     signedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    reason: dryv.field(sharedProperties.Description).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+    note: dryv.field(civicProperties.Note).maybe().description("The stated reason, in `note_language_id`."),
+    noteLanguageId: belongsTo(() => Languages).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description(
-    "One change to an executed contract: a variation of price or scope, an extension, a renewal or a termination.",
-  )
+  .rule("VariationAmountHasCurrency", (v) => v.amountChange.isNull().or(v.currencyId.isNotNull()))
+  .rule("VariationNoteHasLanguage", (v) => v.note.isNull().or(v.noteLanguageId.isNotNull()))
+  .description("A change to a contract's price, period or scope.")
   .role("entity")
-  .facets({
-    storage: dryv.storage("variations").index("contractId").index("kindId").index("sourceCitationId"),
-  });
+  .facets({ storage: dryv.storage("variations").index("contractId") });
 
-/*---------------- civic.officials ----------------*/
-export const Officials = civic
-  .schema("Officials", {
-    procurementId: belongsTo(() => Procurements).maybe(),
-    contractId: belongsTo(() => Contracts).maybe(),
-    individualId: belongsTo(() => Individuals),
-    /** Scheme civ.official.role: accounting officer, committee chair, evaluator, approver, signatory. */
-    roleId: belongsTo(() => Value).tags("scheme:ref.sch.civ.official.role"),
-    /** The office the person held when they acted, when known. */
-    officeId: belongsTo(() => Offices).maybe(),
-    actedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    sourceCitationId: belongsTo(() => Citations).maybe(),
+/*---------------- civic.deliveries ----------------*/
+export const Deliveries = civic
+  .schema("Deliveries", {
+    contractId: belongsTo(() => Contracts, { onDelete: "cascade" }),
+    kindTerm: term("civ.delivery.kind", "interim certificate, completion, handover."),
+    ...money("Certified value"),
+    deliveredOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    featureId: belongsTo(() => Features).maybe(),
+  })
+  .extends(baseSchemas.CodedEntity)
+  .rule("DeliveryAmountHasCurrency", (v) => v.amount.isNull().or(v.currencyId.isNotNull()))
+  .description("Work delivered and certified under a contract.")
+  .role("entity")
+  .facets({ storage: dryv.storage("deliveries").index("contractId").index("featureId") });
+
+/*---------------- civic.items ----------------*/
+export const Items = civic
+  .schema("Items", {
+    contractId: belongsTo(() => Contracts, { onDelete: "cascade" }).maybe(),
+    bidId: belongsTo(() => Bids, { onDelete: "cascade" }).maybe(),
+    goodId: belongsTo(() => Goods).description("The catalogue good, service or works item."),
+    quantity: dryv.field(sharedProperties.Number),
+    unitId: belongsTo(() => Units),
+    unitPrice: dryv.field(sharedProperties.AmountMinorUnits).maybe().description("Price per unit in whole minor units."),
+    currencyId: belongsTo(() => Currencies).maybe(),
   })
   .extends(baseSchemas.Entity)
-  .rule("HasProcurementOrContract", rule.atLeastOne("procurementId", "contractId"))
+  .rule("ItemHasOneOwner", rule.exactlyOne("contractId", "bidId"))
+  .rule("ItemPriceHasCurrency", (v) => v.unitPrice.isNull().or(v.currencyId.isNotNull()))
+  .description("A line item of a contract or bid.")
+  .role("entity")
+  .facets({ storage: dryv.storage("items").index("contractId").index("bidId").index("goodId") });
+
+/*---------------- civic.scores ----------------*/
+export const Scores = civic
+  .schema("Scores", {
+    contractId: belongsTo(() => Contracts, { onDelete: "cascade" }).maybe(),
+    projectId: belongsTo(() => Projects, { onDelete: "cascade" }).maybe(),
+    score: dryv
+      .field(sharedProperties.Number)
+      .maybe()
+      .description("Price ratio against comparable prices; empty when too few."),
+    low: dryv.field(sharedProperties.Number).maybe(),
+    high: dryv.field(sharedProperties.Number).maybe(),
+    comparables: dryv.field(sharedProperties.NonNegativeInteger).description("How many prices were compared."),
+    confidence: dryv.field(sharedProperties.Confidence).maybe(),
+    basis: dryv.field(civicProperties.ScoreBasis),
+    computedAt: dryv.field(sharedProperties.Instant),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("ScoreHasOneSubject", rule.exactlyOne("contractId", "projectId"))
   .description(
-    "A person who acted in a buying process (evaluated, approved, signed), with the role and the office held then; this is what lets a conflict be checked on a real signature.",
+    "Prepared, reviewable comparison of a contract or project with comparable prices; never a finding or accusation.",
   )
+  .role("entity")
+  .facets({ storage: dryv.storage("scores").index("contractId").index("projectId") });
+
+/*---------------- civic.roles ----------------*/
+export const Roles = civic
+  .schema("Roles", {
+    procurementId: belongsTo(() => Procurements, { onDelete: "cascade" }).maybe(),
+    bidId: belongsTo(() => Bids, { onDelete: "cascade" }).maybe(),
+    contractId: belongsTo(() => Contracts, { onDelete: "cascade" }).maybe(),
+    projectId: belongsTo(() => Projects, { onDelete: "cascade" }).maybe(),
+    holderId: belongsTo(() => Holders)
+      .maybe()
+      .description("The person acting through a public office (a Chief Officer signing)."),
+    identityId: identity("The person or organisation acting in their own right.").maybe(),
+    roleTerm: term(
+      "civ.role",
+      "accounting officer, evaluator, signatory, consortium partner, subcontractor, beneficial owner, beneficiary community.",
+    ),
+    share: dryv.field(sharedProperties.Percentage).maybe(),
+    actedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("RoleHasOneRow", rule.exactlyOne("procurementId", "bidId", "contractId", "projectId"))
+  .rule("RoleHasOneActor", rule.exactlyOne("holderId", "identityId"))
+  .description("The people and organisations involved in procurement, contracts and projects, and how.")
   .role("entity")
   .facets({
     storage: dryv
-      .storage("officials")
+      .storage("roles")
       .index("procurementId")
       .index("contractId")
-      .index("individualId")
-      .index("roleId")
-      .index("officeId")
-      .index("sourceCitationId"),
+      .index("projectId")
+      .index("holderId")
+      .index("identityId"),
   });
+
+/*---------------- civic.attachments ----------------*/
+export const Attachments = civic
+  .schema("Attachments", {
+    projectId: belongsTo(() => Projects, { onDelete: "cascade" }).maybe(),
+    contractId: belongsTo(() => Contracts, { onDelete: "cascade" }).maybe(),
+    deliveryId: belongsTo(() => Deliveries, { onDelete: "cascade" }).maybe(),
+    assetId: belongsTo(() => Assets).maybe(),
+    articleId: belongsTo(() => Articles).maybe(),
+    purposeTerm: term("med.attachment.purpose", "photo, document, video."),
+    position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
+    startSecond: dryv.field(civicProperties.Seconds).maybe(),
+    endSecond: dryv.field(civicProperties.Seconds).maybe(),
+  })
+  .extends(baseSchemas.Entity)
+  .rule("AttachmentHasOneRow", rule.exactlyOne("projectId", "contractId", "deliveryId"))
+  .rule("AttachmentHasOneMedia", rule.exactlyOne("assetId", "articleId"))
+  .description("Media on projects, contracts and deliveries (site photos, signed contracts).")
+  .role("entity")
+  .facets({ storage: dryv.storage("attachments").index("projectId").index("contractId").index("deliveryId") });

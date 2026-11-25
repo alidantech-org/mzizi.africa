@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
-import { GovernanceInstitutionsModule } from "#/modules/governance/features/institutions/institutions.module.ts";
+import { GovernanceBodiesModule } from "#/modules/governance/features/bodies/bodies.module.ts";
+import { GovernanceSeatsModule } from "#/modules/governance/features/seats/seats.module.ts";
 
 @Module({
-  imports: [GovernanceInstitutionsModule],
+  imports: [GovernanceBodiesModule, GovernanceSeatsModule],
 })
 export class GovernanceModule {}

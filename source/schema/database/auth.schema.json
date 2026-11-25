@@ -21,7 +21,6 @@
         "actor_kind"
         ,"display_name"
         ,"id"
-        ,"person_ref_id"
         ,"status"
       ],
       "x-seed": {
@@ -33,15 +32,14 @@
           ,"disabled_at"
           ,"display_name"
           ,"id"
+          ,"individual_code"
           ,"last_authenticated_at"
-          ,"person_ref_id"
           ,"status"
         ],
         "required": [
           "actor_kind"
           ,"display_name"
           ,"id"
-          ,"person_ref_id"
           ,"status"
         ]
       },
@@ -49,7 +47,7 @@
         "actor_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["person", "service"],
+          "enum": ["agent", "person", "service"],
           "x-role": "data"
         }
         ,"created_at": {
@@ -79,16 +77,17 @@
           "x-primaryKey": true,
           "x-role": "data"
         }
+        ,"individual_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Individuals", "column": "id", "alias": "individual_code" }
+        }
         ,"last_authenticated_at": {
           "type": ["string", "null"],
           "x-type": "timestamp",
           "format": "date-time",
-          "x-role": "data"
-        }
-        ,"person_ref_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
           "x-role": "data"
         }
         ,"status": {
@@ -99,13 +98,13 @@
         }
       }
     },
-    "delegation_roles": {
-      "title": "auth.delegation_roles",
+    "allowances": {
+      "title": "auth.allowances",
       "type": "object",
       "additionalProperties": false,
-      "x-code": "sys.tbl.auth.delegation-roles",
-      "x-id": "#/schemas/auth.DelegationRoles",
-      "x-table": "auth.delegation_roles",
+      "x-code": "sys.tbl.auth.allowances",
+      "x-id": "#/schemas/auth.Allowances",
+      "x-table": "auth.allowances",
       "x-primaryKey": ["delegation_id", "role_id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
@@ -142,6 +141,117 @@
           "x-primaryKey": true,
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/auth.Roles", "column": "id", "alias": "role_code" }
+        }
+      }
+    },
+    "codes": {
+      "title": "auth.codes",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.auth.codes",
+      "x-id": "#/schemas/auth.Codes",
+      "x-table": "auth.codes",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "attempts"
+        ,"channel"
+        ,"digest"
+        ,"expires_at"
+        ,"id"
+        ,"purpose"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+        ],
+        "columns": [
+          "attempts"
+          ,"channel"
+          ,"consumed_at"
+          ,"digest"
+          ,"expires_at"
+          ,"id"
+          ,"login_code"
+          ,"purpose"
+          ,"value"
+        ],
+        "required": [
+          "attempts"
+          ,"channel"
+          ,"digest"
+          ,"expires_at"
+          ,"id"
+          ,"purpose"
+        ]
+      },
+      "properties": {
+        "attempts": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"channel": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["email", "sms"],
+          "x-role": "data"
+        }
+        ,"consumed_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"digest": {
+          "type": "string",
+          "x-type": "text",
+          "minLength": 64,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "x-role": "data"
+        }
+        ,"expires_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"login_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Logins", "column": "id", "alias": "login_code" }
+        }
+        ,"purpose": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["change", "signin", "signup"],
+          "x-role": "data"
+        }
+        ,"value": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 320,
+          "minLength": 3,
+          "x-role": "data"
         }
       }
     },
@@ -246,403 +356,13 @@
         }
       }
     },
-    "invitations": {
-      "title": "auth.invitations",
+    "grants": {
+      "title": "auth.grants",
       "type": "object",
       "additionalProperties": false,
-      "x-code": "sys.tbl.auth.invitations",
-      "x-id": "#/schemas/auth.Invitations",
-      "x-table": "auth.invitations",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
-      "x-uniqueKeys": [
-        ["token_digest"]
-      ],
-      "required": [
-        "id"
-        ,"institution_ref_id"
-        ,"intended_email"
-        ,"invited_by"
-        ,"token_digest"
-      ],
-      "x-seed": {
-        "system": [
-          "created_at"
-        ],
-        "columns": [
-          "accepted_account_code"
-          ,"accepted_at"
-          ,"expires_at"
-          ,"id"
-          ,"institution_ref_id"
-          ,"intended_email"
-          ,"invited_by_code"
-          ,"revoked_at"
-          ,"token_digest"
-        ],
-        "required": [
-          "id"
-          ,"institution_ref_id"
-          ,"intended_email"
-          ,"invited_by_code"
-          ,"token_digest"
-        ]
-      },
-      "properties": {
-        "accepted_account_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "accepted_account_code" }
-        }
-        ,"accepted_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"created_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-managed": true,
-          "x-role": "system"
-        }
-        ,"expires_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "data"
-        }
-        ,"institution_ref_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "data"
-        }
-        ,"intended_email": {
-          "type": "string",
-          "x-type": "text",
-          "x-role": "data"
-        }
-        ,"invited_by": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "invited_by_code" }
-        }
-        ,"revoked_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"token_digest": {
-          "type": "string",
-          "x-type": "text",
-          "minLength": 64,
-          "maxLength": 64,
-          "pattern": "^[a-f0-9]{64}$",
-          "x-role": "data"
-        }
-      }
-    },
-    "login_identities": {
-      "title": "auth.login_identities",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.auth.login-identities",
-      "x-id": "#/schemas/auth.LoginIdentities",
-      "x-table": "auth.login_identities",
-      "x-primaryKey": ["id"],"x-naturalKey": ["issuer", "subject"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["issuer", "subject"]
-      ],
-      "required": [
-        "account_id"
-        ,"id"
-        ,"issuer"
-        ,"linked_at"
-        ,"subject"
-      ],
-      "x-seed": {
-        "system": [
-          "id"
-        ],
-        "columns": [
-          "account_code"
-          ,"issuer"
-          ,"last_authenticated_at"
-          ,"linked_at"
-          ,"subject"
-          ,"unlinked_at"
-        ],
-        "required": [
-          "account_code"
-          ,"issuer"
-          ,"linked_at"
-          ,"subject"
-        ]
-      },
-      "properties": {
-        "account_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "account_code" }
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"issuer": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 500,
-          "minLength": 1,
-          "x-role": "key"
-        }
-        ,"last_authenticated_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"linked_at": {
-          "type": "string",
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"subject": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 500,
-          "minLength": 1,
-          "x-role": "key"
-        }
-        ,"unlinked_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-      }
-    },
-    "memberships": {
-      "title": "auth.memberships",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.auth.memberships",
-      "x-id": "#/schemas/auth.Memberships",
-      "x-table": "auth.memberships",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
-      "x-uniqueKeys": [
-      ],
-      "required": [
-        "account_id"
-        ,"id"
-        ,"institution_ref_id"
-        ,"status"
-      ],
-      "x-seed": {
-        "system": [
-        ],
-        "columns": [
-          "account_code"
-          ,"ends_at"
-          ,"id"
-          ,"institution_ref_id"
-          ,"revoked_at"
-          ,"revoked_by_code"
-          ,"starts_at"
-          ,"status"
-          ,"verified_at"
-          ,"verified_by_code"
-        ],
-        "required": [
-          "account_code"
-          ,"id"
-          ,"institution_ref_id"
-          ,"status"
-        ]
-      },
-      "properties": {
-        "account_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "account_code" }
-        }
-        ,"ends_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "data"
-        }
-        ,"institution_ref_id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "data"
-        }
-        ,"revoked_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"revoked_by": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "revoked_by_code" }
-        }
-        ,"starts_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"status": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["active", "expired", "pending", "revoked", "suspended"],
-          "x-role": "data"
-        }
-        ,"verified_at": {
-          "type": ["string", "null"],
-          "x-type": "timestamp",
-          "format": "date-time",
-          "x-role": "data"
-        }
-        ,"verified_by": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "verified_by_code" }
-        }
-      }
-    },
-    "permissions": {
-      "title": "auth.permissions",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.auth.permissions",
-      "x-id": "#/schemas/auth.Permissions",
-      "x-table": "auth.permissions",
-      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
-      "x-seedable": true,
-      "x-uniqueKeys": [
-        ["code"]
-      ],
-      "required": [
-        "action"
-        ,"code"
-        ,"id"
-        ,"is_active"
-        ,"resource_type"
-      ],
-      "x-seed": {
-        "system": [
-          "id"
-        ],
-        "columns": [
-          "action"
-          ,"code"
-          ,"description"
-          ,"field_group"
-          ,"is_active"
-          ,"resource_type"
-        ],
-        "required": [
-          "action"
-          ,"code"
-          ,"is_active"
-          ,"resource_type"
-        ]
-      },
-      "properties": {
-        "action": {
-          "type": "string",
-          "x-type": "text",
-          "enum": ["admin", "create", "delete", "export", "publish", "read", "review", "update"],
-          "x-role": "data"
-        }
-        ,"code": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-          "x-role": "key"
-        }
-        ,"description": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 4000,
-          "x-role": "data"
-        }
-        ,"field_group": {
-          "type": ["string", "null"],
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "x-role": "data"
-        }
-        ,"id": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-primaryKey": true,
-          "x-role": "system"
-        }
-        ,"is_active": {
-          "type": "boolean",
-          "x-type": "boolean",
-          "x-role": "data"
-        }
-        ,"resource_type": {
-          "type": "string",
-          "x-type": "text",
-          "maxLength": 255,
-          "minLength": 1,
-          "x-role": "data"
-        }
-      }
-    },
-    "role_assignments": {
-      "title": "auth.role_assignments",
-      "type": "object",
-      "additionalProperties": false,
-      "x-code": "sys.tbl.auth.role-assignments",
-      "x-id": "#/schemas/auth.RoleAssignments",
-      "x-table": "auth.role_assignments",
+      "x-code": "sys.tbl.auth.grants",
+      "x-id": "#/schemas/auth.Grants",
+      "x-table": "auth.grants",
       "x-primaryKey": ["id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
@@ -770,13 +490,424 @@
         }
       }
     },
-    "role_permissions": {
-      "title": "auth.role_permissions",
+    "invitations": {
+      "title": "auth.invitations",
       "type": "object",
       "additionalProperties": false,
-      "x-code": "sys.tbl.auth.role-permissions",
-      "x-id": "#/schemas/auth.RolePermissions",
-      "x-table": "auth.role_permissions",
+      "x-code": "sys.tbl.auth.invitations",
+      "x-id": "#/schemas/auth.Invitations",
+      "x-table": "auth.invitations",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+        ["token_digest"]
+      ],
+      "required": [
+        "id"
+        ,"institution_id"
+        ,"intended_email"
+        ,"invited_by"
+        ,"token_digest"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+        ],
+        "columns": [
+          "accepted_account_code"
+          ,"accepted_at"
+          ,"expires_at"
+          ,"id"
+          ,"institution_code"
+          ,"intended_email"
+          ,"invited_by_code"
+          ,"revoked_at"
+          ,"token_digest"
+        ],
+        "required": [
+          "id"
+          ,"institution_code"
+          ,"intended_email"
+          ,"invited_by_code"
+          ,"token_digest"
+        ]
+      },
+      "properties": {
+        "accepted_account_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "accepted_account_code" }
+        }
+        ,"accepted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"expires_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"institution_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
+        }
+        ,"intended_email": {
+          "type": "string",
+          "x-type": "text",
+          "x-role": "data"
+        }
+        ,"invited_by": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "invited_by_code" }
+        }
+        ,"revoked_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"token_digest": {
+          "type": "string",
+          "x-type": "text",
+          "minLength": 64,
+          "maxLength": 64,
+          "pattern": "^[a-f0-9]{64}$",
+          "x-role": "data"
+        }
+      }
+    },
+    "logins": {
+      "title": "auth.logins",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.auth.logins",
+      "x-id": "#/schemas/auth.Logins",
+      "x-table": "auth.logins",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "account_id"
+        ,"id"
+        ,"kind"
+        ,"linked_at"
+      ],
+      "x-seed": {
+        "system": [
+        ],
+        "columns": [
+          "account_code"
+          ,"id"
+          ,"issuer"
+          ,"kind"
+          ,"last_authenticated_at"
+          ,"linked_at"
+          ,"subject"
+          ,"unlinked_at"
+          ,"value"
+          ,"verified_at"
+        ],
+        "required": [
+          "account_code"
+          ,"id"
+          ,"kind"
+          ,"linked_at"
+        ]
+      },
+      "properties": {
+        "account_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "account_code" }
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"issuer": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 500,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"kind": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["email", "oidc", "phone"],
+          "x-role": "data"
+        }
+        ,"last_authenticated_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"linked_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"subject": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 500,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"unlinked_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"value": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 320,
+          "minLength": 3,
+          "x-role": "data"
+        }
+        ,"verified_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+      }
+    },
+    "memberships": {
+      "title": "auth.memberships",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.auth.memberships",
+      "x-id": "#/schemas/auth.Memberships",
+      "x-table": "auth.memberships",
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
+      "x-uniqueKeys": [
+      ],
+      "required": [
+        "account_id"
+        ,"id"
+        ,"institution_id"
+        ,"status"
+      ],
+      "x-seed": {
+        "system": [
+        ],
+        "columns": [
+          "account_code"
+          ,"ends_at"
+          ,"id"
+          ,"institution_code"
+          ,"revoked_at"
+          ,"revoked_by_code"
+          ,"starts_at"
+          ,"status"
+          ,"verified_at"
+          ,"verified_by_code"
+        ],
+        "required": [
+          "account_code"
+          ,"id"
+          ,"institution_code"
+          ,"status"
+        ]
+      },
+      "properties": {
+        "account_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "account_code" }
+        }
+        ,"ends_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"institution_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
+        }
+        ,"revoked_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"revoked_by": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "revoked_by_code" }
+        }
+        ,"starts_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"status": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["active", "expired", "pending", "revoked", "suspended"],
+          "x-role": "data"
+        }
+        ,"verified_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-role": "data"
+        }
+        ,"verified_by": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/auth.Accounts", "column": "id", "alias": "verified_by_code" }
+        }
+      }
+    },
+    "permissions": {
+      "title": "auth.permissions",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.auth.permissions",
+      "x-id": "#/schemas/auth.Permissions",
+      "x-table": "auth.permissions",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+      ],
+      "required": [
+        "action"
+        ,"code"
+        ,"id"
+        ,"is_active"
+        ,"resource_type"
+      ],
+      "x-seed": {
+        "system": [
+          "id"
+        ],
+        "columns": [
+          "action"
+          ,"code"
+          ,"description"
+          ,"field_group"
+          ,"is_active"
+          ,"resource_type"
+        ],
+        "required": [
+          "action"
+          ,"code"
+          ,"is_active"
+          ,"resource_type"
+        ]
+      },
+      "properties": {
+        "action": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["admin", "create", "delete", "export", "publish", "read", "review", "update"],
+          "x-role": "data"
+        }
+        ,"code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"description": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 4000,
+          "x-role": "data"
+        }
+        ,"field_group": {
+          "type": ["string", "null"],
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"is_active": {
+          "type": "boolean",
+          "x-type": "boolean",
+          "x-role": "data"
+        }
+        ,"resource_type": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["auth", "civic", "community", "economy", "election", "event", "filesystem", "finance", "geography", "governance", "history", "identity", "legal", "legislature", "media", "official", "politics", "product", "reference", "source", "statistics", "vocabulary"],
+          "x-role": "data"
+        }
+      }
+    },
+    "privileges": {
+      "title": "auth.privileges",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.auth.privileges",
+      "x-id": "#/schemas/auth.Privileges",
+      "x-table": "auth.privileges",
       "x-primaryKey": ["role_id", "permission_id"],"x-naturalKey": [],
       "x-seedable": false,
       "x-uniqueKeys": [
@@ -862,7 +993,7 @@
         "columns": [
           "code"
           ,"description"
-          ,"managing_institution_ref_id"
+          ,"institution_code"
           ,"policy_version"
           ,"protected"
           ,"retired_at"
@@ -904,11 +1035,12 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"managing_institution_ref_id": {
+        ,"institution_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
         }
         ,"policy_version": {
           "type": "string",
@@ -952,7 +1084,6 @@
       "required": [
         "id"
         ,"include_descendants"
-        ,"institution_ref_id"
         ,"is_global"
         ,"scope_hash"
       ],
@@ -961,30 +1092,29 @@
           "created_at"
         ],
         "columns": [
-          "country_ref_id"
-          ,"dataset_ref_id"
+          "country_code"
+          ,"feature_code"
           ,"field_group"
-          ,"geographic_unit_ref_id"
           ,"id"
           ,"include_descendants"
-          ,"institution_ref_id"
+          ,"institution_code"
           ,"is_global"
           ,"scope_hash"
         ],
         "required": [
           "id"
           ,"include_descendants"
-          ,"institution_ref_id"
           ,"is_global"
           ,"scope_hash"
         ]
       },
       "properties": {
-        "country_ref_id": {
+        "country_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/reference.Countries", "column": "id", "alias": "country_code" }
         }
         ,"created_at": {
           "type": "string",
@@ -993,23 +1123,18 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"dataset_ref_id": {
+        ,"feature_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"field_group": {
           "type": ["string", "null"],
           "x-type": "text",
           "maxLength": 255,
           "minLength": 1,
-          "x-role": "data"
-        }
-        ,"geographic_unit_ref_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
           "x-role": "data"
         }
         ,"id": {
@@ -1024,11 +1149,12 @@
           "x-type": "boolean",
           "x-role": "data"
         }
-        ,"institution_ref_id": {
-          "type": "string",
+        ,"institution_id": {
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "data"
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
         }
         ,"is_global": {
           "type": "boolean",

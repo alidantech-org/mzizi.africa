@@ -3,7 +3,7 @@
 A file `data/<scope>/<domain>/<table>.csv` holds the rows of `<domain>.<table>`. A row is written in the seed view of the
 table: its natural key (`code`), its data, and links written as the target's code (`scheme_code`). It never carries ids or
 system fields (`version`, `created_at`, `updated_at`, `deleted_at`); the loader assigns them, deriving the id from the
-table and the code (`mzizi_manifest.features.seeds.ids.stable_id`).
+table and the code (`mzizi_manifest.features.data.ids.stable_id`).
 
 Checked: the path names a seedable table; the header holds only allowed columns and every required one; each value fits
 its column (kind, length, pattern, enum); natural keys and other unique keys are unique across all files of a table; every

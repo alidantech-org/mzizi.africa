@@ -1,16 +1,16 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
+import { SharedIdentityKind } from "#sdk/types/shared/enums/identity-kind.ts";
 
-/** The sole canonical identity for each geographic entity, whatever its type. Country, parentage and administrative or electoral membership are dated relationships, never columns here. */
+/** The one identity of every place, natural or administrative. A country's feature shares the country's identity; parents and ranks are dated relationships, never columns here. */
 export interface GeographyFeatures {
   code: string;
   createdAt: string;
   deletedAt?: string | null;
   endedOn?: string | null;
   establishedOn?: string | null;
-  featureTypeId: string;
-  fromToPrecision?: SharedDatePrecision | null;
   fromYear?: number | null;
   id: string;
+  identityKind: SharedIdentityKind;
+  kindTerm: string;
   toYear?: number | null;
   updatedAt: string;
   version: number;

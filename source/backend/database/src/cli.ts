@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /** `bun run db <command>`: administration of the single Mzizi PostgreSQL database. */
-import { assemble, migrate, plan, roles, status, verify } from "./commands.ts";
+import { assemble, migrate, partitions, plan, refresh, roles, status, verify } from "./commands.ts";
 import { paths } from "./config.ts";
 import { formatFile } from "./format.ts";
 
@@ -14,6 +14,8 @@ commands:
   migrate   apply pending releases under an advisory lock
   verify    check applied releases against recorded checksums and the database identity
   roles     provision the engine and API roles and their grants (idempotent)
+  refresh   rebuild prepared tables: refresh [outlines|pieces|figures...] (default: all)
+  partitions  add missing monthly partitions: partitions [--through YYYY-MM] (default: 12 months ahead)
 
 environment:
   MZIZI_DB_ADMIN_URL         administrative connection (status, plan, migrate, verify, roles)
@@ -58,6 +60,14 @@ async function main(argv: string[]): Promise<number> {
     case "roles":
       print(await roles());
       return 0;
+    case "refresh":
+      print(await refresh(argv.slice(1)));
+      return 0;
+    case "partitions": {
+      const at = argv.indexOf("--through");
+      print(await partitions(at >= 0 ? argv[at + 1] : undefined));
+      return 0;
+    }
     case undefined:
     case "help":
     case "--help":

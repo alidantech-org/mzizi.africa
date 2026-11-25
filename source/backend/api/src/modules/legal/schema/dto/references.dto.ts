@@ -5,7 +5,6 @@ import {
   IsOptional,
   IsString,
   IsUUID,
-  Matches,
   MaxLength,
   Min,
   MinLength,
@@ -17,28 +16,17 @@ import { ReferenceMethod } from "#/modules/legal/schema/enum/reference-method.en
 import { ReferenceRelation } from "#/modules/legal/schema/enum/reference-relation.enum.ts";
 import { ReviewStatus } from "#/modules/legal/schema/enum/review-status.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
-import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { NonEmptyString500 } from "#/modules/shared/schema/type/non-empty-string500.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * A textual mention of a provision inside a wording or translation, with the exact span. A mention is not an amendment. (entity)
+ * A cross-reference found inside a text ("subject to Article 24"). (entity)
  *
- * Invariant "ExactlyOneOrigin" has no simple form, so it isn't validated here.
+ * Invariant "ReferenceHasOneSource" has no simple form, so it isn't validated here.
  */
 export class ReferencesDto {
-  @IsString()
-  @MinLength(1)
-  @MaxLength(255)
-  @Matches(
-    new RegExp(
-      "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
-    ),
-  )
-  code!: IdentityCode;
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -66,15 +54,8 @@ export class ReferencesDto {
 
   @IsInt()
   @Min(0)
-  @Satisfies<ReferencesDto>(
-    (object) =>
-      object.spanStart == null || object.spanEnd == null || object.spanStart < object.spanEnd,
-    {
-      message: "Span Must Be Ordered",
-    },
-  )
-  @Satisfies<ReferencesDto>((object) => object.spanStart !== object.spanEnd, {
-    message: "Span Must Be Non Empty",
+  @Satisfies<ReferencesDto>((object) => object.spanStart < object.spanEnd, {
+    message: "Reference Span Is Ordered",
   })
   spanStart!: NonNegativeInteger;
 

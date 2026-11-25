@@ -6,23 +6,21 @@ import {
   IsUUID,
   MaxLength,
   Min,
+  MinLength,
   ValidateIf,
 } from "class-validator";
 
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import type { Note } from "#/modules/geography/schema/type/note.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * An edge in a geographic transformation; multiple rows sharing transformation_id represent splits, mergers, creation or dissolution without overwriting predecessor identities. (entity)
+ * One edge of a boundary change: splits, merges, creation or dissolution, without overwriting the places. (entity)
  */
 export class ChangesDto {
-  @IsString()
-  @IsUUID()
-  changeKindId!: Id;
-
   @IsISO8601({})
   createdAt!: Instant;
 
@@ -36,20 +34,46 @@ export class ChangesDto {
   @IsISO8601({ strict: true })
   effectiveOn?: CalendarDate | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.explanation !== null)
-  @IsString()
-  @MaxLength(4000)
-  explanation?: Description | null;
-
   @IsString()
   @IsUUID()
   id!: Id;
+
+  @IsString()
+  @IsUUID()
+  kindTerm!: Id;
+
+  @IsOptional()
+  @ValidateIf((object) => object.note !== null)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(4000)
+  @Satisfies<ChangesDto>((object) => object.note == null || object.noteLanguageId != null, {
+    message: "Change Note Has Language",
+  })
+  note?: Note | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.noteLanguageId !== null)
+  @IsString()
+  @IsUUID()
+  noteLanguageId?: Id | null;
+
+  @IsOptional()
+  @ValidateIf((object) => object.occurrenceId !== null)
+  @IsString()
+  @IsUUID()
+  occurrenceId?: Id | null;
 
   @IsOptional()
   @ValidateIf((object) => object.predecessorFeatureId !== null)
   @IsString()
   @IsUUID()
+  @Satisfies<ChangesDto>(
+    (object) => object.predecessorFeatureId != null || object.successorFeatureId != null,
+    {
+      message: "Change Has A Place",
+    },
+  )
   predecessorFeatureId?: Id | null;
 
   @IsOptional()
@@ -57,10 +81,6 @@ export class ChangesDto {
   @IsString()
   @IsUUID()
   successorFeatureId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  transformationId!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

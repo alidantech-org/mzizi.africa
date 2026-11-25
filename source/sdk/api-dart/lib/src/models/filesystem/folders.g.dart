@@ -15,7 +15,7 @@ FilesystemFolders _$FilesystemFoldersFromJson(Map<String, dynamic> json) => File
   id: json['id'] as String,
   name: json['name'] as String,
   parentId: json['parentId'] as String?,
-  roleId: json['roleId'] as String,
+  roleTerm: json['roleTerm'] as String,
   updatedAt: DateTime.parse(json['updatedAt'] as String),
   version: (json['version'] as num).toInt(),
 );
@@ -29,7 +29,7 @@ Map<String, dynamic> _$FilesystemFoldersToJson(FilesystemFolders instance) => <S
   'id': instance.id,
   'name': instance.name,
   'parentId': ?instance.parentId,
-  'roleId': instance.roleId,
+  'roleTerm': instance.roleTerm,
   'updatedAt': instance.updatedAt.toIso8601String(),
   'version': instance.version,
 };

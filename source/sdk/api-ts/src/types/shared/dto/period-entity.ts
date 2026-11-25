@@ -1,10 +1,7 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
-
-/** Base for versioned records with a period of integer years and one precision for the pair. */
+/** Base for versioned records with a period of integer years. */
 export interface SharedPeriodEntity {
   createdAt: string;
   deletedAt?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
   fromYear?: number | null;
   id: string;
   toYear?: number | null;

@@ -71,12 +71,6 @@ export const editionsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "observedAt",
-      optional: false,
-      nullable: false,
-      spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
       name: "repealedOn",
       optional: true,
       nullable: true,
@@ -101,16 +95,5 @@ export const editionsExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
   ],
-  invariants: [
-    {
-      any: false,
-      comparisons: [
-        {
-          left: { field: "id" },
-          operator: "not-equal",
-          right: { field: "supersedesId" },
-        },
-      ],
-    },
-  ],
+  invariants: [],
 });

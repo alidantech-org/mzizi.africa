@@ -3,6 +3,7 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { accountsExample } from "@test/modules/auth/schema/dto/examples/accounts.dto.example.ts";
+import { institutionsExample } from "@test/modules/governance/schema/dto/examples/institutions.dto.example.ts";
 import { createdExample } from "@test/modules/shared/schema/dto/examples/created.dto.example.ts";
 
 /** The contract shape of Invitations, for generated tests. */
@@ -40,7 +41,7 @@ export const invitationsExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "institutionRefId",
+      name: "institutionId",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },

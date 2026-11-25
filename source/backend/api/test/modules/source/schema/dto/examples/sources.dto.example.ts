@@ -3,17 +3,16 @@ import {
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { SourceKind } from "#/modules/source/schema/enum/source-kind.enum.ts";
-import { entitiesExample } from "@test/modules/official/schema/dto/examples/entities.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
 import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
 import { publishersExample } from "@test/modules/source/schema/dto/examples/publishers.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Sources, for generated tests. */
 export const sourcesExample: ContractExample = contractExample({
   name: "Sources",
   fields: [
     {
-      name: "classificationId",
+      name: "classTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -44,7 +43,7 @@ export const sourcesExample: ContractExample = contractExample({
       spec: { kind: "string", minLength: 1, maxLength: 255 },
     },
     {
-      name: "credibilityId",
+      name: "credibilityTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -54,12 +53,6 @@ export const sourcesExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "temporal", temporal: "instant" },
-    },
-    {
-      name: "description",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", maxLength: 4000 },
     },
     {
       name: "id",
@@ -74,13 +67,13 @@ export const sourcesExample: ContractExample = contractExample({
       spec: { kind: "enum", values: Object.values(SourceKind) },
     },
     {
-      name: "licenceId",
-      optional: true,
-      nullable: true,
-      spec: { kind: "string", format: "uuid" },
+      name: "label",
+      optional: false,
+      nullable: false,
+      spec: { kind: "string", minLength: 1, maxLength: 255 },
     },
     {
-      name: "officialEntityId",
+      name: "licenceTerm",
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "uuid" },
@@ -96,12 +89,6 @@ export const sourcesExample: ContractExample = contractExample({
       optional: true,
       nullable: true,
       spec: { kind: "string", format: "url", maxLength: 2048 },
-    },
-    {
-      name: "title",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", minLength: 1, maxLength: 300 },
     },
     {
       name: "updatedAt",

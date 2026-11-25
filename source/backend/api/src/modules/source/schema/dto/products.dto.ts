@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -11,15 +12,15 @@ import {
   ValidateIf,
 } from "class-validator";
 
-import type { Description } from "#/modules/shared/schema/type/description.type.ts";
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One logical document or dataset, independent of who served it, in what format or how many times it was downloaded. (entity)
+ * A publisher's series (the Economic Survey). Its titles are `identity.names`. (entity)
  */
 export class ProductsDto {
   @IsString()
@@ -40,30 +41,25 @@ export class ProductsDto {
   @IsISO8601({})
   deletedAt?: Instant | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.description !== null)
-  @IsString()
-  @MaxLength(4000)
-  description?: Description | null;
-
   @IsString()
   @IsUUID()
   id!: Id;
 
+  @IsEnum(IdentityKind)
+  @Satisfies<ProductsDto>((object) => object.identityKind === "product", {
+    message: "Product Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsString()
   @IsUUID()
-  kindId!: Id;
+  kindTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.publisherId !== null)
   @IsString()
   @IsUUID()
   publisherId?: Id | null;
-
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  title!: Name;
 
   @IsISO8601({})
   updatedAt!: Instant;

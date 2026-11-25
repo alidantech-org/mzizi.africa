@@ -8,7 +8,7 @@
 
 ## Modules are named after schemas
 
-Each API module carries the name of the database schema whose data it owns: `reference`, `identity`, `vocabulary`, `geography`, `official`, `source`, `legal`, `governance`, `legislature`, `politics`, `election`, `civic`, `finance`, `economy`, `statistics`, `event`, `history`, `media`, `filesystem`, `community`, `product`, `auth`. A reader who knows the schema map knows where an operation lives.
+Each API module carries the name of the database schema whose data it owns: `reference`, `identity`, `vocabulary`, `geography`, `official`, `source`, `legal`, `governance`, `legislature`, `politics`, `election`, `civic`, `finance`, `economy`, `statistics`, `event`, `history`, `media`, `filesystem`, `community`, `product`, `auth`, plus the one composition module `frontend`. A reader who knows the schema map knows where an operation lives.
 
 - A module's submodules are named after that schema's tables or clear groups of them (for example `governance` → `institutions`, `offices`, `holders`, `powers`).
 - An operation lives in the module of the schema that owns the rows it reads or writes first.
@@ -22,7 +22,7 @@ Names that describe an action or a screen rather than an owner are not allowed: 
 
 ## One module for shaping data for the frontend
 
-Screens often need data from several schemas at once (a place page: geography, statistics, governance and finance). That composition happens in **one** clearly bounded module whose only job is to map system data into clean, typed, frontend-ready shapes: the `LocalizedText` texts, place summaries, trees and chart series the screens consume. It reads through the owning modules' actions; it owns no tables and duplicates no domain rules. Its name and boundary are fixed in the app contracts task (TSK-70669AC571AA) and recorded in this rule when chosen.
+Screens often need data from several schemas at once (a place page: geography, statistics, governance and finance). That composition happens in **one** clearly bounded module whose only job is to map system data into clean, typed, frontend-ready shapes: the `LocalizedText` texts, place summaries, trees and chart series the screens consume. It reads through the owning modules' actions; it owns no tables and duplicates no domain rules. Its name is **`frontend`** (chosen in TSK-70669AC571AA, 25 November 2026): `dryv/contracts/apps/api/frontend.ts`, implemented in `source/backend/api/src/implementations/`. See [API modules](../design/architecture/API_MODULES.md).
 
 ## Applying the rule
 

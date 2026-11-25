@@ -6,6 +6,6 @@ part of 'feature_key.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-GeographyFeatureKey _$GeographyFeatureKeyFromJson(Map<String, dynamic> json) => GeographyFeatureKey(featureId: json['featureId'] as String);
+GeographyFeatureKey _$GeographyFeatureKeyFromJson(Map<String, dynamic> json) => GeographyFeatureKey(code: json['code'] as String);
 
-Map<String, dynamic> _$GeographyFeatureKeyToJson(GeographyFeatureKey instance) => <String, dynamic>{'featureId': instance.featureId};
+Map<String, dynamic> _$GeographyFeatureKeyToJson(GeographyFeatureKey instance) => <String, dynamic>{'code': instance.code};

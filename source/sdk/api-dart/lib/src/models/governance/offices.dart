@@ -1,48 +1,46 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
 import 'package:mzizi_api/src/models/governance/institutions.dart';
 import 'package:mzizi_api/src/models/governance/positions.dart';
-import 'package:mzizi_api/src/models/shared/coded_period_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
 
 part 'offices.g.dart';
 
-/// One established public office, independent of any current holder and optionally scoped to a geographic unit.
+/// One concrete seat (the Governor of Nairobi, the MCA for Kilimani ward).
 @JsonSerializable(includeIfNull: false)
 class GovernanceOffices {
   const GovernanceOffices({
-    this.abolishedOn,
     required this.code,
     required this.createdAt,
-    this.createdOn,
     this.deletedAt,
-    this.fromToPrecision,
+    this.endsOn,
+    this.featureId,
     this.fromYear,
     required this.id,
+    required this.identityKind,
     required this.institutionId,
     required this.positionId,
-    this.seatOrdinal,
-    this.sourceCitationId,
+    this.seat,
+    this.startsOn,
     this.toYear,
-    this.unitFeatureId,
     required this.updatedAt,
     required this.version,
   });
-  final DateTime? abolishedOn;
   final String code;
   final DateTime createdAt;
-  final DateTime? createdOn;
   final DateTime? deletedAt;
-  final SharedDatePrecision? fromToPrecision;
+  final DateTime? endsOn;
+  final String? featureId;
   final int? fromYear;
   final String id;
+  final SharedIdentityKind identityKind;
   final String institutionId;
   final String positionId;
-  final int? seatOrdinal;
-  final String? sourceCitationId;
+  final String? seat;
+  final DateTime? startsOn;
   final int? toYear;
-  final String? unitFeatureId;
   final DateTime updatedAt;
   final int version;
 

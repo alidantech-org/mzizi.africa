@@ -8,11 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
 class PartiesRow(BaseModel):
-    """One political-party specialization of an Official entity over an optional effective period."""
+    """A political party; it shares its organisation's identity (`official.entities`)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -26,16 +26,15 @@ class PartiesRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    deregistered_on: date | None = None
-    entity_id: UUID
-    from_to_precision: DatePrecision | None = None
+    ends_on: date | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    party_kind_id: UUID
-    registered_on: date | None = None
-    source_citation_id: UUID | None = None
+    identity_kind: IdentityKind
+    kind_term: UUID
+    starts_on: date | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

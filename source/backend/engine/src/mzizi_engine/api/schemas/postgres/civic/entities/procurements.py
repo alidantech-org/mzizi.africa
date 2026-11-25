@@ -8,18 +8,20 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class ProcurementsRow(BaseModel):
-    """One public procurement process run by a buyer, optionally linked to a project."""
+    """A tender. Its title is an `identity.names` row and its tender number an `identity.identifiers` row."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "civic.procurements"
 
-    awarded_on: date | None = None
+    amount: Annotated[int, Field(ge=0)] | None = None
     bidder_count: Annotated[int, Field(ge=0)] | None = None
-    buyer_entity_id: UUID
-    category_id: UUID | None = None
+    buyer_id: UUID
+    category_term: UUID
     closes_on: date | None = None
     code: Annotated[
         str,
@@ -29,20 +31,17 @@ class ProcurementsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    country_id: UUID | None = None
+    country_id: UUID
     created_at: datetime
     currency_id: UUID | None = None
     deleted_at: datetime | None = None
-    estimated_amount_minor_units: Annotated[int, Field(ge=0)] | None = None
-    evaluation_basis_id: UUID | None = None
+    evaluation_term: UUID | None = None
     id: UUID
-    nature_id: UUID | None = None
-    procedure_kind_id: UUID
+    identity_kind: IdentityKind
+    nature_term: UUID | None = None
+    procedure_term: UUID
     project_id: UUID | None = None
     published_on: date | None = None
-    reference: Annotated[str, Field(min_length=1, max_length=300)] | None = None
-    source_citation_id: UUID | None = None
-    status_id: UUID | None = None
-    title: Annotated[str, Field(min_length=1, max_length=300)] | None = None
+    status_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

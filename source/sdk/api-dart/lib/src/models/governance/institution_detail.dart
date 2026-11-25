@@ -1,6 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
-import 'package:mzizi_api/src/models/governance/institution_detail_mandates.dart';
 import 'package:mzizi_api/src/models/governance/institution_detail_names.dart';
 import 'package:mzizi_api/src/models/governance/institution_detail_offices.dart';
 
@@ -10,22 +8,26 @@ part 'institution_detail.g.dart';
 @JsonSerializable(includeIfNull: false)
 class GovernanceInstitutionDetail {
   const GovernanceInstitutionDetail({
+    this.armTerm,
+    this.basisTerm,
+    this.classTerm,
     required this.code,
-    this.fromToPrecision,
+    required this.countryId,
     this.fromYear,
-    required this.id,
-    required this.kind,
-    required this.mandates,
+    required this.institutionId,
+    required this.kindTerm,
     required this.names,
     required this.offices,
     this.toYear,
   });
+  final String? armTerm;
+  final String? basisTerm;
+  final String? classTerm;
   final String code;
-  final SharedDatePrecision? fromToPrecision;
+  final String countryId;
   final int? fromYear;
-  final String id;
-  final String kind;
-  final List<GovernanceInstitutionDetailMandates> mandates;
+  final String institutionId;
+  final String kindTerm;
   final List<GovernanceInstitutionDetailNames> names;
   final List<GovernanceInstitutionDetailOffices> offices;
   final int? toYear;

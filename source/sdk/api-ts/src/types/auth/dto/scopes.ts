@@ -1,13 +1,12 @@
-/** Deduplicated access scope: global, or narrowed by country, geographic unit, dataset or field group. */
+/** A deduplicated access scope: global, or narrowed by institution, country, place or field group. */
 export interface AuthScopes {
-  countryRefId?: string | null;
+  countryId?: string | null;
   createdAt: string;
-  datasetRefId?: string | null;
+  featureId?: string | null;
   fieldGroup?: string | null;
-  geographicUnitRefId?: string | null;
   id: string;
   includeDescendants: boolean;
-  institutionRefId: string;
+  institutionId?: string | null;
   isGlobal: boolean;
   scopeHash: string;
 }

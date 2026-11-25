@@ -1,6 +1,6 @@
-import type { Id } from "#/modules/shared/schema/type/id.type.ts";
+import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 
 /** Office Key */
 export interface OfficeKey {
-  officeId: Id;
+  code: IdentityCode;
 }

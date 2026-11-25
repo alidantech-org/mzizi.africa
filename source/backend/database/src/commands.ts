@@ -2,6 +2,7 @@
 import { SQL } from "bun";
 import { APPLICATION_ROLES, adminUrl, paths, TARGET_NAME } from "./config.ts";
 import { applied, applyRelease, ensure, reconcile } from "./ledger.ts";
+import { partitions as addPartitions, REFRESH_TARGETS, type RefreshTarget, refresh as refreshPrepared } from "./maintenance.ts";
 import { assemble as assembleSnapshot, loadReleases } from "./releases.ts";
 
 const LOCK_NAME = "mzizi.migrations";
@@ -121,4 +122,17 @@ export async function roles(): Promise<string> {
     }
     return `roles ready for ${TARGET_NAME}: ${APPLICATION_ROLES.map((entry) => entry.role).join(", ")} on ${schemas.length} schema(s)`;
   });
+}
+
+/** Rebuilds prepared tables (outlines, pieces, figures); all of them when none is named. */
+export async function refresh(names: readonly string[]): Promise<string[]> {
+  const unknown = names.filter((name) => !REFRESH_TARGETS.includes(name as RefreshTarget));
+  if (unknown.length > 0) throw new Error(`unknown refresh target(s): ${unknown.join(", ")}; use ${REFRESH_TARGETS.join(", ")}`);
+  const targets = names.length > 0 ? REFRESH_TARGETS.filter((target) => names.includes(target)) : REFRESH_TARGETS;
+  return await withAdmin((sql) => refreshPrepared(sql, targets));
+}
+
+/** Adds the missing monthly partitions of month-partitioned tables, through `YYYY-MM` or a year ahead. */
+export async function partitions(through?: string): Promise<string[]> {
+  return await withAdmin((sql) => addPartitions(sql, through));
 }

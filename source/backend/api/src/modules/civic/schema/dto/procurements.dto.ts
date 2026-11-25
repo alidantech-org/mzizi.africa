@@ -1,4 +1,5 @@
 import {
+  IsEnum,
   IsInt,
   IsISO8601,
   IsOptional,
@@ -10,23 +11,29 @@ import {
   MinLength,
   ValidateIf,
 } from "class-validator";
+
+import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
+import { IdentityKind } from "#/modules/shared/schema/enum/identity-kind.enum.ts";
 import type { AmountMinorUnits } from "#/modules/shared/schema/type/amount-minor-units.type.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
-import type { Name } from "#/modules/shared/schema/type/name.type.ts";
 import type { NonNegativeInteger } from "#/modules/shared/schema/type/non-negative-integer.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One public procurement process run by a buyer, optionally linked to a project. (entity)
+ * A tender. Its title is an `identity.names` row and its tender number an `identity.identifiers` row. (entity)
  */
 export class ProcurementsDto {
   @IsOptional()
-  @ValidateIf((object) => object.awardedOn !== null)
-  @IsISO8601({ strict: true })
-  awardedOn?: CalendarDate | null;
+  @ValidateIf((object) => object.amount !== null)
+  @IsInt()
+  @Min(0)
+  @Satisfies<ProcurementsDto>((object) => object.amount == null || object.currencyId != null, {
+    message: "Procurement Amount Has Currency",
+  })
+  amount?: AmountMinorUnits | null;
 
   @IsOptional()
   @ValidateIf((object) => object.bidderCount !== null)
@@ -36,13 +43,11 @@ export class ProcurementsDto {
 
   @IsString()
   @IsUUID()
-  buyerEntityId!: Id;
+  buyerId!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.categoryId !== null)
   @IsString()
   @IsUUID()
-  categoryId?: Id | null;
+  categoryTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.closesOn !== null)
@@ -59,11 +64,9 @@ export class ProcurementsDto {
   )
   code!: IdentityCode;
 
-  @IsOptional()
-  @ValidateIf((object) => object.countryId !== null)
   @IsString()
   @IsUUID()
-  countryId?: Id | null;
+  countryId!: Id;
 
   @IsISO8601({})
   createdAt!: Instant;
@@ -80,30 +83,30 @@ export class ProcurementsDto {
   deletedAt?: Instant | null;
 
   @IsOptional()
-  @ValidateIf((object) => object.estimatedAmountMinorUnits !== null)
-  @IsInt()
-  @Min(0)
-  estimatedAmountMinorUnits?: AmountMinorUnits | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.evaluationBasisId !== null)
+  @ValidateIf((object) => object.evaluationTerm !== null)
   @IsString()
   @IsUUID()
-  evaluationBasisId?: Id | null;
+  evaluationTerm?: Id | null;
 
   @IsString()
   @IsUUID()
   id!: Id;
 
+  @IsEnum(IdentityKind)
+  @Satisfies<ProcurementsDto>((object) => object.identityKind === "procurement", {
+    message: "Procurement Kind",
+  })
+  identityKind!: IdentityKind;
+
   @IsOptional()
-  @ValidateIf((object) => object.natureId !== null)
+  @ValidateIf((object) => object.natureTerm !== null)
   @IsString()
   @IsUUID()
-  natureId?: Id | null;
+  natureTerm?: Id | null;
 
   @IsString()
   @IsUUID()
-  procedureKindId!: Id;
+  procedureTerm!: Id;
 
   @IsOptional()
   @ValidateIf((object) => object.projectId !== null)
@@ -116,31 +119,9 @@ export class ProcurementsDto {
   @IsISO8601({ strict: true })
   publishedOn?: CalendarDate | null;
 
-  @IsOptional()
-  @ValidateIf((object) => object.reference !== null)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  reference?: Name | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
   @IsString()
   @IsUUID()
-  sourceCitationId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.statusId !== null)
-  @IsString()
-  @IsUUID()
-  statusId?: Id | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.title !== null)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(300)
-  title?: Name | null;
+  statusTerm!: Id;
 
   @IsISO8601({})
   updatedAt!: Instant;

@@ -1,26 +1,27 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/enums/shared/date_precision.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/period_entity.dart';
+import 'package:mzizi_api/src/models/reference/hierarchies.dart';
+import 'package:mzizi_api/src/models/reference/levels.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'relationships.g.dart';
 
-/// A typed, dated directed relationship between features; separate rows allow overlapping administrative, electoral, statistical and other systems.
+/// A dated link between places; a parent link in a hierarchy also records the inner place's level.
 @JsonSerializable(includeIfNull: false)
 class GeographyRelationships {
   const GeographyRelationships({
     required this.createdAt,
     this.deletedAt,
     this.endsOn,
-    this.fromToPrecision,
     this.fromYear,
+    this.hierarchyId,
     required this.id,
+    required this.kindTerm,
+    this.levelId,
     required this.objectFeatureId,
-    required this.relationshipKindId,
     this.startsOn,
     required this.subjectFeatureId,
-    required this.systemId,
     this.toYear,
     required this.updatedAt,
     required this.version,
@@ -28,14 +29,14 @@ class GeographyRelationships {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? endsOn;
-  final SharedDatePrecision? fromToPrecision;
   final int? fromYear;
+  final String? hierarchyId;
   final String id;
+  final String kindTerm;
+  final String? levelId;
   final String objectFeatureId;
-  final String relationshipKindId;
   final DateTime? startsOn;
   final String subjectFeatureId;
-  final String systemId;
   final int? toYear;
   final DateTime updatedAt;
   final int version;

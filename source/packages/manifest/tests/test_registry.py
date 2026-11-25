@@ -10,7 +10,6 @@ from mzizi_manifest.features.registry.scan import scan
 from mzizi_manifest.orchestrator.cli import main
 
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "schema"
-SEED_ROOT = SCHEMA_ROOT.parents[1] / "seed"
 
 A = "pg.src.srs.ke.a"
 B = "pg.src.srs.ke.b"
@@ -54,12 +53,6 @@ def test_the_example_tree_resolves_every_code() -> None:
     assert kinds["sys.eng.job.ke.example-ministry-publications"] is Kind.JOB
     users = result.registry.users_of("sys.trm.ke.office-names")
     assert [e.code for e in users] == ["pg.src.srs.ke.example-ministry"]
-
-
-def test_the_real_seed_tree_has_no_problems() -> None:
-    result = scan(SEED_ROOT)
-    assert result.problems == []
-    assert result.registry.resolve("sys.eng.web.classification").kind is Kind.ENGINE  # type: ignore[union-attr]
 
 
 def test_a_valid_tree_with_a_module_mapping_and_global_sharing(tmp_path: Path) -> None:

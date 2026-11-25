@@ -8,11 +8,9 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
-
 
 class DomainsRow(BaseModel):
-    """A host name a source is served from. A host belongs to one source at a time; its validity period records moves."""
+    """A host name a source publishes on."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -26,19 +24,18 @@ class DomainsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
+    contact_id: UUID | None = None
     created_at: datetime
     deleted_at: datetime | None = None
     ends_on: date | None = None
-    entity_id: UUID | None = None
-    from_to_precision: DatePrecision | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     host: Annotated[str, Field(min_length=1, max_length=255)]
     id: UUID
     last_checked_at: datetime | None = None
-    official_contact_id: UUID | None = None
+    owner_id: UUID | None = None
     source_id: UUID | None = None
     starts_on: date | None = None
-    status_id: UUID | None = None
+    status_term: UUID
     template_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime

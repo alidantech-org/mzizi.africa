@@ -60,7 +60,7 @@ def candidates_sql(stored: Stored) -> sql.Composed:
     folded = sql.SQL("unaccent(lower(n.{}))").format(sql.Identifier(stored.text_column))
     kind = sql.SQL("coalesce(k.code, '')") if stored.kind_column else sql.SQL("''")
     join_kind = (
-        sql.SQL("LEFT JOIN reference.values k ON k.id = t.{}").format(sql.Identifier(stored.kind_column))
+        sql.SQL("LEFT JOIN vocabulary.terms k ON k.id = t.{}").format(sql.Identifier(stored.kind_column))
         if stored.kind_column
         else sql.SQL("")
     )

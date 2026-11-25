@@ -4,8 +4,10 @@ import {
 } from "@test/modules/common/schema/dto/testing/examples.ts";
 import { SubjectTable } from "#/modules/shared/schema/enum/subject-table.enum.ts";
 import { VerificationOutcome } from "#/modules/source/schema/enum/verification-outcome.enum.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { codedSubjectEntityExample } from "@test/modules/shared/schema/dto/examples/coded-subject-entity.dto.example.ts";
+import { accountsExample } from "@test/modules/auth/schema/dto/examples/accounts.dto.example.ts";
+import { languagesExample } from "@test/modules/reference/schema/dto/examples/languages.dto.example.ts";
+import { codedEntityExample } from "@test/modules/shared/schema/dto/examples/coded-entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Verifications, for generated tests. */
 export const verificationsExample: ContractExample = contractExample({
@@ -49,21 +51,27 @@ export const verificationsExample: ContractExample = contractExample({
       spec: { kind: "temporal", temporal: "instant" },
     },
     {
-      name: "explanation",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", maxLength: 4000 },
-    },
-    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "methodId",
+      name: "methodTerm",
       optional: false,
       nullable: false,
+      spec: { kind: "string", format: "uuid" },
+    },
+    {
+      name: "note",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", minLength: 1, maxLength: 4000 },
+    },
+    {
+      name: "noteLanguageId",
+      optional: true,
+      nullable: true,
       spec: { kind: "string", format: "uuid" },
     },
     {
@@ -73,10 +81,10 @@ export const verificationsExample: ContractExample = contractExample({
       spec: { kind: "enum", values: Object.values(VerificationOutcome) },
     },
     {
-      name: "reviewerSnapshot",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "json" },
+      name: "reviewerId",
+      optional: true,
+      nullable: true,
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "subjectId",

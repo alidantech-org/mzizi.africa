@@ -1,12 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/filesystem/retention.dart';
-import 'package:mzizi_api/src/models/filesystem/file_versions.dart';
 import 'package:mzizi_api/src/models/filesystem/folders.dart';
+import 'package:mzizi_api/src/models/filesystem/versions.dart';
 import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 
 part 'files.g.dart';
 
-/// Stable logical file identity; equal content hashes may belong to different files.
+/// A stable logical file; equal content hashes may belong to different files.
 @JsonSerializable(includeIfNull: false)
 class FilesystemFiles {
   const FilesystemFiles({
@@ -18,6 +18,7 @@ class FilesystemFiles {
     required this.id,
     required this.name,
     required this.retention,
+    this.tags,
     required this.updatedAt,
     required this.version,
   });
@@ -29,6 +30,7 @@ class FilesystemFiles {
   final String id;
   final String name;
   final FilesystemRetention retention;
+  final List<String>? tags;
   final DateTime updatedAt;
   final int version;
 

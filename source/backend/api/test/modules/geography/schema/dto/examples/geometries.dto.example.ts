@@ -2,10 +2,9 @@ import {
   type ContractExample,
   contractExample,
 } from "@test/modules/common/schema/dto/testing/examples.ts";
-import { DatePrecision } from "#/modules/shared/schema/enum/date-precision.enum.ts";
 import { featuresExample } from "@test/modules/geography/schema/dto/examples/features.dto.example.ts";
-import { valueExample } from "@test/modules/reference/schema/dto/examples/value.dto.example.ts";
-import { periodEntityExample } from "@test/modules/shared/schema/dto/examples/period-entity.dto.example.ts";
+import { entityExample } from "@test/modules/shared/schema/dto/examples/entity.dto.example.ts";
+import { termsExample } from "@test/modules/vocabulary/schema/dto/examples/terms.dto.example.ts";
 
 /** The contract shape of Geometries, for generated tests. */
 export const geometriesExample: ContractExample = contractExample({
@@ -18,7 +17,7 @@ export const geometriesExample: ContractExample = contractExample({
       spec: { kind: "number" },
     },
     {
-      name: "basisId",
+      name: "basisTerm",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
@@ -60,12 +59,6 @@ export const geometriesExample: ContractExample = contractExample({
       spec: { kind: "string", format: "uuid" },
     },
     {
-      name: "fromToPrecision",
-      optional: true,
-      nullable: true,
-      spec: { kind: "enum", values: Object.values(DatePrecision) },
-    },
-    {
       name: "fromYear",
       optional: true,
       nullable: true,
@@ -78,34 +71,10 @@ export const geometriesExample: ContractExample = contractExample({
       spec: { kind: "unknown" },
     },
     {
-      name: "geometryRoleId",
-      optional: false,
-      nullable: false,
-      spec: { kind: "string", format: "uuid" },
-    },
-    {
       name: "id",
       optional: false,
       nullable: false,
       spec: { kind: "string", format: "uuid" },
-    },
-    {
-      name: "maxZoom",
-      optional: true,
-      nullable: true,
-      spec: { kind: "number", integer: true, min: 0 },
-    },
-    {
-      name: "minZoom",
-      optional: true,
-      nullable: true,
-      spec: { kind: "number", integer: true, min: 0 },
-    },
-    {
-      name: "observedAt",
-      optional: true,
-      nullable: true,
-      spec: { kind: "temporal", temporal: "instant" },
     },
     {
       name: "revision",
@@ -114,10 +83,10 @@ export const geometriesExample: ContractExample = contractExample({
       spec: { kind: "number", integer: true, min: 1 },
     },
     {
-      name: "srid",
+      name: "roleTerm",
       optional: false,
       nullable: false,
-      spec: { kind: "number", integer: true, min: 1 },
+      spec: { kind: "string", format: "uuid" },
     },
     {
       name: "supersedesId",
@@ -145,46 +114,6 @@ export const geometriesExample: ContractExample = contractExample({
     },
   ],
   invariants: [
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "fromYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "toYear" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "fromYear" },
-          operator: "less-than-or-equal",
-          right: { field: "toYear" },
-        },
-      ],
-    },
-    {
-      any: true,
-      comparisons: [
-        {
-          left: { field: "minZoom" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "maxZoom" },
-          operator: "equal",
-          right: { literal: null },
-        },
-        {
-          left: { field: "minZoom" },
-          operator: "less-than",
-          right: { field: "maxZoom" },
-        },
-      ],
-    },
     {
       any: false,
       comparisons: [

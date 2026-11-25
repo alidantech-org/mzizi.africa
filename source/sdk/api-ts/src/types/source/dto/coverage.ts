@@ -1,21 +1,22 @@
-/** What a source or product covers, for which place, years and kind of record, how completely, and when that was checked. It makes every 'none recorded' honest: the page says which sources were checked, and a gap is never read as zero. */
+/** Expected coverage, for acquisition planning. */
 export interface SourceCoverage {
-  checkedOn: string;
+  checkedOn?: string | null;
   code: string;
   countryId: string;
-  coverageSubjectId: string;
   createdAt: string;
   deletedAt?: string | null;
-  expectedPublicationUrl?: string | null;
+  expectedUrl?: string | null;
+  featureId?: string | null;
+  fromYear?: number | null;
   id: string;
-  levelId: string;
+  levelId?: string | null;
   note?: string | null;
-  periodFrom?: string | null;
-  periodUntil?: string | null;
+  noteLanguageId?: string | null;
   productId?: string | null;
-  publisherEntityId?: string | null;
-  scopeUnitFeatureId?: string | null;
+  publisherId?: string | null;
   sourceId?: string | null;
+  subjectTerm: string;
+  toYear?: number | null;
   updatedAt: string;
   version: number;
 }

@@ -1,35 +1,39 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/models/geography/features.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
+import 'package:mzizi_api/src/models/history/occurrences.dart';
+import 'package:mzizi_api/src/models/reference/languages.dart';
 import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'changes.g.dart';
 
-/// An edge in a geographic transformation; multiple rows sharing transformation_id represent splits, mergers, creation or dissolution without overwriting predecessor identities.
+/// One edge of a boundary change: splits, merges, creation or dissolution, without overwriting the places.
 @JsonSerializable(includeIfNull: false)
 class GeographyChanges {
   const GeographyChanges({
-    required this.changeKindId,
     required this.createdAt,
     this.deletedAt,
     this.effectiveOn,
-    this.explanation,
     required this.id,
+    required this.kindTerm,
+    this.note,
+    this.noteLanguageId,
+    this.occurrenceId,
     this.predecessorFeatureId,
     this.successorFeatureId,
-    required this.transformationId,
     required this.updatedAt,
     required this.version,
   });
-  final String changeKindId;
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? effectiveOn;
-  final String? explanation;
   final String id;
+  final String kindTerm;
+  final String? note;
+  final String? noteLanguageId;
+  final String? occurrenceId;
   final String? predecessorFeatureId;
   final String? successorFeatureId;
-  final String transformationId;
   final DateTime updatedAt;
   final int version;
 

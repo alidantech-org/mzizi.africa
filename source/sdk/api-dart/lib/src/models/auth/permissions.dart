@@ -1,10 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mzizi_api/src/enums/auth/auth_action.dart';
+import 'package:mzizi_api/src/enums/auth/resource_type.dart';
 import 'package:mzizi_api/src/models/shared/coded_identified.dart';
 
 part 'permissions.g.dart';
 
-/// Named action on a resource type, optionally narrowed to a field group.
+/// A named action on a resource type, optionally narrowed to a field group.
 @JsonSerializable(includeIfNull: false)
 class AuthPermissions {
   const AuthPermissions({
@@ -22,7 +23,7 @@ class AuthPermissions {
   final String? fieldGroup;
   final String id;
   final bool isActive;
-  final String resourceType;
+  final AuthResourceType resourceType;
 
   factory AuthPermissions.fromJson(Map<String, dynamic> json) => _$AuthPermissionsFromJson(json);
 

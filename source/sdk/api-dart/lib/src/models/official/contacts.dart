@@ -1,41 +1,37 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/official/individuals.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
-import 'package:mzizi_api/src/models/source/citations.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/shared/entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'contacts.g.dart';
 
-/// One sourced contact channel for exactly one identity; visibility class governs handling of private values.
+/// A public or official-business contact of a named thing.
 @JsonSerializable(includeIfNull: false)
 class OfficialContacts {
   const OfficialContacts({
-    required this.code,
     required this.createdAt,
     this.deletedAt,
-    this.entityId,
+    this.fromYear,
     required this.id,
-    this.individualId,
-    required this.kindId,
-    this.sourceCitationId,
+    required this.identityId,
+    required this.kindTerm,
+    this.toYear,
     required this.updatedAt,
     required this.value,
     required this.version,
-    required this.visibilityId,
+    required this.visibilityTerm,
   });
-  final String code;
   final DateTime createdAt;
   final DateTime? deletedAt;
-  final String? entityId;
+  final int? fromYear;
   final String id;
-  final String? individualId;
-  final String kindId;
-  final String? sourceCitationId;
+  final String identityId;
+  final String kindTerm;
+  final int? toYear;
   final DateTime updatedAt;
   final String value;
   final int version;
-  final String visibilityId;
+  final String visibilityTerm;
 
   factory OfficialContacts.fromJson(Map<String, dynamic> json) => _$OfficialContactsFromJson(json);
 

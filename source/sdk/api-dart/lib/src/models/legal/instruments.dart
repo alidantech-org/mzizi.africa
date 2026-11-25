@@ -1,12 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mzizi_api/src/models/geography/features.dart';
-import 'package:mzizi_api/src/models/official/entities.dart';
-import 'package:mzizi_api/src/models/reference/value.dart';
-import 'package:mzizi_api/src/models/shared/coded_entity.dart';
+import 'package:mzizi_api/src/enums/shared/identity_kind.dart';
+import 'package:mzizi_api/src/models/governance/jurisdictions.dart';
+import 'package:mzizi_api/src/models/identity/identities.dart';
+import 'package:mzizi_api/src/models/shared/identity_entity.dart';
+import 'package:mzizi_api/src/models/vocabulary/terms.dart';
 
 part 'instruments.g.dart';
 
-/// Stable instrument identity, independent of its names, editions, downloads and languages.
+/// A legal instrument (the Constitution of Kenya 2010, an Act). Its titles are `identity.names`.
 @JsonSerializable(includeIfNull: false)
 class LegalInstruments {
   const LegalInstruments({
@@ -14,12 +15,15 @@ class LegalInstruments {
     required this.createdAt,
     this.deletedAt,
     this.enactedOn,
+    this.fromYear,
     required this.id,
-    this.issuingEntityId,
-    this.issuingUnitId,
-    required this.kindId,
+    required this.identityKind,
+    this.issuerId,
+    this.jurisdictionId,
+    required this.kindTerm,
     this.publishedOn,
-    this.statusId,
+    this.statusTerm,
+    this.toYear,
     required this.updatedAt,
     required this.version,
   });
@@ -27,12 +31,15 @@ class LegalInstruments {
   final DateTime createdAt;
   final DateTime? deletedAt;
   final DateTime? enactedOn;
+  final int? fromYear;
   final String id;
-  final String? issuingEntityId;
-  final String? issuingUnitId;
-  final String kindId;
+  final SharedIdentityKind identityKind;
+  final String? issuerId;
+  final String? jurisdictionId;
+  final String kindTerm;
   final DateTime? publishedOn;
-  final String? statusId;
+  final String? statusTerm;
+  final int? toYear;
   final DateTime updatedAt;
   final int version;
 

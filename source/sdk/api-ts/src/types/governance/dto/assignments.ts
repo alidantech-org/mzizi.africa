@@ -1,21 +1,15 @@
-import { SharedDatePrecision } from "#sdk/types/shared/enums/date-precision.ts";
-
-/** Who is responsible for a function, how it is shared, where a person starts, and the law that assigns it. */
+/** Which institution or position carries a function, and who leads it. */
 export interface GovernanceAssignments {
-  basisProvisionId?: string | null;
-  code: string;
   createdAt: string;
   deletedAt?: string | null;
-  fromToPrecision?: SharedDatePrecision | null;
   fromYear?: number | null;
   functionId: string;
   id: string;
+  initiatorId?: string | null;
   institutionId?: string | null;
-  obligorKindId?: string | null;
-  shareId: string;
-  sourceCitationId?: string | null;
-  startInstitutionId?: string | null;
-  startPositionId?: string | null;
+  positionId?: string | null;
+  provisionId?: string | null;
+  shareTerm: string;
   toYear?: number | null;
   updatedAt: string;
   version: number;

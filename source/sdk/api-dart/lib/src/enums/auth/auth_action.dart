@@ -9,7 +9,7 @@ enum AuthAuthAction {
   @JsonValue('delete')
   delete,
   @JsonValue('export')
-  export,
+  exportValue,
   @JsonValue('publish')
   publish,
   @JsonValue('read')

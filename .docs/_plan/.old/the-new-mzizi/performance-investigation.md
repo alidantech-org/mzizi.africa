@@ -78,6 +78,6 @@ The candidate improvement must be benchmarked before/after on the same dataset, 
 ## Reference
 
 - [Current SQL](../../../../source/backend/database/sql/schema.sql)
-- [Explorer queries](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/queries.ts)
-- [Geometry reader](../../../../source/backend/api/src/modules/explorer/features/explorer/reads/boundaries.ts)
+- `Explorer queries` (removed in the 2026-11-25 rebuild)
+- `Geometry reader` (removed in the 2026-11-25 rebuild)
 - [Database migration guidance](../../../../source/backend/database/migrations/README.md)

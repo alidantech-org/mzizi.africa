@@ -4,7 +4,7 @@ import 'package:mzizi_api/src/models/shared/coded_entity.dart';
 
 part 'editions.g.dart';
 
-/// A meaningful legal content state of an instrument. Not a download and not a Source publication edition.
+/// One edition of an instrument with its consolidation and commencement dates.
 @JsonSerializable(includeIfNull: false)
 class LegalEditions {
   const LegalEditions({
@@ -17,7 +17,6 @@ class LegalEditions {
     required this.designation,
     required this.id,
     required this.instrumentId,
-    required this.observedAt,
     this.repealedOn,
     this.supersedesId,
     required this.updatedAt,
@@ -32,7 +31,6 @@ class LegalEditions {
   final String designation;
   final String id;
   final String instrumentId;
-  final DateTime observedAt;
   final DateTime? repealedOn;
   final String? supersedesId;
   final DateTime updatedAt;

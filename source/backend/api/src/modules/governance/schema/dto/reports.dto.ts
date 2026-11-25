@@ -5,21 +5,22 @@ import {
   IsString,
   IsUUID,
   Matches,
+  Max,
   MaxLength,
   Min,
   MinLength,
   ValidateIf,
 } from "class-validator";
 
-import { Satisfies } from "#/modules/common/schema/dto/validators/satisfies.ts";
 import type { Id } from "#/modules/shared/schema/type/id.type.ts";
 import type { IdentityCode } from "#/modules/shared/schema/type/identity-code.type.ts";
 import type { PositiveInteger } from "#/modules/shared/schema/type/positive-integer.type.ts";
+import type { Year } from "#/modules/shared/schema/type/year.type.ts";
 import type { CalendarDate } from "#/modules/shared/schema/type/calendar-date.type.ts";
 import type { Instant } from "#/modules/shared/schema/type/instant.type.ts";
 
 /**
- * One expected or found filing under an obligation, for one reporter and period, with its status and the document when found. Absence is a status, not a missing row. (entity)
+ * One report filed (or not) against an obligation. (entity)
  */
 export class ReportsDto {
   @IsOptional()
@@ -56,6 +57,13 @@ export class ReportsDto {
   @IsISO8601({ strict: true })
   filedOn?: CalendarDate | null;
 
+  @IsOptional()
+  @ValidateIf((object) => object.fromYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  fromYear?: Year | null;
+
   @IsString()
   @IsUUID()
   id!: Id;
@@ -64,38 +72,20 @@ export class ReportsDto {
   @IsUUID()
   obligationId!: Id;
 
-  @IsOptional()
-  @ValidateIf((object) => object.periodFrom !== null)
-  @IsISO8601({ strict: true })
-  @Satisfies<ReportsDto>(
-    (object) =>
-      object.periodFrom == null ||
-      object.periodUntil == null ||
-      object.periodFrom <= object.periodUntil,
-    {
-      message: "Report Period Is Ordered",
-    },
-  )
-  periodFrom?: CalendarDate | null;
-
-  @IsOptional()
-  @ValidateIf((object) => object.periodUntil !== null)
-  @IsISO8601({ strict: true })
-  periodUntil?: CalendarDate | null;
+  @IsString()
+  @IsUUID()
+  reporterId!: Id;
 
   @IsString()
   @IsUUID()
-  reporterEntityId!: Id;
+  statusTerm!: Id;
 
   @IsOptional()
-  @ValidateIf((object) => object.sourceCitationId !== null)
-  @IsString()
-  @IsUUID()
-  sourceCitationId?: Id | null;
-
-  @IsString()
-  @IsUUID()
-  statusId!: Id;
+  @ValidateIf((object) => object.toYear !== null)
+  @IsInt()
+  @Min(-10000)
+  @Max(3000)
+  toYear?: Year | null;
 
   @IsISO8601({})
   updatedAt!: Instant;

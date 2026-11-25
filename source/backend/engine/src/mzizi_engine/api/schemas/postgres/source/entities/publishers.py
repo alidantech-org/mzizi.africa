@@ -8,15 +8,17 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+
 
 class PublishersRow(BaseModel):
-    """Accepted publisher; an optional official identity distinguishes the organization from its publication channels."""
+    """Who publishes; a publisher shares its organisation's identity (`official.entities`)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "source.publishers"
 
-    classification_id: UUID | None = None
+    class_term: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -29,8 +31,7 @@ class PublishersRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
-    kind_id: UUID
-    name: Annotated[str, Field(min_length=1, max_length=300)]
-    official_entity_id: UUID | None = None
+    identity_kind: IdentityKind
+    kind_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

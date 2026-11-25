@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class LegalEditionsRow(BaseModel):
-    """A meaningful legal content state of an instrument. Not a download and not a Source publication edition."""
+    """One edition of an instrument with its consolidation and commencement dates."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -32,7 +32,6 @@ class LegalEditionsRow(BaseModel):
     designation: Annotated[str, Field(min_length=1, max_length=255)]
     id: UUID
     instrument_id: UUID
-    observed_at: datetime
     repealed_on: date | None = None
     supersedes_id: UUID | None = None
     updated_at: datetime

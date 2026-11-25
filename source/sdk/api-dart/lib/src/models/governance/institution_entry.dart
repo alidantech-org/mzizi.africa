@@ -6,11 +6,24 @@ part 'institution_entry.g.dart';
 /// Institution Entry
 @JsonSerializable(includeIfNull: false)
 class GovernanceInstitutionEntry {
-  const GovernanceInstitutionEntry({required this.code, required this.id, required this.kind, required this.names});
+  const GovernanceInstitutionEntry({
+    this.armTerm,
+    this.classTerm,
+    required this.code,
+    this.fromYear,
+    required this.institutionId,
+    required this.kindTerm,
+    required this.names,
+    this.toYear,
+  });
+  final String? armTerm;
+  final String? classTerm;
   final String code;
-  final String id;
-  final String kind;
+  final int? fromYear;
+  final String institutionId;
+  final String kindTerm;
   final List<GovernanceInstitutionEntryNames> names;
+  final int? toYear;
 
   factory GovernanceInstitutionEntry.fromJson(Map<String, dynamic> json) => _$GovernanceInstitutionEntryFromJson(json);
 

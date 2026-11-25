@@ -8,17 +8,16 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.shared.enums.date_precision import DatePrecision
+from mzizi_engine.api.schemas.postgres.governance.enums.frequency import Frequency
 
 
 class ObligationsRow(BaseModel):
-    """A duty to report or publish, with who owes it, to whom, how often and the law that creates it. Each filing found is a report."""
+    """A duty to report that law sets; its explanation is a definition name."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "governance.obligations"
 
-    basis_provision_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -27,19 +26,13 @@ class ObligationsRow(BaseModel):
             pattern="^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
         ),
     ]
-    country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    description: Annotated[str, Field(max_length=4000)]
-    frequency_id: UUID
-    from_to_precision: DatePrecision | None = None
-    from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
+    frequency: Frequency
+    holder_id: UUID
     id: UUID
-    obligation_kind_id: UUID
-    obligor_institution_id: UUID | None = None
-    obligor_kind_id: UUID | None = None
-    recipient_entity_id: UUID | None = None
-    source_citation_id: UUID | None = None
-    to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
+    kind_term: UUID
+    provision_id: UUID | None = None
+    recipient_id: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

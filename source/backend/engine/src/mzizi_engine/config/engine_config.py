@@ -331,7 +331,9 @@ class EngineConfig(_Frozen):
         return self.crawler.user_agent
 
     def require_input_root(self) -> Path:
-        return self.crawler.input_root or _repository_root() / "seed"
+        return self.crawler.input_root or Path(
+            os.environ.get("MZIZI_SEED_ROOT") or _repository_root() / ".dev" / "seed"
+        )
 
     def require_search_keys(self) -> SearchKeys:
         brave = self.search_missing("brave")
@@ -392,6 +394,6 @@ def _list(text: str) -> tuple[str, ...]:
 
 def _repository_root() -> Path:
     for parent in Path(__file__).resolve().parents:
-        if (parent / "seed").is_dir() and (parent / "pyproject.toml").is_file():
+        if (parent / "dryv.yaml").is_file() and (parent / "pyproject.toml").is_file():
             return parent
     return Path.cwd()
