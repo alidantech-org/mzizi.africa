@@ -10,6 +10,7 @@ import type { TrustedContext } from "#/database/persistence/persistence.types";
 import { AccountCollectionDto } from "#/modules/auth/schema/dto/account-collection.dto";
 import { AccountWindowDto } from "#/modules/auth/schema/dto/account-window.dto";
 import { LIST_ACCOUNTS_PLAN as plan } from "./list-accounts.config.ts";
+
 /** Named typed repository function; all SQL and transaction handling live in the runtime. */
 export async function listAccountsRepository(
   runtime: PersistenceRuntime,

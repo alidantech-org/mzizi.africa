@@ -9,6 +9,7 @@ import {
 import type { TrustedContext } from "#/database/persistence/persistence.types";
 import { AccountReadDto } from "#/modules/auth/schema/dto/account-read.dto";
 import { GET_MY_ACCOUNT_PLAN as plan } from "./get-my-account.config.ts";
+
 /** Named typed repository function; all SQL and transaction handling live in the runtime. */
 export async function getMyAccountRepository(
   runtime: PersistenceRuntime,
