@@ -14,8 +14,16 @@ import { TypeOrmConnection } from "#/database/persistence/typeorm-connection";
 
 /** The canonical store name the contracts declare (`dryv.yaml` stores.main). */
 const MAIN_STORE = "main";
-/** Prefix of every cache key, so several projects can share one Redis. */
-const CACHE_PREFIX = "mzizi:api:main";
+
+/** Prefix of every cache key: "mzizi:api:{environment}:{store}".
+ * Environment from NODE_ENV (dev/staging/prod); store from dryv.yaml stores.main.
+ * When you need to invalidate all keys in an environment (e.g., breaking API changes),
+ * update this prefix and redeploy. Keys are scoped by operation, so old entries expire naturally. */
+function cachePrefix(): string {
+  const env = process.env.NODE_ENV || "dev";
+  const store = MAIN_STORE;
+  return `mzizi:api:${env}:${store}`;
+}
 
 /** No sign-in is wired yet: requests carry no principal, so operations that require a policy fail closed. */
 @Injectable()
@@ -51,7 +59,7 @@ function redisCommands(client: RedisClient): RedisCommands {
       useFactory: (source: DataSource): PersistenceRuntime => {
         const stores = new StoreConnections(new Map([[MAIN_STORE, new TypeOrmConnection(source)]]));
         const redisUrl = process.env.REDIS_URL;
-        const cache = redisUrl ? new RedisCache(redisCommands(new RedisClient(redisUrl)), CACHE_PREFIX) : undefined;
+        const cache = redisUrl ? new RedisCache(redisCommands(new RedisClient(redisUrl)), cachePrefix()) : undefined;
         return new PersistenceRuntime(stores, cache);
       },
     },

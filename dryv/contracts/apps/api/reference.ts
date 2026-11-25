@@ -177,6 +177,7 @@ const io = reference.schemas({
 
 export const referenceOperations = {
   ...countries.operations({
+    /** Listed countries, cached 6h. Invalidated by: UpdateCountry, BulkUpdateCountries (future). */
     ListCountries: dryv
       .operation()
       .role("list")
@@ -188,6 +189,7 @@ export const referenceOperations = {
       .facets(({ input, output }) => ({
         http: dryv.http("GET", "/v1/reference/countries").input(input, dryv.queryObject()).output(output),
       })),
+    /** Country detail by code, cached 6h. Invalidated by: UpdateCountry (future). */
     GetCountry: dryv
       .operation()
       .role("detail")
@@ -201,6 +203,7 @@ export const referenceOperations = {
       })),
   }),
   ...languages.operations({
+    /** Listed languages, cached 6h. Invalidated by: UpdateLanguage, BulkUpdateLanguages (future). */
     ListLanguages: dryv
       .operation()
       .role("list")
@@ -214,6 +217,7 @@ export const referenceOperations = {
       })),
   }),
   ...divisions.operations({
+    /** Hierarchies for one country, cached 6h. Invalidated by: BulkUpdateHierarchies (future). */
     ListHierarchies: dryv
       .operation()
       .role("list")
@@ -227,6 +231,7 @@ export const referenceOperations = {
       })),
   }),
   ...measures.operations({
+    /** Listed measurement units, cached 6h. Invalidated by: UpdateUnit, BulkUpdateUnits (future). */
     ListUnits: dryv
       .operation()
       .role("list")
@@ -238,6 +243,7 @@ export const referenceOperations = {
       .facets(({ input, output }) => ({
         http: dryv.http("GET", "/v1/reference/units").input(input, dryv.queryObject()).output(output),
       })),
+    /** Listed currencies, cached 6h. Invalidated by: UpdateCurrency, BulkUpdateCurrencies (future). */
     ListCurrencies: dryv
       .operation()
       .role("list")
