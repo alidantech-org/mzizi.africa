@@ -1,5 +1,5 @@
 ---
-{id: TSK-7BA66E947A39,name: Rebuild the NestJS API module by module with Redis caching,type: task,status: planned,priority: high,created_at: 2026-11-24T19:53:09.464Z,updated_at: 2026-11-24T20:02:07.861Z,depends_on: [TSK-6065C44E5476],order: 4096}
+{id: TSK-7BA66E947A39,name: Rebuild the NestJS API module by module with Redis caching,type: task,status: planned,priority: high,created_at: 2026-11-24T19:53:09.464Z,updated_at: 2026-11-25T03:25:38.337Z,depends_on: [TSK-1265807A54E3],order: 4096}
 ---
 
 # Rebuild the NestJS API module by module with Redis caching
@@ -111,6 +111,11 @@ Task 5 of 7; starts only when the seed removal task is completed. Reference layo
 
 - [ ] Regenerate the API from the redesigned contracts in the new clean format using the Dryv `nestjs-persistence` pack (typed reads, writes, transactions, scoped Redis caching)
 - [ ] Generated modules follow `.docs/rules/api-modules.md`: schema-named modules, no overlap, one frontend-mapping module
+
+## When something blocks (owner direction, 25 November 2026)
+
+- [ ] Fix Mzizi contracts and local packs when generation or generated code is wrong
+- [ ] In extreme cases, fix the problem in Dryv itself instead of stopping, following Dryv's own rules: Dryv is a neutral, general system and must never gain Mzizi-specific behaviour; record each Dryv change in DRYV_GAPS
 
 ## Acceptance checklist
 

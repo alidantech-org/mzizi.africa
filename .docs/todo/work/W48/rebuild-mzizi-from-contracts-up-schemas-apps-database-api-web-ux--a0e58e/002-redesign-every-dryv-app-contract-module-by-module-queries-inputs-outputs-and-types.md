@@ -144,6 +144,11 @@ Task 2 of 7; starts only when task 1 is completed. Current contracts: `dryv/cont
 - [ ] Design one frontend-mapping module that composes data from the schema modules into clean typed shapes, and record its name in the rule
 - [ ] Bind the packs needed for the new API format and plan a clean regeneration
 
+## Breakage scope (owner direction, 25 November 2026)
+
+- [ ] Breakage is allowed **only** in `source/apps/` until the web task; every other part of `source/` (backend API, engine, database, packages, `source/schema`, `source/sdk`) must build, typecheck and pass tests after this task
+- [ ] Regenerate the Python engine schemas and models and the machine-readable schemas in `source/schema` from the new contracts, and fix their callers
+
 ## Acceptance checklist
 
 - [ ] No API type, DTO or query shape exists only in hand-written code

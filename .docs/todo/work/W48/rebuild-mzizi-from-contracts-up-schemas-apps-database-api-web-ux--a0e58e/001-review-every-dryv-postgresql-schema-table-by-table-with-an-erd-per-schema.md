@@ -1,312 +1,190 @@
 ---
-{id: TSK-D0EC3D8B6D47,name: "Review every Dryv PostgreSQL schema table by table, with an ERD per schema",type: task,status: planned,priority: high,created_at: 2026-11-24T19:52:48.881Z,updated_at: 2026-11-25T00:21:01.183Z,order: 1024,depends_on: [TSK-C61A06DEFCB9]}
+{id: TSK-D0EC3D8B6D47,name: Author the approved database design into the Dryv schema contracts,type: task,status: planned,priority: high,created_at: 2026-11-24T19:52:48.881Z,updated_at: 2026-11-25T03:25:34.381Z,order: 1024,depends_on: [TSK-C61A06DEFCB9]}
 ---
 
-# Review every Dryv PostgreSQL schema table by table, with an ERD per schema
+# Author the approved database design into the Dryv schema contracts
 
 ## Goal
 
-Revisit the whole database design before anything is regenerated. For each schema in `dryv/contracts/schemas/postgres`, read every table, understand why it exists, how it connects to other tables inside and outside the schema, and whether it preserves Mzizi's evidence path (raw artifact, extraction, candidate, review, accepted version), historical time and place, and uncertainty. The outcome is an approved, documented design with one ERD per schema, ready for the app contracts and the database restart.
+Turn the approved design in `.docs/design/data/FOUNDATION_REDESIGN.md` into the authored Dryv schema contracts under `dryv/contracts/schemas`, schema by schema, so that generated SQL matches the design exactly: new schemas (identity, vocabulary, product, media, legislature, election, economy, history), moved and renamed tables, `_term` columns, identity-backed tables, partitioning, and descriptions that become SQL comments. This is the first implementation step of the rebuild wave; every later step generates from these contracts.
 
 ## Context
 
-This is task 1 of 7 in the wave and must be finished before any other. The authored contracts are in `dryv/contracts/schemas/postgres/*.ts`, with shared building blocks in `_base.ts`, `_shared.ts`, `_periods.ts` and `_subjects.ts`. The generated SQL is `source/backend/database/sql/schema.sql`. Read `.docs/docs/DOMAINS.md`, `.docs/design/data/DATABASE_ARCHITECTURE.md`, `.docs/rules/code-columns.md`, `.docs/rules/versioning.md` and the PostgreSQL review in `.docs/_plan/the-new-mzizi/`. The `accountability` schema is analytical and has no persisted tables; confirm that stays true. Identity columns stay `code`, dotted and lowercase. Do not invent version fields. Record each schema's findings in a review note under `.docs/design/data/` and draw its ERD as Mermaid `erDiagram` in the same note.
+The design was discussed and approved with the owner on 24–25 November 2026 (discussion task TSK-C61A06DEFCB9, 303/303). FOUNDATION_REDESIGN is the single source of truth; where an older document disagrees, FOUNDATION_REDESIGN wins. Dryv now supports what this needs (see DRYV_GAPS, "Rebuild capabilities delivered"): schema-facet LIST/RANGE/HASH partitioning with composite keys, SQL comments, enum and conditional checks and composite references. Update the local Dryv checkout (`~/Projects/personal/alidantech-org/codepot/dryv`) and relink before authoring. Rules: camelCase in contracts, snake_case in SQL (section 24); no citation or observed-at columns (section 23); every table keeps `code`; years required, dates optional; single-word table names; `country_id` only on large tables; `.docs/rules/typed-code.md`, `code-columns.md`, `versioning.md` (never invent versions).
 
-For every table the review answers: what it stores, its key and `code` rule, every foreign key and the reason for it, time columns (observed vs valid), provenance and source links, soft delete, expected size, the reads that will hit it and the indexes those need, and whether it should be merged, split, renamed or removed.
+**Descriptions replace explanatory code comments.** Where a contract uses a code comment to explain a schema, table or column, move that explanation into a Dryv description so it is generated as a SQL `COMMENT ON`; keep code comments only for notes that matter to contract authors and not to database readers. Write descriptions only where they add meaning.
 
-## Method for each schema
+**Partitioning must be declared, not left as notes:** `identity.names` and `identity.identifiers` by identity kind; `statistics.observations`, `statistics.breakdowns`, `statistics.figures`, `election.results`, `election.tallies`, `legislature.votes`, `legislature.speeches`, `finance.flows`, `economy.prices`, `community.posts` by country; `source.captures`, `source.discoveries`, `community.views`, `community.notifications`, `community.dispatches` by month; `source.evidence` by subject table with a hash split for the largest.
 
-- [ ] Read the contract file and the shared bases it uses
-- [ ] Review each table (checklist below)
-- [ ] Map connections to other schemas
-- [ ] Draw the Mermaid ERD
-- [ ] Write the review note with proposed changes
-- [ ] Get owner approval for the proposed changes
+## Preparation
 
-## Schema `reference` (13 tables)
+- [ ] Update and relink the local Dryv checkout; confirm the partitioning, comment and integrity capabilities are available
+- [ ] Re-read FOUNDATION_REDESIGN sections 2–34 and list every contract file to create, rewrite or delete
+- [ ] Update `_base.ts`, `_shared.ts`, `_periods.ts` and `_subjects.ts` for identity-backed tables, `_term` columns and the removed subject links
 
-- [ ] `reference.copy`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.countries`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.instances`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.language_names`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.languages`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.patterns`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.schemes`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.templates`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.topics`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.units`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.value_labels`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.value_relations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference.values`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `reference`: cross-schema connections mapped
-- [ ] `reference`: ERD drawn
-- [ ] `reference`: review note written and approved
+## Schema `reference`
 
-## Schema `auth` (11 tables)
+- [ ] Author `reference` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `reference` partitioning where the design requires it
+- [ ] Move `reference` explanations from code comments into descriptions
+- [ ] Generate SQL for `reference` and check it against the design
 
-- [ ] `auth.accounts`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.delegation_roles`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.delegations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.invitations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.login_identities`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.memberships`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.permissions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.role_assignments`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.role_permissions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.roles`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth.scopes`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `auth`: cross-schema connections mapped
-- [ ] `auth`: ERD drawn
-- [ ] `auth`: review note written and approved
+## Schema `identity`
 
-## Schema `geography` (9 tables)
+- [ ] Author `identity` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `identity` partitioning where the design requires it
+- [ ] Move `identity` explanations from code comments into descriptions
+- [ ] Generate SQL for `identity` and check it against the design
 
-- [ ] `geography.assets`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography.changes`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography.classifications`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography.features`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography.geometries`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography.identifiers`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography.levels`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography.names`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography.relationships`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `geography`: cross-schema connections mapped
-- [ ] `geography`: ERD drawn
-- [ ] `geography`: review note written and approved
+## Schema `vocabulary`
 
-## Schema `source` (18 tables)
+- [ ] Author `vocabulary` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `vocabulary` partitioning where the design requires it
+- [ ] Move `vocabulary` explanations from code comments into descriptions
+- [ ] Generate SQL for `vocabulary` and check it against the design
 
-- [ ] `source.addresses`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.artifacts`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.attributions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.captures`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.citations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.contenders`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.coverage`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.discoveries`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.disputes`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.domains`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.editions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.links`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.products`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.publishers`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.relationships`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.slugs`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.sources`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source.verifications`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `source`: cross-schema connections mapped
-- [ ] `source`: ERD drawn
-- [ ] `source`: review note written and approved
+## Schema `product`
 
-## Schema `filesystem` (9 tables)
+- [ ] Author `product` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `product` partitioning where the design requires it
+- [ ] Move `product` explanations from code comments into descriptions
+- [ ] Generate SQL for `product` and check it against the design
 
-- [ ] `filesystem.contents`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem.content_tags`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem.file_extensions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem.files`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem.file_versions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem.folders`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem.media`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem.taggings`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem.tags`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `filesystem`: cross-schema connections mapped
-- [ ] `filesystem`: ERD drawn
-- [ ] `filesystem`: review note written and approved
+## Schema `media`
 
-## Schema `official` (7 tables)
+- [ ] Author `media` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `media` partitioning where the design requires it
+- [ ] Move `media` explanations from code comments into descriptions
+- [ ] Generate SQL for `media` and check it against the design
 
-- [ ] `official.branding`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `official.contacts`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `official.entities`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `official.identifiers`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `official.individuals`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `official.names`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `official.relationships`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `official`: cross-schema connections mapped
-- [ ] `official`: ERD drawn
-- [ ] `official`: review note written and approved
+## Schema `filesystem`
 
-## Schema `legal` (9 tables)
+- [ ] Author `filesystem` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `filesystem` partitioning where the design requires it
+- [ ] Move `filesystem` explanations from code comments into descriptions
+- [ ] Generate SQL for `filesystem` and check it against the design
 
-- [ ] `legal.editions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal.effects`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal.instruments`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal.names`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal.provisions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal.references`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal.relationships`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal.translations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal.wordings`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `legal`: cross-schema connections mapped
-- [ ] `legal`: ERD drawn
-- [ ] `legal`: review note written and approved
+## Schema `geography`
 
-## Schema `governance` (24 tables)
+- [ ] Author `geography` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `geography` partitioning where the design requires it
+- [ ] Move `geography` explanations from code comments into descriptions
+- [ ] Generate SQL for `geography` and check it against the design
 
-- [ ] `governance.agenda`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.assignments`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.authority_scopes`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.bills`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.fulfilments`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.functions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.hansards`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.holders`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.institutions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.mandates`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.motions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.obligations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.offices`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.positions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.powers`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.procedures`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.promises`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.relationships`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.reports`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.sittings`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.speeches`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.stages`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.terms`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance.votes`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `governance`: cross-schema connections mapped
-- [ ] `governance`: ERD drawn
-- [ ] `governance`: review note written and approved
+## Schema `official`
 
-## Schema `politics` (15 tables)
+- [ ] Author `official` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `official` partitioning where the design requires it
+- [ ] Move `official` explanations from code comments into descriptions
+- [ ] Generate SQL for `official` and check it against the design
 
-- [ ] `politics.alignments`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.candidates`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.coalitions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.contests`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.contributions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.elections`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.electorates`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.manifesto_items`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.manifestos`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.memberships`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.option_results`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.parties`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.polls`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.referendum_options`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics.results`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `politics`: cross-schema connections mapped
-- [ ] `politics`: ERD drawn
-- [ ] `politics`: review note written and approved
+## Schema `source`
 
-## Schema `civic` (12 tables)
+- [ ] Author `source` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `source` partitioning where the design requires it
+- [ ] Move `source` explanations from code comments into descriptions
+- [ ] Generate SQL for `source` and check it against the design
 
-- [ ] `civic.beneficiaries`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.bids`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.contracts`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.deliveries`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.facilities`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.officials`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.partners`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.procurements`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.project_features`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.projects`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.services`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic.variations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `civic`: cross-schema connections mapped
-- [ ] `civic`: ERD drawn
-- [ ] `civic`: review note written and approved
+## Schema `legal`
 
-## Schema `finance` (7 tables)
+- [ ] Author `legal` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `legal` partitioning where the design requires it
+- [ ] Move `legal` explanations from code comments into descriptions
+- [ ] Generate SQL for `legal` and check it against the design
 
-- [ ] `finance.appropriations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `finance.budgets`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `finance.budget_versions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `finance.debts`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `finance.fiscal_periods`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `finance.flows`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `finance.funds`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `finance`: cross-schema connections mapped
-- [ ] `finance`: ERD drawn
-- [ ] `finance`: review note written and approved
+## Schema `governance`
 
-## Schema `statistics` (4 tables)
+- [ ] Author `governance` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `governance` partitioning where the design requires it
+- [ ] Move `governance` explanations from code comments into descriptions
+- [ ] Generate SQL for `governance` and check it against the design
 
-- [ ] `statistics.components`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `statistics.indicators`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `statistics.metrics`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `statistics.observations`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `statistics`: cross-schema connections mapped
-- [ ] `statistics`: ERD drawn
-- [ ] `statistics`: review note written and approved
+## Schema `legislature`
 
-## Schema `event` (12 tables)
+- [ ] Author `legislature` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `legislature` partitioning where the design requires it
+- [ ] Move `legislature` explanations from code comments into descriptions
+- [ ] Generate SQL for `legislature` and check it against the design
 
-- [ ] `event.calendars`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.changes`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.events`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.items`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.names`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.occurrences`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.participants`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.rules`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.schedules`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.seasons`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.subjects`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event.venues`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `event`: cross-schema connections mapped
-- [ ] `event`: ERD drawn
-- [ ] `event`: review note written and approved
+## Schema `politics`
 
-## Schema `community` (15 tables)
+- [ ] Author `politics` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `politics` partitioning where the design requires it
+- [ ] Move `politics` explanations from code comments into descriptions
+- [ ] Generate SQL for `politics` and check it against the design
 
-- [ ] `community.actors`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.cases`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.consents`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.deliveries`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.devices`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.notifications`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.places`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.posts`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.preferences`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.proofs`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.reactions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.replies`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.subscriptions`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.tokens`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community.views`: purpose, keys, foreign keys, time, provenance, indexes, keep/merge/split
-- [ ] `community`: cross-schema connections mapped
-- [ ] `community`: ERD drawn
-- [ ] `community`: review note written and approved
+## Schema `election`
 
-## Schema `accountability` (analytical, no tables)
+- [ ] Author `election` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `election` partitioning where the design requires it
+- [ ] Move `election` explanations from code comments into descriptions
+- [ ] Generate SQL for `election` and check it against the design
 
-- [ ] Confirm it stays analytical and list the reads it needs from other schemas
-- [ ] Document which views or queries replace persisted tables
+## Schema `civic`
 
-## Whole-database review
+- [ ] Author `civic` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `civic` partitioning where the design requires it
+- [ ] Move `civic` explanations from code comments into descriptions
+- [ ] Generate SQL for `civic` and check it against the design
 
-- [ ] Draw one overview ERD of how schemas connect
-- [ ] List every proposed change in one table with its reason and risk
-- [ ] Check every change against the evidence path and historical modelling rules
-- [ ] Record the approved design as a decision in `.docs/decisions/`
+## Schema `finance`
 
-## Partitioning plan
+- [ ] Author `finance` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `finance` partitioning where the design requires it
+- [ ] Move `finance` explanations from code comments into descriptions
+- [ ] Generate SQL for `finance` and check it against the design
 
-Decide, with reasons, which tables need PostgreSQL partitioning, which do not, and how. Partitioning is planned here and built in the database task; it is only adopted where data volume or access patterns justify it, because it constrains global unique keys and foreign keys.
+## Schema `economy`
 
-- [ ] Estimate current and expected row counts and growth for every large or append-heavy table (for example `statistics.observations`, `source.captures`, `source.artifacts`, `geography.geometries`, `governance.votes`, `governance.speeches`, `governance.hansards`, `politics.results`, `finance.flows`, `community.views`, `community.notifications`, `community.reactions`, `event.occurrences`)
-- [ ] For each candidate, record the dominant access pattern (by country, by time period, by feature, by source)
-- [ ] Choose the strategy per table: none, range by time, list by country, or hash, and the partition key
-- [ ] Check the impact on primary keys, `code` uniqueness, foreign keys pointing into the table, and soft delete
-- [ ] Plan partition creation, retention and maintenance (new periods, new countries, detach and archive)
-- [ ] Plan how queries must filter on the partition key so pruning works, and list the API reads affected
-- [ ] Record which tables are deliberately not partitioned and why
-- [ ] Write the partitioning plan into the database architecture doc and get owner approval
+- [ ] Author `economy` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `economy` partitioning where the design requires it
+- [ ] Move `economy` explanations from code comments into descriptions
+- [ ] Generate SQL for `economy` and check it against the design
+
+## Schema `statistics`
+
+- [ ] Author `statistics` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `statistics` partitioning where the design requires it
+- [ ] Move `statistics` explanations from code comments into descriptions
+- [ ] Generate SQL for `statistics` and check it against the design
+
+## Schema `event`
+
+- [ ] Author `event` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `event` partitioning where the design requires it
+- [ ] Move `event` explanations from code comments into descriptions
+- [ ] Generate SQL for `event` and check it against the design
+
+## Schema `history`
+
+- [ ] Author `history` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `history` partitioning where the design requires it
+- [ ] Move `history` explanations from code comments into descriptions
+- [ ] Generate SQL for `history` and check it against the design
+
+## Schema `community`
+
+- [ ] Author `community` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `community` partitioning where the design requires it
+- [ ] Move `community` explanations from code comments into descriptions
+- [ ] Generate SQL for `community` and check it against the design
+
+## Schema `auth`
+
+- [ ] Author `auth` exactly as approved (tables, columns, keys, links, enums)
+- [ ] Declare `auth` partitioning where the design requires it
+- [ ] Move `auth` explanations from code comments into descriptions
+- [ ] Generate SQL for `auth` and check it against the design
+
+## Removals
+
+- [ ] Delete contracts and tables that the design removes (for example `accountability`, `reference.copy`, `geography.levels`, the name and identifier tables now in `identity`, `source.slugs`, `source.links`)
+- [ ] Update `dryv/contracts/apps/pgsql/index.ts` to list every new and remaining group
+- [ ] Update the contract audit tools (`dryv/tools/*`) for the new inventory; fix the four stale inventory mismatches
 
 ## Acceptance checklist
 
-- [ ] The partitioning plan is written, reasoned table by table, and approved
-- [ ] Every table above is checked off
-- [ ] Every schema has a review note and ERD
-- [ ] The owner approved the design changes
+- [ ] `bun run check` in `dryv/` passes
+- [ ] Generated SQL contains every approved schema, table, partition and comment, and nothing removed
+- [ ] Every deviation from the design is recorded in the run's owner-questions file instead of being guessed
 - [ ] `task validate` passes
-
-## Comments
-
-### 2026-11-24T22:56:25.869Z · PETER IRUNGU
-
-Reference schema reviewed with the owner on 2026-11-24/25. Approved foundation direction is in .docs/design/data/FOUNDATION_REDESIGN.md (identity, vocabulary, classification, administrative systems, multilingual rules, product and media schemas). Open items are listed there under Pending discussion.

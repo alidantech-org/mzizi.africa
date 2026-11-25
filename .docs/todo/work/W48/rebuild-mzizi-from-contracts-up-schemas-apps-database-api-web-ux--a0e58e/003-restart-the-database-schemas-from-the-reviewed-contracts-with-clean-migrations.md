@@ -1,5 +1,5 @@
 ---
-{id: TSK-1265807A54E3,name: Restart the database schemas from the reviewed contracts with clean migrations,type: task,status: planned,priority: high,created_at: 2026-11-24T19:53:02.515Z,updated_at: 2026-11-24T19:53:02.515Z,depends_on: [TSK-70669AC571AA],order: 3072}
+{id: TSK-1265807A54E3,name: Restart the database schemas from the reviewed contracts with clean migrations,type: task,status: planned,priority: high,created_at: 2026-11-24T19:53:02.515Z,updated_at: 2026-11-25T03:25:36.594Z,depends_on: [TSK-6065C44E5476],order: 3072}
 ---
 
 # Restart the database schemas from the reviewed contracts with clean migrations

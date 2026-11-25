@@ -109,6 +109,11 @@ Task 6 of 7; starts only when task 4 is completed. The real app lives in `source
 - [ ] Loading states for help
 - [ ] Measure help against the baseline
 
+## Owner direction (25 November 2026)
+
+- [ ] Starts after the backend (database and API) is done; frontend breakage before then is accepted
+- [ ] Start the API, web and supporting services yourself (on their own ports) to test in the browser; prove speed with before-and-after measurements in the browser
+
 ## Acceptance checklist
 
 - [ ] Every screen above is built, server-rendered and measured

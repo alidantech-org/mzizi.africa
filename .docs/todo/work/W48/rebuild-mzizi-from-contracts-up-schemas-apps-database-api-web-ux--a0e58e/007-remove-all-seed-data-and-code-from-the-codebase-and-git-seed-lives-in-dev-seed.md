@@ -1,5 +1,5 @@
 ---
-{id: TSK-6065C44E5476,name: Remove all seed data and code from the codebase and Git; seed lives in .dev/seed,type: task,status: planned,priority: high,created_at: 2026-11-24T20:02:02.572Z,updated_at: 2026-11-24T20:02:04.915Z,depends_on: [TSK-1265807A54E3],order: 3584}
+{id: TSK-6065C44E5476,name: Remove all seed data and code from the codebase and Git; seed lives in .dev/seed,type: task,status: planned,priority: high,created_at: 2026-11-24T20:02:02.572Z,updated_at: 2026-11-25T03:25:39.269Z,depends_on: [TSK-70669AC571AA],order: 2560}
 ---
 
 # Remove all seed data and seed code from the codebase and Git; seed work lives only in git-ignored .dev/seed
@@ -54,6 +54,12 @@ Task 4 of 7 in the wave. It runs after the database and migrations task (TSK-126
 - [ ] Rewrite the AGENTS.md Seed inputs section: seed lives only in git-ignored `.dev/seed/`
 - [ ] Update or retire `.docs/_plan/guides/seed-outside-git.md`, `.docs/rules/codes.md` and manifest docs, and fix every link
 - [ ] Record the decision in `.docs/decisions/`
+
+## Owner direction (25 November 2026)
+
+- [ ] Seed files no longer need owner approval; seed is prepared and loaded freely from `.dev/seed/`
+- [ ] Fix the engine and all Python code so nothing needs or reads in-repository seeds; seed loading takes its inputs from `.dev/seed/` or a configured path
+- [ ] This task now runs **before** the database task, so the new database is seeded from `.dev/seed/`
 
 ## Acceptance checklist
 

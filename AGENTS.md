@@ -97,7 +97,7 @@ Consult `.docs/docs/DOMAINS.md` before adding domain ownership. Keep source-neut
 
 ## Seed inputs
 
-Read `seed/README.md` before changing curated or prepared system inputs. `seed/` is being rebuilt from empty (old tree archived in `.dev/archives/seed/`): never add a seed file, folder or manifest entry without showing it to the owner and getting approval first, one file or small set at a time. Keep them under root `seed/` with manifest, provenance, scope and access metadata. After seed changes, run `uv run mzizi-manifest check`; refresh the lock with `uv run mzizi-manifest lock` when required. Do not treat an example manifest as executable or delete existing S3 artifacts as part of local database work.
+Seed data is leaving the codebase (owner decision, 25 November 2026). All seed preparation, inputs and tooling live in the git-ignored `.dev/seed/` and are never committed; the root `seed/` folder and in-repository seed code are being removed by task TSK-6065C44E5476, and engine and Python code must not depend on in-repository seeds. **Seed files no longer need owner approval.** Do not delete existing S3 artifacts as part of local database work.
 
 <!-- BEGIN TASK MANAGED TASK-TOOL -->
 ## Task workspace
