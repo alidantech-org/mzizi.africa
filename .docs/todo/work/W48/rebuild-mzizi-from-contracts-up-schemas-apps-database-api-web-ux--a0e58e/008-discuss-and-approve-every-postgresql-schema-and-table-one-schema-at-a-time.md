@@ -10,7 +10,7 @@ This is the running discussion checklist for the database redesign. It lists eve
 
 ## Context
 
-Discussions follow the same pattern as the reference review of 2026-11-24 and 2026-11-25. Agreed results are written into `.docs/design/data/FOUNDATION_REDESIGN.md` (foundation rules) or a per-schema design note under `.docs/design/data/`, with a Mermaid ERD. Anything not agreed stays under that document's Pending discussion section. The rules already agreed apply to every schema below: named things get identities in the `identity` schema; text lives in `identity.names`, `vocabulary.labels`, `product.messages` or `media.texts`; columns pointing at terms end in `_term` and use the meaning words (kind, status, role, method, basis, category); `country_id` only on large tables filtered by country; single-word table names where they are clear; partitioning planned per table; descriptions only where they add meaning. Only PostgreSQL schemas are in scope; MongoDB schemas are not. Discuss in the order below, because later schemas depend on earlier ones.
+Discussions follow the same pattern as the reference review of 2026-11-24 and 2026-11-25. Agreed results are written into `.docs/design/data/FOUNDATION_REDESIGN.md` (foundation rules) or a per-schema design note under `.docs/design/data/`, with a Mermaid ERD. Anything not agreed stays under that document's Pending discussion section. The rules already agreed apply to every schema below: named things get identities in the `identity` schema; text lives in `identity.names`, `vocabulary.labels`, `product.messages` or `media.texts`; columns pointing at terms end in `_term` and use the meaning words (kind, status, role, method, basis, category); `country_id` only on large tables filtered by country; single-word table names where they are clear; partitioning planned per table; descriptions only where they add meaning. **No table has a column saying where its rows came from** (no `source_citation_id`, `citation_id` or similar, including in already-approved schemas): the `source` schema records it in a partitioned linking table that uses subject columns without a foreign key (FOUNDATION_REDESIGN section 23). Only PostgreSQL schemas are in scope; MongoDB schemas are not. Discuss in the order below, because later schemas depend on earlier ones.
 
 For each table, the discussion decides: keep, move (and where), rename (and to what), merge or remove; its key and links; its term columns; whether it is an identity; and whether it needs `country_id` or partitioning.
 
@@ -23,7 +23,7 @@ For each table, the discussion decides: keep, move (and where), rename (and to w
 - [x] media (new): approved 2026-11-25 (FOUNDATION_REDESIGN section 22)
 - [x] filesystem: approved 2026-11-25 (FOUNDATION_REDESIGN section 22)
 - [x] geography: approved 2026-11-25 (FOUNDATION_REDESIGN section 22)
-- [ ] official
+- [x] official: approved 2026-11-25 (FOUNDATION_REDESIGN section 25)
 - [ ] source
 - [ ] legal
 - [ ] governance
@@ -147,18 +147,19 @@ Changes below were approved by the owner on 2026-11-25.
 
 ## Schema `official` (7 tables today)
 
-Organisations and people; names and identifiers move to identity.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `official.branding`: keep, move, rename, merge or remove decided
-- [ ] `official.contacts`: keep, move, rename, merge or remove decided
-- [ ] `official.entities`: keep, move, rename, merge or remove decided
-- [ ] `official.identifiers`: keep, move, rename, merge or remove decided
-- [ ] `official.individuals`: keep, move, rename, merge or remove decided
-- [ ] `official.names`: keep, move, rename, merge or remove decided
-- [ ] `official.relationships`: keep, move, rename, merge or remove decided
-- [ ] `official`: term columns, identities, country_id and partitioning decided
-- [ ] `official` target shape approved by the owner
-- [ ] `official` ERD drawn
+- [x] `official.entities` (existing): kept, identity-backed; `kind_term`; required years, optional dates
+- [x] `official.individuals` (existing): kept, identity-backed; adds birth and death years
+- [x] `official.names` (existing): removed → `identity.names`
+- [x] `official.identifiers` (existing): removed → `identity.identifiers`
+- [x] `official.contacts` (existing): kept; `identity_id`; public and official-business only
+- [x] `official.relationships` (existing): kept; `from_id`, `to_id`; public figures only, shown when verified
+- [x] `official.branding` (existing): kept; words and colours only, images move to media
+- [x] `official.parts` (new): people's name parts
+- [x] Source citation columns removed from every official table
+- [x] `official` changes approved by the owner
+- [x] `official` ERD written into the design doc
 
 ## Schema `source` (18 tables today)
 

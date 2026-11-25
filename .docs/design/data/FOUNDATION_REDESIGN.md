@@ -100,7 +100,7 @@ Special name structures stay with their owner. For example, people's given and f
 
 ```text
 identity.names (identity_id, kind, language_id, text, name_kind_term, script_term, country_id?,
-                 from_year, to_year, is_default, citation_id)
+                 from_year, to_year, is_default)
 ```
 
 - Name kinds are terms: preferred, official, short, local, alternative, historical, abbreviation, transliteration.
@@ -108,14 +108,14 @@ identity.names (identity_id, kind, language_id, text, name_kind_term, script_ter
 - Script is recorded, so Amharic in Ge'ez can sit beside its Latin transliteration and Arabic can be marked right to left.
 - At most one default name per identity, language and period.
 - **Every identity has one default name.** Its language may be any language, `mul` (a form shared by languages, such as "Nairobi") or `en`. English is **not** forced (owner decision 2026-11-25). Other languages are added rows.
-- Names carry a citation, because a name is a claim with a source.
+- Where a name came from is recorded by the `source` schema, not on the name row ([section 23](#23-provenance-lives-in-the-source-schema)).
 
 `reference.language_names` merges into this table.
 
 ### 3.5 `identity.identifiers`
 
 ```text
-identity.identifiers (identity_id, kind, scheme_term, value, issuer_id?, from_year, to_year, citation_id)
+identity.identifiers (identity_id, kind, scheme_term, value, issuer_id?, from_year, to_year)
 ```
 
 This merges `geography.identifiers` and `official.identifiers`, list-partitioned by kind, and covers ISO, IEBC, Wikidata, registration numbers and similar codes. **Privacy:** personal identifiers such as national ID numbers are never stored here. Only public identifiers are allowed.
@@ -217,7 +217,7 @@ There are five concepts, each used the same way in every schema:
 | **Dimension** | How a statistic is broken down | 1 per dimension | Through its observation | `statistics.breakdowns` |
 
 ```text
-identity.classifications (identity_id, term_id, from_year, to_year, citation_id)
+identity.classifications (identity_id, term_id, from_year, to_year)
 identity.tags            (identity_id, term_id)
 statistics.breakdowns     (observation_id, term_id)   at most one term per dimension per observation
 ```
@@ -443,15 +443,9 @@ This rule must be explained in the codebase: in `dryv/contracts/schemas/README` 
 | `legal.effects` | Places, institutions, offices, laws | → `identity.identities` |
 | `event.subjects` | Named things | → `identity.identities` |
 | `civic.beneficiaries` | Organisations, places, groups | → `identity.identities` |
-| `source.verifications` | Any row (observation, result, vote) | Evidence state on the row itself |
+| `source.verifications` | Any row (observation, result, vote) | Stays in `source`, linked by subject (section 23) |
 
-Only verification points at rows without names. Following the provenance rule, the evidence for a row lives on that row:
-
-```text
-statistics.observations  + citation_id, status_term (sourced, verified, disputed), verified_citation_id
-```
-
-A table that needs many reviews per row gets its own table in its own schema (for example `statistics.reviews (observation_id, …)`). The 0002 "any subject" trigger and most of `_subjects.ts` are then removed.
+Only verification points at rows without names. Verification, like provenance, belongs to the `source` schema: it records which row was verified, against what and when, using a subject link (see [section 23](#23-provenance-lives-in-the-source-schema)). Domain rows carry no evidence columns. The 0002 "any subject" trigger is removed for the tables that now point at identities.
 
 ## 17. What moves where
 
@@ -612,10 +606,10 @@ erDiagram
 | Table | Columns | Replaces |
 |---|---|---|
 | `identities` | `id`, `kind` (enum), `code` (unique), timestamps | New anchor |
-| `names` | `identity_id`, `identity_kind` (enum, partition key), `language_id`, `text`, `kind_term` (preferred, official, short, local, alternative, historical, abbreviation, transliteration), `script_term`, `country_id` (optional), `from_year`, `to_year`, `is_default`, `citation_id` | `geography.names`, `official.names`, `legal.names`, `event.names`, `reference.language_names` |
-| `identifiers` | `identity_id`, `identity_kind`, `scheme_term`, `namespace`, `value`, `issuer_id` → identities, `from_year`, `to_year`, `citation_id` | `geography.identifiers`, `official.identifiers` |
+| `names` | `identity_id`, `identity_kind` (enum, partition key), `language_id`, `text`, `kind_term` (preferred, official, short, local, alternative, historical, abbreviation, transliteration), `script_term`, `country_id` (optional), `from_year`, `to_year`, `is_default` | `geography.names`, `official.names`, `legal.names`, `event.names`, `reference.language_names` |
+| `identifiers` | `identity_id`, `identity_kind`, `scheme_term`, `namespace`, `value`, `issuer_id` → identities, `from_year`, `to_year` | `geography.identifiers`, `official.identifiers` |
 | `addresses` | `identity_id`, `country_id`, `segment`, `section_term` (optional), `parent_id`, `language_id` (optional), `canonical_id`, `from_year`, `to_year` | `source.slugs`, `source.links` |
-| `classifications` | `identity_id`, `class_term`, `scheme_id` (copied for the one-answer check), `from_year`, `to_year`, `citation_id` | `geography.classifications`, `countries.continentId`, `subregionId` |
+| `classifications` | `identity_id`, `class_term`, `scheme_id` (copied for the one-answer check), `from_year`, `to_year` | `geography.classifications`, `countries.continentId`, `subregionId` |
 | `tags` | `identity_id`, `tag_term` (key is both) | `filesystem.tags`, `taggings`, `content_tags` for identities |
 
 - `names` and `identifiers` are list-partitioned by `identity_kind`; PostgreSQL requires the partition key in every unique key, for example `(identity_kind, scheme_term, namespace, value)`.
@@ -657,9 +651,9 @@ erDiagram
 | `features` | kept, identity-backed | `featureTypeId` → `kind_term`; a country's feature shares the country's one identity |
 | `names`, `identifiers`, `classifications` | removed | → `identity.names`, `identity.identifiers`, `identity.classifications` |
 | `levels` | removed | → `reference.hierarchies`, `reference.levels` |
-| `geometries` | kept | `geometryRoleId` → `role_term` (outline, point, centreline); `basisId` → `basis_term` (surveyed, digitised, derived); `minZoom`, `maxZoom` move to `outlines`; `srid` removed (always 4326); adds `citation_id` and a spatial index; full detail never altered |
-| `relationships` | kept | `relationshipKindId` → `kind_term` (inside, borders, part of); `systemId` → `hierarchy_id`; adds `level_id` (the inner place's level) and `citation_id` |
-| `changes` | kept | `changeKindId` → `kind_term` (split, merge, rename, transfer); `transformationId` → a link to the future history schema; free-text `explanation` → optional note with its language, plus `citation_id` |
+| `geometries` | kept | `geometryRoleId` → `role_term` (outline, point, centreline); `basisId` → `basis_term` (surveyed, digitised, derived); `minZoom`, `maxZoom` move to `outlines`; `srid` removed (always 4326); adds a spatial index; full detail never altered |
+| `relationships` | kept | `relationshipKindId` → `kind_term` (inside, borders, part of); `systemId` → `hierarchy_id`; adds `level_id` (the inner place's level) |
+| `changes` | kept | `changeKindId` → `kind_term` (split, merge, rename, transfer); `transformationId` → a link to the future history schema; free-text `explanation` → optional note with its language |
 | `assets` | kept, widened | `kindId`, `purposeId` → `kind_term`, `purpose_term`; adds `hierarchy_id`, `level_id`, `built_at`, `stale_at` for prepared outputs (tile sets, TopoJSON); `layer`, `band`, `member` kept |
 | — | `outlines` (new) | `feature_id`, `geometry_id`, `band` (zoom band 0–3), `tolerance`, `geometry`, `bbox`, `centroid`, `points`, `built_at`; unique per geometry and band |
 | — | `pieces` (new) | `feature_id`, `geometry_id`, `geometry`: subdivided polygons with a spatial index for "where am I?" lookups |
@@ -698,7 +692,7 @@ erDiagram
 | `scopes` | `scheme_id`, `identity_kind` (enum), unique together | new |
 | `terms` | `code`, `scheme_id`, `parent_id`, `supersedes_id`, `status` (enum: active, deprecated, retired), `position`, `icon_code`, `color_token`, `country_id` (optional), `lower`, `upper`, `unit_id`, `lower_inclusive`, `upper_inclusive` | `reference.values`; `label` removed |
 | `labels` | exactly one of `term_id` or `scheme_id`; `language_id`, `kind` (enum: preferred, plural, short, abbreviation, alternative, definition), `text`, `country_id` (optional) | `reference.value_labels` |
-| `mappings` | `from_id`, `to_id`, `kind` (enum: broader, narrower, exact, close, related), `citation_id`; no loops in broader and narrower | `reference.value_relations` |
+| `mappings` | `from_id`, `to_id`, `kind` (enum: broader, narrower, exact, close, related); no loops in broader and narrower | `reference.value_relations` |
 
 ```mermaid
 erDiagram
@@ -730,7 +724,7 @@ Articles and assets are not identities; each **belongs to** an identity where it
 |---|---|---|
 | `articles` | `code`, `identity_id` → identities (what it is for; optional for general articles), `category_term`, `author_id` → identities (optional), `published_at` | `filesystem.contents` (its record part) |
 | `texts` | `article_id`, `language_id`, `title`, `summary`, `body` (Markdown), `origin` (enum: original, human, machine), `translated_from_id`, `status` (enum: draft, reviewed, published); exactly one original per article, at most one live text per language | `filesystem.contents` (its text part) |
-| `assets` | `code`, `kind_term` (photo, logo, flag, portrait, video, audio, scan), `version_id` → `filesystem.versions` **or** `external_url` + `platform_term`, `start_second`, `end_second`, `width`, `height`, `duration`, `licence_term`, `citation_id`, `captured_on` | `filesystem.media` (file part); untyped `metadata` → typed columns |
+| `assets` | `code`, `kind_term` (photo, logo, flag, portrait, video, audio, scan), `version_id` → `filesystem.versions` **or** `external_url` + `platform_term`, `start_second`, `end_second`, `width`, `height`, `duration`, `licence_term`, `captured_on` | `filesystem.media` (file part); untyped `metadata` → typed columns |
 | `captions` | `asset_id`, `language_id`, `title`, `description`, `alt_text`, `origin` (enum) | `filesystem.media` text columns |
 | `uses` | `asset_id`, `identity_id`, `purpose_term` (portrait, logo, skyline, map), `position`, `from_year`, `to_year` | `filesystem.media` subject link and free-text `purpose` |
 
@@ -747,10 +741,75 @@ erDiagram
   identities ||--o{ uses : "shown with"
 ```
 
+## 23. Provenance lives in the source schema
+
+**Rule, agreed 2026-11-25. This is a must for every schema, including the ones already approved.**
+
+- **No domain table has a column saying where its rows came from.** Columns such as `source_citation_id`, `sourceCitationId`, `citation_id`, `verified_citation_id` and similar are removed everywhere: identity, reference, vocabulary, geography, media, official and every schema still to be discussed.
+- **The `source` schema says where every row came from.** It holds the record of the source, citation or capture, and a **linking table** that connects it to the rows it supports.
+- **The link uses subject columns** (`subject_table`, `subject_id`, the same kind of columns as today's `_subjects.ts`). It names the table and row, so it can point at any row in any schema, named or not, including a single observation, vote or result. **It has no foreign key**; that is accepted because it must reach every table.
+- **The linking table is partitioned**, because every sourced row in the database gets at least one link and it will be the largest table in the system.
+- What the link records (citation, capture, method, confidence, observed time, verification), how it is partitioned, and how a deleted row's links are handled are designed when the `source` schema is discussed.
+
+## 24. Name casing across languages
+
+**Rule, agreed 2026-11-25.**
+
+| Where | Casing | Example |
+|---|---|---|
+| Dryv contracts (`dryv/contracts`, everything authored) | camelCase | `registrationCountryId`, `kindTerm` |
+| Generated SQL and the database | snake_case | `registration_country_id`, `kind_term` |
+| Python (engine, packages) | snake_case | `registration_country_id` |
+| TypeScript and Dart: generated SDKs, the NestJS API, the web app and the Flutter app | camelCase | `registrationCountryId` |
+
+- Contracts are always authored in camelCase. The SQL generator turns them into snake_case; TypeScript and Dart keep camelCase; Python uses snake_case.
+- **Column names in this document's tables are written as they appear in SQL** (snake_case). The same column is camelCase in the contracts and in TypeScript and Dart.
+- A change that is **only casing** (for example `registrationCountryId` in the contract and `registration_country_id` in SQL) is **not a rename**. It is the same column. Only a change of words (for example `featureTypeId` → `kindTerm` / `kind_term`) is a rename.
+- The `_term` ending agreed in section 15 is written `Term` in camelCase: `kindTerm`, `statusTerm`.
+
+## 25. Approved shape: `official`
+
+**Approved by the owner on 2026-11-25.** Column names are in SQL casing (section 24). Base columns and sections 21–24 apply; no table has a citation column (section 23). Every table keeps its `code`.
+
+### 25.1 Decisions
+
+- **Name parts:** a new `official.parts` table holds people's name parts; display names stay in `identity.names`.
+- **Contacts and privacy:** `visibility_term` allows only *public* and *official business*. Private personal contacts (a politician's personal phone) are **never stored**. This closes the old open item on contact access.
+- **Branding:** images (logo, flag, portrait, photograph) move to `media.assets` and `media.uses`. Words and colours stay in `official.branding`, which keeps its name.
+- **Personal relationships:** kinship and associate links are stored **only for public figures**, always with a basis and a source link in the `source` schema, and shown only when their status is verified.
+- **Entity time:** entities require `from_year` and `to_year` under the agreed time rule; `registered_on` and `dissolved_on` are optional exact dates kept in agreement with the years.
+
+### 25.2 Tables
+
+| Table today | After | Changes |
+|---|---|---|
+| `entities` | kept, identity-backed | `kind_id` → `kind_term` (company, NGO, regional bloc, union); `registration_country_id` unchanged (a fact, not a partition key); adds required `from_year`, `to_year`; `registered_on`, `dissolved_on` optional; `source_citation_id` removed |
+| `individuals` | kept, identity-backed | `birth_date`, `death_date` optional; adds `birth_year`, `death_year`; `source_citation_id` removed |
+| `names` | removed | → `identity.names` |
+| `identifiers` | removed | → `identity.identifiers`; `issuer_entity_id` → `issuer_id`; uniqueness with empty issuer or namespace uses `NULLS NOT DISTINCT` |
+| `contacts` | kept, widened | `entity_id` + `individual_id` → `identity_id` (offices, institutions and parties can have contacts); `kind_id` → `kind_term` (phone, email, website, postal address, social account); `visibility_id` → `visibility_term` (public, official business only); adds `from_year`, `to_year`; `source_citation_id` removed |
+| `relationships` | kept, simplified | `from_entity_id`, `from_individual_id`, `to_entity_id`, `to_individual_id` → `from_id`, `to_id` → identities; `kind_id` → `kind_term` (kinship, business, political); `evidence_basis_id`, `evidence_status_id` → `basis_term`, `status_term`; `share_percentage`, `confidence`, `starts_on`, `ends_on` kept; adds years; `source_citation_id` removed |
+| `branding` | kept, narrowed | `entity_id` + `individual_id` → `identity_id`; `kind_id` → `kind_term` (slogan, motto, colours, symbol); `value` → `text` with `language_id`; adds `colors text[]` (hex values, used by charts) and years; images move to media; `source_citation_id` removed |
+| — | `parts` (new) | `name_id` → `identity.names`, `part` (enum: prefix, given, middle, family, suffix), `position`, `text` |
+
+No partitioning and no `country_id` columns are needed in `official`.
+
+```mermaid
+erDiagram
+  identities ||--|| entities : "is"
+  identities ||--|| individuals : "is"
+  names ||--o{ parts : "split into"
+  identities ||--o{ contacts : has
+  identities ||--o{ relationships : "from / to"
+  identities ||--o{ branding : has
+  countries ||--o{ entities : "registered in"
+```
+
 ## Pending discussion
 
-1. **History schema (new).** A schema for historical events and activities (reforms such as Kenya's 2013 devolution, independence, boundary changes, wars, treaties), which `geography.changes` and other schemas will point at. Its relation to today's `event` schema (calendars, occurrences, schedules) must be decided.
-2. **Articles for several identities.** `media.articles.identity_id` holds one owner. Whether an article can be for several identities (an explainer about devolution and every county) is to be decided.
+1. **Source links.** The design of the `source` linking table (section 23): what it records, its partition key, and cleanup when a row is deleted.
+2. **History schema (new).** A schema for historical events and activities (reforms such as Kenya's 2013 devolution, independence, boundary changes, wars, treaties), which `geography.changes` and other schemas will point at. Its relation to today's `event` schema (calendars, occurrences, schedules) must be decided.
+3. **Articles for several identities.** `media.articles.identity_id` holds one owner. Whether an article can be for several identities (an explainer about devolution and every county) is to be decided.
 
 ## Related
 
