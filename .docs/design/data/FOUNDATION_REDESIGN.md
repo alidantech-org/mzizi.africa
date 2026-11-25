@@ -653,7 +653,7 @@ erDiagram
 | `levels` | removed | → `reference.hierarchies`, `reference.levels` |
 | `geometries` | kept | `geometryRoleId` → `role_term` (outline, point, centreline); `basisId` → `basis_term` (surveyed, digitised, derived); `minZoom`, `maxZoom` move to `outlines`; `srid` removed (always 4326); adds a spatial index; full detail never altered |
 | `relationships` | kept | `relationshipKindId` → `kind_term` (inside, borders, part of); `systemId` → `hierarchy_id`; adds `level_id` (the inner place's level) |
-| `changes` | kept | `changeKindId` → `kind_term` (split, merge, rename, transfer); `transformationId` → a link to the future history schema; free-text `explanation` → optional note with its language |
+| `changes` | kept | `changeKindId` → `kind_term` (split, merge, rename, transfer); `transformationId` → `occurrence_id` → `history.occurrences`; free-text `explanation` → optional note with its language |
 | `assets` | kept, widened | `kindId`, `purposeId` → `kind_term`, `purpose_term`; adds `hierarchy_id`, `level_id`, `built_at`, `stale_at` for prepared outputs (tile sets, TopoJSON); `layer`, `band`, `member` kept |
 | — | `outlines` (new) | `feature_id`, `geometry_id`, `band` (zoom band 0–3), `tolerance`, `geometry`, `bbox`, `centroid`, `points`, `built_at`; unique per geometry and band |
 | — | `pieces` (new) | `feature_id`, `geometry_id`, `geometry`: subdivided polygons with a spatial index for "where am I?" lookups |
@@ -805,11 +805,105 @@ erDiagram
   countries ||--o{ entities : "registered in"
 ```
 
+## 26. Removed: `accountability`
+
+**Owner decision 2026-11-25.** The old `accountability` schema (a read-only set of derived indicator shapes with no tables) is removed. Its contract file `dryv/contracts/schemas/postgres/accountability.ts` was deleted, along with its import in `dryv/contracts/apps/pgsql/index.ts` and its checks in `dryv/tools/audit-main-domain-contracts.ts`. Any accountability views needed later are designed as API reads in the app contracts, not as a database schema.
+
+## 27. Approved shape: `history`, `event` and `auth`
+
+**Approved by the owner on 2026-11-25.** Column names are in SQL casing (section 24). Base columns and sections 21–24 apply; no table has a citation column (section 23). Every table keeps its `code`.
+
+### 27.1 History and event are always separate
+
+| | `event` | `history` |
+|---|---|---|
+| What it records | Planned and recurring civic happenings: public holidays, parliamentary sittings, budget deadlines, election timetables, seasons | What happened and mattered: independence in 1963, the 2010 constitution, devolution in 2013, wars, treaties, disasters, boundary reforms |
+| Shape | Precise details and pre-planning: calendars, recurrence rules, planned and actual dates, times, timezones, venues, schedules, postponements | Significance: eras, causes and effects, who and what was involved, often uncertain or approximate dates |
+| Time | Exact dates and times | Years required, dates optional, with a precision (day, month, year, decade, circa) |
+| Looks | Forward as well as back | Back |
+
+**How to choose:** if a thing is planned, scheduled or recurring and its exact dates and arrangements matter, it is an `event` (and each instance an `event.occurrences` row). If it is recorded because of its historical significance, consequences or place in a period, it is a `history.occurrences` row. One real happening can have both: the 2013 general election has an `event.occurrences` row (polling day, timetable) and may have a `history.occurrences` row (its significance as the first election under devolution), linked by identity relationships where needed.
+
+### 27.2 `history` (new)
+
+| Table | Columns | Notes |
+|---|---|---|
+| `occurrences` | identity-backed; `code`, `kind_term` (independence, reform, war, treaty, disaster, founding), `from_year`, `to_year`, `starts_on`, `ends_on` (optional), `precision` (enum: day, month, year, decade, circa), `country_id` (optional) | Named through `identity.names` ("Kenya's independence", "Uhuru"). Named `occurrences`, not `events`, to keep it distinct from the `event` schema |
+| `eras` | identity-backed; `code`, `kind_term` (colonial, post-independence, presidency), `from_year`, `to_year`, `country_id` (optional), `parent_id` | Named periods; an era can sit inside another |
+| `roles` | `occurrence_id`, `identity_id`, `role_term` (leader, signatory, affected place, venue, opponent) | People, organisations and places involved |
+| `links` | `from_id`, `to_id`, `kind` (enum: part of, caused, led to, followed, replaced) | Between history occurrences |
+
+`geography.changes` points at `history.occurrences` (the reform behind a split or merge); governance and legal may point at it later.
+
+```mermaid
+erDiagram
+  identities ||--|| occurrences : "is"
+  identities ||--|| eras : "is"
+  eras ||--o{ eras : within
+  occurrences ||--o{ roles : involves
+  identities ||--o{ roles : "takes part"
+  occurrences ||--o{ links : "from / to"
+  occurrences ||--o{ changes : "behind (geography)"
+```
+
+### 27.3 `event` (the civic calendar)
+
+| Table today | After | Changes |
+|---|---|---|
+| `calendars` | kept | `calendar_kind_id` → `kind_term`; `description` removed; `source_citation_id` removed |
+| `events` | kept, identity-backed | `event_kind_id` → `kind_term`; `scope_level_kind_id` → `level_id` → `reference.levels`; `scope_feature_id` → `feature_id`; `organiser_entity_id` → `organiser_id` → identities; `basis_provision_id` kept; `source_citation_id` removed |
+| `names` | removed | → `identity.names` |
+| `rules` | kept | `rule_kind_id` → `kind_term`; `adjustment_id` → `adjustment_term`; recurrence columns kept; `source_citation_id` removed |
+| `occurrences` | kept | `status_id`, `knowledge_id`, `format_id` → `status_term`, `knowledge_term`, `format_term`; `timezone` → `timezone_id` → `reference.timezones`; `venue_feature_id`, `venue_note` removed (covered by `venues`); `organiser_entity_id` → `organiser_id`; `source_citation_id` removed |
+| `changes` | kept | `change_kind_id`, `reason_id` → `kind_term`, `reason_term`; `authority_entity_id` → `authority_id`; `explanation` → optional note with its language; `source_citation_id` removed |
+| `subjects` | kept | subject link → `identity_id`; `role_id` → `role_term` |
+| `participants` | kept | `entity_id` + `individual_id` → `identity_id`; `role_id` → `role_term` |
+| `schedules` | kept | `schedule_kind_id`, `status_id` → `kind_term`, `status_term`; `issuer_entity_id` → `issuer_id`; `source_citation_id` removed |
+| `items` | kept | `note` → optional note with its language |
+| `seasons` | kept | `season_kind_id` → `kind_term`; `scope_feature_id` → `feature_id`; `description` removed; `source_citation_id` removed |
+| `venues` | kept | `role_id` → `role_term`; `note` → optional note with its language |
+
+No partitioning in `event`.
+
+### 27.4 `auth` (platform accounts and access)
+
+Decisions:
+
+- **Role text is allowed.** Role titles and descriptions are internal admin text and stay as plain English columns: a deliberate exception to the no-display-text rule.
+- **`delegation_roles` is kept and renamed `allowances`** (agent's choice, delegated by the owner). It is the security ceiling of a delegation: the roles a delegate may receive through it. `grants.delegation_id` records which delegation a grant came from, but without allowances a delegator could pass on any role they hold.
+- **`scopes.dataset_ref_id` is removed.**
+- **Accounts and contributions:** see 27.5.
+
+| Table today | After | Changes |
+|---|---|---|
+| `accounts` | kept | `actor_kind` → enum (person, service, agent); `person_ref_id` → `individual_id` → `official.individuals` (only when the account belongs to a known public person); `display_name`, `status`, `disabled_at`, `last_authenticated_at` kept |
+| `login_identities` | renamed `logins` | `issuer`, `subject` kept |
+| `roles` | kept | `managing_institution_ref_id` → `institution_id` (real foreign key); `title`, `description` kept as English text |
+| `permissions` | kept | `resource_type`, `action`, `field_group` → enums generated from the contracts |
+| `role_permissions` | renamed `privileges` | |
+| `role_assignments` | renamed `grants` | `scope_id`, `membership_id`, `delegation_id` kept |
+| `memberships` | kept | `institution_ref_id` → `institution_id`; verification columns kept |
+| `invitations` | kept | `institution_ref_id` → `institution_id`; only the token digest is stored |
+| `scopes` | kept | `institution_ref_id`, `country_ref_id`, `geographic_unit_ref_id` → `institution_id`, `country_id`, `feature_id` (real foreign keys); `dataset_ref_id` removed; `include_descendants`, `scope_hash` kept |
+| `delegations` | kept | |
+| `delegation_roles` | renamed `allowances` | the roles a delegation may hand on |
+
+Auth keeps revoke and expiry history instead of soft delete and versions. No partitioning.
+
+### 27.5 Direction for contributions (to design in the `community` review)
+
+Owner direction, 2026-11-25:
+
+- **Only signed-in, authenticated people can contribute.** Posts, comments, reviews, articles, information and media come from real people with an `auth.accounts` sign-in, to avoid pseudonymous and fake content.
+- **Nothing is published straight away.** Every contribution is published only after human review or after passing automated content filtering (including AI filtering).
+- **People who post bad content are blocked.**
+- Contributed articles and media use the `media` schema shapes (belonging to identities); contributions stay distinct from curated, sourced knowledge.
+- How `auth.accounts` and `community.actors` divide (sign-in versus public profile), the review and filtering workflow, and blocking are designed when `community` is discussed.
+
 ## Pending discussion
 
 1. **Source links.** The design of the `source` linking table (section 23): what it records, its partition key, and cleanup when a row is deleted.
-2. **History schema (new).** A schema for historical events and activities (reforms such as Kenya's 2013 devolution, independence, boundary changes, wars, treaties), which `geography.changes` and other schemas will point at. Its relation to today's `event` schema (calendars, occurrences, schedules) must be decided.
-3. **Articles for several identities.** `media.articles.identity_id` holds one owner. Whether an article can be for several identities (an explainer about devolution and every county) is to be decided.
+2. **Articles for several identities.** `media.articles.identity_id` holds one owner. Whether an article can be for several identities (an explainer about devolution and every county) is to be decided.
 
 ## Related
 

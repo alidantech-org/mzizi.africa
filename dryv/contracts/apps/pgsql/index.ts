@@ -6,7 +6,6 @@
  */
 import { dryv } from "@dryvcode/author";
 import { shared } from "#/schemas/_shared.ts";
-import { accountability } from "#/schemas/postgres/accountability.ts";
 import { auth } from "#/schemas/postgres/auth.ts";
 import { civic } from "#/schemas/postgres/civic.ts";
 import { filesystem } from "#/schemas/postgres/filesystem.ts";
@@ -41,7 +40,6 @@ export default dryv
     finance,
     source,
     filesystem,
-    accountability,
     statistics,
     event,
   );

@@ -31,11 +31,11 @@ For each table, the discussion decides: keep, move (and where), rename (and to w
 - [ ] civic
 - [ ] finance
 - [ ] statistics
-- [ ] event
+- [x] event: approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
 - [ ] community
-- [ ] auth
-- [ ] history (new, proposed): historical events and activities; to be designed
-- [ ] accountability (analytical, no tables)
+- [x] auth: approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
+- [x] history (new): approved 2026-11-25 (FOUNDATION_REDESIGN section 27)
+- [x] accountability: removed 2026-11-25 (FOUNDATION_REDESIGN section 26)
 
 ## Schema `reference` (13 tables today)
 
@@ -308,23 +308,22 @@ Indicators and observations; fixed dimension columns become breakdowns.
 
 ## Schema `event` (12 tables today)
 
-Calendars, events, occurrences and schedules; names move to identity.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `event.calendars`: keep, move, rename, merge or remove decided
-- [ ] `event.changes`: keep, move, rename, merge or remove decided
-- [ ] `event.events`: keep, move, rename, merge or remove decided
-- [ ] `event.items`: keep, move, rename, merge or remove decided
-- [ ] `event.names`: keep, move, rename, merge or remove decided
-- [ ] `event.occurrences`: keep, move, rename, merge or remove decided
-- [ ] `event.participants`: keep, move, rename, merge or remove decided
-- [ ] `event.rules`: keep, move, rename, merge or remove decided
-- [ ] `event.schedules`: keep, move, rename, merge or remove decided
-- [ ] `event.seasons`: keep, move, rename, merge or remove decided
-- [ ] `event.subjects`: keep, move, rename, merge or remove decided
-- [ ] `event.venues`: keep, move, rename, merge or remove decided
-- [ ] `event`: term columns, identities, country_id and partitioning decided
-- [ ] `event` target shape approved by the owner
-- [ ] `event` ERD drawn
+- [x] `event.calendars` (existing): kept; `kind_term`; description and citation removed
+- [x] `event.events` (existing): kept, identity-backed; `level_id`, `feature_id`, `organiser_id`
+- [x] `event.names` (existing): removed → `identity.names`
+- [x] `event.rules` (existing): kept; `kind_term`, `adjustment_term`
+- [x] `event.occurrences` (existing): kept; `timezone_id`; venue columns removed
+- [x] `event.changes` (existing): kept; `authority_id`; note with language
+- [x] `event.subjects` (existing): kept; `identity_id`
+- [x] `event.participants` (existing): kept; `identity_id`
+- [x] `event.schedules` (existing): kept; `issuer_id`
+- [x] `event.items` (existing): kept; note with language
+- [x] `event.seasons` (existing): kept; `feature_id`; description removed
+- [x] `event.venues` (existing): kept; `role_term`
+- [x] `event` changes approved by the owner
+- [x] `event` ERD written into the design doc
 
 ## Schema `community` (15 tables today)
 
@@ -351,39 +350,38 @@ App users' activity: actors, posts, reactions, notifications.
 
 ## Schema `auth` (11 tables today)
 
-Accounts, roles, permissions and delegations.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `auth.accounts`: keep, move, rename, merge or remove decided
-- [ ] `auth.delegation_roles`: keep, move, rename, merge or remove decided
-- [ ] `auth.delegations`: keep, move, rename, merge or remove decided
-- [ ] `auth.invitations`: keep, move, rename, merge or remove decided
-- [ ] `auth.login_identities`: keep, move, rename, merge or remove decided
-- [ ] `auth.memberships`: keep, move, rename, merge or remove decided
-- [ ] `auth.permissions`: keep, move, rename, merge or remove decided
-- [ ] `auth.role_assignments`: keep, move, rename, merge or remove decided
-- [ ] `auth.role_permissions`: keep, move, rename, merge or remove decided
-- [ ] `auth.roles`: keep, move, rename, merge or remove decided
-- [ ] `auth.scopes`: keep, move, rename, merge or remove decided
-- [ ] `auth`: term columns, identities, country_id and partitioning decided
-- [ ] `auth` target shape approved by the owner
-- [ ] `auth` ERD drawn
+- [x] `auth.accounts` (existing): kept; `actor_kind` enum; `individual_id`
+- [x] `auth.login_identities` (existing): renamed `logins`
+- [x] `auth.roles` (existing): kept; English title and description allowed; `institution_id`
+- [x] `auth.permissions` (existing): kept; generated enums
+- [x] `auth.role_permissions` (existing): renamed `privileges`
+- [x] `auth.role_assignments` (existing): renamed `grants`
+- [x] `auth.memberships` (existing): kept; `institution_id`
+- [x] `auth.invitations` (existing): kept; `institution_id`
+- [x] `auth.scopes` (existing): kept; real foreign keys; `dataset_ref_id` removed
+- [x] `auth.delegations` (existing): kept
+- [x] `auth.delegation_roles` (existing): renamed `allowances`
+- [x] Contribution direction recorded for the community review: signed-in only, reviewed or filtered before publishing, bad actors blocked
+- [x] `auth` changes approved by the owner
+- [x] `auth` ERD written into the design doc
 
-## Schema `history` (new, proposed)
+## Schema `history` (new)
 
-A schema for historical events and activities (reforms such as Kenya's 2013 devolution, independence, boundary changes, treaties), which `geography.changes` and other schemas point at. Not designed yet.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] Decide what it holds and how it relates to today's `event` schema
-- [ ] Design its tables
-- [ ] `history` changes approved by the owner
-- [ ] `history` ERD written into the design doc
+- [x] `history.occurrences` (new): identity-backed historical happenings with precision
+- [x] `history.eras` (new): named periods
+- [x] `history.roles` (new): identities involved
+- [x] `history.links` (new): causes, effects and parts
+- [x] History kept separate from `event`, with the rule for choosing documented
+- [x] `history` changes approved by the owner
+- [x] `history` ERD written into the design doc
 
-## Schema `accountability` (no tables)
+## Schema `accountability` (removed)
 
-Read-only analytical surface; derived indicators are computed by queries, not stored.
-
-- [ ] Confirm it stays without tables
-- [ ] List the reads it needs from other schemas
-- [ ] Accountability shape approved by the owner
+- [x] `accountability` removed: contract file, pgsql import and audit checks deleted on 2026-11-25
 
 ## Acceptance checklist
 

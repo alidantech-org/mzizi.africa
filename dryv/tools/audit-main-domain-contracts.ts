@@ -67,21 +67,6 @@ for (const [schema, tables] of Object.entries(expected)) {
     problems.push(`${schema} storage inventory mismatch: expected [${wanted}], found [${found}]`);
   }
 }
-const accountability = await Bun.file(join(contracts, "accountability.ts")).text();
-if (/\.storage\(/.test(accountability)) problems.push("accountability must not declare persisted storage");
-for (const view of [
-  "BudgetExecution",
-  "ProcurementPerformance",
-  "ProjectPerformance",
-  "ServiceCoverage",
-  "InstitutionalPerformance",
-  "PromiseProgress",
-  "OversightSignals",
-]) {
-  if (!accountability.includes(`.schema("${view}"`)) problems.push(`accountability output missing: ${view}`);
-  if (!new RegExp(`\\.schema\\("${view}"[\\s\\S]*?\\.role\\("view-model"\\)`).test(accountability))
-    problems.push(`accountability output must be a view-model: ${view}`);
-}
 const civic = await Bun.file(join(contracts, "civic.ts")).text();
 for (const forbidden of ["service_locations", 'storage("assets")', 'storage("networks")', 'storage("segments")']) {
   if (civic.includes(forbidden)) problems.push(`Civic duplicates Geography ownership: ${forbidden}`);

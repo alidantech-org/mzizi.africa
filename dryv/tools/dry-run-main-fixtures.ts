@@ -145,4 +145,4 @@ assert.equal(signal.status, "review_signal");
 assert.equal(signal.citation, "cite:payment");
 assert.ok(!("misconduct" in signal));
 
-console.log("Synthetic Main dry-run OK: institutional, election, service, project, finance and accountability joins");
+console.log("Synthetic Main dry-run OK: institutional, election, service, project, and finance joins");
