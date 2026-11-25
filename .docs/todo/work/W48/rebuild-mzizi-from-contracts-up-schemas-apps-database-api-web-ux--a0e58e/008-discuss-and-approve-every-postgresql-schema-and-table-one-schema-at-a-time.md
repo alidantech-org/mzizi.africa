@@ -24,7 +24,7 @@ For each table, the discussion decides: keep, move (and where), rename (and to w
 - [x] filesystem: approved 2026-11-25 (FOUNDATION_REDESIGN section 22)
 - [x] geography: approved 2026-11-25 (FOUNDATION_REDESIGN section 22)
 - [x] official: approved 2026-11-25 (FOUNDATION_REDESIGN section 25)
-- [ ] source
+- [x] source: approved 2026-11-25 (FOUNDATION_REDESIGN section 34)
 - [x] legal: approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
 - [x] governance: approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
 - [x] politics: approved 2026-11-25 (FOUNDATION_REDESIGN section 30)
@@ -166,29 +166,29 @@ Changes below were approved by the owner on 2026-11-25.
 
 ## Schema `source` (18 tables today)
 
-Publishers, sources, artifacts, captures, citations; slugs and links move to identity.addresses.
+Changes below were approved by the owner on 2026-11-25.
 
-- [ ] `source.addresses`: keep, move, rename, merge or remove decided
-- [ ] `source.artifacts`: keep, move, rename, merge or remove decided
-- [ ] `source.attributions`: keep, move, rename, merge or remove decided
-- [ ] `source.captures`: keep, move, rename, merge or remove decided
-- [ ] `source.citations`: keep, move, rename, merge or remove decided
-- [ ] `source.contenders`: keep, move, rename, merge or remove decided
-- [ ] `source.coverage`: keep, move, rename, merge or remove decided
-- [ ] `source.discoveries`: keep, move, rename, merge or remove decided
-- [ ] `source.disputes`: keep, move, rename, merge or remove decided
-- [ ] `source.domains`: keep, move, rename, merge or remove decided
-- [ ] `source.editions`: keep, move, rename, merge or remove decided
-- [ ] `source.links`: keep, move, rename, merge or remove decided
-- [ ] `source.products`: keep, move, rename, merge or remove decided
-- [ ] `source.publishers`: keep, move, rename, merge or remove decided
-- [ ] `source.relationships`: keep, move, rename, merge or remove decided
-- [ ] `source.slugs`: keep, move, rename, merge or remove decided
-- [ ] `source.sources`: keep, move, rename, merge or remove decided
-- [ ] `source.verifications`: keep, move, rename, merge or remove decided
-- [ ] `source`: term columns, identities, country_id and partitioning decided
-- [ ] `source` target shape approved by the owner
-- [ ] `source` ERD drawn
+- [x] `source.publishers` (existing): kept; shares the organisation's identity
+- [x] `source.sources` (existing): kept; English label
+- [x] `source.domains` (existing): kept
+- [x] `source.addresses` (existing): renamed `paths`; website pages, listings, files, feeds and APIs
+- [x] `source.discoveries` (existing): kept; partitioned by month
+- [x] `source.products` (existing): kept, identity-backed
+- [x] `source.editions` (existing): kept
+- [x] `source.artifacts` (existing): kept; byte details left to filesystem
+- [x] `source.captures` (existing): kept; typed response columns; partitioned by month
+- [x] `source.relationships` (existing): renamed `derivations`
+- [x] `source.citations` (existing): kept; locator only
+- [x] `source.evidence` (new): provenance links, partitioned by subject table
+- [x] `source.verifications` (existing): kept
+- [x] `source.attributions` (existing): kept
+- [x] `source.slugs`, `links` (existing): removed → `identity.addresses`
+- [x] `source.coverage` (existing): kept
+- [x] `source.disputes` (existing): kept; subject link
+- [x] `source.contenders` (existing): kept; `evidence_id`
+- [x] `media.subjects` (new): articles about several identities
+- [x] `source` changes approved by the owner
+- [x] `source` ERD written into the design doc
 
 ## Schema `legal` (9 tables today)
 
@@ -436,7 +436,7 @@ Changes below were approved by the owner on 2026-11-25.
 ## Acceptance checklist
 
 - [x] Every schema above is discussed and its target shape approved
-- [ ] Every current table has a recorded decision
-- [ ] Every agreed result is written into FOUNDATION_REDESIGN or a per-schema design note with an ERD
-- [ ] Nothing still open is left unmarked: open items are listed under Pending discussion
+- [x] Every current table has a recorded decision
+- [x] Every agreed result is written into FOUNDATION_REDESIGN or a per-schema design note with an ERD
+- [x] Nothing still open is left unmarked: open items are listed under Pending discussion
 - [ ] `task validate` passes

@@ -865,6 +865,22 @@ erDiagram
 
 No partitioning in `event`.
 
+
+```mermaid
+erDiagram
+  identities ||--|| events : "is"
+  calendars ||--o{ events : in
+  events ||--o{ rules : recurs
+  events ||--o{ occurrences : happens
+  occurrences ||--o{ changes : "moved"
+  occurrences ||--o{ venues : at
+  occurrences ||--o{ participants : involves
+  events ||--o{ subjects : about
+  events ||--o{ schedules : anchors
+  schedules ||--o{ items : lists
+  features ||--o{ seasons : "in place"
+```
+
 ### 27.4 `auth` (platform accounts and access)
 
 Decisions:
@@ -889,6 +905,23 @@ Decisions:
 | `delegation_roles` | renamed `allowances` | the roles a delegation may hand on |
 
 Auth keeps revoke and expiry history instead of soft delete and versions. No partitioning.
+
+
+```mermaid
+erDiagram
+  accounts ||--o{ logins : "signs in with"
+  logins ||--o{ codes : "one-time codes"
+  roles ||--o{ privileges : has
+  permissions ||--o{ privileges : granted
+  accounts ||--o{ memberships : "member of"
+  accounts ||--o{ grants : holds
+  roles ||--o{ grants : given
+  scopes ||--o{ grants : "limited to"
+  delegations ||--o{ grants : "came from"
+  delegations ||--o{ allowances : "may pass on"
+  roles ||--o{ allowances : allowed
+  accounts ||--o{ invitations : invites
+```
 
 ### 27.5 Direction for contributions (to design in the `community` review)
 
@@ -1133,6 +1166,22 @@ Example: the Constitution (legal) creates the office of Governor (governance); a
 | `relationships` | kept | amendments and repeals; `kind_term`; `explanation` → note with language |
 | `effects` | kept | what a provision does to a thing: subject link → `identity_id`; `explanation` → note with language |
 
+
+```mermaid
+erDiagram
+  identities ||--|| instruments : "is"
+  instruments ||--o{ editions : has
+  instruments ||--o{ provisions : contains
+  provisions ||--o{ provisions : parent
+  provisions ||--o{ wordings : "worded as"
+  editions ||--o{ wordings : in
+  wordings ||--o{ translations : translated
+  wordings ||--o{ references : "refers to"
+  instruments ||--o{ relationships : "amends or repeals"
+  wordings ||--o{ effects : does
+  identities ||--o{ effects : affected
+```
+
 ### 30.4 `governance`
 
 | Table today | After | Changes |
@@ -1156,6 +1205,26 @@ Example: the Constitution (legal) creates the office of Governor (governance); a
 
 Committees are institutions linked to their house through `relationships`.
 
+
+```mermaid
+erDiagram
+  identities ||--|| institutions : "is"
+  identities ||--|| positions : "is"
+  identities ||--|| offices : "is"
+  institutions ||--o{ positions : defines
+  positions ||--o{ offices : "concrete seats"
+  offices ||--o{ holders : "held by"
+  individuals ||--o{ holders : holds
+  holders ||--o{ appointments : steps
+  institutions ||--o{ terms : has
+  institutions ||--o{ relationships : "oversees or part of"
+  institutions ||--o{ jurisdictions : "authority in"
+  functions ||--o{ assignments : "carried by"
+  identities ||--o{ powers : "from or to"
+  procedures ||--o{ powers : "by procedure"
+  obligations ||--o{ reports : filed
+```
+
 ### 30.5 `legislature` (new)
 
 | Table | Was | Columns |
@@ -1170,6 +1239,25 @@ Committees are institutions linked to their house through `relationships`.
 | `speeches` | governance | `sitting_id`, `holder_id`, `motion_id`, `bill_id`, `hansard_id`, `kind_term`, `position`, `page`, `word_count`, `country_id`; partitioned by country |
 | `summaries` | new | exactly one of `bill_id`, `motion_id`, `speech_id`, `agenda_id`; `language_id`, `text`, `origin` (enum), `status` |
 
+
+```mermaid
+erDiagram
+  institutions ||--o{ sittings : house
+  occurrences ||--o{ sittings : when
+  sittings ||--o{ agenda : has
+  identities ||--|| bills : "is"
+  bills ||--o{ stages : passes
+  sittings ||--o{ motions : debates
+  motions ||--o{ votes : decided
+  holders ||--o{ votes : casts
+  parties ||--o{ votes : "voted as"
+  sittings ||--o{ hansards : recorded
+  sittings ||--o{ speeches : has
+  holders ||--o{ speeches : gives
+  bills ||--o{ summaries : summarised
+  bills ||--o| instruments : became
+```
+
 ### 30.6 `politics`
 
 | Table today | After | Changes |
@@ -1183,6 +1271,22 @@ Committees are institutions linked to their house through `relationships`.
 | `governance.fulfilments` | moved | `commitment_id`, exactly one of `project_id`, `contract_id`, `appropriation_id`, `bill_id`, `instrument_id`; `kind_term`, `status_term`, `recorded_on` |
 | `contributions` | kept | `donor_id`, `recipient_id` → identities, `election_id` (optional), amount + `currency_id`, `is_in_kind`, `given_on`, `status_term`, `version_id` (disclosure file) |
 
+
+```mermaid
+erDiagram
+  identities ||--|| parties : "is"
+  identities ||--|| coalitions : "is"
+  parties ||--o{ memberships : has
+  individuals ||--o{ memberships : joins
+  coalitions ||--o{ alignments : has
+  parties ||--o{ alignments : aligns
+  parties ||--o{ manifestos : publishes
+  manifestos ||--o{ commitments : contains
+  identities ||--o{ commitments : makes
+  commitments ||--o{ fulfilments : "delivered by"
+  identities ||--o{ contributions : "donor or recipient"
+```
+
 ### 30.7 `election` (new)
 
 | Table | Was | Columns |
@@ -1195,6 +1299,23 @@ Committees are institutions linked to their house through `relationships`.
 | `turnouts` | `electorates` | `contest_id`, `feature_id`, `registered`, `cast`, `valid`, `rejected`, `spoilt`, `status`, `collection_id`, `revision`, `supersedes_id` |
 | `results` | `results` + `option_results` | exactly one of `candidate_id`, `choice_id`; `feature_id`, `votes`, `status`, `basis`, `collection_id` → `statistics.collections`, `revision`, `supersedes_id`, `country_id`; partitioned by country |
 | `tallies` | new, prepared | the result to show per contest, candidate or choice and place, chosen with `statistics.priorities` (IEBC first); partitioned by country |
+
+
+```mermaid
+erDiagram
+  identities ||--|| elections : "is"
+  events ||--o{ elections : "planned as"
+  elections ||--o{ contests : has
+  offices ||--o{ contests : "for seat"
+  contests ||--o{ candidates : has
+  contests ||--o{ choices : referendum
+  elections ||--o{ stations : has
+  contests ||--o{ turnouts : counts
+  candidates ||--o{ results : votes
+  choices ||--o{ results : votes
+  forms ||--o{ results : "from form"
+  results ||--o{ tallies : "chosen for"
+```
 
 ### 30.8 `civic`
 
@@ -1211,6 +1332,26 @@ Committees are institutions linked to their house through `relationships`.
 | `deliveries` | kept | work delivered and certified: `contract_id`, `kind_term`, certified value + `currency_id`, `delivered_on`, `feature_id`. Payments are `finance.flows` |
 | `officials`, `partners`, `beneficiaries` | merged → `roles` | exactly one of `procurement_id`, `bid_id`, `contract_id`, `project_id`; `holder_id` → `governance.holders` when acting through an office, otherwise `identity_id`; `role_term` (accounting officer, evaluator, signatory, consortium partner, subcontractor, beneficial owner, beneficiary community); `share`; `acted_on` |
 
+
+```mermaid
+erDiagram
+  identities ||--|| services : "is"
+  identities ||--|| facilities : "is (same as feature)"
+  identities ||--|| projects : "is"
+  identities ||--|| procurements : "is"
+  projects ||--o{ sites : at
+  projects ||--o{ procurements : buys
+  procurements ||--o{ bids : receives
+  procurements ||--o{ contracts : awards
+  contracts ||--o{ variations : changed
+  contracts ||--o{ deliveries : delivers
+  contracts ||--o{ items : "line items"
+  goods ||--o{ items : good
+  contracts ||--o{ scores : scored
+  contracts ||--o{ roles : "people and firms"
+  holders ||--o{ roles : "acting in office"
+```
+
 ### 30.9 `finance`
 
 | Table today | After | Changes |
@@ -1225,6 +1366,22 @@ Committees are institutions linked to their house through `relationships`.
 | `MoneyEntity` | abstract base | not a table |
 | — | `findings` (new) | audit findings: `institution_id`, `period_id`, `kind_term`, questioned amount + `currency_id`, `status_term` (open, resolved, referred), optional `contract_id`, `project_id`, `flow_id` |
 
+
+
+```mermaid
+erDiagram
+  periods ||--o{ budgets : for
+  budgets ||--o{ revisions : versions
+  revisions ||--o{ appropriations : allocates
+  appropriations ||--o{ appropriations : parent
+  identities ||--|| funds : "is"
+  identities ||--|| debts : "is"
+  appropriations ||--o{ flows : spent
+  funds ||--o{ flows : from
+  contracts ||--o{ flows : paid
+  debts ||--o{ flows : services
+  institutions ||--o{ findings : audited
+```
 
 ## 31. What the UI can show, and proposed additions
 
@@ -1409,10 +1566,97 @@ erDiagram
 - **Confidence:** `civic.scores` records `score`, `low`, `high`, `comparables` (how many prices were compared), `confidence` and `basis`. When there are too few comparable prices it says so instead of giving a score.
 - Scores remain **reviewable proposals** that show their inputs, never findings or accusations.
 
+## 34. Approved shape: `source`
+
+**Approved by the owner on 2026-11-25.** Column names are in SQL casing; sections 21–24 apply. This completes the provenance rule of section 23.
+
+### 34.1 What `source` answers
+
+Every fact follows the evidence path `raw artifact → extracted representation → candidate → review → accepted row`. Extracted representations and candidates are staged in MongoDB (see the database architecture); when a candidate is accepted into PostgreSQL, its evidence links are written here. `source` answers four questions:
+
+1. **Who published it?** Publishers, their channels, websites and paths.
+2. **What did we get, and when?** Products, editions, artifacts (the bytes) and captures (each fetch).
+3. **Exactly where in it?** Citations: a page, paragraph, JSON path or CSV cell.
+4. **Which rows does it support, and how?** Evidence links, verifications, disputes and rights.
+
+### 34.2 Decisions
+
+- **Publishers share their organisation's identity** (`official.entities`), like institutions and parties.
+- **Sources have a plain English `label`**, an internal technical name like auth role titles; they are not identities. (The owner answered "yes" to "a label or identity-backed"; the first option, the label, is recorded.)
+- **`source.addresses` is renamed `paths`**, so "addresses" means only readable URLs in `identity.addresses`. A path is **any location on a domain**: a website page (`/path1/path2`), a listing, a file, a feed, or an API endpoint. It is not limited to back-end or API sources.
+- **`evidence`** is the provenance linking table, as designed in 34.4.
+- **`relationships` is renamed `derivations`**, and its subject link is dropped.
+- **`products` are identity-backed**, so "Economic Survey" has multilingual names.
+
+### 34.3 Tables
+
+| Table today | After | Changes |
+|---|---|---|
+| `publishers` | kept, shares the organisation's identity | `name` → names; `official_entity_id` removed; `kind_term`, `class_term`, `country_id` |
+| `sources` | kept | a publication channel: `publisher_id`, `label` (English), `kind` (enum: website, api, portal, feed), `class_term`, `credibility_term`, `licence_term`, `terms_url`, `credential_binding` (the name of a secret setting, never the secret); `title`, `description`, `official_entity_id` removed |
+| `domains` | kept | `source_id`, `host`, `status_term`, `owner_id` → identities, `contact_id` → `official.contacts`, `template_id` → `governance.templates`, `last_checked_at`, years plus dates |
+| `addresses` | renamed `paths` | any location on a domain: `domain_id`, `kind` (enum: page, listing, file, feed, api), `path` (`/path1/path2`), `query`, `method` (for API calls; pages are fetched with GET), note with language |
+| `discoveries` | kept | links found while crawling: `path_id`, `observed_url`, `found_on_id`, `source_id`, `anchor_text`, `context`, `discovered_at`; partitioned by month |
+| `products` | kept, identity-backed | a publisher's series: `kind_term`, `publisher_id`; `title`, `description` → names |
+| `editions` | kept | one issue: `product_id`, `designation`, `language_id`, `published_on`; `description` removed |
+| `artifacts` | kept, slimmer | the bytes as obtained: `edition_id`, `version_id` → `filesystem.versions`, `parent_id`; `sha256`, `format`, `content_type`, `size_bytes` removed (held by `filesystem.versions`); `location`, `description` removed |
+| `captures` | kept | one fetch: `source_id`, `path_id`, `discovery_id`, `artifact_id`, `original_url`, `retrieved_url`, `retrieved_at`; untyped `response_metadata` → `status_code`, `etag`, `last_modified`, `content_type`; partitioned by month |
+| `relationships` | renamed `derivations` | lineage: outputs (artifact, edition, file version) from inputs, `method`, `run`; subject link removed |
+| `citations` | kept, focused | exactly where in an artifact: `artifact_id` or `capture_id`, `path_id`, `locator_term` (page, paragraph, JSON path, CSV cell, region, timestamp), `locator`, `quoted_hash`, `recorded_at`; subject link moves to `evidence` |
+| — | `evidence` (new) | the provenance linking table (34.4) |
+| `verifications` | kept | a review decision about a row: subject link, `method_term`, `outcome` (enum), `confidence`, `reviewer_id` → accounts, `assessed_at`, `supersedes_id`; explanation → note with language |
+| `attributions` | kept | credit and rights: `licence_term`, `credit`, `rights`, `assessed_at`, `assessor_id` → accounts |
+| `slugs`, `links` | removed | → `identity.addresses` |
+| `coverage` | kept | expected coverage for acquisition planning: `country_id`, `source_id`, `product_id`, `feature_id`, `subject_term`, years, `level_id`, `checked_on`, `expected_url`, `publisher_id`; note with language |
+| `disputes` | kept | conflicting claims about a row: subject link, `kind_term`, `status_term`, `resolved_on`, `resolution_id` → evidence; summary → note with language |
+| `contenders` | kept | one side of a dispute: `dispute_id`, `evidence_id`, `claim` + `language_id`, `is_preferred` |
+
+### 34.4 `source.evidence`
+
+```text
+source.evidence
+  subject_table    the table it supports, such as 'statistics.observations'   (no foreign key, by design)
+  subject_id       the row
+  citation_id      → source.citations: exactly where in which artifact
+  role             enum: origin, supports, contradicts
+  method           enum: manual, extracted, matched, modelled
+  fields           text[], optional: which columns it supports
+  confidence       0–1, optional
+  observed_at      when the information was observed or retrieved (not when it was valid)
+  recorded_at      when the link was written
+```
+
+- **Partitioning:** list-partitioned by `subject_table`; the largest (`statistics.observations`, `election.results`, `legislature.votes`) are further hash-partitioned on `subject_id`. Main index (`subject_table`, `subject_id`); reverse lookups use an index on `citation_id`.
+- **No foreign key, by design.** Integrity comes from Mzizi's own write code (it checks the row exists), a regular per-partition sweep for links whose row no longer exists, and soft-deleted rows keeping their evidence as history.
+
+```mermaid
+erDiagram
+  identities ||--|| publishers : "is"
+  publishers ||--o{ sources : runs
+  sources ||--o{ domains : "on"
+  domains ||--o{ paths : has
+  paths ||--o{ discoveries : "found on"
+  paths ||--o{ captures : fetched
+  publishers ||--o{ products : publishes
+  products ||--o{ editions : has
+  editions ||--o{ artifacts : contains
+  versions ||--o{ artifacts : bytes
+  captures ||--o{ artifacts : obtained
+  artifacts ||--o{ citations : "located in"
+  citations ||--o{ evidence : "supports rows"
+  artifacts ||--o{ derivations : "input / output"
+  artifacts ||--o{ attributions : rights
+  disputes ||--o{ contenders : sides
+  evidence ||--o{ contenders : claim
+```
+
+### 34.5 Articles for several identities
+
+**Approved 2026-11-25.** An article can be about several identities. `media.subjects` (`article_id`, `identity_id`, `role_term`: main, mentioned) lists them; `media.articles.identity_id` stays as the main one. An explainer about devolution can be for the national government and mention every county.
+
 ## Pending discussion
 
-1. **Source links.** The design of the `source` linking table (section 23): what it records, its partition key, and cleanup when a row is deleted.
-2. **Articles for several identities.** `media.articles.identity_id` holds one owner. Whether an article can be for several identities (an explainer about devolution and every county) is to be decided.
+None. Every PostgreSQL schema has been discussed and approved (2026-11-25). New open items are added here as they arise.
 
 ## Related
 
