@@ -2,6 +2,17 @@
 
 Mzizi is an evidence-first platform for researching African history, heritage, geography, culture, languages, governance and public life. It preserves source material and provenance so that claims can be reviewed in context, across time and place, with uncertainty visible.
 
+## Getting Started
+
+**New here?** See [MONOREPO.md](MONOREPO.md) for the Bun workspace structure, then continue below.
+
+```bash
+# Initial setup
+bun install
+bun run setup
+bun run dev
+```
+
 Start with [WHY](.docs/docs/WHY.md), [GOALS](.docs/docs/GOALS.md) and [STORY](.docs/docs/STORY.md) for the purpose and product direction. The eight core project documents are indexed in the [documentation guide](.docs/docs/README.md). Detailed designs live under [.docs/design](.docs/design/README.md); planning proposals live under [.docs/_plan](.docs/_plan/README.md).
 
 ## CLI and scraping

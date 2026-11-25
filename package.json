@@ -1,9 +1,13 @@
 {
-  "name": "mzizi-repository",
+  "name": "mzizi-monorepo",
   "private": true,
   "type": "module",
   "packageManager": "bun@1.4.2",
-  "description": "Root command runner for Mzizi Africa. Every command delegates to scripts/mz.ts; see scripts/README.md.",
+  "description": "Mzizi Africa Bun monorepo: unified workspace for Dryv contracts, backend API, and web apps. All commands routed through scripts/mz.ts.",
+  "workspaces": [
+    "dryv",
+    "source"
+  ],
   "scripts": {
     "mz": "bun scripts/mz.ts",
     "help": "bun scripts/mz.ts help",
