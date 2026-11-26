@@ -1,0 +1,55 @@
+/* Evidence-first: every figure is a door. Clicking a figure opens a drawer showing where it comes from, how it was
+   reviewed, how it changed, and who disagrees. The open figure lives in the URL as `view.fig` so it can be shared and
+   Back closes it. Designed around: source.*, election.results (status/basis/revision/supersedes), statistics.priorities,
+   finance.revisions, and the evidence path raw artifact -> extracted -> candidate -> review -> versioned data. */
+(function () {
+  const esc = P.esc; const E = (P.evidence = {}); P.figs = {};
+  const STATUS = {
+    verified: { label: "Verified", glyph: "✓", cls: "ok", why: "Reviewed and matches its source." },
+    provisional: { label: "Provisional", glyph: "◐", cls: "warn", why: "Published but still open to correction." },
+    revised: { label: "Revised", glyph: "↻", cls: "info", why: "A later revision replaced an earlier figure." },
+    estimate: { label: "Estimate", glyph: "≈", cls: "mute", why: "Modelled or surveyed, not counted." },
+    disputed: { label: "Disputed", glyph: "!", cls: "bad", why: "Sources disagree and no ranking settles it yet." },
+  };
+  E.STATUS = STATUS;
+  const num = (t) => { const m = String(t).replace(/<[^>]+>/g, "").replace(/,/g, "").match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
+  const reshape = (orig, n) => { const t = String(orig).replace(/<[^>]+>/g, ""); const dec = /\.\d/.test(t) ? 1 : 0; const big = Math.abs(n) >= 1000; return t.replace(/-?[\d,]+(\.\d+)?/, big ? D.fmt(n) : n.toFixed(dec)); };
+
+  /** Deterministic evidence record for a figure key. */
+  E.of = (key, label, value) => {
+    const r = D.rng("EV:" + key); const kind = key.split(":")[0];
+    const w = { pop: ["estimate", "provisional"], reg: ["verified", "revised"], cast: ["verified", "revised", "provisional"], lead: ["verified", "revised"], bud: ["verified", "revised"], rel: ["provisional", "verified"], aud: ["verified", "provisional"], ind: ["estimate", "provisional", "disputed"], holders: ["verified"], won: ["verified", "revised"], turn: ["verified", "provisional"], units: ["verified"], vote: ["verified"], prov: ["verified", "revised"] }[kind] || ["verified", "provisional", "estimate"];
+    const status = w[Math.floor(r() * w.length)]; const conf = status === "verified" ? 0.9 + r() * 0.09 : status === "disputed" ? 0.4 + r() * 0.2 : 0.6 + r() * 0.25;
+    const pool = D.sources.filter((s) => ({ pop: ["Geography", "Finance"], reg: ["Election"], cast: ["Election"], lead: ["Election"], turn: ["Election"], won: ["Election"], bud: ["Finance"], rel: ["Finance"], aud: ["Finance"], ind: ["Geography", "Finance"], holders: ["Law", "Election"], units: ["Law", "Geography"], vote: ["Legislature"], prov: ["Law"] }[kind] || ["Law"]).includes(s.kind)); const srcs = (pool.length ? pool : D.sources).slice(0, 1 + Math.floor(r() * 2));
+    const locators = ["page 41, table 3", "sheet 'Summary', cell D14", "form 34C, line 9", "section 2.1", "row 118 of the extract"];
+    const nv = num(value); const alts = status === "disputed" || status === "estimate" || r() < 0.25 ? [["Survey series", 0.03 + r() * 0.07, r() < 0.5 ? 1 : -1, "priority 2"], ["Administrative records", 0.01 + r() * 0.04, r() < 0.5 ? 1 : -1, "priority 3"]].map((a) => ({ name: a[0], value: nv == null ? "—" : reshape(value, nv * (1 + a[2] * a[1])), diff: Math.round(a[1] * 1000) / 10 * a[2], rank: a[3] })) : [];
+    const revs = [{ rev: 1, when: "2026-08-14", value: nv == null ? value : reshape(value, nv * (status === "revised" ? 0.986 : 1)), status: status === "revised" ? "provisional" : status, by: "Model-assisted extraction", note: "First extraction" }];
+    if (status === "revised") revs.push({ rev: 2, when: "2026-09-30", value: String(value).replace(/<[^>]+>/g, ""), status: "verified", by: "Reviewer (person)", note: "Corrected after the form was re-read; supersedes revision 1" });
+    return { key, label, value: String(value).replace(/<[^>]+>/g, ""), status, conf, sources: srcs.map((s, i) => ({ ...s, locator: locators[(i + Math.floor(r() * 5)) % 5], retrievedAt: s.retrieved + " 0" + (6 + i) + ":2" + i })), alts, revs, reviewer: r() < 0.5 ? { kind: "person", name: "Reviewer (sample)" } : { kind: "rule", name: "Approved automatic rule: matches two independent sources" }, cites: 1 + Math.floor(r() * 30), asOf: "2026-11-26" };
+  };
+
+  /** A figure that opens its evidence. Returns a link. */
+  P.fig = (value, key, label) => { const ev = E.of(key, label || key, value); P.figs[key] = ev; const s = STATUS[ev.status];
+    return `<a class="fig" href="${P.href({ set: { "view.fig": key } })}" aria-label="${esc(label || key)}: ${esc(String(value).replace(/<[^>]+>/g, ""))}. ${s.label}. Open evidence."><span class="fv">${value}</span><span class="tm ${s.cls}" title="${s.label}: ${s.why}" aria-hidden="true">${s.glyph}</span></a>`; };
+
+  const pathStep = (i, cur) => ["Raw artifact", "Extracted", "Candidate", "Reviewed", "Versioned data"].map((t, k) => `<span class="st ${k < cur ? "done" : k === cur ? "now" : ""}">${t}</span>`).join('<span class="muted">→</span>');
+  const sheet = (ev) => { const s = STATUS[ev.status]; const closeHref = P.href({ set: { "view.fig": "" } }); const src = ev.sources[0]; const url = location.origin + P.href({ set: { "view.fig": ev.key } });
+    const body = `<div class="sh-head"><div><span class="eyebrow">Evidence</span><h2>${esc(ev.label)}</h2></div><a class="ib" href="${closeHref}" aria-label="Close evidence" id="sh-close">${P.icon("x")}</a></div>
+    <div class="sh-val"><b>${esc(ev.value)}</b><span class="chip ${s.cls === "info" ? "" : s.cls}">${s.glyph} ${s.label}</span></div><p class="muted sm" style="margin:2px 0 12px">${s.why} As of ${ev.asOf}, ${esc(P.pl.name)}.</p>
+    <div class="sh-sec"><h3>How we got here</h3><div class="pipe">${pathStep(0, { verified: 5, revised: 5, provisional: 3, estimate: 2, disputed: 3 }[ev.status])}</div><div class="bar" style="margin-top:10px" title="Confidence"><i style="width:${Math.round(ev.conf * 100)}%"></i></div><small class="muted">Confidence ${Math.round(ev.conf * 100)}%. ${ev.reviewer.kind === "person" ? "Approved by a person" : esc(ev.reviewer.name)}. Acceptance is recorded either way.</small></div>
+    <div class="sh-sec"><h3>Sources (${ev.sources.length})</h3>${ev.sources.map((x) => `<div class="src-card"><b>${esc(x.title)}</b><div class="muted sm">${P.chip(x.kind, "mute")} ${esc(x.fmt)} · retrieved ${x.retrievedAt} · robots: ${esc(x.robots)}</div><div class="sm">Where: <b>${esc(x.locator)}</b> · SHA-256 <span class="mono">${x.sha}</span></div><details><summary>See the original</summary><div class="raw"><div class="muted sm">${esc(x.locator)} · raw bytes preserved, this is the extracted text</div><p>… the total recorded for ${esc(P.pl.name)} stood at <mark class="hl-m">${esc(ev.value)}</mark> according to the schedule submitted by the reporting office …</p></div></details></div>`).join("")}</div>
+    <div class="sh-sec"><h3>History of this figure</h3><ol class="steps">${ev.revs.map((r) => `<li><span><b>Revision ${r.rev}</b> · ${r.when} · ${esc(r.value)} ${P.chip(r.status, r.status === "verified" ? "ok" : "warn")}<br><span class="muted sm">${esc(r.by)}. ${esc(r.note)}</span></span></li>`).join("")}</ol></div>
+    <div class="sh-sec"><h3>${ev.alts.length ? "Where sources disagree" : "Agreement"}</h3>${ev.alts.length ? `<table><thead><tr><th>Source</th><th class="n">Value</th><th class="n">Difference</th><th>Rank</th></tr></thead><tbody><tr class="hl"><td><b>Shown here</b></td><td class="n">${esc(ev.value)}</td><td class="n">—</td><td>priority 1</td></tr>${ev.alts.map((a) => `<tr><td>${esc(a.name)}</td><td class="n">${esc(a.value)}</td><td class="n">${a.diff > 0 ? "+" : ""}${a.diff}%</td><td>${a.rank}</td></tr>`).join("")}</tbody></table><p class="sm muted">The figure shown is the highest-priority collection (<code>statistics.priorities</code>). The others stay visible, never deleted.</p>` : '<p class="sm muted" style="margin:0">No other collection reports a different value.</p>'}</div>
+    <div class="sh-sec"><h3>Use it</h3><div class="row"><button class="btn sm" data-ev="cite">Copy citation</button><button class="btn sm" data-ev="link">Copy link</button><button class="btn sm" data-ev="follow">${P.icon("bell")} Follow changes</button></div><details style="margin-top:10px"><summary>Report a problem with this figure</summary><label class="f" style="margin-top:8px"><span>What looks wrong?</span><textarea id="ev-report" placeholder="e.g. the form says a different number"></textarea></label><button class="btn sm pri" style="margin-top:6px" data-ev="report">Send for review</button></details><p class="sm muted" style="margin-top:10px">Cited ${ev.cites} times by readers.</p></div>`;
+    return `<div class="sheet-wrap"><a class="sheet-back" href="${closeHref}" aria-label="Close evidence" tabindex="-1"></a><aside class="sheet" role="dialog" aria-modal="true" aria-label="Evidence for ${esc(ev.label)}">${body}</aside></div>`; };
+
+  E.sync = () => { const dlg = document.getElementById("dlg"); const key = P.q && P.q["view.fig"];
+    if (!key) { if (dlg.querySelector(".sheet-wrap")) dlg.innerHTML = ""; return; }
+    const ev = P.figs[key]; if (!ev) { const u = new URL(location.href); u.searchParams.delete("view.fig"); history.replaceState(null, "", u.pathname + u.search + u.hash); P.q["view.fig"] = ""; return; }
+    dlg.innerHTML = sheet(ev); const c = document.getElementById("sh-close"); c && c.focus({ preventScroll: true }); };
+
+  document.addEventListener("click", (e) => { const b = e.target.closest("[data-ev]"); if (!b) return; const ev = P.figs[P.q["view.fig"]]; if (!ev) return; const act = b.dataset.ev;
+    const cite = `Mzizi Africa. ${ev.label}, ${P.pl.name}: ${ev.value} (${STATUS[ev.status].label.toLowerCase()}, revision ${ev.revs.at(-1).rev}). Source: ${ev.sources[0].title}, retrieved ${ev.sources[0].retrieved}. ${location.href}`;
+    const copy = (t, m) => { (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => P.toast(m), () => P.toast("Copy blocked by the browser. " + t.slice(0, 60) + "…")); };
+    if (act === "cite") copy(cite, "Citation copied"); else if (act === "link") copy(location.href, "Link copied. It reopens this evidence."); else if (act === "follow") P.toast("Following this figure. You will be told when a new revision supersedes it."); else if (act === "report") { const t = document.getElementById("ev-report"); if (!t.value.trim()) { P.toast("Say what looks wrong first."); return; } t.value = ""; P.toast("Sent. A reviewer will look at this figure; nothing changes until they do."); } });
+})();

@@ -4,10 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Mzizi Africa — prototype</title>
-<script>document.write('<base href="'+(location.protocol!=="file:"&&!/\.html?$/.test(location.pathname)?"/":"./")+'">')</script>
+<script>document.write('<base href="'+(location.protocol!=="file:"&&!/\.html?$/.test(location.pathname)&&/^\/(ke(\/|$)|$)/.test(location.pathname)?"/":"./")+'">')</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="shell.css">
 <link rel="stylesheet" href="views.css">
+<link rel="stylesheet" href="polish.css">
 <script>
 /* Paint-first theme: set mode and palette from the cookie before first paint, as the real shell does. */
 (function(){try{var m=document.cookie.match(/mzizi-proto-theme=([^;]*)/)||[];var v=decodeURIComponent(m[1]||localStorage.getItem('mzizi-proto-theme')||'system.terra').split('.');
@@ -31,13 +32,19 @@ document.documentElement.dataset.mode=mode;document.documentElement.dataset.pale
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="data.js"></script>
 <script src="core.js"></script>
+<script src="icons.js"></script>
 <script src="viz.js"></script>
 <script src="shell.js"></script>
 <script src="views-place.js"></script>
+<script src="views-time.js"></script>
 <script src="views-politics.js"></script>
+<script src="views-parliament.js"></script>
 <script src="views-gov.js"></script>
+<script src="views-legal.js"></script>
 <script src="views-money-data.js"></script>
 <script src="views-community.js"></script>
+<script src="evidence.js"></script>
+<script src="rail.js"></script>
 <script src="boot.js"></script>
 </body>
 </html>

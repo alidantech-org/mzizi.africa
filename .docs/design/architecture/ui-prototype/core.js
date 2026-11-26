@@ -4,7 +4,7 @@
 (function () {
   const P = (window.P = { views: {}, mounts: [], gen: 0 });
   /* Documented scheme: /<country>/<place…>?view=&view.id=&filters.*  (path = place). Hosts that cannot serve deep paths (file://, a plain index.html, the artifact sandbox) fall back to ?at=. */
-  P.pathMode = location.protocol !== "file:" && !/\.html?$/.test(location.pathname);
+  P.pathMode = location.protocol !== "file:" && !/\.html?$/.test(location.pathname) && /^\/(ke(\/|$)|$)/.test(location.pathname);
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   P.esc = esc;
   /* ---- preferences: one cookie per topic (localStorage fallback on file://) ---- */
@@ -44,7 +44,8 @@
   const LEVELS = ["country", "county", "constituency", "ward"];
   P.whyUnavailable = (id, pl) => { const n = P.nav(id); if (!pl.ok) return null; if (pl.depth > n.max) return `${n.label} only applies down to ${LEVELS[n.max]} level. You are at ${LEVELS[pl.depth]} level. Go up to ${n.max === 0 ? "the country" : "a " + LEVELS[n.max]} to open it.`; return null; };
   /* Which query keys each view owns. Anything else is dropped when the subject changes. */
-  P.ALLOWED = { atlas: ["view.layer", "view.ind", "view.year"], history: ["view.year"], media: ["view.id", "display.lang", "filters.kind"], community: ["filters.kind", "filters.topic", "sort.by"], elections: ["view.id", "view.contest", "view.year", "sort.by"], parliament: ["view.id", "view.tab", "filters.q"], promises: ["filters.status", "filters.topic"], leaders: ["view.id", "filters.level"], institutions: ["view.id"], power: ["view.node", "view.proc"], law: ["view.id"], finance: ["view.tab"], suppliers: ["filters.status", "sort.by", "view.id"], statistics: ["view.indicator", "view.break", "view.from"], compare: ["view.ids", "view.indicator"], sources: ["view.id", "view.tab"] };
+  P.GLOBAL = ["view.fig"];
+  P.ALLOWED = { atlas: ["view.layer", "view.ind", "view.year", "view.mode", "view.compare"], history: ["view.year"], media: ["view.id", "display.lang", "filters.kind"], community: ["filters.kind", "filters.topic", "sort.by"], elections: ["view.id", "view.contest", "view.year", "sort.by"], parliament: ["view.id", "view.tab", "view.house", "view.board", "view.sitting", "filters.q", "filters.party"], promises: ["filters.status", "filters.topic"], leaders: ["view.id", "filters.level"], institutions: ["view.id"], power: ["view.node", "view.proc"], law: ["view.id", "view.as", "view.diff", "view.ref", "view.trail", "filters.q", "filters.kind", "filters.status"], finance: ["view.tab"], suppliers: ["filters.status", "sort.by", "view.id"], statistics: ["view.indicator", "view.break", "view.from"], compare: ["view.ids", "view.indicator"], sources: ["view.id", "view.tab"] };
 
   /* ---- URL state ---- */
   P.parse = () => {
@@ -53,7 +54,7 @@
     P.q = q; P.at = at; P.pl = pl; P.view = view; P.hash = location.hash.replace("#", ""); P.errors = [];
     if (!P.nav(raw)) P.errors.push(`Unknown view "${raw}".`);
     if (!pl.ok) P.errors.push(pl.error);
-    Object.keys(q).forEach((k) => { if (["at", "view", "lang"].includes(k) || !/^(view|filters|sort|page|display)\./.test(k)) return; if (!(P.ALLOWED[view] || []).includes(k)) P.errors.push(`"${k}" is not used by the ${P.nav(view).label} view.`); });
+    Object.keys(q).forEach((k) => { if (["at", "view", "lang"].includes(k) || !/^(view|filters|sort|page|display)\./.test(k)) return; if (!(P.ALLOWED[view] || []).includes(k) && !P.GLOBAL.includes(k)) P.errors.push(`"${k}" is not used by the ${P.nav(view).label} view.`); });
     return q;
   };
   /** patch: {at, view, set:{k:v}, keep:true (carry current params), hash} — nothing is carried implicitly when the subject changes. */
@@ -61,7 +62,8 @@
     const at = patch.at || P.at; const view = patch.view || P.view; const sameSubject = view === P.view; const p = new URLSearchParams();
     if (!P.pathMode) p.set("at", at.join("/")); if (view !== "overview") p.set("view", view);
     const base = patch.keep || (sameSubject && patch.set) ? Object.assign({}, P.q) : {};
-    Object.keys(base).forEach((k) => { if (/^(view|filters|sort|page|display)\./.test(k) && (P.ALLOWED[view] || []).includes(k)) base[k] = base[k]; else delete base[k]; });
+    Object.keys(base).forEach((k) => { if (/^(view|filters|sort|page|display)\./.test(k) && ((P.ALLOWED[view] || []).includes(k) || P.GLOBAL.includes(k))) base[k] = base[k]; else delete base[k]; });
+    if (patch.at && patch.at.join("/") !== P.at.join("/")) delete base["view.fig"];
     if (patch.at && patch.at.join("/") !== P.at.join("/") && patch.dropOnPlace) patch.dropOnPlace.forEach((k) => delete base[k]);
     Object.assign(base, patch.set || {}); Object.keys(base).forEach((k) => { if (base[k] === "" || base[k] == null) return; p.set(k, base[k]); });
     if (P.q.lang) p.set("lang", P.q.lang);
@@ -83,9 +85,10 @@
   P.icons = { home: "M3 11l9-8 9 8M5 10v10h14V10", map: "M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14", users: "M16 20v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1M9.5 11a3.5 3.5 0 100-7 3.5 3.5 0 000 7M21 20v-1a4 4 0 00-3-3.9M16 4.1a3.5 3.5 0 010 6.8", vote: "M9 11l3 3 8-8M5 21h14M5 21v-4h14v4", landmark: "M3 21h18M5 21V10M9 21V10M15 21V10M19 21V10M2 10l10-7 10 7", building: "M4 21V4h10v17M14 9h6v12M8 8h2M8 12h2M8 16h2", network: "M12 5a2 2 0 100-4 2 2 0 000 4M5 21a2 2 0 100-4 2 2 0 000 4M19 21a2 2 0 100-4 2 2 0 000 4M12 5v6M12 11l-7 6M12 11l7 6", gavel: "M14 4l6 6M9 9l6 6M4 20l7-7M12 2l8 8-3 3-8-8z", coins: "M12 6c4 0 7-1 7-2s-3-2-7-2-7 1-7 2 3 2 7 2zM5 4v6c0 1 3 2 7 2s7-1 7-2V4M5 10v6c0 1 3 2 7 2s7-1 7-2v-6", layers: "M12 2l10 6-10 6L2 8zM2 14l10 6 10-6", chart: "M4 20V4M4 20h16M8 16v-5M12 16V7M16 16v-3", compare: "M6 3v12M18 9v12M6 15a3 3 0 100 6 3 3 0 000-6M18 3a3 3 0 100 6", library: "M4 4v16M9 4v16M14 6l4 14", message: "M21 12a8 8 0 01-11.6 7.1L3 21l1.9-6.4A8 8 0 1121 12z", image: "M3 5h18v14H3zM8 11a2 2 0 100-4 2 2 0 000 4M21 16l-5-5-8 8", clock: "M12 21a9 9 0 100-18 9 9 0 000 18M12 7v5l3 2", search: "M11 18a7 7 0 100-14 7 7 0 000 14M21 21l-5-5", bell: "M6 16V11a6 6 0 1112 0v5l2 2H4zM10 21h4", pin: "M12 22s7-6 7-12a7 7 0 10-14 0c0 6 7 12 7 12M12 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5", settings: "M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0M14 4v4M8 10v4M16 16v4", chev: "M6 9l6 6 6-6", x: "M6 6l12 12M18 6L6 18", panel: "M3 4h18v16H3zM9 4v16", lock: "M6 11h12v10H6zM8 11V8a4 4 0 118 0v3", target: "M12 21a9 9 0 100-18 9 9 0 000 18M12 16a4 4 0 100-8 4 4 0 000 8M12 12h0", flag: "M5 21V4M5 4h12l-2 4 2 4H5", menu: "M4 6h16M4 12h16M4 18h16", heart: "M12 20s-8-5-8-11a4.5 4.5 0 018-2.5A4.5 4.5 0 0120 9c0 6-8 11-8 11z", play: "M7 4l13 8-13 8z", mic: "M12 3a3 3 0 013 3v6a3 3 0 01-6 0V6a3 3 0 013-3M5 11a7 7 0 0014 0M12 18v3", doc: "M6 3h9l4 4v14H6zM14 3v5h5", plus: "M12 5v14M5 12h14", check: "M5 12l5 5 9-10", help: "M12 21a9 9 0 100-18 9 9 0 000 18M9.5 9.5a2.5 2.5 0 114 2c-1 .7-1.5 1-1.5 2M12 17h0" };
   P.icon = (n, c) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"${c ? ` class="${c}"` : ""}><path d="${P.icons[n] || ""}"/></svg>`;
   P.chip = (t, k) => `<span class="chip ${k || ""}">${esc(t)}</span>`;
-  P.stat = (l, v, s) => `<div class="stat"><span class="eyebrow">${esc(l)}</span><b>${v}</b>${s ? `<small>${s}</small>` : ""}</div>`;
+  P.stat = (l, v, s, k) => `<div class="stat"><span class="eyebrow">${esc(l)}</span><b>${k ? P.fig(v, k, l) : v}</b>${s ? `<small>${s}</small>` : ""}</div>`;
   P.panel = (title, body, o = {}) => { const id = o.id || D.slug(title); return `<section class="panel" id="${id}" data-section="${id}"${o.cls ? ` style="${o.cls}"` : ""}><div class="ph"><h2>${esc(title)}</h2>${o.sub ? `<span class="muted sm">${o.sub}</span>` : ""}<div class="tools">${o.tools || ""}</div></div>${body}</section>`; };
-  P.head = (title, sub, tools) => `<div class="pagehead"><div><span class="eyebrow">${esc(P.pl.ok ? P.pl.level : "")}</span><h1>${esc(title)}</h1>${sub ? `<p>${sub}</p>` : ""}</div>${tools ? `<div class="tools">${tools}</div>` : ""}</div>`;
+  P.legend = () => `<div class="legend-strip" role="note"><b style="color:var(--ink)">Every marked figure opens its evidence.</b>${[["✓","ok","Verified"],["◐","warn","Provisional"],["↻","info","Revised"],["≈","mute","Estimate"],["!","bad","Disputed"]].map((x) => `<span><span class="tm ${x[1]}">${x[0]}</span>${x[2]}</span>`).join("")}</div>`;
+  P.head = (title, sub, tools) => (["overview", "elections", "finance", "statistics", "leaders"].includes(P.view) ? "" : "") + `<div class="pagehead"><div><span class="eyebrow">${esc(P.pl.ok ? P.pl.level : "")}</span><h1>${esc(title)}</h1>${sub ? `<p>${sub}</p>` : ""}</div>${tools ? `<div class="tools">${tools}</div>` : ""}</div>` + (["overview", "elections", "finance", "statistics"].includes(P.view) && !(P.q && P.q["view.id"]) ? P.legend() : "");
   P.table = (cols, rows, o = {}) => `<div class="tw"><table><thead><tr>${cols.map((c) => `<th class="${c.n ? "n" : ""}">${esc(c.h)}</th>`).join("")}</tr></thead><tbody>${rows.map((r) => `<tr${r.href ? ` data-href="${r.href}"` : ""}${r.hl ? ' class="hl"' : ""}>${cols.map((c, i) => `<td class="${c.n ? "n" : ""}">${r.c[i]}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
   P.seg = (key, opts, cur, label) => `<div class="seg" role="group" aria-label="${esc(label || key)}">${opts.map((o) => `<a href="${P.href({ set: { [key]: o[0] } })}" aria-current="${cur === o[0]}">${esc(o[1])}</a>`).join("")}</div>`;
   P.select = (key, opts, cur, label) => `<label class="f"><span class="sr">${esc(label)}</span><select data-q="${key}" aria-label="${esc(label)}">${opts.map((o) => `<option value="${esc(o[0])}"${o[0] === cur ? " selected" : ""}>${esc(o[1])}</option>`).join("")}</select></label>`;
@@ -99,7 +102,7 @@
 
   /* ---- render: paint first, fill in after; keep scroll within a subject ---- */
   P.render = () => {
-    P.parse(); P.gen++; P.mounts.length = 0; const main = document.getElementById("main"); const same = P.lastView === P.view && P.lastErr === !!P.errors.length && !P.forceTop;
+    P.parse(); P.gen++; P.mounts.length = 0; P.figs = {}; if (P._play) { clearInterval(P._play); P._play = null; } const main = document.getElementById("main"); const same = P.lastView === P.view && P.lastErr === !!P.errors.length && !P.forceTop;
     P.shell.update();
     const fill = () => {
       const n = P.nav(P.view); let html;
@@ -108,7 +111,7 @@
       else if (why) html = `<div class="panel empty"><h2>${esc(n.label)} is not available here</h2><p>${esc(why)}</p><a class="btn pri" href="${P.href({ at: P.at.slice(0, Math.max(n.max, 0) + 1) })}">Go up one level</a></div>`;
       else { try { html = P.views[P.view](); } catch (e) { console.error(e); html = `<div class="panel empty"><h2>This screen failed to render</h2><p class="mono">${esc(e.message)}</p></div>`; } }
       if (P.errors.length && P.pl.ok) html = `<div class="note warn" style="margin-bottom:12px">${P.errors.map(esc).join(" ")}</div>` + html;
-      main.innerHTML = html; main.classList.remove("busy"); P.drain(); P.validateHash();
+      main.innerHTML = html; main.classList.remove("busy"); P.drain(); P.validateHash(); P.evidence && P.evidence.sync();
       document.title = `${n.label} · ${P.pl.ok ? P.pl.name : "Mzizi"} — Mzizi prototype`;
       if (same && P.keepY != null) window.scrollTo(0, P.keepY); else if (P.hash && document.getElementById(P.hash)) document.getElementById(P.hash).scrollIntoView(); else window.scrollTo(0, 0);
       P.keepY = null; P.forceTop = false; P.lastView = P.view; P.lastErr = !!P.errors.length;

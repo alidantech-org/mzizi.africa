@@ -216,4 +216,32 @@
     { id: "C3", src: "S5", claim: "Bill B3 passed second reading on 2026-04-15", conf: 0.93, state: "pending", note: "Seen in two Hansard sittings." },
     { id: "C4", src: "S1", claim: "Article 6 lists 47 counties", conf: 0.97, state: "pending", note: "Schedule 1 agrees." },
   ];
+
+  /* Through time: how Kenya was divided and governed in each era (schematic; geography.changes + history.eras).
+     Units are illustrative centroids; real drawings come from geography.outlines per date range. */
+  D.ERAS = [
+    { id: "pre", from: 1800, to: 1895, name: "Before the Protectorate", authority: "Local and coastal polities", head: "Varied (illustrative)", unitHead: "Local authority", note: "Zones shown are illustrative groupings, not borders." },
+    { id: "prot", from: 1895, to: 1920, name: "East Africa Protectorate", authority: "British colonial administration", head: "Commissioner, later Governor", unitHead: "District Commissioner", note: "Declared in 1895." },
+    { id: "col", from: 1920, to: 1963, name: "Colony and Protectorate of Kenya", authority: "British colonial administration", head: "Governor", unitHead: "Provincial or District Commissioner", note: "The coastal strip stayed a protectorate." },
+    { id: "prov", from: 1963, to: 2013, name: "Independent Kenya: provinces", authority: "National government acting through provinces", head: "Prime Minister, then President (from 1964)", unitHead: "Provincial Commissioner (appointed)", note: "Eight provinces." },
+    { id: "cty", from: 2013, to: 2027, name: "Devolved Kenya: counties", authority: "National and county governments", head: "President", unitHead: "Governor (elected)", note: "47 counties under the 2010 Constitution." },
+  ];
+  D.eraAt = (y) => D.ERAS.find((e) => y >= e.from && y < e.to) || D.ERAS[D.ERAS.length - 1];
+  D.eraUnits = (id) => {
+    if (id === "pre") return [["Coast trading towns", -3.5, 39.6], ["Northern frontier", 2.5, 38.4], ["Rift and highlands", 0.3, 36.1], ["Lake basin", -0.2, 34.6]].map((u, i) => ({ id: D.slug(u[0]), name: u[0], lat: u[1], lon: u[2], cvar: "--c" + (i + 1), value: i }));
+    if (id === "prot") return [{ id: "eap", name: "East Africa Protectorate", lat: 0.3, lon: 37.6, cvar: "--c1", value: 0 }];
+    if (id === "col") return [{ id: "colony", name: "Colony of Kenya", lat: 0.3, lon: 37.4, cvar: "--c1", value: 0 }, { id: "strip", name: "Coastal Strip (protectorate)", lat: -3.9, lon: 39.75, cvar: "--c3", value: 1 }];
+    if (id === "prov") { const by = {}; D.counties.forEach((c) => (by[c.region] = by[c.region] || []).push(c)); return Object.keys(by).map((r, i) => ({ id: D.slug(r), name: r + " Province", lat: by[r].reduce((a, c) => a + c.lat, 0) / by[r].length, lon: by[r].reduce((a, c) => a + c.lon, 0) / by[r].length, cvar: "--c" + ((i % 5) + 1), value: i })); }
+    return D.counties.map((c, i) => ({ id: c.id, name: c.name, lat: c.lat, lon: c.lon, cvar: "--c" + ((i % 5) + 1), value: i }));
+  };
+  D.unitCount = (id) => ({ pre: 4, prot: 1, col: 2, prov: 8, cty: 47 }[id]);
+  D.shifts = [
+    { y: 1895, t: "East Africa Protectorate declared", from: "local polities", to: "one protectorate" },
+    { y: 1920, t: "Kenya Colony established; coastal strip remains a protectorate", from: "1 unit", to: "2 units" },
+    { y: 1963, t: "Independence; provinces and districts inherited", from: "colony", to: "8 provinces" },
+    { y: 2010, t: "New Constitution promulgated (27 August)", from: "8 provinces", to: "47 counties decided" },
+    { y: 2013, t: "County governments begin operating", from: "appointed provincial administration", to: "elected governors" },
+  ];
+  D.nameAt = (county, y) => { const N = { nairobi: [["Enkare Nyrobi", 1800, 1899], ["Nairobi", 1899, 2027]], mombasa: [["Kisiwa cha Mvita", 1800, 1593], ["Mombasa", 1593, 2027]] }[county.id]; const n = N && N.find((x) => y >= x[1] && y < x[2]); return n ? n[0] : county.name; };
+  D.unitOf = (units, lat, lon) => units.reduce((b, u) => ((u.lat - lat) ** 2 + (u.lon - lon) ** 2 < (b.lat - lat) ** 2 + (b.lon - lon) ** 2 ? u : b), units[0]);
 })();

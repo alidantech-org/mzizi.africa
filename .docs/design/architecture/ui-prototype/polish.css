@@ -1,0 +1,45 @@
+/* Polish layer: size tokens, icon rendering, custom scrollbars, popover and switcher behaviour, touch sizes. Loaded last. */
+:root{--ctl:38px;--ctl-sm:30px;--ic:18px;--ease:cubic-bezier(.2,.8,.2,1);--thumb:color-mix(in srgb,var(--ink) 24%,transparent);--thumb-h:color-mix(in srgb,var(--ink) 44%,transparent)}
+svg.ic{width:var(--ic);height:var(--ic);fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;flex:none;overflow:visible}
+svg.ic .d{fill:currentColor;fill-opacity:.14;stroke:none}
+.item svg.ic,.ib svg.ic{--ic:18px}.btn svg.ic{--ic:16px}.btn.sm svg.ic,.chip svg.ic{--ic:14px}.grp-h svg.ic{--ic:12px}.loc svg.ic{--ic:16px}.srch svg.ic{--ic:16px}
+.item[aria-current=page] svg.ic{color:var(--accent)}.item:hover svg.ic .d,.item[aria-current=page] svg.ic .d{fill-opacity:.3}
+.item{position:relative;transition:background .12s,color .12s}
+.item[aria-current=page]::before{content:"";position:absolute;left:-8px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+html[data-side=rail] .item[aria-current=page]::before{left:-8px}
+/* Scrollbars: thin, quiet, wider on hover. Firefox gets the standards properties. */
+*{scrollbar-width:thin;scrollbar-color:var(--thumb) transparent}
+::-webkit-scrollbar{width:12px;height:12px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--thumb);border-radius:99px;border:4px solid transparent;background-clip:content-box;min-height:36px}
+::-webkit-scrollbar-thumb:hover{background:var(--thumb-h);background-clip:content-box;border-width:3px}
+::-webkit-scrollbar-corner{background:transparent}
+html{scrollbar-gutter:stable}.sidenav{scrollbar-gutter:stable}.sidenav::-webkit-scrollbar{width:10px}
+/* Reading progress (a line under the app bar) */
+#bar::after{content:"";position:absolute;left:0;bottom:-1px;height:2px;width:var(--prog,0%);background:var(--accent);transition:width .08s linear}
+/* Popovers: animate in, flip above, keyboard rows */
+#pop>.popover{animation:popin .14s var(--ease);transform-origin:var(--ox,100%) var(--oy,0)}
+@keyframes popin{from{opacity:0;transform:translateY(-4px) scale(.98)}}
+.popover .row{border-radius:8px}.popover .row[data-active=true],.popover .row:focus-visible{background:var(--accent-soft);outline:0}
+.popover .pk-search{display:flex;align-items:center;gap:8px;margin:2px 4px 6px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:var(--paper);min-height:var(--ctl)}
+.popover .pk-search input{all:unset;flex:1;min-height:var(--ctl)}.popover .pk-search:focus-within{border-color:var(--accent)}
+.pk-item{display:flex;align-items:center;gap:6px;border-radius:8px}.pk-item:hover{background:var(--accent-soft)}.pk-item>a{flex:1;display:flex;gap:8px;align-items:center;min-height:38px;padding:0 10px;text-decoration:none;border-radius:8px}.pk-item small{margin-left:auto;color:var(--muted)}
+.pk-item>button{border:0;background:none;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;color:var(--muted)}.pk-item>button:hover{background:var(--line);color:var(--ink)}
+.pk-crumbs{display:flex;flex-wrap:wrap;gap:2px;padding:2px 6px 6px;font-size:12px}.pk-crumbs button{border:0;background:none;color:var(--muted);padding:2px 6px;border-radius:6px}.pk-crumbs button:hover{background:var(--line);color:var(--ink)}.pk-crumbs button:last-child{color:var(--ink);font-weight:600}
+.popover hr{border:0;border-top:1px solid var(--line);margin:6px 4px}
+.opt{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:0 10px;border:0;background:none;border-radius:8px;text-align:left}.opt:hover{background:var(--accent-soft)}.opt .tick{margin-left:auto;color:var(--accent)}.opt small{color:var(--muted)}
+[data-tip]{position:relative}
+/* Section rail (right edge, wide screens) */
+#rail{position:fixed;right:10px;top:50%;translate:0 -50%;z-index:40;display:none;flex-direction:column;gap:2px;padding:6px 4px;border-radius:12px}
+@media(min-width:1380px){#rail.on{display:flex}}
+#rail a{display:flex;align-items:center;justify-content:flex-end;gap:8px;height:22px;text-decoration:none;color:var(--muted);font-size:11px;padding:0 4px}
+#rail a i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:.15s;flex:none}
+#rail a span{opacity:0;translate:6px 0;transition:.15s;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:1px 8px;white-space:nowrap;pointer-events:none}
+#rail a:hover span,#rail a:focus-visible span{opacity:1;translate:0 0}
+#rail a[aria-current=true] i{background:var(--accent);width:9px;height:9px}#rail a:hover i{background:var(--muted)}
+/* Coarse pointers get 44px targets */
+@media(pointer:coarse){:root{--ctl:44px;--ctl-sm:40px}.btn,.item,.seg a,.seg button,.ib,select,input[type=text],input[type=search]{min-height:44px}.ib{width:44px}.btn.sm{min-height:40px}.pk-item>a{min-height:44px}}
+/* Controls share one rhythm */
+.btn{min-height:var(--ctl);transition:border-color .12s,background .12s,transform .08s}.btn:active{transform:translateY(1px)}.btn.sm{min-height:var(--ctl-sm)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m7 9.500 5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:16px;padding-right:30px;min-height:var(--ctl)}
+.seg a,.seg button{min-height:var(--ctl-sm);transition:background .15s,color .15s}
+.tw{scrollbar-gutter:auto}

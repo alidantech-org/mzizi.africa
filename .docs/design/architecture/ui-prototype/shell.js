@@ -22,17 +22,24 @@
     <button class="loc" data-act="loc" aria-haspopup="dialog" aria-label="Change place: ${esc(placeName)}">${P.icon("pin")}<span style="display:flex;gap:4px;overflow:hidden">${crumbs.join("")}</span>${P.icon("chev")}</button>
     <span class="grow"></span>
     <button class="srch" data-act="search" aria-label="Search">${P.icon("search")}<span>Search places, people, bills…</span><kbd>Ctrl K</kbd></button>
-    <button class="ib" data-act="lang" aria-label="Language: ${P.q && P.q.lang === "sw" ? "Kiswahili" : "English"}" title="Language"><b class="mono" style="font-size:12px">${P.q && P.q.lang === "sw" ? "SW" : "EN"}</b></button>
+    <button class="ib" data-act="mode" aria-label="Switch to ${document.documentElement.dataset.mode === "dark" ? "light" : "dark"} mode" title="${document.documentElement.dataset.mode === "dark" ? "Light" : "Dark"} mode">${P.icon(document.documentElement.dataset.mode === "dark" ? "sun" : "moon")}</button>
+    <button class="ib" data-act="lang" aria-label="Language: ${P.q && P.q.lang === "sw" ? "Kiswahili" : "English"}" aria-haspopup="dialog" title="Language"><b class="mono" style="font-size:11px;letter-spacing:.04em">${P.q && P.q.lang === "sw" ? "SW" : "EN"}</b></button>
     <button class="ib" data-act="saved" aria-label="Saved places" aria-haspopup="true">${P.icon("heart")}</button>
     <button class="ib" data-act="alerts" aria-label="Alerts, 2 unread" aria-haspopup="true">${P.icon("bell")}<span class="dot"></span></button>
     <button class="ib" data-act="settings" aria-label="Settings" aria-haspopup="true">${P.icon("settings")}</button>`;
   };
 
   /* ---- popovers ---- */
-  P.closeAll = () => { pop.innerHTML = ""; document.documentElement.classList.remove("drawer"); document.getElementById("scrim").hidden = true; };
-  const openPop = (anchor, html, w) => { P.closeAll(); const r = anchor.getBoundingClientRect(); const d = document.createElement("div"); d.className = "popover"; d.style.minWidth = (w || 260) + "px"; d.innerHTML = html; pop.appendChild(d); const left = Math.max(8, Math.min(innerWidth - d.offsetWidth - 8, r.right - d.offsetWidth)); d.style.left = left + "px"; d.style.top = r.bottom + 6 + "px"; const f = d.querySelector("a,button,input"); f && f.focus({ preventScroll: true }); };
-  document.addEventListener("pointerdown", (e) => { if (pop.firstChild && !e.target.closest(".popover") && !e.target.closest("[data-act]")) pop.innerHTML = ""; });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { pop.innerHTML = ""; dlg.innerHTML = ""; P.closeAll(); } if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); sh.search(); } });
+  let popAnchor = null;
+  P.closeAll = (rf) => { pop.innerHTML = ""; if (popAnchor) { popAnchor.removeAttribute("aria-expanded"); if (rf === true) popAnchor.focus(); popAnchor = null; } document.documentElement.classList.remove("drawer"); document.getElementById("scrim").hidden = true; };
+  const focusables = (d) => [...d.querySelectorAll("a[href],button:not([disabled]),input,[tabindex='0']")].filter((e) => e.offsetParent !== null);
+  const place = (d, a) => { const r = a.getBoundingClientRect(), vw = innerWidth, vh = innerHeight, w = d.offsetWidth, h = d.offsetHeight; let left = r.left < vw / 2 ? Math.max(8, r.left) : Math.max(8, r.right - w); left = Math.min(left, vw - w - 8); let top = r.bottom + 6, flip = false; if (top + h > vh - 8) { if (r.top - 6 - h > 8) { top = r.top - 6 - h; flip = true; } else d.style.maxHeight = vh - top - 8 + "px"; } d.style.left = left + "px"; d.style.top = top + "px"; d.style.setProperty("--oy", flip ? "100%" : "0"); d.style.setProperty("--ox", r.left < vw / 2 ? "0%" : "100%"); };
+  const openPop = (anchor, html, w) => { P.closeAll(); popAnchor = anchor; anchor.setAttribute("aria-expanded", "true"); const d = document.createElement("div"); d.className = "popover"; d.setAttribute("role", "dialog"); d.style.minWidth = (w || 260) + "px"; d.innerHTML = html; pop.appendChild(d); place(d, anchor);
+    d.addEventListener("keydown", (e) => { const f = focusables(d); const i = f.indexOf(document.activeElement); if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); P.closeAll(true); } else if (e.key === "ArrowDown" || e.key === "ArrowUp") { if (document.activeElement.tagName === "INPUT" && e.key === "ArrowUp" && i <= 1) return; e.preventDefault(); f[(i + (e.key === "ArrowDown" ? 1 : -1) + f.length) % f.length].focus(); } else if (e.key === "Home" || e.key === "End") { if (document.activeElement.tagName === "INPUT") return; e.preventDefault(); f[e.key === "Home" ? 0 : f.length - 1].focus(); } else if (e.key === "Tab") { if (e.shiftKey && i === 0) { e.preventDefault(); f[f.length - 1].focus(); } else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); } } });
+    const first = d.querySelector("input") || focusables(d)[0]; first && first.focus({ preventScroll: true }); return d; };
+  addEventListener("resize", () => P.closeAll());
+  document.addEventListener("pointerdown", (e) => { if (pop.firstChild && !e.target.closest(".popover") && !e.target.closest("[data-act]")) P.closeAll(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { dlg.innerHTML = ""; P.closeAll(true); } if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); sh.search(); } });
   const row = (href, icon, label, small, cur) => `<a class="row" href="${href}" ${cur ? 'aria-current="true"' : ""}>${icon ? P.icon(icon) : ""}<span>${esc(label)}</span>${small ? `<small>${esc(small)}</small>` : ""}</a>`;
   /* Disabled-link tooltip */
   let tipEl; const showTip = (t) => { const b = t.getBoundingClientRect(); hideTip(); tipEl = document.createElement("div"); tipEl.className = "tip"; tipEl.setAttribute("role", "tooltip"); tipEl.innerHTML = `<b>${esc(t.dataset.label)} is not available here</b><br>${esc(t.dataset.why)}`; document.body.appendChild(tipEl); tipEl.style.left = b.right + 10 + "px"; tipEl.style.top = Math.max(8, b.top - 4) + "px"; };
@@ -45,7 +52,9 @@
     if (act === "side") P.pref.setSide(arg), P.shell.update();
     else if (act === "grp") { const c = P.pref.groups(); P.pref.setGroups(c.includes(arg) ? c.filter((x) => x !== arg) : c.concat(arg)); sh.update(); }
     else if (act === "menu") { if (document.documentElement.dataset.side === "hidden" && innerWidth > 900) { P.pref.setSide("open"); sh.update(); } else { document.documentElement.classList.add("drawer"); document.getElementById("scrim").hidden = false; } }
-    else if (act === "lang") { const sw = P.q.lang === "sw"; const u = new URL(location.href); if (sw) u.searchParams.delete("lang"); else u.searchParams.set("lang", "sw"); P.navigate(u.pathname + u.search + location.hash, { fromSameSubject: true }); }
+    else if (act === "lang") sh.lang(b);
+    else if (act === "setlang") { const u = new URL(location.href); if (arg === "sw") u.searchParams.set("lang", "sw"); else u.searchParams.delete("lang"); P.closeAll(); P.navigate(u.pathname + u.search + location.hash, { fromSameSubject: true }); }
+    else if (act === "mode") { const cur = document.documentElement.dataset.mode; P.pref.setTheme(cur === "dark" ? "light" : "dark", P.pref.theme().palette); sh.update(); }
     else if (act === "loc") sh.where(b); else if (act === "search") sh.search(); else if (act === "saved") sh.saved(b); else if (act === "alerts") sh.alerts(b); else if (act === "settings") sh.settings(b);
     else if (act === "theme") { P.pref.setTheme(arg.split("+")[0], arg.split("+")[1]); sh.settings(document.querySelector('[data-act="settings"]')); }
     else if (act === "size") { P.store.set(P.K.a11y, arg + "." + P.pref.a11y().motion); P.applyA11y(); sh.settings(document.querySelector('[data-act="settings"]')); }
@@ -56,10 +65,19 @@
   });
   document.getElementById("scrim").addEventListener("click", P.closeAll);
 
-  sh.where = (anchor) => { const pl = P.pl; const kids = pl.ok ? D.children(pl) : []; const lvl = pl.ok ? (pl.depth < 3 ? D.country.levels[pl.depth] + "s" : "") : "";
-    openPop(anchor, `<h4>Go to</h4>${row(P.href({ at: ["ke"] }), "pin", "Kenya", "country", pl.depth === 0)}${pl.ok ? pl.trail.map((t, i) => row(P.href({ at: pl.at.slice(0, i + 2) }), "pin", t.name, t.level.toLowerCase(), i === pl.trail.length - 1)).join("") : ""}
-      ${kids.length ? `<h4>${esc(lvl)} in ${esc(pl.name)}</h4>${kids.map((k) => row(P.href({ at: pl.at.concat(k.id) }), "", k.name, k.pop ? D.fmt(k.pop) + "k" : "")).join("")}` : ""}
-      <h4>Location</h4><button class="row" data-act="capture">${P.icon("target")}<span>Use my location or pick on map…</span></button>`, 300); };
+  /* Place picker: search anywhere, or drill down level by level without leaving the page */
+  const ALL = () => { const o = []; D.counties.forEach((c) => { o.push({ name: c.name, level: "County", at: ["ke", c.id], trail: "Kenya" }); D.constituencies(c).forEach((k) => { o.push({ name: k.name, level: "Constituency", at: ["ke", c.id, k.id], trail: c.name }); k.wards.forEach((w) => o.push({ name: w, level: "Ward", at: ["ke", c.id, k.id, D.slug(w)], trail: c.name + " › " + k.name })); }); }); return o; };
+  sh.where = (anchor) => { let path = P.pl.ok ? P.at.slice(0, Math.min(3, P.at.length)) : ["ke"]; if (path.length > 1 && D.children(D.place(path)).length === 0) path = path.slice(0, -1); let q = "";
+    const d = openPop(anchor, `<div class="pk-crumbs" id="pk-c"></div><label class="pk-search">${P.icon("search")}<input id="pk-q" type="search" placeholder="Find a county, constituency or ward" aria-label="Find a place" autocomplete="off"></label><div id="pk-l" role="list"></div><hr><button class="row" data-act="capture">${P.icon("target")}<span>Use my location or pick on the map…</span></button>`, 340);
+    const c = d.querySelector("#pk-c"), l = d.querySelector("#pk-l"), inp = d.querySelector("#pk-q");
+    const item = (x, drill) => `<div class="pk-item" role="listitem"><a href="${P.href({ at: x.at })}"><span>${esc(x.name)}</span><small>${x.trail ? esc(x.trail) : esc(x.level || "")}</small></a>${drill ? `<button data-drill="${x.at.join("/")}" aria-label="Browse inside ${esc(x.name)}">${P.icon("chevr")}</button>` : ""}</div>`;
+    const draw = () => { const here = D.place(path); const names = ["Kenya"].concat(here.ok ? here.trail.map((t) => t.name) : []); c.innerHTML = q ? `<button data-crumb="-1">Search results</button>` : names.map((n, i) => `<button data-crumb="${i}">${esc(n)}</button>`).join("<span class='muted'>›</span>");
+      if (q) { const hit = ALL().filter((x) => x.name.toLowerCase().includes(q.toLowerCase())).slice(0, 12); l.innerHTML = hit.length ? hit.map((x) => item(x, false)).join("") : '<div class="empty sm">No place matches.</div>'; return; }
+      const kids = here.ok ? D.children(here) : []; const open = here.ok ? `<div class="pk-item" role="listitem"><a href="${P.href({ at: path })}" style="font-weight:600"><span>Open ${esc(here.name)}</span><small>${esc(here.level)}</small></a></div>` : ""; l.innerHTML = open + (kids.length ? kids.map((k) => item({ name: k.name, level: k.pop ? D.fmt(k.pop * 1000) + " people" : k.level, at: path.concat(k.id) }, D.children(D.place(path.concat(k.id))).length > 0)).join("") : '<div class="empty sm">Nothing below this level.</div>'); };
+    draw(); d.addEventListener("click", (e) => { const dr = e.target.closest("[data-drill]"); if (dr) { path = dr.dataset.drill.split("/"); q = ""; inp.value = ""; draw(); const f = l.querySelector("a"); f && f.focus(); } const cr = e.target.closest("[data-crumb]"); if (cr) { const i = +cr.dataset.crumb; if (i >= 0) path = path.slice(0, i + 1); q = ""; inp.value = ""; draw(); inp.focus(); } });
+    inp.addEventListener("input", () => { q = inp.value.trim(); draw(); }); };
+  sh.lang = (anchor) => { const sw = P.q && P.q.lang === "sw"; const o = (v, n, sub) => `<button class="opt" data-act="setlang:${v}" role="menuitemradio" aria-checked="${(v === "sw") === !!sw}"><span>${n}<br><small>${sub}</small></span>${(v === "sw") === !!sw ? `<span class="tick">${P.icon("check")}</span>` : ""}</button>`;
+    openPop(anchor, `<h4>Language</h4>${o("en", "English", "Original wording of every source")}${o("sw", "Kiswahili", "Navigation and headings translated")}<div class="note" style="margin:8px 6px 4px">Evidence is never silently translated. Where a translation is missing, English is shown and marked.</div>`, 300); };
   document.addEventListener("click", (e) => { if (e.target.closest("[data-act='capture']")) { pop.innerHTML = ""; sh.capture(); } });
 
   sh.settings = (anchor) => { const t = P.pref.theme(), a = P.pref.a11y(), sd = P.pref.side(); const bt = (act, label, on) => `<button class="btn sm ${on ? "on" : ""}" data-act="${act}" aria-pressed="${!!on}">${label}</button>`;
