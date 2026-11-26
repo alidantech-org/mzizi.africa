@@ -1267,9 +1267,10 @@
       "x-code": "sys.tbl.election.turnouts",
       "x-id": "#/schemas/election.Turnouts",
       "x-table": "election.turnouts",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["contest_code", "feature_code", "collection_code", "revision"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["contest_id", "feature_id", "collection_id", "revision"]
       ],
       "required": [
         "contest_id"
@@ -1282,6 +1283,7 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -1290,7 +1292,6 @@
           ,"collection_code"
           ,"contest_code"
           ,"feature_code"
-          ,"id"
           ,"registered"
           ,"rejected"
           ,"revision"
@@ -1302,7 +1303,6 @@
         "required": [
           "contest_code"
           ,"feature_code"
-          ,"id"
           ,"revision"
           ,"status"
         ]
@@ -1317,14 +1317,14 @@
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/statistics.Collections", "column": "id", "alias": "collection_code" }
         }
         ,"contest_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/election.Contests", "column": "id", "alias": "contest_code" }
         }
         ,"created_at": {
@@ -1345,7 +1345,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"id": {
@@ -1353,7 +1353,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"registered": {
           "type": ["integer", "null"],
@@ -1368,7 +1368,7 @@
         ,"revision": {
           "type": "integer",
           "x-type": "integer",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"spoilt": {
           "type": ["integer", "null"],

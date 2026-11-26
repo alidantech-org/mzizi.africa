@@ -15,7 +15,7 @@ plugins:
   - name: jinja
     extensions: [.j2]
 
-capabilities: { persistence: true, stores: true, partitioning: true }
+capabilities: { persistence: true, stores: true, partitioning: true, backend: { backend: postgresql, index_nulls_not_distinct: true } }
 
 selections:
   entities:

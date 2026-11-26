@@ -21,3 +21,7 @@ Dryv's local checkout supports storage constraints (acyclic, composite reference
 ## Progress
 
 2026-11-26. Done with an accepted limit. Dryv cannot author triggers, routines or joined views, so the SQL is in the project pack `dryv/packs/postgres-sql` and Dryv renders it into `schema.sql` (owner agreed; recorded in `DRYV_GAPS.md` and `dryv/README.md`). Generated: area guard (deeper level, skipped level only if the level allows it, period inside the parent, parent must exist), geometry status guard, template-country guard, product guards on every root table (from the field tag), text transforms (slug, compact, upper, lower), `template.generate` and `template.generate_pattern`, and the coverage views including `template.pending_queue`. NULLS-equal uniqueness is done with pairs of partial unique indexes (areas, relationships, texts).
+
+### 2026-11-26, null-equal uniqueness
+
+Dryv now supports `.unique(...).nullsNotDistinct()` (index input `nullsNotDistinct: true`). The five partial-index pairs (areas, relationships, template texts, alignments, turnouts) were replaced by one null-equal unique index each, and the two project packs declare the capability. The other new Dryv options (native guards through `compilePostgresObjects`, `provided` routines) were not adopted; the pack SQL stays.

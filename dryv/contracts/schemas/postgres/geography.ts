@@ -145,31 +145,15 @@ export const Areas = geography
   )
   .role("entity");
 
-const startedArea = geography.expression(
-  "StartedArea",
-  Areas.check((v) => v.fromYear.isNotNull()),
-);
-const undatedArea = geography.expression(
-  "UndatedArea",
-  Areas.check((v) => v.fromYear.isNull()),
-);
 Areas.facets({
   storage: dryv
     .storage("areas")
-    .indexes(
-      {
-        description: "A place is one area per hierarchy and start year.",
-        fields: ["hierarchyId", "featureId", "fromYear"],
-        unique: true,
-        where: startedArea,
-      },
-      {
-        description: "A place is one area per hierarchy when no start year is known.",
-        fields: ["hierarchyId", "featureId"],
-        unique: true,
-        where: undatedArea,
-      },
-    )
+    .indexes({
+      description: "A place is one area per hierarchy and start year; a missing start year counts as one value.",
+      fields: ["hierarchyId", "featureId", "fromYear"],
+      unique: true,
+      nullsNotDistinct: true,
+    })
     .index("featureId")
     .index("parentId")
     .index("levelId")
@@ -255,31 +239,15 @@ export const Relationships = geography
   )
   .role("entity");
 
-const startedRelationship = geography.expression(
-  "StartedRelationship",
-  Relationships.check((v) => v.fromYear.isNotNull()),
-);
-const undatedRelationship = geography.expression(
-  "UndatedRelationship",
-  Relationships.check((v) => v.fromYear.isNull()),
-);
 Relationships.facets({
   storage: dryv
     .storage("relationships")
-    .indexes(
-      {
-        description: "One link per pair, kind and start year.",
-        fields: ["subjectFeatureId", "objectFeatureId", "kind", "fromYear"],
-        unique: true,
-        where: startedRelationship,
-      },
-      {
-        description: "One link per pair and kind when no start year is known.",
-        fields: ["subjectFeatureId", "objectFeatureId", "kind"],
-        unique: true,
-        where: undatedRelationship,
-      },
-    )
+    .indexes({
+      description: "One link per pair, kind and start year; a missing start year counts as one value.",
+      fields: ["subjectFeatureId", "objectFeatureId", "kind", "fromYear"],
+      unique: true,
+      nullsNotDistinct: true,
+    })
     .index("subjectFeatureId", "kind")
     .index("objectFeatureId", "kind")
     .index("fromYear", "toYear"),

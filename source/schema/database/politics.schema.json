@@ -13,9 +13,10 @@
       "x-code": "sys.tbl.politics.alignments",
       "x-id": "#/schemas/politics.Alignments",
       "x-table": "politics.alignments",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["coalition_code", "party_code", "from_year"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["coalition_id", "party_id", "from_year"]
       ],
       "required": [
         "coalition_id"
@@ -27,20 +28,19 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "coalition_code"
           ,"from_year"
-          ,"id"
           ,"kind_term_code"
           ,"party_code"
           ,"to_year"
         ],
         "required": [
           "coalition_code"
-          ,"id"
           ,"kind_term_code"
           ,"party_code"
         ]
@@ -50,7 +50,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/politics.Coalitions", "column": "id", "alias": "coalition_code" }
         }
         ,"created_at": {
@@ -70,14 +70,14 @@
         ,"from_year": {
           "type": ["integer", "null"],
           "x-type": "integer",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"kind_term": {
           "type": "string",
@@ -90,7 +90,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/politics.Parties", "column": "id", "alias": "party_code" }
         }
         ,"to_year": {

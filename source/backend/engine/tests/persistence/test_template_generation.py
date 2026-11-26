@@ -322,3 +322,18 @@ def test_every_enum_value_has_an_interface_label(conn: Connection) -> None:
         ).fetchall()
     }
     assert expected <= found, sorted(expected - found)[:5]
+
+
+def test_a_missing_start_year_still_counts_as_one_value_in_a_unique_key(conn: Connection) -> None:
+    county = _area(conn, _level(conn, "ref.lev.ke.electoral.county"))
+    conn.execute("UPDATE geography.areas SET from_year = NULL WHERE id = %s::uuid", (county["id"],))
+    message = _rejected(
+        conn,
+        _NEW_AREA,
+        "geo.are.test.twice",
+        county["hierarchy_id"],
+        _level(conn, "ref.lev.ke.electoral.county"),
+        county["feature_id"],
+        None,
+    )
+    assert "uq_areas__" in message

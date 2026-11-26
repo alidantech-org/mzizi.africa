@@ -17,6 +17,7 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
+        ,["hierarchy_id", "feature_id", "from_year"]
       ],
       "required": [
         "code"
@@ -928,9 +929,10 @@
       "x-code": "sys.tbl.geography.relationships",
       "x-id": "#/schemas/geography.Relationships",
       "x-table": "geography.relationships",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["subject_feature_code", "object_feature_code", "kind", "from_year"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["subject_feature_id", "object_feature_id", "kind", "from_year"]
       ],
       "required": [
         "id"
@@ -942,13 +944,13 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "ends_on"
           ,"from_year"
-          ,"id"
           ,"kind"
           ,"object_feature_code"
           ,"starts_on"
@@ -956,8 +958,7 @@
           ,"to_year"
         ],
         "required": [
-          "id"
-          ,"kind"
+          "kind"
           ,"object_feature_code"
           ,"subject_feature_code"
         ]
@@ -986,26 +987,26 @@
         ,"from_year": {
           "type": ["integer", "null"],
           "x-type": "integer",
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"kind": {
           "type": "string",
           "x-type": "text",
           "enum": ["borders", "connects", "flows-through", "inside", "located-on", "part-of", "replaced-by"],
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"object_feature_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "object_feature_code" }
         }
         ,"starts_on": {
@@ -1018,7 +1019,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "subject_feature_code" }
         }
         ,"to_year": {

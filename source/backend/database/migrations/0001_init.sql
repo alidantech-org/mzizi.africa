@@ -10945,18 +10945,12 @@ ADD CONSTRAINT "fk_turnouts_feature_id" FOREIGN KEY ("feature_id") REFERENCES "g
 ALTER TABLE "election"."turnouts"
 ADD CONSTRAINT "fk_turnouts_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "election"."turnouts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_turnouts__contest_id_feature_id_collection_id_revi_partial_1" ON "election"."turnouts" USING btree (
+CREATE UNIQUE INDEX "uq_turnouts__contest_id_feature_id_collection_id_revision" ON "election"."turnouts" USING btree (
     "contest_id",
     "feature_id",
     "collection_id",
     "revision"
-)
-WHERE
-    ("collection_id" IS NOT NULL);
-
-CREATE UNIQUE INDEX "uq_turnouts__contest_id_feature_id_revision_partial_2" ON "election"."turnouts" USING btree ("contest_id", "feature_id", "revision")
-WHERE
-    ("collection_id" IS NULL);
+) NULLS NOT DISTINCT;
 
 CREATE INDEX "ix_turnouts__feature_id" ON "election"."turnouts" USING btree ("feature_id");
 
@@ -11441,13 +11435,7 @@ ADD CONSTRAINT "fk_areas_template_id" FOREIGN KEY ("template_id") REFERENCES "te
 
 CREATE UNIQUE INDEX "uq_areas__code" ON "geography"."areas" USING btree ("code");
 
-CREATE UNIQUE INDEX "uq_areas__hierarchy_id_feature_id_from_year_partial_2" ON "geography"."areas" USING btree ("hierarchy_id", "feature_id", "from_year")
-WHERE
-    ("from_year" IS NOT NULL);
-
-CREATE UNIQUE INDEX "uq_areas__hierarchy_id_feature_id_partial_3" ON "geography"."areas" USING btree ("hierarchy_id", "feature_id")
-WHERE
-    ("from_year" IS NULL);
+CREATE UNIQUE INDEX "uq_areas__hierarchy_id_feature_id_from_year" ON "geography"."areas" USING btree ("hierarchy_id", "feature_id", "from_year") NULLS NOT DISTINCT;
 
 CREATE INDEX "ix_areas__feature_id" ON "geography"."areas" USING btree ("feature_id");
 
@@ -11606,18 +11594,12 @@ ADD CONSTRAINT "fk_relationships_object_feature_id" FOREIGN KEY ("object_feature
 ALTER TABLE "geography"."relationships"
 ADD CONSTRAINT "fk_relationships_subject_feature_id" FOREIGN KEY ("subject_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_relationships__subject_feature_id_object_feature_i_partial_1" ON "geography"."relationships" USING btree (
+CREATE UNIQUE INDEX "uq_relationships__subject_feature_id_object_feature_id_kind_fro" ON "geography"."relationships" USING btree (
     "subject_feature_id",
     "object_feature_id",
     "kind",
     "from_year"
-)
-WHERE
-    ("from_year" IS NOT NULL);
-
-CREATE UNIQUE INDEX "uq_relationships__subject_feature_id_object_feature_i_partial_2" ON "geography"."relationships" USING btree ("subject_feature_id", "object_feature_id", "kind")
-WHERE
-    ("from_year" IS NULL);
+) NULLS NOT DISTINCT;
 
 CREATE INDEX "ix_relationships__subject_feature_id_kind" ON "geography"."relationships" USING btree ("subject_feature_id", "kind");
 
@@ -12748,13 +12730,7 @@ ADD CONSTRAINT "fk_alignments_kind_term" FOREIGN KEY ("kind_term") REFERENCES "v
 ALTER TABLE "politics"."alignments"
 ADD CONSTRAINT "fk_alignments_party_id" FOREIGN KEY ("party_id") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_alignments__coalition_id_party_id_from_year_partial_1" ON "politics"."alignments" USING btree ("coalition_id", "party_id", "from_year")
-WHERE
-    ("from_year" IS NOT NULL);
-
-CREATE UNIQUE INDEX "uq_alignments__coalition_id_party_id_partial_2" ON "politics"."alignments" USING btree ("coalition_id", "party_id")
-WHERE
-    ("from_year" IS NULL);
+CREATE UNIQUE INDEX "uq_alignments__coalition_id_party_id_from_year" ON "politics"."alignments" USING btree ("coalition_id", "party_id", "from_year") NULLS NOT DISTINCT;
 
 CREATE INDEX "ix_alignments__party_id" ON "politics"."alignments" USING btree ("party_id");
 
@@ -13727,13 +13703,7 @@ ADD CONSTRAINT "fk_texts_language_id" FOREIGN KEY ("language_id") REFERENCES "re
 ALTER TABLE "template"."texts"
 ADD CONSTRAINT "fk_texts_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_texts__template_id_purpose_language_id_partial_1" ON "template"."texts" USING btree ("template_id", "purpose", "language_id")
-WHERE
-    ("language_id" IS NOT NULL);
-
-CREATE UNIQUE INDEX "uq_texts__template_id_purpose_partial_2" ON "template"."texts" USING btree ("template_id", "purpose")
-WHERE
-    ("language_id" IS NULL);
+CREATE UNIQUE INDEX "uq_texts__template_id_purpose_language_id" ON "template"."texts" USING btree ("template_id", "purpose", "language_id") NULLS NOT DISTINCT;
 
 ALTER TABLE "vocabulary"."labels"
 ADD CONSTRAINT "fk_labels_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;

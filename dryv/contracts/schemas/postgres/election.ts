@@ -176,26 +176,12 @@ export const Turnouts = election
 Turnouts.facets({
   storage: dryv
     .storage("turnouts")
-    .indexes(
-      {
-        description: "One turnout per contest, place, collection and revision.",
-        fields: ["contestId", "featureId", "collectionId", "revision"],
-        unique: true,
-        where: election.expression(
-          "CollectedTurnout",
-          Turnouts.check((v) => v.collectionId.isNotNull()),
-        ),
-      },
-      {
-        description: "One turnout per contest, place and revision when no collection is named.",
-        fields: ["contestId", "featureId", "revision"],
-        unique: true,
-        where: election.expression(
-          "UncollectedTurnout",
-          Turnouts.check((v) => v.collectionId.isNull()),
-        ),
-      },
-    )
+    .indexes({
+      description: "One turnout per contest, place, collection and revision.",
+      fields: ["contestId", "featureId", "collectionId", "revision"],
+      unique: true,
+      nullsNotDistinct: true,
+    })
     .index("featureId"),
 });
 

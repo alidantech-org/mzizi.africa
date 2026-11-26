@@ -250,29 +250,13 @@ export const Texts = template
   .description("A text template for a code, a name per language, a web domain or a contact value.")
   .role("entity");
 
-const namedText = template.expression(
-  "NamedText",
-  Texts.check((v) => v.languageId.isNotNull()),
-);
-const unnamedText = template.expression(
-  "UnnamedText",
-  Texts.check((v) => v.languageId.isNull()),
-);
 Texts.facets({
-  storage: dryv.storage("texts").indexes(
-    {
-      description: "One text per template, purpose and language.",
-      fields: ["templateId", "purpose", "languageId"],
-      unique: true,
-      where: namedText,
-    },
-    {
-      description: "One text per template and purpose where no language applies.",
-      fields: ["templateId", "purpose"],
-      unique: true,
-      where: unnamedText,
-    },
-  ),
+  storage: dryv.storage("texts").indexes({
+    description: "One text per template, purpose and language; a missing language counts as one value.",
+    fields: ["templateId", "purpose", "languageId"],
+    unique: true,
+    nullsNotDistinct: true,
+  }),
 });
 
 /*---------------- template.items ----------------*/

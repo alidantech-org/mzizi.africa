@@ -292,7 +292,7 @@ ALTER TABLE "{{ ns }}"."{{ table_of(schema) }}" ADD CONSTRAINT "fk_{{ table_of(s
 {%- set suffix = ('' if index.method == 'btree' else '_' ~ index.method) ~ ('' if index.where is none else '_partial_' ~ loop.index) -%}
 {%- set prefix = ("uq_" if index.unique else "ix_") ~ table_of(schema) ~ "__" ~ (cols.items | join("_")) -%}
 {%- set generated_name = prefix[:63 - suffix|length] ~ suffix -%}
-{{ "\n" }}CREATE {% if index.unique %}UNIQUE {% endif %}INDEX "{{ index.name if index.name is not none else generated_name }}" ON "{{ ns }}"."{{ table_of(schema) }}" USING {{ index.method }} ({% for item in index.fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}){% if index.where is not none %} WHERE {{ x5(index.where.rule.node, schema.id ~ '.index') }}{% endif %};
+{{ "\n" }}CREATE {% if index.unique %}UNIQUE {% endif %}INDEX "{{ index.name if index.name is not none else generated_name }}" ON "{{ ns }}"."{{ table_of(schema) }}" USING {{ index.method }} ({% for item in index.fields %}"{{ item.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}){% if index.nulls_not_distinct %} NULLS NOT DISTINCT{% endif %}{% if index.where is not none %} WHERE {{ x5(index.where.rule.node, schema.id ~ '.index') }}{% endif %};
 {%- endfor %}
 {%- for constraint in schema.facets.storage.constraints %}
 {%- set pk = schema.facets.storage.primary_key %}

@@ -128,26 +128,12 @@ export const Manifestos = politics
 Alignments.facets({
   storage: dryv
     .storage("alignments")
-    .indexes(
-      {
-        description: "One alignment per coalition, party and start year.",
-        fields: ["coalitionId", "partyId", "fromYear"],
-        unique: true,
-        where: politics.expression(
-          "StartedAlignment",
-          Alignments.check((v) => v.fromYear.isNotNull()),
-        ),
-      },
-      {
-        description: "One alignment per coalition and party when no start year is known.",
-        fields: ["coalitionId", "partyId"],
-        unique: true,
-        where: politics.expression(
-          "UndatedAlignment",
-          Alignments.check((v) => v.fromYear.isNull()),
-        ),
-      },
-    )
+    .indexes({
+      description: "One alignment per coalition, party and start year.",
+      fields: ["coalitionId", "partyId", "fromYear"],
+      unique: true,
+      nullsNotDistinct: true,
+    })
     .index("partyId"),
 });
 

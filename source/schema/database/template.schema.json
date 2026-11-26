@@ -642,9 +642,10 @@
       "x-code": "sys.tbl.template.texts",
       "x-id": "#/schemas/template.Texts",
       "x-table": "template.texts",
-      "x-primaryKey": ["id"],"x-naturalKey": [],
-      "x-seedable": false,
+      "x-primaryKey": ["id"],"x-naturalKey": ["template_code", "purpose", "language_code"],
+      "x-seedable": true,
       "x-uniqueKeys": [
+        ["template_id", "purpose", "language_id"]
       ],
       "required": [
         "body"
@@ -656,12 +657,12 @@
         "system": [
           "created_at"
           ,"deleted_at"
+          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "body"
-          ,"id"
           ,"language_code"
           ,"name_kind"
           ,"purpose"
@@ -669,7 +670,6 @@
         ],
         "required": [
           "body"
-          ,"id"
           ,"purpose"
           ,"template_code"
         ]
@@ -701,13 +701,13 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "data"
+          "x-role": "system"
         }
         ,"language_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/reference.Languages", "column": "id", "alias": "language_code" }
         }
         ,"name_kind": {
@@ -720,13 +720,13 @@
           "type": "string",
           "x-type": "text",
           "enum": ["code", "contact", "domain", "name"],
-          "x-role": "data"
+          "x-role": "key"
         }
         ,"template_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "link",
+          "x-role": "key",
           "x-link": { "tableId": "#/schemas/template.Templates", "column": "id", "alias": "template_code" }
         }
         ,"updated_at": {
