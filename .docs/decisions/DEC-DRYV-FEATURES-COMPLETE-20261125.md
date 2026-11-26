@@ -1,3 +1,10 @@
+---
+id: DEC-DRYV-FEATURES-COMPLETE-20261125
+name: Dryv features complete
+type: decision
+tags: [dryv]
+---
+
 # Decision: Dryv Features Complete (2026-11-25)
 
 ## Summary

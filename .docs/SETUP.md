@@ -1,3 +1,9 @@
+---
+id: DOC-SETUP
+name: Setup
+type: documentation
+---
+
 # SETUP.md: clone, install and scrape any site
 
 This guide takes a fresh clone to a working scrape-and-extract job: crawl a site (including JavaScript-heavy sites and pages with bad HTML), follow pagination, download every PDF, then extract each PDF into Markdown, tables (CSV), images and OCR text.
@@ -217,8 +223,8 @@ The engine records `robots.txt` as a signal and respects it by default. Do not s
 
 ## 12. More reading
 
-- [CLI and engine jobs quickstart](.docs/design/operations/cli-and-jobs.md)
-- [Web acquisition runtime](.docs/design/acquisition/WEB_ACQUISITION_RUNTIME.md)
-- [Extraction package](source/packages/extraction/README.md)
-- [Job spec schema](source/schema/engine/job.schema.json) and [example](source/schema/engine/_example/documents-job.json)
-- [Engine README](source/backend/engine/README.md)
+- [CLI and engine jobs quickstart](design/operations/cli-and-jobs.md)
+- [Web acquisition runtime](design/acquisition/WEB_ACQUISITION_RUNTIME.md)
+- [Extraction package](../source/packages/extraction/README.md)
+- [Job spec schema](../source/schema/engine/job.schema.json) and [example](../source/schema/engine/_example/documents-job.json)
+- [Engine README](../source/backend/engine/README.md)

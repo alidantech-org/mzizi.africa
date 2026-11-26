@@ -1,3 +1,9 @@
+---
+id: DOC-MONOREPO
+name: Mzizi Africa Bun monorepo
+type: documentation
+---
+
 # Mzizi Africa Bun Monorepo
 
 Unified Bun workspace managing Dryv contracts, backend API, and web applications from a single root.

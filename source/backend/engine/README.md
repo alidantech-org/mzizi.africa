@@ -42,6 +42,8 @@ One file reads the environment: [`config/engine_config.py`](src/mzizi_engine/con
 
 ## Operations and jobs
 
+`translation.plan`, `translation.glossary` and `translation.run` (package `mzizi-translation`) read stored text from PostgreSQL through `persistence/postgres/translation.py`, translate it with curated lookup tables, a glossary built from existing translations and any mix of machine engines (lookup files under the input root, a local CTranslate2 model, LibreTranslate-compatible or Google v2 services whose key comes from a named environment variable), and write drafts only when `apply` is true (a `ledger` path under the input root records where each saved draft came from; `markers` engines translate the marker words of place and body names). Streams: `vocabulary.labels`, `identity.names/<kind>`, `legal.wordings` (into `legal.translations`, `machine`/`proposed`) and `product.messages` (`machine`/`draft`). Verified as a dry run against `mzizix`; no machine model is installed.
+
 `GET /capabilities` lists the registered operations; `POST /v1/jobs` runs one (`{"kind", "input"}`) through the executor with limits, retries and cancellation (`ENGINE_CAPABILITY_LIMITS="name=n,..."`), and results are delivered to `NESTJS_CALLBACK_URL` through an outbox with `Idempotency-Key` retries. For `filesystem.*` kinds the engine stamps the authenticated principal into the payload as `actor`; a client-supplied actor is overwritten.
 
 The [developer portal design](../../../.docs/design/architecture/DEVELOPER_PORTAL.md) records the planned shared HTTP workflow, including replay and workspace artifacts. The current executor and the Mongo spec-run ledger are separate paths.

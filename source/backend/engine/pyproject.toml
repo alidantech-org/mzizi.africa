@@ -15,6 +15,7 @@ dependencies = [
   "mzizi-filesystem",
   "mzizi-manifest",
   "mzizi-patterns",
+  "mzizi-translation",
   "mzizi-fetch",
   "mzizi-search",
   "mzizi-crawler",
@@ -43,6 +44,7 @@ where = ["src"]
 mzizi-filesystem = { workspace = true }
 mzizi-manifest = { workspace = true }
 mzizi-patterns = { workspace = true }
+mzizi-translation = { workspace = true }
 mzizi-fetch = { workspace = true }
 mzizi-search = { workspace = true }
 mzizi-crawler = { workspace = true }

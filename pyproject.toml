@@ -60,7 +60,7 @@ extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Body", "f
 "**/tests/**" = ["B017", "E731", "E741"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["mzizi_patterns", "mzizi_engine", "mzizi_extraction", "mzizi_filesystem", "mzizi_manifest", "mzizi_fetch", "mzizi_search", "mzizi_cli", "mzizi_browser", "mzizi_crawler"]
+known-first-party = ["mzizi_patterns", "mzizi_engine", "mzizi_extraction", "mzizi_filesystem", "mzizi_translation", "mzizi_manifest", "mzizi_fetch", "mzizi_search", "mzizi_cli", "mzizi_browser", "mzizi_crawler"]
 
 [tool.mypy]
 python_version = "3.12"

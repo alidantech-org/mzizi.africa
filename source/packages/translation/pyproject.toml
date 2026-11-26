@@ -1,0 +1,25 @@
+[project]
+name = "mzizi-translation"
+version = "0.1.0"
+description = "Translation capability: tiered, engine-neutral translation of stored text (curated sources, a term glossary, interchangeable machine engines) with quality checks, behind one orchestrator. No database knowledge."
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2.7", "mzizi-patterns"]
+
+[project.optional-dependencies]
+ctranslate2 = ["ctranslate2", "sentencepiece", "huggingface-hub"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+
+[tool.uv.sources]
+mzizi-patterns = { workspace = true }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

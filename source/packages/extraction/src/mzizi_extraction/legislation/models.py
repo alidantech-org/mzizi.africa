@@ -91,6 +91,8 @@ class Node:
     text: str = ""
     page: int = 0
     children: list[Node] = field(default_factory=list)
+    #: Printed annotations kept beside the statement, such as amendment history `[Act No. 2 of 2022, s. 4.]`.
+    notes: list[str] = field(default_factory=list)
 
     def walk(self) -> list[Node]:
         out = [self]

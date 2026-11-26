@@ -228,11 +228,6 @@ destinations:
     actions:
       - { $ref: "#/actions/imports" }
       - { $ref: "#/actions/format-ts" }
-  app-app:
-    path: source/apps/app
-    imports: { path: source/apps/app/lib, prefix: "package:mzizi_app/" }
-    actions:
-      - { $ref: "#/actions/format-dart" }
   # Shared client SDKs generated from the product API contract.
   sdk-ts:
     path: source/sdk/api-ts
