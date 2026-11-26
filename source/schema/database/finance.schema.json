@@ -19,8 +19,7 @@
         ["code"]
       ],
       "required": [
-        "class_term"
-        ,"code"
+        "code"
         ,"id"
         ,"revision_id"
       ],
@@ -44,8 +43,7 @@
           ,"revision_code"
         ],
         "required": [
-          "class_term_code"
-          ,"code"
+          "code"
           ,"revision_code"
         ]
       },
@@ -56,7 +54,7 @@
           "x-role": "data"
         }
         ,"class_term": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
@@ -183,6 +181,7 @@
           ,"government_code"
           ,"kind_term_code"
           ,"period_code"
+          ,"template_code"
         ],
         "required": [
           "code"
@@ -249,6 +248,13 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/finance.Periods", "column": "id", "alias": "period_code" }
+        }
+        ,"template_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/template.Templates", "column": "id", "alias": "template_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -379,7 +385,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"kind_term": {
@@ -435,7 +441,7 @@
         ,"institution_id"
         ,"kind_term"
         ,"period_id"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -456,14 +462,14 @@
           ,"kind_term_code"
           ,"period_code"
           ,"project_code"
-          ,"status_term_code"
+          ,"status"
         ],
         "required": [
           "code"
           ,"institution_code"
           ,"kind_term_code"
           ,"period_code"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -556,12 +562,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/civic.Projects", "column": "id", "alias": "project_code" }
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.fin.finding.status" }
+          "x-type": "text",
+          "enum": ["open", "referred", "resolved"],
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -592,7 +597,7 @@
       "required": [
         "country_id"
         ,"id"
-        ,"kind_term"
+        ,"kind"
       ],
       "x-seed": {
         "system": [
@@ -614,7 +619,7 @@
           ,"fund_code"
           ,"id"
           ,"institution_code"
-          ,"kind_term_code"
+          ,"kind"
           ,"occurred_on"
           ,"period_code"
           ,"project_code"
@@ -622,7 +627,7 @@
         "required": [
           "country_code"
           ,"id"
-          ,"kind_term_code"
+          ,"kind"
         ]
       },
       "properties": {
@@ -723,12 +728,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/governance.Institutions", "column": "id", "alias": "institution_code" }
         }
-        ,"kind_term": {
+        ,"kind": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.fin.flow.kind" }
+          "x-type": "text",
+          "enum": ["allocation", "disbursement", "payment", "receipt", "transfer"],
+          "x-role": "data"
         }
         ,"occurred_on": {
           "type": ["string", "null"],
@@ -799,6 +803,7 @@
           ,"manager_code"
           ,"scope_code"
           ,"source_term_code"
+          ,"template_code"
         ],
         "required": [
           "code"
@@ -847,7 +852,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"kind_term": {
@@ -878,6 +883,13 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "source_term_code", "scheme": "voc.sch.fin.fund.source" }
         }
+        ,"template_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/template.Templates", "column": "id", "alias": "template_code" }
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
@@ -904,14 +916,14 @@
       "x-seedable": true,
       "x-uniqueKeys": [
         ["code"]
-        ,["country_id", "kind_term", "starts_on"]
+        ,["country_id", "kind", "starts_on"]
       ],
       "required": [
         "code"
         ,"country_id"
         ,"ends_on"
         ,"id"
-        ,"kind_term"
+        ,"kind"
         ,"starts_on"
       ],
       "x-seed": {
@@ -927,7 +939,7 @@
           ,"country_code"
           ,"ends_on"
           ,"from_year"
-          ,"kind_term_code"
+          ,"kind"
           ,"starts_on"
           ,"to_year"
         ],
@@ -935,7 +947,7 @@
           "code"
           ,"country_code"
           ,"ends_on"
-          ,"kind_term_code"
+          ,"kind"
           ,"starts_on"
         ]
       },
@@ -987,12 +999,11 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"kind_term": {
+        ,"kind": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.fin.period.kind" }
+          "x-type": "text",
+          "enum": ["fiscal-year", "month", "quarter"],
+          "x-role": "data"
         }
         ,"starts_on": {
           "type": "string",
@@ -1038,7 +1049,7 @@
         ,"code"
         ,"id"
         ,"revision"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -1053,13 +1064,13 @@
           ,"code"
           ,"released_on"
           ,"revision"
-          ,"status_term_code"
+          ,"status"
         ],
         "required": [
           "budget_code"
           ,"code"
           ,"revision"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -1110,12 +1121,11 @@
           "x-type": "integer",
           "x-role": "data"
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.fin.revision.status" }
+          "x-type": "text",
+          "enum": ["approved", "enacted", "proposed"],
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",

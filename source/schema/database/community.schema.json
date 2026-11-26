@@ -383,7 +383,7 @@
         ],
         "columns": [
           "decided_at"
-          ,"decision_term_code"
+          ,"decision"
           ,"id"
           ,"post_country_code"
           ,"post_code"
@@ -412,12 +412,11 @@
           "format": "date-time",
           "x-role": "data"
         }
-        ,"decision_term": {
+        ,"decision": {
           "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "decision_term_code", "scheme": "voc.sch.com.case.decision" }
+          "x-type": "text",
+          "enum": ["approve", "escalate", "reject", "remove"],
+          "x-role": "data"
         }
         ,"deleted_at": {
           "type": ["string", "null"],
@@ -463,7 +462,7 @@
         ,"state": {
           "type": "string",
           "x-type": "text",
-          "enum": ["draft", "pending", "published", "rejected", "removed"],
+          "enum": ["decided", "escalated", "in-review", "open"],
           "x-role": "data"
         }
         ,"updated_at": {
@@ -975,7 +974,7 @@
       "required": [
         "id"
         ,"key_id"
-        ,"kind_term"
+        ,"kind"
       ],
       "x-seed": {
         "system": [
@@ -985,7 +984,7 @@
           "id"
           ,"identity_code"
           ,"key_code"
-          ,"kind_term_code"
+          ,"kind"
           ,"occurrence_code"
           ,"post_country_code"
           ,"post_id"
@@ -993,7 +992,7 @@
         "required": [
           "id"
           ,"key_code"
-          ,"kind_term_code"
+          ,"kind"
         ]
       },
       "properties": {
@@ -1026,12 +1025,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/product.Keys", "column": "id", "alias": "key_code" }
         }
-        ,"kind_term": {
+        ,"kind": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.com.notification.kind" }
+          "x-type": "text",
+          "enum": ["event-reminder", "new-figure", "reply"],
+          "x-role": "data"
         }
         ,"occurrence_id": {
           "type": ["string", "null"],
@@ -1187,7 +1185,7 @@
         "actor_id"
         ,"country_id"
         ,"id"
-        ,"kind_term"
+        ,"kind"
         ,"state"
       ],
       "x-seed": {
@@ -1204,7 +1202,7 @@
           ,"device_code"
           ,"id"
           ,"identity_code"
-          ,"kind_term_code"
+          ,"kind"
           ,"language_code"
           ,"parent_code"
           ,"proof_code"
@@ -1216,7 +1214,7 @@
           "actor_code"
           ,"country_code"
           ,"id"
-          ,"kind_term_code"
+          ,"kind"
           ,"state"
         ]
       },
@@ -1278,12 +1276,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
         }
-        ,"kind_term": {
+        ,"kind": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.com.post.kind" }
+          "x-type": "text",
+          "enum": ["comment", "question", "report", "review"],
+          "x-role": "data"
         }
         ,"language_id": {
           "type": ["string", "null"],
@@ -1739,7 +1736,7 @@
         ,"post_id"
         ,"received_at"
         ,"respondent_id"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -1757,7 +1754,7 @@
           ,"published_at"
           ,"received_at"
           ,"respondent_code"
-          ,"status_term_code"
+          ,"status"
         ],
         "required": [
           "body"
@@ -1767,7 +1764,7 @@
           ,"post_code"
           ,"received_at"
           ,"respondent_code"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -1839,12 +1836,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "respondent_code" }
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.com.reply.status" }
+          "x-type": "text",
+          "enum": ["published", "received", "withdrawn"],
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -1868,16 +1864,16 @@
       "x-code": "sys.tbl.community.subscriptions",
       "x-id": "#/schemas/community.Subscriptions",
       "x-table": "community.subscriptions",
-      "x-primaryKey": ["id"],"x-naturalKey": ["actor_code", "identity_code", "kind_term_code"],
+      "x-primaryKey": ["id"],"x-naturalKey": ["actor_code", "identity_code", "kind"],
       "x-seedable": true,
       "x-uniqueKeys": [
-        ["actor_id", "identity_id", "kind_term"]
+        ["actor_id", "identity_id", "kind"]
       ],
       "required": [
         "actor_id"
         ,"id"
         ,"identity_id"
-        ,"kind_term"
+        ,"kind"
       ],
       "x-seed": {
         "system": [
@@ -1890,13 +1886,13 @@
         "columns": [
           "actor_code"
           ,"identity_code"
-          ,"kind_term_code"
+          ,"kind"
           ,"revoked_at"
         ],
         "required": [
           "actor_code"
           ,"identity_code"
-          ,"kind_term_code"
+          ,"kind"
         ]
       },
       "properties": {
@@ -1935,12 +1931,11 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
         }
-        ,"kind_term": {
+        ,"kind": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "key",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.com.subscription.kind" }
+          "x-type": "text",
+          "enum": ["alerts", "follow"],
+          "x-role": "key"
         }
         ,"revoked_at": {
           "type": ["string", "null"],

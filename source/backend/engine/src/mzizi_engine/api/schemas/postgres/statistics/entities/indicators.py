@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+from mzizi_engine.api.schemas.postgres.shared.enums.indicator_kind import IndicatorKind
 from mzizi_engine.api.schemas.postgres.statistics.enums.aggregation import Aggregation
 from mzizi_engine.api.schemas.postgres.statistics.enums.frequency import Frequency
 
@@ -37,7 +38,7 @@ class IndicatorsRow(BaseModel):
     id: UUID
     identity_kind: IdentityKind
     is_derived: bool
-    kind_term: UUID
+    kind: IndicatorKind
     role_term: UUID | None = None
     topic_term: UUID
     unit_id: UUID | None = None

@@ -205,6 +205,12 @@ def build_operation_registry() -> OperationRegistry:
     from mzizi_engine.runtime.assembly.filesystem_operations import register_filesystem
 
     register_filesystem(reg)
+    from mzizi_engine.runtime.assembly.translation_operations import register_translation
+
+    register_translation(reg)
+    from mzizi_engine.runtime.assembly.template_operations import register_template
+
+    register_template(reg)
     from mzizi_engine.runtime.assembly.search_operations import register_search
 
     register_search(reg)

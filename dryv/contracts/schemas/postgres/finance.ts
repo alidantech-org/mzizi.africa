@@ -6,8 +6,10 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { templateFields } from "#/schemas/_templates.ts";
 import { belongsTo, byCountry, identity, identityKindField, identityReference, term } from "./_links.ts";
 import { Contracts, Projects } from "./civic.ts";
 import { Features } from "./geography.ts";
@@ -33,7 +35,7 @@ const money = (meaning: string) => ({
 export const Periods = finance
   .schema("Periods", {
     countryId: belongsTo(() => Countries),
-    kindTerm: term("fin.period.kind", "fiscal year, quarter, month."),
+    kind: dryv.field(enums.PeriodKind).description("fiscal year, quarter, month."),
     ...periodFields,
     startsOn: dryv.field(sharedProperties.CalendarDate),
     endsOn: dryv.field(sharedProperties.CalendarDate),
@@ -42,7 +44,7 @@ export const Periods = finance
   .rule("PeriodDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .description("A fiscal period of a country (FY 2023/24).")
   .role("entity")
-  .facets({ storage: dryv.storage("periods").unique("countryId", "kindTerm", "startsOn") });
+  .facets({ storage: dryv.storage("periods").unique("countryId", "kind", "startsOn") });
 
 /*---------------- finance.budgets ----------------*/
 export const Budgets = finance
@@ -51,12 +53,19 @@ export const Budgets = finance
     countryId: belongsTo(() => Countries),
     periodId: belongsTo(() => Periods),
     kindTerm: term("fin.budget.kind", "recurrent, development, consolidated."),
+    ...templateFields("budget"),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("A government's budget for a fiscal period.")
+  .description(
+    "A government's budget for a fiscal period; an expected budget (one per county per year) is generated from a pattern before any figure exists.",
+  )
   .role("entity")
   .facets({
-    storage: dryv.storage("budgets").unique("governmentId", "periodId", "kindTerm").index("countryId", "periodId"),
+    storage: dryv
+      .storage("budgets")
+      .unique("governmentId", "periodId", "kindTerm")
+      .index("countryId", "periodId")
+      .index("templateId"),
   });
 
 /*---------------- finance.revisions ----------------*/
@@ -66,7 +75,7 @@ export const Revisions = finance
     revision: dryv
       .field(sharedProperties.PositiveInteger)
       .description("1 for the original budget, rising with supplementaries."),
-    statusTerm: term("fin.revision.status", "proposed, approved, enacted."),
+    status: dryv.field(enums.RevisionStatus).description("proposed, approved, enacted."),
     releasedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
@@ -82,7 +91,10 @@ export const Appropriations = finance
     recipientId: identity("The institution or body the money is voted to.").maybe(),
     projectId: belongsTo(() => Projects).maybe(),
     featureId: belongsTo(() => Features).maybe(),
-    classTerm: term("fin.classification", "The budget classification of the line (programme, economic item)."),
+    classTerm: term(
+      "fin.classification",
+      "The budget classification of the line (programme, economic item); empty while the vote is only expected.",
+    ).maybe(),
     ...money("Amount appropriated"),
   })
   .extends(baseSchemas.CodedEntity)
@@ -108,12 +120,19 @@ export const Funds = finance
     sourceTerm: term("fin.fund.source", "exchequer, donor, levy.").maybe(),
     countryId: belongsTo(() => Countries),
     scopeId: belongsTo(() => Jurisdictions).maybe(),
+    ...templateFields("fund"),
   })
   .extends(baseSchemas.IdentityEntity)
   .rule("FundKind", (v) => v.identityKind.eq("fund"))
-  .description("A public fund (NG-CDF).")
+  .description("A public fund (the county revenue fund, an NG-CDF); an expected one is generated from a pattern.")
   .role("entity")
-  .facets({ storage: dryv.storage("funds").index("countryId", "kindTerm").references("FundIsIdentity", identityReference) });
+  .facets({
+    storage: dryv
+      .storage("funds")
+      .index("countryId", "kindTerm")
+      .index("templateId")
+      .references("FundIsIdentity", identityReference),
+  });
 
 /*---------------- finance.debts ----------------*/
 export const Debts = finance
@@ -144,7 +163,7 @@ export const Debts = finance
 /*---------------- finance.flows ----------------*/
 export const Flows = finance
   .schema("Flows", {
-    kindTerm: term("fin.flow.kind", "allocation, transfer, disbursement, payment, receipt."),
+    kind: dryv.field(enums.FlowKind).description("allocation, transfer, disbursement, payment, receipt."),
     periodId: belongsTo(() => Periods).maybe(),
     fundId: belongsTo(() => Funds).maybe(),
     appropriationId: belongsTo(() => Appropriations).maybe(),
@@ -161,6 +180,17 @@ export const Flows = finance
   })
   .extends(baseSchemas.PartitionedEntity)
   .rule("FlowAmountHasCurrency", (v) => v.amount.isNull().or(v.currencyId.isNotNull()))
+  .rule("FlowHasAnAnchor", (v) =>
+    v.fundId
+      .isNotNull()
+      .or(
+        v.appropriationId.isNotNull(),
+        v.contractId.isNotNull(),
+        v.debtId.isNotNull(),
+        v.projectId.isNotNull(),
+        v.institutionId.isNotNull(),
+      ),
+  )
   .description("A movement of public money: allocation, transfer, disbursement, payment or receipt.")
   .role("entity")
   .facets({
@@ -182,7 +212,7 @@ export const Findings = finance
     periodId: belongsTo(() => Periods),
     kindTerm: term("fin.finding.kind", "unsupported expenditure, irregular procurement, pending bills."),
     ...money("Questioned amount"),
-    statusTerm: term("fin.finding.status", "open, resolved or referred."),
+    status: dryv.field(enums.FindingStatus).description("open, resolved or referred."),
     contractId: belongsTo(() => Contracts).maybe(),
     projectId: belongsTo(() => Projects).maybe(),
     flowId: dryv.field(sharedProperties.Id).maybe().description("The flow questioned, with `flow_country_id`."),

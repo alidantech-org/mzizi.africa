@@ -7,6 +7,7 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, identity, identityKindField, identityReference, term } from "./_links.ts";
@@ -61,7 +62,7 @@ export const Instruments = legal
   .schema("Instruments", {
     identityKind: identityKindField("instrument"),
     kindTerm: term("leg.instrument.kind", "constitution, act, regulation, by-law, treaty."),
-    statusTerm: term("leg.instrument.status", "in force, repealed, pending.").maybe(),
+    status: dryv.field(enums.InstrumentStatus).description("in force, repealed, pending.").maybe(),
     jurisdictionId: belongsTo(() => Jurisdictions)
       .maybe()
       .description("The authority and area under which it was made."),
@@ -169,6 +170,12 @@ export const References = legal
     spanText: dryv.field(sharedProperties.NonEmptyString500),
     method: dryv.field(legalEnums.ReferenceMethod),
     reviewStatus: dryv.field(legalEnums.ReviewStatus),
+    metadata: dryv
+      .field(sharedProperties.JsonText)
+      .maybe()
+      .description(
+        "What the parser found beyond the one target: the whole citation group (`Article 10, (a) and (b)`), the instrument cited (this one, the Constitution or a named outside instrument), the designations and how far each resolved. Provenance and URLs belong in `source`, not here.",
+      ),
   })
   .extends(baseSchemas.Entity)
   .rule("ReferenceHasOneSource", rule.exactlyOne("wordingId", "translationId"))

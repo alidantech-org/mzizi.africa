@@ -8,6 +8,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.bill_status import BillStatus
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
@@ -34,7 +35,7 @@ class BillsRow(BaseModel):
     instrument_id: UUID | None = None
     kind_term: UUID
     sponsor_id: UUID | None = None
-    status_term: UUID
+    status: BillStatus
     term_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

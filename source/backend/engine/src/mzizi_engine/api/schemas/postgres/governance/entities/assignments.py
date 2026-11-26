@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.assignment_share import AssignmentShare
+
 
 class AssignmentsRow(BaseModel):
     """Which institution or position carries a function, and who leads it."""
@@ -24,8 +26,7 @@ class AssignmentsRow(BaseModel):
     initiator_id: UUID | None = None
     institution_id: UUID | None = None
     position_id: UUID | None = None
-    provision_id: UUID | None = None
-    share_term: UUID
+    share: AssignmentShare
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

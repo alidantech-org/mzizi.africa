@@ -8,6 +8,9 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.contact_kind import ContactKind
+from mzizi_engine.api.schemas.postgres.shared.enums.contact_visibility import ContactVisibility
+
 
 class ContactsRow(BaseModel):
     """A public or official-business contact of a named thing."""
@@ -21,9 +24,9 @@ class ContactsRow(BaseModel):
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     identity_id: UUID
-    kind_term: UUID
+    kind: ContactKind
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
-    value: Annotated[str, Field(min_length=1, max_length=1000)]
+    value: Annotated[str, Field(min_length=1, max_length=1000)] | None = None
     version: Annotated[int, Field(ge=1)]
-    visibility_term: UUID
+    visibility: ContactVisibility

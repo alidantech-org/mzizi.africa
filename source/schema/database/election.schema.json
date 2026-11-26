@@ -402,14 +402,16 @@
           ,"version"
         ],
         "columns": [
-          "code"
+          "area_code"
+          ,"code"
           ,"election_code"
-          ,"feature_code"
           ,"kind_term_code"
           ,"office_code"
           ,"previous_holder_code"
           ,"reason_term_code"
           ,"seat_count"
+          ,"template_code"
+          ,"term_code"
         ],
         "required": [
           "code"
@@ -418,7 +420,14 @@
         ]
       },
       "properties": {
-        "code": {
+        "area_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Areas", "column": "id", "alias": "area_code" }
+        }
+        ,"code": {
           "type": "string",
           "x-type": "text",
           "maxLength": 255,
@@ -446,13 +455,6 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/election.Elections", "column": "id", "alias": "election_code" }
-        }
-        ,"feature_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"id": {
           "type": "string",
@@ -494,6 +496,20 @@
           "x-type": "integer",
           "x-role": "data"
         }
+        ,"template_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/template.Templates", "column": "id", "alias": "template_code" }
+        }
+        ,"term_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/governance.OfficeTerms", "column": "id", "alias": "term_code" }
+        }
         ,"updated_at": {
           "type": "string",
           "x-type": "timestamp",
@@ -527,7 +543,7 @@
         ,"from_year"
         ,"id"
         ,"kind_term"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -547,15 +563,15 @@
           ,"identity_kind"
           ,"kind_term_code"
           ,"parent_code"
-          ,"status_term_code"
-          ,"term_code"
+          ,"status"
+          ,"template_code"
         ],
         "required": [
           "code"
           ,"country_code"
           ,"from_year"
           ,"kind_term_code"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -624,7 +640,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"kind_term": {
@@ -641,19 +657,18 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/election.Elections", "column": "id", "alias": "parent_code" }
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.ele.election.status" }
+          "x-type": "text",
+          "enum": ["annulled", "held", "scheduled"],
+          "x-role": "data"
         }
-        ,"term_id": {
+        ,"template_id": {
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
-          "x-link": { "tableId": "#/schemas/governance.OfficeTerms", "column": "id", "alias": "term_code" }
+          "x-link": { "tableId": "#/schemas/template.Templates", "column": "id", "alias": "template_code" }
         }
         ,"updated_at": {
           "type": "string",
@@ -682,8 +697,7 @@
       "x-uniqueKeys": [
       ],
       "required": [
-        "asset_id"
-        ,"contest_id"
+        "contest_id"
         ,"form_term"
         ,"id"
         ,"status"
@@ -706,8 +720,7 @@
           ,"status"
         ],
         "required": [
-          "asset_code"
-          ,"contest_code"
+          "contest_code"
           ,"form_term_code"
           ,"id"
           ,"status"
@@ -715,7 +728,7 @@
       },
       "properties": {
         "asset_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "link",
@@ -992,7 +1005,7 @@
           ,"note_language_code"
           ,"opens_at"
           ,"registered_voters"
-          ,"status_term_code"
+          ,"status"
           ,"streams"
         ],
         "required": [
@@ -1083,12 +1096,11 @@
           "x-type": "integer",
           "x-role": "data"
         }
-        ,"status_term": {
+        ,"status": {
           "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.ele.station.status" }
+          "x-type": "text",
+          "enum": ["closed", "gazetted", "open", "relocated"],
+          "x-role": "data"
         }
         ,"streams": {
           "type": ["integer", "null"],
@@ -1255,10 +1267,9 @@
       "x-code": "sys.tbl.election.turnouts",
       "x-id": "#/schemas/election.Turnouts",
       "x-table": "election.turnouts",
-      "x-primaryKey": ["id"],"x-naturalKey": ["contest_code", "feature_code", "collection_code", "revision"],
-      "x-seedable": true,
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
       "x-uniqueKeys": [
-        ["contest_id", "feature_id", "collection_id", "revision"]
       ],
       "required": [
         "contest_id"
@@ -1271,7 +1282,6 @@
         "system": [
           "created_at"
           ,"deleted_at"
-          ,"id"
           ,"updated_at"
           ,"version"
         ],
@@ -1280,6 +1290,7 @@
           ,"collection_code"
           ,"contest_code"
           ,"feature_code"
+          ,"id"
           ,"registered"
           ,"rejected"
           ,"revision"
@@ -1291,6 +1302,7 @@
         "required": [
           "contest_code"
           ,"feature_code"
+          ,"id"
           ,"revision"
           ,"status"
         ]
@@ -1305,14 +1317,14 @@
           "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/statistics.Collections", "column": "id", "alias": "collection_code" }
         }
         ,"contest_id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/election.Contests", "column": "id", "alias": "contest_code" }
         }
         ,"created_at": {
@@ -1333,7 +1345,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
         }
         ,"id": {
@@ -1341,7 +1353,7 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "data"
         }
         ,"registered": {
           "type": ["integer", "null"],
@@ -1356,7 +1368,7 @@
         ,"revision": {
           "type": "integer",
           "x-type": "integer",
-          "x-role": "key"
+          "x-role": "data"
         }
         ,"spoilt": {
           "type": ["integer", "null"],

@@ -8,6 +8,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.hierarchy_kind import HierarchyKind
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
@@ -33,7 +34,7 @@ class HierarchiesRow(BaseModel):
     id: UUID
     identity_kind: IdentityKind
     is_routing: bool
-    kind_term: UUID
+    kind: HierarchyKind
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

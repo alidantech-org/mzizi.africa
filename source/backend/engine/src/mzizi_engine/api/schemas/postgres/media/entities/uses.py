@@ -16,7 +16,7 @@ class UsesRow(BaseModel):
 
     table: ClassVar[str] = "media.uses"
 
-    asset_id: UUID
+    asset_id: UUID | None = None
     created_at: datetime
     deleted_at: datetime | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None

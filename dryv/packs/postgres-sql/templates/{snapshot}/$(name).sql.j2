@@ -236,7 +236,7 @@
 {%- set needs.extensions = needs.extensions + [extension] -%}
 {%- endfor -%}
 {#- Matching tools the platform relies on: trigram and edit-distance similarity and accent folding for names. -#}
-{%- for extension in ['pg_trgm', 'unaccent', 'fuzzystrmatch'] -%}
+{%- for extension in ['pg_trgm', 'unaccent', 'fuzzystrmatch', 'uuid-ossp'] -%}
 {%- if extension not in needs.extensions -%}{%- set needs.extensions = needs.extensions + [extension] -%}{%- endif -%}
 {%- endfor -%}
 {%- for schema in schemas -%}
@@ -409,6 +409,637 @@ CREATE{% if view.materialized %} MATERIALIZED{% endif %} VIEW "{{ view.namespace
 SELECT {% for column in view.columns %}"{{ column.field.snake }}" AS "{{ column.name.snake }}"{% if not loop.last %}, {% endif %}{% endfor %}
 FROM "{{ ns }}"."{{ table_of(schema) }}"{% if view.where %} WHERE "{{ view.where.field.snake }}" IS {% if not view.where.is_null %}NOT {% endif %}NULL{% endif %};
 {%- endfor %}
+{%- endfor %}
+
+{#- Database objects: guards, text transforms, generation and coverage views. The static part is rendered as written (raw); the product guards come from tags. -#}
+{% raw %}
+-- ===== Database objects: guards, text transforms, generation and coverage views =====
+-- Rendered by the project pack mzizi.postgres-sql. Intent: .docs/decisions/DEC-DB-RETHINK-ROOTS-UNITS-SLOTS-20261125.md.
+
+-- ---- Guards ----
+
+CREATE FUNCTION "geography"."areas__guard"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_parent record;
+  v_child record;
+BEGIN
+  IF NEW."parent_id" IS NULL THEN
+    RETURN NEW;
+  END IF;
+  SELECT a."from_year", a."to_year", l."depth" INTO v_parent
+  FROM "geography"."areas" a JOIN "reference"."levels" l ON l."id" = a."level_id"
+  WHERE a."id" = NEW."parent_id";
+  IF v_parent."depth" IS NULL THEN
+    RAISE EXCEPTION 'the parent area of % does not exist yet; load parents before children', NEW."code" USING ERRCODE = '23503';
+  END IF;
+  SELECT l."depth", l."allows_skip" INTO v_child FROM "reference"."levels" l WHERE l."id" = NEW."level_id";
+  IF v_child."depth" <= v_parent."depth" THEN
+    RAISE EXCEPTION 'area % must be at a deeper level than its parent', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  IF v_child."depth" > v_parent."depth" + 1 AND NOT v_child."allows_skip" THEN
+    RAISE EXCEPTION 'area % skips a level and its level does not allow that', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  IF NEW."from_year" IS NOT NULL AND v_parent."from_year" IS NOT NULL AND NEW."from_year" < v_parent."from_year" THEN
+    RAISE EXCEPTION 'area % starts before its parent', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  IF v_parent."to_year" IS NOT NULL AND (NEW."to_year" IS NULL OR NEW."to_year" > v_parent."to_year") THEN
+    RAISE EXCEPTION 'area % outlives its parent', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+CREATE TRIGGER "tr_areas__guard" BEFORE INSERT OR UPDATE OF "parent_id", "level_id", "from_year", "to_year"
+ON "geography"."areas" FOR EACH ROW EXECUTE FUNCTION "geography"."areas__guard"();
+
+CREATE FUNCTION "geography"."geometries__guard"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."status" = 'expected' AND NEW."geometry" IS NOT NULL THEN
+    RAISE EXCEPTION 'an expected geometry has no drawing yet' USING ERRCODE = '23514';
+  END IF;
+  IF NEW."status" <> 'expected' AND NEW."geometry" IS NULL THEN
+    RAISE EXCEPTION 'a % geometry needs a drawing', NEW."status" USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+CREATE TRIGGER "tr_geometries__guard" BEFORE INSERT OR UPDATE OF "status", "geometry"
+ON "geography"."geometries" FOR EACH ROW EXECUTE FUNCTION "geography"."geometries__guard"();
+
+CREATE FUNCTION "template"."templates__guard"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_pattern uuid;
+  v_level uuid;
+BEGIN
+  IF NEW."fan_out_level_id" IS NULL THEN
+    RETURN NEW;
+  END IF;
+  SELECT p."country_id" INTO v_pattern FROM "template"."patterns" p WHERE p."id" = NEW."pattern_id";
+  IF v_pattern IS NULL THEN
+    RETURN NEW;
+  END IF;
+  SELECT h."country_id" INTO v_level
+  FROM "reference"."levels" l JOIN "reference"."hierarchies" h ON h."id" = l."hierarchy_id"
+  WHERE l."id" = NEW."fan_out_level_id";
+  IF v_level IS DISTINCT FROM v_pattern THEN
+    RAISE EXCEPTION 'template % fans out over a level of another country than its pattern', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+CREATE TRIGGER "tr_templates__guard" BEFORE INSERT OR UPDATE OF "pattern_id", "fan_out_level_id"
+ON "template"."templates" FOR EACH ROW EXECUTE FUNCTION "template"."templates__guard"();
+
+-- ---- Text transforms (the closed list: slug, compact, upper, lower) ----
+
+CREATE FUNCTION "template"."stable_id"(p_code text) RETURNS uuid LANGUAGE sql IMMUTABLE AS $fn$
+  SELECT uuid_generate_v5('6f1c2b1e-8f0e-4c55-9e7a-2b0c5d1e7a10'::uuid, p_code)
+$fn$;
+COMMENT ON FUNCTION "template"."stable_id"(text) IS 'The id a row with this code always gets: uuid5 of the code in the seed namespace, the same derivation the seed builders use, so generated and seeded rows agree.';
+
+CREATE FUNCTION "template"."identity_id"(p_code text) RETURNS uuid LANGUAGE sql STABLE AS $fn$
+  SELECT coalesce((SELECT i."id" FROM "identity"."identities" i WHERE i."code" = p_code), "template"."stable_id"(p_code))
+$fn$;
+COMMENT ON FUNCTION "template"."identity_id"(text) IS 'The id of the identity with this code if it exists (seeded rows keep their ids), otherwise the stable id the code always gets.';
+
+CREATE FUNCTION "template"."slug"(p_value text) RETURNS text LANGUAGE sql STABLE AS $fn$
+  SELECT trim(both '-' FROM regexp_replace(lower(unaccent(p_value)), '[^a-z0-9]+', '-', 'g'))
+$fn$;
+
+CREATE FUNCTION "template"."compact"(p_value text) RETURNS text LANGUAGE sql STABLE AS $fn$
+  SELECT replace("template"."slug"(p_value), '-', '')
+$fn$;
+
+CREATE FUNCTION "template"."render"(p_body text, p_vars jsonb) RETURNS text LANGUAGE plpgsql STABLE AS $fn$
+DECLARE
+  v_result text := p_body;
+  v_match text[];
+  v_value text;
+  v_step text;
+BEGIN
+  FOR v_match IN SELECT regexp_matches(p_body, '(\{([a-z_0-9]+)((?:\|[a-z]+)*)\})', 'g') LOOP
+    v_value := p_vars ->> v_match[2];
+    IF v_value IS NULL THEN
+      RAISE EXCEPTION 'text template uses the token % but no value is known for it', v_match[2] USING ERRCODE = '22023';
+    END IF;
+    IF v_match[3] <> '' THEN
+      FOREACH v_step IN ARRAY string_to_array(substr(v_match[3], 2), '|') LOOP
+        v_value := CASE v_step
+          WHEN 'slug' THEN "template"."slug"(v_value)
+          WHEN 'compact' THEN "template"."compact"(v_value)
+          WHEN 'upper' THEN upper(v_value)
+          WHEN 'lower' THEN lower(v_value)
+          ELSE NULL
+        END;
+        IF v_value IS NULL THEN
+          RAISE EXCEPTION 'unknown transform %', v_step USING ERRCODE = '22023';
+        END IF;
+      END LOOP;
+    END IF;
+    v_result := replace(v_result, v_match[1], v_value);
+  END LOOP;
+  RETURN v_result;
+END
+$fn$;
+COMMENT ON FUNCTION "template"."render"(text, jsonb) IS 'Fills `{token|transform}` placeholders of a text template; an unknown token or transform is an error.';
+
+CREATE FUNCTION "template"."name_of"(p_identity uuid) RETURNS text LANGUAGE sql STABLE AS $fn$
+  SELECT n."text" FROM "identity"."names" n
+  WHERE n."identity_id" = p_identity AND n."deleted_at" IS NULL
+  ORDER BY n."is_default" DESC, n."created_at", n."id" LIMIT 1
+$fn$;
+
+CREATE FUNCTION "template"."last_segment"(p_code text) RETURNS text LANGUAGE sql IMMUTABLE AS $fn$
+  SELECT regexp_replace(p_code, '^.*\.', '')
+$fn$;
+
+CREATE FUNCTION "template"."area_vars"(p_area uuid) RETURNS jsonb LANGUAGE sql STABLE AS $fn$
+  WITH RECURSIVE chain AS (
+    SELECT a."id", a."parent_id", a."level_id", a."feature_id", a."code" FROM "geography"."areas" a WHERE a."id" = p_area
+    UNION ALL
+    SELECT p."id", p."parent_id", p."level_id", p."feature_id", p."code"
+    FROM "geography"."areas" p JOIN chain c ON p."id" = c."parent_id"
+  )
+  SELECT coalesce(
+           (SELECT jsonb_object_agg("template"."last_segment"(k."code"), "template"."name_of"(c."feature_id"))
+            FROM chain c
+            JOIN "reference"."levels" l ON l."id" = c."level_id"
+            JOIN "vocabulary"."terms" k ON k."id" = l."kind_term"),
+           '{}'::jsonb)
+         || jsonb_build_object(
+              'area', (SELECT "template"."name_of"(a."feature_id") FROM "geography"."areas" a WHERE a."id" = p_area),
+              'area_code', (SELECT "template"."last_segment"(a."code") FROM "geography"."areas" a WHERE a."id" = p_area))
+$fn$;
+COMMENT ON FUNCTION "template"."area_vars"(uuid) IS 'The tokens an area offers to text templates: its own name (`area`), its code and the name of each ancestor by level kind (`county`, `constituency`, `ward`).';
+
+CREATE FUNCTION "template"."vars"(p_ctx jsonb) RETURNS jsonb LANGUAGE sql STABLE AS $fn$
+  SELECT CASE WHEN p_ctx ->> 'area_id' IS NULL THEN '{}'::jsonb ELSE "template"."area_vars"((p_ctx ->> 'area_id')::uuid) END || p_ctx
+$fn$;
+
+CREATE FUNCTION "template"."text_of"(p_template uuid, p_purpose text) RETURNS text LANGUAGE sql STABLE AS $fn$
+  SELECT x."body" FROM "template"."texts" x
+  WHERE x."template_id" = p_template AND x."purpose" = p_purpose AND x."language_id" IS NULL AND x."deleted_at" IS NULL
+$fn$;
+
+CREATE FUNCTION "template"."country_of_area"(p_area uuid) RETURNS uuid LANGUAGE sql STABLE AS $fn$
+  SELECT h."country_id" FROM "geography"."areas" a
+  JOIN "reference"."levels" l ON l."id" = a."level_id"
+  JOIN "reference"."hierarchies" h ON h."id" = l."hierarchy_id"
+  WHERE a."id" = p_area
+$fn$;
+
+-- ---- Generation ----
+
+CREATE FUNCTION "template"."contexts"(p_template uuid, p_ctx jsonb) RETURNS SETOF jsonb LANGUAGE plpgsql STABLE AS $fn$
+DECLARE
+  t "template"."templates";
+  p "template"."patterns";
+  a record;
+BEGIN
+  SELECT * INTO t FROM "template"."templates" WHERE "id" = p_template AND "deleted_at" IS NULL;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'template % does not exist', p_template USING ERRCODE = '22023';
+  END IF;
+  SELECT * INTO p FROM "template"."patterns" WHERE "id" = t."pattern_id";
+  IF t."scope" = 'single' THEN
+    RETURN NEXT p_ctx;
+  ELSIF t."scope" = 'level' THEN
+    FOR a IN
+      SELECT ar."id" FROM "geography"."areas" ar
+      JOIN "reference"."levels" l ON l."id" = ar."level_id"
+      JOIN "reference"."hierarchies" h ON h."id" = l."hierarchy_id"
+      WHERE ar."level_id" = t."fan_out_level_id" AND ar."deleted_at" IS NULL
+        AND (p."country_id" IS NULL OR h."country_id" = p."country_id")
+      ORDER BY ar."code"
+    LOOP
+      RETURN NEXT p_ctx || jsonb_build_object('area_id', a."id");
+    END LOOP;
+  ELSIF t."scope" = 'within' THEN
+    IF p_ctx ->> 'area_id' IS NULL THEN
+      RAISE EXCEPTION 'template % fans out within an area but no area is in context', t."code" USING ERRCODE = '22023';
+    END IF;
+    FOR a IN
+      WITH RECURSIVE down AS (
+        SELECT ar."id" FROM "geography"."areas" ar WHERE ar."parent_id" = (p_ctx ->> 'area_id')::uuid AND ar."deleted_at" IS NULL
+        UNION ALL
+        SELECT ar."id" FROM "geography"."areas" ar JOIN down d ON ar."parent_id" = d."id" WHERE ar."deleted_at" IS NULL
+      )
+      SELECT ar."id" FROM down d JOIN "geography"."areas" ar ON ar."id" = d."id"
+      WHERE ar."level_id" = t."fan_out_level_id" ORDER BY ar."code"
+    LOOP
+      RETURN NEXT p_ctx || jsonb_build_object('area_id', a."id");
+    END LOOP;
+  ELSE
+    FOR a IN SELECT i."key", i."name" FROM "template"."items" i WHERE i."template_id" = t."id" AND i."deleted_at" IS NULL ORDER BY i."position" LOOP
+      RETURN NEXT p_ctx || jsonb_build_object('item_key', a."key", 'item_name', a."name");
+    END LOOP;
+  END IF;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_names"(p_template uuid, p_identity uuid, p_kind text, p_code text, p_vars jsonb) RETURNS void LANGUAGE plpgsql AS $fn$
+DECLARE
+  n record;
+BEGIN
+  FOR n IN
+    SELECT x."language_id", x."name_kind", "template"."render"(x."body", p_vars) AS rendered
+    FROM "template"."texts" x
+    WHERE x."template_id" = p_template AND x."purpose" = 'name' AND x."deleted_at" IS NULL
+    ORDER BY x."created_at", x."id"
+  LOOP
+    INSERT INTO "identity"."names" ("id", "identity_id", "identity_kind", "language_id", "kind", "text", "is_default", "version", "created_at", "updated_at")
+    VALUES ("template"."stable_id"(p_code || ':' || n."language_id"::text), p_identity, p_kind, n."language_id", n."name_kind", n."rendered", true, 1, now(), now())
+    ON CONFLICT DO NOTHING;
+  END LOOP;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_institution"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_vars jsonb := "template"."vars"(c);
+  v_code text;
+  v_id uuid;
+  v_country uuid;
+BEGIN
+  v_code := "template"."render"("template"."text_of"(t."id", 'code'), v_vars);
+  v_id := "template"."identity_id"(v_code);
+  created := NOT EXISTS (SELECT 1 FROM "governance"."institutions" x WHERE x."id" = v_id);
+  IF created THEN
+    v_country := coalesce(p."country_id", "template"."country_of_area"((c ->> 'area_id')::uuid));
+    INSERT INTO "identity"."identities" ("id", "kind", "code", "version", "created_at", "updated_at") VALUES (v_id, 'entity', v_code, 1, now(), now())
+    ON CONFLICT DO NOTHING;
+    INSERT INTO "official"."entities" ("id", "identity_kind", "code", "kind_term", "registration_country_id", "from_year", "version", "created_at", "updated_at")
+    VALUES (v_id, 'entity', v_code, t."entity_kind_term", v_country, p."from_year", 1, now(), now())
+    ON CONFLICT DO NOTHING;
+    INSERT INTO "governance"."institutions" ("id", "identity_kind", "code", "kind_term", "arm", "class_term", "country_id", "from_year", "template_id", "version", "created_at", "updated_at")
+    VALUES (v_id, 'entity', v_code, t."kind_term", t."arm", t."class_term", v_country, p."from_year", t."id", 1, now(), now());
+    PERFORM "template"."make_names"(t."id", v_id, 'entity', v_code, v_vars);
+  ELSE
+    -- an existing institution is adopted: the template fills what is missing and links itself
+    UPDATE "governance"."institutions" x SET
+      "kind_term" = coalesce(x."kind_term", t."kind_term"), "arm" = coalesce(x."arm", t."arm"),
+      "class_term" = coalesce(x."class_term", t."class_term"),
+      "template_id" = coalesce(x."template_id", t."id")
+    WHERE x."id" = v_id;
+  END IF;
+  ctx := c || jsonb_build_object('institution_id', v_id, 'institution_code', v_code);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_office"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_inst uuid := (c ->> 'institution_id')::uuid;
+  v_position uuid;
+  v_count integer;
+  v_seat integer;
+  v_vars jsonb;
+  v_code text;
+  v_id uuid;
+BEGIN
+  IF v_inst IS NULL THEN
+    RAISE EXCEPTION 'template % makes offices but no institution is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  SELECT po."id" INTO v_position FROM "governance"."positions" po
+  WHERE po."role_term" = t."role_term" AND po."deleted_at" IS NULL
+    AND (po."institution_class_term" IS NULL
+         OR po."institution_class_term" = (SELECT i."class_term" FROM "governance"."institutions" i WHERE i."id" = v_inst))
+  ORDER BY (po."institution_class_term" IS NOT NULL) DESC, po."code" LIMIT 1;
+  IF v_position IS NULL THEN
+    RAISE EXCEPTION 'template % found no position for its role', t."code" USING ERRCODE = '22023';
+  END IF;
+  v_count := CASE t."count_kind" WHEN 'exact' THEN t."count_min" WHEN 'minimum' THEN t."count_min" ELSE 0 END;
+  FOR v_seat IN 1..v_count LOOP
+    v_vars := "template"."vars"(c) || jsonb_build_object('seat', v_seat, 'institution', "template"."last_segment"(c ->> 'institution_code'));
+    v_code := "template"."render"("template"."text_of"(t."id", 'code'), v_vars);
+    v_id := "template"."identity_id"(v_code);
+    created := NOT EXISTS (SELECT 1 FROM "governance"."offices" x WHERE x."id" = v_id);
+    IF created THEN
+      INSERT INTO "identity"."identities" ("id", "kind", "code", "version", "created_at", "updated_at") VALUES (v_id, 'office', v_code, 1, now(), now())
+      ON CONFLICT DO NOTHING;
+      INSERT INTO "governance"."offices" ("id", "identity_kind", "code", "position_id", "institution_id", "area_id", "seat", "from_year", "template_id", "version", "created_at", "updated_at")
+      VALUES (v_id, 'office', v_code, v_position, v_inst, (c ->> 'area_id')::uuid,
+              CASE WHEN v_count > 1 THEN v_seat::text END, p."from_year", t."id", 1, now(), now());
+      PERFORM "template"."make_names"(t."id", v_id, 'office', v_code, v_vars);
+    END IF;
+    ctx := c || jsonb_build_object('office_id', v_id, 'office_code', v_code, 'position_id', v_position);
+    RETURN NEXT;
+  END LOOP;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_term"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_office record;
+  v_election record;
+  v_code text;
+  v_id uuid;
+  v_ordinal integer := 0;
+  v_next integer;
+BEGIN
+  SELECT o."id", o."code", o."area_id", o."from_year", o."institution_id" INTO v_office
+  FROM "governance"."offices" o WHERE o."id" = (c ->> 'office_id')::uuid;
+  IF v_office."id" IS NULL THEN
+    RAISE EXCEPTION 'template % makes terms but no office is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  IF t."repeat_years" IS NULL THEN
+    v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c));
+    SELECT x."id" INTO v_id FROM "governance"."terms" x WHERE x."code" = v_code;
+    created := v_id IS NULL;
+    IF created THEN
+      v_id := "template"."stable_id"(v_code);
+      INSERT INTO "governance"."terms" ("id", "code", "kind_term", "office_id", "area_id", "ordinal", "from_year", "template_id", "version", "created_at", "updated_at")
+      VALUES (v_id, v_code, t."term_kind_term", v_office."id", v_office."area_id", 1, v_office."from_year", t."id", 1, now(), now());
+    END IF;
+    ctx := c || jsonb_build_object('term_id', v_id, 'term_code', v_code);
+    RETURN NEXT;
+    RETURN;
+  END IF;
+  FOR v_election IN
+    SELECT e."id", e."from_year" FROM "election"."elections" e
+    WHERE e."deleted_at" IS NULL AND e."kind_term" = t."election_kind_term"
+      AND e."country_id" = (SELECT ins."country_id" FROM "governance"."institutions" ins WHERE ins."id" = v_office."institution_id")
+      AND e."from_year" >= coalesce(v_office."from_year", e."from_year")
+    ORDER BY e."from_year"
+  LOOP
+    v_ordinal := v_ordinal + 1;
+    SELECT min(e2."from_year") INTO v_next FROM "election"."elections" e2
+    WHERE e2."deleted_at" IS NULL AND e2."kind_term" = t."election_kind_term" AND e2."country_id" = (SELECT ins."country_id" FROM "governance"."institutions" ins WHERE ins."id" = v_office."institution_id")
+      AND e2."from_year" > v_election."from_year";
+    v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c) || jsonb_build_object('year', v_election."from_year"));
+    SELECT x."id" INTO v_id FROM "governance"."terms" x WHERE x."code" = v_code;
+    created := v_id IS NULL;
+    IF created THEN
+      v_id := "template"."stable_id"(v_code);
+      INSERT INTO "governance"."terms" ("id", "code", "kind_term", "office_id", "area_id", "election_id", "ordinal", "from_year", "to_year", "template_id", "version", "created_at", "updated_at")
+      VALUES (v_id, v_code, t."term_kind_term", v_office."id", v_office."area_id", v_election."id", v_ordinal, v_election."from_year", v_next, t."id", 1, now(), now());
+    END IF;
+    ctx := c || jsonb_build_object('term_id', v_id, 'term_code', v_code, 'election_id', v_election."id", 'year', v_election."from_year");
+    RETURN NEXT;
+  END LOOP;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_holder"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_term record;
+  v_code text;
+  v_id uuid;
+BEGIN
+  SELECT x."id", x."office_id", x."from_year", x."to_year" INTO v_term FROM "governance"."terms" x WHERE x."id" = (c ->> 'term_id')::uuid;
+  IF v_term."id" IS NULL THEN
+    RAISE EXCEPTION 'template % makes holders but no term is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c));
+  SELECT h."id" INTO v_id FROM "governance"."holders" h WHERE h."code" = v_code;
+  created := v_id IS NULL;
+  IF created THEN
+    v_id := "template"."stable_id"(v_code);
+    INSERT INTO "governance"."holders" ("id", "code", "office_id", "term_id", "individual_id", "method", "from_year", "to_year", "version", "created_at", "updated_at")
+    VALUES (v_id, v_code, v_term."office_id", v_term."id", NULL, t."method", v_term."from_year", v_term."to_year", 1, now(), now());
+  END IF;
+  ctx := c || jsonb_build_object('holder_id', v_id);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_premises"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_code text;
+  v_id uuid;
+BEGIN
+  IF c ->> 'institution_id' IS NULL THEN
+    RAISE EXCEPTION 'template % makes premises but no institution is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c));
+  SELECT x."id" INTO v_id FROM "official"."premises" x WHERE x."code" = v_code;
+  created := v_id IS NULL;
+  IF created THEN
+    v_id := "template"."stable_id"(v_code);
+    INSERT INTO "official"."premises" ("id", "code", "entity_id", "kind_term", "ordinal", "feature_id", "from_year", "version", "created_at", "updated_at")
+    VALUES (v_id, v_code, (c ->> 'institution_id')::uuid, t."premises_kind_term", 1, NULL, p."from_year", 1, now(), now());
+  END IF;
+  ctx := c || jsonb_build_object('premises_id', v_id);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_contact"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_id uuid;
+  v_text text := "template"."text_of"(t."id", 'contact');
+BEGIN
+  IF c ->> 'institution_id' IS NULL THEN
+    RAISE EXCEPTION 'template % makes contacts but no institution is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  SELECT x."id" INTO v_id FROM "official"."contacts" x
+  WHERE x."identity_id" = (c ->> 'institution_id')::uuid AND x."kind" = t."contact_kind" AND x."deleted_at" IS NULL;
+  created := v_id IS NULL;
+  IF created THEN
+    v_id := "template"."stable_id"((c ->> 'institution_code') || ':' || t."code");
+    INSERT INTO "official"."contacts" ("id", "identity_id", "kind", "value", "visibility", "version", "created_at", "updated_at")
+    VALUES (v_id, (c ->> 'institution_id')::uuid, t."contact_kind",
+            CASE WHEN v_text IS NULL THEN NULL ELSE "template"."render"(v_text, "template"."vars"(c)) END,
+            t."contact_visibility", 1, now(), now());
+  END IF;
+  ctx := c || jsonb_build_object('contact_id', v_id);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_election_cycle"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_year integer := coalesce(t."start_year", p."from_year");
+  v_limit integer;
+  v_vars jsonb;
+  v_code text;
+  v_id uuid;
+BEGIN
+  IF v_year IS NULL THEN
+    RAISE EXCEPTION 'template % has no start year and its pattern has no from year', t."code" USING ERRCODE = '22023';
+  END IF;
+  v_limit := CASE WHEN t."repeat_years" IS NULL THEN v_year
+                  ELSE v_year + t."repeat_years" * greatest(0, floor((extract(year FROM now())::integer - v_year)::numeric / t."repeat_years")::integer + 1) END;
+  WHILE v_year <= v_limit LOOP
+    v_vars := c || jsonb_build_object('year', v_year);
+    v_code := "template"."render"("template"."text_of"(t."id", 'code'), v_vars);
+    v_id := "template"."identity_id"(v_code);
+    created := NOT EXISTS (SELECT 1 FROM "election"."elections" x WHERE x."id" = v_id);
+    IF created THEN
+      INSERT INTO "identity"."identities" ("id", "kind", "code", "version", "created_at", "updated_at") VALUES (v_id, 'election', v_code, 1, now(), now())
+      ON CONFLICT DO NOTHING;
+      INSERT INTO "election"."elections" ("id", "identity_kind", "code", "country_id", "kind_term", "status", "from_year", "template_id", "version", "created_at", "updated_at")
+      VALUES (v_id, 'election', v_code, p."country_id", t."election_kind_term",
+              CASE WHEN v_year < extract(year FROM now())::integer THEN coalesce(t."election_past_status", t."election_status") ELSE t."election_status" END, v_year, t."id", 1, now(), now());
+      PERFORM "template"."make_names"(t."id", v_id, 'election', v_code, v_vars);
+    END IF;
+    ctx := v_vars || jsonb_build_object('election_id', v_id);
+    RETURN NEXT;
+    EXIT WHEN t."repeat_years" IS NULL;
+    v_year := v_year + t."repeat_years";
+  END LOOP;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_contest"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_term record;
+  v_code text;
+  v_id uuid;
+BEGIN
+  SELECT x."id", x."office_id", x."area_id", x."election_id" INTO v_term FROM "governance"."terms" x WHERE x."id" = (c ->> 'term_id')::uuid;
+  IF v_term."id" IS NULL OR v_term."election_id" IS NULL THEN
+    RETURN;
+  END IF;
+  v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c));
+  SELECT x."id" INTO v_id FROM "election"."contests" x WHERE x."code" = v_code;
+  created := v_id IS NULL;
+  IF created THEN
+    v_id := "template"."stable_id"(v_code);
+    INSERT INTO "election"."contests" ("id", "code", "election_id", "office_id", "term_id", "area_id", "kind_term", "template_id", "version", "created_at", "updated_at")
+    VALUES (v_id, v_code, v_term."election_id", v_term."office_id", v_term."id", v_term."area_id", t."contest_kind_term", t."id", 1, now(), now());
+  END IF;
+  ctx := c || jsonb_build_object('contest_id', v_id);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make"(t "template"."templates", p "template"."patterns", c jsonb)
+RETURNS TABLE(ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+BEGIN
+  CASE t."product"
+    WHEN 'institution' THEN RETURN QUERY SELECT * FROM "template"."make_institution"(t, p, c);
+    WHEN 'office' THEN RETURN QUERY SELECT * FROM "template"."make_office"(t, p, c);
+    WHEN 'term' THEN RETURN QUERY SELECT * FROM "template"."make_term"(t, p, c);
+    WHEN 'holder' THEN RETURN QUERY SELECT * FROM "template"."make_holder"(t, p, c);
+    WHEN 'premises' THEN RETURN QUERY SELECT * FROM "template"."make_premises"(t, p, c);
+    WHEN 'contact' THEN RETURN QUERY SELECT * FROM "template"."make_contact"(t, p, c);
+    WHEN 'election-cycle' THEN RETURN QUERY SELECT * FROM "template"."make_election_cycle"(t, p, c);
+    WHEN 'contest' THEN RETURN QUERY SELECT * FROM "template"."make_contest"(t, p, c);
+    ELSE RAISE EXCEPTION 'generation of % rows is not available yet', t."product" USING ERRCODE = '0A000';
+  END CASE;
+END
+$fn$;
+
+CREATE FUNCTION "template"."generate"(p_template uuid, p_ctx jsonb DEFAULT '{}'::jsonb) RETURNS integer LANGUAGE plpgsql AS $fn$
+DECLARE
+  t "template"."templates";
+  p "template"."patterns";
+  c jsonb;
+  r record;
+  l record;
+  v_made integer := 0;
+BEGIN
+  SELECT * INTO t FROM "template"."templates" WHERE "id" = p_template AND "deleted_at" IS NULL;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'template % does not exist', p_template USING ERRCODE = '22023';
+  END IF;
+  SELECT * INTO p FROM "template"."patterns" WHERE "id" = t."pattern_id";
+  FOR c IN SELECT * FROM "template"."contexts"(p_template, p_ctx) LOOP
+    FOR r IN SELECT * FROM "template"."make"(t, p, c) LOOP
+      IF r."created" THEN
+        v_made := v_made + 1;
+      END IF;
+      FOR l IN SELECT x."effect_template_id" FROM "template"."lines" x WHERE x."template_id" = p_template AND x."deleted_at" IS NULL ORDER BY x."position" LOOP
+        v_made := v_made + "template"."generate"(l."effect_template_id", r."ctx");
+      END LOOP;
+    END LOOP;
+  END LOOP;
+  RETURN v_made;
+END
+$fn$;
+COMMENT ON FUNCTION "template"."generate"(uuid, jsonb) IS 'Runs one template: creates the roots it describes for each place, item or year in context, then runs its effect lines for each. Only missing rows are created, so a second run creates nothing. Returns the number of rows created.';
+
+CREATE FUNCTION "template"."generate_pattern"(p_pattern uuid) RETURNS integer LANGUAGE plpgsql AS $fn$
+DECLARE
+  r record;
+  v_made integer := 0;
+BEGIN
+  FOR r IN
+    SELECT x."id" FROM "template"."templates" x
+    WHERE x."pattern_id" = p_pattern AND x."deleted_at" IS NULL
+      AND NOT EXISTS (SELECT 1 FROM "template"."lines" l WHERE l."effect_template_id" = x."id" AND l."deleted_at" IS NULL)
+    ORDER BY x."sequence", x."code"
+  LOOP
+    v_made := v_made + "template"."generate"(r."id");
+  END LOOP;
+  RETURN v_made;
+END
+$fn$;
+COMMENT ON FUNCTION "template"."generate_pattern"(uuid) IS 'Runs every root template of a pattern in sequence order (election cycles before the offices and terms that depend on them).';
+
+-- ---- Coverage views (what is missing; the pending slots) ----
+
+CREATE VIEW "template"."pending_holders" AS
+SELECT h."id" AS row_id, h."code" AS code, o."code" AS office_code, t."code" AS term_code, h."from_year", h."to_year"
+FROM "governance"."holders" h
+JOIN "governance"."offices" o ON o."id" = h."office_id"
+LEFT JOIN "governance"."terms" t ON t."id" = h."term_id"
+WHERE h."individual_id" IS NULL AND h."deleted_at" IS NULL;
+
+CREATE VIEW "template"."pending_contacts" AS
+SELECT c."id" AS row_id, i."code" AS identity_code, c."kind"
+FROM "official"."contacts" c JOIN "identity"."identities" i ON i."id" = c."identity_id"
+WHERE c."value" IS NULL AND c."deleted_at" IS NULL;
+
+CREATE VIEW "template"."pending_geometries" AS
+SELECT g."id" AS row_id, f."code" AS feature_code, a."code" AS area_code
+FROM "geography"."geometries" g
+JOIN "geography"."features" f ON f."id" = g."feature_id"
+LEFT JOIN "geography"."areas" a ON a."feature_id" = f."id" AND a."deleted_at" IS NULL
+WHERE g."status" = 'expected' AND g."deleted_at" IS NULL;
+
+CREATE VIEW "template"."offices_without_terms" AS
+SELECT o."id" AS row_id, o."code" AS code
+FROM "governance"."offices" o
+WHERE o."deleted_at" IS NULL AND NOT EXISTS (SELECT 1 FROM "governance"."terms" t WHERE t."office_id" = o."id" AND t."deleted_at" IS NULL);
+
+CREATE VIEW "template"."terms_without_holders" AS
+SELECT t."id" AS row_id, t."code" AS code
+FROM "governance"."terms" t
+WHERE t."deleted_at" IS NULL AND t."office_id" IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM "governance"."holders" h WHERE h."term_id" = t."id" AND h."deleted_at" IS NULL);
+
+CREATE VIEW "template"."contests_without_candidates" AS
+SELECT c."id" AS row_id, c."code" AS code
+FROM "election"."contests" c
+WHERE c."deleted_at" IS NULL AND NOT EXISTS (SELECT 1 FROM "election"."candidates" ca WHERE ca."contest_id" = c."id" AND ca."deleted_at" IS NULL);
+
+CREATE VIEW "template"."pending_queue" AS
+SELECT 'holder'::text AS queue, 'governance.holders'::text AS table_name, row_id, code, 'individual'::text AS missing FROM "template"."pending_holders"
+UNION ALL SELECT 'contact', 'official.contacts', row_id, identity_code, 'value' FROM "template"."pending_contacts"
+UNION ALL SELECT 'geometry', 'geography.geometries', row_id, coalesce(area_code, feature_code), 'drawing' FROM "template"."pending_geometries"
+UNION ALL SELECT 'office', 'governance.offices', row_id, code, 'term' FROM "template"."offices_without_terms"
+UNION ALL SELECT 'term', 'governance.terms', row_id, code, 'holder' FROM "template"."terms_without_holders"
+UNION ALL SELECT 'contest', 'election.contests', row_id, code, 'candidates' FROM "template"."contests_without_candidates";
+COMMENT ON VIEW "template"."pending_queue" IS 'Every pending slot and gap in one list (queue, table, row, code, what is missing); export it as the research work queue.';
+{% endraw %}
+
+{#- Template-product guards: a root's template must make that kind of row. Driven by the `template-product:<kind>` tag on the template link. -#}
+{%- for schema in schemas %}
+{%- set ns = namespace_of(schema) %}
+{%- for field in schema.fields %}{% for tag in field.tags %}{% if (tag | string)[:17] == 'template-product:' %}
+{%- set product = (tag | string)[17:] %}
+CREATE FUNCTION "{{ ns }}"."{{ table_of(schema) }}__template_product"() RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."{{ field.name.snake }}" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."{{ field.name.snake }}" AND t."product" = {{ sql_literal(product) }}
+  ) THEN
+    RAISE EXCEPTION '{{ table_of(schema) }}.{{ field.name.snake }} must name a template that makes {{ product }} rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+CREATE TRIGGER "tr_{{ table_of(schema) }}__template_product" BEFORE INSERT OR UPDATE OF "{{ field.name.snake }}"
+ON "{{ ns }}"."{{ table_of(schema) }}" FOR EACH ROW EXECUTE FUNCTION "{{ ns }}"."{{ table_of(schema) }}__template_product"();
+{%- endif %}{% endfor %}{% endfor %}
 {%- endfor %}
 
 {#- Descriptions become SQL comments: tables and columns of every selected entity. -#}

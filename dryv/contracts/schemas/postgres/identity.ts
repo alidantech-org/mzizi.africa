@@ -6,6 +6,7 @@
  */
 import * as dryv from "@dryvcode/author";
 import { baseSchemas, codeDescription } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, identityProperties, registerLinkTargets, term } from "./_links.ts";
@@ -78,10 +79,11 @@ export const Names = identity
       "Language of the text: any language, `mul` for a form shared by languages, never assumed English.",
     ),
     text: dryv.field(identityText.NameText),
-    kindTerm: term(
-      "idn.name.kind",
-      "What the name is: preferred, official, short, local, alternative, historical, abbreviation, transliteration or definition.",
-    ),
+    kind: dryv
+      .field(enums.NameKind)
+      .description(
+        "What the name is: preferred, official, short, local, alternative, historical, abbreviation, transliteration or definition.",
+      ),
     scriptTerm: term("ref.script", "Writing system of the text (Latin, Ge'ez, Arabic).").maybe(),
     countryId: belongsTo(() => Countries)
       .maybe()

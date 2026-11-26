@@ -7,9 +7,11 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields, periodProperties } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, identity, identityKindField, identityProperties, identityReference, term } from "./_links.ts";
+import { Features } from "./geography.ts";
 import { Names } from "./identity.ts";
 import { Countries, Languages } from "./reference.ts";
 
@@ -100,16 +102,40 @@ export const Parts = official
 export const Contacts = official
   .schema("Contacts", {
     identityId: identity("The person, organisation, office, institution or party reached."),
-    kindTerm: term("ofc.contact.kind", "phone, email, website, postal address, social account."),
-    value: dryv.field(officialProperties.ContactValue),
-    visibilityTerm: term("ofc.contact.visibility", "public or official business only; private contacts are never stored."),
+    kind: dryv.field(enums.ContactKind).description("phone, email, website, postal address, social account."),
+    value: dryv
+      .field(officialProperties.ContactValue)
+      .maybe()
+      .description("The address, number or URL; empty while the contact is only an expected slot."),
+    visibility: dryv
+      .field(enums.ContactVisibility)
+      .description("public or official business only; private contacts are never stored."),
     ...periodFields,
   })
   .extends(baseSchemas.Entity)
   .rule("ContactPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
   .description("A public or official-business contact of a named thing.")
   .role("entity")
-  .facets({ storage: dryv.storage("contacts").index("identityId", "kindTerm") });
+  .facets({ storage: dryv.storage("contacts").index("identityId", "kind") });
+
+/*---------------- official.premises ----------------*/
+export const Premises = official
+  .schema("Premises", {
+    entityId: belongsTo(() => Entities).description("The organisation that has the premises."),
+    kindTerm: term("ofc.premises.kind", "headquarters, regional office, branch, registered office."),
+    ordinal: dryv
+      .field(sharedProperties.PositiveInteger)
+      .description("1 for the first premises of this kind of the organisation, rising for further ones."),
+    featureId: belongsTo(() => Features)
+      .maybe()
+      .description("The place the premises are at (the map pin); empty while unknown."),
+  })
+  .extends(baseSchemas.CodedPeriodEntity)
+  .description(
+    "A located premises of an organisation: its headquarters, regional or registered office. The address is an `identity.addresses` row or a postal-address contact; the pin may be unknown while the row is only expected.",
+  )
+  .role("entity")
+  .facets({ storage: dryv.storage("premises").unique("entityId", "kindTerm", "ordinal").index("featureId") });
 
 /*---------------- official.relationships ----------------*/
 export const Relationships = official

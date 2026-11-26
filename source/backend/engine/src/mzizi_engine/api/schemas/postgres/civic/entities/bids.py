@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.bid_outcome import BidOutcome
+
 
 class BidsRow(BaseModel):
     """A bid on a tender, including cheaper bids that lost."""
@@ -30,7 +32,7 @@ class BidsRow(BaseModel):
     currency_id: UUID | None = None
     deleted_at: datetime | None = None
     id: UUID
-    outcome_term: UUID
+    outcome: BidOutcome
     procurement_id: UUID
     submitted_on: date | None = None
     updated_at: datetime

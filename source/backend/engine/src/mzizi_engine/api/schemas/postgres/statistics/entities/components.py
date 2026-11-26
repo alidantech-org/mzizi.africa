@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.component_transform import ComponentTransform
+
 
 class ComponentsRow(BaseModel):
     """One part of a composite index, with its weight and transform."""
@@ -22,5 +24,5 @@ class ComponentsRow(BaseModel):
     id: UUID
     indicator_id: UUID
     position: Annotated[int, Field(ge=0)] | None = None
-    transform_term: UUID
+    transform: ComponentTransform
     weight: float

@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.stage_outcome import StageOutcome
+
 
 class StagesRow(BaseModel):
     """A stage a bill passes through."""
@@ -23,7 +25,7 @@ class StagesRow(BaseModel):
     kind_term: UUID
     motion_id: UUID | None = None
     on_date: date | None = None
-    outcome_term: UUID | None = None
+    outcome: StageOutcome | None = None
     sequence: Annotated[int, Field(ge=1)]
     sitting_id: UUID | None = None
     updated_at: datetime

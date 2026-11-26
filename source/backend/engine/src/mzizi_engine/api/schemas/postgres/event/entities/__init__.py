@@ -15,11 +15,11 @@ from mzizi_engine.api.schemas.postgres.event.entities.subjects import EventSubje
 from mzizi_engine.api.schemas.postgres.event.entities.venues import VenuesRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
 from mzizi_engine.api.schemas.postgres.identity.entities.identities import IdentitiesRow
-from mzizi_engine.api.schemas.postgres.legal.entities.provisions import ProvisionsRow
 from mzizi_engine.api.schemas.postgres.reference.entities.countries import CountriesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.languages import LanguagesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.levels import LevelsRow
 from mzizi_engine.api.schemas.postgres.reference.entities.timezones import TimezonesRow
+from mzizi_engine.api.schemas.postgres.template.entities.templates import TemplatesRow
 from mzizi_engine.api.schemas.postgres.vocabulary.entities.terms import TermsRow
 
 __all__ = [
@@ -35,10 +35,10 @@ __all__ = [
     "LanguagesRow",
     "LevelsRow",
     "ParticipantsRow",
-    "ProvisionsRow",
     "RulesRow",
     "SchedulesRow",
     "SeasonsRow",
+    "TemplatesRow",
     "TermsRow",
     "TimezonesRow",
     "VenuesRow",

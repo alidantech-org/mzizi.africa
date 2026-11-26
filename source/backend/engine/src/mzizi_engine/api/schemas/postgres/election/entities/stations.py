@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.station_status import StationStatus
+
 
 class StationsRow(BaseModel):
     """A polling station in an election."""
@@ -35,7 +37,7 @@ class StationsRow(BaseModel):
     note_language_id: UUID | None = None
     opens_at: datetime | None = None
     registered_voters: Annotated[int, Field(ge=0)] | None = None
-    status_term: UUID | None = None
+    status: StationStatus | None = None
     streams: Annotated[int, Field(ge=1)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

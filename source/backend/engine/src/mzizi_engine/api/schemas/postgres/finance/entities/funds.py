@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import Identit
 
 
 class FundsRow(BaseModel):
-    """A public fund (NG-CDF)."""
+    """A public fund (the county revenue fund, an NG-CDF); an expected one is generated from a pattern."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -35,5 +35,6 @@ class FundsRow(BaseModel):
     manager_id: UUID | None = None
     scope_id: UUID | None = None
     source_term: UUID | None = None
+    template_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

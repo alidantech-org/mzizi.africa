@@ -22,8 +22,14 @@ Related: [FOUNDATION_REDESIGN](../../design/data/FOUNDATION_REDESIGN.md), [LEGAL
 
 ## Acceptance checklist
 
-- [ ] The document explains the chain country, hierarchy, level, administrative unit, feature, with where the country is needed and where it is implied.
-- [ ] The document explains how a pattern and its templates generate institutions, positions and offices from a level, and how the database verifies the result with keys, checks and triggers.
-- [ ] The document states the rule that governance tables never link to legal provisions directly, and lists every current `provision_id` column that would move to patterns, templates or effects.
-- [ ] The document compares linking governance to raw features against a dedicated official administrative unit, with a recommendation and the owner's decision.
-- [ ] Open questions and owner decisions are recorded, each decision also written to `.docs/decisions/`, and `task validate` passes.
+- [x] The document explains the chain country, hierarchy, level, administrative unit, feature, with where the country is needed and where it is implied.
+- [x] The document explains how a pattern and its templates generate institutions, positions and offices from a level, and how the database verifies the result with keys, checks and triggers.
+- [x] The document states the rule that governance tables never link to legal provisions directly, and lists every current `provision_id` column that would move to patterns, templates or effects.
+- [x] The document compares linking governance to raw features against a dedicated official administrative unit, with a recommendation and the owner's decision.
+- [x] Open questions and owner decisions are recorded, each decision also written to `.docs/decisions/`, and `task validate` passes.
+
+## Comments
+
+### 2026-11-25T16:29:28.496Z · PETER IRUNGU
+
+First draft written: .docs/design/data/GEOGRAPHY_REFERENCE_AND_GOVERNANCE_RETHINK.md with findings from the live database and decisions G1 to G7. Awaiting owner comments; no contract or seed changed.

@@ -8,9 +8,12 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.holder_end import HolderEnd
+from mzizi_engine.api.schemas.postgres.shared.enums.selection_method import SelectionMethod
+
 
 class HoldersRow(BaseModel):
-    """A person in an office for a period. How they got there is `governance.appointments`."""
+    """A person in an office for a period, or the empty slot for one. How a person got there is `governance.appointments`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -30,11 +33,12 @@ class HoldersRow(BaseModel):
     ends_on: date | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
-    individual_id: UUID
-    method_term: UUID
+    individual_id: UUID | None = None
+    method: SelectionMethod | None = None
     office_id: UUID
-    reason_term: UUID | None = None
+    reason: HolderEnd | None = None
     starts_on: date | None = None
+    term_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

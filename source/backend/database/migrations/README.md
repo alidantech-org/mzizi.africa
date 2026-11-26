@@ -4,7 +4,7 @@ One immutable release stream for the single database `mzizi`. `bun run db assemb
 
 ## Releases
 
-- `0001_init.sql`: the one baseline, assembled on 25 November 2026 from the redesigned contracts ([FOUNDATION_REDESIGN](../../../../.docs/design/data/FOUNDATION_REDESIGN.md)). The earlier stream (an `0001_init.sql` of the old design and `0002_subject_integrity.sql`) was deleted, not continued: the new design keeps subject links only in `source`, so no subject-integrity release exists.
+- `0001_init.sql`: the one baseline, reassembled on 26 November 2026 from the contracts after the database design and seed rethink ([decision](../../../../.docs/decisions/DEC-DB-RETHINK-ROOTS-UNITS-SLOTS-20261125.md)): the `template` schema, `geography.areas`, premises, office terms and holder slots, and the guards, the `template.generate` function and the coverage views rendered by the project pack. The earlier baseline and the hand-written `0002_reference_metadata.sql` were deleted, not continued (the `legal.references.metadata` column is in the baseline). The assembled file is never edited by hand.
 
 ## Later releases
 

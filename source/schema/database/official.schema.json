@@ -140,9 +140,8 @@
       "required": [
         "id"
         ,"identity_id"
-        ,"kind_term"
-        ,"value"
-        ,"visibility_term"
+        ,"kind"
+        ,"visibility"
       ],
       "x-seed": {
         "system": [
@@ -155,17 +154,16 @@
           "from_year"
           ,"id"
           ,"identity_code"
-          ,"kind_term_code"
+          ,"kind"
           ,"to_year"
           ,"value"
-          ,"visibility_term_code"
+          ,"visibility"
         ],
         "required": [
           "id"
           ,"identity_code"
-          ,"kind_term_code"
-          ,"value"
-          ,"visibility_term_code"
+          ,"kind"
+          ,"visibility"
         ]
       },
       "properties": {
@@ -202,12 +200,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
         }
-        ,"kind_term": {
+        ,"kind": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.ofc.contact.kind" }
+          "x-type": "text",
+          "enum": ["email", "facebook", "fax", "instagram", "landmark", "mobile", "physical-address", "postal-address", "social-media", "telephone", "tiktok", "website", "x", "youtube"],
+          "x-role": "data"
         }
         ,"to_year": {
           "type": ["integer", "null"],
@@ -222,7 +219,7 @@
           "x-role": "system"
         }
         ,"value": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "text",
           "maxLength": 1000,
           "minLength": 1,
@@ -234,12 +231,11 @@
           "x-managed": true,
           "x-role": "system"
         }
-        ,"visibility_term": {
+        ,"visibility": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "visibility_term_code", "scheme": "voc.sch.ofc.contact.visibility" }
+          "x-type": "text",
+          "enum": ["private", "public", "restricted"],
+          "x-role": "data"
         }
       }
     },
@@ -328,7 +324,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"kind_term": {
@@ -463,7 +459,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"updated_at": {
@@ -552,7 +548,7 @@
         ,"name_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"part": {
@@ -572,6 +568,131 @@
           "maxLength": 255,
           "minLength": 1,
           "x-role": "data"
+        }
+      }
+    },
+    "premises": {
+      "title": "official.premises",
+      "type": "object",
+      "additionalProperties": false,
+      "x-code": "sys.tbl.official.premises",
+      "x-id": "#/schemas/official.Premises",
+      "x-table": "official.premises",
+      "x-primaryKey": ["id"],"x-naturalKey": ["code"],
+      "x-seedable": true,
+      "x-uniqueKeys": [
+        ["code"]
+        ,["entity_id", "kind_term", "ordinal"]
+      ],
+      "required": [
+        "code"
+        ,"entity_id"
+        ,"id"
+        ,"kind_term"
+        ,"ordinal"
+      ],
+      "x-seed": {
+        "system": [
+          "created_at"
+          ,"deleted_at"
+          ,"id"
+          ,"updated_at"
+          ,"version"
+        ],
+        "columns": [
+          "code"
+          ,"entity_code"
+          ,"feature_code"
+          ,"from_year"
+          ,"kind_term_code"
+          ,"ordinal"
+          ,"to_year"
+        ],
+        "required": [
+          "code"
+          ,"entity_code"
+          ,"kind_term_code"
+          ,"ordinal"
+        ]
+      },
+      "properties": {
+        "code": {
+          "type": "string",
+          "x-type": "text",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*(\\.[a-z0-9]+(-[a-z0-9]+)*(~[a-z0-9]+(-[a-z0-9]+)*)*){0,15}$",
+          "x-role": "key"
+        }
+        ,"created_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"deleted_at": {
+          "type": ["string", "null"],
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"entity_id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/official.Entities", "column": "id", "alias": "entity_code" }
+        }
+        ,"feature_id": {
+          "type": ["string", "null"],
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/geography.Features", "column": "id", "alias": "feature_code" }
+        }
+        ,"from_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"id": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-primaryKey": true,
+          "x-role": "system"
+        }
+        ,"kind_term": {
+          "type": "string",
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.ofc.premises.kind" }
+        }
+        ,"ordinal": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"to_year": {
+          "type": ["integer", "null"],
+          "x-type": "integer",
+          "x-role": "data"
+        }
+        ,"updated_at": {
+          "type": "string",
+          "x-type": "timestamp",
+          "format": "date-time",
+          "x-managed": true,
+          "x-role": "system"
+        }
+        ,"version": {
+          "type": "integer",
+          "x-type": "integer",
+          "x-managed": true,
+          "x-role": "system"
         }
       }
     },

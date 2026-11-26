@@ -5,7 +5,6 @@ from __future__ import annotations
 from mzizi_engine.api.schemas.postgres.auth.entities.accounts import AccountsRow
 from mzizi_engine.api.schemas.postgres.filesystem.entities.versions import VersionsRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
-from mzizi_engine.api.schemas.postgres.governance.entities.templates import TemplatesRow
 from mzizi_engine.api.schemas.postgres.identity.entities.identities import IdentitiesRow
 from mzizi_engine.api.schemas.postgres.official.entities.contacts import ContactsRow
 from mzizi_engine.api.schemas.postgres.reference.entities.countries import CountriesRow
@@ -54,7 +53,6 @@ __all__ = [
     "PublishersRow",
     "SourceEditionsRow",
     "SourcesRow",
-    "TemplatesRow",
     "TermsRow",
     "VerificationsRow",
     "VersionsRow",

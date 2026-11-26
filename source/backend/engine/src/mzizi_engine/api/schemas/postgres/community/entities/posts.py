@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.community.enums.post_state import PostState
+from mzizi_engine.api.schemas.postgres.shared.enums.post_kind import PostKind
 
 
 class PostsRow(BaseModel):
@@ -26,7 +27,7 @@ class PostsRow(BaseModel):
     device_id: UUID | None = None
     id: UUID
     identity_id: UUID | None = None
-    kind_term: UUID
+    kind: PostKind
     language_id: UUID | None = None
     parent_id: UUID | None = None
     proof_id: UUID | None = None

@@ -171,8 +171,8 @@ def test_draft_preserves_source_cells_and_flags_unsupported_fields(
                     "source_heading": "Place name",
                     "name_column": "name",
                     "code_column": "feature_code",
-                    "target_column": "feature_code",
-                    "target_table": "geography.features",
+                    "target_column": "area_code",
+                    "target_table": "geography.areas",
                 },
             },
         )

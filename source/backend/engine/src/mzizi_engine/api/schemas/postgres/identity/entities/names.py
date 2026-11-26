@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+from mzizi_engine.api.schemas.postgres.shared.enums.name_kind import NameKind
 
 
 class IdentityNamesRow(BaseModel):
@@ -26,7 +27,7 @@ class IdentityNamesRow(BaseModel):
     identity_id: UUID
     identity_kind: IdentityKind
     is_default: bool
-    kind_term: UUID
+    kind: NameKind
     language_id: UUID
     script_term: UUID | None = None
     text: Annotated[str, Field(min_length=1, max_length=1000)]

@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from mzizi_engine.api.schemas.postgres.shared.enums.subject_role import SubjectRole
+
 
 class MediaSubjectsRow(BaseModel):
     """The named things an article is about, beyond its main identity (section 34.5)."""
@@ -21,4 +23,4 @@ class MediaSubjectsRow(BaseModel):
     deleted_at: datetime | None = None
     id: UUID
     identity_id: UUID
-    role_term: UUID
+    role: SubjectRole

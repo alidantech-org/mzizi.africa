@@ -2,7 +2,7 @@
  * Schema: product | Database: mzizi
  * Design: .docs/design/data/FOUNDATION_REDESIGN.md sections 8 and 22.5 (approved 2026-11-25).
  * Contract authors: interface keys are contracts-first: screens declare their keys, unknown keys are refused, and
- * every displayed enum value has a key `enum.<schema>.<column>.<value>` (section 29.7).
+ * every displayed enum value has a key `enum.<enum name in kebab case>.<value>` (for example `enum.selection-method.elected`), shared by every app (`app_id` empty).
  */
 import * as dryv from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
@@ -87,7 +87,9 @@ export const Lang = product
   .extends(baseSchemas.Association)
   .description("The languages a release offers, in order.")
   .role("entity")
-  .facets({ storage: dryv.storage("lang").unique("releaseId", "languageId").index("languageId") });
+  .facets({
+    storage: dryv.storage("lang").unique("releaseId", "languageId").unique("releaseId", "position").index("languageId"),
+  });
 
 /*---------------- product.keys ----------------*/
 export const Keys = product

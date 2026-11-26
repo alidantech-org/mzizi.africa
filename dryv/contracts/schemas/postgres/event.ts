@@ -7,11 +7,12 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { templateFields } from "#/schemas/_templates.ts";
 import { belongsTo, identity, identityKindField, identityReference, term } from "./_links.ts";
 import { Features } from "./geography.ts";
-import { Provisions } from "./legal.ts";
 import { Countries, Languages, Levels, Timezones } from "./reference.ts";
 
 export const event = dryv
@@ -63,9 +64,6 @@ export const Events = event
       .maybe()
       .description("The place the event concerns."),
     organiserId: identity("The organisation or office that organises it.").maybe(),
-    basisProvisionId: belongsTo(() => Provisions)
-      .maybe()
-      .description("The legal provision that requires the event."),
   })
   .extends(baseSchemas.IdentityEntity)
   .rule("EventKind", (v) => v.identityKind.eq("event"))
@@ -84,7 +82,7 @@ export const Events = event
 export const Rules = event
   .schema("Rules", {
     eventId: belongsTo(() => Events, { onDelete: "cascade" }),
-    kindTerm: term("evt.rule.kind", "fixed date, nth weekday, interval, rrule."),
+    kind: dryv.field(enums.RuleKind).description("fixed date, nth weekday, interval, rrule."),
     month: dryv.field(eventProperties.Month).maybe(),
     dayOfMonth: dryv.field(eventProperties.Day).maybe(),
     weekday: dryv.field(eventProperties.Weekday).maybe().description("ISO weekday, 1 is Monday."),
@@ -97,26 +95,32 @@ export const Rules = event
     anchorOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     adjustmentTerm: term("evt.rule.adjustment", "What happens when the date falls on a weekend.").maybe(),
     ...periodFields,
+    ...templateFields("event-rule"),
   })
   .extends(baseSchemas.Entity)
-  .description("When an event recurs.")
+  .description(
+    "When an event recurs. A rule may be generated from a pattern (the second Tuesday of August every fifth year).",
+  )
   .role("entity")
-  .facets({ storage: dryv.storage("rules").index("eventId") });
+  .facets({ storage: dryv.storage("rules").index("eventId").index("templateId") });
 
 /*---------------- event.occurrences ----------------*/
 export const Occurrences = event
   .schema("Occurrences", {
     eventId: belongsTo(() => Events, { onDelete: "cascade" }),
-    plannedStartsOn: dryv.field(sharedProperties.CalendarDate),
+    plannedStartsOn: dryv
+      .field(sharedProperties.CalendarDate)
+      .maybe()
+      .description("Planned first day; empty while the date is not yet known."),
     plannedEndsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     actualStartsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     actualEndsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     startsAt: dryv.field(sharedProperties.Instant).maybe().description("Exact start time, when known."),
     timezoneId: belongsTo(() => Timezones).maybe(),
     isAllDay: dryv.field(sharedProperties.Flag),
-    statusTerm: term("evt.occurrence.status", "scheduled, held, postponed, cancelled."),
-    knowledgeTerm: term("evt.occurrence.knowledge", "How the date is known: announced, gazetted, estimated."),
-    formatTerm: term("evt.occurrence.format", "in person, online or hybrid.").maybe(),
+    status: dryv.field(enums.OccurrenceStatus).description("scheduled, held, postponed, cancelled."),
+    knowledgeTerm: term("evt.occurrence.knowledge", "How the date is known: announced, gazetted, estimated.").maybe(),
+    format: dryv.field(enums.OccurrenceFormat).description("in person, online or hybrid.").maybe(),
     organiserId: identity("The organiser of this occurrence when it differs from the event's.").maybe(),
     continuesOccurrenceId: belongsTo(dryv.self)
       .maybe()
@@ -133,13 +137,12 @@ export const Occurrences = event
 export const Changes = event
   .schema("Changes", {
     occurrenceId: belongsTo(() => Occurrences, { onDelete: "cascade" }),
-    kindTerm: term("evt.change.kind", "postponed, brought forward, cancelled, moved."),
+    kind: dryv.field(enums.OccurrenceChange).description("postponed, brought forward, cancelled, moved."),
     reasonTerm: term("evt.change.reason", "Why it changed.").maybe(),
     fromOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     toOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     decidedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     authorityId: identity("Who decided the change.").maybe(),
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
     replacementOccurrenceId: belongsTo(() => Occurrences).maybe(),
     ...note,
   })
@@ -183,15 +186,17 @@ export const Schedules = event
       .description("The event the schedule counts from."),
     anchorOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     issuerId: identity("The body that issued the schedule.").maybe(),
-    basisProvisionId: belongsTo(() => Provisions).maybe(),
-    statusTerm: term("evt.schedule.status", "draft, published, superseded."),
+    status: dryv.field(enums.ScheduleStatus).description("draft, published, superseded."),
     supersedesScheduleId: belongsTo(dryv.self).maybe(),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
+    ...templateFields("event-schedule"),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("A published timetable of steps counted from an anchor (an election timetable).")
+  .description(
+    "A published timetable of steps counted from an anchor (an election timetable); an expected one is generated from a pattern.",
+  )
   .role("entity")
-  .facets({ storage: dryv.storage("schedules").index("countryId", "kindTerm").index("anchorEventId") });
+  .facets({ storage: dryv.storage("schedules").index("countryId", "kindTerm").index("anchorEventId").index("templateId") });
 
 /*---------------- event.items ----------------*/
 export const Items = event
@@ -218,9 +223,9 @@ export const Seasons = event
       .maybe()
       .description("The region the season applies to."),
     kindTerm: term("evt.season.kind", "long rains, short rains, school term, harvest."),
-    startMonth: dryv.field(eventProperties.Month),
+    startMonth: dryv.field(eventProperties.Month).maybe(),
     startDay: dryv.field(eventProperties.Day).maybe(),
-    endMonth: dryv.field(eventProperties.Month),
+    endMonth: dryv.field(eventProperties.Month).maybe(),
     endDay: dryv.field(eventProperties.Day).maybe(),
     isNatural: dryv.field(sharedProperties.Flag).description("True for a natural season, false for an institutional one."),
   })
@@ -233,7 +238,9 @@ export const Seasons = event
 export const Venues = event
   .schema("Venues", {
     occurrenceId: belongsTo(() => Occurrences, { onDelete: "cascade" }),
-    featureId: belongsTo(() => Features),
+    featureId: belongsTo(() => Features)
+      .maybe()
+      .description("The place; empty while the venue is not yet known."),
     roleTerm: term("evt.venue.role", "main venue, satellite, route."),
     ...note,
   })

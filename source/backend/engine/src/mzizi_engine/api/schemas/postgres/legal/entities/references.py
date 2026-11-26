@@ -23,6 +23,7 @@ class ReferencesRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
+    metadata: str | None = None
     method: ReferenceMethod
     relation: ReferenceRelation
     review_status: ReviewStatus

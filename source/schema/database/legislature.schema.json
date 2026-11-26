@@ -272,7 +272,7 @@
         ,"id"
         ,"institution_id"
         ,"kind_term"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -289,14 +289,14 @@
           ,"instrument_code"
           ,"kind_term_code"
           ,"sponsor_code"
-          ,"status_term_code"
+          ,"status"
           ,"term_code"
         ],
         "required": [
           "code"
           ,"institution_code"
           ,"kind_term_code"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -333,7 +333,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"institution_id": {
@@ -364,12 +364,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/governance.Holders", "column": "id", "alias": "sponsor_code" }
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.leg.bill.status" }
+          "x-type": "text",
+          "enum": ["assented", "in-committee", "lapsed", "passed", "published", "withdrawn"],
+          "x-role": "data"
         }
         ,"term_id": {
           "type": ["string", "null"],
@@ -550,12 +549,10 @@
         "columns": [
           "bill_code"
           ,"code"
-          ,"instrument_code"
           ,"kind_term_code"
           ,"mover_code"
-          ,"outcome_term_code"
+          ,"outcome"
           ,"period_code"
-          ,"provision_code"
           ,"revision_code"
           ,"sitting_code"
         ],
@@ -602,13 +599,6 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"instrument_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
-        }
         ,"kind_term": {
           "type": "string",
           "x-type": "uuid",
@@ -623,12 +613,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/governance.Holders", "column": "id", "alias": "mover_code" }
         }
-        ,"outcome_term": {
+        ,"outcome": {
           "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "outcome_term_code", "scheme": "voc.sch.leg.motion.outcome" }
+          "x-type": "text",
+          "enum": ["carried", "negatived", "withdrawn"],
+          "x-role": "data"
         }
         ,"period_id": {
           "type": ["string", "null"],
@@ -636,13 +625,6 @@
           "format": "uuid",
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/finance.Periods", "column": "id", "alias": "period_code" }
-        }
-        ,"provision_id": {
-          "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/legal.Provisions", "column": "id", "alias": "provision_code" }
         }
         ,"revision_id": {
           "type": ["string", "null"],
@@ -978,7 +960,7 @@
           ,"kind_term_code"
           ,"motion_code"
           ,"on_date"
-          ,"outcome_term_code"
+          ,"outcome"
           ,"sequence"
           ,"sitting_code"
         ],
@@ -1037,12 +1019,11 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"outcome_term": {
+        ,"outcome": {
           "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "outcome_term_code", "scheme": "voc.sch.leg.stage.outcome" }
+          "x-type": "text",
+          "enum": ["deferred", "passed", "rejected"],
+          "x-role": "data"
         }
         ,"sequence": {
           "type": "integer",

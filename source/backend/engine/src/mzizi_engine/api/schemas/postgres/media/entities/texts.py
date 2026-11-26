@@ -12,7 +12,7 @@ from mzizi_engine.api.schemas.postgres.media.enums.text_origin import TextOrigin
 from mzizi_engine.api.schemas.postgres.media.enums.text_status import TextStatus
 
 
-class TextsRow(BaseModel):
+class MediaTextsRow(BaseModel):
     """One article in one language: exactly one original per article, at most one live text per language."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")

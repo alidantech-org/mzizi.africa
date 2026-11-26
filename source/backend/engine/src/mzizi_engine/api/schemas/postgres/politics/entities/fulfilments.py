@@ -8,6 +8,9 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.fulfilment_kind import FulfilmentKind
+from mzizi_engine.api.schemas.postgres.shared.enums.fulfilment_status import FulfilmentStatus
+
 
 class FulfilmentsRow(BaseModel):
     """What delivered (or contradicts) a commitment: a project, contract, appropriation, bill or law."""
@@ -24,9 +27,9 @@ class FulfilmentsRow(BaseModel):
     deleted_at: datetime | None = None
     id: UUID
     instrument_id: UUID | None = None
-    kind_term: UUID
+    kind: FulfilmentKind
     project_id: UUID | None = None
     recorded_on: date | None = None
-    status_term: UUID
+    status: FulfilmentStatus
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

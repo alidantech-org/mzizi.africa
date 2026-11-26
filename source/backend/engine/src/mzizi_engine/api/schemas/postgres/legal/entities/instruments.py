@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+from mzizi_engine.api.schemas.postgres.shared.enums.instrument_status import InstrumentStatus
 
 
 class InstrumentsRow(BaseModel):
@@ -36,7 +37,7 @@ class InstrumentsRow(BaseModel):
     jurisdiction_id: UUID | None = None
     kind_term: UUID
     published_on: date | None = None
-    status_term: UUID | None = None
+    status: InstrumentStatus | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

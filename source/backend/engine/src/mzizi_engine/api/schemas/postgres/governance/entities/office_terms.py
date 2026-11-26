@@ -10,12 +10,13 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class OfficeTermsRow(BaseModel):
-    """A numbered term or mandate of an institution or office (absorbs the former mandates)."""
+    """A numbered term or mandate of an institution or office: one row per election cycle for an elected office, one open row for an appointed one."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "governance.terms"
 
+    area_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -26,8 +27,8 @@ class OfficeTermsRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
+    election_id: UUID | None = None
     ends_on: date | None = None
-    feature_id: UUID | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     institution_id: UUID | None = None
@@ -35,6 +36,7 @@ class OfficeTermsRow(BaseModel):
     office_id: UUID | None = None
     ordinal: Annotated[int, Field(ge=1)] | None = None
     starts_on: date | None = None
+    template_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

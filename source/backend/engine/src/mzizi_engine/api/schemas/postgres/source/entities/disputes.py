@@ -8,6 +8,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.dispute_status import DisputeStatus
 from mzizi_engine.api.schemas.postgres.shared.enums.subject_table import SubjectTable
 
 
@@ -34,7 +35,7 @@ class DisputesRow(BaseModel):
     note_language_id: UUID | None = None
     resolution_id: UUID | None = None
     resolved_on: date | None = None
-    status_term: UUID
+    status: DisputeStatus
     subject_id: UUID
     subject_table: SubjectTable
     updated_at: datetime

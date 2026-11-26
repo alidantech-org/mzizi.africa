@@ -9,6 +9,8 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+from mzizi_engine.api.schemas.postgres.shared.enums.institution_arm import InstitutionArm
+from mzizi_engine.api.schemas.postgres.shared.enums.institution_basis import InstitutionBasis
 
 
 class InstitutionsRow(BaseModel):
@@ -18,8 +20,8 @@ class InstitutionsRow(BaseModel):
 
     table: ClassVar[str] = "governance.institutions"
 
-    arm_term: UUID | None = None
-    basis_term: UUID | None = None
+    arm: InstitutionArm | None = None
+    basis: InstitutionBasis | None = None
     class_term: UUID | None = None
     code: Annotated[
         str,
@@ -38,6 +40,7 @@ class InstitutionsRow(BaseModel):
     identity_kind: IdentityKind
     kind_term: UUID
     starts_on: date | None = None
+    template_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.motion_outcome import MotionOutcome
+
 
 class MotionsRow(BaseModel):
-    """A motion debated at a sitting."""
+    """A motion debated at a sitting; the law it concerns is reached through its bill, not a provision link."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -28,12 +30,10 @@ class MotionsRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     id: UUID
-    instrument_id: UUID | None = None
     kind_term: UUID
     mover_id: UUID | None = None
-    outcome_term: UUID | None = None
+    outcome: MotionOutcome | None = None
     period_id: UUID | None = None
-    provision_id: UUID | None = None
     revision_id: UUID | None = None
     sitting_id: UUID
     updated_at: datetime

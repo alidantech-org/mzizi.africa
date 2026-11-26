@@ -9,6 +9,8 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+from mzizi_engine.api.schemas.postgres.shared.enums.language_kind import LanguageKind
+from mzizi_engine.api.schemas.postgres.shared.enums.text_direction import TextDirection
 
 
 class LanguagesRow(BaseModel):
@@ -28,7 +30,7 @@ class LanguagesRow(BaseModel):
     ]
     created_at: datetime
     deleted_at: datetime | None = None
-    direction_term: UUID | None = None
+    direction: TextDirection | None = None
     family_term: UUID | None = None
     glottocode: Annotated[str, Field(min_length=8, max_length=8, pattern="^[a-z]{4}[0-9]{4}$")] | None = None
     id: UUID
@@ -36,7 +38,7 @@ class LanguagesRow(BaseModel):
     iso6391: Annotated[str, Field(min_length=2, max_length=2, pattern="^[a-z]{2}$")] | None = None
     iso6392: Annotated[str, Field(min_length=3, max_length=3, pattern="^[a-z]{3}$")] | None = None
     iso6393: Annotated[str, Field(min_length=3, max_length=3, pattern="^[a-z]{3}$")] | None = None
-    kind_term: UUID
+    kind: LanguageKind
     parent_id: UUID | None = None
     script_term: UUID | None = None
     updated_at: datetime

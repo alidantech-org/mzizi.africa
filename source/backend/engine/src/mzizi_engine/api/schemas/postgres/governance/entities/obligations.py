@@ -32,7 +32,6 @@ class ObligationsRow(BaseModel):
     holder_id: UUID
     id: UUID
     kind_term: UUID
-    provision_id: UUID | None = None
     recipient_id: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

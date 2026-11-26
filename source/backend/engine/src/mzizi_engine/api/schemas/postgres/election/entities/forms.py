@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.election.enums.form_status import FormStatus
+from mzizi_engine.api.schemas.postgres.shared.enums.form_status import FormStatus
 
 
 class FormsRow(BaseModel):
@@ -18,7 +18,7 @@ class FormsRow(BaseModel):
 
     table: ClassVar[str] = "election.forms"
 
-    asset_id: UUID
+    asset_id: UUID | None = None
     contest_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None

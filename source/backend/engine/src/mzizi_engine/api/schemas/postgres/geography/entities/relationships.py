@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.place_relation import PlaceRelation
+
 
 class GeographyRelationshipsRow(BaseModel):
-    """A dated link between places; a parent link in a hierarchy also records the inner place's level."""
+    """A dated link between places that is not membership of an administrative or electoral hierarchy (a lake inside a county, two wards that border). Hierarchy membership is `geography.areas`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -20,10 +22,8 @@ class GeographyRelationshipsRow(BaseModel):
     deleted_at: datetime | None = None
     ends_on: date | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
-    hierarchy_id: UUID | None = None
     id: UUID
-    kind_term: UUID
-    level_id: UUID | None = None
+    kind: PlaceRelation
     object_feature_id: UUID
     starts_on: date | None = None
     subject_feature_id: UUID

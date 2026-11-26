@@ -31,7 +31,6 @@ class FunctionsRow(BaseModel):
     id: UUID
     identity_kind: IdentityKind
     parent_id: UUID | None = None
-    provision_id: UUID | None = None
     topic_term: UUID
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

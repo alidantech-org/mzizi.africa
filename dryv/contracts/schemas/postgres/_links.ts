@@ -64,6 +64,8 @@ export const identityProperties = shared.properties({
     Procurement: "procurement",
     Fund: "fund",
     Debt: "debt",
+    Pattern: "pattern",
+    Template: "template",
   }),
 });
 
@@ -98,7 +100,9 @@ export type IdentityKindValue =
   | "project"
   | "procurement"
   | "fund"
-  | "debt";
+  | "debt"
+  | "pattern"
+  | "template";
 
 /**
  * A column that points at a vocabulary term (section 15): a uuid foreign key to `vocabulary.terms.id` whose scheme is

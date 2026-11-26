@@ -8,6 +8,9 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.occurrence_format import OccurrenceFormat
+from mzizi_engine.api.schemas.postgres.shared.enums.occurrence_status import OccurrenceStatus
+
 
 class EventOccurrencesRow(BaseModel):
     """One happening of an event, with planned and actual dates."""
@@ -30,15 +33,15 @@ class EventOccurrencesRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     event_id: UUID
-    format_term: UUID | None = None
+    format: OccurrenceFormat | None = None
     id: UUID
     is_all_day: bool
-    knowledge_term: UUID
+    knowledge_term: UUID | None = None
     organiser_id: UUID | None = None
     planned_ends_on: date | None = None
-    planned_starts_on: date
+    planned_starts_on: date | None = None
     starts_at: datetime | None = None
-    status_term: UUID
+    status: OccurrenceStatus
     timezone_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

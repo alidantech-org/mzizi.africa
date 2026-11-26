@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.subscription_kind import SubscriptionKind
+
 
 class SubscriptionsRow(BaseModel):
     """A named thing an actor follows."""
@@ -21,7 +23,7 @@ class SubscriptionsRow(BaseModel):
     deleted_at: datetime | None = None
     id: UUID
     identity_id: UUID
-    kind_term: UUID
+    kind: SubscriptionKind
     revoked_at: datetime | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

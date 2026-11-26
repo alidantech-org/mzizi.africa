@@ -13,10 +13,9 @@
       "x-code": "sys.tbl.politics.alignments",
       "x-id": "#/schemas/politics.Alignments",
       "x-table": "politics.alignments",
-      "x-primaryKey": ["id"],"x-naturalKey": ["coalition_code", "party_code", "from_year"],
-      "x-seedable": true,
+      "x-primaryKey": ["id"],"x-naturalKey": [],
+      "x-seedable": false,
       "x-uniqueKeys": [
-        ["coalition_id", "party_id", "from_year"]
       ],
       "required": [
         "coalition_id"
@@ -28,19 +27,20 @@
         "system": [
           "created_at"
           ,"deleted_at"
-          ,"id"
           ,"updated_at"
           ,"version"
         ],
         "columns": [
           "coalition_code"
           ,"from_year"
+          ,"id"
           ,"kind_term_code"
           ,"party_code"
           ,"to_year"
         ],
         "required": [
           "coalition_code"
+          ,"id"
           ,"kind_term_code"
           ,"party_code"
         ]
@@ -50,7 +50,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/politics.Coalitions", "column": "id", "alias": "coalition_code" }
         }
         ,"created_at": {
@@ -70,14 +70,14 @@
         ,"from_year": {
           "type": ["integer", "null"],
           "x-type": "integer",
-          "x-role": "key"
+          "x-role": "data"
         }
         ,"id": {
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
-          "x-role": "system"
+          "x-role": "data"
         }
         ,"kind_term": {
           "type": "string",
@@ -90,7 +90,7 @@
           "type": "string",
           "x-type": "uuid",
           "format": "uuid",
-          "x-role": "key",
+          "x-role": "link",
           "x-link": { "tableId": "#/schemas/politics.Parties", "column": "id", "alias": "party_code" }
         }
         ,"to_year": {
@@ -340,7 +340,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"kind_term": {
@@ -395,7 +395,7 @@
         ,"language_id"
         ,"maker_id"
         ,"statement"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -421,8 +421,8 @@
           ,"quantity"
           ,"speech_id"
           ,"statement"
+          ,"status"
           ,"status_as_of"
-          ,"status_term_code"
           ,"to_year"
           ,"topic_term_code"
           ,"unit_code"
@@ -433,7 +433,7 @@
           ,"language_code"
           ,"maker_code"
           ,"statement"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -556,18 +556,17 @@
           "minLength": 1,
           "x-role": "data"
         }
+        ,"status": {
+          "type": "string",
+          "x-type": "text",
+          "enum": ["broken", "fulfilled", "in-progress", "not-started"],
+          "x-role": "data"
+        }
         ,"status_as_of": {
           "type": ["string", "null"],
           "x-type": "date",
           "format": "date",
           "x-role": "data"
-        }
-        ,"status_term": {
-          "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.pol.commitment.status" }
         }
         ,"to_year": {
           "type": ["integer", "null"],
@@ -621,7 +620,7 @@
         ,"id"
         ,"is_in_kind"
         ,"recipient_id"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -640,7 +639,7 @@
           ,"given_on"
           ,"is_in_kind"
           ,"recipient_code"
-          ,"status_term_code"
+          ,"status"
           ,"version_code"
         ],
         "required": [
@@ -648,7 +647,7 @@
           ,"donor_code"
           ,"is_in_kind"
           ,"recipient_code"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -725,12 +724,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "recipient_code" }
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.pol.contribution.status" }
+          "x-type": "text",
+          "enum": ["declared", "disputed", "reported"],
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -768,8 +766,8 @@
       "required": [
         "commitment_id"
         ,"id"
-        ,"kind_term"
-        ,"status_term"
+        ,"kind"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -785,16 +783,16 @@
           ,"contract_code"
           ,"id"
           ,"instrument_code"
-          ,"kind_term_code"
+          ,"kind"
           ,"project_code"
           ,"recorded_on"
-          ,"status_term_code"
+          ,"status"
         ],
         "required": [
           "commitment_code"
           ,"id"
-          ,"kind_term_code"
-          ,"status_term_code"
+          ,"kind"
+          ,"status"
         ]
       },
       "properties": {
@@ -854,12 +852,11 @@
           "x-role": "link",
           "x-link": { "tableId": "#/schemas/legal.Instruments", "column": "id", "alias": "instrument_code" }
         }
-        ,"kind_term": {
+        ,"kind": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.pol.fulfilment.kind" }
+          "x-type": "text",
+          "enum": ["contradicts", "delivers", "partly-delivers"],
+          "x-role": "data"
         }
         ,"project_id": {
           "type": ["string", "null"],
@@ -874,12 +871,11 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.pol.fulfilment.status" }
+          "x-type": "text",
+          "enum": ["claimed", "disputed", "verified"],
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -1226,7 +1222,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"kind_term": {

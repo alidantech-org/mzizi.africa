@@ -9,6 +9,7 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { subjectFields } from "#/schemas/_subjects.ts";
@@ -16,7 +17,6 @@ import { belongsTo, byMonth, identity, identityKindField, identityReference, ter
 import { Accounts } from "./auth.ts";
 import { Versions } from "./filesystem.ts";
 import { Features } from "./geography.ts";
-import { Templates } from "./governance.ts";
 import { Contacts } from "./official.ts";
 import { Countries, Languages, Levels } from "./reference.ts";
 
@@ -85,19 +85,18 @@ export const Domains = source
   .schema("Domains", {
     sourceId: belongsTo(() => Sources).maybe(),
     host: dryv.field(sharedProperties.NonEmptyString255),
-    statusTerm: term("src.domain.status", "live, moved, unreachable, retired."),
+    status: dryv.field(enums.DomainStatus).description("live, moved, unreachable, retired."),
     ownerId: identity("Who owns the domain.").maybe(),
     contactId: belongsTo(() => Contacts).maybe(),
-    templateId: belongsTo(() => Templates)
-      .maybe()
-      .description("The governance template that expected this domain."),
     lastCheckedAt: dryv.field(sharedProperties.Instant).maybe(),
     ...periodFields,
     startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("A host name a source publishes on.")
+  .description(
+    "A host name a source publishes on. A candidate host generated for an institution is not a source until it is verified.",
+  )
   .role("entity")
   .facets({ storage: dryv.storage("domains").unique("host").index("sourceId").index("ownerId") });
 
@@ -393,9 +392,12 @@ export const Disputes = source
   .schema("Disputes", {
     ...subjectFields,
     kindTerm: term("src.dispute.kind", "conflicting figure, conflicting date, conflicting identity."),
-    statusTerm: term("src.dispute.status", "open, resolved, unresolvable."),
+    status: dryv.field(enums.DisputeStatus).description("open, resolved, unresolvable."),
     resolvedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    resolutionId: dryv.field(sharedProperties.Id).maybe().description("The evidence row chosen, when resolved."),
+    resolutionId: dryv
+      .field(sharedProperties.Id)
+      .maybe()
+      .description("The evidence row chosen, when resolved (a plain id: evidence is partitioned)."),
     ...note,
   })
   .extends(baseSchemas.CodedEntity)
@@ -407,7 +409,11 @@ export const Disputes = source
 export const Contenders = source
   .schema("Contenders", {
     disputeId: belongsTo(() => Disputes, { onDelete: "cascade" }),
-    evidenceId: dryv.field(sharedProperties.Id).description("The evidence row behind this side."),
+    evidenceId: dryv
+      .field(sharedProperties.Id)
+      .description(
+        "The evidence row behind this side (a plain id: evidence is partitioned, so no single-column key exists to reference).",
+      ),
     claim: dryv.field(sourceEnums.Note).description("The claim, in `language_id`."),
     languageId: belongsTo(() => Languages),
     isPreferred: dryv.field(sharedProperties.Flag),

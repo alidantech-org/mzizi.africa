@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from mzizi_engine.api.schemas.postgres.filesystem.entities.versions import VersionsRow
+from mzizi_engine.api.schemas.postgres.geography.entities.areas import AreasRow
 from mzizi_engine.api.schemas.postgres.geography.entities.assets import GeographyAssetsRow
 from mzizi_engine.api.schemas.postgres.geography.entities.changes import GeographyChangesRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
@@ -15,9 +16,11 @@ from mzizi_engine.api.schemas.postgres.identity.entities.identities import Ident
 from mzizi_engine.api.schemas.postgres.reference.entities.hierarchies import HierarchiesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.languages import LanguagesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.levels import LevelsRow
+from mzizi_engine.api.schemas.postgres.template.entities.templates import TemplatesRow
 from mzizi_engine.api.schemas.postgres.vocabulary.entities.terms import TermsRow
 
 __all__ = [
+    "AreasRow",
     "FeaturesRow",
     "GeographyAssetsRow",
     "GeographyChangesRow",
@@ -30,6 +33,7 @@ __all__ = [
     "LevelsRow",
     "OutlinesRow",
     "PiecesRow",
+    "TemplatesRow",
     "TermsRow",
     "VersionsRow",
 ]

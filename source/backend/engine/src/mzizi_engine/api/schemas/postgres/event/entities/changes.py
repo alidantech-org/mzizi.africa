@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.occurrence_change import OccurrenceChange
+
 
 class EventChangesRow(BaseModel):
     """A postponement, cancellation or move of an occurrence."""
@@ -17,13 +19,12 @@ class EventChangesRow(BaseModel):
     table: ClassVar[str] = "event.changes"
 
     authority_id: UUID | None = None
-    basis_provision_id: UUID | None = None
     created_at: datetime
     decided_on: date | None = None
     deleted_at: datetime | None = None
     from_on: date | None = None
     id: UUID
-    kind_term: UUID
+    kind: OccurrenceChange
     note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
     note_language_id: UUID | None = None
     occurrence_id: UUID

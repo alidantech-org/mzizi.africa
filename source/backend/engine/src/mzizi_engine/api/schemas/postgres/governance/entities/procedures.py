@@ -31,6 +31,5 @@ class ProceduresRow(BaseModel):
     id: UUID
     identity_kind: IdentityKind
     kind_term: UUID
-    provision_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

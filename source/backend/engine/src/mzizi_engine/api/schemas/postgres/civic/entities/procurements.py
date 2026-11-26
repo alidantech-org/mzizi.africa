@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+from mzizi_engine.api.schemas.postgres.shared.enums.procurement_status import ProcurementStatus
 
 
 class ProcurementsRow(BaseModel):
@@ -42,6 +43,6 @@ class ProcurementsRow(BaseModel):
     procedure_term: UUID
     project_id: UUID | None = None
     published_on: date | None = None
-    status_term: UUID
+    status: ProcurementStatus
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

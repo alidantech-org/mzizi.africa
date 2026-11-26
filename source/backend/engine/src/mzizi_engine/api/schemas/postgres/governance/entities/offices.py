@@ -12,12 +12,13 @@ from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import Identit
 
 
 class OfficesRow(BaseModel):
-    """One concrete seat (the Governor of Nairobi, the MCA for Kilimani ward)."""
+    """One concrete seat: a position at an institution and an area (the Governor of Nairobi, the MCA for Kilimani ward)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     table: ClassVar[str] = "governance.offices"
 
+    area_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -29,14 +30,15 @@ class OfficesRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     ends_on: date | None = None
-    feature_id: UUID | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     identity_kind: IdentityKind
     institution_id: UUID
     position_id: UUID
+    premises_id: UUID | None = None
     seat: Annotated[str, Field(min_length=1, max_length=100)] | None = None
     starts_on: date | None = None
+    template_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -8,6 +8,7 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, identity, identityKindField, identityReference, term } from "./_links.ts";
@@ -65,6 +66,7 @@ export const Services = civic
     ...dates,
   })
   .extends(baseSchemas.IdentityEntity)
+  .rule("ServicePeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
   .rule("ServiceKind", (v) => v.identityKind.eq("service"))
   .description("A public service. Its names and descriptions are `identity.names`.")
   .role("entity")
@@ -86,11 +88,12 @@ export const Facilities = civic
     ownerId: identity("Who owns it.").maybe(),
     institutionId: belongsTo(() => Institutions).maybe(),
     ownershipTerm: term("civ.facility.ownership", "public, private, faith-based, community.").maybe(),
-    statusTerm: term("civ.facility.status", "operational, under construction, closed.").maybe(),
+    status: dryv.field(enums.FacilityStatus).description("operational, under construction, closed.").maybe(),
     ...periodFields,
     ...dates,
   })
   .extends(baseSchemas.IdentityEntity)
+  .rule("FacilitiePeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
   .rule("FacilityKind", (v) => v.identityKind.eq("feature"))
   .description(
     'A public facility; it shares its geography feature\'s identity, so "near me" is a spatial query on the feature.',
@@ -113,18 +116,19 @@ export const Projects = civic
     implementerId: identity("Who implements it.").maybe(),
     countryId: belongsTo(() => Countries),
     scopeId: belongsTo(() => Jurisdictions).maybe(),
-    statusTerm: term("civ.project.status", "planned, ongoing, complete, stalled, abandoned."),
+    status: dryv.field(enums.ProjectStatus).description("planned, ongoing, complete, stalled, abandoned."),
     ...periodFields,
     ...dates,
   })
   .extends(baseSchemas.IdentityEntity)
+  .rule("ProjectPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
   .rule("ProjectKind", (v) => v.identityKind.eq("project"))
   .description("A public project. Its names and descriptions are `identity.names`; its places are `civic.sites`.")
   .role("entity")
   .facets({
     storage: dryv
       .storage("projects")
-      .index("countryId", "statusTerm")
+      .index("countryId", "status")
       .index("institutionId")
       .references("ProjectIsIdentity", identityReference),
   });
@@ -151,7 +155,7 @@ export const Procurements = civic
     buyerId: identity("The procuring entity."),
     countryId: belongsTo(() => Countries),
     procedureTerm: term("civ.procurement.procedure", "open tender, restricted, direct, request for quotation."),
-    statusTerm: term("civ.procurement.status", "planned, open, evaluation, awarded, cancelled."),
+    status: dryv.field(enums.ProcurementStatus).description("planned, open, evaluation, awarded, cancelled."),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     closesOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     ...money("Estimated value"),
@@ -166,7 +170,7 @@ export const Procurements = civic
   .facets({
     storage: dryv
       .storage("procurements")
-      .index("countryId", "statusTerm")
+      .index("countryId", "status")
       .index("buyerId")
       .index("projectId")
       .references("ProcurementIsIdentity", identityReference),
@@ -178,7 +182,7 @@ export const Bids = civic
     procurementId: belongsTo(() => Procurements, { onDelete: "cascade" }),
     bidderId: identity("The bidding organisation or person."),
     ...money("Bid price"),
-    outcomeTerm: term("civ.bid.outcome", "won, lost, disqualified, withdrawn."),
+    outcome: dryv.field(enums.BidOutcome).description("won, lost, disqualified, withdrawn."),
     submittedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
@@ -196,7 +200,7 @@ export const Contracts = civic
     contractorId: identity("The contractor."),
     buyerId: identity("The buyer."),
     ...money("Contract value"),
-    statusTerm: term("civ.contract.status", "signed, ongoing, completed, terminated."),
+    status: dryv.field(enums.ContractStatus).description("signed, ongoing, completed, terminated."),
     signedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     ...dates,
   })
@@ -308,7 +312,7 @@ export const Roles = civic
   })
   .extends(baseSchemas.Entity)
   .rule("RoleHasOneRow", rule.exactlyOne("procurementId", "bidId", "contractId", "projectId"))
-  .rule("RoleHasOneActor", rule.exactlyOne("holderId", "identityId"))
+  .rule("RoleHasOneActor", rule.atMostOne("holderId", "identityId"))
   .description("The people and organisations involved in procurement, contracts and projects, and how.")
   .role("entity")
   .facets({

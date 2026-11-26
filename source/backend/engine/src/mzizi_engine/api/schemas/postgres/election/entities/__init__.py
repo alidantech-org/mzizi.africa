@@ -13,6 +13,7 @@ from mzizi_engine.api.schemas.postgres.election.entities.stations import Station
 from mzizi_engine.api.schemas.postgres.election.entities.tallies import TalliesRow
 from mzizi_engine.api.schemas.postgres.election.entities.turnouts import TurnoutsRow
 from mzizi_engine.api.schemas.postgres.event.entities.events import EventsRow
+from mzizi_engine.api.schemas.postgres.geography.entities.areas import AreasRow
 from mzizi_engine.api.schemas.postgres.geography.entities.features import FeaturesRow
 from mzizi_engine.api.schemas.postgres.governance.entities.holders import HoldersRow
 from mzizi_engine.api.schemas.postgres.governance.entities.office_terms import OfficeTermsRow
@@ -25,9 +26,11 @@ from mzizi_engine.api.schemas.postgres.politics.entities.parties import PartiesR
 from mzizi_engine.api.schemas.postgres.reference.entities.countries import CountriesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.languages import LanguagesRow
 from mzizi_engine.api.schemas.postgres.statistics.entities.collections import CollectionsRow
+from mzizi_engine.api.schemas.postgres.template.entities.templates import TemplatesRow
 from mzizi_engine.api.schemas.postgres.vocabulary.entities.terms import TermsRow
 
 __all__ = [
+    "AreasRow",
     "ArticlesRow",
     "CandidatesRow",
     "ChoicesRow",
@@ -50,6 +53,7 @@ __all__ = [
     "ResultsRow",
     "StationsRow",
     "TalliesRow",
+    "TemplatesRow",
     "TermsRow",
     "TurnoutsRow",
 ]

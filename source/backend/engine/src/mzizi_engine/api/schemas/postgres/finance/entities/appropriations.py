@@ -17,7 +17,7 @@ class AppropriationsRow(BaseModel):
     table: ClassVar[str] = "finance.appropriations"
 
     amount: Annotated[int, Field(ge=0)] | None = None
-    class_term: UUID
+    class_term: UUID | None = None
     code: Annotated[
         str,
         Field(

@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.legislature.enums.hansard_status import HansardStatus
+from mzizi_engine.api.schemas.postgres.shared.enums.form_status import FormStatus
 
 
 class HansardsRow(BaseModel):
@@ -34,6 +34,6 @@ class HansardsRow(BaseModel):
     published_on: date | None = None
     reference: Annotated[str, Field(min_length=1, max_length=255)] | None = None
     sitting_id: UUID
-    status: HansardStatus
+    status: FormStatus
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

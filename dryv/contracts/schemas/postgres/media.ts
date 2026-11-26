@@ -6,6 +6,7 @@
  */
 import * as dryv from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, identity, term } from "./_links.ts";
@@ -99,7 +100,7 @@ export const Subjects = media
   .schema("Subjects", {
     articleId: belongsTo(() => Articles, { onDelete: "cascade" }),
     identityId: identity("A named thing the article is about."),
-    roleTerm: term("med.subject.role", "main or mentioned."),
+    role: dryv.field(enums.SubjectRole).description("main or mentioned."),
   })
   .extends(baseSchemas.Association)
   .description("The named things an article is about, beyond its main identity (section 34.5).")
@@ -171,7 +172,9 @@ export const Captions = media
 /*---------------- media.uses ----------------*/
 export const Uses = media
   .schema("Uses", {
-    assetId: belongsTo(() => Assets, { onDelete: "cascade" }),
+    assetId: belongsTo(() => Assets, { onDelete: "cascade" })
+      .maybe()
+      .description("The image or file shown; empty while the use is only expected (a flag with no file yet)."),
     identityId: identity("The named thing the asset illustrates."),
     purposeTerm: term("med.use.purpose", "Why it is shown: portrait, logo, flag, skyline, map."),
     position: dryv

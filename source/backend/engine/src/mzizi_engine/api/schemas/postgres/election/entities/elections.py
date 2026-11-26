@@ -8,11 +8,12 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.election_status import ElectionStatus
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
 
 
 class ElectionsRow(BaseModel):
-    """An election or referendum. Its names are `identity.names`."""
+    """An election or referendum; a general election cycle is generated from a pattern. The terms it fills are `governance.terms`. Its names are `identity.names`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -37,7 +38,7 @@ class ElectionsRow(BaseModel):
     identity_kind: IdentityKind
     kind_term: UUID
     parent_id: UUID | None = None
-    status_term: UUID
-    term_id: UUID | None = None
+    status: ElectionStatus
+    template_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.finding_status import FindingStatus
+
 
 class FindingsRow(BaseModel):
     """An audit finding about an institution in a fiscal period."""
@@ -36,6 +38,6 @@ class FindingsRow(BaseModel):
     kind_term: UUID
     period_id: UUID
     project_id: UUID | None = None
-    status_term: UUID
+    status: FindingStatus
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

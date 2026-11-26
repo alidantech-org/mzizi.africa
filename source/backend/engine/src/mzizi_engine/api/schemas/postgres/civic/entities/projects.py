@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+from mzizi_engine.api.schemas.postgres.shared.enums.project_status import ProjectStatus
 
 
 class ProjectsRow(BaseModel):
@@ -38,7 +39,7 @@ class ProjectsRow(BaseModel):
     scope_id: UUID | None = None
     sponsor_id: UUID | None = None
     starts_on: date | None = None
-    status_term: UUID
+    status: ProjectStatus
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

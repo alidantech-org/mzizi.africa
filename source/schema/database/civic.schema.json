@@ -155,7 +155,7 @@
         "bidder_id"
         ,"code"
         ,"id"
-        ,"outcome_term"
+        ,"outcome"
         ,"procurement_id"
       ],
       "x-seed": {
@@ -171,14 +171,14 @@
           ,"bidder_code"
           ,"code"
           ,"currency_code"
-          ,"outcome_term_code"
+          ,"outcome"
           ,"procurement_code"
           ,"submitted_on"
         ],
         "required": [
           "bidder_code"
           ,"code"
-          ,"outcome_term_code"
+          ,"outcome"
           ,"procurement_code"
         ]
       },
@@ -231,12 +231,11 @@
           "x-primaryKey": true,
           "x-role": "system"
         }
-        ,"outcome_term": {
+        ,"outcome": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "outcome_term_code", "scheme": "voc.sch.civ.bid.outcome" }
+          "x-type": "text",
+          "enum": ["disqualified", "lost", "withdrawn", "won"],
+          "x-role": "data"
         }
         ,"procurement_id": {
           "type": "string",
@@ -284,7 +283,7 @@
         ,"contractor_id"
         ,"id"
         ,"nature_term"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -306,14 +305,14 @@
           ,"project_code"
           ,"signed_on"
           ,"starts_on"
-          ,"status_term_code"
+          ,"status"
         ],
         "required": [
           "buyer_code"
           ,"code"
           ,"contractor_code"
           ,"nature_term_code"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -411,12 +410,11 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.civ.contract.status" }
+          "x-type": "text",
+          "enum": ["completed", "ongoing", "signed", "terminated"],
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -596,7 +594,7 @@
           ,"owner_code"
           ,"ownership_term_code"
           ,"starts_on"
-          ,"status_term_code"
+          ,"status"
           ,"to_year"
         ],
         "required": [
@@ -664,7 +662,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"institution_id": {
@@ -701,12 +699,11 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"status_term": {
+        ,"status": {
           "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.civ.facility.status" }
+          "x-type": "text",
+          "enum": ["closed", "operational", "under-construction"],
+          "x-role": "data"
         }
         ,"to_year": {
           "type": ["integer", "null"],
@@ -870,7 +867,7 @@
         ,"country_id"
         ,"id"
         ,"procedure_term"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -895,7 +892,7 @@
           ,"procedure_term_code"
           ,"project_code"
           ,"published_on"
-          ,"status_term_code"
+          ,"status"
         ],
         "required": [
           "buyer_code"
@@ -903,7 +900,7 @@
           ,"code"
           ,"country_code"
           ,"procedure_term_code"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -991,7 +988,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"nature_term": {
@@ -1021,12 +1018,11 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.civ.procurement.status" }
+          "x-type": "text",
+          "enum": ["awarded", "cancelled", "evaluation", "open", "planned"],
+          "x-role": "data"
         }
         ,"updated_at": {
           "type": "string",
@@ -1059,7 +1055,7 @@
         "code"
         ,"country_id"
         ,"id"
-        ,"status_term"
+        ,"status"
       ],
       "x-seed": {
         "system": [
@@ -1080,13 +1076,13 @@
           ,"scope_code"
           ,"sponsor_code"
           ,"starts_on"
-          ,"status_term_code"
+          ,"status"
           ,"to_year"
         ],
         "required": [
           "code"
           ,"country_code"
-          ,"status_term_code"
+          ,"status"
         ]
       },
       "properties": {
@@ -1141,7 +1137,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"implementer_id": {
@@ -1178,12 +1174,11 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"status_term": {
+        ,"status": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.civ.project.status" }
+          "x-type": "text",
+          "enum": ["abandoned", "complete", "ongoing", "planned", "stalled"],
+          "x-role": "data"
         }
         ,"to_year": {
           "type": ["integer", "null"],
@@ -1567,7 +1562,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"institution_id": {

@@ -6,6 +6,8 @@ CREATE EXTENSION IF NOT EXISTS "unaccent";
 
 CREATE EXTENSION IF NOT EXISTS "fuzzystrmatch";
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE EXTENSION IF NOT EXISTS "postgis";
 
 CREATE SCHEMA "auth";
@@ -49,6 +51,8 @@ CREATE SCHEMA "reference";
 CREATE SCHEMA "source";
 
 CREATE SCHEMA "statistics";
+
+CREATE SCHEMA "template";
 
 CREATE SCHEMA "vocabulary";
 
@@ -337,7 +341,7 @@ CREATE TABLE "civic"."bids" (
     "currency_id" uuid,
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
-    "outcome_term" uuid NOT NULL,
+    "outcome" text NOT NULL,
     "procurement_id" uuid NOT NULL,
     "submitted_on" date,
     "updated_at" timestamptz NOT NULL,
@@ -347,6 +351,9 @@ CREATE TABLE "civic"."bids" (
             ("amount" IS NULL)
             OR ("currency_id" IS NOT NULL)
         )
+    ),
+    CONSTRAINT "chk_bids_outcome_enum" CHECK (
+        "outcome" IN ('disqualified', 'lost', 'withdrawn', 'won')
     ),
     PRIMARY KEY ("id")
 );
@@ -366,7 +373,7 @@ CREATE TABLE "civic"."contracts" (
     "project_id" uuid,
     "signed_on" date,
     "starts_on" date,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_contracts_contract_amount_has_currency" CHECK (
@@ -381,6 +388,9 @@ CREATE TABLE "civic"."contracts" (
             OR ("ends_on" IS NULL)
             OR ("starts_on" <= "ends_on")
         )
+    ),
+    CONSTRAINT "chk_contracts_status_enum" CHECK (
+        "status" IN ('completed', 'ongoing', 'signed', 'terminated')
     ),
     PRIMARY KEY ("id")
 );
@@ -422,10 +432,17 @@ CREATE TABLE "civic"."facilities" (
     "owner_id" uuid,
     "ownership_term" uuid,
     "starts_on" date,
-    "status_term" uuid,
+    "status" text,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_facilities_facilitie_period_is_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
     CONSTRAINT "chk_facilities_facility_kind" CHECK (("identity_kind" = 'feature')),
     CONSTRAINT "chk_facilities_identity_kind_enum" CHECK (
         "identity_kind" IN (
@@ -452,15 +469,20 @@ CREATE TABLE "civic"."facilities" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
+    ),
+    CONSTRAINT "chk_facilities_status_enum" CHECK (
+        "status" IN ('closed', 'operational', 'under-construction')
     ),
     PRIMARY KEY ("id")
 );
@@ -517,7 +539,7 @@ CREATE TABLE "civic"."procurements" (
     "procedure_term" uuid NOT NULL,
     "project_id" uuid,
     "published_on" date,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_procurements_procurement_kind" CHECK (("identity_kind" = 'procurement')),
@@ -552,14 +574,25 @@ CREATE TABLE "civic"."procurements" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
+        )
+    ),
+    CONSTRAINT "chk_procurements_status_enum" CHECK (
+        "status" IN (
+            'awarded',
+            'cancelled',
+            'evaluation',
+            'open',
+            'planned'
         )
     ),
     PRIMARY KEY ("id")
@@ -579,10 +612,17 @@ CREATE TABLE "civic"."projects" (
     "scope_id" uuid,
     "sponsor_id" uuid,
     "starts_on" date,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_projects_project_period_is_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
     CONSTRAINT "chk_projects_project_kind" CHECK (("identity_kind" = 'project')),
     CONSTRAINT "chk_projects_identity_kind_enum" CHECK (
         "identity_kind" IN (
@@ -609,14 +649,25 @@ CREATE TABLE "civic"."projects" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
+        )
+    ),
+    CONSTRAINT "chk_projects_status_enum" CHECK (
+        "status" IN (
+            'abandoned',
+            'complete',
+            'ongoing',
+            'planned',
+            'stalled'
         )
     ),
     PRIMARY KEY ("id")
@@ -668,12 +719,18 @@ CREATE TABLE "civic"."roles" (
     CONSTRAINT "chk_roles_role_has_one_actor" CHECK (
         (
             (
-                ("holder_id" IS NOT NULL)
+                ("holder_id" IS NULL)
                 AND ("identity_id" IS NULL)
             )
             OR (
-                ("holder_id" IS NULL)
-                AND ("identity_id" IS NOT NULL)
+                (
+                    ("holder_id" IS NOT NULL)
+                    AND ("identity_id" IS NULL)
+                )
+                OR (
+                    ("holder_id" IS NULL)
+                    AND ("identity_id" IS NOT NULL)
+                )
             )
         )
     ),
@@ -735,6 +792,13 @@ CREATE TABLE "civic"."services" (
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_services_service_period_is_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
     CONSTRAINT "chk_services_service_kind" CHECK (("identity_kind" = 'service')),
     CONSTRAINT "chk_services_identity_kind_enum" CHECK (
         "identity_kind" IN (
@@ -761,12 +825,14 @@ CREATE TABLE "civic"."services" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -884,7 +950,7 @@ CREATE TABLE "community"."blocks" (
 CREATE TABLE "community"."cases" (
     "created_at" timestamptz NOT NULL,
     "decided_at" timestamptz,
-    "decision_term" uuid,
+    "decision" text,
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
     "post_country_id" uuid NOT NULL,
@@ -894,14 +960,11 @@ CREATE TABLE "community"."cases" (
     "state" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_cases_decision_enum" CHECK (
+        "decision" IN ('approve', 'escalate', 'reject', 'remove')
+    ),
     CONSTRAINT "chk_cases_state_enum" CHECK (
-        "state" IN (
-            'draft',
-            'pending',
-            'published',
-            'rejected',
-            'removed'
-        )
+        "state" IN ('decided', 'escalated', 'in-review', 'open')
     ),
     PRIMARY KEY ("id")
 );
@@ -1222,10 +1285,13 @@ CREATE TABLE "community"."notifications" (
     "id" uuid NOT NULL,
     "identity_id" uuid,
     "key_id" uuid NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "occurrence_id" uuid,
     "post_country_id" uuid,
     "post_id" uuid,
+    CONSTRAINT "chk_notifications_kind_enum" CHECK (
+        "kind" IN ('event-reminder', 'new-figure', 'reply')
+    ),
     PRIMARY KEY ("id", "created_at")
 )
 PARTITION BY
@@ -1497,7 +1563,7 @@ CREATE TABLE "community"."posts" (
     "device_id" uuid,
     "id" uuid NOT NULL,
     "identity_id" uuid,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "language_id" uuid,
     "parent_id" uuid,
     "proof_id" uuid,
@@ -1511,6 +1577,9 @@ CREATE TABLE "community"."posts" (
             ("state" <> 'published')
             OR ("published_at" IS NOT NULL)
         )
+    ),
+    CONSTRAINT "chk_posts_kind_enum" CHECK (
+        "kind" IN ('comment', 'question', 'report', 'review')
     ),
     CONSTRAINT "chk_posts_state_enum" CHECK (
         "state" IN (
@@ -1696,9 +1765,12 @@ CREATE TABLE "community"."replies" (
     "published_at" timestamptz,
     "received_at" timestamptz NOT NULL,
     "respondent_id" uuid NOT NULL,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_replies_status_enum" CHECK (
+        "status" IN ('published', 'received', 'withdrawn')
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -1708,10 +1780,11 @@ CREATE TABLE "community"."subscriptions" (
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
     "identity_id" uuid NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "revoked_at" timestamptz,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_subscriptions_kind_enum" CHECK ("kind" IN ('alerts', 'follow')),
     PRIMARY KEY ("id")
 );
 
@@ -2113,7 +2186,7 @@ CREATE TABLE "economy"."prices" (
     "from_year" integer,
     "good_id" uuid NOT NULL,
     "id" uuid NOT NULL,
-    "kind" text NOT NULL,
+    "kind_term" uuid NOT NULL,
     "revision" integer NOT NULL,
     "starts_on" date,
     "status" text NOT NULL,
@@ -2121,6 +2194,20 @@ CREATE TABLE "economy"."prices" (
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_prices_price_period_is_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_prices_price_dates_are_ordered" CHECK (
+        (
+            ("starts_on" IS NULL)
+            OR ("ends_on" IS NULL)
+            OR ("starts_on" <= "ends_on")
+        )
+    ),
     CONSTRAINT "chk_prices_basis_enum" CHECK (
         "basis" IN (
             'aggregated',
@@ -2128,16 +2215,6 @@ CREATE TABLE "economy"."prices" (
             'measured',
             'modelled',
             'projected'
-        )
-    ),
-    CONSTRAINT "chk_prices_kind_enum" CHECK (
-        "kind" IN (
-            'contract',
-            'farm-gate',
-            'modelled',
-            'retail',
-            'standard-cost',
-            'wholesale'
         )
     ),
     CONSTRAINT "chk_prices_status_enum" CHECK (
@@ -2325,17 +2402,19 @@ CREATE TABLE "election"."choices" (
 );
 
 CREATE TABLE "election"."contests" (
+    "area_id" uuid,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "election_id" uuid NOT NULL,
-    "feature_id" uuid,
     "id" uuid NOT NULL,
     "kind_term" uuid NOT NULL,
     "office_id" uuid,
     "previous_holder_id" uuid,
     "reason_term" uuid,
     "seat_count" integer,
+    "template_id" uuid,
+    "term_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -2354,8 +2433,8 @@ CREATE TABLE "election"."elections" (
     "identity_kind" text NOT NULL DEFAULT 'election',
     "kind_term" uuid NOT NULL,
     "parent_id" uuid,
-    "status_term" uuid NOT NULL,
-    "term_id" uuid,
+    "status" text NOT NULL,
+    "template_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_elections_election_kind" CHECK (("identity_kind" = 'election')),
@@ -2384,21 +2463,24 @@ CREATE TABLE "election"."elections" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
     ),
+    CONSTRAINT "chk_elections_status_enum" CHECK ("status" IN ('annulled', 'held', 'scheduled')),
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "election"."forms" (
-    "asset_id" uuid NOT NULL,
+    "asset_id" uuid,
     "contest_id" uuid NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
@@ -2573,7 +2655,7 @@ CREATE TABLE "election"."stations" (
     "note_language_id" uuid,
     "opens_at" timestamptz,
     "registered_voters" integer,
-    "status_term" uuid,
+    "status" text,
     "streams" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -2582,6 +2664,9 @@ CREATE TABLE "election"."stations" (
             ("note" IS NULL)
             OR ("note_language_id" IS NOT NULL)
         )
+    ),
+    CONSTRAINT "chk_stations_status_enum" CHECK (
+        "status" IN ('closed', 'gazetted', 'open', 'relocated')
     ),
     PRIMARY KEY ("id")
 );
@@ -2765,13 +2850,12 @@ CREATE TABLE "event"."calendars" (
 
 CREATE TABLE "event"."changes" (
     "authority_id" uuid,
-    "basis_provision_id" uuid,
     "created_at" timestamptz NOT NULL,
     "decided_on" date,
     "deleted_at" timestamptz,
     "from_on" date,
     "id" uuid NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "note" varchar(4000),
     "note_language_id" uuid,
     "occurrence_id" uuid NOT NULL,
@@ -2786,11 +2870,18 @@ CREATE TABLE "event"."changes" (
             OR ("note_language_id" IS NOT NULL)
         )
     ),
+    CONSTRAINT "chk_changes_kind_enum" CHECK (
+        "kind" IN (
+            'brought-forward',
+            'cancelled',
+            'moved',
+            'postponed'
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "event"."events" (
-    "basis_provision_id" uuid,
     "calendar_id" uuid,
     "code" varchar(255) NOT NULL,
     "country_id" uuid,
@@ -2830,12 +2921,14 @@ CREATE TABLE "event"."events" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -2874,15 +2967,15 @@ CREATE TABLE "event"."occurrences" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "event_id" uuid NOT NULL,
-    "format_term" uuid,
+    "format" text,
     "id" uuid NOT NULL,
     "is_all_day" boolean NOT NULL,
-    "knowledge_term" uuid NOT NULL,
+    "knowledge_term" uuid,
     "organiser_id" uuid,
     "planned_ends_on" date,
-    "planned_starts_on" date NOT NULL,
+    "planned_starts_on" date,
     "starts_at" timestamptz,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "timezone_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -2898,6 +2991,16 @@ CREATE TABLE "event"."occurrences" (
             ("actual_starts_on" IS NULL)
             OR ("actual_ends_on" IS NULL)
             OR ("actual_starts_on" <= "actual_ends_on")
+        )
+    ),
+    CONSTRAINT "chk_occurrences_format_enum" CHECK ("format" IN ('hybrid', 'in-person', 'online')),
+    CONSTRAINT "chk_occurrences_status_enum" CHECK (
+        "status" IN (
+            'cancelled',
+            'expected',
+            'held',
+            'postponed',
+            'scheduled'
         )
     ),
     PRIMARY KEY ("id")
@@ -2923,21 +3026,24 @@ CREATE TABLE "event"."rules" (
     "from_year" integer,
     "id" uuid NOT NULL,
     "interval_years" integer,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "month" integer,
     "nth_weekday" integer,
     "rrule" varchar(500),
+    "template_id" uuid,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     "weekday" integer,
+    CONSTRAINT "chk_rules_kind_enum" CHECK (
+        "kind" IN ('fixed-date', 'interval', 'nth-weekday', 'rrule')
+    ),
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "event"."schedules" (
     "anchor_event_id" uuid,
     "anchor_on" date,
-    "basis_provision_id" uuid,
     "code" varchar(255) NOT NULL,
     "country_id" uuid,
     "created_at" timestamptz NOT NULL,
@@ -2946,10 +3052,14 @@ CREATE TABLE "event"."schedules" (
     "issuer_id" uuid,
     "kind_term" uuid NOT NULL,
     "published_on" date,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "supersedes_schedule_id" uuid,
+    "template_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_schedules_status_enum" CHECK (
+        "status" IN ('draft', 'expected', 'published', 'superseded')
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -2959,13 +3069,13 @@ CREATE TABLE "event"."seasons" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "end_day" integer,
-    "end_month" integer NOT NULL,
+    "end_month" integer,
     "feature_id" uuid,
     "id" uuid NOT NULL,
     "is_natural" boolean NOT NULL,
     "kind_term" uuid NOT NULL,
     "start_day" integer,
-    "start_month" integer NOT NULL,
+    "start_month" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -2984,7 +3094,7 @@ CREATE TABLE "event"."subjects" (
 CREATE TABLE "event"."venues" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
-    "feature_id" uuid NOT NULL,
+    "feature_id" uuid,
     "id" uuid NOT NULL,
     "note" varchar(4000),
     "note_language_id" uuid,
@@ -3077,7 +3187,7 @@ CREATE TABLE "filesystem"."versions" (
 
 CREATE TABLE "finance"."appropriations" (
     "amount" bigint,
-    "class_term" uuid NOT NULL,
+    "class_term" uuid,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "currency_id" uuid,
@@ -3109,6 +3219,7 @@ CREATE TABLE "finance"."budgets" (
     "id" uuid NOT NULL,
     "kind_term" uuid NOT NULL,
     "period_id" uuid NOT NULL,
+    "template_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     PRIMARY KEY ("id")
@@ -3162,12 +3273,14 @@ CREATE TABLE "finance"."debts" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -3189,7 +3302,7 @@ CREATE TABLE "finance"."findings" (
     "kind_term" uuid NOT NULL,
     "period_id" uuid NOT NULL,
     "project_id" uuid,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_findings_finding_amount_has_currency" CHECK (
@@ -3204,6 +3317,7 @@ CREATE TABLE "finance"."findings" (
             OR ("flow_country_id" IS NOT NULL)
         )
     ),
+    CONSTRAINT "chk_findings_status_enum" CHECK ("status" IN ('open', 'referred', 'resolved')),
     PRIMARY KEY ("id")
 );
 
@@ -3222,7 +3336,7 @@ CREATE TABLE "finance"."flows" (
     "fund_id" uuid,
     "id" uuid NOT NULL,
     "institution_id" uuid,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "occurred_on" date,
     "period_id" uuid,
     "project_id" uuid,
@@ -3232,6 +3346,25 @@ CREATE TABLE "finance"."flows" (
         (
             ("amount" IS NULL)
             OR ("currency_id" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_flows_flow_has_an_anchor" CHECK (
+        (
+            ("fund_id" IS NOT NULL)
+            OR ("appropriation_id" IS NOT NULL)
+            OR ("contract_id" IS NOT NULL)
+            OR ("debt_id" IS NOT NULL)
+            OR ("project_id" IS NOT NULL)
+            OR ("institution_id" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_flows_kind_enum" CHECK (
+        "kind" IN (
+            'allocation',
+            'disbursement',
+            'payment',
+            'receipt',
+            'transfer'
         )
     ),
     PRIMARY KEY ("id", "country_id")
@@ -3330,6 +3463,7 @@ CREATE TABLE "finance"."funds" (
     "manager_id" uuid,
     "scope_id" uuid,
     "source_term" uuid,
+    "template_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_funds_fund_kind" CHECK (("identity_kind" = 'fund')),
@@ -3358,12 +3492,14 @@ CREATE TABLE "finance"."funds" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -3379,7 +3515,7 @@ CREATE TABLE "finance"."periods" (
     "ends_on" date NOT NULL,
     "from_year" integer,
     "id" uuid NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "starts_on" date NOT NULL,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
@@ -3391,6 +3527,7 @@ CREATE TABLE "finance"."periods" (
             OR ("starts_on" <= "ends_on")
         )
     ),
+    CONSTRAINT "chk_periods_kind_enum" CHECK ("kind" IN ('fiscal-year', 'month', 'quarter')),
     PRIMARY KEY ("id")
 );
 
@@ -3402,9 +3539,35 @@ CREATE TABLE "finance"."revisions" (
     "id" uuid NOT NULL,
     "released_on" date,
     "revision" integer NOT NULL,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_revisions_status_enum" CHECK ("status" IN ('approved', 'enacted', 'proposed')),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "geography"."areas" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "feature_id" uuid NOT NULL,
+    "from_year" integer,
+    "hierarchy_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "level_id" uuid NOT NULL,
+    "parent_id" uuid,
+    "template_id" uuid,
+    "to_year" integer,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_areas_period_years_are_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_areas_area_is_not_its_own_parent" CHECK (("id" <> "parent_id")),
     PRIMARY KEY ("id")
 );
 
@@ -3418,7 +3581,7 @@ CREATE TABLE "geography"."assets" (
     "geometry_id" uuid,
     "hierarchy_id" uuid,
     "id" uuid NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "layer" varchar(255),
     "level_id" uuid,
     "member" varchar(1000),
@@ -3427,6 +3590,17 @@ CREATE TABLE "geography"."assets" (
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     "version_id" uuid NOT NULL,
+    CONSTRAINT "chk_assets_kind_enum" CHECK (
+        "kind" IN (
+            'elevation',
+            'outline',
+            'raster',
+            'thumbnail',
+            'tile',
+            'topojson',
+            'vector-boundary'
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -3435,7 +3609,7 @@ CREATE TABLE "geography"."changes" (
     "deleted_at" timestamptz,
     "effective_on" date,
     "id" uuid NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "note" varchar(4000),
     "note_language_id" uuid,
     "occurrence_id" uuid,
@@ -3454,6 +3628,9 @@ CREATE TABLE "geography"."changes" (
             ("note" IS NULL)
             OR ("note_language_id" IS NOT NULL)
         )
+    ),
+    CONSTRAINT "chk_changes_kind_enum" CHECK (
+        "kind" IN ('merge', 'rename', 'split', 'transfer')
     ),
     PRIMARY KEY ("id")
 );
@@ -3516,12 +3693,14 @@ CREATE TABLE "geography"."features" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -3530,24 +3709,47 @@ CREATE TABLE "geography"."features" (
 );
 
 CREATE TABLE "geography"."geometries" (
-    "area" double precision NOT NULL GENERATED ALWAYS AS (ST_Area ("geometry")) STORED,
-    "basis_term" uuid NOT NULL,
-    "centroid" geometry (point, 4326) NOT NULL GENERATED ALWAYS AS (ST_Centroid ("geometry")) STORED,
+    "area" double precision GENERATED ALWAYS AS (ST_Area ("geometry")) STORED,
+    "basis" text,
+    "centroid" geometry (point, 4326) GENERATED ALWAYS AS (ST_Centroid ("geometry")) STORED,
     "confidence" double precision,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
-    "envelope" geometry (geometry, 4326) NOT NULL GENERATED ALWAYS AS (ST_Envelope ("geometry")) STORED,
+    "envelope" geometry (geometry, 4326) GENERATED ALWAYS AS (ST_Envelope ("geometry")) STORED,
     "feature_id" uuid NOT NULL,
     "from_year" integer,
-    "geometry" geometry (geometry, 4326) NOT NULL,
+    "geometry" geometry (geometry, 4326),
     "id" uuid NOT NULL,
     "revision" integer NOT NULL,
-    "role_term" uuid NOT NULL,
+    "role" text NOT NULL,
+    "status" text NOT NULL DEFAULT 'established',
     "supersedes_id" uuid,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_geometries_geometry_is_not_its_own_successor" CHECK (("id" <> "supersedes_id")),
+    CONSTRAINT "chk_geometries_basis_enum" CHECK (
+        "basis" IN (
+            'approximate',
+            'derived',
+            'digitised',
+            'illustrative',
+            'reconstructed',
+            'surveyed',
+            'traditional-claim'
+        )
+    ),
+    CONSTRAINT "chk_geometries_role_enum" CHECK (
+        "role" IN (
+            'centreline',
+            'centroid',
+            'claimed-outline',
+            'label-point',
+            'outline',
+            'point'
+        )
+    ),
+    CONSTRAINT "chk_geometries_status_enum" CHECK ("status" IN ('draft', 'established', 'expected')),
     PRIMARY KEY ("id")
 );
 
@@ -3582,10 +3784,8 @@ CREATE TABLE "geography"."relationships" (
     "deleted_at" timestamptz,
     "ends_on" date,
     "from_year" integer,
-    "hierarchy_id" uuid,
     "id" uuid NOT NULL,
-    "kind_term" uuid NOT NULL,
-    "level_id" uuid,
+    "kind" text NOT NULL,
     "object_feature_id" uuid NOT NULL,
     "starts_on" date,
     "subject_feature_id" uuid NOT NULL,
@@ -3607,10 +3807,15 @@ CREATE TABLE "geography"."relationships" (
         )
     ),
     CONSTRAINT "chk_relationships_relationship_is_not_self" CHECK (("subject_feature_id" <> "object_feature_id")),
-    CONSTRAINT "chk_relationships_level_needs_hierarchy" CHECK (
-        (
-            ("level_id" IS NULL)
-            OR ("hierarchy_id" IS NOT NULL)
+    CONSTRAINT "chk_relationships_kind_enum" CHECK (
+        "kind" IN (
+            'borders',
+            'connects',
+            'flows-through',
+            'inside',
+            'located-on',
+            'part-of',
+            'replaced-by'
         )
     ),
     PRIMARY KEY ("id")
@@ -3651,8 +3856,7 @@ CREATE TABLE "governance"."assignments" (
     "initiator_id" uuid,
     "institution_id" uuid,
     "position_id" uuid,
-    "provision_id" uuid,
-    "share_term" uuid NOT NULL,
+    "share" text NOT NULL,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -3668,6 +3872,7 @@ CREATE TABLE "governance"."assignments" (
             )
         )
     ),
+    CONSTRAINT "chk_assignments_share_enum" CHECK ("share" IN ('concurrent', 'exclusive')),
     PRIMARY KEY ("id")
 );
 
@@ -3678,7 +3883,6 @@ CREATE TABLE "governance"."functions" (
     "id" uuid NOT NULL,
     "identity_kind" text NOT NULL DEFAULT 'function',
     "parent_id" uuid,
-    "provision_id" uuid,
     "topic_term" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -3708,12 +3912,14 @@ CREATE TABLE "governance"."functions" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -3729,11 +3935,12 @@ CREATE TABLE "governance"."holders" (
     "ends_on" date,
     "from_year" integer,
     "id" uuid NOT NULL,
-    "individual_id" uuid NOT NULL,
-    "method_term" uuid NOT NULL,
+    "individual_id" uuid,
+    "method" text,
     "office_id" uuid NOT NULL,
-    "reason_term" uuid,
+    "reason" text,
     "starts_on" date,
+    "term_id" uuid,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -3751,69 +3958,26 @@ CREATE TABLE "governance"."holders" (
             OR ("starts_on" <= "ends_on")
         )
     ),
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "governance"."instances" (
-    "contact_id" uuid,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "domain_id" uuid,
-    "generated_at" timestamptz NOT NULL,
-    "id" uuid NOT NULL,
-    "institution_id" uuid,
-    "office_id" uuid,
-    "position_id" uuid,
-    "status_term" uuid NOT NULL,
-    "template_id" uuid NOT NULL,
-    "unit_feature_id" uuid,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    CONSTRAINT "chk_instances_instance_has_one_product" CHECK (
-        (
-            (
-                ("institution_id" IS NOT NULL)
-                AND ("position_id" IS NULL)
-                AND ("office_id" IS NULL)
-                AND ("domain_id" IS NULL)
-                AND ("contact_id" IS NULL)
-            )
-            OR (
-                ("institution_id" IS NULL)
-                AND ("position_id" IS NOT NULL)
-                AND ("office_id" IS NULL)
-                AND ("domain_id" IS NULL)
-                AND ("contact_id" IS NULL)
-            )
-            OR (
-                ("institution_id" IS NULL)
-                AND ("position_id" IS NULL)
-                AND ("office_id" IS NOT NULL)
-                AND ("domain_id" IS NULL)
-                AND ("contact_id" IS NULL)
-            )
-            OR (
-                ("institution_id" IS NULL)
-                AND ("position_id" IS NULL)
-                AND ("office_id" IS NULL)
-                AND ("domain_id" IS NOT NULL)
-                AND ("contact_id" IS NULL)
-            )
-            OR (
-                ("institution_id" IS NULL)
-                AND ("position_id" IS NULL)
-                AND ("office_id" IS NULL)
-                AND ("domain_id" IS NULL)
-                AND ("contact_id" IS NOT NULL)
-            )
+    CONSTRAINT "chk_holders_method_enum" CHECK (
+        "method" IN (
+            'acting',
+            'appointed',
+            'elected',
+            'elected-by-members',
+            'ex-officio',
+            'nominated',
+            'running-mate'
         )
+    ),
+    CONSTRAINT "chk_holders_reason_enum" CHECK (
+        "reason" IN ('death', 'removal', 'resignation', 'term-end')
     ),
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "governance"."institutions" (
-    "arm_term" uuid,
-    "basis_term" uuid,
+    "arm" text,
+    "basis" text,
     "class_term" uuid,
     "code" varchar(255) NOT NULL,
     "country_id" uuid NOT NULL,
@@ -3825,6 +3989,7 @@ CREATE TABLE "governance"."institutions" (
     "identity_kind" text NOT NULL DEFAULT 'entity',
     "kind_term" uuid NOT NULL,
     "starts_on" date,
+    "template_id" uuid,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -3835,6 +4000,21 @@ CREATE TABLE "governance"."institutions" (
             OR ("to_year" IS NULL)
             OR ("from_year" <= "to_year")
         )
+    ),
+    CONSTRAINT "chk_institutions_arm_enum" CHECK (
+        "arm" IN (
+            'county',
+            'devolved-government',
+            'executive',
+            'funds',
+            'independent',
+            'independent-commission',
+            'judiciary',
+            'legislature'
+        )
+    ),
+    CONSTRAINT "chk_institutions_basis_enum" CHECK (
+        "basis" IN ('administrative', 'constitutional', 'statutory')
     ),
     CONSTRAINT "chk_institutions_identity_kind_enum" CHECK (
         "identity_kind" IN (
@@ -3861,12 +4041,14 @@ CREATE TABLE "governance"."institutions" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -3875,15 +4057,15 @@ CREATE TABLE "governance"."institutions" (
 );
 
 CREATE TABLE "governance"."jurisdictions" (
+    "area_id" uuid,
     "code" varchar(255) NOT NULL,
     "country_id" uuid NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
-    "feature_id" uuid,
     "from_year" integer,
     "id" uuid NOT NULL,
     "institution_id" uuid,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "office_id" uuid,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
@@ -3900,6 +4082,9 @@ CREATE TABLE "governance"."jurisdictions" (
             )
         )
     ),
+    CONSTRAINT "chk_jurisdictions_kind_enum" CHECK (
+        "kind" IN ('appellate', 'subject-matter', 'territorial')
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -3911,28 +4096,31 @@ CREATE TABLE "governance"."obligations" (
     "holder_id" uuid NOT NULL,
     "id" uuid NOT NULL,
     "kind_term" uuid NOT NULL,
-    "provision_id" uuid,
     "recipient_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_obligations_frequency_enum" CHECK (
         "frequency" IN (
             'annual',
+            'daily',
+            'irregular',
             'monthly',
             'on-event',
             'per-term',
-            'quarterly'
+            'quarterly',
+            'weekly'
         )
     ),
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "governance"."terms" (
+    "area_id" uuid,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
+    "election_id" uuid,
     "ends_on" date,
-    "feature_id" uuid,
     "from_year" integer,
     "id" uuid NOT NULL,
     "institution_id" uuid,
@@ -3940,6 +4128,7 @@ CREATE TABLE "governance"."terms" (
     "office_id" uuid,
     "ordinal" integer,
     "starts_on" date,
+    "template_id" uuid,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -3966,18 +4155,20 @@ CREATE TABLE "governance"."terms" (
 );
 
 CREATE TABLE "governance"."offices" (
+    "area_id" uuid,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "ends_on" date,
-    "feature_id" uuid,
     "from_year" integer,
     "id" uuid NOT NULL,
     "identity_kind" text NOT NULL DEFAULT 'office',
     "institution_id" uuid NOT NULL,
     "position_id" uuid NOT NULL,
+    "premises_id" uuid,
     "seat" varchar(100),
     "starts_on" date,
+    "template_id" uuid,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -4014,29 +4205,18 @@ CREATE TABLE "governance"."offices" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
     ),
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "governance"."patterns" (
-    "code" varchar(255) NOT NULL,
-    "country_id" uuid,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "id" uuid NOT NULL,
-    "kind_term" uuid,
-    "title" varchar(300) NOT NULL,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
     PRIMARY KEY ("id")
 );
 
@@ -4048,14 +4228,14 @@ CREATE TABLE "governance"."positions" (
     "exposure_term" uuid,
     "id" uuid NOT NULL,
     "identity_kind" text NOT NULL DEFAULT 'position',
-    "institution_id" uuid,
+    "institution_class_term" uuid,
     "level_id" uuid,
-    "method_term" uuid,
+    "method" text,
     "position" integer,
-    "provision_id" uuid,
     "role_term" uuid NOT NULL,
     "seat_count" integer,
     "seat_level_id" uuid,
+    "template_id" uuid,
     "term_limit" integer,
     "term_years" integer,
     "updated_at" timestamptz NOT NULL,
@@ -4086,14 +4266,27 @@ CREATE TABLE "governance"."positions" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
+        )
+    ),
+    CONSTRAINT "chk_positions_method_enum" CHECK (
+        "method" IN (
+            'acting',
+            'appointed',
+            'elected',
+            'elected-by-members',
+            'ex-officio',
+            'nominated',
+            'running-mate'
         )
     ),
     PRIMARY KEY ("id")
@@ -4107,7 +4300,6 @@ CREATE TABLE "governance"."powers" (
     "is_binding" boolean NOT NULL,
     "kind_term" uuid NOT NULL,
     "procedure_id" uuid,
-    "provision_id" uuid,
     "step" integer,
     "threshold_term" uuid,
     "to_id" uuid NOT NULL,
@@ -4124,7 +4316,6 @@ CREATE TABLE "governance"."procedures" (
     "id" uuid NOT NULL,
     "identity_kind" text NOT NULL DEFAULT 'procedure',
     "kind_term" uuid NOT NULL,
-    "provision_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_procedures_procedure_kind" CHECK (("identity_kind" = 'procedure')),
@@ -4153,12 +4344,14 @@ CREATE TABLE "governance"."procedures" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -4173,7 +4366,6 @@ CREATE TABLE "governance"."relationships" (
     "from_year" integer,
     "id" uuid NOT NULL,
     "kind_term" uuid NOT NULL,
-    "provision_id" uuid,
     "to_id" uuid NOT NULL,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
@@ -4193,67 +4385,18 @@ CREATE TABLE "governance"."reports" (
     "id" uuid NOT NULL,
     "obligation_id" uuid NOT NULL,
     "reporter_id" uuid NOT NULL,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "governance"."templates" (
-    "arm_term" uuid,
-    "basis_term" uuid,
-    "class_term" uuid,
-    "code" varchar(255) NOT NULL,
-    "code_template" varchar(500) NOT NULL,
-    "created_at" timestamptz NOT NULL,
-    "deleted_at" timestamptz,
-    "fan_out_level_id" uuid,
-    "id" uuid NOT NULL,
-    "kind_term" uuid,
-    "method_term" uuid,
-    "name_template" varchar(500) NOT NULL,
-    "parent_template_id" uuid,
-    "pattern_id" uuid NOT NULL,
-    "produces" text NOT NULL,
-    "role_term" uuid,
-    "seat_count" integer,
-    "term_limit" integer,
-    "term_years" integer,
-    "updated_at" timestamptz NOT NULL,
-    "version" integer NOT NULL,
-    CONSTRAINT "chk_templates_position_attributes_need_position_product" CHECK (
-        (
-            ("produces" = 'position')
-            OR ("produces" = 'office')
-            OR (
-                ("role_term" IS NULL)
-                AND ("method_term" IS NULL)
-                AND ("basis_term" IS NULL)
-                AND ("seat_count" IS NULL)
-                AND ("term_years" IS NULL)
-                AND ("term_limit" IS NULL)
-            )
-        )
-    ),
-    CONSTRAINT "chk_templates_institution_attributes_need_institution_product" CHECK (
-        (
-            ("produces" = 'institution')
-            OR (
-                ("kind_term" IS NULL)
-                AND ("arm_term" IS NULL)
-                AND ("class_term" IS NULL)
-            )
-        )
-    ),
-    CONSTRAINT "chk_templates_produces_enum" CHECK (
-        "produces" IN (
-            'contact',
-            'domain',
-            'event-rule',
-            'institution',
-            'office',
-            'position'
+    CONSTRAINT "chk_reports_status_enum" CHECK (
+        "status" IN (
+            'due',
+            'found-elsewhere',
+            'late',
+            'missing',
+            'not-applicable',
+            'on-time'
         )
     ),
     PRIMARY KEY ("id")
@@ -4305,12 +4448,14 @@ CREATE TABLE "history"."eras" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -4393,12 +4538,14 @@ CREATE TABLE "history"."occurrences" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -4506,12 +4653,14 @@ CREATE TABLE "identity"."identifiers" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -4585,12 +4734,14 @@ CREATE TABLE "identity"."identities" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -4607,7 +4758,7 @@ CREATE TABLE "identity"."names" (
     "identity_id" uuid NOT NULL,
     "identity_kind" text NOT NULL,
     "is_default" boolean NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "language_id" uuid NOT NULL,
     "script_term" uuid,
     "text" varchar(1000) NOT NULL,
@@ -4646,14 +4797,29 @@ CREATE TABLE "identity"."names" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
+        )
+    ),
+    CONSTRAINT "chk_names_kind_enum" CHECK (
+        "kind" IN (
+            'abbreviation',
+            'alternative',
+            'definition',
+            'historical',
+            'local',
+            'official',
+            'preferred',
+            'short',
+            'transliteration'
         )
     ),
     PRIMARY KEY ("id", "identity_kind")
@@ -4766,7 +4932,7 @@ CREATE TABLE "legal"."instruments" (
     "jurisdiction_id" uuid,
     "kind_term" uuid NOT NULL,
     "published_on" date,
-    "status_term" uuid,
+    "status" text,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -4803,16 +4969,19 @@ CREATE TABLE "legal"."instruments" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
     ),
+    CONSTRAINT "chk_instruments_status_enum" CHECK ("status" IN ('in-force', 'pending', 'repealed')),
     PRIMARY KEY ("id")
 );
 
@@ -4850,6 +5019,7 @@ CREATE TABLE "legal"."references" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
+    "metadata" jsonb,
     "method" text NOT NULL,
     "relation" text NOT NULL,
     "review_status" text NOT NULL,
@@ -5063,7 +5233,7 @@ CREATE TABLE "legislature"."bills" (
     "instrument_id" uuid,
     "kind_term" uuid NOT NULL,
     "sponsor_id" uuid,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "term_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -5093,14 +5263,26 @@ CREATE TABLE "legislature"."bills" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
+        )
+    ),
+    CONSTRAINT "chk_bills_status_enum" CHECK (
+        "status" IN (
+            'assented',
+            'in-committee',
+            'lapsed',
+            'passed',
+            'published',
+            'withdrawn'
         )
     ),
     PRIMARY KEY ("id")
@@ -5129,16 +5311,43 @@ CREATE TABLE "legislature"."motions" (
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
-    "instrument_id" uuid,
     "kind_term" uuid NOT NULL,
     "mover_id" uuid,
-    "outcome_term" uuid,
+    "outcome" text,
     "period_id" uuid,
-    "provision_id" uuid,
     "revision_id" uuid,
     "sitting_id" uuid NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_motions_motion_has_at_most_one_subject" CHECK (
+        (
+            (
+                ("bill_id" IS NULL)
+                AND ("revision_id" IS NULL)
+                AND ("period_id" IS NULL)
+            )
+            OR (
+                (
+                    ("bill_id" IS NOT NULL)
+                    AND ("revision_id" IS NULL)
+                    AND ("period_id" IS NULL)
+                )
+                OR (
+                    ("bill_id" IS NULL)
+                    AND ("revision_id" IS NOT NULL)
+                    AND ("period_id" IS NULL)
+                )
+                OR (
+                    ("bill_id" IS NULL)
+                    AND ("revision_id" IS NULL)
+                    AND ("period_id" IS NOT NULL)
+                )
+            )
+        )
+    ),
+    CONSTRAINT "chk_motions_outcome_enum" CHECK (
+        "outcome" IN ('carried', 'negatived', 'withdrawn')
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -5267,11 +5476,12 @@ CREATE TABLE "legislature"."stages" (
     "kind_term" uuid NOT NULL,
     "motion_id" uuid,
     "on_date" date,
-    "outcome_term" uuid,
+    "outcome" text,
     "sequence" integer NOT NULL,
     "sitting_id" uuid,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_stages_outcome_enum" CHECK ("outcome" IN ('deferred', 'passed', 'rejected')),
     PRIMARY KEY ("id")
 );
 
@@ -5515,7 +5725,8 @@ CREATE TABLE "media"."subjects" (
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
     "identity_id" uuid NOT NULL,
-    "role_term" uuid NOT NULL,
+    "role" text NOT NULL,
+    CONSTRAINT "chk_subjects_role_enum" CHECK ("role" IN ('main', 'mentioned')),
     PRIMARY KEY ("id")
 );
 
@@ -5545,7 +5756,7 @@ CREATE TABLE "media"."texts" (
 );
 
 CREATE TABLE "media"."uses" (
-    "asset_id" uuid NOT NULL,
+    "asset_id" uuid,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
     "from_year" integer,
@@ -5594,18 +5805,39 @@ CREATE TABLE "official"."contacts" (
     "from_year" integer,
     "id" uuid NOT NULL,
     "identity_id" uuid NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
-    "value" varchar(1000) NOT NULL,
+    "value" varchar(1000),
     "version" integer NOT NULL,
-    "visibility_term" uuid NOT NULL,
+    "visibility" text NOT NULL,
     CONSTRAINT "chk_contacts_contact_period_is_ordered" CHECK (
         (
             ("from_year" IS NULL)
             OR ("to_year" IS NULL)
             OR ("from_year" <= "to_year")
         )
+    ),
+    CONSTRAINT "chk_contacts_kind_enum" CHECK (
+        "kind" IN (
+            'email',
+            'facebook',
+            'fax',
+            'instagram',
+            'landmark',
+            'mobile',
+            'physical-address',
+            'postal-address',
+            'social-media',
+            'telephone',
+            'tiktok',
+            'website',
+            'x',
+            'youtube'
+        )
+    ),
+    CONSTRAINT "chk_contacts_visibility_enum" CHECK (
+        "visibility" IN ('private', 'public', 'restricted')
     ),
     PRIMARY KEY ("id")
 );
@@ -5664,12 +5896,14 @@ CREATE TABLE "official"."entities" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -5729,12 +5963,14 @@ CREATE TABLE "official"."individuals" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -5776,18 +6012,43 @@ CREATE TABLE "official"."parts" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
     ),
     CONSTRAINT "chk_parts_part_enum" CHECK (
         "part" IN ('family', 'given', 'middle', 'prefix', 'suffix')
+    ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "official"."premises" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "entity_id" uuid NOT NULL,
+    "feature_id" uuid,
+    "from_year" integer,
+    "id" uuid NOT NULL,
+    "kind_term" uuid NOT NULL,
+    "ordinal" integer NOT NULL,
+    "to_year" integer,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_premises_period_years_are_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
     ),
     PRIMARY KEY ("id")
 );
@@ -5831,6 +6092,13 @@ CREATE TABLE "politics"."alignments" (
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_alignments_alignment_period_is_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -5897,6 +6165,13 @@ CREATE TABLE "politics"."coalitions" (
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_coalitions_coalition_period_is_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
     CONSTRAINT "chk_coalitions_coalition_kind" CHECK (("identity_kind" = 'coalition')),
     CONSTRAINT "chk_coalitions_identity_kind_enum" CHECK (
         "identity_kind" IN (
@@ -5923,12 +6198,14 @@ CREATE TABLE "politics"."coalitions" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -5955,8 +6232,8 @@ CREATE TABLE "politics"."commitments" (
     "quantity" double precision,
     "speech_id" uuid,
     "statement" varchar(8000) NOT NULL,
+    "status" text NOT NULL,
     "status_as_of" date,
-    "status_term" uuid NOT NULL,
     "to_year" integer,
     "topic_term" uuid,
     "unit_id" uuid,
@@ -5981,6 +6258,14 @@ CREATE TABLE "politics"."commitments" (
             'office-pledge'
         )
     ),
+    CONSTRAINT "chk_commitments_status_enum" CHECK (
+        "status" IN (
+            'broken',
+            'fulfilled',
+            'in-progress',
+            'not-started'
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -5996,7 +6281,7 @@ CREATE TABLE "politics"."contributions" (
     "id" uuid NOT NULL,
     "is_in_kind" boolean NOT NULL,
     "recipient_id" uuid NOT NULL,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     "version_id" uuid,
@@ -6006,6 +6291,7 @@ CREATE TABLE "politics"."contributions" (
             OR ("currency_id" IS NOT NULL)
         )
     ),
+    CONSTRAINT "chk_contributions_status_enum" CHECK ("status" IN ('declared', 'disputed', 'reported')),
     PRIMARY KEY ("id")
 );
 
@@ -6018,10 +6304,10 @@ CREATE TABLE "politics"."fulfilments" (
     "deleted_at" timestamptz,
     "id" uuid NOT NULL,
     "instrument_id" uuid,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "project_id" uuid,
     "recorded_on" date,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
     CONSTRAINT "chk_fulfilments_fulfilment_has_one_target" CHECK (
@@ -6063,6 +6349,10 @@ CREATE TABLE "politics"."fulfilments" (
             )
         )
     ),
+    CONSTRAINT "chk_fulfilments_kind_enum" CHECK (
+        "kind" IN ('contradicts', 'delivers', 'partly-delivers')
+    ),
+    CONSTRAINT "chk_fulfilments_status_enum" CHECK ("status" IN ('claimed', 'disputed', 'verified')),
     PRIMARY KEY ("id")
 );
 
@@ -6163,12 +6453,14 @@ CREATE TABLE "politics"."parties" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -6210,12 +6502,14 @@ CREATE TABLE "product"."apps" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -6348,12 +6642,14 @@ CREATE TABLE "reference"."countries" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -6409,12 +6705,14 @@ CREATE TABLE "reference"."currencies" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -6431,7 +6729,7 @@ CREATE TABLE "reference"."hierarchies" (
     "id" uuid NOT NULL,
     "identity_kind" text NOT NULL DEFAULT 'hierarchy',
     "is_routing" boolean NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
@@ -6468,14 +6766,24 @@ CREATE TABLE "reference"."hierarchies" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
+        )
+    ),
+    CONSTRAINT "chk_hierarchies_kind_enum" CHECK (
+        "kind" IN (
+            'administrative',
+            'electoral',
+            'statistical',
+            'traditional'
         )
     ),
     PRIMARY KEY ("id")
@@ -6485,7 +6793,7 @@ CREATE TABLE "reference"."languages" (
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
-    "direction_term" uuid,
+    "direction" text,
     "family_term" uuid,
     "glottocode" char(8),
     "id" uuid NOT NULL,
@@ -6493,7 +6801,7 @@ CREATE TABLE "reference"."languages" (
     "iso6391" char(2),
     "iso6392" char(3),
     "iso6393" char(3),
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "parent_id" uuid,
     "script_term" uuid,
     "updated_at" timestamptz NOT NULL,
@@ -6501,6 +6809,7 @@ CREATE TABLE "reference"."languages" (
     "vitality_term" uuid,
     CONSTRAINT "chk_languages_language_kind" CHECK (("identity_kind" = 'language')),
     CONSTRAINT "chk_languages_language_is_not_its_own_parent" CHECK (("id" <> "parent_id")),
+    CONSTRAINT "chk_languages_direction_enum" CHECK ("direction" IN ('ltr', 'rtl')),
     CONSTRAINT "chk_languages_identity_kind_enum" CHECK (
         "identity_kind" IN (
             'app',
@@ -6526,20 +6835,26 @@ CREATE TABLE "reference"."languages" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
+    ),
+    CONSTRAINT "chk_languages_kind_enum" CHECK (
+        "kind" IN ('language', 'macrolanguage', 'special', 'variety')
     ),
     PRIMARY KEY ("id")
 );
 
 CREATE TABLE "reference"."levels" (
+    "allows_skip" boolean NOT NULL DEFAULT FALSE,
     "code" varchar(255) NOT NULL,
     "created_at" timestamptz NOT NULL,
     "deleted_at" timestamptz,
@@ -6576,12 +6891,14 @@ CREATE TABLE "reference"."levels" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -6648,12 +6965,14 @@ CREATE TABLE "reference"."timezones" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -6701,12 +7020,14 @@ CREATE TABLE "reference"."units" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -7398,11 +7719,12 @@ CREATE TABLE "source"."disputes" (
     "note_language_id" uuid,
     "resolution_id" uuid,
     "resolved_on" date,
-    "status_term" uuid NOT NULL,
+    "status" text NOT NULL,
     "subject_id" uuid NOT NULL,
     "subject_table" text NOT NULL,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_disputes_status_enum" CHECK ("status" IN ('open', 'resolved', 'unresolvable')),
     CONSTRAINT "chk_disputes_subject_table_enum" CHECK (
         "subject_table" IN (
             'civic.attachments',
@@ -7477,6 +7799,7 @@ CREATE TABLE "source"."disputes" (
             'finance.funds',
             'finance.periods',
             'finance.revisions',
+            'geography.areas',
             'geography.assets',
             'geography.changes',
             'geography.features',
@@ -7488,18 +7811,15 @@ CREATE TABLE "source"."disputes" (
             'governance.assignments',
             'governance.functions',
             'governance.holders',
-            'governance.instances',
             'governance.institutions',
             'governance.jurisdictions',
             'governance.obligations',
             'governance.offices',
-            'governance.patterns',
             'governance.positions',
             'governance.powers',
             'governance.procedures',
             'governance.relationships',
             'governance.reports',
-            'governance.templates',
             'governance.terms',
             'history.eras',
             'history.links',
@@ -7540,6 +7860,7 @@ CREATE TABLE "source"."disputes" (
             'official.entities',
             'official.individuals',
             'official.parts',
+            'official.premises',
             'official.relationships',
             'politics.alignments',
             'politics.attachments',
@@ -7590,6 +7911,11 @@ CREATE TABLE "source"."disputes" (
             'statistics.metrics',
             'statistics.observations',
             'statistics.priorities',
+            'template.items',
+            'template.lines',
+            'template.patterns',
+            'template.templates',
+            'template.texts',
             'vocabulary.labels',
             'vocabulary.mappings',
             'vocabulary.schemes',
@@ -7613,11 +7939,19 @@ CREATE TABLE "source"."domains" (
     "owner_id" uuid,
     "source_id" uuid,
     "starts_on" date,
-    "status_term" uuid NOT NULL,
-    "template_id" uuid,
+    "status" text NOT NULL,
     "to_year" integer,
     "updated_at" timestamptz NOT NULL,
     "version" integer NOT NULL,
+    CONSTRAINT "chk_domains_status_enum" CHECK (
+        "status" IN (
+            'expected',
+            'live',
+            'moved',
+            'retired',
+            'unreachable'
+        )
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -7725,6 +8059,7 @@ CREATE TABLE "source"."evidence" (
             'finance.funds',
             'finance.periods',
             'finance.revisions',
+            'geography.areas',
             'geography.assets',
             'geography.changes',
             'geography.features',
@@ -7736,18 +8071,15 @@ CREATE TABLE "source"."evidence" (
             'governance.assignments',
             'governance.functions',
             'governance.holders',
-            'governance.instances',
             'governance.institutions',
             'governance.jurisdictions',
             'governance.obligations',
             'governance.offices',
-            'governance.patterns',
             'governance.positions',
             'governance.powers',
             'governance.procedures',
             'governance.relationships',
             'governance.reports',
-            'governance.templates',
             'governance.terms',
             'history.eras',
             'history.links',
@@ -7788,6 +8120,7 @@ CREATE TABLE "source"."evidence" (
             'official.entities',
             'official.individuals',
             'official.parts',
+            'official.premises',
             'official.relationships',
             'politics.alignments',
             'politics.attachments',
@@ -7838,6 +8171,11 @@ CREATE TABLE "source"."evidence" (
             'statistics.metrics',
             'statistics.observations',
             'statistics.priorities',
+            'template.items',
+            'template.lines',
+            'template.patterns',
+            'template.templates',
+            'template.texts',
             'vocabulary.labels',
             'vocabulary.mappings',
             'vocabulary.schemes',
@@ -8047,12 +8385,14 @@ CREATE TABLE "source"."products" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -8097,12 +8437,14 @@ CREATE TABLE "source"."publishers" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -8228,6 +8570,7 @@ CREATE TABLE "source"."verifications" (
             'finance.funds',
             'finance.periods',
             'finance.revisions',
+            'geography.areas',
             'geography.assets',
             'geography.changes',
             'geography.features',
@@ -8239,18 +8582,15 @@ CREATE TABLE "source"."verifications" (
             'governance.assignments',
             'governance.functions',
             'governance.holders',
-            'governance.instances',
             'governance.institutions',
             'governance.jurisdictions',
             'governance.obligations',
             'governance.offices',
-            'governance.patterns',
             'governance.positions',
             'governance.powers',
             'governance.procedures',
             'governance.relationships',
             'governance.reports',
-            'governance.templates',
             'governance.terms',
             'history.eras',
             'history.links',
@@ -8291,6 +8631,7 @@ CREATE TABLE "source"."verifications" (
             'official.entities',
             'official.individuals',
             'official.parts',
+            'official.premises',
             'official.relationships',
             'politics.alignments',
             'politics.attachments',
@@ -8341,6 +8682,11 @@ CREATE TABLE "source"."verifications" (
             'statistics.metrics',
             'statistics.observations',
             'statistics.priorities',
+            'template.items',
+            'template.lines',
+            'template.patterns',
+            'template.templates',
+            'template.texts',
             'vocabulary.labels',
             'vocabulary.mappings',
             'vocabulary.schemes',
@@ -8481,12 +8827,14 @@ CREATE TABLE "statistics"."collections" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -8501,10 +8849,13 @@ CREATE TABLE "statistics"."components" (
     "id" uuid NOT NULL,
     "indicator_id" uuid NOT NULL,
     "position" integer,
-    "transform_term" uuid NOT NULL,
+    "transform" text NOT NULL,
     "weight" double precision NOT NULL,
     CONSTRAINT "chk_components_component_is_not_itself" CHECK (("indicator_id" <> "component_id")),
     CONSTRAINT "chk_components_weight_is_positive" CHECK (("weight" > 0)),
+    CONSTRAINT "chk_components_transform_enum" CHECK (
+        "transform" IN ('as-is', 'inverted', 'normalised')
+    ),
     PRIMARY KEY ("id")
 );
 
@@ -8667,7 +9018,7 @@ CREATE TABLE "statistics"."indicators" (
     "id" uuid NOT NULL,
     "identity_kind" text NOT NULL DEFAULT 'indicator',
     "is_derived" boolean NOT NULL,
-    "kind_term" uuid NOT NULL,
+    "kind" text NOT NULL,
     "role_term" uuid,
     "topic_term" uuid NOT NULL,
     "unit_id" uuid,
@@ -8711,14 +9062,29 @@ CREATE TABLE "statistics"."indicators" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
+        )
+    ),
+    CONSTRAINT "chk_indicators_kind_enum" CHECK (
+        "kind" IN (
+            'amount',
+            'count',
+            'currency',
+            'index',
+            'other',
+            'percent',
+            'rate',
+            'ratio',
+            'share'
         )
     ),
     PRIMARY KEY ("id")
@@ -8766,12 +9132,14 @@ CREATE TABLE "statistics"."metrics" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -8946,6 +9314,387 @@ CREATE TABLE "statistics"."priorities" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "template"."items" (
+    "code" varchar(255) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "key" varchar(100) NOT NULL,
+    "language_id" uuid NOT NULL,
+    "name" varchar(255) NOT NULL,
+    "position" integer NOT NULL,
+    "template_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "template"."lines" (
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "effect_template_id" uuid NOT NULL,
+    "id" uuid NOT NULL,
+    "position" integer NOT NULL,
+    "template_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_lines_line_is_not_self" CHECK (("template_id" <> "effect_template_id")),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "template"."patterns" (
+    "code" varchar(255) NOT NULL,
+    "country_id" uuid,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "from_year" integer,
+    "id" uuid NOT NULL,
+    "identity_kind" text NOT NULL DEFAULT 'pattern',
+    "to_year" integer,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_patterns_pattern_kind" CHECK (("identity_kind" = 'pattern')),
+    CONSTRAINT "chk_patterns_pattern_period_is_ordered" CHECK (
+        (
+            ("from_year" IS NULL)
+            OR ("to_year" IS NULL)
+            OR ("from_year" <= "to_year")
+        )
+    ),
+    CONSTRAINT "chk_patterns_identity_kind_enum" CHECK (
+        "identity_kind" IN (
+            'app',
+            'bill',
+            'coalition',
+            'collection',
+            'country',
+            'currency',
+            'debt',
+            'election',
+            'entity',
+            'era',
+            'event',
+            'feature',
+            'function',
+            'fund',
+            'hierarchy',
+            'indicator',
+            'individual',
+            'instrument',
+            'language',
+            'level',
+            'metric',
+            'occurrence',
+            'office',
+            'pattern',
+            'position',
+            'procedure',
+            'procurement',
+            'product',
+            'project',
+            'service',
+            'template',
+            'timezone',
+            'unit'
+        )
+    ),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "template"."templates" (
+    "arm" text,
+    "basis_term" uuid,
+    "class_term" uuid,
+    "code" varchar(255) NOT NULL,
+    "confidence" double precision,
+    "contact_kind" text,
+    "contact_visibility" text,
+    "contest_kind_term" uuid,
+    "count_kind" text NOT NULL,
+    "count_max" integer,
+    "count_min" integer,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "election_kind_term" uuid,
+    "election_past_status" text,
+    "election_status" text,
+    "entity_kind_term" uuid,
+    "fan_out_level_id" uuid,
+    "id" uuid NOT NULL,
+    "identity_kind" text NOT NULL DEFAULT 'template',
+    "kind_term" uuid,
+    "method" text,
+    "pattern_id" uuid NOT NULL,
+    "premises_kind_term" uuid,
+    "product" text NOT NULL,
+    "reason" varchar(500),
+    "repeat_years" integer,
+    "role_term" uuid,
+    "scope" text NOT NULL,
+    "seat_count" integer,
+    "sequence" integer NOT NULL DEFAULT 0,
+    "start_year" integer,
+    "term_kind_term" uuid,
+    "term_limit" integer,
+    "term_years" integer,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_templates_template_kind" CHECK (("identity_kind" = 'template')),
+    CONSTRAINT "chk_templates_fan_out_needs_level" CHECK (
+        (
+            ("scope" = 'single')
+            OR ("scope" = 'list')
+            OR ("fan_out_level_id" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_templates_level_only_for_fan_out" CHECK (
+        (
+            ("scope" = 'level')
+            OR ("scope" = 'within')
+            OR ("fan_out_level_id" IS NULL)
+        )
+    ),
+    CONSTRAINT "chk_templates_exact_count_needs_number" CHECK (
+        (
+            ("count_kind" <> 'exact')
+            OR ("count_min" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_templates_minimum_count_needs_number" CHECK (
+        (
+            ("count_kind" <> 'minimum')
+            OR ("count_min" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_templates_maximum_count_needs_number" CHECK (
+        (
+            ("count_kind" <> 'maximum')
+            OR ("count_max" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_templates_range_count_needs_bounds" CHECK (
+        (
+            ("count_kind" <> 'range')
+            OR (
+                ("count_min" IS NOT NULL)
+                AND ("count_max" IS NOT NULL)
+            )
+        )
+    ),
+    CONSTRAINT "chk_templates_count_bounds_are_ordered" CHECK (
+        (
+            ("count_min" IS NULL)
+            OR ("count_max" IS NULL)
+            OR ("count_min" <= "count_max")
+        )
+    ),
+    CONSTRAINT "chk_templates_institution_attributes_need_institution" CHECK (
+        (
+            ("product" = 'institution')
+            OR (
+                ("kind_term" IS NULL)
+                AND ("arm" IS NULL)
+                AND ("class_term" IS NULL)
+            )
+        )
+    ),
+    CONSTRAINT "chk_templates_position_attributes_need_seat" CHECK (
+        (
+            ("product" = 'position')
+            OR ("product" = 'office')
+            OR ("product" = 'term')
+            OR ("product" = 'holder')
+            OR (
+                ("role_term" IS NULL)
+                AND ("method" IS NULL)
+                AND ("basis_term" IS NULL)
+                AND ("seat_count" IS NULL)
+                AND ("term_years" IS NULL)
+                AND ("term_limit" IS NULL)
+            )
+        )
+    ),
+    CONSTRAINT "chk_templates_premises_kind_needs_premises" CHECK (
+        (
+            ("product" = 'premises')
+            OR ("premises_kind_term" IS NULL)
+        )
+    ),
+    CONSTRAINT "chk_templates_contact_kind_needs_contact" CHECK (
+        (
+            ("product" = 'contact')
+            OR ("contact_kind" IS NULL)
+        )
+    ),
+    CONSTRAINT "chk_templates_repeat_needs_repeating_product" CHECK (
+        (
+            ("repeat_years" IS NULL)
+            OR ("product" = 'election-cycle')
+            OR ("product" = 'term')
+            OR ("product" = 'event-schedule')
+        )
+    ),
+    CONSTRAINT "chk_templates_arm_enum" CHECK (
+        "arm" IN (
+            'county',
+            'devolved-government',
+            'executive',
+            'funds',
+            'independent',
+            'independent-commission',
+            'judiciary',
+            'legislature'
+        )
+    ),
+    CONSTRAINT "chk_templates_contact_kind_enum" CHECK (
+        "contact_kind" IN (
+            'email',
+            'facebook',
+            'fax',
+            'instagram',
+            'landmark',
+            'mobile',
+            'physical-address',
+            'postal-address',
+            'social-media',
+            'telephone',
+            'tiktok',
+            'website',
+            'x',
+            'youtube'
+        )
+    ),
+    CONSTRAINT "chk_templates_contact_visibility_enum" CHECK (
+        "contact_visibility" IN ('private', 'public', 'restricted')
+    ),
+    CONSTRAINT "chk_templates_count_kind_enum" CHECK (
+        "count_kind" IN ('exact', 'maximum', 'minimum', 'range')
+    ),
+    CONSTRAINT "chk_templates_election_past_status_enum" CHECK (
+        "election_past_status" IN ('annulled', 'held', 'scheduled')
+    ),
+    CONSTRAINT "chk_templates_election_status_enum" CHECK (
+        "election_status" IN ('annulled', 'held', 'scheduled')
+    ),
+    CONSTRAINT "chk_templates_identity_kind_enum" CHECK (
+        "identity_kind" IN (
+            'app',
+            'bill',
+            'coalition',
+            'collection',
+            'country',
+            'currency',
+            'debt',
+            'election',
+            'entity',
+            'era',
+            'event',
+            'feature',
+            'function',
+            'fund',
+            'hierarchy',
+            'indicator',
+            'individual',
+            'instrument',
+            'language',
+            'level',
+            'metric',
+            'occurrence',
+            'office',
+            'pattern',
+            'position',
+            'procedure',
+            'procurement',
+            'product',
+            'project',
+            'service',
+            'template',
+            'timezone',
+            'unit'
+        )
+    ),
+    CONSTRAINT "chk_templates_method_enum" CHECK (
+        "method" IN (
+            'acting',
+            'appointed',
+            'elected',
+            'elected-by-members',
+            'ex-officio',
+            'nominated',
+            'running-mate'
+        )
+    ),
+    CONSTRAINT "chk_templates_product_enum" CHECK (
+        "product" IN (
+            'area',
+            'budget',
+            'contact',
+            'contest',
+            'domain',
+            'election-cycle',
+            'event-rule',
+            'event-schedule',
+            'fund',
+            'holder',
+            'institution',
+            'office',
+            'position',
+            'premises',
+            'term'
+        )
+    ),
+    CONSTRAINT "chk_templates_scope_enum" CHECK ("scope" IN ('level', 'list', 'single', 'within')),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "template"."texts" (
+    "body" varchar(1000) NOT NULL,
+    "created_at" timestamptz NOT NULL,
+    "deleted_at" timestamptz,
+    "id" uuid NOT NULL,
+    "language_id" uuid,
+    "name_kind" text,
+    "purpose" text NOT NULL,
+    "template_id" uuid NOT NULL,
+    "updated_at" timestamptz NOT NULL,
+    "version" integer NOT NULL,
+    CONSTRAINT "chk_texts_name_has_language" CHECK (
+        (
+            ("purpose" <> 'name')
+            OR ("language_id" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_texts_name_has_kind" CHECK (
+        (
+            ("purpose" <> 'name')
+            OR ("name_kind" IS NOT NULL)
+        )
+    ),
+    CONSTRAINT "chk_texts_only_names_have_language" CHECK (
+        (
+            ("purpose" = 'name')
+            OR ("language_id" IS NULL)
+        )
+    ),
+    CONSTRAINT "chk_texts_name_kind_enum" CHECK (
+        "name_kind" IN (
+            'abbreviation',
+            'alternative',
+            'definition',
+            'historical',
+            'local',
+            'official',
+            'preferred',
+            'short',
+            'transliteration'
+        )
+    ),
+    CONSTRAINT "chk_texts_purpose_enum" CHECK (
+        "purpose" IN ('code', 'contact', 'domain', 'name')
+    ),
+    PRIMARY KEY ("id")
+);
+
 CREATE TABLE "vocabulary"."labels" (
     "country_id" uuid,
     "created_at" timestamptz NOT NULL,
@@ -9052,12 +9801,14 @@ CREATE TABLE "vocabulary"."scopes" (
             'metric',
             'occurrence',
             'office',
+            'pattern',
             'position',
             'procedure',
             'procurement',
             'product',
             'project',
             'service',
+            'template',
             'timezone',
             'unit'
         )
@@ -9309,9 +10060,6 @@ ALTER TABLE "civic"."bids"
 ADD CONSTRAINT "fk_bids_currency_id" FOREIGN KEY ("currency_id") REFERENCES "reference"."currencies" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "civic"."bids"
-ADD CONSTRAINT "fk_bids_outcome_term" FOREIGN KEY ("outcome_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "civic"."bids"
 ADD CONSTRAINT "fk_bids_procurement_id" FOREIGN KEY ("procurement_id") REFERENCES "civic"."procurements" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_bids__code" ON "civic"."bids" USING btree ("code");
@@ -9337,9 +10085,6 @@ ADD CONSTRAINT "fk_contracts_procurement_id" FOREIGN KEY ("procurement_id") REFE
 
 ALTER TABLE "civic"."contracts"
 ADD CONSTRAINT "fk_contracts_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "civic"."contracts"
-ADD CONSTRAINT "fk_contracts_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_contracts__code" ON "civic"."contracts" USING btree ("code");
 
@@ -9386,9 +10131,6 @@ ADD CONSTRAINT "fk_facilities_owner_id" FOREIGN KEY ("owner_id") REFERENCES "ide
 
 ALTER TABLE "civic"."facilities"
 ADD CONSTRAINT "fk_facilities_ownership_term" FOREIGN KEY ("ownership_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "civic"."facilities"
-ADD CONSTRAINT "fk_facilities_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_facilities__code" ON "civic"."facilities" USING btree ("code");
 
@@ -9447,12 +10189,9 @@ ADD CONSTRAINT "fk_procurements_procedure_term" FOREIGN KEY ("procedure_term") R
 ALTER TABLE "civic"."procurements"
 ADD CONSTRAINT "fk_procurements_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "civic"."procurements"
-ADD CONSTRAINT "fk_procurements_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_procurements__code" ON "civic"."procurements" USING btree ("code");
 
-CREATE INDEX "ix_procurements__country_id_status_term" ON "civic"."procurements" USING btree ("country_id", "status_term");
+CREATE INDEX "ix_procurements__country_id_status" ON "civic"."procurements" USING btree ("country_id", "status");
 
 CREATE INDEX "ix_procurements__buyer_id" ON "civic"."procurements" USING btree ("buyer_id");
 
@@ -9476,12 +10215,9 @@ ADD CONSTRAINT "fk_projects_scope_id" FOREIGN KEY ("scope_id") REFERENCES "gover
 ALTER TABLE "civic"."projects"
 ADD CONSTRAINT "fk_projects_sponsor_id" FOREIGN KEY ("sponsor_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "civic"."projects"
-ADD CONSTRAINT "fk_projects_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_projects__code" ON "civic"."projects" USING btree ("code");
 
-CREATE INDEX "ix_projects__country_id_status_term" ON "civic"."projects" USING btree ("country_id", "status_term");
+CREATE INDEX "ix_projects__country_id_status" ON "civic"."projects" USING btree ("country_id", "status");
 
 CREATE INDEX "ix_projects__institution_id" ON "civic"."projects" USING btree ("institution_id");
 
@@ -9631,9 +10367,6 @@ ADD CONSTRAINT "fk_blocks_reason_term" FOREIGN KEY ("reason_term") REFERENCES "v
 CREATE INDEX "ix_blocks__account_id_from_on" ON "community"."blocks" USING btree ("account_id", "from_on");
 
 ALTER TABLE "community"."cases"
-ADD CONSTRAINT "fk_cases_decision_term" FOREIGN KEY ("decision_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."cases"
 ADD CONSTRAINT "fk_cases_post_country_id" FOREIGN KEY ("post_country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "community"."cases"
@@ -9698,9 +10431,6 @@ ALTER TABLE "community"."notifications"
 ADD CONSTRAINT "fk_notifications_key_id" FOREIGN KEY ("key_id") REFERENCES "product"."keys" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "community"."notifications"
-ADD CONSTRAINT "fk_notifications_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."notifications"
 ADD CONSTRAINT "fk_notifications_occurrence_id" FOREIGN KEY ("occurrence_id") REFERENCES "event"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "community"."notifications"
@@ -9735,9 +10465,6 @@ ADD CONSTRAINT "fk_posts_device_id" FOREIGN KEY ("device_id") REFERENCES "commun
 
 ALTER TABLE "community"."posts"
 ADD CONSTRAINT "fk_posts_identity_id" FOREIGN KEY ("identity_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "community"."posts"
-ADD CONSTRAINT "fk_posts_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "community"."posts"
 ADD CONSTRAINT "fk_posts_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -9816,9 +10543,6 @@ ADD CONSTRAINT "fk_replies_post_country_id" FOREIGN KEY ("post_country_id") REFE
 ALTER TABLE "community"."replies"
 ADD CONSTRAINT "fk_replies_respondent_id" FOREIGN KEY ("respondent_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "community"."replies"
-ADD CONSTRAINT "fk_replies_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE INDEX "ix_replies__post_id" ON "community"."replies" USING btree ("post_id");
 
 CREATE INDEX "ix_replies__respondent_id" ON "community"."replies" USING btree ("respondent_id");
@@ -9832,10 +10556,7 @@ ADD CONSTRAINT "fk_subscriptions_actor_id" FOREIGN KEY ("actor_id") REFERENCES "
 ALTER TABLE "community"."subscriptions"
 ADD CONSTRAINT "fk_subscriptions_identity_id" FOREIGN KEY ("identity_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "community"."subscriptions"
-ADD CONSTRAINT "fk_subscriptions_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_subscriptions__actor_id_identity_id_kind_term" ON "community"."subscriptions" USING btree ("actor_id", "identity_id", "kind_term");
+CREATE UNIQUE INDEX "uq_subscriptions__actor_id_identity_id_kind" ON "community"."subscriptions" USING btree ("actor_id", "identity_id", "kind");
 
 CREATE INDEX "ix_subscriptions__identity_id" ON "community"."subscriptions" USING btree ("identity_id");
 
@@ -9974,6 +10695,9 @@ ADD CONSTRAINT "fk_prices_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geo
 ALTER TABLE "economy"."prices"
 ADD CONSTRAINT "fk_prices_good_id" FOREIGN KEY ("good_id") REFERENCES "economy"."goods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "economy"."prices"
+ADD CONSTRAINT "fk_prices_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE INDEX "ix_prices__country_id_good_id_from_year" ON "economy"."prices" USING btree ("country_id", "good_id", "from_year");
 
 CREATE INDEX "ix_prices__country_id_feature_id" ON "economy"."prices" USING btree ("country_id", "feature_id");
@@ -10051,10 +10775,10 @@ CREATE UNIQUE INDEX "uq_choices__code" ON "election"."choices" USING btree ("cod
 CREATE UNIQUE INDEX "uq_choices__contest_id_ballot_order" ON "election"."choices" USING btree ("contest_id", "ballot_order");
 
 ALTER TABLE "election"."contests"
-ADD CONSTRAINT "fk_contests_election_id" FOREIGN KEY ("election_id") REFERENCES "election"."elections" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_contests_area_id" FOREIGN KEY ("area_id") REFERENCES "geography"."areas" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "election"."contests"
-ADD CONSTRAINT "fk_contests_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_contests_election_id" FOREIGN KEY ("election_id") REFERENCES "election"."elections" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
 
 ALTER TABLE "election"."contests"
 ADD CONSTRAINT "fk_contests_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10068,11 +10792,24 @@ ADD CONSTRAINT "fk_contests_previous_holder_id" FOREIGN KEY ("previous_holder_id
 ALTER TABLE "election"."contests"
 ADD CONSTRAINT "fk_contests_reason_term" FOREIGN KEY ("reason_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "election"."contests"
+ADD CONSTRAINT "fk_contests_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_contests__code" ON "election"."contests" USING btree ("code");
 
-CREATE INDEX "ix_contests__election_id_feature_id" ON "election"."contests" USING btree ("election_id", "feature_id");
+CREATE INDEX "ix_contests__election_id_area_id" ON "election"."contests" USING btree ("election_id", "area_id");
 
 CREATE INDEX "ix_contests__office_id" ON "election"."contests" USING btree ("office_id");
+
+CREATE INDEX "ix_contests__term_id" ON "election"."contests" USING btree ("term_id");
+
+CREATE INDEX "ix_contests__template_id" ON "election"."contests" USING btree ("template_id");
+
+ALTER TABLE "governance"."terms"
+ADD CONSTRAINT "uq_terms__id_office_id_key" UNIQUE ("id", "office_id");
+
+ALTER TABLE "election"."contests"
+ADD CONSTRAINT "fk_contests__contest_term_is_of_office" FOREIGN KEY ("term_id", "office_id") REFERENCES "governance"."terms" ("id", "office_id");
 
 ALTER TABLE "election"."elections"
 ADD CONSTRAINT "fk_elections_authority_id" FOREIGN KEY ("authority_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10090,10 +10827,7 @@ ALTER TABLE "election"."elections"
 ADD CONSTRAINT "fk_elections_parent_id" FOREIGN KEY ("parent_id") REFERENCES "election"."elections" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "election"."elections"
-ADD CONSTRAINT "fk_elections_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "election"."elections"
-ADD CONSTRAINT "fk_elections_term_id" FOREIGN KEY ("term_id") REFERENCES "governance"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_elections_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_elections__code" ON "election"."elections" USING btree ("code");
 
@@ -10102,6 +10836,8 @@ CREATE INDEX "ix_elections__country_id_from_year" ON "election"."elections" USIN
 CREATE INDEX "ix_elections__event_id" ON "election"."elections" USING btree ("event_id");
 
 CREATE INDEX "ix_elections__parent_id" ON "election"."elections" USING btree ("parent_id");
+
+CREATE INDEX "ix_elections__template_id" ON "election"."elections" USING btree ("template_id");
 
 ALTER TABLE "election"."elections"
 ADD CONSTRAINT "fk_elections__election_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
@@ -10171,9 +10907,6 @@ ADD CONSTRAINT "fk_stations_host_id" FOREIGN KEY ("host_id") REFERENCES "identit
 ALTER TABLE "election"."stations"
 ADD CONSTRAINT "fk_stations_note_language_id" FOREIGN KEY ("note_language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "election"."stations"
-ADD CONSTRAINT "fk_stations_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_stations__code" ON "election"."stations" USING btree ("code");
 
 CREATE UNIQUE INDEX "uq_stations__election_id_feature_id" ON "election"."stations" USING btree ("election_id", "feature_id");
@@ -10212,12 +10945,18 @@ ADD CONSTRAINT "fk_turnouts_feature_id" FOREIGN KEY ("feature_id") REFERENCES "g
 ALTER TABLE "election"."turnouts"
 ADD CONSTRAINT "fk_turnouts_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "election"."turnouts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_turnouts__contest_id_feature_id_collection_id_revision" ON "election"."turnouts" USING btree (
+CREATE UNIQUE INDEX "uq_turnouts__contest_id_feature_id_collection_id_revi_partial_1" ON "election"."turnouts" USING btree (
     "contest_id",
     "feature_id",
     "collection_id",
     "revision"
-);
+)
+WHERE
+    ("collection_id" IS NOT NULL);
+
+CREATE UNIQUE INDEX "uq_turnouts__contest_id_feature_id_revision_partial_2" ON "election"."turnouts" USING btree ("contest_id", "feature_id", "revision")
+WHERE
+    ("collection_id" IS NULL);
 
 CREATE INDEX "ix_turnouts__feature_id" ON "election"."turnouts" USING btree ("feature_id");
 
@@ -10235,12 +10974,6 @@ ALTER TABLE "event"."changes"
 ADD CONSTRAINT "fk_changes_authority_id" FOREIGN KEY ("authority_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."changes"
-ADD CONSTRAINT "fk_changes_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "event"."changes"
-ADD CONSTRAINT "fk_changes_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "event"."changes"
 ADD CONSTRAINT "fk_changes_note_language_id" FOREIGN KEY ("note_language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."changes"
@@ -10253,9 +10986,6 @@ ALTER TABLE "event"."changes"
 ADD CONSTRAINT "fk_changes_replacement_occurrence_id" FOREIGN KEY ("replacement_occurrence_id") REFERENCES "event"."occurrences" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE INDEX "ix_changes__occurrence_id" ON "event"."changes" USING btree ("occurrence_id");
-
-ALTER TABLE "event"."events"
-ADD CONSTRAINT "fk_events_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."events"
 ADD CONSTRAINT "fk_events_calendar_id" FOREIGN KEY ("calendar_id") REFERENCES "event"."calendars" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10309,16 +11039,10 @@ ALTER TABLE "event"."occurrences"
 ADD CONSTRAINT "fk_occurrences_event_id" FOREIGN KEY ("event_id") REFERENCES "event"."events" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."occurrences"
-ADD CONSTRAINT "fk_occurrences_format_term" FOREIGN KEY ("format_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "event"."occurrences"
 ADD CONSTRAINT "fk_occurrences_knowledge_term" FOREIGN KEY ("knowledge_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."occurrences"
 ADD CONSTRAINT "fk_occurrences_organiser_id" FOREIGN KEY ("organiser_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "event"."occurrences"
-ADD CONSTRAINT "fk_occurrences_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."occurrences"
 ADD CONSTRAINT "fk_occurrences_timezone_id" FOREIGN KEY ("timezone_id") REFERENCES "reference"."timezones" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10349,15 +11073,14 @@ ALTER TABLE "event"."rules"
 ADD CONSTRAINT "fk_rules_event_id" FOREIGN KEY ("event_id") REFERENCES "event"."events" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."rules"
-ADD CONSTRAINT "fk_rules_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_rules_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE INDEX "ix_rules__event_id" ON "event"."rules" USING btree ("event_id");
 
-ALTER TABLE "event"."schedules"
-ADD CONSTRAINT "fk_schedules_anchor_event_id" FOREIGN KEY ("anchor_event_id") REFERENCES "event"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+CREATE INDEX "ix_rules__template_id" ON "event"."rules" USING btree ("template_id");
 
 ALTER TABLE "event"."schedules"
-ADD CONSTRAINT "fk_schedules_basis_provision_id" FOREIGN KEY ("basis_provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_schedules_anchor_event_id" FOREIGN KEY ("anchor_event_id") REFERENCES "event"."events" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."schedules"
 ADD CONSTRAINT "fk_schedules_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10369,16 +11092,18 @@ ALTER TABLE "event"."schedules"
 ADD CONSTRAINT "fk_schedules_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."schedules"
-ADD CONSTRAINT "fk_schedules_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_schedules_supersedes_schedule_id" FOREIGN KEY ("supersedes_schedule_id") REFERENCES "event"."schedules" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "event"."schedules"
-ADD CONSTRAINT "fk_schedules_supersedes_schedule_id" FOREIGN KEY ("supersedes_schedule_id") REFERENCES "event"."schedules" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_schedules_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_schedules__code" ON "event"."schedules" USING btree ("code");
 
 CREATE INDEX "ix_schedules__country_id_kind_term" ON "event"."schedules" USING btree ("country_id", "kind_term");
 
 CREATE INDEX "ix_schedules__anchor_event_id" ON "event"."schedules" USING btree ("anchor_event_id");
+
+CREATE INDEX "ix_schedules__template_id" ON "event"."schedules" USING btree ("template_id");
 
 ALTER TABLE "event"."seasons"
 ADD CONSTRAINT "fk_seasons_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10548,11 +11273,16 @@ ADD CONSTRAINT "fk_budgets_kind_term" FOREIGN KEY ("kind_term") REFERENCES "voca
 ALTER TABLE "finance"."budgets"
 ADD CONSTRAINT "fk_budgets_period_id" FOREIGN KEY ("period_id") REFERENCES "finance"."periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "finance"."budgets"
+ADD CONSTRAINT "fk_budgets_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_budgets__code" ON "finance"."budgets" USING btree ("code");
 
 CREATE UNIQUE INDEX "uq_budgets__government_id_period_id_kind_term" ON "finance"."budgets" USING btree ("government_id", "period_id", "kind_term");
 
 CREATE INDEX "ix_budgets__country_id_period_id" ON "finance"."budgets" USING btree ("country_id", "period_id");
+
+CREATE INDEX "ix_budgets__template_id" ON "finance"."budgets" USING btree ("template_id");
 
 ALTER TABLE "finance"."debts"
 ADD CONSTRAINT "fk_debts_borrower_id" FOREIGN KEY ("borrower_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10601,9 +11331,6 @@ ADD CONSTRAINT "fk_findings_period_id" FOREIGN KEY ("period_id") REFERENCES "fin
 ALTER TABLE "finance"."findings"
 ADD CONSTRAINT "fk_findings_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "finance"."findings"
-ADD CONSTRAINT "fk_findings_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_findings__code" ON "finance"."findings" USING btree ("code");
 
 CREATE INDEX "ix_findings__institution_id_period_id" ON "finance"."findings" USING btree ("institution_id", "period_id");
@@ -10647,9 +11374,6 @@ ALTER TABLE "finance"."flows"
 ADD CONSTRAINT "fk_flows_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "finance"."flows"
-ADD CONSTRAINT "fk_flows_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "finance"."flows"
 ADD CONSTRAINT "fk_flows_period_id" FOREIGN KEY ("period_id") REFERENCES "finance"."periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "finance"."flows"
@@ -10680,9 +11404,14 @@ ADD CONSTRAINT "fk_funds_scope_id" FOREIGN KEY ("scope_id") REFERENCES "governan
 ALTER TABLE "finance"."funds"
 ADD CONSTRAINT "fk_funds_source_term" FOREIGN KEY ("source_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "finance"."funds"
+ADD CONSTRAINT "fk_funds_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_funds__code" ON "finance"."funds" USING btree ("code");
 
 CREATE INDEX "ix_funds__country_id_kind_term" ON "finance"."funds" USING btree ("country_id", "kind_term");
+
+CREATE INDEX "ix_funds__template_id" ON "finance"."funds" USING btree ("template_id");
 
 ALTER TABLE "finance"."funds"
 ADD CONSTRAINT "fk_funds__fund_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
@@ -10690,31 +11419,80 @@ ADD CONSTRAINT "fk_funds__fund_is_identity" FOREIGN KEY ("id", "identity_kind") 
 ALTER TABLE "finance"."periods"
 ADD CONSTRAINT "fk_periods_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "finance"."periods"
-ADD CONSTRAINT "fk_periods_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_periods__code" ON "finance"."periods" USING btree ("code");
 
-CREATE UNIQUE INDEX "uq_periods__country_id_kind_term_starts_on" ON "finance"."periods" USING btree ("country_id", "kind_term", "starts_on");
+CREATE UNIQUE INDEX "uq_periods__country_id_kind_starts_on" ON "finance"."periods" USING btree ("country_id", "kind", "starts_on");
 
 ALTER TABLE "finance"."revisions"
 ADD CONSTRAINT "fk_revisions_budget_id" FOREIGN KEY ("budget_id") REFERENCES "finance"."budgets" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
 
-ALTER TABLE "finance"."revisions"
-ADD CONSTRAINT "fk_revisions_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_revisions__code" ON "finance"."revisions" USING btree ("code");
 
 CREATE UNIQUE INDEX "uq_revisions__budget_id_revision" ON "finance"."revisions" USING btree ("budget_id", "revision");
+
+ALTER TABLE "geography"."areas"
+ADD CONSTRAINT "fk_areas_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."areas"
+ADD CONSTRAINT "fk_areas_hierarchy_id" FOREIGN KEY ("hierarchy_id") REFERENCES "reference"."hierarchies" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "geography"."areas"
+ADD CONSTRAINT "fk_areas_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_areas__code" ON "geography"."areas" USING btree ("code");
+
+CREATE UNIQUE INDEX "uq_areas__hierarchy_id_feature_id_from_year_partial_2" ON "geography"."areas" USING btree ("hierarchy_id", "feature_id", "from_year")
+WHERE
+    ("from_year" IS NOT NULL);
+
+CREATE UNIQUE INDEX "uq_areas__hierarchy_id_feature_id_partial_3" ON "geography"."areas" USING btree ("hierarchy_id", "feature_id")
+WHERE
+    ("from_year" IS NULL);
+
+CREATE INDEX "ix_areas__feature_id" ON "geography"."areas" USING btree ("feature_id");
+
+CREATE INDEX "ix_areas__parent_id" ON "geography"."areas" USING btree ("parent_id");
+
+CREATE INDEX "ix_areas__level_id" ON "geography"."areas" USING btree ("level_id");
+
+CREATE INDEX "ix_areas__template_id" ON "geography"."areas" USING btree ("template_id");
+
+CREATE FUNCTION "geography"."areas__area_parents_have_no_cycle" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."parent_id" IS NOT NULL AND EXISTS (
+    WITH RECURSIVE chain(id) AS (
+      SELECT NEW."parent_id"
+      UNION
+      SELECT t."parent_id" FROM "geography"."areas" t JOIN chain ON t."id" = chain.id WHERE t."parent_id" IS NOT NULL
+    ) SELECT 1 FROM chain WHERE id = NEW."id"
+  ) THEN
+    RAISE EXCEPTION 'areas.parent_id would create a cycle' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_areas__area_parents_have_no_cycle"
+BEFORE INSERT OR UPDATE OF "parent_id" ON "geography"."areas" FOR EACH ROW
+EXECUTE FUNCTION "geography"."areas__area_parents_have_no_cycle" ();
+
+ALTER TABLE "reference"."levels"
+ADD CONSTRAINT "uq_levels__id_hierarchy_id_key" UNIQUE ("id", "hierarchy_id");
+
+ALTER TABLE "geography"."areas"
+ADD CONSTRAINT "fk_areas__area_level_is_in_hierarchy" FOREIGN KEY ("level_id", "hierarchy_id") REFERENCES "reference"."levels" ("id", "hierarchy_id");
+
+ALTER TABLE "geography"."areas"
+ADD CONSTRAINT "uq_areas__id_hierarchy_id_key" UNIQUE ("id", "hierarchy_id");
+
+ALTER TABLE "geography"."areas"
+ADD CONSTRAINT "fk_areas__area_parent_is_in_hierarchy" FOREIGN KEY ("parent_id", "hierarchy_id") REFERENCES "geography"."areas" ("id", "hierarchy_id");
 
 ALTER TABLE "geography"."assets"
 ADD CONSTRAINT "fk_assets_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."assets"
 ADD CONSTRAINT "fk_assets_hierarchy_id" FOREIGN KEY ("hierarchy_id") REFERENCES "reference"."hierarchies" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."assets"
-ADD CONSTRAINT "fk_assets_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."assets"
 ADD CONSTRAINT "fk_assets_level_id" FOREIGN KEY ("level_id") REFERENCES "reference"."levels" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10742,9 +11520,6 @@ ALTER TABLE "geography"."assets"
 ADD CONSTRAINT "fk_assets__asset_geometry_of_feature" FOREIGN KEY ("geometry_id", "feature_id") REFERENCES "geography"."geometries" ("id", "feature_id");
 
 ALTER TABLE "geography"."changes"
-ADD CONSTRAINT "fk_changes_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."changes"
 ADD CONSTRAINT "fk_changes_note_language_id" FOREIGN KEY ("note_language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."changes"
@@ -10766,7 +11541,7 @@ CREATE INDEX "ix_changes__predecessor_feature_id" ON "geography"."changes" USING
 
 CREATE INDEX "ix_changes__successor_feature_id" ON "geography"."changes" USING btree ("successor_feature_id");
 
-CREATE INDEX "ix_changes__kind_term" ON "geography"."changes" USING btree ("kind_term");
+CREATE INDEX "ix_changes__kind" ON "geography"."changes" USING btree ("kind");
 
 ALTER TABLE "geography"."features"
 ADD CONSTRAINT "fk_features_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10781,20 +11556,14 @@ ALTER TABLE "geography"."features"
 ADD CONSTRAINT "fk_features__feature_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
 
 ALTER TABLE "geography"."geometries"
-ADD CONSTRAINT "fk_geometries_basis_term" FOREIGN KEY ("basis_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."geometries"
 ADD CONSTRAINT "fk_geometries_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."geometries"
-ADD CONSTRAINT "fk_geometries_role_term" FOREIGN KEY ("role_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."geometries"
 ADD CONSTRAINT "fk_geometries_supersedes_id" FOREIGN KEY ("supersedes_id") REFERENCES "geography"."geometries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_geometries__feature_id_role_term_revision" ON "geography"."geometries" USING btree ("feature_id", "role_term", "revision");
+CREATE UNIQUE INDEX "uq_geometries__feature_id_role_revision" ON "geography"."geometries" USING btree ("feature_id", "role", "revision");
 
-CREATE UNIQUE INDEX "uq_geometries__feature_id_role_term_partial_2" ON "geography"."geometries" USING btree ("feature_id", "role_term")
+CREATE UNIQUE INDEX "uq_geometries__feature_id_role_partial_2" ON "geography"."geometries" USING btree ("feature_id", "role")
 WHERE
     (
         ("to_year" IS NULL)
@@ -10805,7 +11574,7 @@ CREATE UNIQUE INDEX "uq_geometries__id_feature_id" ON "geography"."geometries" U
 
 CREATE INDEX "ix_geometries__geometry_gist" ON "geography"."geometries" USING gist ("geometry");
 
-CREATE INDEX "ix_geometries__basis_term" ON "geography"."geometries" USING btree ("basis_term");
+CREATE INDEX "ix_geometries__basis" ON "geography"."geometries" USING btree ("basis");
 
 ALTER TABLE "geography"."outlines"
 ADD CONSTRAINT "fk_outlines_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
@@ -10832,33 +11601,27 @@ CREATE INDEX "ix_pieces__feature_id" ON "geography"."pieces" USING btree ("featu
 CREATE INDEX "ix_pieces__geometry_id" ON "geography"."pieces" USING btree ("geometry_id");
 
 ALTER TABLE "geography"."relationships"
-ADD CONSTRAINT "fk_relationships_hierarchy_id" FOREIGN KEY ("hierarchy_id") REFERENCES "reference"."hierarchies" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."relationships"
-ADD CONSTRAINT "fk_relationships_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."relationships"
-ADD CONSTRAINT "fk_relationships_level_id" FOREIGN KEY ("level_id") REFERENCES "reference"."levels" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "geography"."relationships"
 ADD CONSTRAINT "fk_relationships_object_feature_id" FOREIGN KEY ("object_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "geography"."relationships"
 ADD CONSTRAINT "fk_relationships_subject_feature_id" FOREIGN KEY ("subject_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_relationships__subject_feature_id_object_feature_id_kind_ter" ON "geography"."relationships" USING btree (
+CREATE UNIQUE INDEX "uq_relationships__subject_feature_id_object_feature_i_partial_1" ON "geography"."relationships" USING btree (
     "subject_feature_id",
     "object_feature_id",
-    "kind_term",
-    "hierarchy_id",
+    "kind",
     "from_year"
-);
+)
+WHERE
+    ("from_year" IS NOT NULL);
 
-CREATE INDEX "ix_relationships__subject_feature_id_kind_term" ON "geography"."relationships" USING btree ("subject_feature_id", "kind_term");
+CREATE UNIQUE INDEX "uq_relationships__subject_feature_id_object_feature_i_partial_2" ON "geography"."relationships" USING btree ("subject_feature_id", "object_feature_id", "kind")
+WHERE
+    ("from_year" IS NULL);
 
-CREATE INDEX "ix_relationships__object_feature_id_kind_term" ON "geography"."relationships" USING btree ("object_feature_id", "kind_term");
+CREATE INDEX "ix_relationships__subject_feature_id_kind" ON "geography"."relationships" USING btree ("subject_feature_id", "kind");
 
-CREATE INDEX "ix_relationships__hierarchy_id_level_id" ON "geography"."relationships" USING btree ("hierarchy_id", "level_id");
+CREATE INDEX "ix_relationships__object_feature_id_kind" ON "geography"."relationships" USING btree ("object_feature_id", "kind");
 
 CREATE INDEX "ix_relationships__from_year_to_year" ON "geography"."relationships" USING btree ("from_year", "to_year");
 
@@ -10892,12 +11655,6 @@ ADD CONSTRAINT "fk_assignments_institution_id" FOREIGN KEY ("institution_id") RE
 ALTER TABLE "governance"."assignments"
 ADD CONSTRAINT "fk_assignments_position_id" FOREIGN KEY ("position_id") REFERENCES "governance"."positions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "governance"."assignments"
-ADD CONSTRAINT "fk_assignments_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."assignments"
-ADD CONSTRAINT "fk_assignments_share_term" FOREIGN KEY ("share_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE INDEX "ix_assignments__function_id" ON "governance"."assignments" USING btree ("function_id");
 
 CREATE INDEX "ix_assignments__institution_id" ON "governance"."assignments" USING btree ("institution_id");
@@ -10906,9 +11663,6 @@ CREATE INDEX "ix_assignments__position_id" ON "governance"."assignments" USING b
 
 ALTER TABLE "governance"."functions"
 ADD CONSTRAINT "fk_functions_parent_id" FOREIGN KEY ("parent_id") REFERENCES "governance"."functions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."functions"
-ADD CONSTRAINT "fk_functions_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."functions"
 ADD CONSTRAINT "fk_functions_topic_term" FOREIGN KEY ("topic_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -10948,13 +11702,7 @@ ALTER TABLE "governance"."holders"
 ADD CONSTRAINT "fk_holders_individual_id" FOREIGN KEY ("individual_id") REFERENCES "official"."individuals" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."holders"
-ADD CONSTRAINT "fk_holders_method_term" FOREIGN KEY ("method_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."holders"
 ADD CONSTRAINT "fk_holders_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."holders"
-ADD CONSTRAINT "fk_holders_reason_term" FOREIGN KEY ("reason_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_holders__code" ON "governance"."holders" USING btree ("code");
 
@@ -10964,51 +11712,10 @@ CREATE INDEX "ix_holders__individual_id" ON "governance"."holders" USING btree (
 
 CREATE INDEX "ix_holders__contest_id" ON "governance"."holders" USING btree ("contest_id");
 
-ALTER TABLE "governance"."instances"
-ADD CONSTRAINT "fk_instances_contact_id" FOREIGN KEY ("contact_id") REFERENCES "official"."contacts" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+CREATE INDEX "ix_holders__term_id" ON "governance"."holders" USING btree ("term_id");
 
-ALTER TABLE "governance"."instances"
-ADD CONSTRAINT "fk_instances_domain_id" FOREIGN KEY ("domain_id") REFERENCES "source"."domains" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."instances"
-ADD CONSTRAINT "fk_instances_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."instances"
-ADD CONSTRAINT "fk_instances_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."instances"
-ADD CONSTRAINT "fk_instances_position_id" FOREIGN KEY ("position_id") REFERENCES "governance"."positions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."instances"
-ADD CONSTRAINT "fk_instances_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."instances"
-ADD CONSTRAINT "fk_instances_template_id" FOREIGN KEY ("template_id") REFERENCES "governance"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."instances"
-ADD CONSTRAINT "fk_instances_unit_feature_id" FOREIGN KEY ("unit_feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_instances__template_id_unit_feature_id_partial_1" ON "governance"."instances" USING btree ("template_id", "unit_feature_id")
-WHERE
-    ("unit_feature_id" IS NOT NULL);
-
-CREATE UNIQUE INDEX "uq_instances__template_id_partial_2" ON "governance"."instances" USING btree ("template_id")
-WHERE
-    ("unit_feature_id" IS NULL);
-
-CREATE INDEX "ix_instances__unit_feature_id" ON "governance"."instances" USING btree ("unit_feature_id");
-
-CREATE INDEX "ix_instances__institution_id" ON "governance"."instances" USING btree ("institution_id");
-
-CREATE INDEX "ix_instances__position_id" ON "governance"."instances" USING btree ("position_id");
-
-CREATE INDEX "ix_instances__office_id" ON "governance"."instances" USING btree ("office_id");
-
-ALTER TABLE "governance"."institutions"
-ADD CONSTRAINT "fk_institutions_arm_term" FOREIGN KEY ("arm_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."institutions"
-ADD CONSTRAINT "fk_institutions_basis_term" FOREIGN KEY ("basis_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ALTER TABLE "governance"."holders"
+ADD CONSTRAINT "fk_holders__holder_term_is_of_office" FOREIGN KEY ("term_id", "office_id") REFERENCES "governance"."terms" ("id", "office_id");
 
 ALTER TABLE "governance"."institutions"
 ADD CONSTRAINT "fk_institutions_class_term" FOREIGN KEY ("class_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11019,33 +11726,41 @@ ADD CONSTRAINT "fk_institutions_country_id" FOREIGN KEY ("country_id") REFERENCE
 ALTER TABLE "governance"."institutions"
 ADD CONSTRAINT "fk_institutions_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "governance"."institutions"
+ADD CONSTRAINT "fk_institutions_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_institutions__code" ON "governance"."institutions" USING btree ("code");
 
 CREATE INDEX "ix_institutions__country_id_kind_term" ON "governance"."institutions" USING btree ("country_id", "kind_term");
 
-CREATE INDEX "ix_institutions__arm_term" ON "governance"."institutions" USING btree ("arm_term");
+CREATE INDEX "ix_institutions__arm" ON "governance"."institutions" USING btree ("arm");
+
+CREATE INDEX "ix_institutions__template_id" ON "governance"."institutions" USING btree ("template_id");
 
 ALTER TABLE "governance"."institutions"
 ADD CONSTRAINT "fk_institutions__institution_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
+
+ALTER TABLE "official"."entities"
+ADD CONSTRAINT "uq_entities__id_key" UNIQUE ("id");
+
+ALTER TABLE "governance"."institutions"
+ADD CONSTRAINT "fk_institutions__institution_is_entity" FOREIGN KEY ("id") REFERENCES "official"."entities" ("id");
+
+ALTER TABLE "governance"."jurisdictions"
+ADD CONSTRAINT "fk_jurisdictions_area_id" FOREIGN KEY ("area_id") REFERENCES "geography"."areas" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."jurisdictions"
 ADD CONSTRAINT "fk_jurisdictions_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."jurisdictions"
-ADD CONSTRAINT "fk_jurisdictions_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."jurisdictions"
 ADD CONSTRAINT "fk_jurisdictions_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."jurisdictions"
-ADD CONSTRAINT "fk_jurisdictions_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."jurisdictions"
 ADD CONSTRAINT "fk_jurisdictions_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_jurisdictions__code" ON "governance"."jurisdictions" USING btree ("code");
 
-CREATE INDEX "ix_jurisdictions__country_id_feature_id" ON "governance"."jurisdictions" USING btree ("country_id", "feature_id");
+CREATE INDEX "ix_jurisdictions__country_id_area_id" ON "governance"."jurisdictions" USING btree ("country_id", "area_id");
 
 CREATE INDEX "ix_jurisdictions__institution_id" ON "governance"."jurisdictions" USING btree ("institution_id");
 
@@ -11058,9 +11773,6 @@ ALTER TABLE "governance"."obligations"
 ADD CONSTRAINT "fk_obligations_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."obligations"
-ADD CONSTRAINT "fk_obligations_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."obligations"
 ADD CONSTRAINT "fk_obligations_recipient_id" FOREIGN KEY ("recipient_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_obligations__code" ON "governance"."obligations" USING btree ("code");
@@ -11070,7 +11782,10 @@ CREATE INDEX "ix_obligations__holder_id" ON "governance"."obligations" USING btr
 CREATE INDEX "ix_obligations__recipient_id" ON "governance"."obligations" USING btree ("recipient_id");
 
 ALTER TABLE "governance"."terms"
-ADD CONSTRAINT "fk_terms_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_terms_area_id" FOREIGN KEY ("area_id") REFERENCES "geography"."areas" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."terms"
+ADD CONSTRAINT "fk_terms_election_id" FOREIGN KEY ("election_id") REFERENCES "election"."elections" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."terms"
 ADD CONSTRAINT "fk_terms_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11081,14 +11796,25 @@ ADD CONSTRAINT "fk_terms_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabu
 ALTER TABLE "governance"."terms"
 ADD CONSTRAINT "fk_terms_office_id" FOREIGN KEY ("office_id") REFERENCES "governance"."offices" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "governance"."terms"
+ADD CONSTRAINT "fk_terms_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_terms__code" ON "governance"."terms" USING btree ("code");
 
 CREATE INDEX "ix_terms__institution_id_ordinal" ON "governance"."terms" USING btree ("institution_id", "ordinal");
 
 CREATE INDEX "ix_terms__office_id" ON "governance"."terms" USING btree ("office_id");
 
+CREATE INDEX "ix_terms__area_id" ON "governance"."terms" USING btree ("area_id");
+
+CREATE INDEX "ix_terms__election_id" ON "governance"."terms" USING btree ("election_id");
+
+CREATE INDEX "ix_terms__template_id" ON "governance"."terms" USING btree ("template_id");
+
+CREATE UNIQUE INDEX "uq_terms__id_office_id" ON "governance"."terms" USING btree ("id", "office_id");
+
 ALTER TABLE "governance"."offices"
-ADD CONSTRAINT "fk_offices_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_offices_area_id" FOREIGN KEY ("area_id") REFERENCES "geography"."areas" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."offices"
 ADD CONSTRAINT "fk_offices_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11096,62 +11822,65 @@ ADD CONSTRAINT "fk_offices_institution_id" FOREIGN KEY ("institution_id") REFERE
 ALTER TABLE "governance"."offices"
 ADD CONSTRAINT "fk_offices_position_id" FOREIGN KEY ("position_id") REFERENCES "governance"."positions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "governance"."offices"
+ADD CONSTRAINT "fk_offices_premises_id" FOREIGN KEY ("premises_id") REFERENCES "official"."premises" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "governance"."offices"
+ADD CONSTRAINT "fk_offices_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_offices__code" ON "governance"."offices" USING btree ("code");
 
-CREATE UNIQUE INDEX "uq_offices__position_id_feature_id_partial_2" ON "governance"."offices" USING btree ("position_id", "feature_id")
+CREATE UNIQUE INDEX "uq_offices__position_id_institution_id_area_id_partial_2" ON "governance"."offices" USING btree ("position_id", "institution_id", "area_id")
 WHERE
     (
         ("deleted_at" IS NULL)
         AND ("to_year" IS NULL)
-        AND ("feature_id" IS NOT NULL)
+        AND ("area_id" IS NOT NULL)
         AND ("seat" IS NULL)
     );
 
-CREATE UNIQUE INDEX "uq_offices__position_id_feature_id_seat_partial_3" ON "governance"."offices" USING btree ("position_id", "feature_id", "seat")
+CREATE UNIQUE INDEX "uq_offices__position_id_institution_id_area_id_seat_partial_3" ON "governance"."offices" USING btree (
+    "position_id",
+    "institution_id",
+    "area_id",
+    "seat"
+)
 WHERE
     (
         ("deleted_at" IS NULL)
         AND ("to_year" IS NULL)
-        AND ("feature_id" IS NOT NULL)
+        AND ("area_id" IS NOT NULL)
         AND ("seat" IS NOT NULL)
     );
 
-CREATE UNIQUE INDEX "uq_offices__position_id_seat_partial_4" ON "governance"."offices" USING btree ("position_id", "seat")
+CREATE UNIQUE INDEX "uq_offices__position_id_institution_id_seat_partial_4" ON "governance"."offices" USING btree ("position_id", "institution_id", "seat")
 WHERE
     (
         ("deleted_at" IS NULL)
         AND ("to_year" IS NULL)
-        AND ("feature_id" IS NULL)
+        AND ("area_id" IS NULL)
         AND ("seat" IS NOT NULL)
     );
 
-CREATE UNIQUE INDEX "uq_offices__position_id_partial_5" ON "governance"."offices" USING btree ("position_id")
+CREATE UNIQUE INDEX "uq_offices__position_id_institution_id_partial_5" ON "governance"."offices" USING btree ("position_id", "institution_id")
 WHERE
     (
         ("deleted_at" IS NULL)
         AND ("to_year" IS NULL)
-        AND ("feature_id" IS NULL)
+        AND ("area_id" IS NULL)
         AND ("seat" IS NULL)
     );
 
 CREATE INDEX "ix_offices__institution_id" ON "governance"."offices" USING btree ("institution_id");
 
-CREATE INDEX "ix_offices__feature_id" ON "governance"."offices" USING btree ("feature_id");
+CREATE INDEX "ix_offices__area_id" ON "governance"."offices" USING btree ("area_id");
+
+CREATE INDEX "ix_offices__premises_id" ON "governance"."offices" USING btree ("premises_id");
+
+CREATE INDEX "ix_offices__template_id" ON "governance"."offices" USING btree ("template_id");
 
 ALTER TABLE "governance"."offices"
 ADD CONSTRAINT "fk_offices__office_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
-
-ALTER TABLE "governance"."patterns"
-ADD CONSTRAINT "fk_patterns_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."patterns"
-ADD CONSTRAINT "fk_patterns_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_patterns__code" ON "governance"."patterns" USING btree ("code");
-
-CREATE INDEX "ix_patterns__kind_term" ON "governance"."patterns" USING btree ("kind_term");
-
-CREATE INDEX "ix_patterns__country_id" ON "governance"."patterns" USING btree ("country_id");
 
 ALTER TABLE "governance"."positions"
 ADD CONSTRAINT "fk_positions_basis_term" FOREIGN KEY ("basis_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11160,16 +11889,10 @@ ALTER TABLE "governance"."positions"
 ADD CONSTRAINT "fk_positions_exposure_term" FOREIGN KEY ("exposure_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."positions"
-ADD CONSTRAINT "fk_positions_institution_id" FOREIGN KEY ("institution_id") REFERENCES "governance"."institutions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+ADD CONSTRAINT "fk_positions_institution_class_term" FOREIGN KEY ("institution_class_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."positions"
 ADD CONSTRAINT "fk_positions_level_id" FOREIGN KEY ("level_id") REFERENCES "reference"."levels" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."positions"
-ADD CONSTRAINT "fk_positions_method_term" FOREIGN KEY ("method_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."positions"
-ADD CONSTRAINT "fk_positions_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."positions"
 ADD CONSTRAINT "fk_positions_role_term" FOREIGN KEY ("role_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11177,13 +11900,18 @@ ADD CONSTRAINT "fk_positions_role_term" FOREIGN KEY ("role_term") REFERENCES "vo
 ALTER TABLE "governance"."positions"
 ADD CONSTRAINT "fk_positions_seat_level_id" FOREIGN KEY ("seat_level_id") REFERENCES "reference"."levels" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+ALTER TABLE "governance"."positions"
+ADD CONSTRAINT "fk_positions_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 CREATE UNIQUE INDEX "uq_positions__code" ON "governance"."positions" USING btree ("code");
 
-CREATE INDEX "ix_positions__institution_id" ON "governance"."positions" USING btree ("institution_id");
+CREATE INDEX "ix_positions__institution_class_term" ON "governance"."positions" USING btree ("institution_class_term");
 
 CREATE INDEX "ix_positions__role_term" ON "governance"."positions" USING btree ("role_term");
 
 CREATE INDEX "ix_positions__level_id" ON "governance"."positions" USING btree ("level_id");
+
+CREATE INDEX "ix_positions__template_id" ON "governance"."positions" USING btree ("template_id");
 
 ALTER TABLE "governance"."positions"
 ADD CONSTRAINT "fk_positions__position_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
@@ -11196,9 +11924,6 @@ ADD CONSTRAINT "fk_powers_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocab
 
 ALTER TABLE "governance"."powers"
 ADD CONSTRAINT "fk_powers_procedure_id" FOREIGN KEY ("procedure_id") REFERENCES "governance"."procedures" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."powers"
-ADD CONSTRAINT "fk_powers_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."powers"
 ADD CONSTRAINT "fk_powers_threshold_term" FOREIGN KEY ("threshold_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11215,9 +11940,6 @@ CREATE INDEX "ix_powers__procedure_id" ON "governance"."powers" USING btree ("pr
 ALTER TABLE "governance"."procedures"
 ADD CONSTRAINT "fk_procedures_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "governance"."procedures"
-ADD CONSTRAINT "fk_procedures_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_procedures__code" ON "governance"."procedures" USING btree ("code");
 
 CREATE INDEX "ix_procedures__kind_term" ON "governance"."procedures" USING btree ("kind_term");
@@ -11230,9 +11952,6 @@ ADD CONSTRAINT "fk_relationships_from_id" FOREIGN KEY ("from_id") REFERENCES "id
 
 ALTER TABLE "governance"."relationships"
 ADD CONSTRAINT "fk_relationships_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."relationships"
-ADD CONSTRAINT "fk_relationships_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "governance"."relationships"
 ADD CONSTRAINT "fk_relationships_to_id" FOREIGN KEY ("to_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11250,49 +11969,11 @@ ADD CONSTRAINT "fk_reports_obligation_id" FOREIGN KEY ("obligation_id") REFERENC
 ALTER TABLE "governance"."reports"
 ADD CONSTRAINT "fk_reports_reporter_id" FOREIGN KEY ("reporter_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "governance"."reports"
-ADD CONSTRAINT "fk_reports_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_reports__code" ON "governance"."reports" USING btree ("code");
 
 CREATE INDEX "ix_reports__obligation_id_from_year" ON "governance"."reports" USING btree ("obligation_id", "from_year");
 
 CREATE INDEX "ix_reports__reporter_id" ON "governance"."reports" USING btree ("reporter_id");
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_arm_term" FOREIGN KEY ("arm_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_basis_term" FOREIGN KEY ("basis_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_class_term" FOREIGN KEY ("class_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_fan_out_level_id" FOREIGN KEY ("fan_out_level_id") REFERENCES "reference"."levels" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_method_term" FOREIGN KEY ("method_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_parent_template_id" FOREIGN KEY ("parent_template_id") REFERENCES "governance"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_pattern_id" FOREIGN KEY ("pattern_id") REFERENCES "governance"."patterns" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
-
-ALTER TABLE "governance"."templates"
-ADD CONSTRAINT "fk_templates_role_term" FOREIGN KEY ("role_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE UNIQUE INDEX "uq_templates__code" ON "governance"."templates" USING btree ("code");
-
-CREATE UNIQUE INDEX "uq_templates__pattern_id_code" ON "governance"."templates" USING btree ("pattern_id", "code");
-
-CREATE INDEX "ix_templates__fan_out_level_id" ON "governance"."templates" USING btree ("fan_out_level_id");
-
-CREATE INDEX "ix_templates__parent_template_id" ON "governance"."templates" USING btree ("parent_template_id");
 
 ALTER TABLE "history"."eras"
 ADD CONSTRAINT "fk_eras_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11469,9 +12150,6 @@ ALTER TABLE "identity"."names"
 ADD CONSTRAINT "fk_names_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "identity"."names"
-ADD CONSTRAINT "fk_names_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "identity"."names"
 ADD CONSTRAINT "fk_names_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "identity"."names"
@@ -11549,9 +12227,6 @@ ADD CONSTRAINT "fk_instruments_jurisdiction_id" FOREIGN KEY ("jurisdiction_id") 
 
 ALTER TABLE "legal"."instruments"
 ADD CONSTRAINT "fk_instruments_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "legal"."instruments"
-ADD CONSTRAINT "fk_instruments_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_instruments__code" ON "legal"."instruments" USING btree ("code");
 
@@ -11734,16 +12409,13 @@ ALTER TABLE "legislature"."bills"
 ADD CONSTRAINT "fk_bills_sponsor_id" FOREIGN KEY ("sponsor_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "legislature"."bills"
-ADD CONSTRAINT "fk_bills_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "legislature"."bills"
 ADD CONSTRAINT "fk_bills_term_id" FOREIGN KEY ("term_id") REFERENCES "governance"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_bills__code" ON "legislature"."bills" USING btree ("code");
 
 CREATE INDEX "ix_bills__institution_id_term_id" ON "legislature"."bills" USING btree ("institution_id", "term_id");
 
-CREATE INDEX "ix_bills__status_term" ON "legislature"."bills" USING btree ("status_term");
+CREATE INDEX "ix_bills__status" ON "legislature"."bills" USING btree ("status");
 
 CREATE INDEX "ix_bills__sponsor_id" ON "legislature"."bills" USING btree ("sponsor_id");
 
@@ -11767,22 +12439,13 @@ ALTER TABLE "legislature"."motions"
 ADD CONSTRAINT "fk_motions_bill_id" FOREIGN KEY ("bill_id") REFERENCES "legislature"."bills" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "legislature"."motions"
-ADD CONSTRAINT "fk_motions_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "legislature"."motions"
 ADD CONSTRAINT "fk_motions_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "legislature"."motions"
 ADD CONSTRAINT "fk_motions_mover_id" FOREIGN KEY ("mover_id") REFERENCES "governance"."holders" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "legislature"."motions"
-ADD CONSTRAINT "fk_motions_outcome_term" FOREIGN KEY ("outcome_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "legislature"."motions"
 ADD CONSTRAINT "fk_motions_period_id" FOREIGN KEY ("period_id") REFERENCES "finance"."periods" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "legislature"."motions"
-ADD CONSTRAINT "fk_motions_provision_id" FOREIGN KEY ("provision_id") REFERENCES "legal"."provisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "legislature"."motions"
 ADD CONSTRAINT "fk_motions_revision_id" FOREIGN KEY ("revision_id") REFERENCES "finance"."revisions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11851,9 +12514,6 @@ ADD CONSTRAINT "fk_stages_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocab
 
 ALTER TABLE "legislature"."stages"
 ADD CONSTRAINT "fk_stages_motion_id" FOREIGN KEY ("motion_id") REFERENCES "legislature"."motions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "legislature"."stages"
-ADD CONSTRAINT "fk_stages_outcome_term" FOREIGN KEY ("outcome_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "legislature"."stages"
 ADD CONSTRAINT "fk_stages_sitting_id" FOREIGN KEY ("sitting_id") REFERENCES "legislature"."sittings" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -11960,9 +12620,6 @@ ADD CONSTRAINT "fk_subjects_article_id" FOREIGN KEY ("article_id") REFERENCES "m
 ALTER TABLE "media"."subjects"
 ADD CONSTRAINT "fk_subjects_identity_id" FOREIGN KEY ("identity_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "media"."subjects"
-ADD CONSTRAINT "fk_subjects_role_term" FOREIGN KEY ("role_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_subjects__article_id_identity_id" ON "media"."subjects" USING btree ("article_id", "identity_id");
 
 CREATE INDEX "ix_subjects__identity_id" ON "media"."subjects" USING btree ("identity_id");
@@ -12018,13 +12675,7 @@ CREATE INDEX "ix_branding__identity_id_kind_term" ON "official"."branding" USING
 ALTER TABLE "official"."contacts"
 ADD CONSTRAINT "fk_contacts_identity_id" FOREIGN KEY ("identity_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "official"."contacts"
-ADD CONSTRAINT "fk_contacts_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "official"."contacts"
-ADD CONSTRAINT "fk_contacts_visibility_term" FOREIGN KEY ("visibility_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-CREATE INDEX "ix_contacts__identity_id_kind_term" ON "official"."contacts" USING btree ("identity_id", "kind_term");
+CREATE INDEX "ix_contacts__identity_id_kind" ON "official"."contacts" USING btree ("identity_id", "kind");
 
 ALTER TABLE "official"."entities"
 ADD CONSTRAINT "fk_entities_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -12054,6 +12705,21 @@ ADD CONSTRAINT "uq_names__id_identity_kind_key" UNIQUE ("id", "identity_kind");
 ALTER TABLE "official"."parts"
 ADD CONSTRAINT "fk_parts__part_of_name" FOREIGN KEY ("name_id", "name_kind") REFERENCES "identity"."names" ("id", "identity_kind");
 
+ALTER TABLE "official"."premises"
+ADD CONSTRAINT "fk_premises_entity_id" FOREIGN KEY ("entity_id") REFERENCES "official"."entities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."premises"
+ADD CONSTRAINT "fk_premises_feature_id" FOREIGN KEY ("feature_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "official"."premises"
+ADD CONSTRAINT "fk_premises_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_premises__code" ON "official"."premises" USING btree ("code");
+
+CREATE UNIQUE INDEX "uq_premises__entity_id_kind_term_ordinal" ON "official"."premises" USING btree ("entity_id", "kind_term", "ordinal");
+
+CREATE INDEX "ix_premises__feature_id" ON "official"."premises" USING btree ("feature_id");
+
 ALTER TABLE "official"."relationships"
 ADD CONSTRAINT "fk_relationships_basis_term" FOREIGN KEY ("basis_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
@@ -12082,7 +12748,13 @@ ADD CONSTRAINT "fk_alignments_kind_term" FOREIGN KEY ("kind_term") REFERENCES "v
 ALTER TABLE "politics"."alignments"
 ADD CONSTRAINT "fk_alignments_party_id" FOREIGN KEY ("party_id") REFERENCES "politics"."parties" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-CREATE UNIQUE INDEX "uq_alignments__coalition_id_party_id_from_year" ON "politics"."alignments" USING btree ("coalition_id", "party_id", "from_year");
+CREATE UNIQUE INDEX "uq_alignments__coalition_id_party_id_from_year_partial_1" ON "politics"."alignments" USING btree ("coalition_id", "party_id", "from_year")
+WHERE
+    ("from_year" IS NOT NULL);
+
+CREATE UNIQUE INDEX "uq_alignments__coalition_id_party_id_partial_2" ON "politics"."alignments" USING btree ("coalition_id", "party_id")
+WHERE
+    ("from_year" IS NULL);
 
 CREATE INDEX "ix_alignments__party_id" ON "politics"."alignments" USING btree ("party_id");
 
@@ -12145,9 +12817,6 @@ ALTER TABLE "politics"."commitments"
 ADD CONSTRAINT "fk_commitments_place_id" FOREIGN KEY ("place_id") REFERENCES "geography"."features" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "politics"."commitments"
-ADD CONSTRAINT "fk_commitments_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "politics"."commitments"
 ADD CONSTRAINT "fk_commitments_topic_term" FOREIGN KEY ("topic_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "politics"."commitments"
@@ -12161,7 +12830,7 @@ CREATE INDEX "ix_commitments__manifesto_id" ON "politics"."commitments" USING bt
 
 CREATE INDEX "ix_commitments__office_id" ON "politics"."commitments" USING btree ("office_id");
 
-CREATE INDEX "ix_commitments__status_term" ON "politics"."commitments" USING btree ("status_term");
+CREATE INDEX "ix_commitments__status" ON "politics"."commitments" USING btree ("status");
 
 ALTER TABLE "politics"."commitments"
 ADD CONSTRAINT "fk_commitments__commitment_in_speech" FOREIGN KEY ("speech_id", "country_id") REFERENCES "legislature"."speeches" ("id", "country_id");
@@ -12177,9 +12846,6 @@ ADD CONSTRAINT "fk_contributions_election_id" FOREIGN KEY ("election_id") REFERE
 
 ALTER TABLE "politics"."contributions"
 ADD CONSTRAINT "fk_contributions_recipient_id" FOREIGN KEY ("recipient_id") REFERENCES "identity"."identities" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "politics"."contributions"
-ADD CONSTRAINT "fk_contributions_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "politics"."contributions"
 ADD CONSTRAINT "fk_contributions_version_id" FOREIGN KEY ("version_id") REFERENCES "filesystem"."versions" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -12208,13 +12874,7 @@ ALTER TABLE "politics"."fulfilments"
 ADD CONSTRAINT "fk_fulfilments_instrument_id" FOREIGN KEY ("instrument_id") REFERENCES "legal"."instruments" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "politics"."fulfilments"
-ADD CONSTRAINT "fk_fulfilments_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "politics"."fulfilments"
 ADD CONSTRAINT "fk_fulfilments_project_id" FOREIGN KEY ("project_id") REFERENCES "civic"."projects" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "politics"."fulfilments"
-ADD CONSTRAINT "fk_fulfilments_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE INDEX "ix_fulfilments__commitment_id" ON "politics"."fulfilments" USING btree ("commitment_id");
 
@@ -12287,6 +12947,8 @@ ALTER TABLE "product"."lang"
 ADD CONSTRAINT "fk_lang_release_id" FOREIGN KEY ("release_id") REFERENCES "product"."releases" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_lang__release_id_language_id" ON "product"."lang" USING btree ("release_id", "language_id");
+
+CREATE UNIQUE INDEX "uq_lang__release_id_position" ON "product"."lang" USING btree ("release_id", "position");
 
 CREATE INDEX "ix_lang__language_id" ON "product"."lang" USING btree ("language_id");
 
@@ -12388,9 +13050,6 @@ ADD CONSTRAINT "fk_currencies__currency_is_identity" FOREIGN KEY ("id", "identit
 ALTER TABLE "reference"."hierarchies"
 ADD CONSTRAINT "fk_hierarchies_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "reference"."hierarchies"
-ADD CONSTRAINT "fk_hierarchies_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_hierarchies__code" ON "reference"."hierarchies" USING btree ("code");
 
 CREATE UNIQUE INDEX "uq_hierarchies__country_id_partial_2" ON "reference"."hierarchies" USING btree ("country_id")
@@ -12401,19 +13060,13 @@ WHERE
         AND ("deleted_at" IS NULL)
     );
 
-CREATE INDEX "ix_hierarchies__country_id_kind_term" ON "reference"."hierarchies" USING btree ("country_id", "kind_term");
+CREATE INDEX "ix_hierarchies__country_id_kind" ON "reference"."hierarchies" USING btree ("country_id", "kind");
 
 ALTER TABLE "reference"."hierarchies"
 ADD CONSTRAINT "fk_hierarchies__hierarchy_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
 
 ALTER TABLE "reference"."languages"
-ADD CONSTRAINT "fk_languages_direction_term" FOREIGN KEY ("direction_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "reference"."languages"
 ADD CONSTRAINT "fk_languages_family_term" FOREIGN KEY ("family_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "reference"."languages"
-ADD CONSTRAINT "fk_languages_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "reference"."languages"
 ADD CONSTRAINT "fk_languages_parent_id" FOREIGN KEY ("parent_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -12707,9 +13360,6 @@ ADD CONSTRAINT "fk_disputes_kind_term" FOREIGN KEY ("kind_term") REFERENCES "voc
 ALTER TABLE "source"."disputes"
 ADD CONSTRAINT "fk_disputes_note_language_id" FOREIGN KEY ("note_language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE "source"."disputes"
-ADD CONSTRAINT "fk_disputes_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_disputes__code" ON "source"."disputes" USING btree ("code");
 
 CREATE INDEX "ix_disputes__subject_table_subject_id" ON "source"."disputes" USING btree ("subject_table", "subject_id");
@@ -12722,12 +13372,6 @@ ADD CONSTRAINT "fk_domains_owner_id" FOREIGN KEY ("owner_id") REFERENCES "identi
 
 ALTER TABLE "source"."domains"
 ADD CONSTRAINT "fk_domains_source_id" FOREIGN KEY ("source_id") REFERENCES "source"."sources" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "source"."domains"
-ADD CONSTRAINT "fk_domains_status_term" FOREIGN KEY ("status_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
-ALTER TABLE "source"."domains"
-ADD CONSTRAINT "fk_domains_template_id" FOREIGN KEY ("template_id") REFERENCES "governance"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 CREATE UNIQUE INDEX "uq_domains__code" ON "source"."domains" USING btree ("code");
 
@@ -12862,9 +13506,6 @@ ADD CONSTRAINT "fk_components_component_id" FOREIGN KEY ("component_id") REFEREN
 ALTER TABLE "statistics"."components"
 ADD CONSTRAINT "fk_components_indicator_id" FOREIGN KEY ("indicator_id") REFERENCES "statistics"."indicators" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
 
-ALTER TABLE "statistics"."components"
-ADD CONSTRAINT "fk_components_transform_term" FOREIGN KEY ("transform_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
-
 CREATE UNIQUE INDEX "uq_components__indicator_id_component_id" ON "statistics"."components" USING btree ("indicator_id", "component_id");
 
 CREATE INDEX "ix_components__component_id" ON "statistics"."components" USING btree ("component_id");
@@ -12910,9 +13551,6 @@ CREATE INDEX "ix_figures__country_id_metric_id_feature_id_from_year" ON "statist
 
 ALTER TABLE "statistics"."figures"
 ADD CONSTRAINT "fk_figures__figure_of_observation" FOREIGN KEY ("observation_id", "country_id") REFERENCES "statistics"."observations" ("id", "country_id");
-
-ALTER TABLE "statistics"."indicators"
-ADD CONSTRAINT "fk_indicators_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE "statistics"."indicators"
 ADD CONSTRAINT "fk_indicators_role_term" FOREIGN KEY ("role_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -13004,6 +13642,98 @@ ADD CONSTRAINT "fk_priorities_steward_id" FOREIGN KEY ("steward_id") REFERENCES 
 CREATE UNIQUE INDEX "uq_priorities__country_id_position" ON "statistics"."priorities" USING btree ("country_id", "position");
 
 CREATE INDEX "ix_priorities__collection_id" ON "statistics"."priorities" USING btree ("collection_id");
+
+ALTER TABLE "template"."items"
+ADD CONSTRAINT "fk_items_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."items"
+ADD CONSTRAINT "fk_items_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_items__code" ON "template"."items" USING btree ("code");
+
+CREATE UNIQUE INDEX "uq_items__template_id_key" ON "template"."items" USING btree ("template_id", "key");
+
+CREATE UNIQUE INDEX "uq_items__template_id_position" ON "template"."items" USING btree ("template_id", "position");
+
+ALTER TABLE "template"."lines"
+ADD CONSTRAINT "fk_lines_effect_template_id" FOREIGN KEY ("effect_template_id") REFERENCES "template"."templates" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."lines"
+ADD CONSTRAINT "fk_lines_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_lines__template_id_effect_template_id" ON "template"."lines" USING btree ("template_id", "effect_template_id");
+
+CREATE UNIQUE INDEX "uq_lines__template_id_position" ON "template"."lines" USING btree ("template_id", "position");
+
+CREATE INDEX "ix_lines__effect_template_id" ON "template"."lines" USING btree ("effect_template_id");
+
+ALTER TABLE "template"."patterns"
+ADD CONSTRAINT "fk_patterns_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_patterns__code" ON "template"."patterns" USING btree ("code");
+
+CREATE INDEX "ix_patterns__country_id" ON "template"."patterns" USING btree ("country_id");
+
+ALTER TABLE "template"."patterns"
+ADD CONSTRAINT "fk_patterns__pattern_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_basis_term" FOREIGN KEY ("basis_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_class_term" FOREIGN KEY ("class_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_contest_kind_term" FOREIGN KEY ("contest_kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_election_kind_term" FOREIGN KEY ("election_kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_entity_kind_term" FOREIGN KEY ("entity_kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_fan_out_level_id" FOREIGN KEY ("fan_out_level_id") REFERENCES "reference"."levels" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_kind_term" FOREIGN KEY ("kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_pattern_id" FOREIGN KEY ("pattern_id") REFERENCES "template"."patterns" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_premises_kind_term" FOREIGN KEY ("premises_kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_role_term" FOREIGN KEY ("role_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates_term_kind_term" FOREIGN KEY ("term_kind_term") REFERENCES "vocabulary"."terms" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_templates__code" ON "template"."templates" USING btree ("code");
+
+CREATE INDEX "ix_templates__pattern_id" ON "template"."templates" USING btree ("pattern_id");
+
+CREATE INDEX "ix_templates__fan_out_level_id" ON "template"."templates" USING btree ("fan_out_level_id");
+
+CREATE INDEX "ix_templates__product" ON "template"."templates" USING btree ("product");
+
+ALTER TABLE "template"."templates"
+ADD CONSTRAINT "fk_templates__template_is_identity" FOREIGN KEY ("id", "identity_kind") REFERENCES "identity"."identities" ("id", "kind");
+
+ALTER TABLE "template"."texts"
+ADD CONSTRAINT "fk_texts_language_id" FOREIGN KEY ("language_id") REFERENCES "reference"."languages" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE "template"."texts"
+ADD CONSTRAINT "fk_texts_template_id" FOREIGN KEY ("template_id") REFERENCES "template"."templates" ("id") ON DELETE CASCADE ON UPDATE RESTRICT;
+
+CREATE UNIQUE INDEX "uq_texts__template_id_purpose_language_id_partial_1" ON "template"."texts" USING btree ("template_id", "purpose", "language_id")
+WHERE
+    ("language_id" IS NOT NULL);
+
+CREATE UNIQUE INDEX "uq_texts__template_id_purpose_partial_2" ON "template"."texts" USING btree ("template_id", "purpose")
+WHERE
+    ("language_id" IS NULL);
 
 ALTER TABLE "vocabulary"."labels"
 ADD CONSTRAINT "fk_labels_country_id" FOREIGN KEY ("country_id") REFERENCES "reference"."countries" ("id") ON DELETE RESTRICT ON UPDATE RESTRICT;
@@ -13159,57 +13889,6 @@ CREATE TRIGGER "civic_scheme_attachments_purpose_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "civic"."scheme_attachments_purpose_term_code" ();
 
-CREATE FUNCTION "civic"."scheme_bids_outcome_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."outcome_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."outcome_term" AND s."code" = 'voc.sch.civ.bid.outcome'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_bids_outcome_term"
-BEFORE INSERT OR UPDATE OF "outcome_term" ON "civic"."bids" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_bids_outcome_term" ();
-
-CREATE FUNCTION "civic"."scheme_bids_outcome_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "civic"."bids" t WHERE t."outcome_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_bids_outcome_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_bids_outcome_term_membership" ();
-
-CREATE FUNCTION "civic"."scheme_bids_outcome_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.civ.bid.outcome' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "civic"."bids" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."outcome_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_bids_outcome_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_bids_outcome_term_code" ();
-
 CREATE FUNCTION "civic"."scheme_contracts_nature_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."nature_term" IS NOT NULL AND NOT EXISTS (
@@ -13260,57 +13939,6 @@ $scheme$;
 CREATE TRIGGER "civic_scheme_contracts_nature_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "civic"."scheme_contracts_nature_term_code" ();
-
-CREATE FUNCTION "civic"."scheme_contracts_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.civ.contract.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_contracts_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "civic"."contracts" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_contracts_status_term" ();
-
-CREATE FUNCTION "civic"."scheme_contracts_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "civic"."contracts" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_contracts_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_contracts_status_term_membership" ();
-
-CREATE FUNCTION "civic"."scheme_contracts_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.civ.contract.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "civic"."contracts" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_contracts_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_contracts_status_term_code" ();
 
 CREATE FUNCTION "civic"."scheme_deliveries_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -13464,57 +14092,6 @@ $scheme$;
 CREATE TRIGGER "civic_scheme_facilities_ownership_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "civic"."scheme_facilities_ownership_term_code" ();
-
-CREATE FUNCTION "civic"."scheme_facilities_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.civ.facility.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_facilities_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "civic"."facilities" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_facilities_status_term" ();
-
-CREATE FUNCTION "civic"."scheme_facilities_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "civic"."facilities" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_facilities_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_facilities_status_term_membership" ();
-
-CREATE FUNCTION "civic"."scheme_facilities_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.civ.facility.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "civic"."facilities" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_facilities_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_facilities_status_term_code" ();
 
 CREATE FUNCTION "civic"."scheme_procurements_category_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -13719,108 +14296,6 @@ $scheme$;
 CREATE TRIGGER "civic_scheme_procurements_procedure_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "civic"."scheme_procurements_procedure_term_code" ();
-
-CREATE FUNCTION "civic"."scheme_procurements_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.civ.procurement.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_procurements_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "civic"."procurements" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_procurements_status_term" ();
-
-CREATE FUNCTION "civic"."scheme_procurements_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "civic"."procurements" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_procurements_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_procurements_status_term_membership" ();
-
-CREATE FUNCTION "civic"."scheme_procurements_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.civ.procurement.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "civic"."procurements" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_procurements_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_procurements_status_term_code" ();
-
-CREATE FUNCTION "civic"."scheme_projects_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.civ.project.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_projects_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "civic"."projects" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_projects_status_term" ();
-
-CREATE FUNCTION "civic"."scheme_projects_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "civic"."projects" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_projects_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_projects_status_term_membership" ();
-
-CREATE FUNCTION "civic"."scheme_projects_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.civ.project.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "civic"."projects" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "civic_scheme_projects_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "civic"."scheme_projects_status_term_code" ();
 
 CREATE FUNCTION "civic"."scheme_roles_role_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -14077,57 +14552,6 @@ CREATE TRIGGER "community_scheme_blocks_reason_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "community"."scheme_blocks_reason_term_code" ();
 
-CREATE FUNCTION "community"."scheme_cases_decision_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."decision_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."decision_term" AND s."code" = 'voc.sch.com.case.decision'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_cases_decision_term"
-BEFORE INSERT OR UPDATE OF "decision_term" ON "community"."cases" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_cases_decision_term" ();
-
-CREATE FUNCTION "community"."scheme_cases_decision_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "community"."cases" t WHERE t."decision_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_cases_decision_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_cases_decision_term_membership" ();
-
-CREATE FUNCTION "community"."scheme_cases_decision_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.com.case.decision' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "community"."cases" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."decision_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_cases_decision_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_cases_decision_term_code" ();
-
 CREATE FUNCTION "community"."scheme_checks_category_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."category_term" IS NOT NULL AND NOT EXISTS (
@@ -14230,57 +14654,6 @@ CREATE TRIGGER "community_scheme_consents_purpose_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "community"."scheme_consents_purpose_term_code" ();
 
-CREATE FUNCTION "community"."scheme_notifications_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.com.notification.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_notifications_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "community"."notifications" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_notifications_kind_term" ();
-
-CREATE FUNCTION "community"."scheme_notifications_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "community"."notifications" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_notifications_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_notifications_kind_term_membership" ();
-
-CREATE FUNCTION "community"."scheme_notifications_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.com.notification.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "community"."notifications" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_notifications_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_notifications_kind_term_code" ();
-
 CREATE FUNCTION "community"."scheme_places_suggestion_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."suggestion_term" IS NOT NULL AND NOT EXISTS (
@@ -14332,57 +14705,6 @@ CREATE TRIGGER "community_scheme_places_suggestion_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "community"."scheme_places_suggestion_term_code" ();
 
-CREATE FUNCTION "community"."scheme_posts_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.com.post.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_posts_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "community"."posts" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_posts_kind_term" ();
-
-CREATE FUNCTION "community"."scheme_posts_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "community"."posts" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_posts_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_posts_kind_term_membership" ();
-
-CREATE FUNCTION "community"."scheme_posts_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.com.post.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "community"."posts" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_posts_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_posts_kind_term_code" ();
-
 CREATE FUNCTION "community"."scheme_reactions_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
@@ -14433,108 +14755,6 @@ $scheme$;
 CREATE TRIGGER "community_scheme_reactions_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "community"."scheme_reactions_kind_term_code" ();
-
-CREATE FUNCTION "community"."scheme_replies_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.com.reply.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_replies_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "community"."replies" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_replies_status_term" ();
-
-CREATE FUNCTION "community"."scheme_replies_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "community"."replies" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_replies_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_replies_status_term_membership" ();
-
-CREATE FUNCTION "community"."scheme_replies_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.com.reply.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "community"."replies" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_replies_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_replies_status_term_code" ();
-
-CREATE FUNCTION "community"."scheme_subscriptions_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.com.subscription.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_subscriptions_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "community"."subscriptions" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_subscriptions_kind_term" ();
-
-CREATE FUNCTION "community"."scheme_subscriptions_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "community"."subscriptions" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_subscriptions_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_subscriptions_kind_term_membership" ();
-
-CREATE FUNCTION "community"."scheme_subscriptions_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.com.subscription.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "community"."subscriptions" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "community_scheme_subscriptions_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "community"."scheme_subscriptions_kind_term_code" ();
 
 CREATE FUNCTION "economy"."scheme_codes_scheme_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -14739,6 +14959,57 @@ $scheme$;
 CREATE TRIGGER "economy_scheme_goods_standard_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "economy"."scheme_goods_standard_term_code" ();
+
+CREATE FUNCTION "economy"."scheme_prices_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.eco.price.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_prices_kind_term"
+BEFORE INSERT OR UPDATE OF "kind_term" ON "economy"."prices" FOR EACH ROW
+EXECUTE FUNCTION "economy"."scheme_prices_kind_term" ();
+
+CREATE FUNCTION "economy"."scheme_prices_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "economy"."prices" t WHERE t."kind_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "economy_scheme_prices_kind_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "economy"."scheme_prices_kind_term_membership" ();
+
+CREATE FUNCTION "economy"."scheme_prices_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.eco.price.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "economy"."prices" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "economy_scheme_prices_kind_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "economy"."scheme_prices_kind_term_code" ();
 
 CREATE FUNCTION "election"."scheme_attachments_purpose_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -14995,57 +15266,6 @@ CREATE TRIGGER "election_scheme_elections_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "election"."scheme_elections_kind_term_code" ();
 
-CREATE FUNCTION "election"."scheme_elections_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.ele.election.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_elections_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "election"."elections" FOR EACH ROW
-EXECUTE FUNCTION "election"."scheme_elections_status_term" ();
-
-CREATE FUNCTION "election"."scheme_elections_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "election"."elections" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "election_scheme_elections_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "election"."scheme_elections_status_term_membership" ();
-
-CREATE FUNCTION "election"."scheme_elections_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.ele.election.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "election"."elections" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "election_scheme_elections_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "election"."scheme_elections_status_term_code" ();
-
 CREATE FUNCTION "election"."scheme_forms_form_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."form_term" IS NOT NULL AND NOT EXISTS (
@@ -15097,57 +15317,6 @@ CREATE TRIGGER "election_scheme_forms_form_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "election"."scheme_forms_form_term_code" ();
 
-CREATE FUNCTION "election"."scheme_stations_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.ele.station.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_stations_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "election"."stations" FOR EACH ROW
-EXECUTE FUNCTION "election"."scheme_stations_status_term" ();
-
-CREATE FUNCTION "election"."scheme_stations_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "election"."stations" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "election_scheme_stations_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "election"."scheme_stations_status_term_membership" ();
-
-CREATE FUNCTION "election"."scheme_stations_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.ele.station.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "election"."stations" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "election_scheme_stations_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "election"."scheme_stations_status_term_code" ();
-
 CREATE FUNCTION "event"."scheme_calendars_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
@@ -15198,57 +15367,6 @@ $scheme$;
 CREATE TRIGGER "event_scheme_calendars_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "event"."scheme_calendars_kind_term_code" ();
-
-CREATE FUNCTION "event"."scheme_changes_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.evt.change.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_changes_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "event"."changes" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_changes_kind_term" ();
-
-CREATE FUNCTION "event"."scheme_changes_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "event"."changes" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_changes_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_changes_kind_term_membership" ();
-
-CREATE FUNCTION "event"."scheme_changes_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.evt.change.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "event"."changes" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_changes_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_changes_kind_term_code" ();
 
 CREATE FUNCTION "event"."scheme_changes_reason_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -15352,57 +15470,6 @@ CREATE TRIGGER "event_scheme_events_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "event"."scheme_events_kind_term_code" ();
 
-CREATE FUNCTION "event"."scheme_occurrences_format_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."format_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."format_term" AND s."code" = 'voc.sch.evt.occurrence.format'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_occurrences_format_term"
-BEFORE INSERT OR UPDATE OF "format_term" ON "event"."occurrences" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_occurrences_format_term" ();
-
-CREATE FUNCTION "event"."scheme_occurrences_format_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "event"."occurrences" t WHERE t."format_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_occurrences_format_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_occurrences_format_term_membership" ();
-
-CREATE FUNCTION "event"."scheme_occurrences_format_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.evt.occurrence.format' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "event"."occurrences" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."format_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_occurrences_format_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_occurrences_format_term_code" ();
-
 CREATE FUNCTION "event"."scheme_occurrences_knowledge_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."knowledge_term" IS NOT NULL AND NOT EXISTS (
@@ -15453,57 +15520,6 @@ $scheme$;
 CREATE TRIGGER "event_scheme_occurrences_knowledge_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "event"."scheme_occurrences_knowledge_term_code" ();
-
-CREATE FUNCTION "event"."scheme_occurrences_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.evt.occurrence.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_occurrences_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "event"."occurrences" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_occurrences_status_term" ();
-
-CREATE FUNCTION "event"."scheme_occurrences_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "event"."occurrences" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_occurrences_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_occurrences_status_term_membership" ();
-
-CREATE FUNCTION "event"."scheme_occurrences_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.evt.occurrence.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "event"."occurrences" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_occurrences_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_occurrences_status_term_code" ();
 
 CREATE FUNCTION "event"."scheme_participants_role_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -15607,57 +15623,6 @@ CREATE TRIGGER "event_scheme_rules_adjustment_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "event"."scheme_rules_adjustment_term_code" ();
 
-CREATE FUNCTION "event"."scheme_rules_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.evt.rule.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_rules_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "event"."rules" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_rules_kind_term" ();
-
-CREATE FUNCTION "event"."scheme_rules_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "event"."rules" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_rules_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_rules_kind_term_membership" ();
-
-CREATE FUNCTION "event"."scheme_rules_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.evt.rule.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "event"."rules" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_rules_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_rules_kind_term_code" ();
-
 CREATE FUNCTION "event"."scheme_schedules_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
@@ -15708,57 +15673,6 @@ $scheme$;
 CREATE TRIGGER "event_scheme_schedules_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "event"."scheme_schedules_kind_term_code" ();
-
-CREATE FUNCTION "event"."scheme_schedules_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.evt.schedule.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_schedules_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "event"."schedules" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_schedules_status_term" ();
-
-CREATE FUNCTION "event"."scheme_schedules_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "event"."schedules" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_schedules_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_schedules_status_term_membership" ();
-
-CREATE FUNCTION "event"."scheme_schedules_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.evt.schedule.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "event"."schedules" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "event_scheme_schedules_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "event"."scheme_schedules_status_term_code" ();
 
 CREATE FUNCTION "event"."scheme_seasons_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -16168,57 +16082,6 @@ CREATE TRIGGER "finance_scheme_findings_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "finance"."scheme_findings_kind_term_code" ();
 
-CREATE FUNCTION "finance"."scheme_findings_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.fin.finding.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_findings_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "finance"."findings" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_findings_status_term" ();
-
-CREATE FUNCTION "finance"."scheme_findings_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "finance"."findings" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "finance_scheme_findings_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_findings_status_term_membership" ();
-
-CREATE FUNCTION "finance"."scheme_findings_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.fin.finding.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "finance"."findings" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "finance_scheme_findings_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_findings_status_term_code" ();
-
 CREATE FUNCTION "finance"."scheme_flows_class_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."class_term" IS NOT NULL AND NOT EXISTS (
@@ -16269,57 +16132,6 @@ $scheme$;
 CREATE TRIGGER "finance_scheme_flows_class_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "finance"."scheme_flows_class_term_code" ();
-
-CREATE FUNCTION "finance"."scheme_flows_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.fin.flow.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_flows_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "finance"."flows" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_flows_kind_term" ();
-
-CREATE FUNCTION "finance"."scheme_flows_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "finance"."flows" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "finance_scheme_flows_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_flows_kind_term_membership" ();
-
-CREATE FUNCTION "finance"."scheme_flows_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.fin.flow.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "finance"."flows" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "finance_scheme_flows_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_flows_kind_term_code" ();
 
 CREATE FUNCTION "finance"."scheme_funds_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -16423,159 +16235,6 @@ CREATE TRIGGER "finance_scheme_funds_source_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "finance"."scheme_funds_source_term_code" ();
 
-CREATE FUNCTION "finance"."scheme_periods_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.fin.period.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_periods_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "finance"."periods" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_periods_kind_term" ();
-
-CREATE FUNCTION "finance"."scheme_periods_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "finance"."periods" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "finance_scheme_periods_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_periods_kind_term_membership" ();
-
-CREATE FUNCTION "finance"."scheme_periods_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.fin.period.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "finance"."periods" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "finance_scheme_periods_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_periods_kind_term_code" ();
-
-CREATE FUNCTION "finance"."scheme_revisions_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.fin.revision.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_revisions_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "finance"."revisions" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_revisions_status_term" ();
-
-CREATE FUNCTION "finance"."scheme_revisions_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "finance"."revisions" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "finance_scheme_revisions_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_revisions_status_term_membership" ();
-
-CREATE FUNCTION "finance"."scheme_revisions_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.fin.revision.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "finance"."revisions" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "finance_scheme_revisions_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "finance"."scheme_revisions_status_term_code" ();
-
-CREATE FUNCTION "geography"."scheme_assets_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.geo.asset.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_assets_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "geography"."assets" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_assets_kind_term" ();
-
-CREATE FUNCTION "geography"."scheme_assets_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "geography"."assets" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_assets_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_assets_kind_term_membership" ();
-
-CREATE FUNCTION "geography"."scheme_assets_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.geo.asset.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "geography"."assets" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_assets_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_assets_kind_term_code" ();
-
 CREATE FUNCTION "geography"."scheme_assets_purpose_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."purpose_term" IS NOT NULL AND NOT EXISTS (
@@ -16626,57 +16285,6 @@ $scheme$;
 CREATE TRIGGER "geography_scheme_assets_purpose_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "geography"."scheme_assets_purpose_term_code" ();
-
-CREATE FUNCTION "geography"."scheme_changes_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.geo.change.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_changes_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "geography"."changes" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_changes_kind_term" ();
-
-CREATE FUNCTION "geography"."scheme_changes_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "geography"."changes" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_changes_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_changes_kind_term_membership" ();
-
-CREATE FUNCTION "geography"."scheme_changes_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.geo.change.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "geography"."changes" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_changes_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_changes_kind_term_code" ();
 
 CREATE FUNCTION "geography"."scheme_features_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -16729,210 +16337,6 @@ CREATE TRIGGER "geography_scheme_features_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "geography"."scheme_features_kind_term_code" ();
 
-CREATE FUNCTION "geography"."scheme_geometries_basis_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."basis_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."basis_term" AND s."code" = 'voc.sch.geo.geometry.basis'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_geometries_basis_term"
-BEFORE INSERT OR UPDATE OF "basis_term" ON "geography"."geometries" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_geometries_basis_term" ();
-
-CREATE FUNCTION "geography"."scheme_geometries_basis_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "geography"."geometries" t WHERE t."basis_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_geometries_basis_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_geometries_basis_term_membership" ();
-
-CREATE FUNCTION "geography"."scheme_geometries_basis_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.geo.geometry.basis' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "geography"."geometries" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."basis_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_geometries_basis_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_geometries_basis_term_code" ();
-
-CREATE FUNCTION "geography"."scheme_geometries_role_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."role_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."role_term" AND s."code" = 'voc.sch.geo.geometry.role'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_geometries_role_term"
-BEFORE INSERT OR UPDATE OF "role_term" ON "geography"."geometries" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_geometries_role_term" ();
-
-CREATE FUNCTION "geography"."scheme_geometries_role_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "geography"."geometries" t WHERE t."role_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_geometries_role_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_geometries_role_term_membership" ();
-
-CREATE FUNCTION "geography"."scheme_geometries_role_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.geo.geometry.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "geography"."geometries" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."role_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_geometries_role_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_geometries_role_term_code" ();
-
-CREATE FUNCTION "geography"."scheme_relationships_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.geo.relationship.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_relationships_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "geography"."relationships" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_relationships_kind_term" ();
-
-CREATE FUNCTION "geography"."scheme_relationships_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "geography"."relationships" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_relationships_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_relationships_kind_term_membership" ();
-
-CREATE FUNCTION "geography"."scheme_relationships_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.geo.relationship.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "geography"."relationships" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "geography_scheme_relationships_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "geography"."scheme_relationships_kind_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_assignments_share_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."share_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."share_term" AND s."code" = 'voc.sch.gov.assignment.share'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_assignments_share_term"
-BEFORE INSERT OR UPDATE OF "share_term" ON "governance"."assignments" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_assignments_share_term" ();
-
-CREATE FUNCTION "governance"."scheme_assignments_share_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."assignments" t WHERE t."share_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_assignments_share_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_assignments_share_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_assignments_share_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.assignment.share' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."assignments" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."share_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_assignments_share_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_assignments_share_term_code" ();
-
 CREATE FUNCTION "governance"."scheme_functions_topic_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."topic_term" IS NOT NULL AND NOT EXISTS (
@@ -16983,261 +16387,6 @@ $scheme$;
 CREATE TRIGGER "governance_scheme_functions_topic_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "governance"."scheme_functions_topic_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_holders_method_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."method_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."method_term" AND s."code" = 'voc.sch.gov.selection.method'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_holders_method_term"
-BEFORE INSERT OR UPDATE OF "method_term" ON "governance"."holders" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_holders_method_term" ();
-
-CREATE FUNCTION "governance"."scheme_holders_method_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."holders" t WHERE t."method_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_holders_method_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_holders_method_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_holders_method_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.selection.method' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."holders" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."method_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_holders_method_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_holders_method_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_holders_reason_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."reason_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."reason_term" AND s."code" = 'voc.sch.gov.holder.reason'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_holders_reason_term"
-BEFORE INSERT OR UPDATE OF "reason_term" ON "governance"."holders" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_holders_reason_term" ();
-
-CREATE FUNCTION "governance"."scheme_holders_reason_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."holders" t WHERE t."reason_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_holders_reason_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_holders_reason_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_holders_reason_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.holder.reason' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."holders" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."reason_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_holders_reason_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_holders_reason_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_instances_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.gov.instance.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_instances_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "governance"."instances" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_instances_status_term" ();
-
-CREATE FUNCTION "governance"."scheme_instances_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."instances" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_instances_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_instances_status_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_instances_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.instance.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."instances" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_instances_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_instances_status_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_institutions_arm_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."arm_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."arm_term" AND s."code" = 'voc.sch.gov.arm'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_institutions_arm_term"
-BEFORE INSERT OR UPDATE OF "arm_term" ON "governance"."institutions" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_institutions_arm_term" ();
-
-CREATE FUNCTION "governance"."scheme_institutions_arm_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."institutions" t WHERE t."arm_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_institutions_arm_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_institutions_arm_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_institutions_arm_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.arm' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."institutions" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."arm_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_institutions_arm_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_institutions_arm_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_institutions_basis_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."basis_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."basis_term" AND s."code" = 'voc.sch.gov.institution.basis'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_institutions_basis_term"
-BEFORE INSERT OR UPDATE OF "basis_term" ON "governance"."institutions" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_institutions_basis_term" ();
-
-CREATE FUNCTION "governance"."scheme_institutions_basis_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."institutions" t WHERE t."basis_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_institutions_basis_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_institutions_basis_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_institutions_basis_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.institution.basis' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."institutions" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."basis_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_institutions_basis_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_institutions_basis_term_code" ();
 
 CREATE FUNCTION "governance"."scheme_institutions_class_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -17341,57 +16490,6 @@ CREATE TRIGGER "governance_scheme_institutions_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "governance"."scheme_institutions_kind_term_code" ();
 
-CREATE FUNCTION "governance"."scheme_jurisdictions_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.gov.jurisdiction.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_jurisdictions_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "governance"."jurisdictions" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_jurisdictions_kind_term" ();
-
-CREATE FUNCTION "governance"."scheme_jurisdictions_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."jurisdictions" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_jurisdictions_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_jurisdictions_kind_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_jurisdictions_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.jurisdiction.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."jurisdictions" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_jurisdictions_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_jurisdictions_kind_term_code" ();
-
 CREATE FUNCTION "governance"."scheme_obligations_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
@@ -17493,57 +16591,6 @@ $scheme$;
 CREATE TRIGGER "governance_scheme_terms_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "governance"."scheme_terms_kind_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_patterns_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.gov.pattern.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_patterns_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "governance"."patterns" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_patterns_kind_term" ();
-
-CREATE FUNCTION "governance"."scheme_patterns_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."patterns" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_patterns_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_patterns_kind_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_patterns_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.pattern.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."patterns" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_patterns_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_patterns_kind_term_code" ();
 
 CREATE FUNCTION "governance"."scheme_positions_basis_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -17647,13 +16694,13 @@ CREATE TRIGGER "governance_scheme_positions_exposure_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "governance"."scheme_positions_exposure_term_code" ();
 
-CREATE FUNCTION "governance"."scheme_positions_method_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "governance"."scheme_positions_institution_class_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF NEW."method_term" IS NOT NULL AND NOT EXISTS (
+  IF NEW."institution_class_term" IS NOT NULL AND NOT EXISTS (
     SELECT 1
     FROM "vocabulary"."terms" v
     JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."method_term" AND s."code" = 'voc.sch.gov.selection.method'
+    WHERE v."id" = NEW."institution_class_term" AND s."code" = 'voc.sch.gov.institution.class'
     FOR SHARE OF v, s
   ) THEN
     RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
@@ -17662,14 +16709,14 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "scheme_positions_method_term"
-BEFORE INSERT OR UPDATE OF "method_term" ON "governance"."positions" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_positions_method_term" ();
+CREATE TRIGGER "scheme_positions_institution_class_term"
+BEFORE INSERT OR UPDATE OF "institution_class_term" ON "governance"."positions" FOR EACH ROW
+EXECUTE FUNCTION "governance"."scheme_positions_institution_class_term" ();
 
-CREATE FUNCTION "governance"."scheme_positions_method_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "governance"."scheme_positions_institution_class_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."positions" t WHERE t."method_term" = OLD."id"
+    SELECT 1 FROM "governance"."positions" t WHERE t."institution_class_term" = OLD."id"
   ) THEN
     RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
   END IF;
@@ -17677,15 +16724,15 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "governance_scheme_positions_method_term_membership"
+CREATE TRIGGER "governance_scheme_positions_institution_class_term_membership"
 BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_positions_method_term_membership" ();
+EXECUTE FUNCTION "governance"."scheme_positions_institution_class_term_membership" ();
 
-CREATE FUNCTION "governance"."scheme_positions_method_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+CREATE FUNCTION "governance"."scheme_positions_institution_class_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
-  IF OLD."code" = 'voc.sch.gov.selection.method' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+  IF OLD."code" = 'voc.sch.gov.institution.class' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
     SELECT 1 FROM "governance"."positions" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."method_term"
+    JOIN "vocabulary"."terms" v ON v."id" = t."institution_class_term"
     WHERE v."scheme_id" = OLD."id"
   ) THEN
     RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
@@ -17694,9 +16741,9 @@ BEGIN
 END;
 $scheme$;
 
-CREATE TRIGGER "governance_scheme_positions_method_term_code"
+CREATE TRIGGER "governance_scheme_positions_institution_class_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_positions_method_term_code" ();
+EXECUTE FUNCTION "governance"."scheme_positions_institution_class_term_code" ();
 
 CREATE FUNCTION "governance"."scheme_positions_role_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -17953,363 +17000,6 @@ CREATE TRIGGER "governance_scheme_relationships_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "governance"."scheme_relationships_kind_term_code" ();
 
-CREATE FUNCTION "governance"."scheme_reports_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.gov.report.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_reports_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "governance"."reports" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_reports_status_term" ();
-
-CREATE FUNCTION "governance"."scheme_reports_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."reports" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_reports_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_reports_status_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_reports_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.report.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."reports" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_reports_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_reports_status_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_templates_arm_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."arm_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."arm_term" AND s."code" = 'voc.sch.gov.arm'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_templates_arm_term"
-BEFORE INSERT OR UPDATE OF "arm_term" ON "governance"."templates" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_arm_term" ();
-
-CREATE FUNCTION "governance"."scheme_templates_arm_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t WHERE t."arm_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_arm_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_arm_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_templates_arm_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.arm' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."arm_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_arm_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_arm_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_templates_basis_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."basis_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."basis_term" AND s."code" = 'voc.sch.gov.seat.basis'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_templates_basis_term"
-BEFORE INSERT OR UPDATE OF "basis_term" ON "governance"."templates" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_basis_term" ();
-
-CREATE FUNCTION "governance"."scheme_templates_basis_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t WHERE t."basis_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_basis_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_basis_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_templates_basis_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.seat.basis' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."basis_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_basis_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_basis_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_templates_class_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."class_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."class_term" AND s."code" = 'voc.sch.gov.institution.class'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_templates_class_term"
-BEFORE INSERT OR UPDATE OF "class_term" ON "governance"."templates" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_class_term" ();
-
-CREATE FUNCTION "governance"."scheme_templates_class_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t WHERE t."class_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_class_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_class_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_templates_class_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.institution.class' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."class_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_class_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_class_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_templates_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.gov.institution.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_templates_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "governance"."templates" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_kind_term" ();
-
-CREATE FUNCTION "governance"."scheme_templates_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_kind_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_templates_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.institution.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_kind_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_templates_method_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."method_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."method_term" AND s."code" = 'voc.sch.gov.selection.method'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_templates_method_term"
-BEFORE INSERT OR UPDATE OF "method_term" ON "governance"."templates" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_method_term" ();
-
-CREATE FUNCTION "governance"."scheme_templates_method_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t WHERE t."method_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_method_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_method_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_templates_method_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.selection.method' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."method_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_method_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_method_term_code" ();
-
-CREATE FUNCTION "governance"."scheme_templates_role_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."role_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."role_term" AND s."code" = 'voc.sch.gov.position.role'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_templates_role_term"
-BEFORE INSERT OR UPDATE OF "role_term" ON "governance"."templates" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_role_term" ();
-
-CREATE FUNCTION "governance"."scheme_templates_role_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t WHERE t."role_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_role_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_role_term_membership" ();
-
-CREATE FUNCTION "governance"."scheme_templates_role_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.gov.position.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "governance"."templates" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."role_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "governance_scheme_templates_role_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "governance"."scheme_templates_role_term_code" ();
-
 CREATE FUNCTION "history"."scheme_eras_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
@@ -18565,57 +17255,6 @@ CREATE TRIGGER "identity_scheme_identifiers_scheme_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "identity"."scheme_identifiers_scheme_term_code" ();
 
-CREATE FUNCTION "identity"."scheme_names_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.idn.name.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_names_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "identity"."names" FOR EACH ROW
-EXECUTE FUNCTION "identity"."scheme_names_kind_term" ();
-
-CREATE FUNCTION "identity"."scheme_names_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "identity"."names" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "identity_scheme_names_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "identity"."scheme_names_kind_term_membership" ();
-
-CREATE FUNCTION "identity"."scheme_names_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.idn.name.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "identity"."names" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "identity_scheme_names_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "identity"."scheme_names_kind_term_code" ();
-
 CREATE FUNCTION "identity"."scheme_names_script_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."script_term" IS NOT NULL AND NOT EXISTS (
@@ -18819,57 +17458,6 @@ $scheme$;
 CREATE TRIGGER "legal_scheme_instruments_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "legal"."scheme_instruments_kind_term_code" ();
-
-CREATE FUNCTION "legal"."scheme_instruments_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.leg.instrument.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_instruments_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "legal"."instruments" FOR EACH ROW
-EXECUTE FUNCTION "legal"."scheme_instruments_status_term" ();
-
-CREATE FUNCTION "legal"."scheme_instruments_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "legal"."instruments" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "legal_scheme_instruments_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "legal"."scheme_instruments_status_term_membership" ();
-
-CREATE FUNCTION "legal"."scheme_instruments_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.leg.instrument.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "legal"."instruments" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "legal_scheme_instruments_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "legal"."scheme_instruments_status_term_code" ();
 
 CREATE FUNCTION "legal"."scheme_relationships_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -19075,57 +17663,6 @@ CREATE TRIGGER "legislature_scheme_bills_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "legislature"."scheme_bills_kind_term_code" ();
 
-CREATE FUNCTION "legislature"."scheme_bills_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.leg.bill.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_bills_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "legislature"."bills" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_bills_status_term" ();
-
-CREATE FUNCTION "legislature"."scheme_bills_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "legislature"."bills" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "legislature_scheme_bills_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_bills_status_term_membership" ();
-
-CREATE FUNCTION "legislature"."scheme_bills_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.leg.bill.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "legislature"."bills" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "legislature_scheme_bills_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_bills_status_term_code" ();
-
 CREATE FUNCTION "legislature"."scheme_motions_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
@@ -19176,57 +17713,6 @@ $scheme$;
 CREATE TRIGGER "legislature_scheme_motions_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "legislature"."scheme_motions_kind_term_code" ();
-
-CREATE FUNCTION "legislature"."scheme_motions_outcome_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."outcome_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."outcome_term" AND s."code" = 'voc.sch.leg.motion.outcome'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_motions_outcome_term"
-BEFORE INSERT OR UPDATE OF "outcome_term" ON "legislature"."motions" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_motions_outcome_term" ();
-
-CREATE FUNCTION "legislature"."scheme_motions_outcome_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "legislature"."motions" t WHERE t."outcome_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "legislature_scheme_motions_outcome_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_motions_outcome_term_membership" ();
-
-CREATE FUNCTION "legislature"."scheme_motions_outcome_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.leg.motion.outcome' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "legislature"."motions" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."outcome_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "legislature_scheme_motions_outcome_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_motions_outcome_term_code" ();
 
 CREATE FUNCTION "legislature"."scheme_sittings_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -19380,57 +17866,6 @@ $scheme$;
 CREATE TRIGGER "legislature_scheme_stages_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "legislature"."scheme_stages_kind_term_code" ();
-
-CREATE FUNCTION "legislature"."scheme_stages_outcome_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."outcome_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."outcome_term" AND s."code" = 'voc.sch.leg.stage.outcome'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_stages_outcome_term"
-BEFORE INSERT OR UPDATE OF "outcome_term" ON "legislature"."stages" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_stages_outcome_term" ();
-
-CREATE FUNCTION "legislature"."scheme_stages_outcome_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "legislature"."stages" t WHERE t."outcome_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "legislature_scheme_stages_outcome_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_stages_outcome_term_membership" ();
-
-CREATE FUNCTION "legislature"."scheme_stages_outcome_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.leg.stage.outcome' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "legislature"."stages" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."outcome_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "legislature_scheme_stages_outcome_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "legislature"."scheme_stages_outcome_term_code" ();
 
 CREATE FUNCTION "media"."scheme_articles_category_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -19636,57 +18071,6 @@ CREATE TRIGGER "media_scheme_assets_provider_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "media"."scheme_assets_provider_term_code" ();
 
-CREATE FUNCTION "media"."scheme_subjects_role_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."role_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."role_term" AND s."code" = 'voc.sch.med.subject.role'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_subjects_role_term"
-BEFORE INSERT OR UPDATE OF "role_term" ON "media"."subjects" FOR EACH ROW
-EXECUTE FUNCTION "media"."scheme_subjects_role_term" ();
-
-CREATE FUNCTION "media"."scheme_subjects_role_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "media"."subjects" t WHERE t."role_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "media_scheme_subjects_role_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "media"."scheme_subjects_role_term_membership" ();
-
-CREATE FUNCTION "media"."scheme_subjects_role_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.med.subject.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "media"."subjects" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."role_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "media_scheme_subjects_role_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "media"."scheme_subjects_role_term_code" ();
-
 CREATE FUNCTION "media"."scheme_uses_purpose_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."purpose_term" IS NOT NULL AND NOT EXISTS (
@@ -19789,108 +18173,6 @@ CREATE TRIGGER "official_scheme_branding_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "official"."scheme_branding_kind_term_code" ();
 
-CREATE FUNCTION "official"."scheme_contacts_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.ofc.contact.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_contacts_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "official"."contacts" FOR EACH ROW
-EXECUTE FUNCTION "official"."scheme_contacts_kind_term" ();
-
-CREATE FUNCTION "official"."scheme_contacts_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "official"."contacts" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "official_scheme_contacts_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "official"."scheme_contacts_kind_term_membership" ();
-
-CREATE FUNCTION "official"."scheme_contacts_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.ofc.contact.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "official"."contacts" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "official_scheme_contacts_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "official"."scheme_contacts_kind_term_code" ();
-
-CREATE FUNCTION "official"."scheme_contacts_visibility_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."visibility_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."visibility_term" AND s."code" = 'voc.sch.ofc.contact.visibility'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_contacts_visibility_term"
-BEFORE INSERT OR UPDATE OF "visibility_term" ON "official"."contacts" FOR EACH ROW
-EXECUTE FUNCTION "official"."scheme_contacts_visibility_term" ();
-
-CREATE FUNCTION "official"."scheme_contacts_visibility_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "official"."contacts" t WHERE t."visibility_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "official_scheme_contacts_visibility_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "official"."scheme_contacts_visibility_term_membership" ();
-
-CREATE FUNCTION "official"."scheme_contacts_visibility_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.ofc.contact.visibility' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "official"."contacts" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."visibility_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "official_scheme_contacts_visibility_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "official"."scheme_contacts_visibility_term_code" ();
-
 CREATE FUNCTION "official"."scheme_entities_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
@@ -19941,6 +18223,57 @@ $scheme$;
 CREATE TRIGGER "official_scheme_entities_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "official"."scheme_entities_kind_term_code" ();
+
+CREATE FUNCTION "official"."scheme_premises_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.ofc.premises.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_premises_kind_term"
+BEFORE INSERT OR UPDATE OF "kind_term" ON "official"."premises" FOR EACH ROW
+EXECUTE FUNCTION "official"."scheme_premises_kind_term" ();
+
+CREATE FUNCTION "official"."scheme_premises_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "official"."premises" t WHERE t."kind_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "official_scheme_premises_kind_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "official"."scheme_premises_kind_term_membership" ();
+
+CREATE FUNCTION "official"."scheme_premises_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.ofc.premises.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "official"."premises" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "official_scheme_premises_kind_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "official"."scheme_premises_kind_term_code" ();
 
 CREATE FUNCTION "official"."scheme_relationships_basis_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -20248,57 +18581,6 @@ CREATE TRIGGER "politics_scheme_coalitions_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "politics"."scheme_coalitions_kind_term_code" ();
 
-CREATE FUNCTION "politics"."scheme_commitments_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.pol.commitment.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_commitments_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "politics"."commitments" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_commitments_status_term" ();
-
-CREATE FUNCTION "politics"."scheme_commitments_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "politics"."commitments" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_commitments_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_commitments_status_term_membership" ();
-
-CREATE FUNCTION "politics"."scheme_commitments_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.pol.commitment.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "politics"."commitments" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_commitments_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_commitments_status_term_code" ();
-
 CREATE FUNCTION "politics"."scheme_commitments_topic_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."topic_term" IS NOT NULL AND NOT EXISTS (
@@ -20349,159 +18631,6 @@ $scheme$;
 CREATE TRIGGER "politics_scheme_commitments_topic_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "politics"."scheme_commitments_topic_term_code" ();
-
-CREATE FUNCTION "politics"."scheme_contributions_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.pol.contribution.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_contributions_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "politics"."contributions" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_contributions_status_term" ();
-
-CREATE FUNCTION "politics"."scheme_contributions_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "politics"."contributions" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_contributions_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_contributions_status_term_membership" ();
-
-CREATE FUNCTION "politics"."scheme_contributions_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.pol.contribution.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "politics"."contributions" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_contributions_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_contributions_status_term_code" ();
-
-CREATE FUNCTION "politics"."scheme_fulfilments_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.pol.fulfilment.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_fulfilments_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "politics"."fulfilments" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_fulfilments_kind_term" ();
-
-CREATE FUNCTION "politics"."scheme_fulfilments_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "politics"."fulfilments" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_fulfilments_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_fulfilments_kind_term_membership" ();
-
-CREATE FUNCTION "politics"."scheme_fulfilments_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.pol.fulfilment.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "politics"."fulfilments" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_fulfilments_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_fulfilments_kind_term_code" ();
-
-CREATE FUNCTION "politics"."scheme_fulfilments_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.pol.fulfilment.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_fulfilments_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "politics"."fulfilments" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_fulfilments_status_term" ();
-
-CREATE FUNCTION "politics"."scheme_fulfilments_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "politics"."fulfilments" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_fulfilments_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_fulfilments_status_term_membership" ();
-
-CREATE FUNCTION "politics"."scheme_fulfilments_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.pol.fulfilment.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "politics"."fulfilments" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "politics_scheme_fulfilments_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "politics"."scheme_fulfilments_status_term_code" ();
 
 CREATE FUNCTION "politics"."scheme_memberships_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -20707,108 +18836,6 @@ CREATE TRIGGER "reference_scheme_countries_recognition_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "reference"."scheme_countries_recognition_term_code" ();
 
-CREATE FUNCTION "reference"."scheme_hierarchies_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.ref.hierarchy.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_hierarchies_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "reference"."hierarchies" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_hierarchies_kind_term" ();
-
-CREATE FUNCTION "reference"."scheme_hierarchies_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "reference"."hierarchies" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "reference_scheme_hierarchies_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_hierarchies_kind_term_membership" ();
-
-CREATE FUNCTION "reference"."scheme_hierarchies_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.ref.hierarchy.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "reference"."hierarchies" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "reference_scheme_hierarchies_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_hierarchies_kind_term_code" ();
-
-CREATE FUNCTION "reference"."scheme_languages_direction_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."direction_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."direction_term" AND s."code" = 'voc.sch.ref.text.direction'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_languages_direction_term"
-BEFORE INSERT OR UPDATE OF "direction_term" ON "reference"."languages" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_languages_direction_term" ();
-
-CREATE FUNCTION "reference"."scheme_languages_direction_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "reference"."languages" t WHERE t."direction_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "reference_scheme_languages_direction_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_languages_direction_term_membership" ();
-
-CREATE FUNCTION "reference"."scheme_languages_direction_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.ref.text.direction' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "reference"."languages" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."direction_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "reference_scheme_languages_direction_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_languages_direction_term_code" ();
-
 CREATE FUNCTION "reference"."scheme_languages_family_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."family_term" IS NOT NULL AND NOT EXISTS (
@@ -20859,57 +18886,6 @@ $scheme$;
 CREATE TRIGGER "reference_scheme_languages_family_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "reference"."scheme_languages_family_term_code" ();
-
-CREATE FUNCTION "reference"."scheme_languages_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.ref.language.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_languages_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "reference"."languages" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_languages_kind_term" ();
-
-CREATE FUNCTION "reference"."scheme_languages_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "reference"."languages" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "reference_scheme_languages_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_languages_kind_term_membership" ();
-
-CREATE FUNCTION "reference"."scheme_languages_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.ref.language.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "reference"."languages" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "reference_scheme_languages_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "reference"."scheme_languages_kind_term_code" ();
 
 CREATE FUNCTION "reference"."scheme_languages_script_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
@@ -21421,108 +19397,6 @@ CREATE TRIGGER "source_scheme_disputes_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "source"."scheme_disputes_kind_term_code" ();
 
-CREATE FUNCTION "source"."scheme_disputes_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.src.dispute.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_disputes_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "source"."disputes" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_disputes_status_term" ();
-
-CREATE FUNCTION "source"."scheme_disputes_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "source"."disputes" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "source_scheme_disputes_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_disputes_status_term_membership" ();
-
-CREATE FUNCTION "source"."scheme_disputes_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.src.dispute.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "source"."disputes" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "source_scheme_disputes_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_disputes_status_term_code" ();
-
-CREATE FUNCTION "source"."scheme_domains_status_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."status_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."status_term" AND s."code" = 'voc.sch.src.domain.status'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_domains_status_term"
-BEFORE INSERT OR UPDATE OF "status_term" ON "source"."domains" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_domains_status_term" ();
-
-CREATE FUNCTION "source"."scheme_domains_status_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "source"."domains" t WHERE t."status_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "source_scheme_domains_status_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_domains_status_term_membership" ();
-
-CREATE FUNCTION "source"."scheme_domains_status_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.src.domain.status' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "source"."domains" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."status_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "source_scheme_domains_status_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "source"."scheme_domains_status_term_code" ();
-
 CREATE FUNCTION "source"."scheme_products_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
@@ -21931,108 +19805,6 @@ CREATE TRIGGER "statistics_scheme_collections_kind_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "statistics"."scheme_collections_kind_term_code" ();
 
-CREATE FUNCTION "statistics"."scheme_components_transform_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."transform_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."transform_term" AND s."code" = 'voc.sch.sta.component.transform'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_components_transform_term"
-BEFORE INSERT OR UPDATE OF "transform_term" ON "statistics"."components" FOR EACH ROW
-EXECUTE FUNCTION "statistics"."scheme_components_transform_term" ();
-
-CREATE FUNCTION "statistics"."scheme_components_transform_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "statistics"."components" t WHERE t."transform_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "statistics_scheme_components_transform_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "statistics"."scheme_components_transform_term_membership" ();
-
-CREATE FUNCTION "statistics"."scheme_components_transform_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.sta.component.transform' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "statistics"."components" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."transform_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "statistics_scheme_components_transform_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "statistics"."scheme_components_transform_term_code" ();
-
-CREATE FUNCTION "statistics"."scheme_indicators_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
-    SELECT 1
-    FROM "vocabulary"."terms" v
-    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
-    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.sta.indicator.kind'
-    FOR SHARE OF v, s
-  ) THEN
-    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "scheme_indicators_kind_term"
-BEFORE INSERT OR UPDATE OF "kind_term" ON "statistics"."indicators" FOR EACH ROW
-EXECUTE FUNCTION "statistics"."scheme_indicators_kind_term" ();
-
-CREATE FUNCTION "statistics"."scheme_indicators_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
-    SELECT 1 FROM "statistics"."indicators" t WHERE t."kind_term" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "statistics_scheme_indicators_kind_term_membership"
-BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
-EXECUTE FUNCTION "statistics"."scheme_indicators_kind_term_membership" ();
-
-CREATE FUNCTION "statistics"."scheme_indicators_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
-BEGIN
-  IF OLD."code" = 'voc.sch.sta.indicator.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
-    SELECT 1 FROM "statistics"."indicators" t
-    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
-    WHERE v."scheme_id" = OLD."id"
-  ) THEN
-    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
-  END IF;
-  RETURN NEW;
-END;
-$scheme$;
-
-CREATE TRIGGER "statistics_scheme_indicators_kind_term_code"
-BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
-EXECUTE FUNCTION "statistics"."scheme_indicators_kind_term_code" ();
-
 CREATE FUNCTION "statistics"."scheme_indicators_role_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
 BEGIN
   IF NEW."role_term" IS NOT NULL AND NOT EXISTS (
@@ -22237,6 +20009,1393 @@ CREATE TRIGGER "statistics_scheme_metrics_topic_term_code"
 BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
 EXECUTE FUNCTION "statistics"."scheme_metrics_topic_term_code" ();
 
+CREATE FUNCTION "template"."scheme_templates_basis_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."basis_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."basis_term" AND s."code" = 'voc.sch.gov.seat.basis'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_basis_term"
+BEFORE INSERT OR UPDATE OF "basis_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_basis_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_basis_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."basis_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_basis_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_basis_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_basis_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.gov.seat.basis' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."basis_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_basis_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_basis_term_code" ();
+
+CREATE FUNCTION "template"."scheme_templates_class_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."class_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."class_term" AND s."code" = 'voc.sch.gov.institution.class'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_class_term"
+BEFORE INSERT OR UPDATE OF "class_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_class_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_class_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."class_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_class_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_class_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_class_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.gov.institution.class' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."class_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_class_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_class_term_code" ();
+
+CREATE FUNCTION "template"."scheme_templates_contest_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."contest_kind_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."contest_kind_term" AND s."code" = 'voc.sch.ele.contest.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_contest_kind_term"
+BEFORE INSERT OR UPDATE OF "contest_kind_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_contest_kind_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_contest_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."contest_kind_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_contest_kind_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_contest_kind_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_contest_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.ele.contest.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."contest_kind_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_contest_kind_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_contest_kind_term_code" ();
+
+CREATE FUNCTION "template"."scheme_templates_election_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."election_kind_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."election_kind_term" AND s."code" = 'voc.sch.ele.election.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_election_kind_term"
+BEFORE INSERT OR UPDATE OF "election_kind_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_election_kind_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_election_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."election_kind_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_election_kind_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_election_kind_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_election_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.ele.election.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."election_kind_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_election_kind_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_election_kind_term_code" ();
+
+CREATE FUNCTION "template"."scheme_templates_entity_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."entity_kind_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."entity_kind_term" AND s."code" = 'voc.sch.ofc.entity.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_entity_kind_term"
+BEFORE INSERT OR UPDATE OF "entity_kind_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_entity_kind_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_entity_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."entity_kind_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_entity_kind_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_entity_kind_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_entity_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.ofc.entity.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."entity_kind_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_entity_kind_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_entity_kind_term_code" ();
+
+CREATE FUNCTION "template"."scheme_templates_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."kind_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."kind_term" AND s."code" = 'voc.sch.gov.institution.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_kind_term"
+BEFORE INSERT OR UPDATE OF "kind_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_kind_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."kind_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_kind_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_kind_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.gov.institution.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."kind_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_kind_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_kind_term_code" ();
+
+CREATE FUNCTION "template"."scheme_templates_premises_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."premises_kind_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."premises_kind_term" AND s."code" = 'voc.sch.ofc.premises.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_premises_kind_term"
+BEFORE INSERT OR UPDATE OF "premises_kind_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_premises_kind_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_premises_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."premises_kind_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_premises_kind_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_premises_kind_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_premises_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.ofc.premises.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."premises_kind_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_premises_kind_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_premises_kind_term_code" ();
+
+CREATE FUNCTION "template"."scheme_templates_role_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."role_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."role_term" AND s."code" = 'voc.sch.gov.position.role'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_role_term"
+BEFORE INSERT OR UPDATE OF "role_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_role_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_role_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."role_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_role_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_role_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_role_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.gov.position.role' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."role_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_role_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_role_term_code" ();
+
+CREATE FUNCTION "template"."scheme_templates_term_kind_term" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."term_kind_term" IS NOT NULL AND NOT EXISTS (
+    SELECT 1
+    FROM "vocabulary"."terms" v
+    JOIN "vocabulary"."schemes" s ON s."id" = v."scheme_id"
+    WHERE v."id" = NEW."term_kind_term" AND s."code" = 'voc.sch.gov.term.kind'
+    FOR SHARE OF v, s
+  ) THEN
+    RAISE EXCEPTION 'referenced value belongs to a different scheme' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "scheme_templates_term_kind_term"
+BEFORE INSERT OR UPDATE OF "term_kind_term" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_term_kind_term" ();
+
+CREATE FUNCTION "template"."scheme_templates_term_kind_term_membership" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF NEW."scheme_id" IS DISTINCT FROM OLD."scheme_id" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."term_kind_term" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot move a value used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_term_kind_term_membership"
+BEFORE UPDATE OF "scheme_id" ON "vocabulary"."terms" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_term_kind_term_membership" ();
+
+CREATE FUNCTION "template"."scheme_templates_term_kind_term_code" () RETURNS trigger LANGUAGE plpgsql AS $scheme$
+BEGIN
+  IF OLD."code" = 'voc.sch.gov.term.kind' AND NEW."code" IS DISTINCT FROM OLD."code" AND EXISTS (
+    SELECT 1 FROM "template"."templates" t
+    JOIN "vocabulary"."terms" v ON v."id" = t."term_kind_term"
+    WHERE v."scheme_id" = OLD."id"
+  ) THEN
+    RAISE EXCEPTION 'cannot rename a scheme used by a scheme-constrained link' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END;
+$scheme$;
+
+CREATE TRIGGER "template_scheme_templates_term_kind_term_code"
+BEFORE UPDATE OF "code" ON "vocabulary"."schemes" FOR EACH ROW
+EXECUTE FUNCTION "template"."scheme_templates_term_kind_term_code" ();
+
+-- ===== Database objects: guards, text transforms, generation and coverage views =====
+-- Rendered by the project pack mzizi.postgres-sql. Intent: .docs/decisions/DEC-DB-RETHINK-ROOTS-UNITS-SLOTS-20261125.md.
+-- ---- Guards ----
+CREATE FUNCTION "geography"."areas__guard" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_parent record;
+  v_child record;
+BEGIN
+  IF NEW."parent_id" IS NULL THEN
+    RETURN NEW;
+  END IF;
+  SELECT a."from_year", a."to_year", l."depth" INTO v_parent
+  FROM "geography"."areas" a JOIN "reference"."levels" l ON l."id" = a."level_id"
+  WHERE a."id" = NEW."parent_id";
+  IF v_parent."depth" IS NULL THEN
+    RAISE EXCEPTION 'the parent area of % does not exist yet; load parents before children', NEW."code" USING ERRCODE = '23503';
+  END IF;
+  SELECT l."depth", l."allows_skip" INTO v_child FROM "reference"."levels" l WHERE l."id" = NEW."level_id";
+  IF v_child."depth" <= v_parent."depth" THEN
+    RAISE EXCEPTION 'area % must be at a deeper level than its parent', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  IF v_child."depth" > v_parent."depth" + 1 AND NOT v_child."allows_skip" THEN
+    RAISE EXCEPTION 'area % skips a level and its level does not allow that', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  IF NEW."from_year" IS NOT NULL AND v_parent."from_year" IS NOT NULL AND NEW."from_year" < v_parent."from_year" THEN
+    RAISE EXCEPTION 'area % starts before its parent', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  IF v_parent."to_year" IS NOT NULL AND (NEW."to_year" IS NULL OR NEW."to_year" > v_parent."to_year") THEN
+    RAISE EXCEPTION 'area % outlives its parent', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_areas__guard"
+BEFORE INSERT OR UPDATE OF "parent_id",
+"level_id",
+"from_year",
+"to_year" ON "geography"."areas" FOR EACH ROW
+EXECUTE FUNCTION "geography"."areas__guard" ();
+
+CREATE FUNCTION "geography"."geometries__guard" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."status" = 'expected' AND NEW."geometry" IS NOT NULL THEN
+    RAISE EXCEPTION 'an expected geometry has no drawing yet' USING ERRCODE = '23514';
+  END IF;
+  IF NEW."status" <> 'expected' AND NEW."geometry" IS NULL THEN
+    RAISE EXCEPTION 'a % geometry needs a drawing', NEW."status" USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_geometries__guard"
+BEFORE INSERT OR UPDATE OF "status",
+"geometry" ON "geography"."geometries" FOR EACH ROW
+EXECUTE FUNCTION "geography"."geometries__guard" ();
+
+CREATE FUNCTION "template"."templates__guard" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_pattern uuid;
+  v_level uuid;
+BEGIN
+  IF NEW."fan_out_level_id" IS NULL THEN
+    RETURN NEW;
+  END IF;
+  SELECT p."country_id" INTO v_pattern FROM "template"."patterns" p WHERE p."id" = NEW."pattern_id";
+  IF v_pattern IS NULL THEN
+    RETURN NEW;
+  END IF;
+  SELECT h."country_id" INTO v_level
+  FROM "reference"."levels" l JOIN "reference"."hierarchies" h ON h."id" = l."hierarchy_id"
+  WHERE l."id" = NEW."fan_out_level_id";
+  IF v_level IS DISTINCT FROM v_pattern THEN
+    RAISE EXCEPTION 'template % fans out over a level of another country than its pattern', NEW."code" USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_templates__guard"
+BEFORE INSERT OR UPDATE OF "pattern_id",
+"fan_out_level_id" ON "template"."templates" FOR EACH ROW
+EXECUTE FUNCTION "template"."templates__guard" ();
+
+-- ---- Text transforms (the closed list: slug, compact, upper, lower) ----
+CREATE FUNCTION "template"."stable_id" (p_code text) RETURNS uuid LANGUAGE sql IMMUTABLE AS $fn$
+  SELECT uuid_generate_v5('6f1c2b1e-8f0e-4c55-9e7a-2b0c5d1e7a10'::uuid, p_code)
+$fn$;
+
+COMMENT ON FUNCTION "template"."stable_id" (text) IS 'The id a row with this code always gets: uuid5 of the code in the seed namespace, the same derivation the seed builders use, so generated and seeded rows agree.';
+
+CREATE FUNCTION "template"."identity_id" (p_code text) RETURNS uuid LANGUAGE sql STABLE AS $fn$
+  SELECT coalesce((SELECT i."id" FROM "identity"."identities" i WHERE i."code" = p_code), "template"."stable_id"(p_code))
+$fn$;
+
+COMMENT ON FUNCTION "template"."identity_id" (text) IS 'The id of the identity with this code if it exists (seeded rows keep their ids), otherwise the stable id the code always gets.';
+
+CREATE FUNCTION "template"."slug" (p_value text) RETURNS text LANGUAGE sql STABLE AS $fn$
+  SELECT trim(both '-' FROM regexp_replace(lower(unaccent(p_value)), '[^a-z0-9]+', '-', 'g'))
+$fn$;
+
+CREATE FUNCTION "template"."compact" (p_value text) RETURNS text LANGUAGE sql STABLE AS $fn$
+  SELECT replace("template"."slug"(p_value), '-', '')
+$fn$;
+
+CREATE FUNCTION "template"."render" (p_body text, p_vars jsonb) RETURNS text LANGUAGE plpgsql STABLE AS $fn$
+DECLARE
+  v_result text := p_body;
+  v_match text[];
+  v_value text;
+  v_step text;
+BEGIN
+  FOR v_match IN SELECT regexp_matches(p_body, '(\{([a-z_0-9]+)((?:\|[a-z]+)*)\})', 'g') LOOP
+    v_value := p_vars ->> v_match[2];
+    IF v_value IS NULL THEN
+      RAISE EXCEPTION 'text template uses the token % but no value is known for it', v_match[2] USING ERRCODE = '22023';
+    END IF;
+    IF v_match[3] <> '' THEN
+      FOREACH v_step IN ARRAY string_to_array(substr(v_match[3], 2), '|') LOOP
+        v_value := CASE v_step
+          WHEN 'slug' THEN "template"."slug"(v_value)
+          WHEN 'compact' THEN "template"."compact"(v_value)
+          WHEN 'upper' THEN upper(v_value)
+          WHEN 'lower' THEN lower(v_value)
+          ELSE NULL
+        END;
+        IF v_value IS NULL THEN
+          RAISE EXCEPTION 'unknown transform %', v_step USING ERRCODE = '22023';
+        END IF;
+      END LOOP;
+    END IF;
+    v_result := replace(v_result, v_match[1], v_value);
+  END LOOP;
+  RETURN v_result;
+END
+$fn$;
+
+COMMENT ON FUNCTION "template"."render" (text, jsonb) IS 'Fills `{token|transform}` placeholders of a text template; an unknown token or transform is an error.';
+
+CREATE FUNCTION "template"."name_of" (p_identity uuid) RETURNS text LANGUAGE sql STABLE AS $fn$
+  SELECT n."text" FROM "identity"."names" n
+  WHERE n."identity_id" = p_identity AND n."deleted_at" IS NULL
+  ORDER BY n."is_default" DESC, n."created_at", n."id" LIMIT 1
+$fn$;
+
+CREATE FUNCTION "template"."last_segment" (p_code text) RETURNS text LANGUAGE sql IMMUTABLE AS $fn$
+  SELECT regexp_replace(p_code, '^.*\.', '')
+$fn$;
+
+CREATE FUNCTION "template"."area_vars" (p_area uuid) RETURNS jsonb LANGUAGE sql STABLE AS $fn$
+  WITH RECURSIVE chain AS (
+    SELECT a."id", a."parent_id", a."level_id", a."feature_id", a."code" FROM "geography"."areas" a WHERE a."id" = p_area
+    UNION ALL
+    SELECT p."id", p."parent_id", p."level_id", p."feature_id", p."code"
+    FROM "geography"."areas" p JOIN chain c ON p."id" = c."parent_id"
+  )
+  SELECT coalesce(
+           (SELECT jsonb_object_agg("template"."last_segment"(k."code"), "template"."name_of"(c."feature_id"))
+            FROM chain c
+            JOIN "reference"."levels" l ON l."id" = c."level_id"
+            JOIN "vocabulary"."terms" k ON k."id" = l."kind_term"),
+           '{}'::jsonb)
+         || jsonb_build_object(
+              'area', (SELECT "template"."name_of"(a."feature_id") FROM "geography"."areas" a WHERE a."id" = p_area),
+              'area_code', (SELECT "template"."last_segment"(a."code") FROM "geography"."areas" a WHERE a."id" = p_area))
+$fn$;
+
+COMMENT ON FUNCTION "template"."area_vars" (uuid) IS 'The tokens an area offers to text templates: its own name (`area`), its code and the name of each ancestor by level kind (`county`, `constituency`, `ward`).';
+
+CREATE FUNCTION "template"."vars" (p_ctx jsonb) RETURNS jsonb LANGUAGE sql STABLE AS $fn$
+  SELECT CASE WHEN p_ctx ->> 'area_id' IS NULL THEN '{}'::jsonb ELSE "template"."area_vars"((p_ctx ->> 'area_id')::uuid) END || p_ctx
+$fn$;
+
+CREATE FUNCTION "template"."text_of" (p_template uuid, p_purpose text) RETURNS text LANGUAGE sql STABLE AS $fn$
+  SELECT x."body" FROM "template"."texts" x
+  WHERE x."template_id" = p_template AND x."purpose" = p_purpose AND x."language_id" IS NULL AND x."deleted_at" IS NULL
+$fn$;
+
+CREATE FUNCTION "template"."country_of_area" (p_area uuid) RETURNS uuid LANGUAGE sql STABLE AS $fn$
+  SELECT h."country_id" FROM "geography"."areas" a
+  JOIN "reference"."levels" l ON l."id" = a."level_id"
+  JOIN "reference"."hierarchies" h ON h."id" = l."hierarchy_id"
+  WHERE a."id" = p_area
+$fn$;
+
+-- ---- Generation ----
+CREATE FUNCTION "template"."contexts" (p_template uuid, p_ctx jsonb) RETURNS SETOF jsonb LANGUAGE plpgsql STABLE AS $fn$
+DECLARE
+  t "template"."templates";
+  p "template"."patterns";
+  a record;
+BEGIN
+  SELECT * INTO t FROM "template"."templates" WHERE "id" = p_template AND "deleted_at" IS NULL;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'template % does not exist', p_template USING ERRCODE = '22023';
+  END IF;
+  SELECT * INTO p FROM "template"."patterns" WHERE "id" = t."pattern_id";
+  IF t."scope" = 'single' THEN
+    RETURN NEXT p_ctx;
+  ELSIF t."scope" = 'level' THEN
+    FOR a IN
+      SELECT ar."id" FROM "geography"."areas" ar
+      JOIN "reference"."levels" l ON l."id" = ar."level_id"
+      JOIN "reference"."hierarchies" h ON h."id" = l."hierarchy_id"
+      WHERE ar."level_id" = t."fan_out_level_id" AND ar."deleted_at" IS NULL
+        AND (p."country_id" IS NULL OR h."country_id" = p."country_id")
+      ORDER BY ar."code"
+    LOOP
+      RETURN NEXT p_ctx || jsonb_build_object('area_id', a."id");
+    END LOOP;
+  ELSIF t."scope" = 'within' THEN
+    IF p_ctx ->> 'area_id' IS NULL THEN
+      RAISE EXCEPTION 'template % fans out within an area but no area is in context', t."code" USING ERRCODE = '22023';
+    END IF;
+    FOR a IN
+      WITH RECURSIVE down AS (
+        SELECT ar."id" FROM "geography"."areas" ar WHERE ar."parent_id" = (p_ctx ->> 'area_id')::uuid AND ar."deleted_at" IS NULL
+        UNION ALL
+        SELECT ar."id" FROM "geography"."areas" ar JOIN down d ON ar."parent_id" = d."id" WHERE ar."deleted_at" IS NULL
+      )
+      SELECT ar."id" FROM down d JOIN "geography"."areas" ar ON ar."id" = d."id"
+      WHERE ar."level_id" = t."fan_out_level_id" ORDER BY ar."code"
+    LOOP
+      RETURN NEXT p_ctx || jsonb_build_object('area_id', a."id");
+    END LOOP;
+  ELSE
+    FOR a IN SELECT i."key", i."name" FROM "template"."items" i WHERE i."template_id" = t."id" AND i."deleted_at" IS NULL ORDER BY i."position" LOOP
+      RETURN NEXT p_ctx || jsonb_build_object('item_key', a."key", 'item_name', a."name");
+    END LOOP;
+  END IF;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_names" (
+    p_template uuid,
+    p_identity uuid,
+    p_kind text,
+    p_code text,
+    p_vars jsonb
+) RETURNS void LANGUAGE plpgsql AS $fn$
+DECLARE
+  n record;
+BEGIN
+  FOR n IN
+    SELECT x."language_id", x."name_kind", "template"."render"(x."body", p_vars) AS rendered
+    FROM "template"."texts" x
+    WHERE x."template_id" = p_template AND x."purpose" = 'name' AND x."deleted_at" IS NULL
+    ORDER BY x."created_at", x."id"
+  LOOP
+    INSERT INTO "identity"."names" ("id", "identity_id", "identity_kind", "language_id", "kind", "text", "is_default", "version", "created_at", "updated_at")
+    VALUES ("template"."stable_id"(p_code || ':' || n."language_id"::text), p_identity, p_kind, n."language_id", n."name_kind", n."rendered", true, 1, now(), now())
+    ON CONFLICT DO NOTHING;
+  END LOOP;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_institution" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_vars jsonb := "template"."vars"(c);
+  v_code text;
+  v_id uuid;
+  v_country uuid;
+BEGIN
+  v_code := "template"."render"("template"."text_of"(t."id", 'code'), v_vars);
+  v_id := "template"."identity_id"(v_code);
+  created := NOT EXISTS (SELECT 1 FROM "governance"."institutions" x WHERE x."id" = v_id);
+  IF created THEN
+    v_country := coalesce(p."country_id", "template"."country_of_area"((c ->> 'area_id')::uuid));
+    INSERT INTO "identity"."identities" ("id", "kind", "code", "version", "created_at", "updated_at") VALUES (v_id, 'entity', v_code, 1, now(), now())
+    ON CONFLICT DO NOTHING;
+    INSERT INTO "official"."entities" ("id", "identity_kind", "code", "kind_term", "registration_country_id", "from_year", "version", "created_at", "updated_at")
+    VALUES (v_id, 'entity', v_code, t."entity_kind_term", v_country, p."from_year", 1, now(), now())
+    ON CONFLICT DO NOTHING;
+    INSERT INTO "governance"."institutions" ("id", "identity_kind", "code", "kind_term", "arm", "class_term", "country_id", "from_year", "template_id", "version", "created_at", "updated_at")
+    VALUES (v_id, 'entity', v_code, t."kind_term", t."arm", t."class_term", v_country, p."from_year", t."id", 1, now(), now());
+    PERFORM "template"."make_names"(t."id", v_id, 'entity', v_code, v_vars);
+  ELSE
+    -- an existing institution is adopted: the template fills what is missing and links itself
+    UPDATE "governance"."institutions" x SET
+      "kind_term" = coalesce(x."kind_term", t."kind_term"), "arm" = coalesce(x."arm", t."arm"),
+      "class_term" = coalesce(x."class_term", t."class_term"),
+      "template_id" = coalesce(x."template_id", t."id")
+    WHERE x."id" = v_id;
+  END IF;
+  ctx := c || jsonb_build_object('institution_id', v_id, 'institution_code', v_code);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_office" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_inst uuid := (c ->> 'institution_id')::uuid;
+  v_position uuid;
+  v_count integer;
+  v_seat integer;
+  v_vars jsonb;
+  v_code text;
+  v_id uuid;
+BEGIN
+  IF v_inst IS NULL THEN
+    RAISE EXCEPTION 'template % makes offices but no institution is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  SELECT po."id" INTO v_position FROM "governance"."positions" po
+  WHERE po."role_term" = t."role_term" AND po."deleted_at" IS NULL
+    AND (po."institution_class_term" IS NULL
+         OR po."institution_class_term" = (SELECT i."class_term" FROM "governance"."institutions" i WHERE i."id" = v_inst))
+  ORDER BY (po."institution_class_term" IS NOT NULL) DESC, po."code" LIMIT 1;
+  IF v_position IS NULL THEN
+    RAISE EXCEPTION 'template % found no position for its role', t."code" USING ERRCODE = '22023';
+  END IF;
+  v_count := CASE t."count_kind" WHEN 'exact' THEN t."count_min" WHEN 'minimum' THEN t."count_min" ELSE 0 END;
+  FOR v_seat IN 1..v_count LOOP
+    v_vars := "template"."vars"(c) || jsonb_build_object('seat', v_seat, 'institution', "template"."last_segment"(c ->> 'institution_code'));
+    v_code := "template"."render"("template"."text_of"(t."id", 'code'), v_vars);
+    v_id := "template"."identity_id"(v_code);
+    created := NOT EXISTS (SELECT 1 FROM "governance"."offices" x WHERE x."id" = v_id);
+    IF created THEN
+      INSERT INTO "identity"."identities" ("id", "kind", "code", "version", "created_at", "updated_at") VALUES (v_id, 'office', v_code, 1, now(), now())
+      ON CONFLICT DO NOTHING;
+      INSERT INTO "governance"."offices" ("id", "identity_kind", "code", "position_id", "institution_id", "area_id", "seat", "from_year", "template_id", "version", "created_at", "updated_at")
+      VALUES (v_id, 'office', v_code, v_position, v_inst, (c ->> 'area_id')::uuid,
+              CASE WHEN v_count > 1 THEN v_seat::text END, p."from_year", t."id", 1, now(), now());
+      PERFORM "template"."make_names"(t."id", v_id, 'office', v_code, v_vars);
+    END IF;
+    ctx := c || jsonb_build_object('office_id', v_id, 'office_code', v_code, 'position_id', v_position);
+    RETURN NEXT;
+  END LOOP;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_term" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_office record;
+  v_election record;
+  v_code text;
+  v_id uuid;
+  v_ordinal integer := 0;
+  v_next integer;
+BEGIN
+  SELECT o."id", o."code", o."area_id", o."from_year", o."institution_id" INTO v_office
+  FROM "governance"."offices" o WHERE o."id" = (c ->> 'office_id')::uuid;
+  IF v_office."id" IS NULL THEN
+    RAISE EXCEPTION 'template % makes terms but no office is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  IF t."repeat_years" IS NULL THEN
+    v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c));
+    SELECT x."id" INTO v_id FROM "governance"."terms" x WHERE x."code" = v_code;
+    created := v_id IS NULL;
+    IF created THEN
+      v_id := "template"."stable_id"(v_code);
+      INSERT INTO "governance"."terms" ("id", "code", "kind_term", "office_id", "area_id", "ordinal", "from_year", "template_id", "version", "created_at", "updated_at")
+      VALUES (v_id, v_code, t."term_kind_term", v_office."id", v_office."area_id", 1, v_office."from_year", t."id", 1, now(), now());
+    END IF;
+    ctx := c || jsonb_build_object('term_id', v_id, 'term_code', v_code);
+    RETURN NEXT;
+    RETURN;
+  END IF;
+  FOR v_election IN
+    SELECT e."id", e."from_year" FROM "election"."elections" e
+    WHERE e."deleted_at" IS NULL AND e."kind_term" = t."election_kind_term"
+      AND e."country_id" = (SELECT ins."country_id" FROM "governance"."institutions" ins WHERE ins."id" = v_office."institution_id")
+      AND e."from_year" >= coalesce(v_office."from_year", e."from_year")
+    ORDER BY e."from_year"
+  LOOP
+    v_ordinal := v_ordinal + 1;
+    SELECT min(e2."from_year") INTO v_next FROM "election"."elections" e2
+    WHERE e2."deleted_at" IS NULL AND e2."kind_term" = t."election_kind_term" AND e2."country_id" = (SELECT ins."country_id" FROM "governance"."institutions" ins WHERE ins."id" = v_office."institution_id")
+      AND e2."from_year" > v_election."from_year";
+    v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c) || jsonb_build_object('year', v_election."from_year"));
+    SELECT x."id" INTO v_id FROM "governance"."terms" x WHERE x."code" = v_code;
+    created := v_id IS NULL;
+    IF created THEN
+      v_id := "template"."stable_id"(v_code);
+      INSERT INTO "governance"."terms" ("id", "code", "kind_term", "office_id", "area_id", "election_id", "ordinal", "from_year", "to_year", "template_id", "version", "created_at", "updated_at")
+      VALUES (v_id, v_code, t."term_kind_term", v_office."id", v_office."area_id", v_election."id", v_ordinal, v_election."from_year", v_next, t."id", 1, now(), now());
+    END IF;
+    ctx := c || jsonb_build_object('term_id', v_id, 'term_code', v_code, 'election_id', v_election."id", 'year', v_election."from_year");
+    RETURN NEXT;
+  END LOOP;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_holder" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_term record;
+  v_code text;
+  v_id uuid;
+BEGIN
+  SELECT x."id", x."office_id", x."from_year", x."to_year" INTO v_term FROM "governance"."terms" x WHERE x."id" = (c ->> 'term_id')::uuid;
+  IF v_term."id" IS NULL THEN
+    RAISE EXCEPTION 'template % makes holders but no term is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c));
+  SELECT h."id" INTO v_id FROM "governance"."holders" h WHERE h."code" = v_code;
+  created := v_id IS NULL;
+  IF created THEN
+    v_id := "template"."stable_id"(v_code);
+    INSERT INTO "governance"."holders" ("id", "code", "office_id", "term_id", "individual_id", "method", "from_year", "to_year", "version", "created_at", "updated_at")
+    VALUES (v_id, v_code, v_term."office_id", v_term."id", NULL, t."method", v_term."from_year", v_term."to_year", 1, now(), now());
+  END IF;
+  ctx := c || jsonb_build_object('holder_id', v_id);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_premises" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_code text;
+  v_id uuid;
+BEGIN
+  IF c ->> 'institution_id' IS NULL THEN
+    RAISE EXCEPTION 'template % makes premises but no institution is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c));
+  SELECT x."id" INTO v_id FROM "official"."premises" x WHERE x."code" = v_code;
+  created := v_id IS NULL;
+  IF created THEN
+    v_id := "template"."stable_id"(v_code);
+    INSERT INTO "official"."premises" ("id", "code", "entity_id", "kind_term", "ordinal", "feature_id", "from_year", "version", "created_at", "updated_at")
+    VALUES (v_id, v_code, (c ->> 'institution_id')::uuid, t."premises_kind_term", 1, NULL, p."from_year", 1, now(), now());
+  END IF;
+  ctx := c || jsonb_build_object('premises_id', v_id);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_contact" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_id uuid;
+  v_text text := "template"."text_of"(t."id", 'contact');
+BEGIN
+  IF c ->> 'institution_id' IS NULL THEN
+    RAISE EXCEPTION 'template % makes contacts but no institution is in context', t."code" USING ERRCODE = '22023';
+  END IF;
+  SELECT x."id" INTO v_id FROM "official"."contacts" x
+  WHERE x."identity_id" = (c ->> 'institution_id')::uuid AND x."kind" = t."contact_kind" AND x."deleted_at" IS NULL;
+  created := v_id IS NULL;
+  IF created THEN
+    v_id := "template"."stable_id"((c ->> 'institution_code') || ':' || t."code");
+    INSERT INTO "official"."contacts" ("id", "identity_id", "kind", "value", "visibility", "version", "created_at", "updated_at")
+    VALUES (v_id, (c ->> 'institution_id')::uuid, t."contact_kind",
+            CASE WHEN v_text IS NULL THEN NULL ELSE "template"."render"(v_text, "template"."vars"(c)) END,
+            t."contact_visibility", 1, now(), now());
+  END IF;
+  ctx := c || jsonb_build_object('contact_id', v_id);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_election_cycle" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_year integer := coalesce(t."start_year", p."from_year");
+  v_limit integer;
+  v_vars jsonb;
+  v_code text;
+  v_id uuid;
+BEGIN
+  IF v_year IS NULL THEN
+    RAISE EXCEPTION 'template % has no start year and its pattern has no from year', t."code" USING ERRCODE = '22023';
+  END IF;
+  v_limit := CASE WHEN t."repeat_years" IS NULL THEN v_year
+                  ELSE v_year + t."repeat_years" * greatest(0, floor((extract(year FROM now())::integer - v_year)::numeric / t."repeat_years")::integer + 1) END;
+  WHILE v_year <= v_limit LOOP
+    v_vars := c || jsonb_build_object('year', v_year);
+    v_code := "template"."render"("template"."text_of"(t."id", 'code'), v_vars);
+    v_id := "template"."identity_id"(v_code);
+    created := NOT EXISTS (SELECT 1 FROM "election"."elections" x WHERE x."id" = v_id);
+    IF created THEN
+      INSERT INTO "identity"."identities" ("id", "kind", "code", "version", "created_at", "updated_at") VALUES (v_id, 'election', v_code, 1, now(), now())
+      ON CONFLICT DO NOTHING;
+      INSERT INTO "election"."elections" ("id", "identity_kind", "code", "country_id", "kind_term", "status", "from_year", "template_id", "version", "created_at", "updated_at")
+      VALUES (v_id, 'election', v_code, p."country_id", t."election_kind_term",
+              CASE WHEN v_year < extract(year FROM now())::integer THEN coalesce(t."election_past_status", t."election_status") ELSE t."election_status" END, v_year, t."id", 1, now(), now());
+      PERFORM "template"."make_names"(t."id", v_id, 'election', v_code, v_vars);
+    END IF;
+    ctx := v_vars || jsonb_build_object('election_id', v_id);
+    RETURN NEXT;
+    EXIT WHEN t."repeat_years" IS NULL;
+    v_year := v_year + t."repeat_years";
+  END LOOP;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make_contest" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+DECLARE
+  v_term record;
+  v_code text;
+  v_id uuid;
+BEGIN
+  SELECT x."id", x."office_id", x."area_id", x."election_id" INTO v_term FROM "governance"."terms" x WHERE x."id" = (c ->> 'term_id')::uuid;
+  IF v_term."id" IS NULL OR v_term."election_id" IS NULL THEN
+    RETURN;
+  END IF;
+  v_code := "template"."render"("template"."text_of"(t."id", 'code'), "template"."vars"(c));
+  SELECT x."id" INTO v_id FROM "election"."contests" x WHERE x."code" = v_code;
+  created := v_id IS NULL;
+  IF created THEN
+    v_id := "template"."stable_id"(v_code);
+    INSERT INTO "election"."contests" ("id", "code", "election_id", "office_id", "term_id", "area_id", "kind_term", "template_id", "version", "created_at", "updated_at")
+    VALUES (v_id, v_code, v_term."election_id", v_term."office_id", v_term."id", v_term."area_id", t."contest_kind_term", t."id", 1, now(), now());
+  END IF;
+  ctx := c || jsonb_build_object('contest_id', v_id);
+  RETURN NEXT;
+END
+$fn$;
+
+CREATE FUNCTION "template"."make" (
+    t "template"."templates",
+    p "template"."patterns",
+    c jsonb
+) RETURNS TABLE (ctx jsonb, created boolean) LANGUAGE plpgsql AS $fn$
+BEGIN
+  CASE t."product"
+    WHEN 'institution' THEN RETURN QUERY SELECT * FROM "template"."make_institution"(t, p, c);
+    WHEN 'office' THEN RETURN QUERY SELECT * FROM "template"."make_office"(t, p, c);
+    WHEN 'term' THEN RETURN QUERY SELECT * FROM "template"."make_term"(t, p, c);
+    WHEN 'holder' THEN RETURN QUERY SELECT * FROM "template"."make_holder"(t, p, c);
+    WHEN 'premises' THEN RETURN QUERY SELECT * FROM "template"."make_premises"(t, p, c);
+    WHEN 'contact' THEN RETURN QUERY SELECT * FROM "template"."make_contact"(t, p, c);
+    WHEN 'election-cycle' THEN RETURN QUERY SELECT * FROM "template"."make_election_cycle"(t, p, c);
+    WHEN 'contest' THEN RETURN QUERY SELECT * FROM "template"."make_contest"(t, p, c);
+    ELSE RAISE EXCEPTION 'generation of % rows is not available yet', t."product" USING ERRCODE = '0A000';
+  END CASE;
+END
+$fn$;
+
+CREATE FUNCTION "template"."generate" (p_template uuid, p_ctx jsonb DEFAULT '{}'::jsonb) RETURNS integer LANGUAGE plpgsql AS $fn$
+DECLARE
+  t "template"."templates";
+  p "template"."patterns";
+  c jsonb;
+  r record;
+  l record;
+  v_made integer := 0;
+BEGIN
+  SELECT * INTO t FROM "template"."templates" WHERE "id" = p_template AND "deleted_at" IS NULL;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'template % does not exist', p_template USING ERRCODE = '22023';
+  END IF;
+  SELECT * INTO p FROM "template"."patterns" WHERE "id" = t."pattern_id";
+  FOR c IN SELECT * FROM "template"."contexts"(p_template, p_ctx) LOOP
+    FOR r IN SELECT * FROM "template"."make"(t, p, c) LOOP
+      IF r."created" THEN
+        v_made := v_made + 1;
+      END IF;
+      FOR l IN SELECT x."effect_template_id" FROM "template"."lines" x WHERE x."template_id" = p_template AND x."deleted_at" IS NULL ORDER BY x."position" LOOP
+        v_made := v_made + "template"."generate"(l."effect_template_id", r."ctx");
+      END LOOP;
+    END LOOP;
+  END LOOP;
+  RETURN v_made;
+END
+$fn$;
+
+COMMENT ON FUNCTION "template"."generate" (uuid, jsonb) IS 'Runs one template: creates the roots it describes for each place, item or year in context, then runs its effect lines for each. Only missing rows are created, so a second run creates nothing. Returns the number of rows created.';
+
+CREATE FUNCTION "template"."generate_pattern" (p_pattern uuid) RETURNS integer LANGUAGE plpgsql AS $fn$
+DECLARE
+  r record;
+  v_made integer := 0;
+BEGIN
+  FOR r IN
+    SELECT x."id" FROM "template"."templates" x
+    WHERE x."pattern_id" = p_pattern AND x."deleted_at" IS NULL
+      AND NOT EXISTS (SELECT 1 FROM "template"."lines" l WHERE l."effect_template_id" = x."id" AND l."deleted_at" IS NULL)
+    ORDER BY x."sequence", x."code"
+  LOOP
+    v_made := v_made + "template"."generate"(r."id");
+  END LOOP;
+  RETURN v_made;
+END
+$fn$;
+
+COMMENT ON FUNCTION "template"."generate_pattern" (uuid) IS 'Runs every root template of a pattern in sequence order (election cycles before the offices and terms that depend on them).';
+
+-- ---- Coverage views (what is missing; the pending slots) ----
+CREATE VIEW "template"."pending_holders" AS
+SELECT
+    h."id" AS row_id,
+    h."code" AS code,
+    o."code" AS office_code,
+    t."code" AS term_code,
+    h."from_year",
+    h."to_year"
+FROM
+    "governance"."holders" h
+    JOIN "governance"."offices" o ON o."id" = h."office_id"
+    LEFT JOIN "governance"."terms" t ON t."id" = h."term_id"
+WHERE
+    h."individual_id" IS NULL
+    AND h."deleted_at" IS NULL;
+
+CREATE VIEW "template"."pending_contacts" AS
+SELECT
+    c."id" AS row_id,
+    i."code" AS identity_code,
+    c."kind"
+FROM
+    "official"."contacts" c
+    JOIN "identity"."identities" i ON i."id" = c."identity_id"
+WHERE
+    c."value" IS NULL
+    AND c."deleted_at" IS NULL;
+
+CREATE VIEW "template"."pending_geometries" AS
+SELECT
+    g."id" AS row_id,
+    f."code" AS feature_code,
+    a."code" AS area_code
+FROM
+    "geography"."geometries" g
+    JOIN "geography"."features" f ON f."id" = g."feature_id"
+    LEFT JOIN "geography"."areas" a ON a."feature_id" = f."id"
+    AND a."deleted_at" IS NULL
+WHERE
+    g."status" = 'expected'
+    AND g."deleted_at" IS NULL;
+
+CREATE VIEW "template"."offices_without_terms" AS
+SELECT
+    o."id" AS row_id,
+    o."code" AS code
+FROM
+    "governance"."offices" o
+WHERE
+    o."deleted_at" IS NULL
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            "governance"."terms" t
+        WHERE
+            t."office_id" = o."id"
+            AND t."deleted_at" IS NULL
+    );
+
+CREATE VIEW "template"."terms_without_holders" AS
+SELECT
+    t."id" AS row_id,
+    t."code" AS code
+FROM
+    "governance"."terms" t
+WHERE
+    t."deleted_at" IS NULL
+    AND t."office_id" IS NOT NULL
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            "governance"."holders" h
+        WHERE
+            h."term_id" = t."id"
+            AND h."deleted_at" IS NULL
+    );
+
+CREATE VIEW "template"."contests_without_candidates" AS
+SELECT
+    c."id" AS row_id,
+    c."code" AS code
+FROM
+    "election"."contests" c
+WHERE
+    c."deleted_at" IS NULL
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            "election"."candidates" ca
+        WHERE
+            ca."contest_id" = c."id"
+            AND ca."deleted_at" IS NULL
+    );
+
+CREATE VIEW "template"."pending_queue" AS
+SELECT
+    'holder'::text AS queue,
+    'governance.holders'::text AS table_name,
+    row_id,
+    code,
+    'individual'::text AS missing
+FROM
+    "template"."pending_holders"
+UNION ALL
+SELECT
+    'contact',
+    'official.contacts',
+    row_id,
+    identity_code,
+    'value'
+FROM
+    "template"."pending_contacts"
+UNION ALL
+SELECT
+    'geometry',
+    'geography.geometries',
+    row_id,
+    coalesce(area_code, feature_code),
+    'drawing'
+FROM
+    "template"."pending_geometries"
+UNION ALL
+SELECT
+    'office',
+    'governance.offices',
+    row_id,
+    code,
+    'term'
+FROM
+    "template"."offices_without_terms"
+UNION ALL
+SELECT
+    'term',
+    'governance.terms',
+    row_id,
+    code,
+    'holder'
+FROM
+    "template"."terms_without_holders"
+UNION ALL
+SELECT
+    'contest',
+    'election.contests',
+    row_id,
+    code,
+    'candidates'
+FROM
+    "template"."contests_without_candidates";
+
+COMMENT ON VIEW "template"."pending_queue" IS 'Every pending slot and gap in one list (queue, table, row, code, what is missing); export it as the research work queue.';
+
+CREATE FUNCTION "election"."contests__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'contest'
+  ) THEN
+    RAISE EXCEPTION 'contests.template_id must name a template that makes contest rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_contests__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "election"."contests" FOR EACH ROW
+EXECUTE FUNCTION "election"."contests__template_product" ();
+
+CREATE FUNCTION "election"."elections__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'election-cycle'
+  ) THEN
+    RAISE EXCEPTION 'elections.template_id must name a template that makes election-cycle rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_elections__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "election"."elections" FOR EACH ROW
+EXECUTE FUNCTION "election"."elections__template_product" ();
+
+CREATE FUNCTION "event"."rules__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'event-rule'
+  ) THEN
+    RAISE EXCEPTION 'rules.template_id must name a template that makes event-rule rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_rules__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "event"."rules" FOR EACH ROW
+EXECUTE FUNCTION "event"."rules__template_product" ();
+
+CREATE FUNCTION "event"."schedules__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'event-schedule'
+  ) THEN
+    RAISE EXCEPTION 'schedules.template_id must name a template that makes event-schedule rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_schedules__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "event"."schedules" FOR EACH ROW
+EXECUTE FUNCTION "event"."schedules__template_product" ();
+
+CREATE FUNCTION "finance"."budgets__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'budget'
+  ) THEN
+    RAISE EXCEPTION 'budgets.template_id must name a template that makes budget rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_budgets__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "finance"."budgets" FOR EACH ROW
+EXECUTE FUNCTION "finance"."budgets__template_product" ();
+
+CREATE FUNCTION "finance"."funds__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'fund'
+  ) THEN
+    RAISE EXCEPTION 'funds.template_id must name a template that makes fund rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_funds__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "finance"."funds" FOR EACH ROW
+EXECUTE FUNCTION "finance"."funds__template_product" ();
+
+CREATE FUNCTION "geography"."areas__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'area'
+  ) THEN
+    RAISE EXCEPTION 'areas.template_id must name a template that makes area rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_areas__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "geography"."areas" FOR EACH ROW
+EXECUTE FUNCTION "geography"."areas__template_product" ();
+
+CREATE FUNCTION "governance"."institutions__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'institution'
+  ) THEN
+    RAISE EXCEPTION 'institutions.template_id must name a template that makes institution rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_institutions__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "governance"."institutions" FOR EACH ROW
+EXECUTE FUNCTION "governance"."institutions__template_product" ();
+
+CREATE FUNCTION "governance"."terms__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'term'
+  ) THEN
+    RAISE EXCEPTION 'terms.template_id must name a template that makes term rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_terms__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "governance"."terms" FOR EACH ROW
+EXECUTE FUNCTION "governance"."terms__template_product" ();
+
+CREATE FUNCTION "governance"."offices__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'office'
+  ) THEN
+    RAISE EXCEPTION 'offices.template_id must name a template that makes office rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_offices__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "governance"."offices" FOR EACH ROW
+EXECUTE FUNCTION "governance"."offices__template_product" ();
+
+CREATE FUNCTION "governance"."positions__template_product" () RETURNS trigger LANGUAGE plpgsql AS $fn$
+BEGIN
+  IF NEW."template_id" IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM "template"."templates" t WHERE t."id" = NEW."template_id" AND t."product" = 'position'
+  ) THEN
+    RAISE EXCEPTION 'positions.template_id must name a template that makes position rows' USING ERRCODE = '23514';
+  END IF;
+  RETURN NEW;
+END
+$fn$;
+
+CREATE TRIGGER "tr_positions__template_product"
+BEFORE INSERT OR UPDATE OF "template_id" ON "governance"."positions" FOR EACH ROW
+EXECUTE FUNCTION "governance"."positions__template_product" ();
+
 COMMENT ON TABLE "auth"."accounts" IS E'A sign-in principal for a person, service or agent.';
 
 COMMENT ON COLUMN "auth"."accounts"."actor_kind" IS E'person, service or agent.';
@@ -22327,7 +21486,7 @@ COMMENT ON COLUMN "civic"."bids"."code" IS E'Stable row code (`.docs/rules/codes
 
 COMMENT ON COLUMN "civic"."bids"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "civic"."bids"."outcome_term" IS E'won, lost, disqualified, withdrawn. Term from vocabulary scheme `civ.bid.outcome`.';
+COMMENT ON COLUMN "civic"."bids"."outcome" IS E'won, lost, disqualified, withdrawn.';
 
 COMMENT ON COLUMN "civic"."bids"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -22345,7 +21504,7 @@ COMMENT ON COLUMN "civic"."contracts"."deleted_at" IS E'Soft-delete time; empty 
 
 COMMENT ON COLUMN "civic"."contracts"."nature_term" IS E'supply, works, services, framework. Term from vocabulary scheme `civ.contract.nature`.';
 
-COMMENT ON COLUMN "civic"."contracts"."status_term" IS E'signed, ongoing, completed, terminated. Term from vocabulary scheme `civ.contract.status`.';
+COMMENT ON COLUMN "civic"."contracts"."status" IS E'signed, ongoing, completed, terminated.';
 
 COMMENT ON COLUMN "civic"."contracts"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -22381,7 +21540,7 @@ COMMENT ON COLUMN "civic"."facilities"."owner_id" IS E'Who owns it.';
 
 COMMENT ON COLUMN "civic"."facilities"."ownership_term" IS E'public, private, faith-based, community. Term from vocabulary scheme `civ.facility.ownership`.';
 
-COMMENT ON COLUMN "civic"."facilities"."status_term" IS E'operational, under construction, closed. Term from vocabulary scheme `civ.facility.status`.';
+COMMENT ON COLUMN "civic"."facilities"."status" IS E'operational, under construction, closed.';
 
 COMMENT ON COLUMN "civic"."facilities"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -22419,7 +21578,7 @@ COMMENT ON COLUMN "civic"."procurements"."nature_term" IS E'new, framework, rene
 
 COMMENT ON COLUMN "civic"."procurements"."procedure_term" IS E'open tender, restricted, direct, request for quotation. Term from vocabulary scheme `civ.procurement.procedure`.';
 
-COMMENT ON COLUMN "civic"."procurements"."status_term" IS E'planned, open, evaluation, awarded, cancelled. Term from vocabulary scheme `civ.procurement.status`.';
+COMMENT ON COLUMN "civic"."procurements"."status" IS E'planned, open, evaluation, awarded, cancelled.';
 
 COMMENT ON COLUMN "civic"."procurements"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -22439,7 +21598,7 @@ COMMENT ON COLUMN "civic"."projects"."implementer_id" IS E'Who implements it.';
 
 COMMENT ON COLUMN "civic"."projects"."sponsor_id" IS E'Who funds the project.';
 
-COMMENT ON COLUMN "civic"."projects"."status_term" IS E'planned, ongoing, complete, stalled, abandoned. Term from vocabulary scheme `civ.project.status`.';
+COMMENT ON COLUMN "civic"."projects"."status" IS E'planned, ongoing, complete, stalled, abandoned.';
 
 COMMENT ON COLUMN "civic"."projects"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -22541,11 +21700,13 @@ COMMENT ON COLUMN "community"."blocks"."version" IS E'Optimistic-concurrency ver
 
 COMMENT ON TABLE "community"."cases" IS E'The moderation of one post.';
 
-COMMENT ON COLUMN "community"."cases"."decision_term" IS E'approve, reject, remove, escalate. Term from vocabulary scheme `com.case.decision`.';
+COMMENT ON COLUMN "community"."cases"."decision" IS E'approve, reject, remove, escalate.';
 
 COMMENT ON COLUMN "community"."cases"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
 COMMENT ON COLUMN "community"."cases"."reason" IS E'Internal moderation note.';
+
+COMMENT ON COLUMN "community"."cases"."state" IS E'open, in review, decided or escalated.';
 
 COMMENT ON COLUMN "community"."cases"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -22591,7 +21752,7 @@ COMMENT ON COLUMN "community"."notifications"."identity_id" IS E'The named thing
 
 COMMENT ON COLUMN "community"."notifications"."key_id" IS E'The interface key whose message is shown.';
 
-COMMENT ON COLUMN "community"."notifications"."kind_term" IS E'new figure, event reminder, reply. Term from vocabulary scheme `com.notification.kind`.';
+COMMENT ON COLUMN "community"."notifications"."kind" IS E'new figure, event reminder, reply.';
 
 COMMENT ON COLUMN "community"."notifications"."post_country_id" IS E'The post''s country, with `post_id` a composite foreign key.';
 
@@ -22615,7 +21776,7 @@ COMMENT ON COLUMN "community"."posts"."deleted_at" IS E'Soft-delete time; empty 
 
 COMMENT ON COLUMN "community"."posts"."identity_id" IS E'The named thing the post is about.';
 
-COMMENT ON COLUMN "community"."posts"."kind_term" IS E'comment, review, report, question. Term from vocabulary scheme `com.post.kind`.';
+COMMENT ON COLUMN "community"."posts"."kind" IS E'comment, review, report, question.';
 
 COMMENT ON COLUMN "community"."posts"."parent_id" IS E'The post this one replies to, in the same country.';
 
@@ -22667,7 +21828,7 @@ COMMENT ON COLUMN "community"."replies"."deleted_at" IS E'Soft-delete time; empt
 
 COMMENT ON COLUMN "community"."replies"."respondent_id" IS E'The office, institution or person replying officially.';
 
-COMMENT ON COLUMN "community"."replies"."status_term" IS E'received, published, withdrawn. Term from vocabulary scheme `com.reply.status`.';
+COMMENT ON COLUMN "community"."replies"."status" IS E'received, published, withdrawn.';
 
 COMMENT ON COLUMN "community"."replies"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -22677,7 +21838,7 @@ COMMENT ON COLUMN "community"."subscriptions"."deleted_at" IS E'Soft-delete time
 
 COMMENT ON COLUMN "community"."subscriptions"."identity_id" IS E'The named thing followed.';
 
-COMMENT ON COLUMN "community"."subscriptions"."kind_term" IS E'follow, alerts. Term from vocabulary scheme `com.subscription.kind`.';
+COMMENT ON COLUMN "community"."subscriptions"."kind" IS E'follow, alerts.';
 
 COMMENT ON COLUMN "community"."subscriptions"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -22775,6 +21936,8 @@ COMMENT ON COLUMN "economy"."prices"."feature_id" IS E'The place the price was o
 
 COMMENT ON COLUMN "economy"."prices"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
 
+COMMENT ON COLUMN "economy"."prices"."kind_term" IS E'retail, wholesale, farm-gate, standard cost, contract, modelled. Term from vocabulary scheme `eco.price.kind`.';
+
 COMMENT ON COLUMN "economy"."prices"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
 COMMENT ON COLUMN "economy"."prices"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
@@ -22809,13 +21972,13 @@ COMMENT ON COLUMN "election"."choices"."text" IS E'The choice as printed on the 
 
 COMMENT ON COLUMN "election"."choices"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "election"."contests" IS E'One contest in an election: one seat or one referendum question for one place.';
+COMMENT ON TABLE "election"."contests" IS E'One contest in an election: one seat or one referendum question for one area. A contest is generated per seat per cycle and exists before any candidate or result.';
+
+COMMENT ON COLUMN "election"."contests"."area_id" IS E'The official area that votes.';
 
 COMMENT ON COLUMN "election"."contests"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
 COMMENT ON COLUMN "election"."contests"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
-
-COMMENT ON COLUMN "election"."contests"."feature_id" IS E'The place that votes.';
 
 COMMENT ON COLUMN "election"."contests"."kind_term" IS E'presidential, governor, member of parliament, referendum question. Term from vocabulary scheme `ele.contest.kind`.';
 
@@ -22823,9 +21986,13 @@ COMMENT ON COLUMN "election"."contests"."office_id" IS E'The seat contested; emp
 
 COMMENT ON COLUMN "election"."contests"."reason_term" IS E'Why the contest is held (term end, vacancy, nullification). Term from vocabulary scheme `ele.contest.reason`.';
 
+COMMENT ON COLUMN "election"."contests"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
+
+COMMENT ON COLUMN "election"."contests"."term_id" IS E'The office term the contest fills; with `office_id` a composite key, so both name the same office.';
+
 COMMENT ON COLUMN "election"."contests"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "election"."elections" IS E'An election or referendum. Its names are `identity.names`.';
+COMMENT ON TABLE "election"."elections" IS E'An election or referendum; a general election cycle is generated from a pattern. The terms it fills are `governance.terms`. Its names are `identity.names`.';
 
 COMMENT ON COLUMN "election"."elections"."authority_id" IS E'The body that runs the election (IEBC).';
 
@@ -22845,15 +22012,15 @@ COMMENT ON COLUMN "election"."elections"."kind_term" IS E'general, by-election, 
 
 COMMENT ON COLUMN "election"."elections"."parent_id" IS E'The general election a by-election or rerun belongs to.';
 
-COMMENT ON COLUMN "election"."elections"."status_term" IS E'scheduled, held, annulled. Term from vocabulary scheme `ele.election.status`.';
+COMMENT ON COLUMN "election"."elections"."status" IS E'scheduled, held, annulled.';
 
-COMMENT ON COLUMN "election"."elections"."term_id" IS E'The term the election fills.';
+COMMENT ON COLUMN "election"."elections"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
 
 COMMENT ON COLUMN "election"."elections"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "election"."forms" IS E'An original results document, so a reader can open the form behind any result.';
 
-COMMENT ON COLUMN "election"."forms"."asset_id" IS E'The form as an image, PDF or link to the official portal.';
+COMMENT ON COLUMN "election"."forms"."asset_id" IS E'The form as an image, PDF or link to the official portal; empty while the form is only expected.';
 
 COMMENT ON COLUMN "election"."forms"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
@@ -22887,7 +22054,7 @@ COMMENT ON COLUMN "election"."stations"."feature_id" IS E'The polling place as a
 
 COMMENT ON COLUMN "election"."stations"."host_id" IS E'The institution hosting the station (a school).';
 
-COMMENT ON COLUMN "election"."stations"."status_term" IS E'gazetted, open, relocated, closed. Term from vocabulary scheme `ele.station.status`.';
+COMMENT ON COLUMN "election"."stations"."status" IS E'gazetted, open, relocated, closed.';
 
 COMMENT ON COLUMN "election"."stations"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -22925,7 +22092,7 @@ COMMENT ON COLUMN "event"."changes"."authority_id" IS E'Who decided the change.'
 
 COMMENT ON COLUMN "event"."changes"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "event"."changes"."kind_term" IS E'postponed, brought forward, cancelled, moved. Term from vocabulary scheme `evt.change.kind`.';
+COMMENT ON COLUMN "event"."changes"."kind" IS E'postponed, brought forward, cancelled, moved.';
 
 COMMENT ON COLUMN "event"."changes"."note" IS E'Optional note, written in `note_language_id`.';
 
@@ -22934,8 +22101,6 @@ COMMENT ON COLUMN "event"."changes"."reason_term" IS E'Why it changed. Term from
 COMMENT ON COLUMN "event"."changes"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "event"."events" IS E'A planned or recurring civic happening (Madaraka Day, budget reading). Its names are `identity.names`.';
-
-COMMENT ON COLUMN "event"."events"."basis_provision_id" IS E'The legal provision that requires the event.';
 
 COMMENT ON COLUMN "event"."events"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -22973,15 +22138,17 @@ COMMENT ON COLUMN "event"."occurrences"."continues_occurrence_id" IS E'The occur
 
 COMMENT ON COLUMN "event"."occurrences"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "event"."occurrences"."format_term" IS E'in person, online or hybrid. Term from vocabulary scheme `evt.occurrence.format`.';
+COMMENT ON COLUMN "event"."occurrences"."format" IS E'in person, online or hybrid.';
 
 COMMENT ON COLUMN "event"."occurrences"."knowledge_term" IS E'How the date is known: announced, gazetted, estimated. Term from vocabulary scheme `evt.occurrence.knowledge`.';
 
 COMMENT ON COLUMN "event"."occurrences"."organiser_id" IS E'The organiser of this occurrence when it differs from the event''s.';
 
+COMMENT ON COLUMN "event"."occurrences"."planned_starts_on" IS E'Planned first day; empty while the date is not yet known.';
+
 COMMENT ON COLUMN "event"."occurrences"."starts_at" IS E'Exact start time, when known.';
 
-COMMENT ON COLUMN "event"."occurrences"."status_term" IS E'scheduled, held, postponed, cancelled. Term from vocabulary scheme `evt.occurrence.status`.';
+COMMENT ON COLUMN "event"."occurrences"."status" IS E'scheduled, held, postponed, cancelled.';
 
 COMMENT ON COLUMN "event"."occurrences"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -22991,7 +22158,7 @@ COMMENT ON COLUMN "event"."participants"."identity_id" IS E'The person or organi
 
 COMMENT ON COLUMN "event"."participants"."role_term" IS E'host, speaker, guest. Term from vocabulary scheme `evt.participant.role`.';
 
-COMMENT ON TABLE "event"."rules" IS E'When an event recurs.';
+COMMENT ON TABLE "event"."rules" IS E'When an event recurs. A rule may be generated from a pattern (the second Tuesday of August every fifth year).';
 
 COMMENT ON COLUMN "event"."rules"."adjustment_term" IS E'What happens when the date falls on a weekend. Term from vocabulary scheme `evt.rule.adjustment`.';
 
@@ -22999,11 +22166,13 @@ COMMENT ON COLUMN "event"."rules"."deleted_at" IS E'Soft-delete time; empty whil
 
 COMMENT ON COLUMN "event"."rules"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
 
-COMMENT ON COLUMN "event"."rules"."kind_term" IS E'fixed date, nth weekday, interval, rrule. Term from vocabulary scheme `evt.rule.kind`.';
+COMMENT ON COLUMN "event"."rules"."kind" IS E'fixed date, nth weekday, interval, rrule.';
 
 COMMENT ON COLUMN "event"."rules"."nth_weekday" IS E'Which weekday of the month; negative counts from the end.';
 
 COMMENT ON COLUMN "event"."rules"."rrule" IS E'An RFC 5545 recurrence rule.';
+
+COMMENT ON COLUMN "event"."rules"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
 
 COMMENT ON COLUMN "event"."rules"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -23011,7 +22180,7 @@ COMMENT ON COLUMN "event"."rules"."version" IS E'Optimistic-concurrency version;
 
 COMMENT ON COLUMN "event"."rules"."weekday" IS E'ISO weekday, 1 is Monday.';
 
-COMMENT ON TABLE "event"."schedules" IS E'A published timetable of steps counted from an anchor (an election timetable).';
+COMMENT ON TABLE "event"."schedules" IS E'A published timetable of steps counted from an anchor (an election timetable); an expected one is generated from a pattern.';
 
 COMMENT ON COLUMN "event"."schedules"."anchor_event_id" IS E'The event the schedule counts from.';
 
@@ -23023,7 +22192,9 @@ COMMENT ON COLUMN "event"."schedules"."issuer_id" IS E'The body that issued the 
 
 COMMENT ON COLUMN "event"."schedules"."kind_term" IS E'election timetable, budget calendar. Term from vocabulary scheme `evt.schedule.kind`.';
 
-COMMENT ON COLUMN "event"."schedules"."status_term" IS E'draft, published, superseded. Term from vocabulary scheme `evt.schedule.status`.';
+COMMENT ON COLUMN "event"."schedules"."status" IS E'draft, published, superseded.';
+
+COMMENT ON COLUMN "event"."schedules"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
 
 COMMENT ON COLUMN "event"."schedules"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -23050,6 +22221,8 @@ COMMENT ON COLUMN "event"."subjects"."role_term" IS E'What part the thing plays 
 COMMENT ON TABLE "event"."venues" IS E'Where an occurrence takes place.';
 
 COMMENT ON COLUMN "event"."venues"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "event"."venues"."feature_id" IS E'The place; empty while the venue is not yet known.';
 
 COMMENT ON COLUMN "event"."venues"."note" IS E'Optional note, written in `note_language_id`.';
 
@@ -23127,7 +22300,7 @@ COMMENT ON TABLE "finance"."appropriations" IS E'A line of a budget revision: mo
 
 COMMENT ON COLUMN "finance"."appropriations"."amount" IS E'Amount appropriated, in whole minor units of `currency_id`.';
 
-COMMENT ON COLUMN "finance"."appropriations"."class_term" IS E'The budget classification of the line (programme, economic item). Term from vocabulary scheme `fin.classification`.';
+COMMENT ON COLUMN "finance"."appropriations"."class_term" IS E'The budget classification of the line (programme, economic item); empty while the vote is only expected. Term from vocabulary scheme `fin.classification`.';
 
 COMMENT ON COLUMN "finance"."appropriations"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -23139,7 +22312,7 @@ COMMENT ON COLUMN "finance"."appropriations"."recipient_id" IS E'The institution
 
 COMMENT ON COLUMN "finance"."appropriations"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "finance"."budgets" IS E'A government''s budget for a fiscal period.';
+COMMENT ON TABLE "finance"."budgets" IS E'A government''s budget for a fiscal period; an expected budget (one per county per year) is generated from a pattern before any figure exists.';
 
 COMMENT ON COLUMN "finance"."budgets"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -23148,6 +22321,8 @@ COMMENT ON COLUMN "finance"."budgets"."deleted_at" IS E'Soft-delete time; empty 
 COMMENT ON COLUMN "finance"."budgets"."government_id" IS E'The government whose budget it is (national or a county).';
 
 COMMENT ON COLUMN "finance"."budgets"."kind_term" IS E'recurrent, development, consolidated. Term from vocabulary scheme `fin.budget.kind`.';
+
+COMMENT ON COLUMN "finance"."budgets"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
 
 COMMENT ON COLUMN "finance"."budgets"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -23185,7 +22360,7 @@ COMMENT ON COLUMN "finance"."findings"."institution_id" IS E'The audited institu
 
 COMMENT ON COLUMN "finance"."findings"."kind_term" IS E'unsupported expenditure, irregular procurement, pending bills. Term from vocabulary scheme `fin.finding.kind`.';
 
-COMMENT ON COLUMN "finance"."findings"."status_term" IS E'open, resolved or referred. Term from vocabulary scheme `fin.finding.status`.';
+COMMENT ON COLUMN "finance"."findings"."status" IS E'open, resolved or referred.';
 
 COMMENT ON COLUMN "finance"."findings"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -23201,11 +22376,11 @@ COMMENT ON COLUMN "finance"."flows"."country_id" IS E'Partition key.';
 
 COMMENT ON COLUMN "finance"."flows"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "finance"."flows"."kind_term" IS E'allocation, transfer, disbursement, payment, receipt. Term from vocabulary scheme `fin.flow.kind`.';
+COMMENT ON COLUMN "finance"."flows"."kind" IS E'allocation, transfer, disbursement, payment, receipt.';
 
 COMMENT ON COLUMN "finance"."flows"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "finance"."funds" IS E'A public fund (NG-CDF).';
+COMMENT ON TABLE "finance"."funds" IS E'A public fund (the county revenue fund, an NG-CDF); an expected one is generated from a pattern.';
 
 COMMENT ON COLUMN "finance"."funds"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -23221,6 +22396,8 @@ COMMENT ON COLUMN "finance"."funds"."manager_id" IS E'Who manages the fund.';
 
 COMMENT ON COLUMN "finance"."funds"."source_term" IS E'exchequer, donor, levy. Term from vocabulary scheme `fin.fund.source`.';
 
+COMMENT ON COLUMN "finance"."funds"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
+
 COMMENT ON COLUMN "finance"."funds"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "finance"."periods" IS E'A fiscal period of a country (FY 2023/24).';
@@ -23231,7 +22408,7 @@ COMMENT ON COLUMN "finance"."periods"."deleted_at" IS E'Soft-delete time; empty 
 
 COMMENT ON COLUMN "finance"."periods"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
 
-COMMENT ON COLUMN "finance"."periods"."kind_term" IS E'fiscal year, quarter, month. Term from vocabulary scheme `fin.period.kind`.';
+COMMENT ON COLUMN "finance"."periods"."kind" IS E'fiscal year, quarter, month.';
 
 COMMENT ON COLUMN "finance"."periods"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -23245,9 +22422,31 @@ COMMENT ON COLUMN "finance"."revisions"."deleted_at" IS E'Soft-delete time; empt
 
 COMMENT ON COLUMN "finance"."revisions"."revision" IS E'1 for the original budget, rising with supplementaries.';
 
-COMMENT ON COLUMN "finance"."revisions"."status_term" IS E'proposed, approved, enacted. Term from vocabulary scheme `fin.revision.status`.';
+COMMENT ON COLUMN "finance"."revisions"."status" IS E'proposed, approved, enacted.';
 
 COMMENT ON COLUMN "finance"."revisions"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
+
+COMMENT ON TABLE "geography"."areas" IS E'One official place in one hierarchy at one level for a period: the unit patterns fan out over and offices, jurisdictions and templates point at. Geography details are found through the feature''s identity; boundary status is read from the feature''s geometry.';
+
+COMMENT ON COLUMN "geography"."areas"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
+
+COMMENT ON COLUMN "geography"."areas"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "geography"."areas"."feature_id" IS E'The place this area is. Never empty: generation creates the feature, then an empty geometry, then the area; details are filled in later.';
+
+COMMENT ON COLUMN "geography"."areas"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
+
+COMMENT ON COLUMN "geography"."areas"."hierarchy_id" IS E'The administrative, electoral or other hierarchy this area belongs to.';
+
+COMMENT ON COLUMN "geography"."areas"."level_id" IS E'The level of the hierarchy this area is (county, constituency, ward).';
+
+COMMENT ON COLUMN "geography"."areas"."parent_id" IS E'The area one level up in the same hierarchy; empty for the top area (the country). Membership lives here, not in `geography.relationships`.';
+
+COMMENT ON COLUMN "geography"."areas"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
+
+COMMENT ON COLUMN "geography"."areas"."to_year" IS E'Last year of the period; empty while the period has not ended.';
+
+COMMENT ON COLUMN "geography"."areas"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "geography"."assets" IS E'A stored GIS file or prepared map output (tile set, TopoJSON) for a feature, through filesystem versions.';
 
@@ -23263,7 +22462,7 @@ COMMENT ON COLUMN "geography"."assets"."geometry_id" IS E'Set when the file is t
 
 COMMENT ON COLUMN "geography"."assets"."hierarchy_id" IS E'For a prepared output: the hierarchy it draws.';
 
-COMMENT ON COLUMN "geography"."assets"."kind_term" IS E'vector boundary, raster, elevation, tile set, TopoJSON. Term from vocabulary scheme `geo.asset.kind`.';
+COMMENT ON COLUMN "geography"."assets"."kind" IS E'vector boundary, raster, elevation, tile set, TopoJSON.';
 
 COMMENT ON COLUMN "geography"."assets"."layer" IS E'Layer name in a multi-layer file.';
 
@@ -23283,7 +22482,7 @@ COMMENT ON TABLE "geography"."changes" IS E'One edge of a boundary change: split
 
 COMMENT ON COLUMN "geography"."changes"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "geography"."changes"."kind_term" IS E'split, merge, rename or transfer. Term from vocabulary scheme `geo.change.kind`.';
+COMMENT ON COLUMN "geography"."changes"."kind" IS E'split, merge, rename or transfer.';
 
 COMMENT ON COLUMN "geography"."changes"."note" IS E'Optional explanation, in `note_language_id`.';
 
@@ -23315,7 +22514,7 @@ COMMENT ON COLUMN "geography"."features"."version" IS E'Optimistic-concurrency v
 
 COMMENT ON TABLE "geography"."geometries" IS E'One full-detail drawing of a feature with its role, basis and revision. The current drawing has no end year.';
 
-COMMENT ON COLUMN "geography"."geometries"."basis_term" IS E'surveyed, digitised or derived. Term from vocabulary scheme `geo.geometry.basis`.';
+COMMENT ON COLUMN "geography"."geometries"."basis" IS E'surveyed, digitised or derived; empty while the drawing is only expected.';
 
 COMMENT ON COLUMN "geography"."geometries"."confidence" IS E'How far to trust the drawing, 0 to 1.';
 
@@ -23323,11 +22522,13 @@ COMMENT ON COLUMN "geography"."geometries"."deleted_at" IS E'Soft-delete time; e
 
 COMMENT ON COLUMN "geography"."geometries"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
 
-COMMENT ON COLUMN "geography"."geometries"."geometry" IS E'Full-detail drawing in EPSG:4326; never altered.';
+COMMENT ON COLUMN "geography"."geometries"."geometry" IS E'Full-detail drawing in EPSG:4326, never altered; empty while the drawing is only expected.';
 
 COMMENT ON COLUMN "geography"."geometries"."revision" IS E'1 for the first drawing of this role, rising with each new drawing.';
 
-COMMENT ON COLUMN "geography"."geometries"."role_term" IS E'outline, point or centreline. Term from vocabulary scheme `geo.geometry.role`.';
+COMMENT ON COLUMN "geography"."geometries"."role" IS E'outline, point or centreline.';
+
+COMMENT ON COLUMN "geography"."geometries"."status" IS E'expected: the row exists but no drawing is loaded yet; draft: a provisional drawing; established: the official boundary. An area''s boundary status is read from here.';
 
 COMMENT ON COLUMN "geography"."geometries"."supersedes_id" IS E'The drawing this one replaces; earlier drawings are kept.';
 
@@ -23353,17 +22554,13 @@ COMMENT ON TABLE "geography"."pieces" IS E'Subdivided polygons with a spatial in
 
 COMMENT ON COLUMN "geography"."pieces"."geometry" IS E'One small piece of the polygon cut with ST_Subdivide.';
 
-COMMENT ON TABLE "geography"."relationships" IS E'A dated link between places; a parent link in a hierarchy also records the inner place''s level.';
+COMMENT ON TABLE "geography"."relationships" IS E'A dated link between places that is not membership of an administrative or electoral hierarchy (a lake inside a county, two wards that border). Hierarchy membership is `geography.areas`.';
 
 COMMENT ON COLUMN "geography"."relationships"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
 COMMENT ON COLUMN "geography"."relationships"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
 
-COMMENT ON COLUMN "geography"."relationships"."hierarchy_id" IS E'The hierarchy the parent link belongs to (Kenya administrative 2013).';
-
-COMMENT ON COLUMN "geography"."relationships"."kind_term" IS E'inside, borders or part of. Term from vocabulary scheme `geo.relationship.kind`.';
-
-COMMENT ON COLUMN "geography"."relationships"."level_id" IS E'The inner place''s level in that hierarchy, so parent and rank are one row.';
+COMMENT ON COLUMN "geography"."relationships"."kind" IS E'inside, borders or part of.';
 
 COMMENT ON COLUMN "geography"."relationships"."object_feature_id" IS E'The outer or second place (Kenya).';
 
@@ -23397,7 +22594,7 @@ COMMENT ON COLUMN "governance"."assignments"."from_year" IS E'First year of the 
 
 COMMENT ON COLUMN "governance"."assignments"."initiator_id" IS E'The position or institution that initiates or leads the function.';
 
-COMMENT ON COLUMN "governance"."assignments"."share_term" IS E'exclusive or concurrent. Term from vocabulary scheme `gov.assignment.share`.';
+COMMENT ON COLUMN "governance"."assignments"."share" IS E'exclusive or concurrent.';
 
 COMMENT ON COLUMN "governance"."assignments"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -23413,13 +22610,11 @@ COMMENT ON COLUMN "governance"."functions"."id" IS E'The identity this row exten
 
 COMMENT ON COLUMN "governance"."functions"."identity_kind" IS E'Kind of the identity this row extends; with `id` it is a composite foreign key to `identity.identities (id, kind)`.';
 
-COMMENT ON COLUMN "governance"."functions"."provision_id" IS E'The provision that assigns the function.';
-
 COMMENT ON COLUMN "governance"."functions"."topic_term" IS E'The policy area (health, roads, agriculture). Term from vocabulary scheme `topic`.';
 
 COMMENT ON COLUMN "governance"."functions"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "governance"."holders" IS E'A person in an office for a period. How they got there is `governance.appointments`.';
+COMMENT ON TABLE "governance"."holders" IS E'A person in an office for a period, or the empty slot for one. How a person got there is `governance.appointments`.';
 
 COMMENT ON COLUMN "governance"."holders"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -23431,31 +22626,25 @@ COMMENT ON COLUMN "governance"."holders"."ends_on" IS E'Exact end date, when kno
 
 COMMENT ON COLUMN "governance"."holders"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
 
-COMMENT ON COLUMN "governance"."holders"."method_term" IS E'How the holder got the seat: elected, nominated, appointed, acting. Term from vocabulary scheme `gov.selection.method`.';
+COMMENT ON COLUMN "governance"."holders"."individual_id" IS E'The person; empty while the holder is only an expected slot.';
 
-COMMENT ON COLUMN "governance"."holders"."reason_term" IS E'Why the tenure ended (term end, resignation, death, removal). Term from vocabulary scheme `gov.holder.reason`.';
+COMMENT ON COLUMN "governance"."holders"."method" IS E'How the holder got the seat: elected, nominated, appointed, acting.';
+
+COMMENT ON COLUMN "governance"."holders"."reason" IS E'Why the tenure ended (term end, resignation, death, removal).';
 
 COMMENT ON COLUMN "governance"."holders"."starts_on" IS E'Exact start date, when known.';
+
+COMMENT ON COLUMN "governance"."holders"."term_id" IS E'The office term this holder slot belongs to; the term must be of the same office.';
 
 COMMENT ON COLUMN "governance"."holders"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
 COMMENT ON COLUMN "governance"."holders"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "governance"."instances" IS E'Which template produced which record, for which place, and whether it is only expected or has been found.';
-
-COMMENT ON COLUMN "governance"."instances"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
-
-COMMENT ON COLUMN "governance"."instances"."status_term" IS E'expected, sourced, verified, not found, disputed. Term from vocabulary scheme `gov.instance.status`.';
-
-COMMENT ON COLUMN "governance"."instances"."unit_feature_id" IS E'The place the product was generated for.';
-
-COMMENT ON COLUMN "governance"."instances"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
-
 COMMENT ON TABLE "governance"."institutions" IS E'A public institution; it shares its organisation''s identity (`official.entities`). Committees are institutions linked to their house.';
 
-COMMENT ON COLUMN "governance"."institutions"."arm_term" IS E'executive, legislature, judiciary or independent. Term from vocabulary scheme `gov.arm`.';
+COMMENT ON COLUMN "governance"."institutions"."arm" IS E'executive, legislature, judiciary or independent.';
 
-COMMENT ON COLUMN "governance"."institutions"."basis_term" IS E'constitutional, statutory, administrative. Term from vocabulary scheme `gov.institution.basis`.';
+COMMENT ON COLUMN "governance"."institutions"."basis" IS E'constitutional, statutory, administrative.';
 
 COMMENT ON COLUMN "governance"."institutions"."class_term" IS E'ministry, department, commission, independent office, court. Term from vocabulary scheme `gov.institution.class`.';
 
@@ -23475,21 +22664,23 @@ COMMENT ON COLUMN "governance"."institutions"."kind_term" IS E'government, assem
 
 COMMENT ON COLUMN "governance"."institutions"."starts_on" IS E'Exact start date, when known.';
 
+COMMENT ON COLUMN "governance"."institutions"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
+
 COMMENT ON COLUMN "governance"."institutions"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
 COMMENT ON COLUMN "governance"."institutions"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "governance"."jurisdictions" IS E'Where an institution or office has authority.';
 
+COMMENT ON COLUMN "governance"."jurisdictions"."area_id" IS E'The official area the authority covers; empty for the whole country.';
+
 COMMENT ON COLUMN "governance"."jurisdictions"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
 COMMENT ON COLUMN "governance"."jurisdictions"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "governance"."jurisdictions"."feature_id" IS E'The area authority covers; empty for the whole country.';
-
 COMMENT ON COLUMN "governance"."jurisdictions"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
 
-COMMENT ON COLUMN "governance"."jurisdictions"."kind_term" IS E'territorial, subject matter, appellate. Term from vocabulary scheme `gov.jurisdiction.kind`.';
+COMMENT ON COLUMN "governance"."jurisdictions"."kind" IS E'territorial, subject matter, appellate.';
 
 COMMENT ON COLUMN "governance"."jurisdictions"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -23509,11 +22700,13 @@ COMMENT ON COLUMN "governance"."obligations"."recipient_id" IS E'Who receives th
 
 COMMENT ON COLUMN "governance"."obligations"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "governance"."terms" IS E'A numbered term or mandate of an institution or office (absorbs the former mandates).';
+COMMENT ON TABLE "governance"."terms" IS E'A numbered term or mandate of an institution or office: one row per election cycle for an elected office, one open row for an appointed one.';
 
 COMMENT ON COLUMN "governance"."terms"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
 COMMENT ON COLUMN "governance"."terms"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "governance"."terms"."election_id" IS E'The general election cycle that fills this term; empty for appointed terms.';
 
 COMMENT ON COLUMN "governance"."terms"."ends_on" IS E'Exact end date, when known.';
 
@@ -23525,11 +22718,15 @@ COMMENT ON COLUMN "governance"."terms"."ordinal" IS E'The term''s number (13th P
 
 COMMENT ON COLUMN "governance"."terms"."starts_on" IS E'Exact start date, when known.';
 
+COMMENT ON COLUMN "governance"."terms"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
+
 COMMENT ON COLUMN "governance"."terms"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
 COMMENT ON COLUMN "governance"."terms"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "governance"."offices" IS E'One concrete seat (the Governor of Nairobi, the MCA for Kilimani ward).';
+COMMENT ON TABLE "governance"."offices" IS E'One concrete seat: a position at an institution and an area (the Governor of Nairobi, the MCA for Kilimani ward).';
+
+COMMENT ON COLUMN "governance"."offices"."area_id" IS E'The official area the seat represents (a ward, a county); empty for a seat of the whole country.';
 
 COMMENT ON COLUMN "governance"."offices"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -23537,37 +22734,25 @@ COMMENT ON COLUMN "governance"."offices"."deleted_at" IS E'Soft-delete time; emp
 
 COMMENT ON COLUMN "governance"."offices"."ends_on" IS E'Exact end date, when known.';
 
-COMMENT ON COLUMN "governance"."offices"."feature_id" IS E'The place the seat represents (a ward).';
-
 COMMENT ON COLUMN "governance"."offices"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
 
 COMMENT ON COLUMN "governance"."offices"."id" IS E'The identity this row extends: the same uuid as `identity.identities.id`.';
 
 COMMENT ON COLUMN "governance"."offices"."identity_kind" IS E'Kind of the identity this row extends; with `id` it is a composite foreign key to `identity.identities (id, kind)`.';
 
+COMMENT ON COLUMN "governance"."offices"."premises_id" IS E'The premises the office sits in (County Hall); empty while unknown.';
+
 COMMENT ON COLUMN "governance"."offices"."seat" IS E'The seat''s number or label where one place has several.';
 
 COMMENT ON COLUMN "governance"."offices"."starts_on" IS E'Exact start date, when known.';
+
+COMMENT ON COLUMN "governance"."offices"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
 
 COMMENT ON COLUMN "governance"."offices"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
 COMMENT ON COLUMN "governance"."offices"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "governance"."patterns" IS E'A reviewed rule for generating expected records (institutions, positions, offices, sites) before real ones are found.';
-
-COMMENT ON COLUMN "governance"."patterns"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
-
-COMMENT ON COLUMN "governance"."patterns"."country_id" IS E'The country the pattern belongs to; empty for any country.';
-
-COMMENT ON COLUMN "governance"."patterns"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
-
-COMMENT ON COLUMN "governance"."patterns"."kind_term" IS E'institution set, position set, site set, calendar set. Term from vocabulary scheme `gov.pattern.kind`.';
-
-COMMENT ON COLUMN "governance"."patterns"."title" IS E'Internal English label for people curating patterns.';
-
-COMMENT ON COLUMN "governance"."patterns"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
-
-COMMENT ON TABLE "governance"."positions" IS E'A kind of seat that law creates (Governor, Member of County Assembly). Its titles are `identity.names`.';
+COMMENT ON TABLE "governance"."positions" IS E'A kind of seat that law creates, defined once per role (Governor, Member of County Assembly). The institution and the place are on the office. Its titles are `identity.names`.';
 
 COMMENT ON COLUMN "governance"."positions"."basis_term" IS E'The grounds of the seat (ward seat, special interest seat). Term from vocabulary scheme `gov.seat.basis`.';
 
@@ -23581,19 +22766,19 @@ COMMENT ON COLUMN "governance"."positions"."id" IS E'The identity this row exten
 
 COMMENT ON COLUMN "governance"."positions"."identity_kind" IS E'Kind of the identity this row extends; with `id` it is a composite foreign key to `identity.identities (id, kind)`.';
 
-COMMENT ON COLUMN "governance"."positions"."institution_id" IS E'The institution the seat belongs to.';
+COMMENT ON COLUMN "governance"."positions"."institution_class_term" IS E'The class of institution that has this seat (county government, county assembly); the institution itself is on the office. Term from vocabulary scheme `gov.institution.class`.';
 
 COMMENT ON COLUMN "governance"."positions"."level_id" IS E'The level of government the position exists at.';
 
-COMMENT ON COLUMN "governance"."positions"."method_term" IS E'How holders are chosen: elected, nominated, appointed. Term from vocabulary scheme `gov.selection.method`.';
+COMMENT ON COLUMN "governance"."positions"."method" IS E'How holders are chosen: elected, nominated, appointed.';
 
 COMMENT ON COLUMN "governance"."positions"."position" IS E'Order in leadership trees.';
-
-COMMENT ON COLUMN "governance"."positions"."provision_id" IS E'The provision that creates the position.';
 
 COMMENT ON COLUMN "governance"."positions"."role_term" IS E'The kind of seat (president, governor, member of county assembly, chair). Term from vocabulary scheme `gov.position.role`.';
 
 COMMENT ON COLUMN "governance"."positions"."seat_level_id" IS E'The level whose places each have one seat (ward for MCAs).';
+
+COMMENT ON COLUMN "governance"."positions"."template_id" IS E'The template that created this root row; empty for a row made by hand. The database checks that the template makes this kind of row.';
 
 COMMENT ON COLUMN "governance"."positions"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -23655,39 +22840,11 @@ COMMENT ON COLUMN "governance"."reports"."from_year" IS E'First year of the peri
 
 COMMENT ON COLUMN "governance"."reports"."reporter_id" IS E'Who filed the report.';
 
-COMMENT ON COLUMN "governance"."reports"."status_term" IS E'due, filed, late, missing. Term from vocabulary scheme `gov.report.status`.';
+COMMENT ON COLUMN "governance"."reports"."status" IS E'due, filed, late, missing.';
 
 COMMENT ON COLUMN "governance"."reports"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
 COMMENT ON COLUMN "governance"."reports"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
-
-COMMENT ON TABLE "governance"."templates" IS E'One thing a pattern produces, how many, how it is named and coded. Templates generate structure only, never people.';
-
-COMMENT ON COLUMN "governance"."templates"."arm_term" IS E'Arm of the product. Term from vocabulary scheme `gov.arm`.';
-
-COMMENT ON COLUMN "governance"."templates"."basis_term" IS E'Seat basis of the product. Term from vocabulary scheme `gov.seat.basis`.';
-
-COMMENT ON COLUMN "governance"."templates"."class_term" IS E'Institution class of the product. Term from vocabulary scheme `gov.institution.class`.';
-
-COMMENT ON COLUMN "governance"."templates"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
-
-COMMENT ON COLUMN "governance"."templates"."code_template" IS E'Code with named tokens.';
-
-COMMENT ON COLUMN "governance"."templates"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
-
-COMMENT ON COLUMN "governance"."templates"."fan_out_level_id" IS E'The level it fans out over (one product per place).';
-
-COMMENT ON COLUMN "governance"."templates"."kind_term" IS E'Institution kind of the product. Term from vocabulary scheme `gov.institution.kind`.';
-
-COMMENT ON COLUMN "governance"."templates"."method_term" IS E'Selection method of the product. Term from vocabulary scheme `gov.selection.method`.';
-
-COMMENT ON COLUMN "governance"."templates"."name_template" IS E'Name with named tokens.';
-
-COMMENT ON COLUMN "governance"."templates"."produces" IS E'What the template produces.';
-
-COMMENT ON COLUMN "governance"."templates"."role_term" IS E'Position role of the product. Term from vocabulary scheme `gov.position.role`.';
-
-COMMENT ON COLUMN "governance"."templates"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "history"."eras" IS E'A named period, possibly inside another.';
 
@@ -23831,7 +22988,7 @@ COMMENT ON COLUMN "identity"."names"."identity_kind" IS E'Kind of the named thin
 
 COMMENT ON COLUMN "identity"."names"."is_default" IS E'The name shown when no other is asked for, in its language; at most one live default per language.';
 
-COMMENT ON COLUMN "identity"."names"."kind_term" IS E'What the name is: preferred, official, short, local, alternative, historical, abbreviation, transliteration or definition. Term from vocabulary scheme `idn.name.kind`.';
+COMMENT ON COLUMN "identity"."names"."kind" IS E'What the name is: preferred, official, short, local, alternative, historical, abbreviation, transliteration or definition.';
 
 COMMENT ON COLUMN "identity"."names"."language_id" IS E'Language of the text: any language, `mul` for a form shared by languages, never assumed English.';
 
@@ -23895,7 +23052,7 @@ COMMENT ON COLUMN "legal"."instruments"."jurisdiction_id" IS E'The authority and
 
 COMMENT ON COLUMN "legal"."instruments"."kind_term" IS E'constitution, act, regulation, by-law, treaty. Term from vocabulary scheme `leg.instrument.kind`.';
 
-COMMENT ON COLUMN "legal"."instruments"."status_term" IS E'in force, repealed, pending. Term from vocabulary scheme `leg.instrument.status`.';
+COMMENT ON COLUMN "legal"."instruments"."status" IS E'in force, repealed, pending.';
 
 COMMENT ON COLUMN "legal"."instruments"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -23918,6 +23075,8 @@ COMMENT ON COLUMN "legal"."provisions"."version" IS E'Optimistic-concurrency ver
 COMMENT ON TABLE "legal"."references" IS E'A cross-reference found inside a text ("subject to Article 24").';
 
 COMMENT ON COLUMN "legal"."references"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "legal"."references"."metadata" IS E'What the parser found beyond the one target: the whole citation group (`Article 10, (a) and (b)`), the instrument cited (this one, the Constitution or a named outside instrument), the designations and how far each resolved. Provenance and URLs belong in `source`, not here.';
 
 COMMENT ON COLUMN "legal"."references"."span_start" IS E'Character offset where the reference starts.';
 
@@ -23989,7 +23148,7 @@ COMMENT ON COLUMN "legislature"."bills"."kind_term" IS E'public, private member'
 
 COMMENT ON COLUMN "legislature"."bills"."sponsor_id" IS E'The member who sponsors the bill, as a holder in office.';
 
-COMMENT ON COLUMN "legislature"."bills"."status_term" IS E'published, in committee, passed, assented, withdrawn, lapsed. Term from vocabulary scheme `leg.bill.status`.';
+COMMENT ON COLUMN "legislature"."bills"."status" IS E'published, in committee, passed, assented, withdrawn, lapsed.';
 
 COMMENT ON COLUMN "legislature"."bills"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -24003,7 +23162,7 @@ COMMENT ON COLUMN "legislature"."hansards"."deleted_at" IS E'Soft-delete time; e
 
 COMMENT ON COLUMN "legislature"."hansards"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "legislature"."motions" IS E'A motion debated at a sitting.';
+COMMENT ON TABLE "legislature"."motions" IS E'A motion debated at a sitting; the law it concerns is reached through its bill, not a provision link.';
 
 COMMENT ON COLUMN "legislature"."motions"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -24011,7 +23170,7 @@ COMMENT ON COLUMN "legislature"."motions"."deleted_at" IS E'Soft-delete time; em
 
 COMMENT ON COLUMN "legislature"."motions"."kind_term" IS E'reading, amendment, approval, adjournment. Term from vocabulary scheme `leg.motion.kind`.';
 
-COMMENT ON COLUMN "legislature"."motions"."outcome_term" IS E'carried, negatived, withdrawn. Term from vocabulary scheme `leg.motion.outcome`.';
+COMMENT ON COLUMN "legislature"."motions"."outcome" IS E'carried, negatived, withdrawn.';
 
 COMMENT ON COLUMN "legislature"."motions"."revision_id" IS E'The budget revision the motion approves.';
 
@@ -24053,7 +23212,7 @@ COMMENT ON COLUMN "legislature"."stages"."deleted_at" IS E'Soft-delete time; emp
 
 COMMENT ON COLUMN "legislature"."stages"."kind_term" IS E'first reading, committee, second reading, third reading, assent. Term from vocabulary scheme `leg.stage.kind`.';
 
-COMMENT ON COLUMN "legislature"."stages"."outcome_term" IS E'passed, rejected, deferred. Term from vocabulary scheme `leg.stage.outcome`.';
+COMMENT ON COLUMN "legislature"."stages"."outcome" IS E'passed, rejected, deferred.';
 
 COMMENT ON COLUMN "legislature"."stages"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -24137,7 +23296,7 @@ COMMENT ON TABLE "media"."subjects" IS E'The named things an article is about, b
 
 COMMENT ON COLUMN "media"."subjects"."identity_id" IS E'A named thing the article is about.';
 
-COMMENT ON COLUMN "media"."subjects"."role_term" IS E'main or mentioned. Term from vocabulary scheme `med.subject.role`.';
+COMMENT ON COLUMN "media"."subjects"."role" IS E'main or mentioned.';
 
 COMMENT ON TABLE "media"."texts" IS E'One article in one language: exactly one original per article, at most one live text per language.';
 
@@ -24152,6 +23311,8 @@ COMMENT ON COLUMN "media"."texts"."translated_from_id" IS E'The text this one wa
 COMMENT ON COLUMN "media"."texts"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "media"."uses" IS E'Which named thing an asset illustrates and why (Nairobi ← photo, skyline).';
+
+COMMENT ON COLUMN "media"."uses"."asset_id" IS E'The image or file shown; empty while the use is only expected (a flag with no file yet).';
 
 COMMENT ON COLUMN "media"."uses"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
@@ -24193,13 +23354,15 @@ COMMENT ON COLUMN "official"."contacts"."from_year" IS E'First year of the perio
 
 COMMENT ON COLUMN "official"."contacts"."identity_id" IS E'The person, organisation, office, institution or party reached.';
 
-COMMENT ON COLUMN "official"."contacts"."kind_term" IS E'phone, email, website, postal address, social account. Term from vocabulary scheme `ofc.contact.kind`.';
+COMMENT ON COLUMN "official"."contacts"."kind" IS E'phone, email, website, postal address, social account.';
 
 COMMENT ON COLUMN "official"."contacts"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
+COMMENT ON COLUMN "official"."contacts"."value" IS E'The address, number or URL; empty while the contact is only an expected slot.';
+
 COMMENT ON COLUMN "official"."contacts"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON COLUMN "official"."contacts"."visibility_term" IS E'public or official business only; private contacts are never stored. Term from vocabulary scheme `ofc.contact.visibility`.';
+COMMENT ON COLUMN "official"."contacts"."visibility" IS E'public or official business only; private contacts are never stored.';
 
 COMMENT ON TABLE "official"."entities" IS E'An organisation. Institutions, parties and publishers share their organisation''s identity; regional bodies (EAC, AU) are entities with dated memberships.';
 
@@ -24240,6 +23403,26 @@ COMMENT ON COLUMN "official"."parts"."name_id" IS E'The display name split here;
 COMMENT ON COLUMN "official"."parts"."name_kind" IS E'Identity kind of the name''s row, the partition key of `identity.names`.';
 
 COMMENT ON COLUMN "official"."parts"."part" IS E'prefix, given, middle, family or suffix.';
+
+COMMENT ON TABLE "official"."premises" IS E'A located premises of an organisation: its headquarters, regional or registered office. The address is an `identity.addresses` row or a postal-address contact; the pin may be unknown while the row is only expected.';
+
+COMMENT ON COLUMN "official"."premises"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
+
+COMMENT ON COLUMN "official"."premises"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "official"."premises"."entity_id" IS E'The organisation that has the premises.';
+
+COMMENT ON COLUMN "official"."premises"."feature_id" IS E'The place the premises are at (the map pin); empty while unknown.';
+
+COMMENT ON COLUMN "official"."premises"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
+
+COMMENT ON COLUMN "official"."premises"."kind_term" IS E'headquarters, regional office, branch, registered office. Term from vocabulary scheme `ofc.premises.kind`.';
+
+COMMENT ON COLUMN "official"."premises"."ordinal" IS E'1 for the first premises of this kind of the organisation, rising for further ones.';
+
+COMMENT ON COLUMN "official"."premises"."to_year" IS E'Last year of the period; empty while the period has not ended.';
+
+COMMENT ON COLUMN "official"."premises"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "official"."relationships" IS E'A kinship, business or political tie between public figures and organisations, always with a source link.';
 
@@ -24323,9 +23506,9 @@ COMMENT ON COLUMN "politics"."commitments"."speech_id" IS E'The speech where it 
 
 COMMENT ON COLUMN "politics"."commitments"."statement" IS E'The original words, in `language_id`.';
 
-COMMENT ON COLUMN "politics"."commitments"."status_as_of" IS E'Date the status was last assessed.';
+COMMENT ON COLUMN "politics"."commitments"."status" IS E'not started, in progress, fulfilled, broken.';
 
-COMMENT ON COLUMN "politics"."commitments"."status_term" IS E'not started, in progress, fulfilled, broken. Term from vocabulary scheme `pol.commitment.status`.';
+COMMENT ON COLUMN "politics"."commitments"."status_as_of" IS E'Date the status was last assessed.';
 
 COMMENT ON COLUMN "politics"."commitments"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -24345,7 +23528,7 @@ COMMENT ON COLUMN "politics"."contributions"."donor_id" IS E'Who gave.';
 
 COMMENT ON COLUMN "politics"."contributions"."recipient_id" IS E'Who received: a party or candidate.';
 
-COMMENT ON COLUMN "politics"."contributions"."status_term" IS E'declared, reported, disputed. Term from vocabulary scheme `pol.contribution.status`.';
+COMMENT ON COLUMN "politics"."contributions"."status" IS E'declared, reported, disputed.';
 
 COMMENT ON COLUMN "politics"."contributions"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -24355,9 +23538,9 @@ COMMENT ON TABLE "politics"."fulfilments" IS E'What delivered (or contradicts) a
 
 COMMENT ON COLUMN "politics"."fulfilments"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "politics"."fulfilments"."kind_term" IS E'delivers, partly delivers, contradicts. Term from vocabulary scheme `pol.fulfilment.kind`.';
+COMMENT ON COLUMN "politics"."fulfilments"."kind" IS E'delivers, partly delivers, contradicts.';
 
-COMMENT ON COLUMN "politics"."fulfilments"."status_term" IS E'claimed, verified, disputed. Term from vocabulary scheme `pol.fulfilment.status`.';
+COMMENT ON COLUMN "politics"."fulfilments"."status" IS E'claimed, verified, disputed.';
 
 COMMENT ON COLUMN "politics"."fulfilments"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -24541,7 +23724,7 @@ COMMENT ON COLUMN "reference"."hierarchies"."identity_kind" IS E'Kind of the ide
 
 COMMENT ON COLUMN "reference"."hierarchies"."is_routing" IS E'True for the hierarchy addresses and breadcrumbs follow; at most one live routing hierarchy per country.';
 
-COMMENT ON COLUMN "reference"."hierarchies"."kind_term" IS E'administrative, electoral, traditional or statistical. Term from vocabulary scheme `ref.hierarchy.kind`.';
+COMMENT ON COLUMN "reference"."hierarchies"."kind" IS E'administrative, electoral, traditional or statistical.';
 
 COMMENT ON COLUMN "reference"."hierarchies"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -24553,7 +23736,7 @@ COMMENT ON COLUMN "reference"."languages"."code" IS E'Stable row code (`.docs/ru
 
 COMMENT ON COLUMN "reference"."languages"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "reference"."languages"."direction_term" IS E'Text direction: left to right or right to left. Term from vocabulary scheme `ref.text.direction`.';
+COMMENT ON COLUMN "reference"."languages"."direction" IS E'Text direction: left to right or right to left.';
 
 COMMENT ON COLUMN "reference"."languages"."family_term" IS E'Language family (Bantu, Nilotic, Cushitic). Term from vocabulary scheme `ref.language.family`.';
 
@@ -24569,7 +23752,7 @@ COMMENT ON COLUMN "reference"."languages"."iso6392" IS E'ISO 639-2 (swa).';
 
 COMMENT ON COLUMN "reference"."languages"."iso6393" IS E'ISO 639-3 (swh), including the special codes und, mul and zxx.';
 
-COMMENT ON COLUMN "reference"."languages"."kind_term" IS E'language, macrolanguage, variety or special. Term from vocabulary scheme `ref.language.kind`.';
+COMMENT ON COLUMN "reference"."languages"."kind" IS E'language, macrolanguage, variety or special.';
 
 COMMENT ON COLUMN "reference"."languages"."parent_id" IS E'The macrolanguage a language belongs to, or the language a variety belongs to.';
 
@@ -24580,6 +23763,8 @@ COMMENT ON COLUMN "reference"."languages"."version" IS E'Optimistic-concurrency 
 COMMENT ON COLUMN "reference"."languages"."vitality_term" IS E'living, endangered or extinct; per-country status is in `locales`. Term from vocabulary scheme `ref.language.vitality`.';
 
 COMMENT ON TABLE "reference"."levels" IS E'A rank of one hierarchy (Kenya 2013: county, sub-county, ward).';
+
+COMMENT ON COLUMN "reference"."levels"."allows_skip" IS E'True when an area at this level may have a parent more than one level up (a location directly under a county). The database allows a skipped level only where this is true.';
 
 COMMENT ON COLUMN "reference"."levels"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -24705,7 +23890,7 @@ COMMENT ON COLUMN "source"."contenders"."claim" IS E'The claim, in `language_id`
 
 COMMENT ON COLUMN "source"."contenders"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
 
-COMMENT ON COLUMN "source"."contenders"."evidence_id" IS E'The evidence row behind this side.';
+COMMENT ON COLUMN "source"."contenders"."evidence_id" IS E'The evidence row behind this side (a plain id: evidence is partitioned, so no single-column key exists to reference).';
 
 COMMENT ON COLUMN "source"."contenders"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
@@ -24755,13 +23940,13 @@ COMMENT ON COLUMN "source"."disputes"."kind_term" IS E'conflicting figure, confl
 
 COMMENT ON COLUMN "source"."disputes"."note" IS E'Optional note, written in `note_language_id`.';
 
-COMMENT ON COLUMN "source"."disputes"."resolution_id" IS E'The evidence row chosen, when resolved.';
+COMMENT ON COLUMN "source"."disputes"."resolution_id" IS E'The evidence row chosen, when resolved (a plain id: evidence is partitioned).';
 
-COMMENT ON COLUMN "source"."disputes"."status_term" IS E'open, resolved, unresolvable. Term from vocabulary scheme `src.dispute.status`.';
+COMMENT ON COLUMN "source"."disputes"."status" IS E'open, resolved, unresolvable.';
 
 COMMENT ON COLUMN "source"."disputes"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
-COMMENT ON TABLE "source"."domains" IS E'A host name a source publishes on.';
+COMMENT ON TABLE "source"."domains" IS E'A host name a source publishes on. A candidate host generated for an institution is not a source until it is verified.';
 
 COMMENT ON COLUMN "source"."domains"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
 
@@ -24771,9 +23956,7 @@ COMMENT ON COLUMN "source"."domains"."from_year" IS E'First year of the period (
 
 COMMENT ON COLUMN "source"."domains"."owner_id" IS E'Who owns the domain.';
 
-COMMENT ON COLUMN "source"."domains"."status_term" IS E'live, moved, unreachable, retired. Term from vocabulary scheme `src.domain.status`.';
-
-COMMENT ON COLUMN "source"."domains"."template_id" IS E'The governance template that expected this domain.';
+COMMENT ON COLUMN "source"."domains"."status" IS E'live, moved, unreachable, retired.';
 
 COMMENT ON COLUMN "source"."domains"."to_year" IS E'Last year of the period; empty while the period has not ended.';
 
@@ -24917,7 +24100,7 @@ COMMENT ON COLUMN "statistics"."components"."component_id" IS E'One indicator it
 
 COMMENT ON COLUMN "statistics"."components"."indicator_id" IS E'The composite index.';
 
-COMMENT ON COLUMN "statistics"."components"."transform_term" IS E'as is, normalised, inverted. Term from vocabulary scheme `sta.component.transform`.';
+COMMENT ON COLUMN "statistics"."components"."transform" IS E'as is, normalised, inverted.';
 
 COMMENT ON TABLE "statistics"."dimensions" IS E'Which breakdowns an indicator allows, in order.';
 
@@ -24963,7 +24146,7 @@ COMMENT ON COLUMN "statistics"."indicators"."identity_kind" IS E'Kind of the ide
 
 COMMENT ON COLUMN "statistics"."indicators"."is_derived" IS E'True when computed from components.';
 
-COMMENT ON COLUMN "statistics"."indicators"."kind_term" IS E'count, rate, ratio, index, share. Term from vocabulary scheme `sta.indicator.kind`.';
+COMMENT ON COLUMN "statistics"."indicators"."kind" IS E'count, rate, ratio, index, share.';
 
 COMMENT ON COLUMN "statistics"."indicators"."role_term" IS E'The part it plays on screens (population, density, area). Term from vocabulary scheme `sta.indicator.role`.';
 
@@ -25026,6 +24209,126 @@ COMMENT ON COLUMN "statistics"."priorities"."position" IS E'Rank; 0 is trusted f
 COMMENT ON COLUMN "statistics"."priorities"."steward_id" IS E'A producer ranked for this country.';
 
 COMMENT ON COLUMN "statistics"."priorities"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
+
+COMMENT ON TABLE "template"."items" IS E'One fixed list entry of a template with the list scope (the Article 250 commissions, the cabinet portfolios).';
+
+COMMENT ON COLUMN "template"."items"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
+
+COMMENT ON COLUMN "template"."items"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "template"."items"."key" IS E'Short token used in the template''s texts (`iebc`).';
+
+COMMENT ON COLUMN "template"."items"."name" IS E'The item''s name in `language_id`.';
+
+COMMENT ON COLUMN "template"."items"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
+
+COMMENT ON TABLE "template"."lines" IS E'One effect line: when the first template creates a row, the second runs for it. This list is how a template records its effects; the effects themselves carry no template column.';
+
+COMMENT ON COLUMN "template"."lines"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "template"."lines"."effect_template_id" IS E'The template that runs for every row the first one creates.';
+
+COMMENT ON COLUMN "template"."lines"."position" IS E'Order in which effects run for one root.';
+
+COMMENT ON COLUMN "template"."lines"."template_id" IS E'The template that runs first (the root).';
+
+COMMENT ON COLUMN "template"."lines"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
+
+COMMENT ON TABLE "template"."patterns" IS E'A reviewed rule set about how one kind of body repeats (a county government, an election cycle). Its names are `identity.names`; its legal basis is `legal.effects` targeting this identity. `fromYear` is the year the pattern takes effect (2013 for counties).';
+
+COMMENT ON COLUMN "template"."patterns"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
+
+COMMENT ON COLUMN "template"."patterns"."country_id" IS E'The country the pattern belongs to; empty means any country.';
+
+COMMENT ON COLUMN "template"."patterns"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "template"."patterns"."from_year" IS E'First year of the period (negative for BCE); empty when the start is not known.';
+
+COMMENT ON COLUMN "template"."patterns"."id" IS E'The identity this row extends: the same uuid as `identity.identities.id`.';
+
+COMMENT ON COLUMN "template"."patterns"."identity_kind" IS E'Kind of the identity this row extends; with `id` it is a composite foreign key to `identity.identities (id, kind)`.';
+
+COMMENT ON COLUMN "template"."patterns"."to_year" IS E'Last year of the period; empty while the period has not ended.';
+
+COMMENT ON COLUMN "template"."patterns"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
+
+COMMENT ON TABLE "template"."templates" IS E'The recipe for one kind of row: what it creates, over which places or items, how many, and with which attributes. Its names are `identity.names`; texts for codes, names, domains and contact values are `template.texts`.';
+
+COMMENT ON COLUMN "template"."templates"."arm" IS E'Arm of the product.';
+
+COMMENT ON COLUMN "template"."templates"."basis_term" IS E'Seat basis of the product. Term from vocabulary scheme `gov.seat.basis`.';
+
+COMMENT ON COLUMN "template"."templates"."class_term" IS E'Institution class of the product. Term from vocabulary scheme `gov.institution.class`.';
+
+COMMENT ON COLUMN "template"."templates"."code" IS E'Stable row code (`.docs/rules/codes.md`): lowercase, dot-separated, unique and never reused.';
+
+COMMENT ON COLUMN "template"."templates"."confidence" IS E'How far the template''s expectation is trusted, 0 to 1. It is stated once here, never on the rows it creates.';
+
+COMMENT ON COLUMN "template"."templates"."contact_kind" IS E'Contact kind of the product (email, website).';
+
+COMMENT ON COLUMN "template"."templates"."contact_visibility" IS E'Visibility of the generated contact (public).';
+
+COMMENT ON COLUMN "template"."templates"."contest_kind_term" IS E'Contest kind of the product (governor, member of parliament). Term from vocabulary scheme `ele.contest.kind`.';
+
+COMMENT ON COLUMN "template"."templates"."count_kind" IS E'How the count is known: exact, a minimum, a maximum or a range. Slots are made for exact and minimum counts only.';
+
+COMMENT ON COLUMN "template"."templates"."count_max" IS E'The maximum or the upper bound.';
+
+COMMENT ON COLUMN "template"."templates"."count_min" IS E'The exact count, the minimum or the lower bound.';
+
+COMMENT ON COLUMN "template"."templates"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "template"."templates"."election_kind_term" IS E'Election kind of the product (general). Term from vocabulary scheme `ele.election.kind`.';
+
+COMMENT ON COLUMN "template"."templates"."election_past_status" IS E'Status for a cycle whose year has passed (held).';
+
+COMMENT ON COLUMN "template"."templates"."election_status" IS E'Status the generated election starts with (scheduled).';
+
+COMMENT ON COLUMN "template"."templates"."entity_kind_term" IS E'Organisation kind of an institution product (public body). Term from vocabulary scheme `ofc.entity.kind`.';
+
+COMMENT ON COLUMN "template"."templates"."fan_out_level_id" IS E'The level the template fans out over; set for the level and within scopes only.';
+
+COMMENT ON COLUMN "template"."templates"."id" IS E'The identity this row extends: the same uuid as `identity.identities.id`.';
+
+COMMENT ON COLUMN "template"."templates"."identity_kind" IS E'Kind of the identity this row extends; with `id` it is a composite foreign key to `identity.identities (id, kind)`.';
+
+COMMENT ON COLUMN "template"."templates"."kind_term" IS E'Institution kind of the product. Term from vocabulary scheme `gov.institution.kind`.';
+
+COMMENT ON COLUMN "template"."templates"."method" IS E'Selection method of the product.';
+
+COMMENT ON COLUMN "template"."templates"."premises_kind_term" IS E'Premises kind of the product (headquarters, regional office). Term from vocabulary scheme `ofc.premises.kind`.';
+
+COMMENT ON COLUMN "template"."templates"."product" IS E'The kind of row this template creates.';
+
+COMMENT ON COLUMN "template"."templates"."reason" IS E'Why the template expects its rows to exist (the law, convention or pattern behind it). Stated once here, never on the rows it creates.';
+
+COMMENT ON COLUMN "template"."templates"."repeat_years" IS E'Cadence in years for products that repeat (election cycles, terms); the first year is the pattern''s `fromYear`.';
+
+COMMENT ON COLUMN "template"."templates"."role_term" IS E'Position role of the product. Term from vocabulary scheme `gov.position.role`.';
+
+COMMENT ON COLUMN "template"."templates"."scope" IS E'level: one per area at the level; within: one per area at the level inside the root''s area; list: one per item; single: one per root.';
+
+COMMENT ON COLUMN "template"."templates"."sequence" IS E'Order in which the root templates of a pattern run (cycles before offices and terms).';
+
+COMMENT ON COLUMN "template"."templates"."start_year" IS E'The first year this template produces; defaults to the pattern''s `fromYear` (Kenya''s first general election was 2013, later ones follow a five-year cycle from 2017).';
+
+COMMENT ON COLUMN "template"."templates"."term_kind_term" IS E'Term kind of the product (parliamentary term, mandate). Term from vocabulary scheme `gov.term.kind`.';
+
+COMMENT ON COLUMN "template"."templates"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
+
+COMMENT ON TABLE "template"."texts" IS E'A text template for a code, a name per language, a web domain or a contact value.';
+
+COMMENT ON COLUMN "template"."texts"."body" IS E'Text with named tokens and a closed list of transforms, such as `{county|slug}` or `{county|compact}.go.ke`.';
+
+COMMENT ON COLUMN "template"."texts"."deleted_at" IS E'Soft-delete time; empty while the record is live.';
+
+COMMENT ON COLUMN "template"."texts"."language_id" IS E'The language of a name; empty for codes, domains and contact values.';
+
+COMMENT ON COLUMN "template"."texts"."name_kind" IS E'Kind of the generated name (official, short); set for names only.';
+
+COMMENT ON COLUMN "template"."texts"."purpose" IS E'code, name, domain or contact value.';
+
+COMMENT ON COLUMN "template"."texts"."version" IS E'Optimistic-concurrency version; starts at 1 and increases on every update.';
 
 COMMENT ON TABLE "vocabulary"."labels" IS E'Every word for a term or scheme, per language and optional country. Labels have no dates; a changed meaning is a new term.';
 

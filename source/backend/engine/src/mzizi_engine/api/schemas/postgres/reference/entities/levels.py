@@ -18,6 +18,7 @@ class LevelsRow(BaseModel):
 
     table: ClassVar[str] = "reference.levels"
 
+    allows_skip: bool
     code: Annotated[
         str,
         Field(

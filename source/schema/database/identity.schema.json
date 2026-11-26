@@ -331,7 +331,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-primaryKey": true,
           "x-role": "data"
         }
@@ -451,7 +451,7 @@
         ,"kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"updated_at": {
@@ -485,7 +485,7 @@
         ,"identity_id"
         ,"identity_kind"
         ,"is_default"
-        ,"kind_term"
+        ,"kind"
         ,"language_id"
         ,"text"
       ],
@@ -503,7 +503,7 @@
           ,"identity_code"
           ,"identity_kind"
           ,"is_default"
-          ,"kind_term_code"
+          ,"kind"
           ,"language_code"
           ,"script_term_code"
           ,"text"
@@ -514,7 +514,7 @@
           ,"identity_code"
           ,"identity_kind"
           ,"is_default"
-          ,"kind_term_code"
+          ,"kind"
           ,"language_code"
           ,"text"
         ]
@@ -563,7 +563,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-primaryKey": true,
           "x-role": "data"
         }
@@ -572,12 +572,11 @@
           "x-type": "boolean",
           "x-role": "data"
         }
-        ,"kind_term": {
+        ,"kind": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.idn.name.kind" }
+          "x-type": "text",
+          "enum": ["abbreviation", "alternative", "definition", "historical", "local", "official", "preferred", "short", "transliteration"],
+          "x-role": "data"
         }
         ,"language_id": {
           "type": "string",

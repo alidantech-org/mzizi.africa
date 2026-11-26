@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.revision_status import RevisionStatus
+
 
 class RevisionsRow(BaseModel):
     """The original or a supplementary version of a budget."""
@@ -30,6 +32,6 @@ class RevisionsRow(BaseModel):
     id: UUID
     released_on: date | None = None
     revision: Annotated[int, Field(ge=1)]
-    status_term: UUID
+    status: RevisionStatus
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

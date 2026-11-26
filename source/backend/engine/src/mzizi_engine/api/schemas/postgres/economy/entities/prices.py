@@ -8,7 +8,6 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from mzizi_engine.api.schemas.postgres.economy.enums.price_kind import PriceKind
 from mzizi_engine.api.schemas.postgres.shared.enums.figure_basis import FigureBasis
 from mzizi_engine.api.schemas.postgres.shared.enums.figure_status import FigureStatus
 
@@ -32,7 +31,7 @@ class PricesRow(BaseModel):
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     good_id: UUID
     id: UUID
-    kind: PriceKind
+    kind_term: UUID
     revision: Annotated[int, Field(ge=1)]
     starts_on: date | None = None
     status: FigureStatus

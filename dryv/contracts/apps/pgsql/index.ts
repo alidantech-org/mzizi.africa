@@ -28,6 +28,7 @@ import { product } from "#/schemas/postgres/product.ts";
 import { reference } from "#/schemas/postgres/reference.ts";
 import { source } from "#/schemas/postgres/source.ts";
 import { statistics } from "#/schemas/postgres/statistics.ts";
+import { template } from "#/schemas/postgres/template.ts";
 import { vocabulary } from "#/schemas/postgres/vocabulary.ts";
 
 export default dryv
@@ -40,6 +41,7 @@ export default dryv
     vocabulary,
     reference,
     identity,
+    template,
     product,
     filesystem,
     media,

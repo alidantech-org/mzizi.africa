@@ -18,7 +18,7 @@ class VenuesRow(BaseModel):
 
     created_at: datetime
     deleted_at: datetime | None = None
-    feature_id: UUID
+    feature_id: UUID | None = None
     id: UUID
     note: Annotated[str, Field(min_length=1, max_length=4000)] | None = None
     note_language_id: UUID | None = None

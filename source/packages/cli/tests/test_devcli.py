@@ -46,6 +46,11 @@ def test_registered_capabilities_are_all_declared_as_ports_or_internal() -> None
         "catalog.seed_tables",  # HTTP only: the seed contract catalog
         "extraction.folder",  # a job stage; the CLI extracts one file at a time
         "patterns.rank",  # a job stage; ranking runs inside a folder extraction
+        "template.generate",  # HTTP and workers only: pattern generation is run by the engine, not by the dev CLI
+        "template.coverage",  # HTTP only: the pending-slot work queue
+        "translation.plan",  # HTTP only: the translation operations are driven by their own job
+        "translation.glossary",  # HTTP only
+        "translation.run",  # HTTP only
     }
 
 

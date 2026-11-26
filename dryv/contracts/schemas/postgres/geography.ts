@@ -2,13 +2,15 @@
  * Schema: geography | Database: mzizi
  * Design: .docs/design/data/FOUNDATION_REDESIGN.md sections 6, 20 and 22.2 (approved 2026-11-25).
  * Contract authors: every geometry is EPSG:4326 and the full-detail drawing is evidence that is never altered; maps read
- * prepared `outlines` and `pieces`. A place's rank is on its dated parent link in `relationships`.
+ * prepared `outlines` and `pieces`. Membership of a hierarchy (parent and rank) is `areas`; `relationships` holds the other links.
  */
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { templateFields } from "#/schemas/_templates.ts";
 import { belongsTo, identityKindField, identityReference, term } from "./_links.ts";
 import { Versions } from "./filesystem.ts";
 import { Occurrences } from "./history.ts";
@@ -29,6 +31,7 @@ export const geographyProperties = geography.properties({
   Layer: dryv.property.string().length({ min: 1, max: 255 }),
   Member: dryv.property.string().length({ min: 1, max: 1000 }),
   Note: dryv.property.string().length({ min: 1, max: 4000 }),
+  GeometryStatus: dryv.property.enum({ Expected: "expected", Draft: "draft", Established: "established" }),
 });
 const calculations = geography.expressions({
   GeometryEnvelope: dryv.expression.spatial.envelope("geometry"),
@@ -65,17 +68,29 @@ export const Features = geography
 export const Geometries = geography
   .schema("Geometries", {
     featureId: belongsTo(() => Features),
-    roleTerm: term("geo.geometry.role", "outline, point or centreline."),
-    basisTerm: term("geo.geometry.basis", "surveyed, digitised or derived."),
+    role: dryv.field(enums.GeometryRole).description("outline, point or centreline."),
+    basis: dryv
+      .field(enums.GeometryBasis)
+      .description("surveyed, digitised or derived; empty while the drawing is only expected.")
+      .maybe(),
+    status: dryv
+      .field(geographyProperties.GeometryStatus)
+      .default("established")
+      .description(
+        "expected: the row exists but no drawing is loaded yet; draft: a provisional drawing; established: the official boundary. An area's boundary status is read from here.",
+      ),
     revision: dryv
       .field(sharedProperties.PositiveInteger)
       .description("1 for the first drawing of this role, rising with each new drawing."),
     supersedesId: belongsTo(dryv.self).maybe().description("The drawing this one replaces; earlier drawings are kept."),
     confidence: dryv.field(sharedProperties.Confidence).maybe().description("How far to trust the drawing, 0 to 1."),
-    geometry: dryv.field(geometry("any")).description("Full-detail drawing in EPSG:4326; never altered."),
-    envelope: dryv.field(geometry("any")).generated(calculations.GeometryEnvelope),
-    centroid: dryv.field(geometry("point")).generated(calculations.GeometryCentroid),
-    area: dryv.field(geographyProperties.GeometryArea).generated(calculations.GeometryArea),
+    geometry: dryv
+      .field(geometry("any"))
+      .maybe()
+      .description("Full-detail drawing in EPSG:4326, never altered; empty while the drawing is only expected."),
+    envelope: dryv.field(geometry("any")).maybe().generated(calculations.GeometryEnvelope),
+    centroid: dryv.field(geometry("point")).maybe().generated(calculations.GeometryCentroid),
+    area: dryv.field(geographyProperties.GeometryArea).maybe().generated(calculations.GeometryArea),
     ...periodFields,
   })
   .extends(baseSchemas.Entity)
@@ -93,17 +108,83 @@ Geometries.facets({
   storage: dryv
     .storage("geometries")
     .indexes(
-      { fields: ["featureId", "roleTerm", "revision"], unique: true },
+      { fields: ["featureId", "role", "revision"], unique: true },
       {
         description: "One current drawing per feature and role.",
-        fields: ["featureId", "roleTerm"],
+        fields: ["featureId", "role"],
         unique: true,
         where: currentGeometry,
       },
       { fields: ["id", "featureId"], unique: true },
       { fields: ["geometry"], method: "gist" },
     )
-    .index("basisTerm"),
+    .index("basis"),
+});
+
+/*---------------- geography.areas ----------------*/
+export const Areas = geography
+  .schema("Areas", {
+    hierarchyId: belongsTo(() => Hierarchies).description(
+      "The administrative, electoral or other hierarchy this area belongs to.",
+    ),
+    levelId: belongsTo(() => Levels).description("The level of the hierarchy this area is (county, constituency, ward)."),
+    featureId: belongsTo(() => Features).description(
+      "The place this area is. Never empty: generation creates the feature, then an empty geometry, then the area; details are filled in later.",
+    ),
+    parentId: belongsTo(dryv.self)
+      .maybe()
+      .description(
+        "The area one level up in the same hierarchy; empty for the top area (the country). Membership lives here, not in `geography.relationships`.",
+      ),
+    ...templateFields("area"),
+  })
+  .extends(baseSchemas.CodedPeriodEntity)
+  .rule("AreaIsNotItsOwnParent", rule.differs("id", "parentId"))
+  .description(
+    "One official place in one hierarchy at one level for a period: the unit patterns fan out over and offices, jurisdictions and templates point at. Geography details are found through the feature's identity; boundary status is read from the feature's geometry.",
+  )
+  .role("entity");
+
+const startedArea = geography.expression(
+  "StartedArea",
+  Areas.check((v) => v.fromYear.isNotNull()),
+);
+const undatedArea = geography.expression(
+  "UndatedArea",
+  Areas.check((v) => v.fromYear.isNull()),
+);
+Areas.facets({
+  storage: dryv
+    .storage("areas")
+    .indexes(
+      {
+        description: "A place is one area per hierarchy and start year.",
+        fields: ["hierarchyId", "featureId", "fromYear"],
+        unique: true,
+        where: startedArea,
+      },
+      {
+        description: "A place is one area per hierarchy when no start year is known.",
+        fields: ["hierarchyId", "featureId"],
+        unique: true,
+        where: undatedArea,
+      },
+    )
+    .index("featureId")
+    .index("parentId")
+    .index("levelId")
+    .index("templateId")
+    .acyclic("AreaParentsHaveNoCycle", { field: "parentId" })
+    .references("AreaLevelIsInHierarchy", {
+      fields: ["levelId", "hierarchyId"],
+      target: () => Levels,
+      targetFields: ["id", "hierarchyId"],
+    })
+    .references("AreaParentIsInHierarchy", {
+      fields: ["parentId", "hierarchyId"],
+      target: () => Areas,
+      targetFields: ["id", "hierarchyId"],
+    }),
 });
 
 /*---------------- geography.outlines ----------------*/
@@ -160,13 +241,7 @@ export const Relationships = geography
   .schema("Relationships", {
     subjectFeatureId: belongsTo(() => Features).description("The inner or first place (Nairobi)."),
     objectFeatureId: belongsTo(() => Features).description("The outer or second place (Kenya)."),
-    kindTerm: term("geo.relationship.kind", "inside, borders or part of."),
-    hierarchyId: belongsTo(() => Hierarchies)
-      .maybe()
-      .description("The hierarchy the parent link belongs to (Kenya administrative 2013)."),
-    levelId: belongsTo(() => Levels)
-      .maybe()
-      .description("The inner place's level in that hierarchy, so parent and rank are one row."),
+    kind: dryv.field(enums.PlaceRelation).description("inside, borders or part of."),
     ...periodFields,
     startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
@@ -175,18 +250,40 @@ export const Relationships = geography
   .rule("RelationshipPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
   .rule("RelationshipDatesAreOrdered", rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .rule("RelationshipIsNotSelf", rule.differs("subjectFeatureId", "objectFeatureId"))
-  .rule("LevelNeedsHierarchy", (v) => v.levelId.isNull().or(v.hierarchyId.isNotNull()))
-  .description("A dated link between places; a parent link in a hierarchy also records the inner place's level.")
-  .role("entity")
-  .facets({
-    storage: dryv
-      .storage("relationships")
-      .unique("subjectFeatureId", "objectFeatureId", "kindTerm", "hierarchyId", "fromYear")
-      .index("subjectFeatureId", "kindTerm")
-      .index("objectFeatureId", "kindTerm")
-      .index("hierarchyId", "levelId")
-      .index("fromYear", "toYear"),
-  });
+  .description(
+    "A dated link between places that is not membership of an administrative or electoral hierarchy (a lake inside a county, two wards that border). Hierarchy membership is `geography.areas`.",
+  )
+  .role("entity");
+
+const startedRelationship = geography.expression(
+  "StartedRelationship",
+  Relationships.check((v) => v.fromYear.isNotNull()),
+);
+const undatedRelationship = geography.expression(
+  "UndatedRelationship",
+  Relationships.check((v) => v.fromYear.isNull()),
+);
+Relationships.facets({
+  storage: dryv
+    .storage("relationships")
+    .indexes(
+      {
+        description: "One link per pair, kind and start year.",
+        fields: ["subjectFeatureId", "objectFeatureId", "kind", "fromYear"],
+        unique: true,
+        where: startedRelationship,
+      },
+      {
+        description: "One link per pair and kind when no start year is known.",
+        fields: ["subjectFeatureId", "objectFeatureId", "kind"],
+        unique: true,
+        where: undatedRelationship,
+      },
+    )
+    .index("subjectFeatureId", "kind")
+    .index("objectFeatureId", "kind")
+    .index("fromYear", "toYear"),
+});
 
 /*---------------- geography.changes ----------------*/
 export const Changes = geography
@@ -196,7 +293,7 @@ export const Changes = geography
       .description("The historical reform behind the change (Kenya's 2013 devolution)."),
     predecessorFeatureId: belongsTo(() => Features).maybe(),
     successorFeatureId: belongsTo(() => Features).maybe(),
-    kindTerm: term("geo.change.kind", "split, merge, rename or transfer."),
+    kind: dryv.field(enums.PlaceChange).description("split, merge, rename or transfer."),
     effectiveOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     note: dryv.field(geographyProperties.Note).maybe().description("Optional explanation, in `note_language_id`."),
     noteLanguageId: belongsTo(() => Languages).maybe(),
@@ -212,7 +309,7 @@ export const Changes = geography
       .unique("occurrenceId", "predecessorFeatureId", "successorFeatureId")
       .index("predecessorFeatureId")
       .index("successorFeatureId")
-      .index("kindTerm"),
+      .index("kind"),
   });
 
 /*---------------- geography.assets ----------------*/
@@ -223,7 +320,7 @@ export const Assets = geography
       .maybe()
       .description("Set when the file is the drawing of one geometry."),
     versionId: belongsTo(() => Versions).description("The exact stored GIS file, tile set or TopoJSON."),
-    kindTerm: term("geo.asset.kind", "vector boundary, raster, elevation, tile set, TopoJSON."),
+    kind: dryv.field(enums.AssetKind).description("vector boundary, raster, elevation, tile set, TopoJSON."),
     purposeTerm: term("geo.asset.purpose", "boundary source, elevation, land cover, prepared map output."),
     hierarchyId: belongsTo(() => Hierarchies)
       .maybe()

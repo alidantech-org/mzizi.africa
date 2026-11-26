@@ -9,6 +9,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.politics.enums.commitment_kind import CommitmentKind
+from mzizi_engine.api.schemas.postgres.shared.enums.commitment_status import CommitmentStatus
 
 
 class CommitmentsRow(BaseModel):
@@ -43,8 +44,8 @@ class CommitmentsRow(BaseModel):
     quantity: float | None = None
     speech_id: UUID | None = None
     statement: Annotated[str, Field(min_length=1, max_length=8000)]
+    status: CommitmentStatus
     status_as_of: date | None = None
-    status_term: UUID
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     topic_term: UUID | None = None
     unit_id: UUID | None = None

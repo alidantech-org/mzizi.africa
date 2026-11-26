@@ -24,8 +24,12 @@ Canonical data, evidence, identity, file metadata and place design. These docume
 - [DRYV_GAPS](DRYV_GAPS.md) — what Dryv does not yet do for this design, with evidence
 - [PUBLIC_BODIES_CLASSIFICATION](PUBLIC_BODIES_CLASSIFICATION.md) — proposal: classification of public bodies by legal basis, function and control levers, with comparison rules
 - [ENGINE_PERSISTENCE](ENGINE_PERSISTENCE.md) — the engine's PostgreSQL, MongoDB and vector persistence: one folder per store, ports for packages, vector as a skeleton
+- [GEOGRAPHY_REFERENCE_AND_GOVERNANCE_RETHINK](GEOGRAPHY_REFERENCE_AND_GOVERNANCE_RETHINK.md) — discussion proposal: how countries, hierarchies, levels, places, positions, offices and legal links connect today, findings from the live database and decisions pending
+- [TEMPLATES_AND_SLOTS](TEMPLATES_AND_SLOTS.md) — discussion proposal: patterns, templates and slots as a platform capability, with worked Kenyan examples and decisions pending
+- [TRANSLATION_PIPELINE](TRANSLATION_PIPELINE.md) — proposal: where translatable text lives, the three trust tiers (curated, glossary, machine), provenance and review for Swahili and other languages
 
 Implementation authorization and delivery requirements: [schema ownership implementation handoff](../../handoffs/HANDOFF-IMPLEMENT-SCHEMA-OWNERSHIP.md).
 - [LOCALITY_READS](LOCALITY_READS.md): the screen-shaped place operations, how evidence and language resolve, and the development data.
 - [CONTEXT_AND_LOCALISATION](CONTEXT_AND_LOCALISATION.md) — proposal: country, language, region and concepts from data; Cloudflare country header
+- [SCHEMA_AUDIT_SLOTS_AND_ENUMS](SCHEMA_AUDIT_SLOTS_AND_ENUMS.md) — findings: slot eligibility per schema, enum versus term, contract problems
 - [EVENTS_INFRASTRUCTURE_AND_SPENDING_MODEL](EVENTS_INFRASTRUCTURE_AND_SPENDING_MODEL.md) — proposal: events and calendar, facilities and polling stations, buyer, supplier, beneficiary and funder roles, coverage

@@ -26,14 +26,6 @@ const economyProperties = economy.properties({
   GoodStatus: dryv.property.enum({ Active: "active", Retired: "retired" }),
   NameKind: dryv.property.enum({ Preferred: "preferred", Plural: "plural", Short: "short", Alternative: "alternative" }),
   CrosswalkKind: dryv.property.enum({ Exact: "exact", Partial: "partial" }),
-  PriceKind: dryv.property.enum({
-    Retail: "retail",
-    Wholesale: "wholesale",
-    FarmGate: "farm-gate",
-    StandardCost: "standard-cost",
-    Contract: "contract",
-    Modelled: "modelled",
-  }),
   ClassCode: dryv.property.string().length({ min: 1, max: 50 }),
   Weight: dryv.property.number().range({ min: 0 }),
 });
@@ -132,7 +124,7 @@ export const Prices = economy
     ...periodFields,
     startsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     endsOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    kind: dryv.field(economyProperties.PriceKind),
+    kindTerm: term("eco.price.kind", "retail, wholesale, farm-gate, standard cost, contract, modelled."),
     amount: dryv
       .field(sharedProperties.AmountMinorUnits)
       .maybe()
@@ -145,6 +137,8 @@ export const Prices = economy
     supersedesId: belongsTo(dryv.self).maybe(),
   })
   .extends(baseSchemas.PartitionedEntity)
+  .rule("PricePeriodIsOrdered", dryv.rule.ordered("fromYear", "toYear", { allowEqual: true }))
+  .rule("PriceDatesAreOrdered", dryv.rule.ordered("startsOn", "endsOn", { allowEqual: true }))
   .description("One observed, reference or modelled price of a good at a place and time.")
   .role("entity")
   .facets({

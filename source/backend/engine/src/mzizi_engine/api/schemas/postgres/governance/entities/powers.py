@@ -23,7 +23,6 @@ class PowersRow(BaseModel):
     is_binding: bool
     kind_term: UUID
     procedure_id: UUID | None = None
-    provision_id: UUID | None = None
     step: Annotated[int, Field(ge=1)] | None = None
     threshold_term: UUID | None = None
     to_id: UUID

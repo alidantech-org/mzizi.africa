@@ -7,6 +7,7 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, identity, identityKindField, identityReference, term } from "./_links.ts";
@@ -88,6 +89,7 @@ export const Coalitions = politics
     ...dates,
   })
   .extends(baseSchemas.IdentityEntity)
+  .rule("CoalitionPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
   .rule("CoalitionKind", (v) => v.identityKind.eq("coalition"))
   .description("A coalition of parties (Azimio, Kenya Kwanza).")
   .role("entity")
@@ -102,9 +104,9 @@ export const Alignments = politics
     ...periodFields,
   })
   .extends(baseSchemas.Entity)
+  .rule("AlignmentPeriodIsOrdered", rule.ordered("fromYear", "toYear", { allowEqual: true }))
   .description("A party's dated place in a coalition.")
-  .role("entity")
-  .facets({ storage: dryv.storage("alignments").unique("coalitionId", "partyId", "fromYear").index("partyId") });
+  .role("entity");
 
 /*---------------- politics.manifestos ----------------*/
 export const Manifestos = politics
@@ -122,6 +124,32 @@ export const Manifestos = politics
   .description("A party's or candidate's manifesto for an election.")
   .role("entity")
   .facets({ storage: dryv.storage("manifestos").index("partyId").index("candidateId").index("electionId") });
+
+Alignments.facets({
+  storage: dryv
+    .storage("alignments")
+    .indexes(
+      {
+        description: "One alignment per coalition, party and start year.",
+        fields: ["coalitionId", "partyId", "fromYear"],
+        unique: true,
+        where: politics.expression(
+          "StartedAlignment",
+          Alignments.check((v) => v.fromYear.isNotNull()),
+        ),
+      },
+      {
+        description: "One alignment per coalition and party when no start year is known.",
+        fields: ["coalitionId", "partyId"],
+        unique: true,
+        where: politics.expression(
+          "UndatedAlignment",
+          Alignments.check((v) => v.fromYear.isNull()),
+        ),
+      },
+    )
+    .index("partyId"),
+});
 
 /*---------------- politics.commitments ----------------*/
 export const Commitments = politics
@@ -148,7 +176,7 @@ export const Commitments = politics
     countryId: belongsTo(() => Countries)
       .maybe()
       .description("With `speech_id`, the speech's partition key."),
-    statusTerm: term("pol.commitment.status", "not started, in progress, fulfilled, broken."),
+    status: dryv.field(enums.CommitmentStatus).description("not started, in progress, fulfilled, broken."),
     statusAsOf: dryv.field(sharedProperties.CalendarDate).maybe().description("Date the status was last assessed."),
   })
   .extends(baseSchemas.CodedEntity)
@@ -162,7 +190,7 @@ export const Commitments = politics
       .index("makerId")
       .index("manifestoId")
       .index("officeId")
-      .index("statusTerm")
+      .index("status")
       .references("CommitmentInSpeech", {
         fields: ["speechId", "countryId"],
         target: () => Speeches,
@@ -179,8 +207,8 @@ export const Fulfilments = politics
     appropriationId: belongsTo(() => Appropriations).maybe(),
     billId: belongsTo(() => Bills).maybe(),
     instrumentId: belongsTo(() => Instruments).maybe(),
-    kindTerm: term("pol.fulfilment.kind", "delivers, partly delivers, contradicts."),
-    statusTerm: term("pol.fulfilment.status", "claimed, verified, disputed."),
+    kind: dryv.field(enums.FulfilmentKind).description("delivers, partly delivers, contradicts."),
+    status: dryv.field(enums.FulfilmentStatus).description("claimed, verified, disputed."),
     recordedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.Entity)
@@ -199,7 +227,7 @@ export const Contributions = politics
     currencyId: belongsTo(() => Currencies).maybe(),
     isInKind: dryv.field(sharedProperties.Flag),
     givenOn: dryv.field(sharedProperties.CalendarDate).maybe(),
-    statusTerm: term("pol.contribution.status", "declared, reported, disputed."),
+    status: dryv.field(enums.ContributionStatus).description("declared, reported, disputed."),
     versionId: belongsTo(() => Versions)
       .maybe()
       .description("The disclosure file."),

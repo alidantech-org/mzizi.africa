@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.asset_kind import AssetKind
+
 
 class GeographyAssetsRow(BaseModel):
     """A stored GIS file or prepared map output (tile set, TopoJSON) for a feature, through filesystem versions."""
@@ -32,7 +34,7 @@ class GeographyAssetsRow(BaseModel):
     geometry_id: UUID | None = None
     hierarchy_id: UUID | None = None
     id: UUID
-    kind_term: UUID
+    kind: AssetKind
     layer: Annotated[str, Field(min_length=1, max_length=255)] | None = None
     level_id: UUID | None = None
     member: Annotated[str, Field(min_length=1, max_length=1000)] | None = None

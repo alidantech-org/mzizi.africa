@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class BudgetsRow(BaseModel):
-    """A government's budget for a fiscal period."""
+    """A government's budget for a fiscal period; an expected budget (one per county per year) is generated from a pattern before any figure exists."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -31,5 +31,6 @@ class BudgetsRow(BaseModel):
     id: UUID
     kind_term: UUID
     period_id: UUID
+    template_id: UUID | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

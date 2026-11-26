@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.rule_kind import RuleKind
+
 
 class RulesRow(BaseModel):
-    """When an event recurs."""
+    """When an event recurs. A rule may be generated from a pattern (the second Tuesday of August every fifth year)."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -25,10 +27,11 @@ class RulesRow(BaseModel):
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     interval_years: Annotated[int, Field(ge=1)] | None = None
-    kind_term: UUID
+    kind: RuleKind
     month: Annotated[int, Field(ge=1, le=12)] | None = None
     nth_weekday: Annotated[int, Field(ge=-5, le=5)] | None = None
     rrule: Annotated[str, Field(min_length=1, max_length=500)] | None = None
+    template_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

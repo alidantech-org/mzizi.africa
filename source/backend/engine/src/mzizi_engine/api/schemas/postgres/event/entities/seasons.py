@@ -28,12 +28,12 @@ class SeasonsRow(BaseModel):
     created_at: datetime
     deleted_at: datetime | None = None
     end_day: Annotated[int, Field(ge=1, le=31)] | None = None
-    end_month: Annotated[int, Field(ge=1, le=12)]
+    end_month: Annotated[int, Field(ge=1, le=12)] | None = None
     feature_id: UUID | None = None
     id: UUID
     is_natural: bool
     kind_term: UUID
     start_day: Annotated[int, Field(ge=1, le=31)] | None = None
-    start_month: Annotated[int, Field(ge=1, le=12)]
+    start_month: Annotated[int, Field(ge=1, le=12)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

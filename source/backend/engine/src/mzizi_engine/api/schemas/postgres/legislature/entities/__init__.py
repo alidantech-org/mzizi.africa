@@ -11,7 +11,6 @@ from mzizi_engine.api.schemas.postgres.governance.entities.institutions import I
 from mzizi_engine.api.schemas.postgres.governance.entities.office_terms import OfficeTermsRow
 from mzizi_engine.api.schemas.postgres.identity.entities.identities import IdentitiesRow
 from mzizi_engine.api.schemas.postgres.legal.entities.instruments import InstrumentsRow
-from mzizi_engine.api.schemas.postgres.legal.entities.provisions import ProvisionsRow
 from mzizi_engine.api.schemas.postgres.legislature.entities.agenda import AgendaRow
 from mzizi_engine.api.schemas.postgres.legislature.entities.attachments import LegislatureAttachmentsRow
 from mzizi_engine.api.schemas.postgres.legislature.entities.bills import BillsRow
@@ -47,7 +46,6 @@ __all__ = [
     "OfficeTermsRow",
     "PartiesRow",
     "PeriodsRow",
-    "ProvisionsRow",
     "RevisionsRow",
     "SittingsRow",
     "SpeechesRow",

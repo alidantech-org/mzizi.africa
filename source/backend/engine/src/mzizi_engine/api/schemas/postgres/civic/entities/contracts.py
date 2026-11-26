@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.contract_status import ContractStatus
+
 
 class ContractsRow(BaseModel):
     """A signed contract."""
@@ -37,6 +39,6 @@ class ContractsRow(BaseModel):
     project_id: UUID | None = None
     signed_on: date | None = None
     starts_on: date | None = None
-    status_term: UUID
+    status: ContractStatus
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

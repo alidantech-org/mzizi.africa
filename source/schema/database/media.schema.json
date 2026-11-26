@@ -471,7 +471,7 @@
         "article_id"
         ,"id"
         ,"identity_id"
-        ,"role_term"
+        ,"role"
       ],
       "x-seed": {
         "system": [
@@ -482,12 +482,12 @@
         "columns": [
           "article_code"
           ,"identity_code"
-          ,"role_term_code"
+          ,"role"
         ],
         "required": [
           "article_code"
           ,"identity_code"
-          ,"role_term_code"
+          ,"role"
         ]
       },
       "properties": {
@@ -526,12 +526,11 @@
           "x-role": "key",
           "x-link": { "tableId": "#/schemas/identity.Identities", "column": "id", "alias": "identity_code" }
         }
-        ,"role_term": {
+        ,"role": {
           "type": "string",
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "role_term_code", "scheme": "voc.sch.med.subject.role" }
+          "x-type": "text",
+          "enum": ["main", "mentioned"],
+          "x-role": "data"
         }
       }
     },
@@ -687,8 +686,7 @@
         ["asset_id", "identity_id", "purpose_term"]
       ],
       "required": [
-        "asset_id"
-        ,"id"
+        "id"
         ,"identity_id"
         ,"purpose_term"
       ],
@@ -709,14 +707,13 @@
           ,"to_year"
         ],
         "required": [
-          "asset_code"
-          ,"identity_code"
+          "identity_code"
           ,"purpose_term_code"
         ]
       },
       "properties": {
         "asset_id": {
-          "type": "string",
+          "type": ["string", "null"],
           "x-type": "uuid",
           "format": "uuid",
           "x-role": "key",

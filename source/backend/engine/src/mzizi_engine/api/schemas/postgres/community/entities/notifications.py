@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from mzizi_engine.api.schemas.postgres.shared.enums.notification_kind import NotificationKind
+
 
 class NotificationsRow(BaseModel):
     """A notification to send; partitioned by month of creation."""
@@ -20,7 +22,7 @@ class NotificationsRow(BaseModel):
     id: UUID
     identity_id: UUID | None = None
     key_id: UUID
-    kind_term: UUID
+    kind: NotificationKind
     occurrence_id: UUID | None = None
     post_country_id: UUID | None = None
     post_id: UUID | None = None

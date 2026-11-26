@@ -331,7 +331,7 @@
           ,"jurisdiction_code"
           ,"kind_term_code"
           ,"published_on"
-          ,"status_term_code"
+          ,"status"
           ,"to_year"
         ],
         "required": [
@@ -384,7 +384,7 @@
         ,"identity_kind": {
           "type": "string",
           "x-type": "text",
-          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "position", "procedure", "procurement", "product", "project", "service", "timezone", "unit"],
+          "enum": ["app", "bill", "coalition", "collection", "country", "currency", "debt", "election", "entity", "era", "event", "feature", "function", "fund", "hierarchy", "indicator", "individual", "instrument", "language", "level", "metric", "occurrence", "office", "pattern", "position", "procedure", "procurement", "product", "project", "service", "template", "timezone", "unit"],
           "x-role": "data"
         }
         ,"issuer_id": {
@@ -414,12 +414,11 @@
           "format": "date",
           "x-role": "data"
         }
-        ,"status_term": {
+        ,"status": {
           "type": ["string", "null"],
-          "x-type": "uuid",
-          "format": "uuid",
-          "x-role": "link",
-          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "status_term_code", "scheme": "voc.sch.leg.instrument.status" }
+          "x-type": "text",
+          "enum": ["in-force", "pending", "repealed"],
+          "x-role": "data"
         }
         ,"to_year": {
           "type": ["integer", "null"],
@@ -592,6 +591,7 @@
         ],
         "columns": [
           "id"
+          ,"metadata"
           ,"method"
           ,"relation"
           ,"review_status"
@@ -634,6 +634,11 @@
           "x-type": "uuid",
           "format": "uuid",
           "x-primaryKey": true,
+          "x-role": "data"
+        }
+        ,"metadata": {
+          "type": ["string", "null"],
+          "x-type": "text",
           "x-role": "data"
         }
         ,"method": {

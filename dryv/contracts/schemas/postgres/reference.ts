@@ -6,6 +6,7 @@
  */
 import * as dryv from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, identityKindField, identityReference, term } from "./_links.ts";
@@ -128,10 +129,10 @@ export const Languages = reference
       .maybe()
       .description("ISO 639-3 (swh), including the special codes und, mul and zxx."),
     glottocode: dryv.field(referenceProperties.Glottocode).maybe().description("Glottolog identifier (swah1253)."),
-    kindTerm: term("ref.language.kind", "language, macrolanguage, variety or special."),
+    kind: dryv.field(enums.LanguageKind).description("language, macrolanguage, variety or special."),
     familyTerm: term("ref.language.family", "Language family (Bantu, Nilotic, Cushitic).").maybe(),
     scriptTerm: term("ref.script", "Main writing system.").maybe(),
-    directionTerm: term("ref.text.direction", "Text direction: left to right or right to left.").maybe(),
+    direction: dryv.field(enums.TextDirection).description("Text direction: left to right or right to left.").maybe(),
     vitalityTerm: term(
       "ref.language.vitality",
       "living, endangered or extinct; per-country status is in `locales`.",
@@ -277,7 +278,7 @@ export const Hierarchies = reference
   .schema("Hierarchies", {
     identityKind: identityKindField("hierarchy"),
     countryId: belongsTo(() => Countries).description("The country this hierarchy divides."),
-    kindTerm: term("ref.hierarchy.kind", "administrative, electoral, traditional or statistical."),
+    kind: dryv.field(enums.HierarchyKind).description("administrative, electoral, traditional or statistical."),
     ...periodFields,
     isRouting: dryv
       .field(sharedProperties.Flag)
@@ -305,7 +306,7 @@ Hierarchies.facets({
         Hierarchies.check((v) => v.isRouting.eq(true).and(v.toYear.isNull(), v.deletedAt.isNull())),
       ),
     })
-    .index("countryId", "kindTerm")
+    .index("countryId", "kind")
     .references("HierarchyIsIdentity", identityReference),
 });
 
@@ -318,6 +319,12 @@ export const Levels = reference
       .field(referenceProperties.Depth)
       .description("Rank in the hierarchy (1 is the first division below the country), as ADM1–ADM4."),
     kindTerm: term("geo.level.kind", "The global word for the rank (county, province, district, ward)."),
+    allowsSkip: dryv
+      .field(sharedProperties.Flag)
+      .default(false)
+      .description(
+        "True when an area at this level may have a parent more than one level up (a location directly under a county). The database allows a skipped level only where this is true.",
+      ),
   })
   .extends(baseSchemas.IdentityEntity)
   .rule("LevelKind", (v) => v.identityKind.eq("level"))

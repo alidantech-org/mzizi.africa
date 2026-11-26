@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.reply_status import ReplyStatus
+
 
 class RepliesRow(BaseModel):
     """An official response to a post."""
@@ -26,6 +28,6 @@ class RepliesRow(BaseModel):
     published_at: datetime | None = None
     received_at: datetime
     respondent_id: UUID
-    status_term: UUID
+    status: ReplyStatus
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

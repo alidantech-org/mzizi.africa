@@ -7,13 +7,14 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, byCountry, identityKindField, identityReference, term } from "./_links.ts";
 import { Occurrences } from "./event.ts";
 import { Periods, Revisions } from "./finance.ts";
 import { Versions } from "./filesystem.ts";
 import { GovernanceTerms, Holders, Institutions } from "./governance.ts";
-import { Instruments, Provisions } from "./legal.ts";
+import { Instruments } from "./legal.ts";
 import { Articles, Assets } from "./media.ts";
 import { Parties } from "./politics.ts";
 import { Countries, Languages } from "./reference.ts";
@@ -27,7 +28,6 @@ export const legislature = dryv
 
 export const legislatureProperties = legislature.properties({
   VoteChoice: dryv.property.enum({ Yes: "yes", No: "no", Abstain: "abstain", Absent: "absent" }),
-  HansardStatus: dryv.property.enum({ Provisional: "provisional", Final: "final" }),
   TextOrigin: dryv.property.enum({ Original: "original", Human: "human", Machine: "machine" }),
   TextStatus: dryv.property.enum({ Draft: "draft", Reviewed: "reviewed", Published: "published" }),
   Session: dryv.property.string().length({ min: 1, max: 100 }),
@@ -59,7 +59,7 @@ export const Bills = legislature
     identityKind: identityKindField("bill"),
     institutionId: belongsTo(() => Institutions),
     kindTerm: term("leg.bill.kind", "public, private member's, money, county bill."),
-    statusTerm: term("leg.bill.status", "published, in committee, passed, assented, withdrawn, lapsed."),
+    status: dryv.field(enums.BillStatus).description("published, in committee, passed, assented, withdrawn, lapsed."),
     sponsorId: belongsTo(() => Holders)
       .maybe()
       .description("The member who sponsors the bill, as a holder in office."),
@@ -76,7 +76,7 @@ export const Bills = legislature
     storage: dryv
       .storage("bills")
       .index("institutionId", "termId")
-      .index("statusTerm")
+      .index("status")
       .index("sponsorId")
       .references("BillIsIdentity", identityReference),
   });
@@ -86,18 +86,17 @@ export const Motions = legislature
   .schema("Motions", {
     sittingId: belongsTo(() => Sittings),
     kindTerm: term("leg.motion.kind", "reading, amendment, approval, adjournment."),
-    outcomeTerm: term("leg.motion.outcome", "carried, negatived, withdrawn.").maybe(),
+    outcome: dryv.field(enums.MotionOutcome).description("carried, negatived, withdrawn.").maybe(),
     moverId: belongsTo(() => Holders).maybe(),
     billId: belongsTo(() => Bills).maybe(),
-    instrumentId: belongsTo(() => Instruments).maybe(),
-    provisionId: belongsTo(() => Provisions).maybe(),
     revisionId: belongsTo(() => Revisions)
       .maybe()
       .description("The budget revision the motion approves."),
     periodId: belongsTo(() => Periods).maybe(),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("A motion debated at a sitting.")
+  .rule("MotionHasAtMostOneSubject", rule.atMostOne("billId", "revisionId", "periodId"))
+  .description("A motion debated at a sitting; the law it concerns is reached through its bill, not a provision link.")
   .role("entity")
   .facets({ storage: dryv.storage("motions").index("sittingId").index("billId").index("moverId") });
 
@@ -124,7 +123,7 @@ export const Stages = legislature
     sittingId: belongsTo(() => Sittings).maybe(),
     motionId: belongsTo(() => Motions).maybe(),
     onDate: dryv.field(sharedProperties.CalendarDate).maybe(),
-    outcomeTerm: term("leg.stage.outcome", "passed, rejected, deferred.").maybe(),
+    outcome: dryv.field(enums.StageOutcome).description("passed, rejected, deferred.").maybe(),
     sequence: dryv.field(sharedProperties.PositiveInteger),
   })
   .extends(baseSchemas.Entity)
@@ -166,7 +165,7 @@ export const Hansards = legislature
     languageId: belongsTo(() => Languages),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     reference: dryv.field(legislatureProperties.Reference).maybe(),
-    status: dryv.field(legislatureProperties.HansardStatus),
+    status: dryv.field(enums.FormStatus),
   })
   .extends(baseSchemas.CodedEntity)
   .description("The official record of a sitting.")

@@ -9,7 +9,7 @@ from mzizi_engine.api.schemas.postgres.media.entities.articles import ArticlesRo
 from mzizi_engine.api.schemas.postgres.media.entities.assets import MediaAssetsRow
 from mzizi_engine.api.schemas.postgres.media.entities.captions import CaptionsRow
 from mzizi_engine.api.schemas.postgres.media.entities.subjects import MediaSubjectsRow
-from mzizi_engine.api.schemas.postgres.media.entities.texts import TextsRow
+from mzizi_engine.api.schemas.postgres.media.entities.texts import MediaTextsRow
 from mzizi_engine.api.schemas.postgres.media.entities.uses import UsesRow
 from mzizi_engine.api.schemas.postgres.reference.entities.languages import LanguagesRow
 from mzizi_engine.api.schemas.postgres.vocabulary.entities.terms import TermsRow
@@ -22,8 +22,8 @@ __all__ = [
     "LanguagesRow",
     "MediaAssetsRow",
     "MediaSubjectsRow",
+    "MediaTextsRow",
     "TermsRow",
-    "TextsRow",
     "UsesRow",
     "VersionsRow",
 ]

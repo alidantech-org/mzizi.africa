@@ -18,7 +18,6 @@ class EventsRow(BaseModel):
 
     table: ClassVar[str] = "event.events"
 
-    basis_provision_id: UUID | None = None
     calendar_id: UUID | None = None
     code: Annotated[
         str,

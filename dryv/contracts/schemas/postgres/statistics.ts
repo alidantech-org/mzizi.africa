@@ -7,6 +7,7 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodFields } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, byCountry, identity, identityKindField, identityReference, term } from "./_links.ts";
@@ -61,7 +62,7 @@ const figureFields = {
 export const Indicators = statistics
   .schema("Indicators", {
     identityKind: identityKindField("indicator"),
-    kindTerm: term("sta.indicator.kind", "count, rate, ratio, index, share."),
+    kind: dryv.field(enums.IndicatorKind).description("count, rate, ratio, index, share."),
     unitId: belongsTo(() => Units).maybe(),
     decimals: dryv.field(statisticsProperties.Decimals).maybe().description("Decimals to show."),
     frequency: dryv.field(statisticsProperties.Frequency).maybe(),
@@ -225,7 +226,7 @@ export const Components = statistics
     indicatorId: belongsTo(() => Indicators, { onDelete: "cascade" }).description("The composite index."),
     componentId: belongsTo(() => Indicators).description("One indicator it is made from."),
     weight: dryv.field(sharedProperties.Number),
-    transformTerm: term("sta.component.transform", "as is, normalised, inverted."),
+    transform: dryv.field(enums.ComponentTransform).description("as is, normalised, inverted."),
     position: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
   })
   .extends(baseSchemas.Association)

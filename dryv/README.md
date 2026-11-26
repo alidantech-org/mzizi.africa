@@ -272,3 +272,13 @@ See [agent instructions](AGENTS.md), [skills](agents/README.md), and [official d
 | api | typescript | dryv/contracts | apps/api/index.ts |
 | engine | typescript | dryv/contracts | apps/engine/index.ts |
 <!-- dryv:end -->
+
+## Database objects from the project pack
+
+Dryv cannot author triggers, routines or joined views yet (see `.docs/design/data/DRYV_GAPS.md`). The project pack `packs/postgres-sql` therefore renders them into `source/backend/database/sql/schema.sql`: guards on `geography.areas`, `geography.geometries` and `template.templates`, the text transforms and `template.generate` / `template.generate_pattern`, and the coverage views in the `template` schema. A field tag `template-product:<kind>` (set by `templateFields("<kind>")` in `contracts/schemas/_templates.ts`) makes the pack emit the product guard for that root table. Never edit the snapshot or an assembled release by hand; change the pack or the contracts and regenerate.
+
+`tsconfig.database.json` covers the schema, pgsql and engine contracts only; the API contract (`contracts/apps/api`) still reads removed columns (`geography.relationships` hierarchy and level) and is deliberately left unchanged until the API work.
+
+## Enums
+
+Closed value sets that code and the interface branch on are enums defined once in `contracts/schemas/_enums.ts` (same in every country, about a dozen values or fewer, a status or structural kind, never added by data entry); anything country-specific or growable is a `term(...)` of the vocabulary. Each enum value needs an interface label in `product.keys` (`enum.<enum name in kebab case>.<value>`) and a message; a test fails when one is missing.

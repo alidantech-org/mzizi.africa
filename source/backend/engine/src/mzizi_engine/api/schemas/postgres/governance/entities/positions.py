@@ -9,10 +9,11 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from mzizi_engine.api.schemas.postgres.shared.enums.identity_kind import IdentityKind
+from mzizi_engine.api.schemas.postgres.shared.enums.selection_method import SelectionMethod
 
 
 class PositionsRow(BaseModel):
-    """A kind of seat that law creates (Governor, Member of County Assembly). Its titles are `identity.names`."""
+    """A kind of seat that law creates, defined once per role (Governor, Member of County Assembly). The institution and the place are on the office. Its titles are `identity.names`."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -32,14 +33,14 @@ class PositionsRow(BaseModel):
     exposure_term: UUID | None = None
     id: UUID
     identity_kind: IdentityKind
-    institution_id: UUID | None = None
+    institution_class_term: UUID | None = None
     level_id: UUID | None = None
-    method_term: UUID | None = None
+    method: SelectionMethod | None = None
     position: Annotated[int, Field(ge=0)] | None = None
-    provision_id: UUID | None = None
     role_term: UUID
     seat_count: Annotated[int, Field(ge=1)] | None = None
     seat_level_id: UUID | None = None
+    template_id: UUID | None = None
     term_limit: Annotated[int, Field(ge=1)] | None = None
     term_years: Annotated[int, Field(ge=1)] | None = None
     updated_at: datetime

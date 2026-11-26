@@ -8,9 +8,11 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.domain_status import DomainStatus
+
 
 class DomainsRow(BaseModel):
-    """A host name a source publishes on."""
+    """A host name a source publishes on. A candidate host generated for an institution is not a source until it is verified."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -35,8 +37,7 @@ class DomainsRow(BaseModel):
     owner_id: UUID | None = None
     source_id: UUID | None = None
     starts_on: date | None = None
-    status_term: UUID
-    template_id: UUID | None = None
+    status: DomainStatus
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]

@@ -655,7 +655,7 @@
         ,"currency_id"
         ,"good_id"
         ,"id"
-        ,"kind"
+        ,"kind_term"
         ,"revision"
         ,"status"
       ],
@@ -677,7 +677,7 @@
           ,"from_year"
           ,"good_code"
           ,"id"
-          ,"kind"
+          ,"kind_term_code"
           ,"revision"
           ,"starts_on"
           ,"status"
@@ -690,7 +690,7 @@
           ,"currency_code"
           ,"good_code"
           ,"id"
-          ,"kind"
+          ,"kind_term_code"
           ,"revision"
           ,"status"
         ]
@@ -775,11 +775,12 @@
           "x-primaryKey": true,
           "x-role": "data"
         }
-        ,"kind": {
+        ,"kind_term": {
           "type": "string",
-          "x-type": "text",
-          "enum": ["contract", "farm-gate", "modelled", "retail", "standard-cost", "wholesale"],
-          "x-role": "data"
+          "x-type": "uuid",
+          "format": "uuid",
+          "x-role": "link",
+          "x-link": { "tableId": "#/schemas/vocabulary.Terms", "column": "id", "alias": "kind_term_code", "scheme": "voc.sch.eco.price.kind" }
         }
         ,"revision": {
           "type": "integer",

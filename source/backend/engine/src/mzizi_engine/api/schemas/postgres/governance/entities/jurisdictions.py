@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.jurisdiction_kind import JurisdictionKind
+
 
 class JurisdictionsRow(BaseModel):
     """Where an institution or office has authority."""
@@ -16,6 +18,7 @@ class JurisdictionsRow(BaseModel):
 
     table: ClassVar[str] = "governance.jurisdictions"
 
+    area_id: UUID | None = None
     code: Annotated[
         str,
         Field(
@@ -27,11 +30,10 @@ class JurisdictionsRow(BaseModel):
     country_id: UUID
     created_at: datetime
     deleted_at: datetime | None = None
-    feature_id: UUID | None = None
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     institution_id: UUID | None = None
-    kind_term: UUID
+    kind: JurisdictionKind
     office_id: UUID | None = None
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime

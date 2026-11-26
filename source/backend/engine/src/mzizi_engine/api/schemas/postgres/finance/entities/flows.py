@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.flow_kind import FlowKind
+
 
 class FlowsRow(BaseModel):
     """A movement of public money: allocation, transfer, disbursement, payment or receipt."""
@@ -30,7 +32,7 @@ class FlowsRow(BaseModel):
     fund_id: UUID | None = None
     id: UUID
     institution_id: UUID | None = None
-    kind_term: UUID
+    kind: FlowKind
     occurred_on: date | None = None
     period_id: UUID | None = None
     project_id: UUID | None = None

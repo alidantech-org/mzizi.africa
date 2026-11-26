@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from mzizi_engine.api.schemas.postgres.shared.enums.contribution_status import ContributionStatus
+
 
 class ContributionsRow(BaseModel):
     """A political donation or in-kind contribution as disclosed."""
@@ -34,7 +36,7 @@ class ContributionsRow(BaseModel):
     id: UUID
     is_in_kind: bool
     recipient_id: UUID
-    status_term: UUID
+    status: ContributionStatus
     updated_at: datetime
     version: Annotated[int, Field(ge=1)]
     version_id: UUID | None = None

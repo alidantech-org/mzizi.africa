@@ -22,7 +22,6 @@ class GovernanceRelationshipsRow(BaseModel):
     from_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     id: UUID
     kind_term: UUID
-    provision_id: UUID | None = None
     to_id: UUID
     to_year: Annotated[int, Field(ge=-10000, le=3000)] | None = None
     updated_at: datetime

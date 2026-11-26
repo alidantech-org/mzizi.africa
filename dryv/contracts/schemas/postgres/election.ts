@@ -7,12 +7,14 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { periodProperties } from "#/schemas/_periods.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
+import { templateFields } from "#/schemas/_templates.ts";
 import { belongsTo, byCountry, identity, identityKindField, identityReference, term } from "./_links.ts";
 import { measureProperties } from "./_measures.ts";
 import { Events } from "./event.ts";
-import { Features } from "./geography.ts";
+import { Areas, Features } from "./geography.ts";
 import { GovernanceTerms, Holders, Offices } from "./governance.ts";
 import { Articles, Assets } from "./media.ts";
 import { Individuals } from "./official.ts";
@@ -28,7 +30,6 @@ export const election = dryv
   .facets({ storage: { namespace: "election", store: "main" } });
 
 const electionProperties = election.properties({
-  FormStatus: dryv.property.enum({ Provisional: "provisional", Final: "final" }),
   ChoiceText: dryv.property.string().length({ min: 1, max: 1000 }),
   Note: dryv.property.string().length({ min: 1, max: 4000 }),
   Seconds: dryv.property.number().range({ min: 0 }),
@@ -43,18 +44,18 @@ export const Elections = election
       .maybe()
       .description("The civic-calendar event; its occurrences hold polling day, reruns and timetable items."),
     kindTerm: term("ele.election.kind", "general, by-election, referendum, primary."),
-    statusTerm: term("ele.election.status", "scheduled, held, annulled."),
+    status: dryv.field(enums.ElectionStatus).description("scheduled, held, annulled."),
     heldOn: dryv.field(sharedProperties.CalendarDate).maybe(),
     fromYear: dryv.field(periodProperties.Year).description("The election year."),
     parentId: belongsTo(dryv.self).maybe().description("The general election a by-election or rerun belongs to."),
-    termId: belongsTo(() => GovernanceTerms)
-      .maybe()
-      .description("The term the election fills."),
     authorityId: identity("The body that runs the election (IEBC).").maybe(),
+    ...templateFields("election-cycle"),
   })
   .extends(baseSchemas.IdentityEntity)
   .rule("ElectionKind", (v) => v.identityKind.eq("election"))
-  .description("An election or referendum. Its names are `identity.names`.")
+  .description(
+    "An election or referendum; a general election cycle is generated from a pattern. The terms it fills are `governance.terms`. Its names are `identity.names`.",
+  )
   .role("entity")
   .facets({
     storage: dryv
@@ -62,6 +63,7 @@ export const Elections = election
       .index("countryId", "fromYear")
       .index("eventId")
       .index("parentId")
+      .index("templateId")
       .references("ElectionIsIdentity", identityReference),
   });
 
@@ -72,18 +74,36 @@ export const Contests = election
     officeId: belongsTo(() => Offices)
       .maybe()
       .description("The seat contested; empty for a referendum question."),
-    featureId: belongsTo(() => Features)
+    termId: belongsTo(() => GovernanceTerms)
       .maybe()
-      .description("The place that votes."),
+      .description("The office term the contest fills; with `office_id` a composite key, so both name the same office."),
+    areaId: belongsTo(() => Areas)
+      .maybe()
+      .description("The official area that votes."),
     kindTerm: term("ele.contest.kind", "presidential, governor, member of parliament, referendum question."),
     reasonTerm: term("ele.contest.reason", "Why the contest is held (term end, vacancy, nullification).").maybe(),
     previousHolderId: belongsTo(() => Holders).maybe(),
     seatCount: dryv.field(sharedProperties.PositiveInteger).maybe(),
+    ...templateFields("contest"),
   })
   .extends(baseSchemas.CodedEntity)
-  .description("One contest in an election: one seat or one referendum question for one place.")
+  .description(
+    "One contest in an election: one seat or one referendum question for one area. A contest is generated per seat per cycle and exists before any candidate or result.",
+  )
   .role("entity")
-  .facets({ storage: dryv.storage("contests").index("electionId", "featureId").index("officeId") });
+  .facets({
+    storage: dryv
+      .storage("contests")
+      .index("electionId", "areaId")
+      .index("officeId")
+      .index("termId")
+      .index("templateId")
+      .references("ContestTermIsOfOffice", {
+        fields: ["termId", "officeId"],
+        target: () => GovernanceTerms,
+        targetFields: ["id", "officeId"],
+      }),
+  });
 
 /*---------------- election.candidates ----------------*/
 export const Candidates = election
@@ -120,7 +140,7 @@ export const Stations = election
     electionId: belongsTo(() => Elections, { onDelete: "cascade" }),
     featureId: belongsTo(() => Features).description("The polling place as a geography feature."),
     hostId: identity("The institution hosting the station (a school).").maybe(),
-    statusTerm: term("ele.station.status", "gazetted, open, relocated, closed.").maybe(),
+    status: dryv.field(enums.StationStatus).description("gazetted, open, relocated, closed.").maybe(),
     registeredVoters: dryv.field(sharedProperties.NonNegativeInteger).maybe(),
     streams: dryv.field(sharedProperties.PositiveInteger).maybe(),
     opensAt: dryv.field(sharedProperties.Instant).maybe(),
@@ -151,10 +171,33 @@ export const Turnouts = election
   })
   .extends(baseSchemas.Entity)
   .description("Registered and cast votes of a contest in one place, by revision.")
-  .role("entity")
-  .facets({
-    storage: dryv.storage("turnouts").unique("contestId", "featureId", "collectionId", "revision").index("featureId"),
-  });
+  .role("entity");
+
+Turnouts.facets({
+  storage: dryv
+    .storage("turnouts")
+    .indexes(
+      {
+        description: "One turnout per contest, place, collection and revision.",
+        fields: ["contestId", "featureId", "collectionId", "revision"],
+        unique: true,
+        where: election.expression(
+          "CollectedTurnout",
+          Turnouts.check((v) => v.collectionId.isNotNull()),
+        ),
+      },
+      {
+        description: "One turnout per contest, place and revision when no collection is named.",
+        fields: ["contestId", "featureId", "revision"],
+        unique: true,
+        where: election.expression(
+          "UncollectedTurnout",
+          Turnouts.check((v) => v.collectionId.isNull()),
+        ),
+      },
+    )
+    .index("featureId"),
+});
 
 /*---------------- election.forms ----------------*/
 export const Forms = election
@@ -163,8 +206,10 @@ export const Forms = election
     stationId: belongsTo(() => Stations).maybe(),
     featureId: belongsTo(() => Features).maybe(),
     formTerm: term("ele.form", "The results form (Kenya's 34A, 34B, 34C)."),
-    assetId: belongsTo(() => Assets).description("The form as an image, PDF or link to the official portal."),
-    status: dryv.field(electionProperties.FormStatus),
+    assetId: belongsTo(() => Assets)
+      .maybe()
+      .description("The form as an image, PDF or link to the official portal; empty while the form is only expected."),
+    status: dryv.field(enums.FormStatus),
     publishedOn: dryv.field(sharedProperties.CalendarDate).maybe(),
   })
   .extends(baseSchemas.Entity)

@@ -9,6 +9,7 @@
 import * as dryv from "@dryvcode/author";
 import { rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
+import { enums } from "#/schemas/_enums.ts";
 import { sharedProperties } from "#/schemas/_shared.ts";
 import { belongsTo, byCountry, byMonth, identity, term } from "./_links.ts";
 import { Accounts } from "./auth.ts";
@@ -188,7 +189,7 @@ export const Posts = community
   .schema("Posts", {
     actorId: belongsTo(() => Actors),
     deviceId: belongsTo(() => Devices).maybe(),
-    kindTerm: term("com.post.kind", "comment, review, report, question."),
+    kind: dryv.field(enums.PostKind).description("comment, review, report, question."),
     body: dryv.field(communityEnums.Body).maybe(),
     languageId: belongsTo(() => Languages).maybe(),
     countryId: belongsTo(() => Countries).description("Partition key."),
@@ -303,9 +304,9 @@ export const Cases = community
   .schema("Cases", {
     postId: belongsTo(() => Posts),
     postCountryId: belongsTo(() => Countries),
-    state: dryv.field(communityEnums.PostState),
+    state: dryv.field(enums.CaseState).description("open, in review, decided or escalated."),
     reviewerAccountId: belongsTo(() => Accounts).maybe(),
-    decisionTerm: term("com.case.decision", "approve, reject, remove, escalate.").maybe(),
+    decision: dryv.field(enums.CaseDecision).description("approve, reject, remove, escalate.").maybe(),
     reason: dryv.field(sharedProperties.Description).maybe().description("Internal moderation note."),
     decidedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
@@ -357,18 +358,18 @@ export const Subscriptions = community
   .schema("Subscriptions", {
     actorId: belongsTo(() => Actors, { onDelete: "cascade" }),
     identityId: identity("The named thing followed."),
-    kindTerm: term("com.subscription.kind", "follow, alerts."),
+    kind: dryv.field(enums.SubscriptionKind).description("follow, alerts."),
     revokedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
   .extends(baseSchemas.Entity)
   .description("A named thing an actor follows.")
   .role("entity")
-  .facets({ storage: dryv.storage("subscriptions").unique("actorId", "identityId", "kindTerm").index("identityId") });
+  .facets({ storage: dryv.storage("subscriptions").unique("actorId", "identityId", "kind").index("identityId") });
 
 /*---------------- community.notifications ----------------*/
 export const Notifications = community
   .schema("Notifications", {
-    kindTerm: term("com.notification.kind", "new figure, event reminder, reply."),
+    kind: dryv.field(enums.NotificationKind).description("new figure, event reminder, reply."),
     keyId: belongsTo(() => Keys).description("The interface key whose message is shown."),
     identityId: identity("The named thing the notification is about.").maybe(),
     ...postLink("The post the notification is about."),
@@ -422,7 +423,7 @@ export const Replies = community
     respondentId: identity("The office, institution or person replying officially."),
     body: dryv.field(communityEnums.Body),
     languageId: belongsTo(() => Languages),
-    statusTerm: term("com.reply.status", "received, published, withdrawn."),
+    status: dryv.field(enums.ReplyStatus).description("received, published, withdrawn."),
     receivedAt: dryv.field(sharedProperties.Instant),
     publishedAt: dryv.field(sharedProperties.Instant).maybe(),
   })
