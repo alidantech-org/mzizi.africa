@@ -21046,6 +21046,31 @@ $fn$;
 
 COMMENT ON FUNCTION "template"."generate_pattern" (uuid) IS 'Runs every root template of a pattern in sequence order (election cycles before the offices and terms that depend on them).';
 
+-- ---- Provided routine: the JSON entry point bound in dryv.yaml (operation template.GeneratePatterns) ----
+-- Dryv records and observes this routine's contract (input, output, failures); its body is project-supplied here.
+CREATE FUNCTION "template"."generate_json" (p_input jsonb, p_context jsonb) RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER AS $fn$
+DECLARE
+  v_code text;
+  v_id uuid;
+  v_result jsonb := '[]'::jsonb;
+BEGIN
+  IF jsonb_typeof(p_input -> 'patterns') IS DISTINCT FROM 'array' OR jsonb_array_length(p_input -> 'patterns') = 0 THEN
+    RAISE EXCEPTION 'validation_error' USING ERRCODE = 'P0001', DETAIL = 'patterns must be a non-empty array of pattern codes';
+  END IF;
+  FOR v_code IN SELECT jsonb_array_elements_text(p_input -> 'patterns') LOOP
+    SELECT p."id" INTO v_id FROM "template"."patterns" p WHERE p."code" = v_code AND p."deleted_at" IS NULL;
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'pattern_not_found' USING ERRCODE = 'P0001', DETAIL = v_code;
+    END IF;
+    v_result := v_result || jsonb_build_array(jsonb_build_object('pattern', v_code, 'created', "template"."generate_pattern"(v_id)));
+  END LOOP;
+  RETURN jsonb_build_object('results', v_result);
+END
+$fn$;
+
+-- Execution stays with the default (PUBLIC): the routine is SECURITY INVOKER, so the caller needs the table privileges anyway.
+COMMENT ON FUNCTION "template"."generate_json" (jsonb, jsonb) IS 'JSON entry point of pattern generation: {"patterns": [codes]} returns {"results": [{"pattern", "created"}]}; an unknown pattern raises pattern_not_found, bad input raises validation_error.';
+
 -- ---- Coverage views (what is missing; the pending slots) ----
 CREATE VIEW "template"."pending_holders" AS
 SELECT

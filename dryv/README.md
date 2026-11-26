@@ -282,3 +282,5 @@ Dryv cannot author triggers, routines or joined views yet (see `.docs/design/dat
 ## Enums
 
 Closed value sets that code and the interface branch on are enums defined once in `contracts/schemas/_enums.ts` (same in every country, about a dozen values or fewer, a status or structural kind, never added by data entry); anything country-specific or growable is a `term(...)` of the vocabulary. Each enum value needs an interface label in `product.keys` (`enum.<enum name in kebab case>.<value>`) and a message; a test fails when one is missing.
+
+The routine `template.generate_json` is the one place Dryv knows about project SQL: the operation `template.GeneratePatterns` is bound as a `provided` native function in `dryv.yaml` (pack `postgresql-objects`, copied from the Dryv examples), so its input, output and failures are recorded in `dryv/.dryv/objects/database-objects.ts` while its body stays in the postgres-sql pack.

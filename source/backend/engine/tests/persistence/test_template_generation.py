@@ -337,3 +337,20 @@ def test_a_missing_start_year_still_counts_as_one_value_in_a_unique_key(conn: Co
         None,
     )
     assert "uq_areas__" in message
+
+
+# -------------------------------------------------------------------------------------- the provided routine
+def test_the_provided_json_routine_runs_patterns_and_reports_each(conn: Connection) -> None:
+    output = PostgresTemplates(conn).generate(PATTERNS[:2])
+    assert [(item.pattern, item.created) for item in output.results] == [(PATTERNS[0], 0), (PATTERNS[1], 0)]
+
+
+def test_the_provided_json_routine_raises_its_declared_failures(conn: Connection) -> None:
+    from mzizi_engine.persistence.postgres.template import PatternNotFound
+
+    with pytest.raises(PatternNotFound):
+        PostgresTemplates(conn).generate(("tpl.pat.ke.nope",))
+    conn.rollback()
+    assert "validation_error" in _rejected(
+        conn, "SELECT template.generate_json('{\"patterns\": []}'::jsonb, '{}'::jsonb)"
+    )

@@ -25,3 +25,7 @@ Dryv's local checkout supports storage constraints (acyclic, composite reference
 ### 2026-11-26, null-equal uniqueness
 
 Dryv now supports `.unique(...).nullsNotDistinct()` (index input `nullsNotDistinct: true`). The five partial-index pairs (areas, relationships, template texts, alignments, turnouts) were replaced by one null-equal unique index each, and the two project packs declare the capability. The other new Dryv options (native guards through `compilePostgresObjects`, `provided` routines) were not adopted; the pack SQL stays.
+
+### 2026-11-26, provided routine
+
+`template.generate_json` (JSON in, JSON out) is declared through Dryv as the `provided` binding of operation `template.GeneratePatterns` and called by the engine. Proven in a throwaway Dryv project (`/tmp/claude-1000/dryv-routine`, files kept in `.dev/research/`) and in a rolled-back transaction before adoption. Limits: Dryv records the contract only; the body and the loops remain project SQL in the pack.

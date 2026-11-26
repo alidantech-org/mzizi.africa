@@ -1,0 +1,16 @@
+version: dryv.pack/v1alpha1
+key: examples.postgresql-objects
+source: templates
+info: {title: "postgresql desired database objects", version: 0.1.0}
+plugins: [{name: jinja, extensions: [.j2]}]
+capabilities:
+  backend:
+    backend: postgresql
+    routines: [function, procedure]
+    queries: [fields, filters, relations, nested, counts, expressions]
+    views: true
+    hook_timings: [before, after, after-commit]
+    hook_coverage: [managed-writes, all-writes]
+    materialization: true
+templates:
+  objects: {}

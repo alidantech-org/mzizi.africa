@@ -6,12 +6,26 @@ adapter only calls it and parses what comes back into named contracts. It never 
 
 from __future__ import annotations
 
+import psycopg
+from psycopg.types.json import Jsonb
+
 from mzizi_engine.persistence.postgres.connection import Connection
 from mzizi_engine.runtime.contracts.base import Frozen
 
 
 class PatternNotFound(LookupError):
     """No pattern has the requested code."""
+
+
+class Generated(Frozen):
+    """One pattern's result from the routine: how many rows it created (zero on a repeat run)."""
+
+    pattern: str
+    created: int
+
+
+class GenerateOutput(Frozen):
+    results: tuple[Generated, ...]
 
 
 class CoverageRow(Frozen):
@@ -35,6 +49,20 @@ class PostgresTemplates:
         if row is None:
             raise PatternNotFound(code)
         return str(row["id"])
+
+    def generate(self, codes: tuple[str, ...]) -> GenerateOutput:
+        """Run patterns through the provided routine `template.generate_json` (operation `template.GeneratePatterns`)."""
+        try:
+            row = self._conn.execute(
+                "SELECT template.generate_json(%s, '{}'::jsonb) AS result", (Jsonb({"patterns": list(codes)}),)
+            ).fetchone()
+        except psycopg.errors.RaiseException as error:
+            if "pattern_not_found" in str(error):
+                raise PatternNotFound(error.diag.message_detail or "") from error
+            raise
+        if row is None:
+            raise RuntimeError("template.generate_json returned no row")
+        return GenerateOutput.model_validate_json(str(row["result"]))
 
     def generate_pattern(self, pattern_id: str) -> int:
         """Run every root template of the pattern; returns the number of rows created (zero on a repeat run)."""

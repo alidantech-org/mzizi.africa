@@ -1,0 +1,103 @@
+/* App shell: sidebar (groups, rail, disabled links with reasons), app bar (location switcher, search, saved, alerts, settings),
+   location capture dialog. Mirrors src/app/demo/_components/layout/app-shell.tsx and navigation/*. */
+(function () {
+  const esc = P.esc; const side = document.getElementById("side"), bar = document.getElementById("bar"), pop = document.getElementById("pop"), dlg = document.getElementById("dlg");
+  const sh = (P.shell = {});
+  const logo = `<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3v12M16 15c-4 0-7 3-7 7M16 15c4 0 7 3 7 7M16 15v14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`;
+
+  sh.update = () => {
+    const pl = P.pl; const rail = document.documentElement.dataset.side === "rail"; const closed = P.pref.groups();
+    const placeName = pl.ok ? (pl.depth ? pl.name : "Kenya") : "Overview";
+    const item = (n, label) => {
+      const why = pl.ok ? P.whyUnavailable(n.id, pl) : null;
+      if (why) return `<button class="item" aria-disabled="true" data-why="${esc(why)}" data-label="${esc(P.t(n.label))}">${P.icon(n.icon)}<span class="lbl">${esc(P.t(label))}</span>${P.icon("lock", "lock")}</button>`;
+      const cur = P.view === n.id; return `<a class="item" href="${P.href({ view: n.id, keep: false })}" ${cur ? 'aria-current="page"' : ""} title="${rail ? esc(P.t(label)) : ""}" aria-label="${esc(P.t(label))}">${P.icon(n.icon)}<span class="lbl">${esc(P.t(label))}</span></a>`;
+    };
+    side.innerHTML = `<div class="side-head">${rail ? `<button class="ib" data-act="side:open" aria-label="Expand sidebar" style="color:var(--accent)">${logo.replace("<svg", '<svg style="width:26px;height:26px"')}</button>` : `<a class="logo" href="${P.href({ at: ["ke"] })}">${logo}<b>Mzizi</b></a>`}<button class="ib min" data-act="side:rail" aria-label="Minimise sidebar">${P.icon("panel")}</button></div>
+    <nav class="sidenav" aria-label="Main">${P.NAV.filter((n) => n.id === "overview").map((n) => item(n, placeName)).join("")}${P.GROUPS.map((g) => { const items = P.NAV.filter((n) => n.group === g && n.id !== "overview"); const open = rail || !closed.includes(g);
+      return `<div>${rail ? '<div class="rail-sep"></div>' : `<button class="grp-h" data-act="grp:${g}" aria-expanded="${open}">${P.t(g)}${P.icon("chev")}</button>`}${open ? items.map((n) => item(n, n.label)).join("") : ""}</div>`; }).join("")}</nav>
+    <div class="side-foot"><span>Prototype · sample data</span></div>`;
+    const crumbs = [`<a href="${P.href({ at: ["ke"] })}" class="crumb">Kenya</a>`].concat(pl.ok ? pl.trail.map((t, i) => `<span class="sep">›</span><a href="${P.href({ at: pl.at.slice(0, i + 2) })}" class="crumb">${esc(t.name)}</a>`) : []);
+    bar.innerHTML = `<button class="ib menu-btn" data-act="menu" aria-label="Open menu">${P.icon("menu")}</button>
+    <button class="loc" data-act="loc" aria-haspopup="dialog" aria-label="Change place: ${esc(placeName)}">${P.icon("pin")}<span style="display:flex;gap:4px;overflow:hidden">${crumbs.join("")}</span>${P.icon("chev")}</button>
+    <span class="grow"></span>
+    <button class="srch" data-act="search" aria-label="Search">${P.icon("search")}<span>Search places, people, bills…</span><kbd>Ctrl K</kbd></button>
+    <button class="ib" data-act="lang" aria-label="Language: ${P.q && P.q.lang === "sw" ? "Kiswahili" : "English"}" title="Language"><b class="mono" style="font-size:12px">${P.q && P.q.lang === "sw" ? "SW" : "EN"}</b></button>
+    <button class="ib" data-act="saved" aria-label="Saved places" aria-haspopup="true">${P.icon("heart")}</button>
+    <button class="ib" data-act="alerts" aria-label="Alerts, 2 unread" aria-haspopup="true">${P.icon("bell")}<span class="dot"></span></button>
+    <button class="ib" data-act="settings" aria-label="Settings" aria-haspopup="true">${P.icon("settings")}</button>`;
+  };
+
+  /* ---- popovers ---- */
+  P.closeAll = () => { pop.innerHTML = ""; document.documentElement.classList.remove("drawer"); document.getElementById("scrim").hidden = true; };
+  const openPop = (anchor, html, w) => { P.closeAll(); const r = anchor.getBoundingClientRect(); const d = document.createElement("div"); d.className = "popover"; d.style.minWidth = (w || 260) + "px"; d.innerHTML = html; pop.appendChild(d); const left = Math.max(8, Math.min(innerWidth - d.offsetWidth - 8, r.right - d.offsetWidth)); d.style.left = left + "px"; d.style.top = r.bottom + 6 + "px"; const f = d.querySelector("a,button,input"); f && f.focus({ preventScroll: true }); };
+  document.addEventListener("pointerdown", (e) => { if (pop.firstChild && !e.target.closest(".popover") && !e.target.closest("[data-act]")) pop.innerHTML = ""; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { pop.innerHTML = ""; dlg.innerHTML = ""; P.closeAll(); } if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); sh.search(); } });
+  const row = (href, icon, label, small, cur) => `<a class="row" href="${href}" ${cur ? 'aria-current="true"' : ""}>${icon ? P.icon(icon) : ""}<span>${esc(label)}</span>${small ? `<small>${esc(small)}</small>` : ""}</a>`;
+  /* Disabled-link tooltip */
+  let tipEl; const showTip = (t) => { const b = t.getBoundingClientRect(); hideTip(); tipEl = document.createElement("div"); tipEl.className = "tip"; tipEl.setAttribute("role", "tooltip"); tipEl.innerHTML = `<b>${esc(t.dataset.label)} is not available here</b><br>${esc(t.dataset.why)}`; document.body.appendChild(tipEl); tipEl.style.left = b.right + 10 + "px"; tipEl.style.top = Math.max(8, b.top - 4) + "px"; };
+  const hideTip = () => { if (tipEl) tipEl.remove(); tipEl = null; };
+  document.addEventListener("mouseover", (e) => { const t = e.target.closest("[data-why]"); if (t) showTip(t); }); document.addEventListener("mouseout", (e) => { if (e.target.closest("[data-why]")) hideTip(); });
+  document.addEventListener("focusin", (e) => { const t = e.target.closest("[data-why]"); if (t) showTip(t); }); document.addEventListener("focusout", hideTip); document.addEventListener("click", (e) => { const t = e.target.closest("[data-why]"); if (t) showTip(t); });
+
+  document.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-act]"); if (!b) return; const [act, arg] = b.dataset.act.split(":");
+    if (act === "side") P.pref.setSide(arg), P.shell.update();
+    else if (act === "grp") { const c = P.pref.groups(); P.pref.setGroups(c.includes(arg) ? c.filter((x) => x !== arg) : c.concat(arg)); sh.update(); }
+    else if (act === "menu") { if (document.documentElement.dataset.side === "hidden" && innerWidth > 900) { P.pref.setSide("open"); sh.update(); } else { document.documentElement.classList.add("drawer"); document.getElementById("scrim").hidden = false; } }
+    else if (act === "lang") { const sw = P.q.lang === "sw"; const u = new URL(location.href); if (sw) u.searchParams.delete("lang"); else u.searchParams.set("lang", "sw"); P.navigate(u.pathname + u.search + location.hash, { fromSameSubject: true }); }
+    else if (act === "loc") sh.where(b); else if (act === "search") sh.search(); else if (act === "saved") sh.saved(b); else if (act === "alerts") sh.alerts(b); else if (act === "settings") sh.settings(b);
+    else if (act === "theme") { P.pref.setTheme(arg.split("+")[0], arg.split("+")[1]); sh.settings(document.querySelector('[data-act="settings"]')); }
+    else if (act === "size") { P.store.set(P.K.a11y, arg + "." + P.pref.a11y().motion); P.applyA11y(); sh.settings(document.querySelector('[data-act="settings"]')); }
+    else if (act === "motion") { P.store.set(P.K.a11y, P.pref.a11y().size + "." + arg); P.applyA11y(); sh.settings(document.querySelector('[data-act="settings"]')); }
+    else if (act === "close") { if (!b.classList.contains("back") || e.target === b) dlg.innerHTML = ""; }
+    else if (act === "savehere") { const s = P.pref.saved(); const key = P.at.join("/"); if (!s.some((x) => x.at.join("/") === key)) s.push({ label: P.pl.name, at: P.at.slice(), isHome: false }); P.pref.setSaved(s); P.toast(`Saved ${P.pl.name} (community.places)`); sh.saved(document.querySelector('[data-act="saved"]')); }
+    else if (act === "home") { const s = P.pref.saved().map((x) => ({ ...x, isHome: x.at.join("/") === arg })); P.pref.setSaved(s); P.toast("Home place updated"); sh.saved(document.querySelector('[data-act="saved"]')); }
+  });
+  document.getElementById("scrim").addEventListener("click", P.closeAll);
+
+  sh.where = (anchor) => { const pl = P.pl; const kids = pl.ok ? D.children(pl) : []; const lvl = pl.ok ? (pl.depth < 3 ? D.country.levels[pl.depth] + "s" : "") : "";
+    openPop(anchor, `<h4>Go to</h4>${row(P.href({ at: ["ke"] }), "pin", "Kenya", "country", pl.depth === 0)}${pl.ok ? pl.trail.map((t, i) => row(P.href({ at: pl.at.slice(0, i + 2) }), "pin", t.name, t.level.toLowerCase(), i === pl.trail.length - 1)).join("") : ""}
+      ${kids.length ? `<h4>${esc(lvl)} in ${esc(pl.name)}</h4>${kids.map((k) => row(P.href({ at: pl.at.concat(k.id) }), "", k.name, k.pop ? D.fmt(k.pop) + "k" : "")).join("")}` : ""}
+      <h4>Location</h4><button class="row" data-act="capture">${P.icon("target")}<span>Use my location or pick on map…</span></button>`, 300); };
+  document.addEventListener("click", (e) => { if (e.target.closest("[data-act='capture']")) { pop.innerHTML = ""; sh.capture(); } });
+
+  sh.settings = (anchor) => { const t = P.pref.theme(), a = P.pref.a11y(), sd = P.pref.side(); const bt = (act, label, on) => `<button class="btn sm ${on ? "on" : ""}" data-act="${act}" aria-pressed="${!!on}">${label}</button>`;
+    openPop(anchor, `<h4>Colour mode</h4><div class="row" style="padding:0 8px">${["light", "dark", "system"].map((m) => bt("theme:" + m + "+" + t.palette, m, t.mode === m)).join("")}</div>
+    <h4>Palette</h4><div class="row" style="padding:0 8px">${[["terra", "Terracotta"], ["teal", "Teal"]].map((p) => bt("theme:" + t.mode + "+" + p[0], p[1], t.palette === p[0])).join("")}</div>
+    <h4>Text size</h4><div class="row" style="padding:0 8px">${[["m", "Normal"], ["l", "Large"], ["xl", "Largest"]].map((p) => bt("size:" + p[0], p[1], a.size === p[0])).join("")}</div>
+    <h4>Motion</h4><div class="row" style="padding:0 8px">${[["on", "Normal"], ["off", "Reduced"]].map((p) => bt("motion:" + p[0], p[1], a.motion === p[0])).join("")}</div>
+    <h4>Sidebar</h4><div class="row" style="padding:0 8px">${[["open", "Expanded"], ["rail", "Rail"], ["hidden", "Hidden"]].map((p) => bt("side:" + p[0], p[1], sd === p[0])).join("")}</div>
+    <div class="note" style="margin:10px 8px 4px">Saved in cookies (<code>mzizi-proto-*</code>) so the first paint matches.</div>`, 300); };
+  sh.saved = (anchor) => { const s = P.pref.saved(); const here = P.pl.ok && !s.some((x) => x.at.join("/") === P.at.join("/"));
+    openPop(anchor, `<h4>Saved places</h4>${s.length ? s.map((x) => `<div class="row">${P.icon(x.isHome ? "home" : "pin")}<a href="${P.href({ at: x.at })}" style="flex:1;text-decoration:none">${esc(x.label)}${x.isHome ? " · home" : ""}</a>${x.isHome ? "" : `<button class="btn sm" data-act="home:${x.at.join("/")}">Make home</button>`}</div>`).join("") : '<div class="empty sm">Nothing saved yet.</div>'}${here ? `<button class="row" data-act="savehere">${P.icon("plus")}<span>Save ${esc(P.pl.name)}</span></button>` : ""}<div class="note" style="margin:8px">Stored as <code>community.places</code>: a feature, your own label, a home flag and an order.</div>`, 300); };
+  sh.alerts = (anchor) => openPop(anchor, `<h4>Alerts</h4>${[["County Water Office replied to your report", P.href({ at: ["ke", "nairobi"], view: "community" }), "message"], ["Bill B3 reached third reading", P.href({ at: ["ke"], view: "parliament", set: { "view.id": "b3" } }), "landmark"], ["Kisumu results revised (revision 2)", P.href({ at: ["ke", "kisumu"], view: "elections" }), "vote"]].map((a) => row(a[1], a[2], a[0])).join("")}<div class="note" style="margin:8px">Subscriptions notify when a subject you follow changes (<code>community.subscriptions → notifications</code>).</div>`, 340);
+
+  /* ---- location capture: device location, map pin, county / constituency / ward ---- */
+  sh.capture = () => {
+    dlg.innerHTML = `<div class="back" data-act="close"><div class="box sm" role="dialog" aria-modal="true" aria-labelledby="cap-t" style="width:min(720px,100%)"><div class="dh"><div><h2 id="cap-t">Where are you?</h2><p class="muted" style="margin:2px 0 0">Use your device location, or click the map. Constituency and ward are approximate until real boundaries load.</p></div><button class="ib" data-act="close" aria-label="Close">${P.icon("x")}</button></div>
+    <div class="row" style="margin-bottom:10px"><button class="btn pri" id="geo">${P.icon("target")} Use my location</button><span class="muted sm" id="geo-s">Your coordinates stay in this browser.</span></div>
+    <div class="mapbox" id="capmap"></div><div id="capres" class="panel" style="margin-top:12px"><span class="muted">Nothing picked yet.</span></div></div></div>`;
+    const res = document.getElementById("capres"); let map;
+    const show = (lat, lon, src) => { const L = D.locate(lat, lon); map.set("pin", { lat, lon });
+      if (!L.inside) { res.innerHTML = `<b>Outside Kenya.</b> <span class="muted">This sample only covers Kenya. We use your connection’s country as a fallback.</span>`; return; }
+      const at = ["ke", L.county.id, L.constituency.id, D.slug(L.ward)];
+      res.innerHTML = `<div class="row"><span class="chip">County: <b>${esc(L.county.name)}</b></span><span class="chip warn">Constituency ≈ ${esc(L.constituency.name)}</span><span class="chip warn">Ward ≈ ${esc(L.ward)}</span><span class="chip mute">${src}</span></div>
+      <div class="row" style="margin-top:10px"><a class="btn pri" href="${P.href({ at, view: P.view, keep: false })}">Open ${esc(L.ward)}</a><a class="btn" href="${P.href({ at: ["ke", L.county.id] })}">Open ${esc(L.county.name)} county</a><button class="btn" data-pick="${at.join("/")}">Save as home</button></div>`;
+      res.querySelector("[data-pick]").onclick = () => { const s = P.pref.saved().filter((x) => !x.isHome); s.unshift({ label: L.ward, at, isHome: true }); P.pref.setSaved(s); P.toast("Saved as your home place"); }; };
+    P.mounts.length = 0; map = V.map(document.getElementById("capmap"), { places: D.counties.map((c) => ({ ...c, value: c.pop })), h: 340, onPick: (lat, lon) => show(lat, lon, "map pin"), tip: (p) => `<b>${esc(p.name)}</b> county` });
+    document.getElementById("geo").onclick = () => { const s = document.getElementById("geo-s"); if (!navigator.geolocation) { s.textContent = "This browser cannot share location."; return; } s.textContent = "Waiting for permission…"; navigator.geolocation.getCurrentPosition((p) => { s.textContent = `Located (±${Math.round(p.coords.accuracy)} m)`; show(p.coords.latitude, p.coords.longitude, "device location"); map.focus(p.coords.latitude, p.coords.longitude); }, (er) => { s.textContent = er.code === 1 ? "Location blocked. Falling back to the connection country (Kenya) — click the map instead." : "Could not read your location."; show(-1.286, 36.82, "connection fallback"); }, { timeout: 8000 }); };
+  };
+
+  /* ---- search ---- */
+  sh.search = () => { dlg.innerHTML = `<div class="back" data-act="close"><div class="box sm" role="dialog" aria-modal="true" aria-label="Search"><input type="search" id="sq" placeholder="Search places, people, bills, subjects…" style="width:100%;min-height:44px;font-size:1.05em" autocomplete="off"><div id="sr" style="margin-top:10px"></div></div></div>`; const q = document.getElementById("sq"), out = document.getElementById("sr");
+    const run = () => { const s = q.value.trim().toLowerCase(); const items = [];
+      D.counties.forEach((c) => items.push(["Place", c.name, "county", P.href({ at: ["ke", c.id] })]));
+      D.counties.forEach((c) => D.constituencies(c).forEach((k) => items.push(["Place", k.name, "constituency · " + c.name, P.href({ at: ["ke", c.id, k.id] })])));
+      D.leaders().filter((l) => l.level !== "Ward").forEach((l) => items.push(["Person", l.name, l.office + " · " + l.place, P.href({ at: l.placeAt, view: "leaders", set: { "view.id": l.id } })]));
+      D.bills.forEach((b) => items.push(["Bill", b.title, b.house, P.href({ at: ["ke"], view: "parliament", set: { "view.id": b.id } })]));
+      P.NAV.forEach((n) => items.push(["Subject", n.label, n.group, P.href({ view: n.id })]));
+      const hit = s ? items.filter((i) => (i[1] + " " + i[2]).toLowerCase().includes(s)).slice(0, 12) : items.filter((i) => i[0] === "Subject").slice(0, 8);
+      out.innerHTML = hit.length ? hit.map((i) => `<a class="row" href="${i[3]}" style="display:flex;gap:10px;padding:8px 10px;border-radius:8px;text-decoration:none"><span class="chip mute">${i[0]}</span><span>${esc(i[1])}</span><small class="muted" style="margin-left:auto">${esc(i[2])}</small></a>`).join("") : `<div class="empty sm">No match.</div>`; };
+    q.oninput = run; run(); q.focus(); out.onclick = () => (dlg.innerHTML = ""); };
+})();

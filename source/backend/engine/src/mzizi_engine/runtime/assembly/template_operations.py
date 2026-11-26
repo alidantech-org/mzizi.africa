@@ -42,13 +42,10 @@ class CoverageResult(Frozen):
 
 
 def generate(request: GenerateRequest) -> GenerateResult:
-    created: dict[str, int] = {}
     with connect(EngineConfig.load().require_postgres().url) as conn:
-        templates = PostgresTemplates(conn)
-        for code in request.patterns:
-            created[code] = templates.generate_pattern(templates.pattern_id(code))
+        output = PostgresTemplates(conn).generate(request.patterns)
         conn.commit()
-    return GenerateResult(created=created)
+    return GenerateResult(created={item.pattern: item.created for item in output.results})
 
 
 def coverage(request: CoverageRequest) -> CoverageResult:

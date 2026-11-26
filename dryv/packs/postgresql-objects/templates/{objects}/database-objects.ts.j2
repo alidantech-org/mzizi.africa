@@ -1,0 +1,18 @@
+/** Canonical desired objects. Apply with the selected backend's object lifecycle adapter. */
+import type { DatabaseObjects } from "#dryv-persistence/objects.runtime";
+import type { CustomOperationHandler } from "#dryv-persistence/persistence.types";
+export const databaseObjects = {{ pack.database.document }} satisfies DatabaseObjects;
+export const databaseObjectsDigest = '{{ pack.database.digest }}';
+
+{% for binding in pack.database.implementations %}
+import { {{ binding.symbol }} as custom{{ loop.index0 }} } from {{ binding.module | tojson }};
+{% endfor %}
+/** Typed handlers remain application code; construction selects these explicit bindings. */
+export const customOperationHandlers = new Map<string, CustomOperationHandler>([
+{% for binding in pack.database.implementations %}
+  [{{ binding.operation | tojson }}, { execute: custom{{ loop.index0 }} }],
+{% endfor %}
+]);
+
+/** Append to a project-owned initial schema.sql after foundation tables and provided bodies. */
+export { compilePostgresObjects } from "#dryv-persistence/snapshot.runtime";

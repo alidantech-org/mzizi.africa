@@ -8,7 +8,7 @@
  * This schema depends on reference, identity and vocabulary alone, so every other schema may import it.
  */
 import * as dryv from "@dryvcode/author";
-import { rule } from "@dryvcode/author";
+import { failure, operation, rule } from "@dryvcode/author";
 import { baseSchemas } from "#/schemas/_base.ts";
 import { enums } from "#/schemas/_enums.ts";
 import { periodFields, periodProperties } from "#/schemas/_periods.ts";
@@ -60,6 +60,7 @@ export const templateProperties = template.properties({
     Contact: "contact",
   }),
   TextBody: dryv.property.string().length({ min: 1, max: 1000 }),
+  PatternCode: dryv.property.string().length({ min: 1, max: 255 }),
 });
 
 /*---------------- template.patterns ----------------*/
@@ -274,3 +275,36 @@ export const Items = template
   )
   .role("entity")
   .facets({ storage: dryv.storage("items").unique("templateId", "key").unique("templateId", "position") });
+
+/*---------------- template.generate (operation, provided routine) ----------------*/
+const generateSchemas = template.schemas({
+  GenerateInput: dryv.schema({
+    patterns: dryv.field(templateProperties.PatternCode).array().description("Pattern codes to run, in order."),
+  }),
+  Generated: dryv.schema({
+    pattern: dryv.field(templateProperties.PatternCode),
+    created: dryv.field(sharedProperties.NonNegativeInteger).description("Rows created; zero on a repeat run."),
+  }),
+});
+const generateOutput = template.schemas({
+  GenerateOutput: dryv.schema({
+    results: dryv.field(generateSchemas.Generated).array().description("One entry per pattern, in the order they ran."),
+  }),
+});
+const generateFailures = template.failures({
+  PatternNotFound: failure("pattern_not_found"),
+  ValidationError: failure("validation_error"),
+});
+
+/**
+ * Runs the patterns through the routine `template.generate_json`. Its body is project-supplied SQL in the project pack
+ * (loops and INSERT..SELECT cannot be lowered by Dryv), bound as a `provided` native function in `dryv.yaml`, so Dryv records
+ * and observes its contract (input, output, failures) without generating or dropping its source.
+ */
+export const GeneratePatterns = template.operations({
+  GeneratePatterns: operation()
+    .input(generateSchemas.GenerateInput)
+    .output(generateOutput.GenerateOutput)
+    .failures(generateFailures.PatternNotFound, generateFailures.ValidationError)
+    .effects({ reads: ["main"], writes: ["main"], transaction: "participant" }),
+});

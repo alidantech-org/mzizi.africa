@@ -250,6 +250,9 @@ destinations:
     path: source/backend/database/sql
     actions:
       - { $ref: "#/actions/format-sql" }
+  # The contract record of provided routines; project-supplied bodies stay in the postgres-sql pack.
+  postgres-objects:
+    path: dryv/.dryv/objects
 
 authoring:
   source: { $ref: "#/sources/authoring/pgsql" }
@@ -336,6 +339,19 @@ packs:
     destination: { $ref: "#/destinations/postgres-sql" }
     outputs: { snapshot: { name: schema } }
 
+  # Records the contract of the provided routine template.generate_json (operation template.GeneratePatterns): its input,
+  # output and failures. Dryv neither generates nor drops the body, which lives in the postgres-sql pack.
+  postgresql-objects:
+    source: { $ref: "#/sources/packs/project", path: postgresql-objects }
+    store: { $ref: "#/stores/main" }
+    destination: { $ref: "#/destinations/postgres-objects" }
+    implementations:
+      - operation: { $ref: "#/operations/template.GeneratePatterns" }
+        target: function
+        namespace: template
+        name: generate_json
+        provided: true
+
   sdk-ts:
     source: { $ref: "#/sources/packs/project", path: sdk-ts }
     destination: { $ref: "#/destinations/sdk-ts" }
@@ -354,6 +370,7 @@ applications:
     application: { $ref: "#/applications/mzizi-pgsql" }
     packs:
       - { $ref: "#/packs/postgres-sql" }
+      - { $ref: "#/packs/postgresql-objects" }
       - { $ref: "#/packs/python-rows" }
       - { $ref: "#/packs/table-schemas" }
   engine:
