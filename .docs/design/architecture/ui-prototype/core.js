@@ -15,42 +15,51 @@
   const K = { theme: "mzizi-proto-theme", side: "mzizi-proto-side", groups: "mzizi-proto-groups", place: "mzizi-proto-place", a11y: "mzizi-proto-a11y", saved: "mzizi-proto-saved" };
   P.K = K;
   P.pref = {
-    theme() { const v = (P.store.get(K.theme) || "system.terra").split("."); return { mode: v[0], palette: v[1] || "terra" }; },
-    setTheme(mode, palette) { P.store.set(K.theme, mode + "." + palette); P.applyTheme(); },
+    theme() { const v = (P.store.get(K.theme) || "system.terra").split("."); return { mode: v[0], palette: v[1] || "terra", accent: v[2] ? "#" + v[2] : "" }; },
+    setTheme(mode, palette, accent) { const a = accent === undefined ? P.pref.theme().accent : accent; P.store.set(K.theme, mode + "." + palette + (a ? "." + a.replace("#", "") : "")); P.applyTheme(); },
     side() { const v = (P.store.get(K.side) || "open").split("."); return v[0]; },
     setSide(m) { P.store.set(K.side, m); P.applySide(); },
     groups() { return (P.store.get(K.groups) || "").split(",").filter(Boolean); },
     setGroups(a) { P.store.set(K.groups, a.join(",")); },
-    a11y() { const v = (P.store.get(K.a11y) || "m.on").split("."); return { size: v[0], motion: v[1] }; },
-    saved() { try { return JSON.parse(P.store.get(K.saved) || "null") || [{ label: "Home", at: ["ke", "nairobi"], isHome: false }]; } catch (e) { return []; } },
+    a11y() { const v = (P.store.get(K.a11y) || "m.on.c.m.n.s").split("."); return { size: v[0] || "m", motion: v[1] || "on", density: v[2] || "c", radius: v[3] || "m", contrast: v[4] || "n", reading: v[5] || "s" }; },
+    setA11y(p) { const a = Object.assign(P.pref.a11y(), p); P.store.set(K.a11y, [a.size, a.motion, a.density, a.radius, a.contrast, a.reading].join(".")); P.applyA11y(); },
+    saved() { const dflt = [{ label: "Home", kind: "home", at: ["ke", "nairobi", "westlands", "parklands"], isHome: true, follow: ["projects", "elections"], freq: "weekly" }, { label: "Work", kind: "work", at: ["ke", "nairobi", "langata", "karen"], isHome: false, follow: ["events"], freq: "off" }, { label: "Family home", kind: "family", at: ["ke", "kisumu"], isHome: false, follow: [], freq: "off" }, { label: "Mombasa", kind: "interest", at: ["ke", "mombasa"], isHome: false, follow: ["history"], freq: "off" }]; try { const s = JSON.parse(P.store.get(K.saved) || "null"); return s && s.length ? s : dflt; } catch (e) { return dflt; } },
+    preferred() { return P.pref.saved().find((x) => x.isHome) || null; },
     setSaved(a) { P.store.set(K.saved, JSON.stringify(a)); },
   };
-  P.applyTheme = () => { const t = P.pref.theme(); const m = t.mode === "system" ? (matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light") : t.mode; document.documentElement.dataset.mode = m; document.documentElement.dataset.palette = t.palette; };
+  P.applyTheme = () => { const t = P.pref.theme(); const m = t.mode === "system" ? (matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light") : t.mode; document.documentElement.dataset.mode = m; document.documentElement.dataset.palette = t.palette; const st = document.documentElement.style; if (t.accent) { const ink = P.contrast(t.accent, "#ffffff") >= P.contrast(t.accent, "#111111") ? "#ffffff" : "#111111"; st.setProperty("--accent", t.accent); st.setProperty("--accent-ink", ink); st.setProperty("--accent-soft", `color-mix(in srgb, ${t.accent} 16%, var(--surface))`); } else { ["--accent", "--accent-ink", "--accent-soft"].forEach((k) => st.removeProperty(k)); } requestAnimationFrame(() => { let m = document.querySelector("meta[name=theme-color]"); if (!m) { m = document.createElement("meta"); m.name = "theme-color"; document.head.appendChild(m); } m.content = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim(); }); };
   P.applySide = () => { document.documentElement.dataset.side = { open: "open", rail: "rail", hidden: "hidden" }[P.pref.side()] || "open"; };
-  P.applyA11y = () => { const a = P.pref.a11y(); document.documentElement.dataset.size = a.size; document.documentElement.dataset.motion = a.motion; };
+  P.applyA11y = () => { const a = P.pref.a11y(), d = document.documentElement.dataset; d.size = a.size; d.motion = a.motion; d.density = a.density; d.radius = a.radius; d.contrast = a.contrast; d.reading = a.reading; };
+  /* WCAG contrast ratio between two hex colours */
+  P.lum = (h) => { const n = parseInt(h.replace("#", ""), 16); const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f((n >> 16) & 255) + 0.7152 * f((n >> 8) & 255) + 0.0722 * f(n & 255); };
+  P.contrast = (a, b) => { const x = P.lum(a), y = P.lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
 
   /* ---- navigation vocabulary (src/app/demo/_lib/navigation/route.ts) ---- */
-  P.GROUPS = ["Place", "Politics", "Government", "Money", "Data"];
+  /* Groups follow the handoff: Explore (geography, government, politics, public money, services and data), Discover and participate, Personal. */
+  P.GROUPS = ["Geography", "Government", "Politics", "Public money", "Services and data", "Discover", "Personal"];
   P.NAV = [
-    ["overview", "Place", "home", 9, "Overview"], ["atlas", "Place", "map", 9, "Atlas"], ["history", "Place", "clock", 1, "History"], ["media", "Place", "image", 9, "Media"], ["community", "Place", "message", 9, "Community"],
-    ["elections", "Politics", "vote", 3, "Elections"], ["parliament", "Politics", "landmark", 1, "Parliament"], ["promises", "Politics", "flag", 3, "Promises"],
+    ["overview", "", "home", 9, "Home"],
+    ["atlas", "Geography", "map", 9, "Atlas"], ["history", "Geography", "clock", 1, "History"],
     ["leaders", "Government", "users", 3, "Leadership"], ["institutions", "Government", "building", 1, "Institutions"], ["power", "Government", "network", 0, "Power model"], ["law", "Government", "gavel", 0, "Laws"],
-    ["finance", "Money", "coins", 2, "Finance"], ["suppliers", "Money", "layers", 2, "Suppliers"],
-    ["statistics", "Data", "chart", 3, "Statistics"], ["compare", "Data", "compare", 1, "Compare"], ["sources", "Data", "library", 9, "Sources"],
+    ["parties", "Politics", "badge", 1, "Parties"], ["elections", "Politics", "vote", 3, "Elections"], ["parliament", "Politics", "landmark", 1, "Parliament"], ["promises", "Politics", "flag", 3, "Promises"],
+    ["finance", "Public money", "coins", 2, "Finance"], ["projects", "Public money", "build", 3, "Projects"], ["suppliers", "Public money", "layers", 2, "Suppliers"],
+    ["services", "Services and data", "cross", 3, "Services"], ["statistics", "Services and data", "chart", 3, "Statistics"], ["compare", "Services and data", "compare", 1, "Compare"],
+    ["events", "Discover", "calendar", 3, "Events"], ["media", "Discover", "image", 9, "Media"], ["community", "Discover", "message", 9, "Community"], ["sources", "Discover", "library", 9, "Sources"],
+    ["myplaces", "Personal", "heart", 9, "My places"], ["personalize", "Personal", "settings", 9, "Appearance"], ["coverage", "Personal", "gauge", 9, "Data readiness"],
   ].map((a) => ({ id: a[0], group: a[1], icon: a[2], max: a[3], label: a[4] }));
   P.nav = (id) => P.NAV.find((n) => n.id === id);
-  const SW = { Overview: "Muhtasari", Atlas: "Atlasi", History: "Historia", Media: "Vyombo vya habari", Community: "Jamii", Elections: "Uchaguzi", Parliament: "Bunge", Promises: "Ahadi", Leadership: "Uongozi", Institutions: "Taasisi", "Power model": "Mfumo wa mamlaka", Laws: "Sheria", Finance: "Fedha", Suppliers: "Wasambazaji", Statistics: "Takwimu", Compare: "Linganisha", Sources: "Vyanzo", Place: "Mahali", Politics: "Siasa", Government: "Serikali", Money: "Pesa", Data: "Data" };
+  const SW = { Home: "Nyumbani", Parties: "Vyama", Projects: "Miradi", Services: "Huduma", Events: "Matukio", "My places": "Maeneo yangu", Appearance: "Mwonekano", Geography: "Jiografia", "Public money": "Fedha za umma", "Services and data": "Huduma na data", Discover: "Gundua", Personal: "Binafsi", Overview: "Muhtasari", Atlas: "Atlasi", History: "Historia", Media: "Vyombo vya habari", Community: "Jamii", Elections: "Uchaguzi", Parliament: "Bunge", Promises: "Ahadi", Leadership: "Uongozi", Institutions: "Taasisi", "Power model": "Mfumo wa mamlaka", Laws: "Sheria", Finance: "Fedha", Suppliers: "Wasambazaji", Statistics: "Takwimu", Compare: "Linganisha", Sources: "Vyanzo", Place: "Mahali", Politics: "Siasa", Government: "Serikali", Money: "Pesa", Data: "Data" };
   P.t = (s) => (P.q && P.q.lang === "sw" && SW[s]) || s;
   const LEVELS = ["country", "county", "constituency", "ward"];
   P.whyUnavailable = (id, pl) => { const n = P.nav(id); if (!pl.ok) return null; if (pl.depth > n.max) return `${n.label} only applies down to ${LEVELS[n.max]} level. You are at ${LEVELS[pl.depth]} level. Go up to ${n.max === 0 ? "the country" : "a " + LEVELS[n.max]} to open it.`; return null; };
   /* Which query keys each view owns. Anything else is dropped when the subject changes. */
   P.GLOBAL = ["view.fig"];
-  P.ALLOWED = { atlas: ["view.layer", "view.ind", "view.year", "view.mode", "view.compare"], history: ["view.year"], media: ["view.id", "display.lang", "filters.kind"], community: ["filters.kind", "filters.topic", "sort.by"], elections: ["view.id", "view.contest", "view.year", "sort.by"], parliament: ["view.id", "view.tab", "view.house", "view.board", "view.sitting", "filters.q", "filters.party"], promises: ["filters.status", "filters.topic"], leaders: ["view.id", "filters.level"], institutions: ["view.id"], power: ["view.node", "view.proc"], law: ["view.id", "view.as", "view.diff", "view.ref", "view.trail", "filters.q", "filters.kind", "filters.status"], finance: ["view.tab"], suppliers: ["filters.status", "sort.by", "view.id"], statistics: ["view.indicator", "view.break", "view.from"], compare: ["view.ids", "view.indicator"], sources: ["view.id", "view.tab"] };
+  P.ALLOWED = { atlas: ["view.layer", "view.ind", "view.year", "view.mode", "view.compare"], history: ["view.year"], media: ["view.id", "display.lang", "filters.kind"], community: ["filters.kind", "filters.topic", "sort.by", "view.compose", "view.subject"], elections: ["view.id", "view.contest", "view.year", "sort.by"], parliament: ["view.id", "view.tab", "view.house", "view.board", "view.sitting", "filters.q", "filters.party"], promises: ["view.id", "filters.status", "filters.topic"], leaders: ["view.id", "view.office", "view.mode", "view.year", "filters.level", "filters.kind", "filters.tenure"], institutions: ["view.id"], power: ["view.node", "view.proc"], law: ["view.id", "view.as", "view.diff", "view.ref", "view.trail", "filters.q", "filters.kind", "filters.status"], finance: ["view.tab"], suppliers: ["filters.status", "sort.by", "view.id"], statistics: ["view.indicator", "view.break", "view.from"], compare: ["view.ids", "view.indicator"], sources: ["view.id", "view.tab"], services: ["filters.cat", "filters.radius", "filters.operator", "view.id", "view.tab", "view.layout"], projects: ["view.id", "view.tab", "view.layout", "filters.status", "filters.sector"], events: ["view.id", "view.layout", "view.month", "filters.type", "filters.scope"], parties: ["view.id", "view.tab"], myplaces: ["view.tab"], personalize: [], coverage: ["filters.status"], overview: [] };
 
   /* ---- URL state ---- */
   P.parse = () => {
     const sp = new URLSearchParams(location.search); const q = {}; sp.forEach((v, k) => (q[k] = v));
-    const at = (P.pathMode ? location.pathname : "/" + (q.at || "ke")).split("/").filter(Boolean); if (!at.length) at.push("ke"); delete q.at; const pl = D.place(at); const raw = q.view || "overview"; const view = P.nav(raw) ? raw : "overview";
+    const at = (P.pathMode ? location.pathname : "/" + (q.at || "ke")).split("/").filter(Boolean); if (!at.length) at.push("ke"); delete q.at; if (!q.lang) { const lc = P.store.get("mzizi-proto-lang"); if (lc === "sw") q.lang = "sw"; } const pl = D.place(at); const raw = q.view || "overview"; const view = P.nav(raw) ? raw : "overview";
     P.q = q; P.at = at; P.pl = pl; P.view = view; P.hash = location.hash.replace("#", ""); P.errors = [];
     if (!P.nav(raw)) P.errors.push(`Unknown view "${raw}".`);
     if (!pl.ok) P.errors.push(pl.error);
@@ -111,7 +120,7 @@
       else if (why) html = `<div class="panel empty"><h2>${esc(n.label)} is not available here</h2><p>${esc(why)}</p><a class="btn pri" href="${P.href({ at: P.at.slice(0, Math.max(n.max, 0) + 1) })}">Go up one level</a></div>`;
       else { try { html = P.views[P.view](); } catch (e) { console.error(e); html = `<div class="panel empty"><h2>This screen failed to render</h2><p class="mono">${esc(e.message)}</p></div>`; } }
       if (P.errors.length && P.pl.ok) html = `<div class="note warn" style="margin-bottom:12px">${P.errors.map(esc).join(" ")}</div>` + html;
-      main.innerHTML = html; main.classList.remove("busy"); P.drain(); P.validateHash(); P.evidence && P.evidence.sync();
+      main.innerHTML = html; main.classList.remove("busy"); P.drain(); P.validateHash(); P.evidence && P.evidence.sync(); P.track && P.track();
       document.title = `${n.label} · ${P.pl.ok ? P.pl.name : "Mzizi"} — Mzizi prototype`;
       if (same && P.keepY != null) window.scrollTo(0, P.keepY); else if (P.hash && document.getElementById(P.hash)) document.getElementById(P.hash).scrollIntoView(); else window.scrollTo(0, 0);
       P.keepY = null; P.forceTop = false; P.lastView = P.view; P.lastErr = !!P.errors.length;

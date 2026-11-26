@@ -2,18 +2,23 @@
 <html lang="en" data-mode="light" data-palette="terra">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
 <title>Mzizi Africa — prototype</title>
 <script>document.write('<base href="'+(location.protocol!=="file:"&&!/\.html?$/.test(location.pathname)&&/^\/(ke(\/|$)|$)/.test(location.pathname)?"/":"./")+'">')</script>
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="shell.css">
 <link rel="stylesheet" href="views.css">
 <link rel="stylesheet" href="polish.css">
+<link rel="stylesheet" href="mobile.css">
 <script>
 /* Paint-first theme: set mode and palette from the cookie before first paint, as the real shell does. */
 (function(){try{var m=document.cookie.match(/mzizi-proto-theme=([^;]*)/)||[];var v=decodeURIComponent(m[1]||localStorage.getItem('mzizi-proto-theme')||'system.terra').split('.');
 var mode=v[0]==='system'?(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light'):v[0];
-document.documentElement.dataset.mode=mode;document.documentElement.dataset.palette=v[1]||'terra';}catch(e){}})();
+document.documentElement.dataset.mode=mode;document.documentElement.dataset.palette=v[1]||'terra';
+if(v[2]){var s=document.documentElement.style;s.setProperty('--accent','#'+v[2]);s.setProperty('--accent-soft','color-mix(in srgb,#'+v[2]+' 16%,var(--surface))');}
+var am=document.cookie.match(/mzizi-proto-a11y=([^;]*)/)||[];var a=decodeURIComponent(am[1]||localStorage.getItem('mzizi-proto-a11y')||'m.on.c.m.n').split('.');var d=document.documentElement.dataset;d.size=a[0]||'m';d.motion=a[1]||'on';d.density=a[2]||'c';d.radius=a[3]||'m';d.contrast=a[4]||'n';d.reading=a[5]||'s';var sm=document.cookie.match(/mzizi-proto-side=([^;]*)/)||[];d.side=(decodeURIComponent(sm[1]||localStorage.getItem('mzizi-proto-side')||'open').split('.')[0])||'open';}catch(e){}})();
 </script>
 </head>
 <body>
@@ -31,20 +36,26 @@ document.documentElement.dataset.mode=mode;document.documentElement.dataset.pale
 <div id="dlg" role="presentation"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="data.js"></script>
+<script src="data2.js"></script>
 <script src="core.js"></script>
 <script src="icons.js"></script>
 <script src="viz.js"></script>
 <script src="shell.js"></script>
 <script src="views-place.js"></script>
 <script src="views-time.js"></script>
+<script src="views-home.js"></script>
 <script src="views-politics.js"></script>
 <script src="views-parliament.js"></script>
+<script src="views-civic.js"></script>
 <script src="views-gov.js"></script>
 <script src="views-legal.js"></script>
+<script src="views-leadership.js"></script>
 <script src="views-money-data.js"></script>
 <script src="views-community.js"></script>
+<script src="views-me.js"></script>
 <script src="evidence.js"></script>
 <script src="rail.js"></script>
+<script src="mobile.js"></script>
 <script src="boot.js"></script>
 </body>
 </html>

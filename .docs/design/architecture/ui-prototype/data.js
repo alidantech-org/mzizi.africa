@@ -85,7 +85,7 @@
   /** politics.commitments + fulfilments (claimed -> partial -> delivered), linked to civic.projects / finance / legislature */
   D.commitments = (l) => {
     const r = D.rng("C:" + l.id); const topics = [["Water", "Pipe clean water to {n} households", "households"], ["Roads", "Tarmac {n} km of access roads", "km"], ["Health", "Equip {n} dispensaries with essential drugs", "dispensaries"], ["Schools", "Build {n} classrooms", "classrooms"], ["Jobs", "Train {n} youths in a trade", "youths"], ["Markets", "Build {n} modern market stalls", "stalls"]];
-    const st = ["claimed", "partial", "delivered", "no evidence"]; const out = [];
+    const st = ["claimed", "partial", "delivered", "no evidence", "in progress", "contradicted", "disputed", "not started"]; const out = [];
     for (let i = 0; i < 4; i++) { const t = topics[(i + Math.floor(r() * 6)) % 6]; const q = [200, 40, 25, 60, 500, 120][topics.indexOf(t)] * (1 + Math.floor(r() * 4));
       const s = D.pick(r, st); out.push({ id: l.id + "-c" + i, topic: t[0], statement: t[1].replace("{n}", D.fmt(q)), unit: t[2], quantity: q, madeOn: "2022-" + String(2 + Math.floor(r() * 4)).padStart(2, "0") + "-1" + Math.floor(r() * 9), dueOn: "202" + (5 + Math.floor(r() * 3)), kind: i ? "manifesto pledge" : "campaign promise", status: s,
         done: s === "delivered" ? q : s === "partial" ? Math.round(q * (0.2 + r() * 0.5)) : 0, evidence: s === "no evidence" ? [] : D.pick(r, [["Project record", "Budget line"], ["Contract", "Delivery report"], ["Bill", "Hansard"], ["Project record"]]) }); }

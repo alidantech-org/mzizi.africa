@@ -43,6 +43,38 @@ Then open `http://127.0.0.1:5599/ke/nairobi?view=atlas`. Opening `index.html` di
 
 A chamber drawn as a hemicycle you can filter by party and hover seat by seat, an order paper, a bill board (columns are legislature stages), a bill page with a committee-amendment redline, a division drawn on the seats (every dot is a member coloured by how they voted), a Hansard reader with speaking time, and a members table. Bills link to the law they change. Code: `views-parliament.js`.
 
+## Mobile and preferences
+
+Breakpoints: phone up to 700 px, drawer layout up to 900 px, stacked readers up to 1100 px (`mobile.css`, `mobile.js`).
+
+- **App bar:** menu, the place name in full (a long breadcrumb never hides it), search, alerts and one overflow menu holding language, light and dark, saved places and quick settings. When you are exploring somewhere other than your preferred place, a strip under the bar says so and offers "Back to Home".
+- **Sheets:** popovers, the place picker, dialogs and the evidence drawer become bottom sheets above the bottom bar, with a grab handle and a scrim that closes them.
+- **Menu drawer:** up to 330 px wide with its own close button; swipe from the left edge to open it and swipe back to close it.
+- **Scaling and padding:** 15 px base text on phones (17 and 19 for the large text settings), 16 px form controls so browsers do not zoom, two-column stat cards, 12 px page padding, safe-area insets for notches and the home bar, 44 px touch targets on touch screens.
+- **No sideways scroll:** segmented controls scroll within themselves, wide tables scroll within their panel, the bill board snaps by column, the calendar shows dots instead of titles, and every grid child can shrink.
+- **Touch map behaviour:** the first tap on a map area previews it, the second opens it, since touch screens have no hover.
+- **Legal reader:** the contents tree starts collapsed on small screens and the reference pane opens as a sheet above the bottom bar.
+- **Extras:** scroll-to-top button, an offline notice, native share on devices that have it, a theme colour that follows the palette, and an installable web manifest (no offline cache).
+- **Preferences that persist and paint before first paint:** mode, palette, custom accent, text size, density, corner radius, higher contrast, reduced motion (now works; it was silently ignored before), reading font for laws and Hansard, sidebar mode, language and home sections. A settings code copies them to another device.
+
+## Alignment with the UI/UX handoff
+
+This round folds in the owner's UI/UX handoff. The owner's requirements drive the screens; where the handoff proposes something, it is marked as a proposal. **Nothing here proves the database can support a screen.** The **Data readiness** screen lists, row by row, what the current Dryv contracts support, support partly, or do not model.
+
+- **Navigation:** the sidebar follows the handoff's groups (Geography, Government, Politics, Public money, Services and data, Discover, Personal). Links a place cannot open stay visible and explain why. A five-item mobile bottom bar (Home, Explore, Media, Community, Profile) is **a proposal pending owner approval**; Explore opens the full subject catalogue.
+- **Location model:** detected, preferred, active, saved, followed and record location are different things (`My places` explains each). Browsing another place shows an "Exploring" tag and a "Back to Home" link, and never changes the preferred place. Place switching keeps the subject. Saved places have labels (Home, Work, Family home, Place of interest) and one preferred place.
+- **Home:** the place profile. Context strip with administrative, electoral and judicial hierarchies kept apart, representatives, government, nearby services, upcoming events, project updates, articles, media, community, recents and saved places. Sections can be hidden and reordered in Appearance.
+- **Leadership:** four separate modes, area representation, institutional hierarchy, appointment tree and history, with filters for elected, appointed, current and past. An office profile is separate from the person, and each links to the other. Every link is one of a defined set (belongs to, reports to, supervises, oversees, appoints, elects).
+- **Services:** category, radius and operator filters with a local map and list. A service is not the facility: the Services tab shows which services a facility offers and where else they are available. No opening hours, "open now", accessibility or phone numbers are shown unless a record has them; distances are from an approximate reference point.
+- **Projects:** list, table and map, with a project page (overview, updates, financials, procurement, media, documents, community, history). The six money terms (allocated, approved, committed, contracted, disbursed, spent) are never merged, and a blank means "not recorded". Progress needs a dated source and is never inferred from money spent. A money trail shows promise, action, budget, contract, delivery and evidence, each link marked reviewed or not recorded.
+- **Events:** a civic calendar by month or agenda for the active place, any saved place or the whole country. Expected dates are marked as estimates and get no countdown; only announced or gazetted dates do.
+- **Parties:** directory and profiles (leadership, manifestos, results, presence, time-aware affiliations). Party colours appear only on identity marks and labelled charts.
+- **Promises:** assessment states follow the handoff (fulfilled, partially fulfilled, claimed, in progress, not started, contradicted, disputed, insufficient evidence), derived from fulfilment kind and status rather than invented scores.
+- **Evidence drawer:** provenance (where it came from, by class: official, independent, community, editorial, unreviewed) is shown apart from verification (whether it checks out).
+- **Votes:** "no record" is a state of its own and is never treated as absent or abstained.
+- **Contribute:** the composer takes a subject (for example a facility or project), an observation date, what kind of contribution it is (firsthand, public source, opinion), alt text, and can save a draft. Contributions never change accepted records.
+- **Appearance:** palettes Savanna, Lagoon, Emerald (the handoff's proposed default, offered not forced), Baobab and Midnight, a custom accent with contrast checks in both modes, text size, density, corner radius, higher contrast and reduced motion. Status colours never change with the palette.
+
 ## Maps and graphs
 
 Maps are plain SVG: each area is a real shape you can hover (tooltip), focus with the keyboard and click (go to that place). There is no zoom, pan or canvas. The power graph is SVG too: hover an arrow to see what it is, click a box or arrow for detail. Code: `V.map` and `V.graph` in `viz.js`.

@@ -61,8 +61,21 @@ main.busy{opacity:.55}
 #toast.show{opacity:1;translate:-50% 0}
 #scrim{position:fixed;inset:0;background:#0006;z-index:55}
 @media(max-width:900px){#side{position:fixed;left:0;translate:-100% 0;transition:translate .2s;width:280px!important;box-shadow:0 0 40px #0005}html.drawer #side{translate:0 0}html[data-side=hidden] #side{display:flex}.menu-btn{display:inline-flex!important}.srch span,.srch kbd{display:none}.srch{min-width:0}html[data-side=rail] .logo b,html[data-side=rail] .lbl,html[data-side=rail] .grp-h,html[data-side=rail] .side-foot span{display:revert}html[data-side=rail] .item{justify-content:flex-start;padding:0 10px}.side-head .min{display:none}}
-@media(prefers-reduced-motion:reduce),html[data-motion=off]{*{transition:none!important;animation:none!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+html[data-motion=off] *{transition:none!important;animation:none!important;scroll-behavior:auto!important}
 /* Skeleton: quiet flat blocks, sized like what they replace (see .docs/rules/loading-states.md) */
 .sk{position:relative;overflow:hidden;background:color-mix(in srgb,var(--ink) 6%,transparent);border-radius:8px}
 .sk::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 35%,color-mix(in srgb,var(--ink) 6%,transparent) 50%,transparent 65%);translate:-100% 0;animation:sh 1.6s linear infinite}
 @keyframes sh{to{translate:100% 0}}
+
+/* More palettes. Emerald is the handoff's proposed modern default; it is offered, not forced. Statuses (ok/warn/bad) never change with palette. */
+html[data-palette=emerald]{--paper:#f7f9f8;--surface:#ffffff;--ink:#172b28;--muted:#526b65;--line:#dde5e2;--accent:#075e54;--accent-ink:#fff;--accent-soft:#ddf0e8;--c1:#075e54;--c2:#c48726;--c3:#2c6e8a;--c4:#7a5c8f;--c5:#b8431f;--s0:#e6f2ee;--s1:#bfddd2;--s2:#7dbba6;--s3:#2f8570;--s4:#0b4a42}
+html[data-palette=emerald][data-mode=dark]{--paper:#0d1816;--surface:#13211e;--ink:#e6f1ee;--muted:#8fa9a2;--line:#223630;--accent:#4fc3a8;--accent-ink:#0d1816;--accent-soft:#173b34;--c1:#4fc3a8;--c2:#e0a84a;--c3:#5fadcb;--c4:#b497cc;--c5:#ec7a4e;--s0:#14302a;--s1:#1f5547;--s2:#2f8570;--s3:#4fc3a8;--s4:#b6ecdd}
+html[data-palette=baobab]{--paper:#f1ebdd;--surface:#fbf7ec;--ink:#2a2118;--muted:#6a5c4a;--line:#e1d6bf;--accent:#7a4b1e;--accent-ink:#fff;--accent-soft:#ebd9c0;--c1:#7a4b1e;--c2:#5a7a3a;--c3:#b07a10;--c4:#2c6e8a;--c5:#8a4a6a;--s0:#f1e6d2;--s1:#e0c89a;--s2:#c49a52;--s3:#8f5a24;--s4:#4a2a10}
+html[data-palette=baobab][data-mode=dark]{--paper:#17120b;--surface:#201a11;--ink:#f0e8d6;--muted:#a89a82;--line:#3a3022;--accent:#d49a52;--accent-ink:#17120b;--accent-soft:#3a2a14;--c1:#d49a52;--c2:#8fb36a;--c3:#e8b44c;--c4:#5fadcb;--c5:#c98aa8;--s0:#2a2212;--s1:#5a4420;--s2:#8f6a2c;--s3:#d49a52;--s4:#f5d9a8}
+html[data-palette=midnight]{--paper:#eef1f8;--surface:#fbfcff;--ink:#141a33;--muted:#515a7c;--line:#d8def0;--accent:#2f4bc0;--accent-ink:#fff;--accent-soft:#dde3fb;--c1:#2f4bc0;--c2:#1f8a6a;--c3:#b07a10;--c4:#c0452f;--c5:#7a4bb5;--s0:#e3e8fa;--s1:#b9c4f0;--s2:#7b8fe0;--s3:#3f58c8;--s4:#16205e}
+html[data-palette=midnight][data-mode=dark]{--paper:#0b1020;--surface:#121a30;--ink:#e6ecff;--muted:#93a0c8;--line:#232d4d;--accent:#7aa2ff;--accent-ink:#0b1020;--accent-soft:#1a2750;--c1:#7aa2ff;--c2:#4fc3a8;--c3:#e8b44c;--c4:#ef8576;--c5:#b497cc;--s0:#141d3a;--s1:#25377a;--s2:#3f5fc0;--s3:#7aa2ff;--s4:#cfdcff}
+/* Density, corner radius, high contrast */
+html[data-density=k]{--ctl:32px;--ctl-sm:26px}html[data-density=s]{--ctl:44px;--ctl-sm:36px}html[data-density=k] main{padding-top:14px}html[data-density=k] .panel{padding:11px}html[data-density=s] .panel{padding:22px}html[data-density=k] td{padding:5px 8px}html[data-density=s] td{padding:13px 10px}
+html[data-radius=s]{--r:4px}html[data-radius=l]{--r:18px}
+html[data-contrast=h]{--line:color-mix(in srgb,var(--ink) 42%,transparent);--muted:color-mix(in srgb,var(--ink) 78%,var(--surface))}html[data-contrast=h] .panel,html[data-contrast=h] .stat,html[data-contrast=h] .person,html[data-contrast=h] .btn{border-width:1.5px}

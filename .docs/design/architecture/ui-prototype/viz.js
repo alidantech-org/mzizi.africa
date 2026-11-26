@@ -50,7 +50,7 @@
   const dpath = (poly) => "M" + poly.map((p) => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") + "Z";
   V.map = (el, o) => {
     el.classList.add("geomap"); el.style.setProperty("--mh", (o.h || 520) + "px"); el.innerHTML = `<svg viewBox="0 0 ${GW} ${GH}" role="group" aria-label="${esc(o.label || "Map of Kenya")}"></svg>`; const svg = el.querySelector("svg"); const tip = document.createElement("div"); tip.className = "xhair"; el.appendChild(tip);
-    const R = ["--s0", "--s1", "--s2", "--s3", "--s4"]; let byId = {};
+    const R = ["--s0", "--s1", "--s2", "--s3", "--s4"]; let byId = {}, armed = null;
     const draw = () => { const cs = cellsOf(o.places); const vals = o.places.map((p) => p.value); const mn = Math.min(...vals), mx = Math.max(...vals); byId = {};
       const fill = (p) => (p.cvar ? `var(${p.cvar})` : o.shade === false ? "var(--s1)" : `var(${R[Math.min(4, Math.floor(((p.value - mn) / (mx - mn || 1)) * 4.999))]})`);
       let h = ""; o.places.forEach((p, i) => { byId[p.id] = p; if (cs[i].length < 3) return; h += `<path class="cell${o.selected === p.id ? " sel" : ""}" data-id="${esc(p.id)}" d="${dpath(cs[i])}" style="fill:${fill(p)}" tabindex="0" role="link" aria-label="${esc(p.name)}"/>`; });
@@ -62,7 +62,7 @@
     const toLonLat = (e) => { const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY; const m = svg.getScreenCTM(); if (!m) return [0, 0]; const q = pt.matrixTransform(m.inverse()); return [(q.x - G.m) / G.k + G.lon0, G.lat1 - (q.y - G.m) / G.k]; };
     el.addEventListener("pointermove", (e) => { const c = e.target.closest(".cell"); if (!c) { tip.style.display = "none"; return; } const p = byId[c.dataset.id]; tip.innerHTML = o.tip ? o.tip(p) : `<b>${esc(p.name)}</b>`; const r = el.getBoundingClientRect(); tip.style.display = "block"; tip.style.left = Math.min(r.width - tip.offsetWidth - 6, e.clientX - r.left + 14) + "px"; tip.style.top = Math.max(4, e.clientY - r.top + 14) + "px"; });
     el.addEventListener("pointerleave", () => (tip.style.display = "none"));
-    el.addEventListener("click", (e) => { const c = e.target.closest(".cell"); if (!c || !o.onPick) return; const [lon, lat] = toLonLat(e); o.onPick(lat, lon, byId[c.dataset.id]); });
+    el.addEventListener("click", (e) => { const c = e.target.closest(".cell"); if (!c || !o.onPick) return; if (matchMedia("(pointer:coarse)").matches && armed !== c.dataset.id) { armed = c.dataset.id; const p = byId[c.dataset.id]; el.querySelectorAll(".cell.sel").forEach((x) => x.classList.remove("sel")); c.classList.add("sel"); tip.innerHTML = (o.tip ? o.tip(p) : `<b>${esc(p.name)}</b>`) + "<br><small>Tap again to open</small>"; tip.style.display = "block"; tip.style.left = "10px"; tip.style.top = "10px"; return; } armed = null; const [lon, lat] = toLonLat(e); o.onPick(lat, lon, byId[c.dataset.id]); });
     el.addEventListener("keydown", (e) => { if (e.key !== "Enter" && e.key !== " ") return; const c = e.target.closest(".cell"); if (!c || !o.onPick) return; e.preventDefault(); const p = byId[c.dataset.id]; o.onPick(p.lat, p.lon, p); });
     el.addEventListener("focusin", (e) => { const c = e.target.closest(".cell"); if (!c) return; const p = byId[c.dataset.id]; tip.innerHTML = o.tip ? o.tip(p) : `<b>${esc(p.name)}</b>`; tip.style.display = "block"; tip.style.left = "10px"; tip.style.top = "10px"; }); el.addEventListener("focusout", () => (tip.style.display = "none"));
     draw(); return { set(k, v) { o[k] = v; draw(); }, redraw: draw, focus() {} };

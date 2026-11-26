@@ -1,0 +1,66 @@
+/* Mobile and tablet. Loaded last. Phone is <= 700px, drawer layout is <= 900px, stacked readers are <= 1100px.
+   Principles: a 56 px app bar that always shows WHERE you are, one-thumb reach (bottom bar and sheets), 16 px inputs so
+   browsers do not zoom, 44 px targets, safe areas respected, nothing wider than the screen. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,a,select,summary,[role=button],input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.more-btn,.drawer-x,.cur,#away,#totop,#netbar{display:none}
+html[data-reading=n]{--readf:Inter,system-ui,sans-serif}:root{--readf:Fraunces,Georgia,serif}
+.prov .sub p,.turn p,.redline,.raw,.doc p,.peektext .sub p{font-family:var(--readf)!important}
+.toc>summary{display:none}
+
+@media(max-width:900px){
+  #bar{padding:env(safe-area-inset-top) 6px 0 4px;height:calc(var(--bar) + env(safe-area-inset-top));gap:2px}
+  .menu-btn{display:inline-flex!important}.hide-m{display:none!important}.more-btn{display:inline-flex}.grow{display:none}
+  .loc{flex:1;min-width:0;max-width:none;padding:0 6px 0 10px;gap:6px}
+  .loc .crumbs,.loc .away-chip{display:none}.loc .cur{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;text-align:left}
+  .srch{width:var(--ctl);min-width:var(--ctl);padding:0;justify-content:center;border-color:transparent;background:none}
+  #away{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:12.5px;background:color-mix(in srgb,var(--warn) 14%,var(--paper));border-bottom:1px solid var(--line)}#away[hidden]{display:none}
+  #side{width:min(88vw,330px)!important;padding-top:env(safe-area-inset-top)}.drawer-x{display:inline-flex;margin-left:auto}.side-head .min{display:none!important}
+  html.drawer body{overflow:hidden}.sidenav{padding-bottom:90px}
+  /* popovers become bottom sheets */
+  #pop>.popover.sheetpop{left:8px!important;right:8px!important;top:auto!important;bottom:calc(64px + env(safe-area-inset-bottom))!important;width:auto;min-width:0!important;max-height:70vh;border-radius:18px;padding:6px 6px 10px;animation:sheetup .22s var(--ease);box-shadow:0 -8px 40px #0006;z-index:90}
+  #pop>.popover.sheetpop::before{content:"";display:block;width:38px;height:4px;border-radius:3px;background:var(--line);margin:4px auto 8px}
+  @keyframes sheetup{from{transform:translateY(28px);opacity:0}}
+  #scrim{z-index:80}#pop{position:relative;z-index:90}
+  .reader{grid-template-columns:1fr}.reader>aside{position:static}
+  .toc>summary{display:block;cursor:pointer;padding:2px 2px 8px;list-style:none}.toc[open]>summary{margin-bottom:6px;border-bottom:1px solid var(--line)}
+  .sticky-side>.panel.peek{position:fixed;left:8px;right:8px;bottom:calc(64px + env(safe-area-inset-bottom));max-height:52vh;overflow:auto;z-index:65;border-radius:16px;box-shadow:0 -10px 40px #0006}
+  .crumbbar{top:calc(var(--bar) + env(safe-area-inset-top) + 2px)}
+  #totop{position:fixed;right:12px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:68;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);box-shadow:0 6px 20px #0004;place-items:center}#totop.on{display:grid}#totop svg{rotate:180deg}
+  #netbar{position:fixed;left:0;right:0;top:calc(var(--bar) + env(safe-area-inset-top));z-index:66;padding:6px 12px;text-align:center;font-size:12.5px;background:var(--warn);color:#111}#netbar.on{display:block}
+}
+@media(max-width:700px){
+  :root{--fs:15px}html[data-size=l]{--fs:17px}html[data-size=xl]{--fs:19px}
+  main{padding:12px 12px calc(84px + env(safe-area-inset-bottom))}
+  .foot{padding:12px;font-size:11px}
+  .pagehead{gap:8px;margin-bottom:12px}.pagehead h1{font-size:24px}.pagehead p{font-size:.95em}.pagehead .tools{margin-left:0;width:100%}
+  .panel{padding:12px}.panel>.ph{gap:6px;margin-bottom:10px}.panel>.ph h2{font-size:16px}.panel>.ph .tools{margin-left:0;width:100%}
+  .stat{padding:10px}.stat b{font-size:22px}.stat small{font-size:12px}.stat .eyebrow{font-size:9.5px}
+  .grid.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.grid.g3,.grid.g2{grid-template-columns:1fr}.split,.split2{grid-template-columns:1fr}
+  .row{gap:6px}.stack>*+*,.panel+.panel{margin-top:12px}
+  .seg{max-width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}.seg::-webkit-scrollbar{display:none}.seg a,.seg button{flex:none;white-space:nowrap}
+  select,input[type=text],input[type=search],input[type=date],input[type=number],textarea{font-size:16px}
+  .panel table,.post table{display:block;max-width:100%;overflow-x:auto}
+  .legend-strip{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;gap:12px;padding:6px 10px;scrollbar-width:none}.legend-strip::-webkit-scrollbar{display:none}
+  .people,.gal{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.people{grid-template-columns:1fr}
+  .board{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:80%;scroll-snap-type:x mandatory;margin:0 -12px;padding:0 12px 8px}.board .col{scroll-snap-align:start}
+  .cal{gap:3px}.cal .day{min-height:54px;padding:3px}.cal .ev{font-size:0;height:6px;min-height:6px;padding:0;border-radius:3px;border-left:0;background:var(--ec)}.cal .dow{padding:2px;font-size:9px}
+  .tabsbar{margin-left:-12px;margin-right:-12px;padding:0 8px}
+  .mapbox{border-radius:var(--r)}.geomap{padding:2px}.geomap .lbl{font-size:10px}
+  .person{padding:10px}.av{width:42px;height:42px}.post{padding:12px}.reply{margin-left:10px}
+  .prov .sub p{font-size:17px}.sub{grid-template-columns:30px 1fr}.xrefs{gap:5px}
+  .hemi{max-width:100%}.card-b{padding:10px}
+  .tl{grid-template-columns:96px 1fr}.lane{grid-template-columns:96px 1fr}
+  /* dialogs and the evidence drawer become full-width bottom sheets */
+  #dlg .back{place-items:end center;padding:0}
+  #dlg .box,#dlg .box.sm{width:100%!important;max-height:92vh;border-radius:18px 18px 0 0;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}
+  .sheet{top:auto;left:0;right:0;width:100%;max-height:88vh;border-left:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;padding-bottom:calc(30px + env(safe-area-inset-bottom));animation:sheetup .22s var(--ease)}
+  .sh-val b{font-size:28px}
+  #toast{bottom:calc(76px + env(safe-area-inset-bottom));max-width:92vw}
+  .tip{max-width:80vw}
+}
+@media(max-width:400px){.grid.g4{grid-template-columns:1fr 1fr}.pagehead h1{font-size:22px}.stat b{font-size:20px}.btn{padding:0 10px}}
+/* Landscape phones and small tablets keep the drawer but use the width */
+@media(min-width:701px) and (max-width:900px){main{padding:16px 18px calc(84px + env(safe-area-inset-bottom))}.grid.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-height:480px) and (orientation:landscape){#tabbar{display:none}body{padding-bottom:0}main{padding-bottom:20px}}
+.split>*,.split2>*,.grid>*,.reader>*,.stack{min-width:0}
